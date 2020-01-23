@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,49 +16,47 @@
 
 package de.adorsys.psd2.validator.certificate;
 
-import java.security.cert.CertificateException;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class CertificateValidatorFactoryTest {
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-	private SimpleCertificateBucket blockedCertBucket;
-	private SimpleCertificateBucket rootCertBucket;
-	private SimpleCertificateBucket intermediateCertBucket;
+class CertificateValidatorFactoryTest {
 
-	@Before
-	public void init() {
+    private SimpleCertificateBucket blockedCertBucket;
+    private SimpleCertificateBucket rootCertBucket;
+    private SimpleCertificateBucket intermediateCertBucket;
 
-		blockedCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("blockedcert"));
-		rootCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("rootcert", "TCA3.crt"));
-		intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
-	}
+    @BeforeEach
+    void init() {
 
-	@Test(expected = CertificateValidationException.class)
-	public void when_ValidCertificate_Expected_True() throws CertificateException, CertificateValidationException {
+        blockedCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("blockedcert"));
+        rootCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("rootcert", "TCA3.crt"));
+        intermediateCertBucket = new SimpleCertificateBucket(CertificateUtils.getCertificates("intermediatecert"));
+    }
 
-		String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
+    @Test
+    void when_ValidCertificate_Expected_True() {
 
-		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
-				rootCertBucket, intermediateCertBucket);
+        String encodedCert = CertificateUtils.getCertificateByName("certificateValid.crt");
 
-		validatorFactory.validate(encodedCert);
-	}
+        CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
+                                                                                       rootCertBucket, intermediateCertBucket);
 
-	@Test(expected = CertificateValidationException.class)
-	public void when_InValidCertificate_Expected_Exception()
-			throws CertificateException, CertificateValidationException {
+        assertThrows(CertificateValidationException.class, () -> validatorFactory.validate(encodedCert));
+    }
 
-		String encodedCert = CertificateUtils.getCertificateByName("certificateInvalid.crt");
+    @Test
+    void when_InValidCertificate_Expected_Exception() {
 
-		CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
-				rootCertBucket, intermediateCertBucket);
+        String encodedCert = CertificateUtils.getCertificateByName("certificateInvalid.crt");
 
-		validatorFactory.validate(encodedCert);
-	}
+        CertificateValidatorFactory validatorFactory = new CertificateValidatorFactory(blockedCertBucket,
+                                                                                       rootCertBucket, intermediateCertBucket);
+
+        assertThrows(CertificateValidationException.class, () -> validatorFactory.validate(encodedCert));
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package de.adorsys.psd2.xs2a.web.filter;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -35,12 +35,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ContentCachingWrappingFilterTest {
+@ExtendWith(MockitoExtension.class)
+class ContentCachingWrappingFilterTest {
     private static final String REQUEST_PATH = "/v1/accounts";
 
     @Mock
@@ -57,7 +57,7 @@ public class ContentCachingWrappingFilterTest {
     private ArgumentCaptor<HttpServletResponse> capturedResponse;
 
     @Test
-    public void doFilterInternal_shouldWrapRequestAndResponse() throws ServletException, IOException {
+    void doFilterInternal_shouldWrapRequestAndResponse() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();

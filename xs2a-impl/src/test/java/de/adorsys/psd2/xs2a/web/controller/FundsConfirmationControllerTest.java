@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@ import de.adorsys.psd2.xs2a.service.FundsConfirmationService;
 import de.adorsys.psd2.xs2a.service.mapper.FundsConfirmationModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -41,8 +41,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FundsConfirmationControllerTest {
+@ExtendWith(MockitoExtension.class)
+class FundsConfirmationControllerTest {
     private final String FUNDS_REQ_DATA = "/json/ConfirmationOfFundsTestData.json";
     private final Charset UTF_8 = Charset.forName("utf-8");
 
@@ -55,13 +55,13 @@ public class FundsConfirmationControllerTest {
     @Mock
     private FundsConfirmationModelMapper fundsConfirmationModelMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(fundsConfirmationService.fundsConfirmation(any())).thenReturn(readResponseObject());
     }
 
     @Test
-    public void fundConfirmation() throws IOException {
+    void fundConfirmation() throws IOException {
         when(responseMapper.ok(any(), any())).thenReturn(getInlineResponse());
 
         //Given

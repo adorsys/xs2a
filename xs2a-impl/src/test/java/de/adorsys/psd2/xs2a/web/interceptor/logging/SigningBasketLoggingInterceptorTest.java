@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,13 +39,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SigningBasketLoggingInterceptorTest {
+@ExtendWith(MockitoExtension.class)
+class SigningBasketLoggingInterceptorTest {
     private static final String TPP_IP = "1.1.1.1";
     private static final String TPP_INFO_JSON = "json/web/interceptor/logging/tpp-info.json";
     private static final String REQUEST_URI = "request_uri";
     private static final String X_REQUEST_ID_HEADER_NAME = "x-request-id";
-    private static final String X_REQUEST_ID_HEADER_VALUE = "222";
     private static final String REDIRECT_ID = "redirect-id";
     private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
 
@@ -66,16 +65,16 @@ public class SigningBasketLoggingInterceptorTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
-        when(response.getHeader(X_REQUEST_ID_HEADER_NAME)).thenReturn(X_REQUEST_ID_HEADER_VALUE);
+    @BeforeEach
+    void setUp() {
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
-        when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
     }
 
     @Test
-    public void preHandle_success() {
+    void preHandle_success() {
+        when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
+
         when(request.getRemoteAddr()).thenReturn(TPP_IP);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
@@ -90,7 +89,7 @@ public class SigningBasketLoggingInterceptorTest {
     }
 
     @Test
-    public void preHandle_pathVariableIsNull() {
+    void preHandle_pathVariableIsNull() {
         when(tppService.getTppInfo()).thenReturn(jsonReader.getObjectFromFile(TPP_INFO_JSON, TppInfo.class));
         when(request.getRemoteAddr()).thenReturn(TPP_IP);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -106,7 +105,7 @@ public class SigningBasketLoggingInterceptorTest {
     }
 
     @Test
-    public void afterCompletion_success() {
+    void afterCompletion_success() {
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
         when(redirectIdService.getRedirectId()).thenReturn(REDIRECT_ID);
 

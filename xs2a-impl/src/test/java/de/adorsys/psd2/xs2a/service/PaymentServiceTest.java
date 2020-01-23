@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,13 +49,13 @@ import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentReque
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,11 +67,11 @@ import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.*;
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
     private static final String WRONG_PAYMENT_ID = "777";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -128,31 +128,21 @@ public class PaymentServiceTest {
     private BulkPayment bulkPayment;
     private PeriodicPayment periodicPayment;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         jsonReader = new JsonReader();
 
         singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json", SinglePayment.class);
         bulkPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-bulk-payment.json", BulkPayment.class);
         periodicPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json", PeriodicPayment.class);
-
-        when(tppService.getTppInfo()).thenReturn(getTppInfo());
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
-            .thenReturn(getPisCommonPayment());
-        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class)))
-            .thenReturn(ValidationResult.valid());
-        when(getPaymentStatusByIdValidator.validate(any(GetPaymentStatusByIdPO.class)))
-            .thenReturn(ValidationResult.valid());
-        when(cancelPaymentValidator.validate(any(CancelPaymentPO.class)))
-            .thenReturn(ValidationResult.valid());
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
-    public void createRawPayment_Success() {
+    void createRawPayment_Success() {
         // Given
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class))).thenReturn(ValidationResult.valid());
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
         when(createPaymentService.createPayment(any(), any(), any()))
@@ -167,8 +157,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createSinglePayment_Success() {
+    void createSinglePayment_Success() {
         // Given
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class))).thenReturn(ValidationResult.valid());
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
         when(createPaymentService.createPayment(any(), any(), any()))
@@ -183,8 +176,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createPeriodicPayment_Success() {
+    void createPeriodicPayment_Success() {
         // Given
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class))).thenReturn(ValidationResult.valid());
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.PERIODIC);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
         when(createPaymentService.createPayment(any(), any(), any()))
@@ -199,7 +195,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createSinglePayment_Failure_ShouldReturnError() {
+    void createSinglePayment_Failure_ShouldReturnError() {
         // Given
         when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class)))
             .thenReturn(ValidationResult.invalid(new MessageError()));
@@ -212,7 +208,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createSinglePayment_withInvalidInitiationParameters_shouldReturnValidationError() {
+    void createSinglePayment_withInvalidInitiationParameters_shouldReturnValidationError() {
         // Given
         PaymentInitiationParameters invalidPaymentInitiationParameters = buildInvalidPaymentInitiationParameters();
 
@@ -229,7 +225,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createPeriodicPayment_Failure_ShouldReturnError() {
+    void createPeriodicPayment_Failure_ShouldReturnError() {
         // Given
         when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class)))
             .thenReturn(ValidationResult.invalid(new MessageError()));
@@ -242,7 +238,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createPeriodicPayment_withInvalidInitiationParameters_shouldReturnValidationError() {
+    void createPeriodicPayment_withInvalidInitiationParameters_shouldReturnValidationError() {
         // Given
         PaymentInitiationParameters invalidPaymentInitiationParameters = buildInvalidPaymentInitiationParameters();
 
@@ -259,8 +255,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createBulkPayments() {
+    void createBulkPayments() {
         // When
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class))).thenReturn(ValidationResult.valid());
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.BULK);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
         when(createPaymentService.createPayment(bulkPayment, paymentInitiationParameters, getTppInfoServiceModified()))
@@ -272,7 +271,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createBulkPayments_withInvalidInitiationParameters_shouldReturnValidationError() {
+    void createBulkPayments_withInvalidInitiationParameters_shouldReturnValidationError() {
         // Given
         PaymentInitiationParameters invalidPaymentInitiationParameters = buildInvalidPaymentInitiationParameters();
 
@@ -289,8 +288,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createPayment_Success_ShouldRecordEvent() {
+    void createPayment_Success_ShouldRecordEvent() {
         // Given
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class))).thenReturn(ValidationResult.valid());
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
         when(createPaymentService.createPayment(any(), any(), any()))
@@ -308,8 +310,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void createPayment_shouldStoreStatusesInLoggingContext() {
+    void createPayment_shouldStoreStatusesInLoggingContext() {
         // Given
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class))).thenReturn(ValidationResult.valid());
+
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
         when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
 
@@ -332,8 +337,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentById_Success_ShouldRecordEvent() {
+    void getPaymentById_Success_ShouldRecordEvent() {
         // Given
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
             .thenReturn(Optional.of(pisCommonPaymentResponse));
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -349,8 +357,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentById_shouldStoreTransactionStatusInLoggingContext() {
+    void getPaymentById_shouldStoreTransactionStatusInLoggingContext() {
         // Given
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString()))
             .thenReturn(Optional.of(pisCommonPaymentResponse));
         when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
@@ -367,7 +378,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentById_withInvalidPaymentResponse_shouldReturnValidationError() {
+    void getPaymentById_withInvalidPaymentResponse_shouldReturnValidationError() {
         // Given
         when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
@@ -383,10 +394,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentById_Failure_WrongId() {
+    void getPaymentById_Failure_WrongId() {
         // Given
-        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID))
-            .thenReturn(Optional.empty());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID)).thenReturn(Optional.empty());
 
         // When
         ResponseObject actualResult = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, WRONG_PAYMENT_ID);
@@ -396,8 +408,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_Success_ShouldRecordEvent() {
+    void getPaymentStatusById_Success_ShouldRecordEvent() {
         // Given
+        when(getPaymentStatusByIdValidator.validate(any(GetPaymentStatusByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), any(String.class)))
             .thenReturn(new ReadPaymentStatusResponse(RCVD));
@@ -416,9 +431,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_shouldStoreTransactionStatusInLoggingContext() {
+    void getPaymentStatusById_shouldStoreTransactionStatusInLoggingContext() {
         // Given
         TransactionStatus transactionStatus = RCVD;
+        when(getPaymentStatusByIdValidator.validate(any(GetPaymentStatusByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
@@ -437,8 +454,10 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_withInvalidPaymentResponse_shouldReturnValidationError() {
+    void getPaymentStatusById_withInvalidPaymentResponse_shouldReturnValidationError() {
         // Given
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(getPaymentStatusByIdValidator.validate(any(GetPaymentStatusByIdPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(invalidPisCommonPaymentResponse));
@@ -453,7 +472,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_Failure_WrongId() {
+    void getPaymentStatusById_Failure_WrongId() {
         // Given
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -466,8 +485,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_Success_FundsAvailableIsNull() {
+    void getPaymentStatusById_Success_FundsAvailableIsNull() {
         // Given
+        when(getPaymentStatusByIdValidator.validate(any(GetPaymentStatusByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), any(String.class)))
             .thenReturn(new ReadPaymentStatusResponse(ACCP));
@@ -486,8 +508,11 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void getPaymentStatusById_Success_FundsAvailableIsTrue() {
+    void getPaymentStatusById_Success_FundsAvailableIsTrue() {
         // Given
+        when(getPaymentStatusByIdValidator.validate(any(GetPaymentStatusByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), any(String.class)))
             .thenReturn(new ReadPaymentStatusResponse(ACCP, true));
@@ -507,8 +532,10 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_Success() {
+    void cancelPayment_Success() {
         // Given
+        when(cancelPaymentValidator.validate(any(CancelPaymentPO.class))).thenReturn(ValidationResult.valid());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(ACCP);
         when(paymentServiceResolver.getCancelPaymentService(any())).thenReturn(cancelCertainPaymentService);
@@ -525,8 +552,10 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_Success_ShouldRecordEvent() {
+    void cancelPayment_Success_ShouldRecordEvent() {
         // Given
+        when(cancelPaymentValidator.validate(any(CancelPaymentPO.class))).thenReturn(ValidationResult.valid());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(RCVD);
 
@@ -545,8 +574,10 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_shouldStoreTransactionStatusInLoggingContext() {
+    void cancelPayment_shouldStoreTransactionStatusInLoggingContext() {
         // Given
+        when(cancelPaymentValidator.validate(any(CancelPaymentPO.class))).thenReturn(ValidationResult.valid());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(pisCommonPaymentResponse.getTransactionStatus()).thenReturn(RCVD);
 
@@ -565,7 +596,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_withInvalidPaymentResponse_shouldReturnValidationError() {
+    void cancelPayment_withInvalidPaymentResponse_shouldReturnValidationError() {
         // Given
         when(cancelPaymentValidator.validate(any(CancelPaymentPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
@@ -582,7 +613,7 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_Failure_WrongId() {
+    void cancelPayment_Failure_WrongId() {
         // Given
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(WRONG_PAYMENT_ID))
             .thenReturn(Optional.empty());
@@ -596,8 +627,12 @@ public class PaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_Fail_FinalisedTransactionStatus() {
+    void cancelPayment_Fail_FinalisedTransactionStatus() {
         // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID)).thenReturn(getPisCommonPayment());
+        when(cancelPaymentValidator.validate(any(CancelPaymentPO.class))).thenReturn(ValidationResult.valid());
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
+
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(getFinalisedPisCommonPayment()));
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,12 +46,12 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
@@ -64,8 +64,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CancelPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CancelPaymentServiceTest {
     private static final String PAYMENT_ID = "12345";
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String AUTHORISATION_ID = "auth id";
@@ -98,17 +98,18 @@ public class CancelPaymentServiceTest {
     @Mock
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(spiContextDataProvider.provide()).thenReturn(SPI_CONTEXT_DATA);
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(requestProviderService.getInternalRequestId()).thenReturn(UUID.fromString(INTERNAL_REQUEST_ID));
-        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
     @Test
-    public void initiatePaymentCancellation_authorisationNotRequired_shouldCancelPaymentWithoutSca() {
+    void initiatePaymentCancellation_authorisationNotRequired_shouldCancelPaymentWithoutSca() {
         // Given
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         SpiPayment spiPayment = getSpiPayment(ACTC);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
@@ -136,7 +137,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_authorisationNotRequired_hasError() {
+    void initiatePaymentCancellation_authorisationNotRequired_hasError() {
         // Given
         SpiPayment spiPayment = getSpiPayment(ACTC);
 
@@ -178,7 +179,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_paymentAlreadyCancelledInSpi_shouldReturnCancelledInResponse() {
+    void initiatePaymentCancellation_paymentAlreadyCancelledInSpi_shouldReturnCancelledInResponse() {
         // Given
         SpiPayment spiPayment = getSpiPayment(CANC);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
@@ -200,8 +201,10 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_withPaymentInReceivedStatus_shouldCancelPaymentWithoutSca() {
+    void initiatePaymentCancellation_withPaymentInReceivedStatus_shouldCancelPaymentWithoutSca() {
         // Given
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         SpiPayment spiPayment = getSpiPayment(RCVD);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
             .thenReturn(SpiResponse.<SpiPaymentCancellationResponse>builder()
@@ -228,7 +231,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_authorisationRequired_shouldReturnResponseFromSpi() {
+    void initiatePaymentCancellation_authorisationRequired_shouldReturnResponseFromSpi() {
         // Given
         SpiPayment spiPayment = getSpiPayment(ACTC);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
@@ -253,7 +256,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_withFinalisedPayment_shouldReturnError() {
+    void initiatePaymentCancellation_withFinalisedPayment_shouldReturnError() {
         // Given
         SpiPayment spiPayment = getSpiPayment(ACSC);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
@@ -276,7 +279,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_spiErrorDuringInitiation_shouldReturnError() {
+    void initiatePaymentCancellation_spiErrorDuringInitiation_shouldReturnError() {
         // Given
         SpiPayment spiPayment = getSpiPayment(null);
         when(paymentCancellationSpi.initiatePaymentCancellation(any(), eq(spiPayment), any()))
@@ -299,7 +302,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_noTransactionStatusFromSpi_shouldGetStatusFromPayment() {
+    void initiatePaymentCancellation_noTransactionStatusFromSpi_shouldGetStatusFromPayment() {
         // Given
         SpiPayment spiPayment = getSpiPayment(ACWC);
 
@@ -324,7 +327,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_authorisationRequired_implicit_shouldReturnResponseFromSpi() {
+    void initiatePaymentCancellation_authorisationRequired_implicit_shouldReturnResponseFromSpi() {
         SpiPayment spiPayment = getSpiPayment(ACTC);
         Xs2aCreatePisCancellationAuthorisationResponse cancellationResponse = new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, spiPayment.getPaymentType(), INTERNAL_REQUEST_ID);
         CancelPaymentResponse cancelPaymentResponseExpected = getCancelPaymentResponse(true, ACTC);
@@ -359,7 +362,7 @@ public class CancelPaymentServiceTest {
     }
 
     @Test
-    public void initiatePaymentCancellation_authorisationRequired_implicit_hasError() {
+    void initiatePaymentCancellation_authorisationRequired_implicit_hasError() {
         SpiPayment spiPayment = getSpiPayment(ACTC);
 
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(ENCRYPTED_PAYMENT_ID, EMPTY_PSU_DATA, spiPayment.getPaymentProduct(), spiPayment.getPaymentType(), null)))

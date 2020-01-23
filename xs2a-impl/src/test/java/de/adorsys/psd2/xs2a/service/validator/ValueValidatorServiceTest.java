@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ package de.adorsys.psd2.xs2a.service.validator;
 
 
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.Validation;
 import javax.validation.ValidationException;
@@ -33,8 +33,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ValueValidatorServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ValueValidatorServiceTest {
     private static final String ACCOUNT_ID = "11111111";
     private static final String TRANSACTION_ID = "22222222";
     private static final LocalDate DATE_FROM = LocalDate.parse("2019-03-03");
@@ -46,15 +46,13 @@ public class ValueValidatorServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         valueValidatorService = new ValueValidatorService(requestProviderService, Validation.buildDefaultValidatorFactory().getValidator());
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
-
     @Test
-    public void validate_AccountAndPeriod() {
+    void validate_AccountAndPeriod() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
@@ -66,7 +64,7 @@ public class ValueValidatorServiceTest {
     }
 
     @Test
-    public void validate_AccountAndTransaction() {
+    void validate_AccountAndTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
@@ -77,10 +75,11 @@ public class ValueValidatorServiceTest {
     }
 
     @Test
-    public void shouldFail_validate_AccountAndEmptyTransaction() {
+    void shouldFail_validate_AccountAndEmptyTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
@@ -88,10 +87,11 @@ public class ValueValidatorServiceTest {
     }
 
     @Test
-    public void shouldFail_validate_EmptyAccountAndTransaction() {
+    void shouldFail_validate_EmptyAccountAndTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setTransactionId(TRANSACTION_ID);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.TransactionIdGroup.class))
@@ -99,11 +99,12 @@ public class ValueValidatorServiceTest {
     }
 
     @Test
-    public void shouldFail_validate_AccountAndEmptyDataFrom() {
+    void shouldFail_validate_AccountAndEmptyDataFrom() {
         //Given:
         ValidationGroup fields = new ValidationGroup();
         fields.setAccountId(ACCOUNT_ID);
         fields.setDateTo(DATE_TO);
+        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
 
         //When Then:
         assertThatThrownBy(() -> valueValidatorService.validate(fields, ValidationGroup.AccountIdGroup.class, ValidationGroup.PeriodGroup.class))

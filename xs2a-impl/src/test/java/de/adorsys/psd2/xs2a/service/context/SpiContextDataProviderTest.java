@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -37,8 +37,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SpiContextDataProviderTest {
+@ExtendWith(MockitoExtension.class)
+class SpiContextDataProviderTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
     private final static UUID X_REQUEST_ID = UUID.fromString("c818a31f-ccdd-4fff-a404-22ad15ba9754");
     private final static UUID INTERNAL_REQUEST_ID = UUID.fromString("b571c834-4eb1-468f-91b0-f5e83589bc22");
@@ -58,14 +58,14 @@ public class SpiContextDataProviderTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
         when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
     }
 
     @Test
-    public void provide_success() {
+    void provide_success() {
         //Given
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
@@ -79,7 +79,7 @@ public class SpiContextDataProviderTest {
     }
 
     @Test
-    public void provideWithPsuIdData_success() {
+    void provideWithPsuIdData_success() {
         //Given
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
@@ -93,7 +93,7 @@ public class SpiContextDataProviderTest {
     }
 
     @Test
-    public void provide_withParameters_success() {
+    void provide_withParameters_success() {
         //Given
         when(psuDataMapper.mapToSpiPsuData(PSU_DATA, null))
             .thenReturn(SPI_PSU_DATA);
@@ -107,7 +107,7 @@ public class SpiContextDataProviderTest {
     }
 
     @Test
-    public void provide_withPsuIpAddress_success() {
+    void provide_withPsuIpAddress_success() {
         //Given
         when(requestProviderService.getPsuIpAddress())
             .thenReturn(PSU_IP_ADDRESS);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,21 +22,21 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aPaymentInfoMapperImpl.class})
-public class SpiToXs2aPaymentInfoMapperTest {
+class SpiToXs2aPaymentInfoMapperTest {
     private static final String PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
@@ -48,7 +48,7 @@ public class SpiToXs2aPaymentInfoMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToXs2aPaymentInfo() {
+    void mapToXs2aPaymentInfo() {
         SpiPaymentInfo spiPaymentInfo = new SpiPaymentInfo(PAYMENT_PRODUCT);
         spiPaymentInfo.setPaymentId(PAYMENT_ID);
         spiPaymentInfo.setPaymentType(PaymentType.SINGLE);
@@ -65,7 +65,7 @@ public class SpiToXs2aPaymentInfoMapperTest {
     }
 
     @Test
-    public void mapToXs2aPaymentInfo_nullValue() {
+    void mapToXs2aPaymentInfo_nullValue() {
         CommonPayment commonPayment = mapper.mapToXs2aPaymentInfo(null);
         assertNull(commonPayment);
     }

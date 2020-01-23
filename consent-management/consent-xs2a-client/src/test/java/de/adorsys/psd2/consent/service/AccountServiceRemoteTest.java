@@ -17,22 +17,22 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountServiceRemoteTest {
+@ExtendWith(MockitoExtension.class)
+class AccountServiceRemoteTest {
 
     private static final String URL = "http://ais/consent/transactions/save";
     private static final String CONSENT_ID = "consent ID";
@@ -49,7 +49,7 @@ public class AccountServiceRemoteTest {
     private AccountServiceRemote accountServiceRemote;
 
     @Test
-    public void saveNumberOfTransactions() {
+    void saveNumberOfTransactions() {
         // Given
         when(remoteAisConsentUrls.saveNumberOfTransactions()).thenReturn(URL);
         when(restTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(NUMBER_OF_TRANSACTIONS), Boolean.class, CONSENT_ID, RESOURCE_ID))

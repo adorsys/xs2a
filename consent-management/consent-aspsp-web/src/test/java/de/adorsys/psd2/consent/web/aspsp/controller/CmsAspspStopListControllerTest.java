@@ -20,12 +20,12 @@ import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.tpp.TppStopListRecord;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,8 +41,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspStopListControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspStopListControllerTest {
     private final String tppAuthorisationNumber = "PSDDE-FAKENCA-87B2AC";
     private final String GET_STOP_LIST_BY_TPP = "/aspsp-api/v1/tpp/stop-list";
     private final String BLOCK_TPP_AUTH_NUMBER = "/aspsp-api/v1/tpp/stop-list/block";
@@ -63,8 +63,8 @@ public class CmsAspspStopListControllerTest {
     private HttpHeaders httpHeaders = new HttpHeaders();
     private TppStopListRecord tppStopListRecord;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
         tppStopListRecord = jsonReader.getObjectFromFile( "json/tpp-stop-list-record.json", TppStopListRecord.class);
@@ -79,7 +79,7 @@ public class CmsAspspStopListControllerTest {
     }
 
     @Test
-    public void getTppStopListRecord_Success() throws Exception {
+    void getTppStopListRecord_Success() throws Exception {
         when(cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListRecord));
 
@@ -93,7 +93,7 @@ public class CmsAspspStopListControllerTest {
     }
 
     @Test
-    public void getTppStopListRecord_404() throws Exception {
+    void getTppStopListRecord_404() throws Exception {
         when(cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
@@ -106,7 +106,7 @@ public class CmsAspspStopListControllerTest {
     }
 
     @Test
-    public void blockTpp() throws Exception {
+    void blockTpp() throws Exception {
         Duration lockPeriodDuration = Duration.ofMillis(lockPeriod);
         when(cmsAspspTppService.blockTpp(tppAuthorisationNumber, INSTANCE_ID, lockPeriodDuration))
             .thenReturn(true);
@@ -121,7 +121,7 @@ public class CmsAspspStopListControllerTest {
     }
 
     @Test
-    public void unblockTpp() throws Exception {
+    void unblockTpp() throws Exception {
         when(cmsAspspTppService.unblockTpp(tppAuthorisationNumber, INSTANCE_ID))
             .thenReturn(true);
 

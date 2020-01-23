@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpiAuthorizationCodeResultTest {
+class SpiAuthorizationCodeResultTest {
 
     @Test
-    public void isEmpty_works_by_null_ChallengeData() {
+    void isEmpty_works_by_null_ChallengeData() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
         spiAuthorizationCodeResult.setSelectedScaMethod(new SpiAuthenticationObject());
 
@@ -32,7 +32,7 @@ public class SpiAuthorizationCodeResultTest {
     }
 
     @Test
-    public void isEmpty_works_by_null_ChallengeData_and_AuthObject() {
+    void isEmpty_works_by_null_ChallengeData_and_AuthObject() {
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
 
         assertTrue(spiAuthorizationCodeResult.isEmpty());

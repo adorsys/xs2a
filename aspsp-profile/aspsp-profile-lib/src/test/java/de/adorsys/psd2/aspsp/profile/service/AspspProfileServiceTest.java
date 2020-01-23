@@ -25,13 +25,13 @@ import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
-import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
@@ -39,8 +39,8 @@ import static de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceFiel
 import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AspspProfileServiceTest {
     private static final int FREQUENCY_PER_DAY = 5;
     private static final boolean COMBINED_SERVICE_INDICATOR = false;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
@@ -83,110 +83,110 @@ public class AspspProfileServiceTest {
     private ProfileConfiguration profileConfiguration;
     private AspspSettings actualResponse;
 
-    @Before
-    public void setUpAccountServiceMock() {
+    @BeforeEach
+    void setUpAccountServiceMock() {
         when(profileConfiguration.getSetting()).thenReturn(buildBankProfileSetting());
 
         actualResponse = aspspProfileService.getAspspSettings();
     }
 
     @Test
-    public void getPisRedirectUrlToAspsp_success() {
-        Assertions.assertThat(actualResponse.getPisRedirectUrlToAspsp()).isEqualTo(PIS_REDIRECT_LINK);
+    void getPisRedirectUrlToAspsp_success() {
+        Assertions.assertEquals(PIS_REDIRECT_LINK, actualResponse.getPisRedirectUrlToAspsp());
     }
 
     @Test
-    public void getPisPaymentCancellationRedirectUrlToAspsp_success() {
-        Assertions.assertThat(actualResponse.getPisPaymentCancellationRedirectUrlToAspsp()).isEqualTo(PIS_CANCELLATION_REDIRECT_LINK);
+    void getPisPaymentCancellationRedirectUrlToAspsp_success() {
+        Assertions.assertEquals(PIS_CANCELLATION_REDIRECT_LINK, actualResponse.getPisPaymentCancellationRedirectUrlToAspsp());
     }
 
     @Test
-    public void getAisRedirectUrlToAspsp_success() {
-        Assertions.assertThat(actualResponse.getAisRedirectUrlToAspsp()).isEqualTo(AIS_REDIRECT_LINK);
+    void getAisRedirectUrlToAspsp_success() {
+        Assertions.assertEquals(AIS_REDIRECT_LINK, actualResponse.getAisRedirectUrlToAspsp());
     }
 
     @Test
-    public void getAvailablePaymentTypes_success() {
-        Assertions.assertThat(actualResponse.getSupportedPaymentTypeAndProductMatrix()).isEqualTo(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX);
+    void getAvailablePaymentTypes_success() {
+        Assertions.assertEquals(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX, actualResponse.getSupportedPaymentTypeAndProductMatrix());
     }
 
     @Test
-    public void getScaApproach_success() {
+    void getScaApproach_success() {
         //When:
         List<ScaApproach> actualResponse = aspspProfileService.getScaApproaches();
 
         //Then:
-        Assertions.assertThat(actualResponse).isEqualTo(Collections.singletonList(REDIRECT_APPROACH));
+        Assertions.assertEquals(Collections.singletonList(REDIRECT_APPROACH), actualResponse);
     }
 
     @Test
-    public void getRedirectUrlExpirationTimeMs_success() {
-        Assertions.assertThat(actualResponse.getRedirectUrlExpirationTimeMs()).isEqualTo(REDIRECT_URL_EXPIRATION_TIME_MS);
+    void getRedirectUrlExpirationTimeMs_success() {
+        Assertions.assertEquals(REDIRECT_URL_EXPIRATION_TIME_MS, actualResponse.getRedirectUrlExpirationTimeMs());
     }
 
     @Test
-    public void getFrequencyPerDay_success() {
-        Assertions.assertThat(actualResponse.getFrequencyPerDay()).isEqualTo(FREQUENCY_PER_DAY);
+    void getFrequencyPerDay_success() {
+        Assertions.assertEquals(FREQUENCY_PER_DAY, actualResponse.getFrequencyPerDay());
     }
 
     @Test
-    public void getNotConfirmedConsentExpirationPeriodMs_success() {
-        Assertions.assertThat(actualResponse.getNotConfirmedConsentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS);
+    void getNotConfirmedConsentExpirationPeriodMs_success() {
+        Assertions.assertEquals(NOT_CONFIRMED_CONSENT_EXPIRATION_PERIOD_MS, actualResponse.getNotConfirmedConsentExpirationPeriodMs());
     }
 
     @Test
-    public void getNotConfirmedPaymentExpirationPeriodMs_success() {
-        Assertions.assertThat(actualResponse.getNotConfirmedPaymentExpirationPeriodMs()).isEqualTo(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS);
+    void getNotConfirmedPaymentExpirationPeriodMs_success() {
+        Assertions.assertEquals(NOT_CONFIRMED_PAYMENT_EXPIRATION_PERIOD_MS, actualResponse.getNotConfirmedPaymentExpirationPeriodMs());
     }
 
     @Test
-    public void getPaymentCancellationRedirectUrlExpirationTimeMs_success() {
-        Assertions.assertThat(actualResponse.getPaymentCancellationRedirectUrlExpirationTimeMs()).isEqualTo(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS);
+    void getPaymentCancellationRedirectUrlExpirationTimeMs_success() {
+        Assertions.assertEquals(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS, actualResponse.getPaymentCancellationRedirectUrlExpirationTimeMs());
     }
 
     @Test
-    public void getAuthorisationExpirationTimeMs_success() {
-        Assertions.assertThat(actualResponse.getAuthorisationExpirationTimeMs()).isEqualTo(AUTHORISATION_EXPIRATION_TIME_MS);
+    void getAuthorisationExpirationTimeMs_success() {
+        Assertions.assertEquals(AUTHORISATION_EXPIRATION_TIME_MS, actualResponse.getAuthorisationExpirationTimeMs());
     }
 
     @Test
-    public void getAvailableAccountsConsentSupported_success() {
-        Assertions.assertThat(actualResponse.isAvailableAccountsConsentSupported()).isEqualTo(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED);
+    void getAvailableAccountsConsentSupported_success() {
+        Assertions.assertEquals(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, actualResponse.isAvailableAccountsConsentSupported());
     }
 
     @Test
-    public void getScaByOneTimeAvailableAccountsConsentRequired_success() {
-        Assertions.assertThat(actualResponse.isScaByOneTimeAvailableAccountsConsentRequired()).isEqualTo(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED);
+    void getScaByOneTimeAvailableAccountsConsentRequired_success() {
+        Assertions.assertEquals(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, actualResponse.isScaByOneTimeAvailableAccountsConsentRequired());
     }
 
     @Test
-    public void getPsuInInitialRequestMandated_success() {
-        Assertions.assertThat(actualResponse.isPsuInInitialRequestMandated()).isEqualTo(PSU_IN_INITIAL_REQUEST_MANDATED);
+    void getPsuInInitialRequestMandated_success() {
+        Assertions.assertEquals(PSU_IN_INITIAL_REQUEST_MANDATED, actualResponse.isPsuInInitialRequestMandated());
     }
 
     @Test
-    public void getForceXs2aBaseUrl_success() {
-        Assertions.assertThat(actualResponse.isForceXs2aBaseUrl()).isEqualTo(FORCE_XS2A_BASE_URL);
+    void getForceXs2aBaseUrl_success() {
+        Assertions.assertEquals(FORCE_XS2A_BASE_URL, actualResponse.isForceXs2aBaseUrl());
     }
 
     @Test
-    public void getXs2aBaseUrl_success() {
-        Assertions.assertThat(actualResponse.getXs2aBaseUrl()).isEqualTo(XS2A_BASE_URL);
+    void getXs2aBaseUrl_success() {
+        Assertions.assertEquals(XS2A_BASE_URL, actualResponse.getXs2aBaseUrl());
     }
 
     @Test
-    public void getEntryReferenceFromSupported_success() {
-        Assertions.assertThat(actualResponse.isEntryReferenceFromSupported()).isEqualTo(ENTRY_REFERENCE_FROM_SUPPORTED);
+    void getEntryReferenceFromSupported_success() {
+        Assertions.assertEquals(ENTRY_REFERENCE_FROM_SUPPORTED, actualResponse.isEntryReferenceFromSupported());
     }
 
     @Test
-    public void supportedTransactionApplicationTypes_success() {
-        Assertions.assertThat(actualResponse.getSupportedTransactionApplicationTypes()).isEqualTo(SUPPORTED_TRANSACTION_APPLICATION_TYPES);
+    void supportedTransactionApplicationTypes_success() {
+        Assertions.assertEquals(SUPPORTED_TRANSACTION_APPLICATION_TYPES, actualResponse.getSupportedTransactionApplicationTypes());
     }
 
     @Test
-    public void getStartAuthorisationMode() {
-        Assertions.assertThat(actualResponse.getStartAuthorisationMode()).isEqualTo(START_AUTHORISATION_MODE);
+    void getStartAuthorisationMode() {
+        Assertions.assertEquals(START_AUTHORISATION_MODE, actualResponse.getStartAuthorisationMode());
     }
 
     private BankProfileSetting buildBankProfileSetting() {

@@ -23,12 +23,12 @@ import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -36,11 +36,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsPsuAisControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsPsuAisControllerTest {
 
     private static final String CONSENT_ID = "consent id";
     private static final String AUTHORISATION_ID = "authorisation id";
@@ -60,13 +60,13 @@ public class CmsPsuAisControllerTest {
     @Mock
     private CmsPsuAisService cmsPsuAisService;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         psuIdData = new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE);
     }
 
     @Test
-    public void updatePsuDataInConsent_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
+    void updatePsuDataInConsent_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -82,7 +82,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updatePsuDataInConsent_withWrongRequest_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
+    void updatePsuDataInConsent_withWrongRequest_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, INSTANCE_ID))
             .thenReturn(false);
@@ -98,7 +98,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updatePsuDataInConsent_withExpiredAuthorisation_shouldReturnRequestTimeout() throws AuthorisationIsExpiredException {
+    void updatePsuDataInConsent_withExpiredAuthorisation_shouldReturnRequestTimeout() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, INSTANCE_ID))
             .thenThrow(new AuthorisationIsExpiredException(NOK_REDIRECT_URI));
@@ -115,7 +115,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsent_withValidRequest_shouldReturnOk() {
+    void getConsent_withValidRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
             .thenReturn(Optional.of(new CmsAisAccountConsent()));
@@ -131,7 +131,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsent_withNonExistingConsent_shouldReturnNotFound() {
+    void getConsent_withNonExistingConsent_shouldReturnNotFound() {
         // Given
         when(cmsPsuAisService.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
             .thenReturn(Optional.empty());
@@ -147,7 +147,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withValidRequest_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
             .thenReturn(true);
@@ -163,7 +163,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withValidRequestAndLowercaseScaStatus_shouldReturnOk() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
             .thenReturn(true);
@@ -180,7 +180,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withFalseFromService_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
             .thenReturn(false);
@@ -196,7 +196,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withInvalidScaStatus_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withInvalidScaStatus_shouldReturnBadRequest() throws AuthorisationIsExpiredException {
         // Given
         String invalidScaStatus = "invalid SCA status";
 
@@ -211,7 +211,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_withExpiredAuthorisation_shouldReturnRequestTimeout() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_withExpiredAuthorisation_shouldReturnRequestTimeout() throws AuthorisationIsExpiredException {
         // Given
         when(cmsPsuAisService.updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID))
             .thenThrow(new AuthorisationIsExpiredException(NOK_REDIRECT_URI));
@@ -230,7 +230,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void confirmConsent_withTrueRequest_shouldReturnOk() {
+    void confirmConsent_withTrueRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.confirmConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -247,7 +247,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void confirmConsent_withFalseRequest_shouldReturnOk() {
+    void confirmConsent_withFalseRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.confirmConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
@@ -264,7 +264,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void rejectConsent_withTrueRequest_shouldReturnOk() {
+    void rejectConsent_withTrueRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.rejectConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -281,7 +281,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void rejectConsent_withFalseRequest_shouldReturnOk() {
+    void rejectConsent_withFalseRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.rejectConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
@@ -298,7 +298,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsentsForPsu_withTrueRequest_shouldReturnOk() {
+    void getConsentsForPsu_withTrueRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
             .thenReturn(Collections.singletonList(new CmsAisAccountConsent()));
@@ -314,7 +314,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsentsForPsu_withFalseRequest_shouldReturnOk() {
+    void getConsentsForPsu_withFalseRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
             .thenReturn(Collections.emptyList());
@@ -331,7 +331,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void revokeConsent_withTrueRequest_shouldReturnOk() {
+    void revokeConsent_withTrueRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.revokeConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(true);
@@ -348,7 +348,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void revokeConsent_withFalseRequest_shouldReturnOk() {
+    void revokeConsent_withFalseRequest_shouldReturnOk() {
         // Given
         when(cmsPsuAisService.revokeConsent(CONSENT_ID, INSTANCE_ID))
             .thenReturn(false);
@@ -365,7 +365,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsentIdByRedirectId_withValidRequest_shouldReturnOk() throws RedirectUrlIsExpiredException {
+    void getConsentIdByRedirectId_withValidRequest_shouldReturnOk() throws RedirectUrlIsExpiredException {
         // Given
         when(cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
             .thenReturn(Optional.of(new CmsAisConsentResponse(new CmsAisAccountConsent(), null, null, null)));
@@ -381,7 +381,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsentIdByRedirectId_withWrongRequest_shouldReturnNotFound() throws RedirectUrlIsExpiredException {
+    void getConsentIdByRedirectId_withWrongRequest_shouldReturnNotFound() throws RedirectUrlIsExpiredException {
         // Given
         when(cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
             .thenReturn(Optional.empty());
@@ -397,7 +397,7 @@ public class CmsPsuAisControllerTest {
     }
 
     @Test
-    public void getConsentIdByRedirectId_withExpiredAuthorisation_shouldReturnRequestTimeout() throws RedirectUrlIsExpiredException {
+    void getConsentIdByRedirectId_withExpiredAuthorisation_shouldReturnRequestTimeout() throws RedirectUrlIsExpiredException {
         // Given
         when(cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
             .thenThrow(new RedirectUrlIsExpiredException(NOK_REDIRECT_URI));

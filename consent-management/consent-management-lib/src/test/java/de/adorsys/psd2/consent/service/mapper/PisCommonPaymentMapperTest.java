@@ -28,22 +28,22 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCommonPaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class PisCommonPaymentMapperTest {
     private final static String PSU_ID = "777";
     private final static JsonReader jsonReader = new JsonReader();
 
@@ -59,7 +59,7 @@ public class PisCommonPaymentMapperTest {
     private CmsAuthorisationMapper cmsAuthorisationMapper;
 
     @Test
-    public void mapToGetPisAuthorizationResponse() {
+    void mapToGetPisAuthorizationResponse() {
         //Given
         when(psuDataMapper.mapToPsuIdDataList(any())).thenReturn(null);
         when(psuDataMapper.mapToPsuIdData(any())).thenReturn(new PsuIdData(PSU_ID, null, null, null));
@@ -74,7 +74,7 @@ public class PisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToPisPaymentDataList() {
+    void mapToPisPaymentDataList() {
         //Given
         PisPayment pisPayment = buildPisPayment(null);
         PisPaymentData pisPaymentDataExpected = jsonReader.getObjectFromFile("json/service/mapper/pis-payment-data.json", PisPaymentData.class);
@@ -86,7 +86,7 @@ public class PisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToPisPaymentDataList_BatchBookingPreferred_True() {
+    void mapToPisPaymentDataList_BatchBookingPreferred_True() {
         //Given
         PisPayment pisPayment = buildPisPayment(Boolean.TRUE);
         //When
@@ -97,7 +97,7 @@ public class PisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToPisPaymentDataList_BatchBookingPreferred_False() {
+    void mapToPisPaymentDataList_BatchBookingPreferred_False() {
         //Given
         PisPayment pisPayment = buildPisPayment(Boolean.FALSE);
         //When
@@ -108,7 +108,7 @@ public class PisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToPisCommonPaymentResponse() {
+    void mapToPisCommonPaymentResponse() {
         // Given
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
@@ -137,7 +137,7 @@ public class PisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToPisCommonPaymentResponse_withNullPaymentData_shouldReturnEmpty() {
+    void mapToPisCommonPaymentResponse_withNullPaymentData_shouldReturnEmpty() {
         // When
         Optional<PisCommonPaymentResponse> actual = pisCommonPaymentMapper.mapToPisCommonPaymentResponse(null);
 

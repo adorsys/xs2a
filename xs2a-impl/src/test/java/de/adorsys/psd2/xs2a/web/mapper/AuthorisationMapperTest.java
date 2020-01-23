@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,25 +29,24 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class AuthorisationMapperTest {
+@ExtendWith(MockitoExtension.class)
+class AuthorisationMapperTest {
 
     private static final String SELF_LINK = "self";
     private static final String LOCALHOST_LINK = "http://localhost";
@@ -75,13 +74,8 @@ public class AuthorisationMapperTest {
     @Mock
     private AuthorisationModelMapper authorisationModelMapper;
 
-    @Before
-    public void setUp() {
-        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
-    }
-
     @Test
-    public void mapToAuthorisations_equals_success() {
+    void mapToAuthorisations_equals_success() {
         // given
         Authorisations expectedAuthorisations = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-Authorisations.json", Authorisations.class);
         Xs2aAuthorisationSubResources xs2AAuthorisationSubResources = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-Xs2aAutorisationSubResources.json", Xs2aAuthorisationSubResources.class);
@@ -94,7 +88,7 @@ public class AuthorisationMapperTest {
     }
 
     @Test
-    public void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aCreatePisAuthorisationResponse() {
+    void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aCreatePisAuthorisationResponse() {
         // given
         StartScaprocessResponse expectedStartScaProcessResponse = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-StartScaProcessResponse-expected.json", StartScaprocessResponse.class);
 
@@ -114,8 +108,10 @@ public class AuthorisationMapperTest {
     }
 
     @Test
-    public void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aUpdatePisCommonPaymentPsuDataResponse() {
+    void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aUpdatePisCommonPaymentPsuDataResponse() {
         // given
+        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
+
         UpdatePsuAuthenticationResponse expectedUpdatePsuAuthenticationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-UpdatePsuAuthenticationResponse-expected.json", UpdatePsuAuthenticationResponse.class);
 
@@ -152,7 +148,7 @@ public class AuthorisationMapperTest {
     }
 
     @Test
-    public void mapToAisCreateOrUpdateAuthorisationResponse_for_CreateConsentAuthorizationResponse() {
+    void mapToAisCreateOrUpdateAuthorisationResponse_for_CreateConsentAuthorizationResponse() {
         // Given
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse =
             jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/AuthorisationMapper-CreateConsentAuthorisationResponse.json", CreateConsentAuthorizationResponse.class);

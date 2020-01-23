@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,15 +36,15 @@ import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationC
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class SinglePaymentTypeValidatorImplTest {
+class SinglePaymentTypeValidatorImplTest {
 
     private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
     private static final String VALUE_71_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
@@ -55,8 +55,8 @@ public class SinglePaymentTypeValidatorImplTest {
     private AccountReference accountReference;
     private Xs2aAddress address;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         JsonReader jsonReader = new JsonReader();
         messageError = new MessageError();
         singlePayment = jsonReader.getObjectFromFile("json/validation/single-payment.json", SinglePayment.class);
@@ -79,18 +79,18 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void getPaymentType() {
+    void getPaymentType() {
         assertEquals(PaymentType.SINGLE, validator.getPaymentType());
     }
 
     @Test
-    public void doValidation_success() {
+    void doValidation_success() {
         validator.doSingleValidation(singlePayment, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void doValidation_endToEndIdentification_tooLong_error() {
+    void doValidation_endToEndIdentification_tooLong_error() {
         singlePayment.setEndToEndIdentification(VALUE_36_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -99,7 +99,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructionIdentification_tooLong_error() {
+    void doValidation_instructionIdentification_tooLong_error() {
         singlePayment.setInstructionIdentification(VALUE_36_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -108,7 +108,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_debtorAccount_null_error() {
+    void doValidation_debtorAccount_null_error() {
         singlePayment.setDebtorAccount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -117,7 +117,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_null_error() {
+    void doValidation_instructedAmount_null_error() {
         singlePayment.setInstructedAmount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -126,7 +126,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_currency_null_error() {
+    void doValidation_instructedAmount_currency_null_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setCurrency(null);
 
@@ -136,7 +136,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_amount_null_error() {
+    void doValidation_instructedAmount_amount_null_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setAmount(null);
 
@@ -146,7 +146,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_amount_wrong_format_error() {
+    void doValidation_instructedAmount_amount_wrong_format_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
         instructedAmount.setAmount(VALUE_36_LENGHT + VALUE_71_LENGHT);
 
@@ -156,7 +156,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorAccount_null_error() {
+    void doValidation_creditorAccount_null_error() {
         singlePayment.setCreditorAccount(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -165,7 +165,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_null_error() {
+    void doValidation_creditorName_null_error() {
         singlePayment.setCreditorName(null);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -174,7 +174,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_empty_error() {
+    void doValidation_creditorName_empty_error() {
         singlePayment.setCreditorName("   ");
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -183,7 +183,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_tooLong_error() {
+    void doValidation_creditorName_tooLong_error() {
         singlePayment.setCreditorName(VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -192,7 +192,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_requestedExecutionDate_error() {
+    void doValidation_requestedExecutionDate_error() {
         singlePayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -200,13 +200,13 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validateAccount_success() {
+    void validateAccount_success() {
         validator.validateAccount(accountReference, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validateAccount_iban_error() {
+    void validateAccount_iban_error() {
         accountReference.setIban("123");
 
         validator.validateAccount(accountReference, messageError);
@@ -215,7 +215,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validateAccount_bban_error() {
+    void validateAccount_bban_error() {
         accountReference.setBban("123");
 
         validator.validateAccount(accountReference, messageError);
@@ -224,7 +224,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_pan_tooLong_error() {
+    void doValidation_pan_tooLong_error() {
         accountReference.setPan(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError);
@@ -233,7 +233,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_maskedPan_tooLong_error() {
+    void doValidation_maskedPan_tooLong_error() {
         accountReference.setMaskedPan(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError);
@@ -242,7 +242,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_Msisdn_tooLong_error() {
+    void doValidation_Msisdn_tooLong_error() {
         accountReference.setMsisdn(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError);
@@ -251,13 +251,13 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_success() {
+    void validatorAddress_success() {
         validator.validateAddress(address, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validatorAddress_street_tooLong_error() {
+    void validatorAddress_street_tooLong_error() {
         address.setStreetName(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
@@ -266,7 +266,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_buildingNumber_tooLong_error() {
+    void validatorAddress_buildingNumber_tooLong_error() {
         address.setBuildingNumber(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
@@ -275,7 +275,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_city_tooLong_error() {
+    void validatorAddress_city_tooLong_error() {
         address.setTownName(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
@@ -284,7 +284,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_postalCode_tooLong_error() {
+    void validatorAddress_postalCode_tooLong_error() {
         address.setPostCode(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError);
@@ -293,7 +293,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_country_null_error() {
+    void validatorAddress_country_null_error() {
         address.setCountry(null);
 
         validator.validateAddress(address, messageError);
@@ -302,7 +302,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_country_codeBlank_error() {
+    void validatorAddress_country_codeBlank_error() {
         address.getCountry().setCode("");
 
         validator.validateAddress(address, messageError);
@@ -311,7 +311,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_country_codeFormat_error() {
+    void validatorAddress_country_codeFormat_error() {
         address.getCountry().setCode("zz");
 
         validator.validateAddress(address, messageError);
@@ -319,7 +319,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_ultimate_debtor_error() {
+    void doValidation_ultimate_debtor_error() {
         singlePayment.setUltimateDebtor(VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -328,7 +328,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_ultimate_creditor_error() {
+    void doValidation_ultimate_creditor_error() {
         singlePayment.setUltimateCreditor(VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError);
@@ -337,7 +337,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_no_reference_error() {
+    void doValidation_remittance_no_reference_error() {
         Remittance remittance = new Remittance();
         remittance.setReference(null);
         singlePayment.setRemittanceInformationStructured(remittance);
@@ -348,7 +348,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_reference_error() {
+    void doValidation_remittance_reference_error() {
         Remittance remittance = new Remittance();
         remittance.setReference(VALUE_36_LENGHT);
         singlePayment.setRemittanceInformationStructured(remittance);
@@ -359,7 +359,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_reference_type_error() {
+    void doValidation_remittance_reference_type_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
         remittance.setReferenceType(VALUE_36_LENGHT);
@@ -371,7 +371,7 @@ public class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_reference_tissuer_error() {
+    void doValidation_remittance_reference_tissuer_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
         remittance.setReferenceIssuer(VALUE_36_LENGHT);

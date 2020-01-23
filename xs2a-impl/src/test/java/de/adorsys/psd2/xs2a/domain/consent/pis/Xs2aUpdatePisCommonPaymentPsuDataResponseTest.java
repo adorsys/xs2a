@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package de.adorsys.psd2.xs2a.domain.consent.pis;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Xs2aUpdatePisCommonPaymentPsuDataResponseTest {
+class Xs2aUpdatePisCommonPaymentPsuDataResponseTest {
     @Test
-    public void getAuthorisationResponseType_shouldReturnUPDATE() {
+    void getAuthorisationResponseType_shouldReturnUPDATE() {
         // Given
         PsuIdData psuData = new PsuIdData(null, null, null, null);
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED, "some payment id", "some cancellation id", psuData);

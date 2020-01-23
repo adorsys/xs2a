@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisScaAuthorisationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AisScaAuthorisationServiceTest {
     @InjectMocks
     private AisScaAuthorisationService aisScaAuthorisationService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableTrue_OneAccessTypeTrue_ScaRequiredFalse() {
+    void isOneFactorAuthorisation_AllAvailableTrue_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()).thenReturn(false);
         //When
@@ -46,7 +46,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableTrue_OneAccessTypeTrue_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_AllAvailableTrue_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
         when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()).thenReturn(true);
         //When
@@ -56,7 +56,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeTrue_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(false, true);
@@ -65,7 +65,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeFalse_ScaRequiredTrue() {
+    void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeFalse_ScaRequiredTrue() {
         //Given
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(false, false);
@@ -74,7 +74,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeTrue_ScaRequiredFalse() {
+    void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(false, true);
@@ -83,7 +83,7 @@ public class AisScaAuthorisationServiceTest {
     }
 
     @Test
-    public void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeFalse_ScaRequiredFalse() {
+    void isOneFactorAuthorisation_AllAvailableFalse_OneAccessTypeFalse_ScaRequiredFalse() {
         //Given
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(false, false);

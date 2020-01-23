@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,22 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SESSIONS_NOT_SUPPORTED;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SB400ErrorMapperTest {
+@ExtendWith(MockitoExtension.class)
+class SB400ErrorMapperTest {
     private static final String ERROR_JSON_PATH = "json/service/mapper/psd2/sb/Error400NGSBS.json";
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/sb/Error400NGSBS-custom-text.json";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
@@ -53,7 +53,7 @@ public class SB400ErrorMapperTest {
     private SB400ErrorMapper sb400ErrorMapper;
 
     @Test
-    public void getErrorStatus_shouldReturn400() {
+    void getErrorStatus_shouldReturn400() {
         // When
         HttpStatus errorStatus = sb400ErrorMapper.getErrorStatus();
 
@@ -62,7 +62,7 @@ public class SB400ErrorMapperTest {
     }
 
     @Test
-    public void getMapper_shouldReturnCorrectErrorMapper() {
+    void getMapper_shouldReturnCorrectErrorMapper() {
         when(messageService.getMessage(SESSIONS_NOT_SUPPORTED.name()))
             .thenReturn("Some %s");
 
@@ -78,7 +78,7 @@ public class SB400ErrorMapperTest {
     }
 
     @Test
-    public void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
+    void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
         when(messageService.getMessage(SESSIONS_NOT_SUPPORTED.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 

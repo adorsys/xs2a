@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,9 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,7 +60,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -76,7 +76,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -87,7 +87,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class,
     PaymentValidationConfigImpl.class
 })
-public class UpdatePsuDataForConsentIT {
+class UpdatePsuDataForConsentIT {
 
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String WRONG_AUTHORISATION_ID = "q3356ea7-8e3e-474f-b5ea-2b89346cb6jk";
@@ -116,8 +116,8 @@ public class UpdatePsuDataForConsentIT {
 
     private HttpHeaders httpHeaders = new HttpHeaders();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeaders.add("PSU-ID", PSU_ID);
@@ -127,7 +127,7 @@ public class UpdatePsuDataForConsentIT {
     }
 
     @Test
-    public void updatePsuData_success() throws Exception {
+    void updatePsuData_success() throws Exception {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         AisConsentAuthorizationResponse authorizationResponse = new AisConsentAuthorizationResponse();
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
@@ -165,7 +165,7 @@ public class UpdatePsuDataForConsentIT {
     }
 
     @Test
-    public void updatePsuData_wrongAuthorisationId() throws Exception {
+    void updatePsuData_wrongAuthorisationId() throws Exception {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
         given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, ENCRYPTED_CONSENT_ID))
             .willReturn(Optional.of(new AisConsentAuthorizationResponse()));

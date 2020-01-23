@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@
 package de.adorsys.psd2.event.persist.logger;
 
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class EventLoggerTest {
+@ExtendWith(MockitoExtension.class)
+class EventLoggerTest {
     private static final String LOG_MESSAGE_JSON_PATH = "json/logger/log-message.json";
     private static final String MESSAGE = "some log message";
 
@@ -36,7 +36,7 @@ public class EventLoggerTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void logMessage_shouldWriteMessageToLogger() {
+    void logMessage_shouldWriteMessageToLogger() {
         // Given
         EventLogger eventLogger = new MockEventLogger(logger);
         EventLogMessage logMessage = jsonReader.getObjectFromFile(LOG_MESSAGE_JSON_PATH, EventLogMessage.class);

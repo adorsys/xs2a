@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,21 @@ package de.adorsys.psd2.starter.config.validation;
 
 import de.adorsys.psd2.xs2a.web.validator.body.payment.config.PaymentValidationConfig;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"de.adorsys.psd2.starter.config.validation"})
 @PropertySource("application.properties")
-public class PaymentValidationConfigImplTest {
+class PaymentValidationConfigImplTest {
 
     @Autowired
     private PaymentValidationConfig paymentValidationConfig;
@@ -40,7 +40,7 @@ public class PaymentValidationConfigImplTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void defaultPaymentValidationConfig() {
+    void defaultPaymentValidationConfig() {
         PaymentValidationConfigImpl expectedPaymentValidationConfig = jsonReader.getObjectFromFile("json/validation/payment-validation-config.json",
                                                                                                    PaymentValidationConfigImpl.class);
         assertEquals(expectedPaymentValidationConfig, paymentValidationConfig);

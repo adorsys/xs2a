@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,17 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -45,23 +45,23 @@ import org.springframework.test.context.junit4.SpringRunner;
         Xs2aInterfaceConfig.class,
         PaymentValidationConfigImpl.class
     })
-public class PaymentCancellationUpdateAuthorisationIT extends PaymentUpdateAuthorisationBase {
-    @Before
-    public void setUp() {
+class PaymentCancellationUpdateAuthorisationIT extends PaymentUpdateAuthorisationBase {
+    @BeforeEach
+    void setUp() {
         before();
     }
 
     // Suppress "Tests should include assertions" Sonar rule as assertions are being performed in another method
     @SuppressWarnings("squid:S2699")
     @Test
-    public void updatePaymentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
+    void updatePaymentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
         updatePaymentPsuData_checkForPsuCredentialsInvalidResponse(PSU_ID_1, PSU_ID_2);
     }
 
     // Suppress "Tests should include assertions" Sonar rule as assertions are being performed in another method
     @SuppressWarnings("squid:S2699")
     @Test
-    public void updatePaymentPsuData_failed_no_psu_authorisation_no_psu_request() throws Exception {
+    void updatePaymentPsuData_failed_no_psu_authorisation_no_psu_request() throws Exception {
         updatePaymentPsuData_checkForFormatErrorResponse(null, null);
     }
 

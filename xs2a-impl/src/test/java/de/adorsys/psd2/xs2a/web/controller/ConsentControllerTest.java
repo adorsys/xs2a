@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,11 @@ import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -56,11 +55,12 @@ import java.util.function.Function;
 
 import static de.adorsys.psd2.xs2a.domain.TppMessageInformation.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.springframework.util.StringUtils.isEmpty;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConsentControllerTest {
+@ExtendWith(MockitoExtension.class)
+class ConsentControllerTest {
     private static final String CORRECT_PSU_ID = "ID 777";
     private static final String WRONG_PSU_ID = "ID 666";
     private static final String PASSWORD = "password";
@@ -96,23 +96,12 @@ public class ConsentControllerTest {
     @Mock
     private ConsentHeadersBuilder consentHeadersBuilder;
 
-    @Before
-    public void setUp() {
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
-        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WRONG), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
-        when(consentService.getAccountConsentsStatusById(eq(CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().body(new ConsentStatusResponse(ConsentStatus.RECEIVED)).build());
-        when(consentService.getAccountConsentsStatusById(eq(WRONG_CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().fail(MESSAGE_ERROR_AIS_404).build());
-        when(consentService.getAccountConsentById(eq(CONSENT_ID))).thenReturn(getConsent(CONSENT_ID));
-        when(consentService.getAccountConsentById(eq(WRONG_CONSENT_ID))).thenReturn(getConsent(WRONG_CONSENT_ID));
-        when(consentService.deleteAccountConsentsById(eq(CONSENT_ID))).thenReturn(ResponseObject.<Void>builder().build());
-        when(consentService.deleteAccountConsentsById(eq(WRONG_CONSENT_ID))).thenReturn(ResponseObject.<Void>builder().fail(MESSAGE_ERROR_AIS_404).build());
-        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_403)).thenReturn(new ResponseEntity<>(HttpStatus.FORBIDDEN));
-        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404)).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
     @Test
-    public void createAccountConsent_Success() {
+    void createAccountConsent_Success() {
         //Given:
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(CONSENT_ID));
+
+        // noinspection unchecked
         doReturn(new ResponseEntity<>(createConsentResponse().getBody(), HttpStatus.CREATED))
             .when(responseMapper).created(any(), any(Function.class), eq(RESPONSE_HEADERS));
         when(consentHeadersBuilder.buildCreateConsentHeaders(any(), any())).thenReturn(RESPONSE_HEADERS);
@@ -134,27 +123,31 @@ public class ConsentControllerTest {
         assertThat(resp.getPsuMessage()).isEqualTo(PSU_MESSAGE_RESPONSE);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createAccountConsent_WithNullInLinks() {
-        //Given:
+    @Test
+    void createAccountConsent_WithNullInLinks() {
+        // Given:
         when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponseWithoutLinks());
         Consents consents = getConsents();
 
-        //When:
-        consentController.createConsent(null, null, consents, null, null,
-                                        new byte[]{}, CORRECT_PSU_ID, null, null,
-                                        null, false, null, null,
-                                        EXPLICIT_PREFERRED, null, null, null, null, null,
-                                        null, null, null, null, null,
-                                        null);
+        // Then:
+        assertThrows(IllegalArgumentException.class, () -> consentController.createConsent(null, null, consents, null, null,
+                                                                                           new byte[]{}, CORRECT_PSU_ID, null, null,
+                                                                                           null, false, null, null,
+                                                                                           EXPLICIT_PREFERRED, null, null, null, null, null,
+                                                                                           null, null, null, null, null,
+                                                                                           null));
     }
 
     @Test
-    public void createAccountConsent_Failure() {
+    void createAccountConsent_Failure() {
         //Given:
+        when(consentService.createAccountConsentsWithResponse(any(), eq(PSU_ID_DATA_WRONG), eq(EXPLICIT_PREFERRED))).thenReturn(createXs2aConsentResponse(null));
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404)).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         Consents consents = getConsents();
+
         //When:
         ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
                                                                         new byte[]{}, WRONG_PSU_ID, null, null,
@@ -167,8 +160,15 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_Success() {
+    void getAccountConsentsStatusById_Success() {
+        // Given
+        when(consentService.getAccountConsentsStatusById(eq(CONSENT_ID)))
+            .thenReturn(ResponseObject.<ConsentStatusResponse>builder()
+                            .body(new ConsentStatusResponse(ConsentStatus.RECEIVED))
+                            .build());
+
         doReturn(new ResponseEntity<>(ConsentStatus.RECEIVED, HttpStatus.OK)).when(responseMapper).ok(any(), any());
+
         //When:
         ResponseEntity responseEntity = consentController.getConsentStatus(CONSENT_ID, null,
                                                                            null, null, null, null, null, null,
@@ -180,7 +180,11 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void getAccountConsentsStatusById_Failure() {
+    void getAccountConsentsStatusById_Failure() {
+        // Given
+        when(consentService.getAccountConsentsStatusById(eq(WRONG_CONSENT_ID))).thenReturn(ResponseObject.<ConsentStatusResponse>builder().fail(MESSAGE_ERROR_AIS_404).build());
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404)).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
         //When:
         ResponseEntity responseEntity = consentController.getConsentStatus(WRONG_CONSENT_ID, null,
                                                                            null, null, null, null, null, null,
@@ -191,7 +195,7 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void startConsentAuthorisation_Success() {
+    void startConsentAuthorisation_Success() {
         // Given
         ResponseHeaders responseHeaders = ResponseHeaders.builder().build();
 
@@ -221,7 +225,8 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void startConsentAuthorisation_Failure() {
+    void startConsentAuthorisation_Failure() {
+        // Given
         when(authorisationMapper.mapToPasswordFromBody(BODY)).thenReturn(PASSWORD);
         when(consentService.createAisAuthorisation(PSU_ID_DATA, WRONG_CONSENT_ID, PASSWORD))
             .thenReturn(ResponseObject.<AuthorisationResponse>builder()
@@ -242,9 +247,13 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void getAccountConsentsInformationById_Success() {
+    void getAccountConsentsInformationById_Success() {
+        // Given
+        when(consentService.getAccountConsentById(eq(CONSENT_ID))).thenReturn(getConsent(CONSENT_ID));
+
         doReturn(new ResponseEntity<>(getConsentInformationResponse().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
+
         //When:
         ResponseEntity responseEntity = consentController.getConsentInformation(CONSENT_ID, null,
                                                                                 null, null, null, null, null, null,
@@ -256,7 +265,11 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void getAccountConsentsInformationById_Failure() {
+    void getAccountConsentsInformationById_Failure() {
+        // Given
+        when(consentService.getAccountConsentById(eq(WRONG_CONSENT_ID))).thenReturn(getConsent(WRONG_CONSENT_ID));
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404)).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
         //When:
         ResponseEntity responseEntity = consentController.getConsentInformation(WRONG_CONSENT_ID, null,
                                                                                 null, null, null, null, null, null,
@@ -267,8 +280,12 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void deleteAccountConsent_Success() {
+    void deleteAccountConsent_Success() {
+        // Given
+        when(consentService.deleteAccountConsentsById(eq(CONSENT_ID))).thenReturn(ResponseObject.<Void>builder().build());
+
         doReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT)).when(responseMapper).delete(any());
+
         //When:
         ResponseEntity responseEntity = consentController.deleteConsent(CONSENT_ID, null,
                                                                         null, null, null, null, null, null,
@@ -279,7 +296,11 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void deleteAccountConsent_Failure() {
+    void deleteAccountConsent_Failure() {
+        // Given
+        when(consentService.deleteAccountConsentsById(eq(WRONG_CONSENT_ID))).thenReturn(ResponseObject.<Void>builder().fail(MESSAGE_ERROR_AIS_404).build());
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404)).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
         //When:
         ResponseEntity responseEntity = consentController.deleteConsent(WRONG_CONSENT_ID, null,
                                                                         null, null, null, null, null, null,
@@ -290,7 +311,8 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void getConsentScaStatus_success() {
+    void getConsentScaStatus_success() {
+        // Given
         ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
                                                        .body(ScaStatus.RECEIVED)
                                                        .build();
@@ -299,7 +321,6 @@ public class ConsentControllerTest {
         doReturn(ResponseEntity.ok(buildReceivedScaStatusResponse()))
             .when(responseMapper).ok(eq(responseObject), any());
 
-        // Given
         ScaStatusResponse expected = buildReceivedScaStatusResponse();
 
         // When
@@ -317,9 +338,13 @@ public class ConsentControllerTest {
     }
 
     @Test
-    public void getConsentScaStatus_failure() {
+    void getConsentScaStatus_failure() {
+        // Given
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_403)).thenReturn(new ResponseEntity<>(HttpStatus.FORBIDDEN));
+
         when(consentService.getConsentAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(buildScaStatusError());
+
         // When
         ResponseEntity actual = consentController.getConsentScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID, REQUEST_ID,
                                                                       null, null, null,

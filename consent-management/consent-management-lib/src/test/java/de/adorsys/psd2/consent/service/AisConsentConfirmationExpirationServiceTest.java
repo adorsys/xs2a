@@ -24,13 +24,13 @@ import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -38,12 +38,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentConfirmationExpirationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentConfirmationExpirationServiceTest {
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final LocalDate TODAY = LocalDate.now();
     private static final LocalDate YESTERDAY = LocalDate.now().minusDays(1);
@@ -57,7 +57,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     private AspspProfileService aspspProfileService;
 
     @Test
-    public void expireConsent() {
+    void expireConsent() {
         // Given
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         // When
@@ -72,24 +72,24 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void shouldConsentBeExpired_False() {
+    void shouldConsentBeExpired_False() {
         Stream.of(
                   buildAisConsent(ConsentStatus.REJECTED, TOMORROW),
                   buildAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
             .map(AisConsent::shouldConsentBeExpired) //When
-            .forEach(Assert::assertFalse); //Then
+            .forEach(Assertions::assertFalse); //Then
     }
 
     @Test
-    public void isConsentExpiredOrFinalised_True() {
+    void isConsentExpiredOrFinalised_True() {
         Stream.of(buildAisConsent(ConsentStatus.RECEIVED, YESTERDAY),
                   buildNonReccuringAlreadyUsedAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
             .map(AisConsent::shouldConsentBeExpired) //When
-            .forEach(Assert::assertTrue); //Then
+            .forEach(Assertions::assertTrue); //Then
     }
 
     @Test
-    public void updateConsentOnConfirmationExpiration() {
+    void updateConsentOnConfirmationExpiration() {
         // Given
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
 
@@ -102,7 +102,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void checkAndUpdateOnConfirmationExpiration_expired() {
+    void checkAndUpdateOnConfirmationExpiration_expired() {
         // Given
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(100L));
@@ -119,7 +119,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void checkAndUpdateOnConfirmationExpiration_nonExpired() {
+    void checkAndUpdateOnConfirmationExpiration_nonExpired() {
         // Given
         when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(86400L));
 
@@ -132,7 +132,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void updateConsentListOnConfirmationExpiration() {
+    void updateConsentListOnConfirmationExpiration() {
         // Given
         ArgumentCaptor<List<AisConsent>> aisConsentListCaptor = ArgumentCaptor.forClass(List.class);
 

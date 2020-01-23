@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,16 +40,15 @@ import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,7 +60,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -84,7 +83,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -95,7 +94,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class,
     PaymentValidationConfigImpl.class
 })
-public class PaymentControllerIT {
+class PaymentControllerIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
@@ -103,7 +102,6 @@ public class PaymentControllerIT {
     private static final String ENCRYPT_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CANCELLATION_ID = "cancellationId";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
 
     private static final String TPP_REDIRECT_URI = "request/redirect_uri";
@@ -137,8 +135,8 @@ public class PaymentControllerIT {
     @Qualifier("consentRestTemplate")
     private RestTemplate consentRestTemplate;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
@@ -170,7 +168,7 @@ public class PaymentControllerIT {
     }
 
     @Test
-    public void getPaymentInitiationScaStatus_successful() throws Exception {
+    void getPaymentInitiationScaStatus_successful() throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
@@ -193,7 +191,7 @@ public class PaymentControllerIT {
     }
 
     @Test
-    public void cancelPaymentAuthorisation_successful() throws Exception {
+    void cancelPaymentAuthorisation_successful() throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisAuthorisationServiceEncrypted.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
@@ -216,7 +214,7 @@ public class PaymentControllerIT {
     }
 
     @Test
-    public void cancelPaymentAuthorisation_Redirect_OAuth_successful() throws Exception {
+    void cancelPaymentAuthorisation_Redirect_OAuth_successful() throws Exception {
         // Given
         AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
         aspspSettings.setScaRedirectFlow(ScaRedirectFlow.OAUTH);
@@ -243,7 +241,7 @@ public class PaymentControllerIT {
     }
 
     @Test
-    public void getPaymentInitiationCancellationAuthorisationInformation() throws Exception {
+    void getPaymentInitiationCancellationAuthorisationInformation() throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MethodValidatorControllerTest {
+class MethodValidatorControllerTest {
 
     @Test
-    public void getMethod() {
+    void getMethod() {
         List<MethodValidator> methodValidators = new ArrayList<>();
         methodValidators.add(new ConsentMethodValidatorImpl(null, null));
         methodValidators.add(new PaymentMethodValidatorImpl(null, null));

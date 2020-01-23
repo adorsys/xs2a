@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ObjectMapperConfigTest {
+class ObjectMapperConfigTest {
 
     @Test
-    public void init() {
+    void init() {
         ObjectMapperConfig config = new ObjectMapperConfig();
         Xs2aObjectMapper xs2aObjectMapper = config.xs2aObjectMapper();
 

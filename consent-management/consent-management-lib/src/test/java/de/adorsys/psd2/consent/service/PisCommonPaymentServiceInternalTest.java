@@ -23,24 +23,24 @@ import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCommonPaymentServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class PisCommonPaymentServiceInternalTest {
 
     @InjectMocks
     private PisCommonPaymentServiceInternal pisCommonPaymentService;
@@ -58,15 +58,15 @@ public class PisCommonPaymentServiceInternalTest {
     private final static PsuData PSU_DATA = new PsuData("id", "type", "corporate ID", "corporate type");
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         pisCommonPaymentData = buildPisCommonPaymentData();
         pisAuthorizationList.add(buildPisAuthorisation(EXTERNAL_ID, PaymentAuthorisationType.CANCELLED));
         pisAuthorizationList.add(buildPisAuthorisation(AUTHORISATION_ID, PaymentAuthorisationType.CREATED));
     }
 
     @Test
-    public void updateMultilevelSca_ShouldReturnTrue() {
+    void updateMultilevelSca_ShouldReturnTrue() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
         when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
@@ -79,7 +79,7 @@ public class PisCommonPaymentServiceInternalTest {
     }
 
     @Test
-    public void updateMultilevelSca_ShouldReturnFalse() {
+    void updateMultilevelSca_ShouldReturnFalse() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.empty());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,19 +18,19 @@ package de.adorsys.psd2.xs2a.web.error;
 
 import de.adorsys.psd2.xs2a.service.message.MessageService;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_EXPIRED;
 import static de.adorsys.psd2.xs2a.exception.MessageCategory.ERROR;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppErrorMessageBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class TppErrorMessageBuilderTest {
     private static final String TEXT = "Certificate is expired";
     private static final String CODE = "CERTIFICATE_EXPIRED";
 
@@ -40,7 +40,7 @@ public class TppErrorMessageBuilderTest {
     private MessageService messageService;
 
     @Test
-    public void buildTppErrorMessage() {
+    void buildTppErrorMessage() {
         TppErrorMessage expected = new TppErrorMessage(ERROR, CERTIFICATE_EXPIRED, TEXT);
         when(messageService.getMessage(CODE)).thenReturn(TEXT);
 

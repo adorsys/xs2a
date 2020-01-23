@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.psd2;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ErrorTypeTest {
+class ErrorTypeTest {
 
     @Test
-    public void getByServiceTypeAndErrorCode_shouldReturnValue() {
+    void getByServiceTypeAndErrorCode_shouldReturnValue() {
         // When
         Optional<ErrorType> errorType = ErrorType.getByServiceTypeAndErrorCode(ServiceType.AIS, 400);
 
@@ -35,7 +35,7 @@ public class ErrorTypeTest {
     }
 
     @Test
-    public void getByServiceTypeAndErrorCode_withNotExistingCode_shouldReturnEmpty() {
+    void getByServiceTypeAndErrorCode_withNotExistingCode_shouldReturnEmpty() {
         // When
         Optional<ErrorType> errorType = ErrorType.getByServiceTypeAndErrorCode(ServiceType.PIS, 423);
 

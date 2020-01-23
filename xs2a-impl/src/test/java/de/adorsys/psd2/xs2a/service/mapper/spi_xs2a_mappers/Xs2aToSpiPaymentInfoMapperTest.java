@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,11 +37,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aToSpiPaymentInfoMapperTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aToSpiPaymentInfoMapperTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PSU_ID_1 = "First";
@@ -59,8 +59,8 @@ public class Xs2aToSpiPaymentInfoMapperTest {
     @Mock
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
         spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
@@ -68,7 +68,7 @@ public class Xs2aToSpiPaymentInfoMapperTest {
     }
 
     @Test
-    public void mapToSpiPaymentInfoSuccess() {
+    void mapToSpiPaymentInfoSuccess() {
         //Given
         CommonPayment commonPayment = buildCommonPayment();
         //When

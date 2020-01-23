@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.HrefType;
@@ -34,25 +32,25 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConsentModelMapperTest {
+@ExtendWith(MockitoExtension.class)
+class ConsentModelMapperTest {
 
     private final static String CONSENT_STATUS = "received";
     private final static String CONSENT_ID = "S7tlYXaar8j7l5IMK89iNJB8SkG5ricoOaEYHyku_AO9BF6MIP29SN_tXtDvaQb3c8b_NsohCWlFlYN0ds8u89WFnjze07vwpAgFM45MlQk=_=_psGLvQpt9Q";
@@ -93,8 +91,8 @@ public class ConsentModelMapperTest {
     private PsuIdData psuIdData;
     private Map bodyMap;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         jsonReader = new JsonReader();
         createConsentResponseWithScaMethods = jsonReader.getObjectFromFile("json/service/mapper/create-consent-response-with-sca-methods.json", CreateConsentResponse.class);
         createConsentResponseWithoutScaMethods = jsonReader.getObjectFromFile("json/service/mapper/create-consent-response-without-sca-methods.json", CreateConsentResponse.class);
@@ -103,7 +101,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentsResponse201_withScaMethods_shouldReturnArrayOfThem() {
+    void mapToConsentsResponse201_withScaMethods_shouldReturnArrayOfThem() {
         // Given
         ScaMethods methods = new ScaMethods();
         methods.add(new AuthenticationObject());
@@ -119,7 +117,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentsResponse201_withScaMethods_withWarnings() {
+    void mapToConsentsResponse201_withScaMethods_withWarnings() {
         // Given
         ScaMethods methods = new ScaMethods();
         methods.add(new AuthenticationObject());
@@ -136,7 +134,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentsResponse201_withoutScaMethods_shouldNotReturnEmptyArray() {
+    void mapToConsentsResponse201_withoutScaMethods_shouldNotReturnEmptyArray() {
         when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
 
         // When
@@ -148,7 +146,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToCancellations() {
+    void mapToCancellations() {
         //Given
         List<String> cancellationIds = Arrays.asList("c0121ca2-ab3a-4564-b915-6e40e8b40f50", "743d0a45-7233-4fbf-9799-c657f327836c");
         //When
@@ -161,7 +159,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToCreateConsentReq_AvailableAccountsWithBalance() {
+    void mapToCreateConsentReq_AvailableAccountsWithBalance() {
         //Given
         when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
@@ -173,7 +171,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToUpdatePsuData_WithBody() {
+    void mapToUpdatePsuData_WithBody() {
         // Given
         UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
                                                                         UpdateConsentPsuDataReq.class);
@@ -184,7 +182,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToUpdatePsuData_WithEmptyBody() {
+    void mapToUpdatePsuData_WithEmptyBody() {
         // Given
         UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-without-password.json",
                                                                         UpdateConsentPsuDataReq.class);
@@ -195,7 +193,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToUpdatePsuData_WithoutBody() {
+    void mapToUpdatePsuData_WithoutBody() {
         // Given
         UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-without-password.json",
                                                                         UpdateConsentPsuDataReq.class);
@@ -206,7 +204,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToPisUpdatePsuData_WithBody() {
+    void mapToPisUpdatePsuData_WithBody() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-with-password.json",
                                                                                          Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
@@ -218,7 +216,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToPisUpdatePsuData_WithEmptyBody() {
+    void mapToPisUpdatePsuData_WithEmptyBody() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-without-password.json",
                                                                                          Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
@@ -230,7 +228,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToPisUpdatePsuData_WithoutBody() {
+    void mapToPisUpdatePsuData_WithoutBody() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-without-password.json",
                                                                                          Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
@@ -242,7 +240,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentStatusResponse200_WithCorrectInput() {
+    void mapToConsentStatusResponse200_WithCorrectInput() {
         // Given
         ConsentStatusResponse inputData = new ConsentStatusResponse(ConsentStatus.RECEIVED);
         ConsentStatusResponse200 expected = jsonReader.getObjectFromFile("json/service/mapper/consent-status-response-200.json",
@@ -254,7 +252,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentStatusResponse200_withPartiallyAuthorised() {
+    void mapToConsentStatusResponse200_withPartiallyAuthorised() {
         // Given
         ConsentStatusResponse inputData = new ConsentStatusResponse(ConsentStatus.PARTIALLY_AUTHORISED);
         ConsentStatusResponse200 expected = jsonReader.getObjectFromFile("json/service/mapper/consent/consent-status-response-200-partially-authorised.json",
@@ -268,7 +266,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentStatusResponse200_WithNull() {
+    void mapToConsentStatusResponse200_WithNull() {
         // When
         ConsentStatusResponse200 actual = consentModelMapper.mapToConsentStatusResponse200(null);
         // Then
@@ -276,7 +274,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentInformationResponse200Json_WithCorrectInput() {
+    void mapToConsentInformationResponse200Json_WithCorrectInput() {
         // Given
         Xs2aAccountAccess accountAccess = createAccountAccess();
         AccountConsent accountConsent = createConsent(accountAccess);
@@ -289,7 +287,7 @@ public class ConsentModelMapperTest {
     }
 
     @Test
-    public void mapToConsentInformationResponse200Json_WithNull() {
+    void mapToConsentInformationResponse200Json_WithNull() {
         // When
         ConsentInformationResponse200Json actual = consentModelMapper.mapToConsentInformationResponse200Json(null);
         // Then
@@ -310,10 +308,6 @@ public class ConsentModelMapperTest {
 
     private Map<String, HrefType> buildLinks() {
         return Collections.singletonMap(SELF_LINK, new HrefType(LOCALHOST_LINK));
-    }
-
-    private Xs2aCreatePisCancellationAuthorisationResponse buildXs2aCreatePisCancellationAuthorisationResponse() {
-        return new Xs2aCreatePisCancellationAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, PaymentType.SINGLE, null);
     }
 
     private Map getBodyMap() {

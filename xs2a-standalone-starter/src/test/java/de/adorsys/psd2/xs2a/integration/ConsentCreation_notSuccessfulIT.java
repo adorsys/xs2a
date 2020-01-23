@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,9 @@ import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +50,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -69,7 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -80,7 +80,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class,
     PaymentValidationConfigImpl.class
 })
-public class ConsentCreation_notSuccessfulIT {
+class ConsentCreation_notSuccessfulIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
     private static final String TPP_ERROR_MESSAGE_JSON_PATH = "/json/account/res/TppErrorMessage.json";
@@ -108,8 +108,8 @@ public class ConsentCreation_notSuccessfulIT {
     @MockBean
     private AspspDataService aspspDataService;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
         headerMap.put("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
@@ -141,19 +141,19 @@ public class ConsentCreation_notSuccessfulIT {
     // =============== IMPLICIT MODE
     //
     @Test
-    public void creation_bank_offered_consent_implicit_embedded_notSuccessful() throws Exception {
+    void creation_bank_offered_consent_implicit_embedded_notSuccessful() throws Exception {
         consentCreation_notSuccessful(httpHeadersImplicit, ScaApproach.EMBEDDED, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH);
     }
 
     // =============== EXPLICIT MODE
     //
     @Test
-    public void creation_bank_offered_consent_explicit_embedded_notSuccessful() throws Exception {
+    void creation_bank_offered_consent_explicit_embedded_notSuccessful() throws Exception {
         consentCreation_notSuccessful(httpHeadersExplicit, ScaApproach.EMBEDDED, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH);
     }
 
     @Test
-    public void creation_consent_withoutPsuIpAddress_notSuccessful() throws Exception {
+    void creation_consent_withoutPsuIpAddress_notSuccessful() throws Exception {
         //Given
         MockHttpServletRequestBuilder requestBuilder = makeRequestBuilder(UrlBuilder.buildConsentCreation(), httpHeadersWithoutPsuIpAddress, resourceToString(BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, UTF_8));
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));

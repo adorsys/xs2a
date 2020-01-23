@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,23 @@ package de.adorsys.psd2.xs2a.component;
 
 import com.fasterxml.jackson.core.JsonParser;
 import de.adorsys.psd2.model.DayOfExecution;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DayOfExecutionDeserializerTest {
-
+@ExtendWith(MockitoExtension.class)
+class DayOfExecutionDeserializerTest {
     private static final String NORMAL_DAY_OF_MONTH_NUMBER = "5";
     private static final String DAY_OF_MONTH_NUMBER_WITH_ZERO = "05";
     private static final DayOfExecution DAY_OF_MONTH_ENUM = DayOfExecution._5;
-
 
     @InjectMocks
     private DayOfExecutionDeserializer dayOfExecutionDeserializer;
@@ -46,21 +44,21 @@ public class DayOfExecutionDeserializerTest {
 
 
     @Test
-    public void deserialize_normal_value_success() throws IOException {
+    void deserialize_normal_value_success() throws IOException {
         when(jsonParser.getText()).thenReturn(NORMAL_DAY_OF_MONTH_NUMBER);
         DayOfExecution actual = dayOfExecutionDeserializer.deserialize(jsonParser, null);
-        assertEquals(actual, DAY_OF_MONTH_ENUM);
+        assertEquals(DAY_OF_MONTH_ENUM, actual);
     }
 
     @Test
-    public void deserialize_value_with_zero_success() throws IOException {
+    void deserialize_value_with_zero_success() throws IOException {
         when(jsonParser.getText()).thenReturn(DAY_OF_MONTH_NUMBER_WITH_ZERO);
         DayOfExecution actual = dayOfExecutionDeserializer.deserialize(jsonParser, null);
-        assertEquals(actual, DAY_OF_MONTH_ENUM);
+        assertEquals(DAY_OF_MONTH_ENUM, actual);
     }
 
     @Test
-    public void deserialize_fail_should_return_null() throws IOException {
+    void deserialize_fail_should_return_null() throws IOException {
         when(jsonParser.getText()).thenThrow(new IOException());
         DayOfExecution actual = dayOfExecutionDeserializer.deserialize(jsonParser, null);
         assertNull(actual);

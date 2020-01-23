@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthenticationObject;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthenticationObject;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aAuthenticationObjectMapperImpl.class})
-public class SpiToXs2aAuthenticationObjectMapperTest {
+class SpiToXs2aAuthenticationObjectMapperTest {
 
     @Autowired
     private SpiToXs2aAuthenticationObjectMapper mapper;
@@ -42,27 +42,27 @@ public class SpiToXs2aAuthenticationObjectMapperTest {
     private SpiAuthenticationObject spiAuthenticationObject;
     private Xs2aAuthenticationObject expectedXs2aAuthenticationObject;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         spiAuthenticationObject = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-authentication-object.json", SpiAuthenticationObject.class);
         expectedXs2aAuthenticationObject = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-authentication-object.json", Xs2aAuthenticationObject.class);
         expectedXs2aAuthenticationObject.setDecoupled(true);
     }
 
     @Test
-    public void mapToXs2aAuthenticationObject() {
+    void mapToXs2aAuthenticationObject() {
         Xs2aAuthenticationObject xs2aAuthenticationObject = mapper.mapToXs2aAuthenticationObject(spiAuthenticationObject);
         assertEquals(expectedXs2aAuthenticationObject, xs2aAuthenticationObject);
     }
 
     @Test
-    public void mapToXs2aAuthenticationObject_nullValue() {
+    void mapToXs2aAuthenticationObject_nullValue() {
         Xs2aAuthenticationObject xs2aAuthenticationObject = mapper.mapToXs2aAuthenticationObject(null);
         assertNotNull(xs2aAuthenticationObject);
     }
 
     @Test
-    public void mapToXs2aListAuthenticationObject() {
+    void mapToXs2aListAuthenticationObject() {
         List<Xs2aAuthenticationObject> xs2aAuthenticationObjectList = mapper.mapToXs2aListAuthenticationObject(Collections.singletonList(spiAuthenticationObject));
 
         assertEquals(1, xs2aAuthenticationObjectList.size());
@@ -70,7 +70,7 @@ public class SpiToXs2aAuthenticationObjectMapperTest {
     }
 
     @Test
-    public void mapToXs2aListAuthenticationObject_nullValue() {
+    void mapToXs2aListAuthenticationObject_nullValue() {
         List<Xs2aAuthenticationObject> xs2aAuthenticationObjectList = mapper.mapToXs2aListAuthenticationObject(null);
 
         assertTrue(xs2aAuthenticationObjectList.isEmpty());

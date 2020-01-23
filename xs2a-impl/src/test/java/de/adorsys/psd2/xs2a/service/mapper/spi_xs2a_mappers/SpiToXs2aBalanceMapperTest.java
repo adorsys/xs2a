@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,21 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aBalanceMapperImpl.class, SpiToXs2aAmountMapperImpl.class})
-public class SpiToXs2aBalanceMapperTest {
+class SpiToXs2aBalanceMapperTest {
 
     @Autowired
     private SpiToXs2aBalanceMapper mapper;
@@ -42,8 +42,8 @@ public class SpiToXs2aBalanceMapperTest {
     private SpiAccountBalance spiAccountBalance;
     private Xs2aBalance expectedBalance;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         spiAccountBalance = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-balance.json",
                                                          SpiAccountBalance.class);
         expectedBalance = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-balance.json",
@@ -51,19 +51,19 @@ public class SpiToXs2aBalanceMapperTest {
     }
 
     @Test
-    public void mapToXs2aBalance() {
+    void mapToXs2aBalance() {
         Xs2aBalance xs2aBalance = mapper.mapToXs2aBalance(spiAccountBalance);
 
         assertEquals(expectedBalance, xs2aBalance);
     }
 
     @Test
-    public void mapToXs2aBalance_nullValue() {
+    void mapToXs2aBalance_nullValue() {
         assertNull(mapper.mapToXs2aBalance(null));
     }
 
     @Test
-    public void mapToXs2aBalanceList() {
+    void mapToXs2aBalanceList() {
         List<Xs2aBalance> Xs2aBalanceList = mapper.mapToXs2aBalanceList(Collections.singletonList(spiAccountBalance));
 
         assertEquals(1, Xs2aBalanceList.size());
@@ -71,7 +71,7 @@ public class SpiToXs2aBalanceMapperTest {
     }
 
     @Test
-    public void mapToXs2aBalanceList_nullValue() {
+    void mapToXs2aBalanceList_nullValue() {
         List<Xs2aBalance> xs2aBalances = mapper.mapToXs2aBalanceList(null);
         assertNotNull(xs2aBalances);
         assertTrue(xs2aBalances.isEmpty());

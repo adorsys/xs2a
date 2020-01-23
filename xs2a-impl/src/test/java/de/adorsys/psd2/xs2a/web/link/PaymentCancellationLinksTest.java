@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,19 +27,19 @@ import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentCancellationLinksTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentCancellationLinksTest {
 
     private static final String HTTP_URL = "http://url";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -64,8 +64,8 @@ public class PaymentCancellationLinksTest {
     @Mock
     private RedirectIdService redirectIdService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         expectedLinks = new Links();
 
         response = new CancelPaymentResponse();
@@ -79,7 +79,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_redirect_implicit() {
+    void buildCancellationLinks_redirect_implicit() {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
@@ -96,7 +96,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_redirect_explicit() {
+    void buildCancellationLinks_redirect_explicit() {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
 
@@ -110,7 +110,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_embedded_implicit() {
+    void buildCancellationLinks_embedded_implicit() {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
@@ -125,7 +125,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_embedded_explicit() {
+    void buildCancellationLinks_embedded_explicit() {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
@@ -139,7 +139,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_decoupled_implicit() {
+    void buildCancellationLinks_decoupled_implicit() {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
@@ -154,7 +154,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_decoupled_explicit() {
+    void buildCancellationLinks_decoupled_explicit() {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
@@ -168,7 +168,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_scaOAuth_implicit() {
+    void buildCancellationLinks_scaOAuth_implicit() {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
 
@@ -182,7 +182,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_scaOAuth_explicit() {
+    void buildCancellationLinks_scaOAuth_explicit() {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
 
@@ -196,7 +196,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_embedded_implicit_psuEmpty() {
+    void buildCancellationLinks_embedded_implicit_psuEmpty() {
         response.setPsuData(PSU_DATA_EMPTY);
 
         boolean isExplicitMethod = false;
@@ -213,7 +213,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_embedded_explicit_psuEmpty() {
+    void buildCancellationLinks_embedded_explicit_psuEmpty() {
         response.setPsuData(PSU_DATA_EMPTY);
 
         boolean isExplicitMethod = true;
@@ -229,7 +229,7 @@ public class PaymentCancellationLinksTest {
     }
 
     @Test
-    public void buildCancellationLinks_status_RJCT() {
+    void buildCancellationLinks_status_RJCT() {
         boolean isExplicitMethod = true;
         response.setTransactionStatus(TransactionStatus.RJCT);
 

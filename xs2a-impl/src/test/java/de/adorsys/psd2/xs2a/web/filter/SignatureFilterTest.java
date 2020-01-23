@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,11 @@ package de.adorsys.psd2.xs2a.web.filter;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -33,9 +33,8 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SignatureFilterTest {
-    private static final String XS2A_PATH = "/v1/accounts";
+@ExtendWith(MockitoExtension.class)
+class SignatureFilterTest {
     private static final String CUSTOM_PATH = "/custom-endpoint";
 
     @Mock
@@ -51,7 +50,7 @@ public class SignatureFilterTest {
     private SignatureFilter signatureFilter;
 
     @Test
-    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();

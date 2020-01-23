@@ -24,22 +24,21 @@ import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisAuthorisationServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class AisAuthorisationServiceInternalEncryptedTest {
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent id";
     private static final String UNDECRYPTABLE_CONSENT_ID = "undecryptable consent id";
     private static final String DECRYPTED_CONSENT_ID = "255574b2-f115-4f3c-8d77-c1897749c060";
@@ -55,27 +54,13 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     @Mock
     private SecurityDataService securityDataService;
 
-    @Before
-    public void setUp() {
-        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
-        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID))
-            .thenReturn(Optional.empty());
-        when(aisConsentAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(buildAisConsentAuthorizationResponse()));
-        when(aisConsentAuthorisationService.updateConsentAuthorization(AUTHORISATION_ID, buildAisConsentAuthorisationRequest()))
-            .thenReturn(true);
-        when(aisConsentAuthorisationService.getAuthorisationsByConsentId(DECRYPTED_CONSENT_ID))
-            .thenReturn(Optional.of(buildAuthorisations()));
-
-        when(aisConsentAuthorisationService.getAuthorisationScaStatus(DECRYPTED_CONSENT_ID, AUTHORISATION_ID))
-            .thenReturn(Optional.of(SCA_STATUS));
-    }
-
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         // Given
         AisConsentAuthorizationResponse expected = buildAisConsentAuthorizationResponse();
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, DECRYPTED_CONSENT_ID))
+            .thenReturn(Optional.of(buildAisConsentAuthorizationResponse()));
 
         // When
         Optional<AisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternalEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, ENCRYPTED_CONSENT_ID);
@@ -88,7 +73,8 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_internalServiceFailed() {
+    void getAccountConsentAuthorizationById_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentAuthorisationService.getAccountConsentAuthorizationById(any(), any())).thenReturn(Optional.empty());
 
         // When
@@ -100,7 +86,8 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_decryptionFailed() {
+    void getAccountConsentAuthorizationById_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
         // When
         Optional<AisConsentAuthorizationResponse> actual = aisAuthorisationServiceInternalEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, UNDECRYPTABLE_CONSENT_ID);
 
@@ -110,9 +97,10 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentAuthorization_success() {
+    void updateConsentAuthorization_success() {
         // Given
         AisConsentAuthorizationRequest request = buildAisConsentAuthorisationRequest();
+        when(aisConsentAuthorisationService.updateConsentAuthorization(AUTHORISATION_ID, buildAisConsentAuthorisationRequest())).thenReturn(true);
 
         // When
         boolean actual = aisAuthorisationServiceInternalEncrypted.updateConsentAuthorization(AUTHORISATION_ID, request);
@@ -123,7 +111,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void updateConsentAuthorization_internalServiceFailed() {
+    void updateConsentAuthorization_internalServiceFailed() {
         when(aisConsentAuthorisationService.updateConsentAuthorization(any(), any())).thenReturn(false);
 
         // Given
@@ -138,9 +126,11 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationsByConsentId_success() {
+    void getAuthorisationsByConsentId_success() {
         // Given
         List<String> expected = buildAuthorisations();
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentAuthorisationService.getAuthorisationsByConsentId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.of(buildAuthorisations()));
 
         // When
         Optional<List<String>> actual = aisAuthorisationServiceInternalEncrypted.getAuthorisationsByConsentId(ENCRYPTED_CONSENT_ID);
@@ -153,8 +143,9 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationsByConsentId_internalServiceFailed() {
-        when(aisConsentAuthorisationService.getAuthorisationsByConsentId(any())).thenReturn(Optional.empty());
+    void getAuthorisationsByConsentId_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentAuthorisationService.getAuthorisationsByConsentId(DECRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         Optional<List<String>> actual = aisAuthorisationServiceInternalEncrypted.getAuthorisationsByConsentId(ENCRYPTED_CONSENT_ID);
@@ -165,7 +156,9 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationsByConsentId_decryptionFailed() {
+    void getAuthorisationsByConsentId_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
         // When
         Optional<List<String>> actual = aisAuthorisationServiceInternalEncrypted.getAuthorisationsByConsentId(UNDECRYPTABLE_CONSENT_ID);
 
@@ -175,7 +168,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach_success() {
+    void getAuthorisationScaApproach_success() {
         //Given
         when(aisConsentAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(SCA_APPROACH)));
@@ -190,7 +183,10 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
+        when(aisConsentAuthorisationService.getAuthorisationScaStatus(DECRYPTED_CONSENT_ID, AUTHORISATION_ID)).thenReturn(Optional.of(SCA_STATUS));
+
         // When
         Optional<ScaStatus> actual = aisAuthorisationServiceInternalEncrypted.getAuthorisationScaStatus(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID);
 
@@ -201,7 +197,8 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_internalServiceFailed() {
+    void getAuthorisationScaStatus_internalServiceFailed() {
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentAuthorisationService.getAuthorisationScaStatus(anyString(), anyString())).thenReturn(Optional.empty());
 
         // When
@@ -213,7 +210,9 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_decryptionFailed() {
+    void getAuthorisationScaStatus_decryptionFailed() {
+        when(securityDataService.decryptId(UNDECRYPTABLE_CONSENT_ID)).thenReturn(Optional.empty());
+
         // When
         Optional<ScaStatus> actual = aisAuthorisationServiceInternalEncrypted.getAuthorisationScaStatus(UNDECRYPTABLE_CONSENT_ID, AUTHORISATION_ID);
 
@@ -223,7 +222,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_success() {
+    void isAuthenticationMethodDecoupled_success() {
         // Given
         when(aisConsentAuthorisationService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(true);
 
@@ -236,7 +235,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_internalServiceFailed() {
+    void isAuthenticationMethodDecoupled_internalServiceFailed() {
         // Given
         when(aisConsentAuthorisationService.isAuthenticationMethodDecoupled(anyString(), anyString())).thenReturn(false);
 
@@ -249,7 +248,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_success() {
+    void saveAuthenticationMethods_success() {
         // Given
         when(aisConsentAuthorisationService.saveAuthenticationMethods(anyString(), any())).thenReturn(true);
         List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod());
@@ -263,7 +262,7 @@ public class AisAuthorisationServiceInternalEncryptedTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_internalServiceFailed() {
+    void saveAuthenticationMethods_internalServiceFailed() {
         // Given
         when(aisConsentAuthorisationService.saveAuthenticationMethods(anyString(), any())).thenReturn(false);
         List<CmsScaMethod> cmsScaMethods = Collections.singletonList(buildCmsScaMethod());

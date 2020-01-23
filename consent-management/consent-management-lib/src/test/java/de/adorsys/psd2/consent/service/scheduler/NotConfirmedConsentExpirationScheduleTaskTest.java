@@ -20,12 +20,12 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -36,8 +36,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NotConfirmedConsentExpirationScheduleTaskTest {
+@ExtendWith(MockitoExtension.class)
+class NotConfirmedConsentExpirationScheduleTaskTest {
 
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
 
@@ -50,7 +50,7 @@ public class NotConfirmedConsentExpirationScheduleTaskTest {
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
     @Test
-    public void obsoleteNotConfirmedConsentIfExpired() {
+    void obsoleteNotConfirmedConsentIfExpired() {
         // Given
         ArgumentCaptor<List<AisConsent>> aisConsentListCaptor = ArgumentCaptor.forClass(List.class);
         when(aisConsentRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED))).thenReturn(Collections.singletonList(buildAisConsent()));

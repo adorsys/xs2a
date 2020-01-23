@@ -19,13 +19,13 @@ package de.adorsys.psd2.consent.service.scheduler;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -35,12 +35,12 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NonRecurringConsentExpirationScheduleTaskTest {
+@ExtendWith(MockitoExtension.class)
+class NonRecurringConsentExpirationScheduleTaskTest {
     private static final LocalDate LOCAL_DATE = LocalDate.now();
     private static final OffsetDateTime CREATION_TIMESTAMP =
         OffsetDateTime.of(2019, 6, 4, 12, 20, 0, 0, ZoneOffset.UTC);
@@ -56,7 +56,7 @@ public class NonRecurringConsentExpirationScheduleTaskTest {
     private NonRecurringConsentExpirationScheduleTask nonRecurringConsentExpirationScheduleTask;
 
     @Test
-    public void expireUsedNonRecurringConsent_expiresReceivedAndValidConsents() {
+    void expireUsedNonRecurringConsent_expiresReceivedAndValidConsents() {
         // Given
         List<AisConsent> aisConsentList = Arrays.asList(buildAisConsent(CONSENT_ID_1, RECEIVED),
                                                         buildAisConsent(CONSENT_ID_2, VALID));

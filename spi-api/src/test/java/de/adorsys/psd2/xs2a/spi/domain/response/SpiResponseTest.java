@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,30 @@ package de.adorsys.psd2.xs2a.spi.domain.response;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class SpiResponseTest {
+class SpiResponseTest {
 
     private final TppMessage FORMAT_ERROR = new TppMessage(MessageErrorCode.FORMAT_ERROR);
 
     @Test
-    public void builder_should_pass_on_failure_without_payload() {
+    void builder_should_pass_on_failure_without_payload() {
         SpiResponse.SpiResponseBuilder<Object> builder = SpiResponse.builder();
 
-        builder
-            .payload(null)
-            .error(FORMAT_ERROR)
-            .build();
+        SpiResponse<Object> response = builder
+                                           .payload(null)
+                                           .error(FORMAT_ERROR)
+                                           .build();
+
+        assertEquals(Collections.singletonList(FORMAT_ERROR), response.getErrors());
     }
 
     @Test
-    public void builder_build_success_response() {
+    void builder_build_success_response() {
         SpiResponse.SpiResponseBuilder<String> builder = SpiResponse.builder();
         SpiResponse<String> response =
             builder
@@ -53,7 +55,7 @@ public class SpiResponseTest {
     }
 
     @Test
-    public void builder_build_should_generate_message_on_fail() {
+    void builder_build_should_generate_message_on_fail() {
         // When
         SpiResponse<String> response = SpiResponse.<String>builder()
                                            .error(FORMAT_ERROR)
@@ -65,7 +67,7 @@ public class SpiResponseTest {
     }
 
     @Test
-    public void builder_build_should_generate_message_on_error() {
+    void builder_build_should_generate_message_on_error() {
         // Given
         TppMessage errorMessage = new TppMessage(MessageErrorCode.CONSENT_UNKNOWN_400);
 
@@ -78,7 +80,7 @@ public class SpiResponseTest {
     }
 
     @Test
-    public void builder_build_with_null_payload_should_generate_error_message() {
+    void builder_build_with_null_payload_should_generate_error_message() {
         // Given
         TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR);
 
@@ -91,7 +93,7 @@ public class SpiResponseTest {
     }
 
     @Test
-    public void builder_build_without_payload_should_generate_error_message() {
+    void builder_build_without_payload_should_generate_error_message() {
         // Given
         TppMessage errorMessage = new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR);
 

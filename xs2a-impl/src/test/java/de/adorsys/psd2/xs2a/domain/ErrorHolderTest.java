@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,22 @@
 package de.adorsys.psd2.xs2a.domain;
 
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.EXECUTION_DATE_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PAYMENT_FAILED;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ErrorHolderTest {
+class ErrorHolderTest {
     private static final ErrorType ERROR_TYPE = ErrorType.PIS_400;
 
     private static final TppMessageInformation TPP_MESSAGE_INFORMATION = TppMessageInformation.of(PAYMENT_FAILED);
 
     @Test
-    public void build() {
+    void build() {
         TppMessageInformation tppMessage = TppMessageInformation.of(PAYMENT_FAILED);
         TppMessageInformation anotherTppMessage = TppMessageInformation.of(EXECUTION_DATE_INVALID);
 
@@ -46,7 +46,7 @@ public class ErrorHolderTest {
     }
 
     @Test
-    public void build_withMultipleTppMessages() {
+    void build_withMultipleTppMessages() {
         TppMessageInformation tppMessageInformation = TppMessageInformation.of(PAYMENT_FAILED);
 
         ErrorHolder build = ErrorHolder

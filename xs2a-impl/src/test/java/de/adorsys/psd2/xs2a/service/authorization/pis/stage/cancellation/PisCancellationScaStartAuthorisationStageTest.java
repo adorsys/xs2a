@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
@@ -62,8 +62,8 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationScaStartAuthorisationStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationScaStartAuthorisationStageTest {
     private static final String PSU_ID = "Test psuId";
     private static final String PAYMENT_ID = "SeviKzWmPUDncnNz4F-f5gIUdnn78_IqZdZQvWhGeVlzr95yG8yF319Fm7h0bDeW_=_bS6p6XvTWI";
     private static final String PASSWORD = "Test password";
@@ -115,26 +115,15 @@ public class PisCancellationScaStartAuthorisationStageTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPaymentId()).thenReturn(PAYMENT_ID);
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getAuthorisationId()).thenReturn(AUTHORISATION_ID);
-        when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPassword()).thenReturn(PASSWORD);
-        when(getPisAuthorisationResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
-        when(getPisAuthorisationResponse.getPaymentType()).thenReturn(PAYMENT_TYPE);
-        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
-        when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(SPI_PSU_DATA);
-        when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), anyListOf(Xs2aAuthenticationObject.class))).thenReturn(true);
-        when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
-        when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
-        when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
-        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
     }
 
     @Test
-    public void apply_Identification_Success() {
+    void apply_Identification_Success() {
         // Given
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(true);
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPsuData()).thenReturn(PSU_ID_DATA);
@@ -146,7 +135,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Identification_NoPsu_Failure() {
+    void apply_Identification_NoPsu_Failure() {
         // Given
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(true);
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPsuData()).thenReturn(null);
@@ -159,7 +148,7 @@ public class PisCancellationScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Identification_WrongPsu_Failure() {
+    void apply_Identification_WrongPsu_Failure() {
         // Given
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(true);
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPsuData()).thenReturn(PSU_ID_DATA_WRONG);
@@ -172,8 +161,19 @@ public class PisCancellationScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Authorisation_NoAvailableScaMethod_success() {
+    void apply_Authorisation_NoAvailableScaMethod_success() {
         // Given
+        when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPassword()).thenReturn(PASSWORD);
+        when(getPisAuthorisationResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(getPisAuthorisationResponse.getPaymentType()).thenReturn(PAYMENT_TYPE);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(SPI_PSU_DATA);
+        when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
+        when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
+        when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
+        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(false);
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
         when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(NONE_SPI_SCA_METHOD));
@@ -189,8 +189,20 @@ public class PisCancellationScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Authorisation_SingleAvailableScaMethod_success() {
+    void apply_Authorisation_SingleAvailableScaMethod_success() {
         // Given
+        when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPassword()).thenReturn(PASSWORD);
+        when(getPisAuthorisationResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(getPisAuthorisationResponse.getPaymentType()).thenReturn(PAYMENT_TYPE);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(SPI_PSU_DATA);
+        when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), anyList())).thenReturn(true);
+        when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
+        when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
+        when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
+        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(false);
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
         when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(ONE_SPI_SCA_METHOD));
@@ -208,8 +220,20 @@ public class PisCancellationScaStartAuthorisationStageTest {
     }
 
     @Test
-    public void apply_Authorisation_MultipleAvailableScaMethod_success() {
+    void apply_Authorisation_MultipleAvailableScaMethod_success() {
         // Given
+        when(xs2aUpdatePisCommonPaymentPsuDataRequest.getPassword()).thenReturn(PASSWORD);
+        when(getPisAuthorisationResponse.getPaymentProduct()).thenReturn(PAYMENT_PRODUCT);
+        when(getPisAuthorisationResponse.getPaymentType()).thenReturn(PAYMENT_TYPE);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(SPI_PSU_DATA);
+        when(xs2aPisCommonPaymentService.saveAuthenticationMethods(any(), anyList())).thenReturn(true);
+        when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildGetPisAuthorisationResponse()));
+        when(getPisAuthorisationResponse.getPayments()).thenReturn(Collections.singletonList(PIS_PAYMENT));
+        when(cmsToXs2aPaymentMapper.mapToSinglePayment(PIS_PAYMENT)).thenReturn(XS2A_PAYMENT);
+        when(xs2aToSpiSinglePaymentMapper.mapToSpiSinglePayment(XS2A_PAYMENT, PAYMENT_PRODUCT)).thenReturn(buildSpiPayment());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         when(xs2aUpdatePisCommonPaymentPsuDataRequest.isUpdatePsuIdentification()).thenReturn(false);
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(SpiAuthorisationStatus.SUCCESS));
         when(paymentCancellationSpi.requestAvailableScaMethods(SPI_CONTEXT_DATA, buildSpiPayment(), spiAspspConsentDataProvider)).thenReturn(buildSuccessfulSpiResponse(MULTIPLE_SPI_SCA_METHODS));

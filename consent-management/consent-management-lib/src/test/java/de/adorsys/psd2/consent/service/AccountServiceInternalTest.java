@@ -20,21 +20,21 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
 import de.adorsys.psd2.consent.repository.AisConsentRepository;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class AccountServiceInternalTest {
 
     private static final String CONSENT_ID = "consent ID";
     private static final String RESOURCE_ID = "resource ID";
@@ -49,7 +49,7 @@ public class AccountServiceInternalTest {
     private AisConsentRepository aisConsentRepository;
 
     @Test
-    public void saveNumberOfTransactions_shouldFail() {
+    void saveNumberOfTransactions_shouldFail() {
         // Given
         when(aisConsentRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
 
@@ -62,7 +62,7 @@ public class AccountServiceInternalTest {
     }
 
     @Test
-    public void saveNumberOfTransactions_success() {
+    void saveNumberOfTransactions_success() {
         // Given
         when(aisConsentRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new AisConsent()));
 

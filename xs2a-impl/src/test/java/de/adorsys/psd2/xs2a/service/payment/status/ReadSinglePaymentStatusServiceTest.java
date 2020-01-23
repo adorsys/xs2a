@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,12 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusRespo
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -55,14 +55,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadSinglePaymentStatusServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadSinglePaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final UUID X_REQUEST_ID = UUID.randomUUID();
     private static final List<PisPayment> PIS_PAYMENTS = Collections.singletonList(new PisPayment());
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PRODUCT);
-    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP,null);
+    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null);
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
     private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload().getTransactionStatus(), TRANSACTION_RESPONSE.getPayload().getFundsAvailable());
@@ -84,16 +84,17 @@ public class ReadSinglePaymentStatusServiceTest {
 
     private PisCommonPaymentResponse commonPaymentData;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         commonPaymentData = getCommonPaymentData();
-        when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
-            .thenReturn(spiAspspConsentDataProvider);
     }
 
     @Test
-    public void readPaymentStatus_success() {
+    void readPaymentStatus_success() {
         // Given
+        when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT))
             .thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
         when(singlePaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
@@ -107,7 +108,7 @@ public class ReadSinglePaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_spiPaymentFactory_pisPaymentsListIsEmpty_failed() {
+    void readPaymentStatus_spiPaymentFactory_pisPaymentsListIsEmpty_failed() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_PAYMENT_NOT_FOUND))
@@ -125,7 +126,7 @@ public class ReadSinglePaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_spiPaymentFactory_createSpiSinglePayment_failed() {
+    void readPaymentStatus_spiPaymentFactory_createSpiSinglePayment_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -143,8 +144,11 @@ public class ReadSinglePaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_singlePaymentSpi_getPaymentStatusById_failed() {
+    void readPaymentStatus_singlePaymentSpi_getPaymentStatusById_failed() {
         //Given
+        when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();

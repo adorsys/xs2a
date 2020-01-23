@@ -19,23 +19,23 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdatePaymentAfterSpiServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class UpdatePaymentAfterSpiServiceInternalTest {
     private static final String PAYMENT_ID = "payment id";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
@@ -47,14 +47,14 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     private TppRedirectUri tppRedirectUri;
     private PisCommonPaymentData pisCommonPaymentData;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
         pisCommonPaymentData = new PisCommonPaymentData();
     }
 
     @Test
-    public void updatePaymentStatus_success() {
+    void updatePaymentStatus_success() {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
@@ -67,7 +67,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentStatus_transactionStatusIsFinalised() {
+    void updatePaymentStatus_transactionStatusIsFinalised() {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
@@ -79,7 +79,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentStatus_paymentDataIsEmpty() {
+    void updatePaymentStatus_paymentDataIsEmpty() {
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.empty());
 
         assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentStatus(PAYMENT_ID, TransactionStatus.ACSP));
@@ -89,7 +89,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_success() {
+    void updatePaymentCancellationTppRedirectUri_success() {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
@@ -102,7 +102,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_transactionStatusIsFinalised() {
+    void updatePaymentCancellationTppRedirectUri_transactionStatusIsFinalised() {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));
@@ -114,7 +114,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_paymentDataIsEmpty() {
+    void updatePaymentCancellationTppRedirectUri_paymentDataIsEmpty() {
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.empty());
 
         assertFalse(updatePaymentAfterSpiServiceInternal.updatePaymentCancellationTppRedirectUri(PAYMENT_ID, tppRedirectUri));
@@ -124,7 +124,7 @@ public class UpdatePaymentAfterSpiServiceInternalTest {
     }
 
     @Test
-    public void updatePaymentCancellationInternalRequestId_success() {
+    void updatePaymentCancellationInternalRequestId_success() {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCP);
 
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, null)).thenReturn(Optional.of(pisCommonPaymentData));

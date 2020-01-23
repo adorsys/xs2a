@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,20 +43,19 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequ
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.payment.create.spi.BulkPaymentInitiationService;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreateBulkPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CreateBulkPaymentServiceTest {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
@@ -94,22 +93,18 @@ public class CreateBulkPaymentServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-
-    @Before
-    public void init() {
+    @Test
+    void createPayment_success() {
+        // Given
         BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
 
         when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse);
-        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForBulkPayment());
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
         when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, buildBulkPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
             .thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
-    }
 
-    @Test
-    public void createPayment_success() {
         //When
         ResponseObject<PaymentInitiationResponse> actualResponse = createBulkPaymentService.createPayment(buildBulkPayment(), buildPaymentInitiationParameters(), buildTppInfo());
 
@@ -120,8 +115,9 @@ public class CreateBulkPaymentServiceTest {
     }
 
     @Test
-    public void createPayment_wrongPsuData() {
+    void createPayment_wrongPsuData() {
         // Given
+        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", WRONG_PSU_DATA)).thenReturn(buildSpiErrorForBulkPayment());
 
         PaymentInitiationParameters param = buildPaymentInitiationParameters();
         param.setPsuData(WRONG_PSU_DATA);
@@ -135,8 +131,17 @@ public class CreateBulkPaymentServiceTest {
     }
 
     @Test
-    public void createPayment_emptyPaymentId_fail() {
+    void createPayment_emptyPaymentId_fail() {
         // Given
+        BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
+
+        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, buildBulkPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
+            .thenReturn(PAYMENT_INFO);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA))
             .thenReturn(PIS_COMMON_PAYMENT_FAIL);
 
@@ -149,8 +154,17 @@ public class CreateBulkPaymentServiceTest {
     }
 
     @Test
-    public void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
+    void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
         // Given
+        BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
+
+        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, buildBulkPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
+            .thenReturn(PAYMENT_INFO);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
         when(pisScaAuthorisationServiceResolver.getService())
@@ -167,8 +181,17 @@ public class CreateBulkPaymentServiceTest {
     }
 
     @Test
-    public void createPayment_authorisationMethodDecider_isImplicitMethod_success() {
+    void createPayment_authorisationMethodDecider_isImplicitMethod_success() {
         // Given
+        BulkPaymentInitiationResponse buildBulkPaymentInitiationResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
+
+        when(bulkPaymentInitiationService.initiatePayment(buildBulkPayment(), "sepa-credit-transfers", PSU_DATA)).thenReturn(buildBulkPaymentInitiationResponse);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, buildBulkPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
+            .thenReturn(PAYMENT_INFO);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         BulkPaymentInitiationResponse expectedResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);

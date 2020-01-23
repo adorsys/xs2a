@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.authorization.pis.stage.cancellation;
 import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -46,14 +45,14 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -63,8 +62,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationDecoupledScaStartAuthorisationStageTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationDecoupledScaStartAuthorisationStageTest {
     private static final String PAYMENT_PRODUCT = "Test payment product";
     private static final String PAYMENT_ID = "Test payment id";
     private static final String PSU_ID = "Test psuId";
@@ -112,8 +111,8 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
     @Mock
     private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         PIS_AUTHORISATION_RESPONSE.setPsuIdData(PSU_ID_DATA);
 
         when(response.getPaymentType())
@@ -128,31 +127,25 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         when(response.getPaymentInfo())
             .thenReturn(PAYMENT_INFO);
 
-        when(request.getPaymentId())
-            .thenReturn(PAYMENT_ID);
-
-        when(request.getPsuData())
-            .thenReturn(PSU_ID_DATA);
-
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA))
             .thenReturn(SPI_PSU_DATA);
 
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
 
-        when(request.getPassword())
-            .thenReturn(PASSWORD);
-
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(Collections.singletonList(PSU_ID_DATA)))
             .thenReturn(Collections.singletonList(SPI_PSU_DATA));
-
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
-
     }
 
     @Test
-    public void apply_Failure_spiResponseHasError() {
+    void apply_Failure_spiResponseHasError() {
+        // Given
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
+        when(request.getPassword()).thenReturn(PASSWORD);
+        when(request.getPsuData()).thenReturn(PSU_ID_DATA);
+        when(request.getPaymentId()).thenReturn(PAYMENT_ID);
+
         SpiResponse<SpiAuthorisationStatus> expectedResponse = buildErrorSpiResponse();
 
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
@@ -164,15 +157,24 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
                             .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
                             .build());
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         assertThat(actualResponse.getScaStatus()).isEqualTo(FAILED_SCA_STATUS);
         assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(PIS_400_ERROR_TYPE);
     }
 
     @Test
-    public void apply_Success() {
+    void apply_Success() {
+        // Given
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
+        when(request.getPassword()).thenReturn(PASSWORD);
+        when(request.getPsuData()).thenReturn(PSU_ID_DATA);
+        when(request.getPaymentId()).thenReturn(PAYMENT_ID);
+
         SpiResponse<SpiAuthorisationStatus> expectedResponse = buildSuccessSpiResponse();
 
         when(paymentCancellationSpi.authorisePsu(SPI_CONTEXT_DATA, SPI_PSU_DATA, PASSWORD, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
@@ -181,14 +183,19 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
         when(pisCommonDecoupledService.proceedDecoupledCancellation(request, SPI_PAYMENT_INFO))
             .thenReturn(mockedExpectedResponse);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         verify(pisCommonDecoupledService).proceedDecoupledCancellation(request, SPI_PAYMENT_INFO);
     }
 
     @Test
-    public void apply_Success_withoutHeaders() {
+    void apply_Success_withoutHeaders() {
+        // Given
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setPaymentId(PAYMENT_ID);
         request.setAuthorisationId(AUTHORISATION_ID);
@@ -207,8 +214,10 @@ public class PisCancellationDecoupledScaStartAuthorisationStageTest {
 
         ArgumentCaptor<Xs2aUpdatePisCommonPaymentPsuDataRequest> captor = ArgumentCaptor.forClass(Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
 
+        // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCancellationDecoupledScaReceivedAuthorisationStage.apply(request, response);
 
+        // Then
         assertThat(actualResponse).isNotNull();
         verify(pisCommonDecoupledService).proceedDecoupledCancellation(captor.capture(), ArgumentMatchers.eq(SPI_PAYMENT_INFO));
 

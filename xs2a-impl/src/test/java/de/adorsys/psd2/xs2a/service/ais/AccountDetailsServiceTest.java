@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,13 +56,13 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -77,8 +77,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountDetailsServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AccountDetailsServiceTest {
     private static final JsonReader jsonReader = new JsonReader();
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final boolean WITH_BALANCE = false;
@@ -133,26 +133,20 @@ public class AccountDetailsServiceTest {
     @Mock
     private LoggingContextService loggingContextService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         accountConsent = createConsent(createAccountAccess());
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         commonAccountRequestObject = buildCommonAccountRequestObject();
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
 
-        when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
-            .thenReturn(ValidationResult.valid());
         when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
-
-        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
     }
 
     @Test
-    public void getAccountDetails_Failure_NoAccountConsent() {
+    void getAccountDetails_Failure_NoAccountConsent() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.empty());
         // When
@@ -162,7 +156,7 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_Failure_AllowedAccountDataHasError() {
+    void getAccountDetails_Failure_AllowedAccountDataHasError() {
         // Given
         when(getAccountDetailsValidator.validate(commonAccountRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
@@ -175,8 +169,13 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_Failure_SpiResponseHasError() {
+    void getAccountDetails_Failure_SpiResponseHasError() {
         // Given
+        when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+
         when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse(spiAccountDetails));
 
@@ -197,7 +196,7 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_failure_accountReferenceNotFoundInAccountAccess() {
+    void getAccountDetails_failure_accountReferenceNotFoundInAccountAccess() {
         // Given
         when(getAccountDetailsValidator.validate(commonAccountRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
@@ -210,8 +209,14 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_Success() {
+    void getAccountDetails_Success() {
         // Given
+        when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+
         when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
 
@@ -234,8 +239,14 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_Success_ShouldRecordEvent() {
+    void getAccountDetails_Success_ShouldRecordEvent() {
         // Given
+        when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+
         when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
         when(accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails))
@@ -253,8 +264,14 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_shouldRecordStatusIntoLoggingContext() {
+    void getAccountDetails_shouldRecordStatusIntoLoggingContext() {
         // Given
+        when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any())).thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+
         when(accountSpi.requestAccountDetailForAccount(SPI_CONTEXT_DATA, WITH_BALANCE, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
         when(accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails))
@@ -272,7 +289,7 @@ public class AccountDetailsServiceTest {
     }
 
     @Test
-    public void getAccountDetails_withInvalidConsent_shouldReturnValidationError() {
+    void getAccountDetails_withInvalidConsent_shouldReturnValidationError() {
         // Given
         when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,28 @@ import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisEndpointAccessCheckerServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisEndpointAccessCheckerServiceTest {
     @InjectMocks
     private PisEndpointAccessCheckerService pisEndpointAccessCheckerService;
     @Mock
     private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
 
     @Test
-    public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_EmptyResponse_True() {
+    void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_EmptyResponse_True() {
         //When
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(Optional.empty());
@@ -55,7 +55,7 @@ public class PisEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_EmptyResponse_True() {
+    void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_EmptyResponse_True() {
         //When
         when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
             .thenReturn(Optional.empty());
@@ -67,7 +67,7 @@ public class PisEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible__Redirect_False() {
+    void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible__Redirect_False() {
         //When
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.REDIRECT));
@@ -79,7 +79,7 @@ public class PisEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible__Redirect_False() {
+    void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible__Redirect_False() {
         //When
         when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.REDIRECT));
@@ -91,7 +91,7 @@ public class PisEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    public void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_Decoupled_True() {
+    void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_Decoupled_True() {
         //When
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED));
@@ -103,7 +103,7 @@ public class PisEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    public void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_Decoupled_ScaMethodSelected_False() {
+    void isEndpointAccessible_CancellationAuthorisation_ShouldAccessible_Decoupled_ScaMethodSelected_False() {
         //When
         when(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(anyString()))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED, ScaStatus.SCAMETHODSELECTED));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,21 +25,20 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PsuDataInInitialRequestValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class PsuDataInInitialRequestValidatorTest {
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null);
     private static final PsuIdData PSU_DATA = new PsuIdData("some psu id", null, null, null);
     private static final MessageError BLANK_PSU_ID_ERROR =
@@ -60,14 +59,8 @@ public class PsuDataInInitialRequestValidatorTest {
     @InjectMocks
     private PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
 
-    @Before
-    public void setUp() {
-        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
-        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
-    }
-
     @Test
-    public void validate_withPsuDataNotMandated_shouldReturnValid() {
+    void validate_withPsuDataNotMandated_shouldReturnValid() {
         //When
         ValidationResult validationResult = psuDataInInitialRequestValidator.validate(EMPTY_PSU_DATA);
 
@@ -76,7 +69,7 @@ public class PsuDataInInitialRequestValidatorTest {
     }
 
     @Test
-    public void validate_withPsuDataMandatedAndValidPsuData_shouldReturnValid() {
+    void validate_withPsuDataMandatedAndValidPsuData_shouldReturnValid() {
         //Given
         when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
 
@@ -88,8 +81,10 @@ public class PsuDataInInitialRequestValidatorTest {
     }
 
     @Test
-    public void validate_withPsuDataMandatedAndBlankPsuId_shouldReturnFormatError() {
+    void validate_withPsuDataMandatedAndBlankPsuId_shouldReturnFormatError() {
         //Given
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
         when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
 
         PsuIdData psuIdData = new PsuIdData(" ", null, null, null);
@@ -106,8 +101,10 @@ public class PsuDataInInitialRequestValidatorTest {
     }
 
     @Test
-    public void validate_withPsuDataMandatedAndNullPsuId_shouldReturnFormatError() {
+    void validate_withPsuDataMandatedAndNullPsuId_shouldReturnFormatError() {
         //Given
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
         when(aspspProfileService.isPsuInInitialRequestMandated()).thenReturn(true);
         PsuIdData psuIdData = new PsuIdData(null, null, null, null);
 

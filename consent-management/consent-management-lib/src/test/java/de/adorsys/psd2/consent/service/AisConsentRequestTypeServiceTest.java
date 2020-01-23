@@ -21,28 +21,28 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AisConsentRequestTypeServiceTest {
+class AisConsentRequestTypeServiceTest {
     private AisConsentRequestTypeService aisConsentRequestTypeService;
     private JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
     private AisAccountAccessInfo accessInfo;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         aisConsentRequestTypeService = new AisConsentRequestTypeService();
         aisConsent = jsonReader.getObjectFromFile("json/ais-consent.json", AisConsent.class);
         accessInfo = jsonReader.getObjectFromFile("json/access-info.json", AisAccountAccessInfo.class);
     }
 
     @Test
-    public void getRequestTypeFromConsent_DEDICATED_ACCOUNTS() {
+    void getRequestTypeFromConsent_DEDICATED_ACCOUNTS() {
         // Given
         // When
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromConsent(aisConsent);
@@ -52,7 +52,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromConsent_GLOBAL() {
+    void getRequestTypeFromConsent_GLOBAL() {
         // Given
         aisConsent.setAspspAccountAccesses(Collections.emptyList());
         aisConsent.setAllPsd2(AccountAccessType.ALL_ACCOUNTS);
@@ -64,7 +64,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromConsent_BANK_OFFERED() {
+    void getRequestTypeFromConsent_BANK_OFFERED() {
         // Given
         aisConsent.setAspspAccountAccesses(Collections.emptyList());
         // When
@@ -75,7 +75,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromConsent_ALL_AVAILABLE_ACCOUNTS() {
+    void getRequestTypeFromConsent_ALL_AVAILABLE_ACCOUNTS() {
         // Given
         aisConsent.setAspspAccountAccesses(Collections.emptyList());
         aisConsent.setAvailableAccounts(AccountAccessType.ALL_ACCOUNTS);
@@ -87,7 +87,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void determineAisConsentRequestTypeByAisConsent_ALL_AVAILABLE_ACCOUNTS_WITH_BALANCES() {
+    void determineAisConsentRequestTypeByAisConsent_ALL_AVAILABLE_ACCOUNTS_WITH_BALANCES() {
         // Given
         aisConsent.setAspspAccountAccesses(Collections.emptyList());
         aisConsent.setAvailableAccountsWithBalance(AccountAccessType.ALL_ACCOUNTS);
@@ -99,7 +99,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromAccess_DEDICATED_ACCOUNTS() {
+    void getRequestTypeFromAccess_DEDICATED_ACCOUNTS() {
         // Given
         // When
         AisConsentRequestType aisConsentRequestType = aisConsentRequestTypeService.getRequestTypeFromAccess(accessInfo);
@@ -109,7 +109,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromAccess_GLOBAL() {
+    void getRequestTypeFromAccess_GLOBAL() {
         // Given
         accessInfo.setAccounts(Collections.emptyList());
         accessInfo.setAllPsd2(AccountAccessType.ALL_ACCOUNTS);
@@ -121,7 +121,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromAccess_BANK_OFFERED() {
+    void getRequestTypeFromAccess_BANK_OFFERED() {
         // Given
         accessInfo.setAccounts(Collections.emptyList());
         // When
@@ -132,7 +132,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromAccess_ALL_AVAILABLE_ACCOUNTS() {
+    void getRequestTypeFromAccess_ALL_AVAILABLE_ACCOUNTS() {
         // Given
         accessInfo.setAccounts(Collections.emptyList());
         accessInfo.setAvailableAccounts(AccountAccessType.ALL_ACCOUNTS);
@@ -144,7 +144,7 @@ public class AisConsentRequestTypeServiceTest {
     }
 
     @Test
-    public void getRequestTypeFromAccess_ALL_AVAILABLE_ACCOUNTS_WITH_BALANCES() {
+    void getRequestTypeFromAccess_ALL_AVAILABLE_ACCOUNTS_WITH_BALANCES() {
         // Given
         accessInfo.setAccounts(Collections.emptyList());
         accessInfo.setAvailableAccountsWithBalance(AccountAccessType.ALL_ACCOUNTS);

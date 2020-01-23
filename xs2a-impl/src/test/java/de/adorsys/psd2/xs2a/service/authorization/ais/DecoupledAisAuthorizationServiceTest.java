@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
@@ -12,28 +28,25 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.stage.embedded.AisScaAuthenticatedStage;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SEPARATOR;
 import static de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory.SERVICE_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-
-@RunWith(MockitoJUnitRunner.class)
-public class DecoupledAisAuthorizationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class DecoupledAisAuthorizationServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -63,13 +76,8 @@ public class DecoupledAisAuthorizationServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void setUp() {
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
-
     @Test
-    public void createConsentAuthorization_success() {
+    void createConsentAuthorization_success() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(ACCOUNT_CONSENT));
@@ -85,7 +93,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void createConsentAuthorization_wrongConsentId_fail() {
+    void createConsentAuthorization_wrongConsentId_fail() {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -98,7 +106,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void updateConsentPsuData_success() {
+    void updateConsentPsuData_success() {
         // Given
         when(scaStageAuthorisationFactory.getService(SERVICE_PREFIX + SEPARATOR + SCA_APPROACH.name() + SEPARATOR + ACCOUNT_CONSENT_AUTHORIZATION.getScaStatus().name()))
             .thenReturn(aisScaAuthenticatedStage);
@@ -113,7 +121,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(Optional.of(ACCOUNT_CONSENT_AUTHORIZATION));
@@ -127,7 +135,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_wrongIds_fail() {
+    void getAccountConsentAuthorizationById_wrongIds_fail() {
         // Given
         when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
@@ -140,7 +148,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         // Given
         when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
@@ -154,7 +162,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_wrongIds_fail() {
+    void getAuthorisationScaStatus_wrongIds_fail() {
         // Given
         when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
@@ -167,7 +175,7 @@ public class DecoupledAisAuthorizationServiceTest {
     }
 
     @Test
-    public void getScaApproachServiceType_success() {
+    void getScaApproachServiceType_success() {
         // When
         ScaApproach actualResponse = decoupledAisAuthorizationService.getScaApproachServiceType();
 

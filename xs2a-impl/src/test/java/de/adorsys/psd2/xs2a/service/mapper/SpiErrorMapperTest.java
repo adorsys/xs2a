@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
@@ -24,25 +23,24 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SpiErrorMapperTest {
+@ExtendWith(MockitoExtension.class)
+class SpiErrorMapperTest {
     @InjectMocks
     private SpiErrorMapper spiErrorMapper;
 
     @Test
-    public void mapToErrorHolder_WithCustomError() {
+    void mapToErrorHolder_WithCustomError() {
         // Given
         String message = "error message";
         ErrorType errorType = ErrorType.PIS_401;
@@ -61,7 +59,7 @@ public class SpiErrorMapperTest {
     }
 
     @Test
-    public void mapToErrorHolder_WithBundleError() {
+    void mapToErrorHolder_WithBundleError() {
         // Given
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = SpiResponse.builder()
@@ -79,9 +77,9 @@ public class SpiErrorMapperTest {
     }
 
     @Test
-    public void mapToErrorHolder_WithBundleErrorAndMessageTextArgs() {
+    void mapToErrorHolder_WithBundleErrorAndMessageTextArgs() {
         // Given
-        Object[] messageTextArgs = new Object[] {"parameter"};
+        Object[] messageTextArgs = new Object[]{"parameter"};
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = SpiResponse.builder()
                                       .error(new TppMessage(PSU_CREDENTIALS_INVALID, messageTextArgs))
@@ -98,7 +96,7 @@ public class SpiErrorMapperTest {
     }
 
     @Test
-    public void mapToErrorHolder_withoutExplicitErrorsInSpiResponse() {
+    void mapToErrorHolder_withoutExplicitErrorsInSpiResponse() {
         // Given
         ErrorType errorType = ErrorType.PIS_401;
         SpiResponse spiResponse = buildSpiResponseTransactionStatus();
@@ -113,7 +111,7 @@ public class SpiErrorMapperTest {
     }
 
     @Test
-    public void mapToErrorHolder_withMultipleErrorsInResponse() {
+    void mapToErrorHolder_withMultipleErrorsInResponse() {
         // Given
         ErrorType firstErrorType = ErrorType.PIS_400;
         TppMessage firstError = new TppMessage(FORMAT_ERROR);
@@ -137,13 +135,13 @@ public class SpiErrorMapperTest {
         assertEquals(firstErrorType, errorHolder.getErrorType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void mapToErrorHolder_withoutErrors_shouldThrowIllegalArgumentException() {
+    @Test
+    void mapToErrorHolder_withoutErrors_shouldThrowIllegalArgumentException() {
         // Given
         SpiResponse spiResponse = SpiResponse.<String>builder().payload("some payload").build();
 
-        // When
-        spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
+        // Then
+        assertThrows(IllegalArgumentException.class, () -> spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS));
     }
 
     private static SpiResponse<Void> buildSpiResponseTransactionStatus() {

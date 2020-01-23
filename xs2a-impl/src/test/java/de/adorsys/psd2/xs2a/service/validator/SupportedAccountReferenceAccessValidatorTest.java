@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,11 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,13 +39,13 @@ import java.util.Collections;
 import java.util.Currency;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SupportedAccountReferenceAccessValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class SupportedAccountReferenceAccessValidatorTest {
     private static final MessageError IBAN_NOT_SUPPORTED_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR_ATTRIBUTE_NOT_SUPPORTED, "IBAN"));
     private static final MessageError BBAN_NOT_SUPPORTED_ERROR =
@@ -73,14 +72,8 @@ public class SupportedAccountReferenceAccessValidatorTest {
     @InjectMocks
     private SupportedAccountReferenceValidator supportedAccountReferenceValidator;
 
-    @Before
-    public void setUp() {
-        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
-        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
-    }
-
     @Test
-    public void validate_withSupportedAccountReferences_shouldReturnValid() {
+    void validate_withSupportedAccountReferences_shouldReturnValid() {
         // Given
         when(aspspProfileService.getSupportedAccountReferenceFields())
             .thenReturn(Collections.singletonList(SupportedAccountReferenceField.IBAN));
@@ -94,7 +87,7 @@ public class SupportedAccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_emptyCollection_shouldReturnValid() {
+    void validate_emptyCollection_shouldReturnValid() {
         // Given
 
         //When
@@ -105,8 +98,10 @@ public class SupportedAccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_withUnsupportedAccountReferences_shouldReturnFormatError() {
+    void validate_withUnsupportedAccountReferences_shouldReturnFormatError() {
         // Given
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
         when(aspspProfileService.getSupportedAccountReferenceFields())
             .thenReturn(Collections.singletonList(SupportedAccountReferenceField.IBAN));
         Collection<AccountReference> accountReferences = Collections.singletonList(ACCOUNT_REFERENCE_BBAN);
@@ -123,8 +118,10 @@ public class SupportedAccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_withOneUnsupportedAccountReferences_shouldReturnFormatError() {
+    void validate_withOneUnsupportedAccountReferences_shouldReturnFormatError() {
         // Given
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
         when(aspspProfileService.getSupportedAccountReferenceFields())
             .thenReturn(Collections.singletonList(SupportedAccountReferenceField.IBAN));
         Collection<AccountReference> accountReferences = Arrays.asList(ACCOUNT_REFERENCE_IBAN, ACCOUNT_REFERENCE_BBAN);
@@ -141,9 +138,11 @@ public class SupportedAccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_withSeveralAccountReferences_shouldReturnFormatError() {
+    void validate_withSeveralAccountReferences_shouldReturnFormatError() {
         // Given
         Collection<AccountReference> accountReferences = Collections.singletonList(ACCOUNT_REFERENCE_ALL);
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
 
         //When
         ValidationResult validationResult = supportedAccountReferenceValidator.validate(accountReferences);
@@ -157,10 +156,11 @@ public class SupportedAccountReferenceAccessValidatorTest {
     }
 
     @Test
-    public void validate_withNoSupportedAccountReferencesInProfile_shouldReturnFormatError() {
+    void validate_withNoSupportedAccountReferencesInProfile_shouldReturnFormatError() {
         // Given
-        when(aspspProfileService.getSupportedAccountReferenceFields())
-            .thenReturn(Collections.emptyList());
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(SERVICE_TYPE);
+        when(errorTypeMapper.mapToErrorType(SERVICE_TYPE, FORMAT_ERROR.getCode())).thenReturn(ErrorType.AIS_400);
+        when(aspspProfileService.getSupportedAccountReferenceFields()).thenReturn(Collections.emptyList());
         Collection<AccountReference> accountReferences = Collections.singletonList(ACCOUNT_REFERENCE_IBAN);
 
         //When

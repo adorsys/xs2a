@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,25 +28,25 @@ import de.adorsys.psd2.xs2a.service.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CancelCertainPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CancelCertainPaymentServiceTest {
 
-    public static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     @InjectMocks
     private CancelCertainPaymentService cancelCertainPaymentService;
 
@@ -59,8 +59,8 @@ public class CancelCertainPaymentServiceTest {
     private JsonReader jsonReader = new JsonReader();
     private PisCommonPaymentResponse commonPaymentResponse;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         paymentCancellationRequest = jsonReader.getObjectFromFile("json/service/payment/pis-payment-cancellation-request.json",
                                                                   PisPaymentCancellationRequest.class);
         commonPaymentResponse = jsonReader.getObjectFromFile("json/service/payment/pis-common-payment-response.json",
@@ -68,7 +68,7 @@ public class CancelCertainPaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_success() {
+    void cancelPayment_success() {
         Optional<? extends SpiPayment> spiSinglePayment = Optional.of(new SpiSinglePayment(PAYMENT_PRODUCT));
         Mockito.doReturn(spiSinglePayment).when(spiPaymentFactory).createSpiPaymentByPaymentType(any(), eq(PAYMENT_PRODUCT), eq(PaymentType.SINGLE));
 
@@ -87,7 +87,7 @@ public class CancelCertainPaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_pisPaymentsListIsEmpty() {
+    void cancelPayment_pisPaymentsListIsEmpty() {
         commonPaymentResponse.setPayments(null);
 
         ResponseObject<CancelPaymentResponse> actualResponse = cancelCertainPaymentService.cancelPayment(commonPaymentResponse, paymentCancellationRequest);
@@ -101,7 +101,7 @@ public class CancelCertainPaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_spiPaymentIsEmpty() {
+    void cancelPayment_spiPaymentIsEmpty() {
         Mockito.doReturn(Optional.empty()).when(spiPaymentFactory).createSpiPaymentByPaymentType(any(), eq(PAYMENT_PRODUCT), eq(PaymentType.SINGLE));
 
         ResponseObject<CancelPaymentResponse> actualResponse = cancelCertainPaymentService.cancelPayment(commonPaymentResponse, paymentCancellationRequest);
@@ -115,7 +115,7 @@ public class CancelCertainPaymentServiceTest {
     }
 
     @Test
-    public void isCommonPayment() {
+    void isCommonPayment() {
         assertFalse(cancelCertainPaymentService.isCommonPayment());
     }
 }

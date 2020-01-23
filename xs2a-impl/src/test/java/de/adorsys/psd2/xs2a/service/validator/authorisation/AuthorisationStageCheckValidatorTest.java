@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,14 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_400;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AuthorisationStageCheckValidatorTest {
+class AuthorisationStageCheckValidatorTest {
     private static final String TEST_PASSWORD = "123";
     private static final String TEST_AUTH_METHOD_ID = "SMS";
     private static final String TEST_AUTH_DATA = "123456";
@@ -51,13 +51,13 @@ public class AuthorisationStageCheckValidatorTest {
 
     private AuthorisationStageCheckValidator checkValidator;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         checkValidator = new AuthorisationStageCheckValidator();
     }
 
     @Test
-    public void test_received_success() {
+    void test_received_success() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(NON_EMPTY_PSU_DATA);
@@ -70,7 +70,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_received_failure_emptyPsuData_ais() {
+    void test_received_failure_emptyPsuData_ais() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
@@ -85,7 +85,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_received_failure_emptyPsuData_pis() {
+    void test_received_failure_emptyPsuData_pis() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
@@ -100,7 +100,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_received_failure_emptyPsuData_pis_cancellation() {
+    void test_received_failure_emptyPsuData_pis_cancellation() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
@@ -115,7 +115,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuIdentified_success() {
+    void test_psuIdentified_success() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setPassword(TEST_PASSWORD);
@@ -128,7 +128,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuIdentified_failure_noPassword_ais() {
+    void test_psuIdentified_failure_noPassword_ais() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -142,7 +142,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuIdentified_failure_noPassword_pis() {
+    void test_psuIdentified_failure_noPassword_pis() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -156,7 +156,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuIdentified_failure_noPassword_pis_cancellation() {
+    void test_psuIdentified_failure_noPassword_pis_cancellation() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -170,7 +170,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuAuthenticated_success() {
+    void test_psuAuthenticated_success() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setAuthenticationMethodId(TEST_AUTH_METHOD_ID);
@@ -183,7 +183,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuAuthenticated_failure_noAuthenticationMethodId_ais() {
+    void test_psuAuthenticated_failure_noAuthenticationMethodId_ais() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -197,7 +197,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuAuthenticated_failure_noAuthenticationMethodId_pis() {
+    void test_psuAuthenticated_failure_noAuthenticationMethodId_pis() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -211,7 +211,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_psuAuthenticated_failure_noAuthenticationMethodId_pis_cancellation() {
+    void test_psuAuthenticated_failure_noAuthenticationMethodId_pis_cancellation() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -225,7 +225,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_scaMethodSelected_success() {
+    void test_scaMethodSelected_success() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
         updateRequest.setScaAuthenticationData(TEST_AUTH_DATA);
@@ -238,7 +238,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_scaMethodSelected_failure_noScaAuthenticationData_ais() {
+    void test_scaMethodSelected_failure_noScaAuthenticationData_ais() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -252,7 +252,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_scaMethodSelected_failure_noScaAuthenticationData_pis() {
+    void test_scaMethodSelected_failure_noScaAuthenticationData_pis() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -266,7 +266,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_scaMethodSelected_failure_noScaAuthenticationData_pis_cancellation() {
+    void test_scaMethodSelected_failure_noScaAuthenticationData_pis_cancellation() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -280,7 +280,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_finalised_success() {
+    void test_finalised_success() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 
@@ -292,7 +292,7 @@ public class AuthorisationStageCheckValidatorTest {
     }
 
     @Test
-    public void test_exempted_success() {
+    void test_exempted_success() {
         //Given
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
 

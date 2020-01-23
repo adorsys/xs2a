@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,19 +22,19 @@ import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     private final static JsonReader jsonReader = new JsonReader();
     private final static String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private final static byte[] PAYMENT_DATA = "test".getBytes();
@@ -47,7 +47,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     private Xs2aRemittanceMapper xs2aRemittanceMapper;
 
     @Test
-    public void mapToPisPaymentInfo() {
+    void mapToPisPaymentInfo() {
         // Given
         PaymentInitiationParameters paymentInitiationParameters = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/payment-initiation-parameters.json", PaymentInitiationParameters.class);
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/tpp-info.json", TppInfo.class);
@@ -64,7 +64,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
-    public void mapToCmsSinglePisCommonPaymentRequest() {
+    void mapToCmsSinglePisCommonPaymentRequest() {
         // Given
         SinglePayment singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json", SinglePayment.class);
         PisCommonPaymentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-request.json", PisCommonPaymentRequest.class);
@@ -77,7 +77,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
-    public void mapToCmsSinglePisCommonPaymentRequestWithoutCreditorAddress() {
+    void mapToCmsSinglePisCommonPaymentRequestWithoutCreditorAddress() {
         // Given
         SinglePayment singlePayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-single-payment-without-creditor-address.json", SinglePayment.class);
         PisCommonPaymentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-request-without-creditor-address.json", PisCommonPaymentRequest.class);
@@ -90,7 +90,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
-    public void mapToCmsPeriodicPisCommonPaymentRequest() {
+    void mapToCmsPeriodicPisCommonPaymentRequest() {
         // Given
         PeriodicPayment periodicPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json", PeriodicPayment.class);
         PisCommonPaymentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-common-payment-request-periodic.json", PisCommonPaymentRequest.class);
@@ -103,7 +103,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
-    public void mapToListPisPayment() {
+    void mapToListPisPayment() {
         //Given
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setPayments(Collections.singletonList(singlePayment));
@@ -117,7 +117,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
-    public void mapToListPisPayment_BatchBookingPreferred_True() {
+    void mapToListPisPayment_BatchBookingPreferred_True() {
         //Given
         BulkPayment bulkPayment = buildBulkPayment(Boolean.TRUE);
         //When
@@ -129,7 +129,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
     }
 
     @Test
-    public void mapToListPisPayment_BatchBookingPreferred_False() {
+    void mapToListPisPayment_BatchBookingPreferred_False() {
         //Given
         BulkPayment bulkPayment = buildBulkPayment(Boolean.FALSE);
         //When
@@ -140,7 +140,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapperTest {
         assertEquals(bulkPayment.getBatchBookingPreferred(), pisPayment.getBatchBookingPreferred());
     }
 
-    public BulkPayment buildBulkPayment(Boolean batchBookingPreferred) {
+    BulkPayment buildBulkPayment(Boolean batchBookingPreferred) {
         BulkPayment bulkPayment = new BulkPayment();
         bulkPayment.setBatchBookingPreferred(batchBookingPreferred);
         bulkPayment.setPayments(Collections.singletonList(singlePayment));

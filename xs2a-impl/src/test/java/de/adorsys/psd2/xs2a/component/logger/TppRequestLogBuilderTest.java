@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@
 package de.adorsys.psd2.xs2a.component.logger;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppRequestLogBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class TppRequestLogBuilderTest {
     private static final String X_REQUEST_ID_HEADER = "x-request-id";
 
     @Mock
@@ -40,7 +40,7 @@ public class TppRequestLogBuilderTest {
     private TppRequestLogBuilder tppRequestLogBuilder;
 
     @Test
-    public void withTpp_shouldAddTppIdAndIpAndRoles() {
+    void withTpp_shouldAddTppIdAndIpAndRoles() {
         // When
         tppRequestLogBuilder.withTpp(tppInfo);
 
@@ -55,7 +55,7 @@ public class TppRequestLogBuilderTest {
     }
 
     @Test
-    public void withRequestUri_shouldAddRequestUri() {
+    void withRequestUri_shouldAddRequestUri() {
         // When
         tppRequestLogBuilder.withRequestUri();
 
@@ -65,7 +65,7 @@ public class TppRequestLogBuilderTest {
     }
 
     @Test
-    public void withXRequestId_shouldAddXRequestId() {
+    void withXRequestId_shouldAddXRequestId() {
         // When
         tppRequestLogBuilder.withXRequestId();
 

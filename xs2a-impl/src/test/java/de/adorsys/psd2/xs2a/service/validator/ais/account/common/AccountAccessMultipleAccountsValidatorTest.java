@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AccountAccessMultipleAccountsValidatorTest {
+class AccountAccessMultipleAccountsValidatorTest {
     private static final String DEDICATED_CONSENT_PATH = "json/service/validator/ais/account/xs2a-account-consent.json";
     private static final String GLOBAL_CONSENT_PATH = "json/service/validator/ais/account/xs2a-account-consent-global.json";
     private static final String ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH = "json/service/validator/ais/account/xs2a-account-consent-all-available-accounts.json";
@@ -40,7 +40,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     private AccountAccessMultipleAccountsValidator validator = new AccountAccessMultipleAccountsValidator();
 
     @Test
-    public void DEDICATED_ACCOUNTS_WithBalance_shouldReturnValid() {
+    void DEDICATED_ACCOUNTS_WithBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_PATH, AisConsentRequestType.DEDICATED_ACCOUNTS);
 
@@ -51,7 +51,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void DEDICATED_ACCOUNTS_WithBalance_shouldReturnError() {
+    void DEDICATED_ACCOUNTS_WithBalance_shouldReturnError() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_WITH_MULTIPLE_ACCOUNTS_PATH, AisConsentRequestType.DEDICATED_ACCOUNTS);
 
@@ -63,7 +63,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void DEDICATED_ACCOUNTS_WithoutBalance_shouldReturnValid() {
+    void DEDICATED_ACCOUNTS_WithoutBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_WITH_MULTIPLE_ACCOUNTS_PATH, AisConsentRequestType.DEDICATED_ACCOUNTS);
         //When
@@ -73,7 +73,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void GLOBAL_WithBalance_shouldReturnValid() {
+    void GLOBAL_WithBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(GLOBAL_CONSENT_PATH, AisConsentRequestType.GLOBAL);
         //When
@@ -83,7 +83,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void GLOBAL_WithoutBalance_shouldReturnValid() {
+    void GLOBAL_WithoutBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(GLOBAL_CONSENT_PATH, AisConsentRequestType.GLOBAL);
         //When
@@ -93,7 +93,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void ALL_AVAILABLE_ACCOUNTS_WithBalance_shouldReturnValid() {
+    void ALL_AVAILABLE_ACCOUNTS_WithBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
         //When
@@ -103,7 +103,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void ALL_AVAILABLE_ACCOUNTS_WithoutBalance_shouldReturnValid() {
+    void ALL_AVAILABLE_ACCOUNTS_WithoutBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
         //When
@@ -113,7 +113,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void BANK_OFFERED_ACCOUNTS_WithBalance_shouldReturnValid() {
+    void BANK_OFFERED_ACCOUNTS_WithBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(BANK_OFFERED_CONSENT_PATH, AisConsentRequestType.BANK_OFFERED);
         //When
@@ -123,7 +123,7 @@ public class AccountAccessMultipleAccountsValidatorTest {
     }
 
     @Test
-    public void BANK_OFFERED_ACCOUNTS_WithoutBalance_shouldReturnValid() {
+    void BANK_OFFERED_ACCOUNTS_WithoutBalance_shouldReturnValid() {
         //Given
         AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(BANK_OFFERED_CONSENT_PATH, AisConsentRequestType.BANK_OFFERED);
         //When

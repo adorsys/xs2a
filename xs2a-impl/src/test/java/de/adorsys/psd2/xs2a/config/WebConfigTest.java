@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,18 @@
 package de.adorsys.psd2.xs2a.config;
 
 import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WebConfigTest {
-
+class WebConfigTest {
     @Test
-    public void extendMessageConverters() {
+    void extendMessageConverters() {
         WebConfig webConfig = new WebConfig(null, null, null,
                                             null, null, null,
                                             null, null, null,

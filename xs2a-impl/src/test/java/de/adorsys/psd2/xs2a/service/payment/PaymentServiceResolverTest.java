@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,19 +36,18 @@ import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonPaymentStatusServic
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadSinglePaymentStatusService;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentServiceResolverTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentServiceResolverTest {
 
     @InjectMocks
     private PaymentServiceResolver paymentServiceResolver;
@@ -87,17 +86,18 @@ public class PaymentServiceResolverTest {
     private PisPaymentCancellationRequest paymentCancellationRequest;
     private PisCommonPaymentResponse pisCommonPaymentResponse;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         paymentInitiationParameters = new PaymentInitiationParameters();
         commonPaymentData = new PisCommonPaymentResponse();
         paymentCancellationRequest = new PisPaymentCancellationRequest(PaymentType.SINGLE, "", "", Boolean.TRUE, new TppRedirectUri("", ""));
         pisCommonPaymentResponse = new PisCommonPaymentResponse();
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
     }
 
     @Test
-    public void getCreatePaymentService_commonPayment() {
+    void getCreatePaymentService_commonPayment() {
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())).thenReturn(true);
 
         CreatePaymentService createPaymentService = paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters);
@@ -105,7 +105,9 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getCreatePaymentService_singlePayment() {
+    void getCreatePaymentService_singlePayment() {
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
         paymentInitiationParameters.setPaymentType(PaymentType.SINGLE);
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())).thenReturn(false);
 
@@ -114,7 +116,9 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getCreatePaymentService_periodicPayment() {
+    void getCreatePaymentService_periodicPayment() {
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
         paymentInitiationParameters.setPaymentType(PaymentType.PERIODIC);
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())).thenReturn(false);
 
@@ -123,7 +127,9 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getCreatePaymentService_bulkPayment() {
+    void getCreatePaymentService_bulkPayment() {
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
         paymentInitiationParameters.setPaymentType(PaymentType.BULK);
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())).thenReturn(false);
 
@@ -133,7 +139,9 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getCreatePaymentService_noPaymentType() {
+    void getCreatePaymentService_noPaymentType() {
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentInitiationParameters.getPaymentProduct())).thenReturn(false);
 
         CreatePaymentService createPaymentService = paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters);
@@ -142,14 +150,14 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getReadPaymentService_commonPayment() {
+    void getReadPaymentService_commonPayment() {
         commonPaymentData.setPaymentData("body".getBytes());
         ReadPaymentService readPaymentService = paymentServiceResolver.getReadPaymentService(commonPaymentData);
         assertEquals(readCommonPaymentService, readPaymentService);
     }
 
     @Test
-    public void getReadPaymentService_singlePayment() {
+    void getReadPaymentService_singlePayment() {
         commonPaymentData.setPaymentType(PaymentType.SINGLE);
         when(readPaymentFactory.getService(PaymentType.SINGLE.getValue())).thenReturn(readSinglePaymentService);
 
@@ -157,26 +165,26 @@ public class PaymentServiceResolverTest {
         assertTrue(readPaymentService instanceof ReadSinglePaymentService);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getCreatePaymentService_withOauthApproach() {
+    @Test
+    void getCreatePaymentService_withOauthApproach() {
         // Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
 
         // When
-        paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters);
+        assertThrows(UnsupportedOperationException.class, () -> paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void getCreatePaymentService_withUndefinedApproach() {
+    @Test
+    void getCreatePaymentService_withUndefinedApproach() {
         // Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.UNDEFINED);
 
         // When
-        paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters);
+        assertThrows(UnsupportedOperationException.class, () -> paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters));
     }
 
     @Test
-    public void getCancelPaymentService_commonPayment() {
+    void getCancelPaymentService_commonPayment() {
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentCancellationRequest.getPaymentProduct())).thenReturn(true);
 
         CancelPaymentService cancelPaymentService = paymentServiceResolver.getCancelPaymentService(paymentCancellationRequest);
@@ -184,7 +192,7 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getCancelPaymentService_certainPayment() {
+    void getCancelPaymentService_certainPayment() {
         when(standardPaymentProductsResolver.isRawPaymentProduct(paymentCancellationRequest.getPaymentProduct())).thenReturn(false);
 
         CancelPaymentService cancelPaymentService = paymentServiceResolver.getCancelPaymentService(paymentCancellationRequest);
@@ -192,7 +200,7 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getReadPaymentStatusService_commonPayment() {
+    void getReadPaymentStatusService_commonPayment() {
         pisCommonPaymentResponse.setPaymentData("body".getBytes());
 
         ReadPaymentStatusService readPaymentStatusService = paymentServiceResolver.getReadPaymentStatusService(pisCommonPaymentResponse);
@@ -200,7 +208,7 @@ public class PaymentServiceResolverTest {
     }
 
     @Test
-    public void getReadPaymentStatusService_singlePayment() {
+    void getReadPaymentStatusService_singlePayment() {
         pisCommonPaymentResponse.setPaymentType(PaymentType.SINGLE);
         when(readPaymentStatusFactory.getService("status-" + pisCommonPaymentResponse.getPaymentType().getValue())).thenReturn(readSinglePaymentStatusService);
 

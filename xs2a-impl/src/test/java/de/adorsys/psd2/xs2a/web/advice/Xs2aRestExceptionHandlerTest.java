@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceType;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,12 +35,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.context.request.WebRequest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aRestExceptionHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aRestExceptionHandlerTest {
 
     private static final String ERROR_TEXT = "HTTP method 'DELETE' is not supported";
     private static final String METHOD_NAME = "DELETE";
@@ -61,7 +61,7 @@ public class Xs2aRestExceptionHandlerTest {
     private Xs2aObjectMapper xs2aObjectMapper;
 
     @Test
-    public void handleHttpRequestMethodNotSupported() throws JsonProcessingException {
+    void handleHttpRequestMethodNotSupported() throws JsonProcessingException {
         HttpRequestMethodNotSupportedException exception = new HttpRequestMethodNotSupportedException(METHOD_NAME);
         HttpHeaders headers = new HttpHeaders();
         HttpStatus status = HttpStatus.OK;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,28 +19,27 @@ package de.adorsys.psd2.xs2a.service.context;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.apache.commons.lang3.NotImplementedException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class MdcLoggingContextServiceTest {
+class MdcLoggingContextServiceTest {
     private static final String CONSENT_STATUS_KEY = "consentStatus";
     private static final String TRANSACTION_STATUS_KEY = "transactionStatus";
     private static final String SCA_STATUS_KEY = "scaStatus";
 
     private MdcLoggingContextService mdcLoggingContextService = new MdcLoggingContextService();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         MDC.clear();
     }
 
     @Test
-    public void storeConsentStatus_shouldPutStatusIntoMdc() {
+    void storeConsentStatus_shouldPutStatusIntoMdc() {
         // Given
         ConsentStatus status = ConsentStatus.RECEIVED;
 
@@ -51,7 +50,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void getConsentStatus_shouldTakeStatusFromMdc() {
+    void getConsentStatus_shouldTakeStatusFromMdc() {
         // Given
         String expectedStatus = ConsentStatus.REJECTED.getValue();
         MDC.put(CONSENT_STATUS_KEY, expectedStatus);
@@ -64,7 +63,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void storeTransactionStatus_shouldPutStatusIntoMdc() {
+    void storeTransactionStatus_shouldPutStatusIntoMdc() {
         // Given
         TransactionStatus status = TransactionStatus.ACSP;
 
@@ -76,7 +75,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void getTransactionStatus_shouldTakeStatusFromMdc() {
+    void getTransactionStatus_shouldTakeStatusFromMdc() {
         // Given
         String expectedStatus = TransactionStatus.ACCC.getTransactionStatus();
         MDC.put(TRANSACTION_STATUS_KEY, expectedStatus);
@@ -89,7 +88,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void storeTransactionAndScaStatus() {
+    void storeTransactionAndScaStatus() {
         // Given
         TransactionStatus transactionStatus = TransactionStatus.ACSP;
         ScaStatus scaStatus = ScaStatus.PSUAUTHENTICATED;
@@ -103,7 +102,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void storeScaStatus_shouldPutStatusIntoMdc() {
+    void storeScaStatus_shouldPutStatusIntoMdc() {
         // Given
         ScaStatus status = ScaStatus.PSUAUTHENTICATED;
 
@@ -115,7 +114,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void getScaStatus_shouldTakeStatusFromMdc() {
+    void getScaStatus_shouldTakeStatusFromMdc() {
         // Given
         String expectedStatus = ScaStatus.PSUAUTHENTICATED.getValue();
         MDC.put(SCA_STATUS_KEY, expectedStatus);
@@ -128,7 +127,7 @@ public class MdcLoggingContextServiceTest {
     }
 
     @Test
-    public void clearContext_shouldClearMdc() {
+    void clearContext_shouldClearMdc() {
         // Given
         MDC.put(CONSENT_STATUS_KEY, "some consent status");
         MDC.put(TRANSACTION_STATUS_KEY, "some transaction status");

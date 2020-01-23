@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,12 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,11 +39,11 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aToSpiBulkPaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aToSpiBulkPaymentMapperTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String RESOURCE_ID = "5c2d20da-f20a-4a5e-bf6d-be5b239e3561";
     private static final String IBAN = "DE123456789";
@@ -70,8 +70,8 @@ public class Xs2aToSpiBulkPaymentMapperTest {
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
         spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
@@ -81,7 +81,7 @@ public class Xs2aToSpiBulkPaymentMapperTest {
     }
 
     @Test
-    public void mapToSpiBulkPaymentSuccess() {
+    void mapToSpiBulkPaymentSuccess() {
         //Given
         BulkPayment payment = buildBulkPayment();
         //When

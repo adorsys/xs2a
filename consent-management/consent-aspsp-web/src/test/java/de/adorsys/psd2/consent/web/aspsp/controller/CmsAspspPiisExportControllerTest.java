@@ -21,12 +21,12 @@ import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,8 +43,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPiisExportControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPiisExportControllerTest {
     private final String PSU_ID = "marion.mueller";
     private final String TPP_ID = "PSDDE-FAKENCA-87B2AC";
     private final String ACCOUNT_ID = "account_id";
@@ -60,7 +60,6 @@ public class CmsAspspPiisExportControllerTest {
     private JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private PsuIdData psuIdData;
-    private PiisConsent piisConsent;
     private Collection<PiisConsent> piisConsents;
 
     @InjectMocks
@@ -69,12 +68,12 @@ public class CmsAspspPiisExportControllerTest {
     @Mock
     private CmsAspspPiisFundsExportService cmsAspspPiisExportService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
         psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
-        piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
+        PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
         piisConsents = Collections.singletonList(piisConsent);
 
         httpHeaders.add("psu-id", PSU_ID);
@@ -90,7 +89,7 @@ public class CmsAspspPiisExportControllerTest {
     }
 
     @Test
-    public void getConsentsByTpp_Success() throws Exception {
+    void getConsentsByTpp_Success() throws Exception {
         when(cmsAspspPiisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
             .thenReturn(piisConsents);
 
@@ -104,7 +103,7 @@ public class CmsAspspPiisExportControllerTest {
     }
 
     @Test
-    public void getConsentsByPsu_Success() throws Exception {
+    void getConsentsByPsu_Success() throws Exception {
         when(cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
             .thenReturn(piisConsents);
 
@@ -118,7 +117,7 @@ public class CmsAspspPiisExportControllerTest {
     }
 
     @Test
-    public void getConsentsByAccount_Success() throws Exception {
+    void getConsentsByAccount_Success() throws Exception {
         when(cmsAspspPiisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
             .thenReturn(piisConsents);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package de.adorsys.psd2.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,9 +26,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class Xs2aObjectMapperTest {
+class Xs2aObjectMapperTest {
     private static final String FIELD_NAME = "someField";
     private static final String FIELD_VALUE = "some value";
     private static final String NOT_EXISTING_FIELD_NAME = "unknownField";
@@ -41,7 +41,7 @@ public class Xs2aObjectMapperTest {
     private static final String MALFORMED_OBJECT_PATH = "/json/mapper/non-json.txt";
 
     @Test
-    public void toJsonField() throws IOException {
+    void toJsonField() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -58,7 +58,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonField_unknownField() throws IOException {
+    void toJsonField_unknownField() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -74,7 +74,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonField_nullValue() throws IOException {
+    void toJsonField_nullValue() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -90,7 +90,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonField_wrongType() throws IOException {
+    void toJsonField_wrongType() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -106,7 +106,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonField_malformedObject() throws IOException {
+    void toJsonField_malformedObject() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -122,7 +122,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonGetValuesForField() throws IOException {
+    void toJsonGetValuesForField() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         List<String> expectedValue = Arrays.asList(NESTED_FIELD_VALUE_1, NESTED_FIELD_VALUE_2);
@@ -138,7 +138,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonGetValuesForField_unknownField() throws IOException {
+    void toJsonGetValuesForField_unknownField() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -153,7 +153,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void toJsonGetValuesForField_malformedObject() throws IOException {
+    void toJsonGetValuesForField_malformedObject() throws IOException {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
@@ -173,7 +173,7 @@ public class Xs2aObjectMapperTest {
     }
 
     @Test
-    public void copy() {
+    void copy() {
         // Given
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 

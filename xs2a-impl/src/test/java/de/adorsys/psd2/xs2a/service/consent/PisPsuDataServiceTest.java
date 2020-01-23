@@ -1,25 +1,39 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisPsuDataServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisPsuDataServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String WRONG_ID = "wrong id";
     private static final List<PsuIdData> LIST_PSU_DATA = getListPisPayment();
@@ -32,13 +46,8 @@ public class PisPsuDataServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void setUp() {
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-    }
-
     @Test
-    public void getPsuDataByPaymentId_success() {
+    void getPsuDataByPaymentId_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(PAYMENT_ID))
             .thenReturn(Optional.of(LIST_PSU_DATA));
@@ -51,7 +60,7 @@ public class PisPsuDataServiceTest {
     }
 
     @Test
-    public void getPsuDataByPaymentId_failed() {
+    void getPsuDataByPaymentId_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(WRONG_ID))
             .thenReturn(Optional.empty());

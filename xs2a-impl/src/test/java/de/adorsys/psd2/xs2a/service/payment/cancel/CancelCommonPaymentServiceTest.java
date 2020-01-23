@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,20 +23,20 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CancelCommonPaymentServiceTest {
-    public static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+@ExtendWith(MockitoExtension.class)
+class CancelCommonPaymentServiceTest {
 
     @InjectMocks
     private CancelCommonPaymentService cancelCommonPaymentService;
@@ -53,8 +53,8 @@ public class CancelCommonPaymentServiceTest {
     private JsonReader jsonReader = new JsonReader();
     private PisCommonPaymentResponse commonPaymentResponse;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         paymentCancellationRequest = jsonReader.getObjectFromFile("json/service/payment/pis-payment-cancellation-request.json",
                                                                   PisPaymentCancellationRequest.class);
         commonPaymentResponse = jsonReader.getObjectFromFile("json/service/payment/pis-common-payment-response.json",
@@ -62,7 +62,7 @@ public class CancelCommonPaymentServiceTest {
     }
 
     @Test
-    public void cancelPayment_success() {
+    void cancelPayment_success() {
         when(cancelPaymentService.initiatePaymentCancellation(spiPaymentInfoCaptor.capture(),
                                                               eq(paymentCancellationRequest.getEncryptedPaymentId()),
                                                               eq(paymentCancellationRequest.getTppExplicitAuthorisationPreferred()),
@@ -74,11 +74,11 @@ public class CancelCommonPaymentServiceTest {
                                                                            eq(paymentCancellationRequest.getEncryptedPaymentId()),
                                                                            eq(paymentCancellationRequest.getTppExplicitAuthorisationPreferred()),
                                                                            eq(paymentCancellationRequest.getTppRedirectUri()));
-        Assert.assertEquals(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentResponse), spiPaymentInfoCaptor.getValue());
+        assertEquals(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentResponse), spiPaymentInfoCaptor.getValue());
     }
 
     @Test
-    public void isCommonPayment() {
-        Assert.assertTrue(cancelCommonPaymentService.isCommonPayment());
+    void isCommonPayment() {
+        assertTrue(cancelCommonPaymentService.isCommonPayment());
     }
 }

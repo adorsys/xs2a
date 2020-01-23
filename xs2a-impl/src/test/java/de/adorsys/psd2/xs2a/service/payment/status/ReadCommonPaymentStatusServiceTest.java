@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,30 +40,30 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusRespo
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadCommonPaymentStatusServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadCommonPaymentStatusServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private final static UUID X_REQUEST_ID = UUID.randomUUID();
     private static final SpiContextData SPI_CONTEXT_DATA = getSpiContextData();
     private static final CommonPayment COMMON_PAYMENT = new CommonPayment();
     private static final SpiPaymentInfo SPI_PAYMENT_INFO = new SpiPaymentInfo(PRODUCT);
-    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP,null);
+    private static final SpiGetPaymentStatusResponse TRANSACTION_STATUS = new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null);
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE = buildSpiResponseTransactionStatus();
     private static final SpiResponse<SpiGetPaymentStatusResponse> TRANSACTION_RESPONSE_FAILURE = buildFailSpiResponseTransactionStatus();
-    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload().getTransactionStatus(),TRANSACTION_RESPONSE.getPayload().getFundsAvailable());
+    private static final ReadPaymentStatusResponse READ_PAYMENT_STATUS_RESPONSE = new ReadPaymentStatusResponse(TRANSACTION_RESPONSE.getPayload().getTransactionStatus(), TRANSACTION_RESPONSE.getPayload().getFundsAvailable());
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
     private static final String SOME_ENCRYPTED_PAYMENT_ID = "Encrypted Payment Id";
 
@@ -86,19 +86,18 @@ public class ReadCommonPaymentStatusServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
         when(cmsToXs2aPaymentMapper.mapToXs2aCommonPayment(PIS_COMMON_PAYMENT_RESPONSE))
             .thenReturn(COMMON_PAYMENT);
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT))
             .thenReturn(SPI_PAYMENT_INFO);
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
     }
 
     @Test
-    public void readPaymentStatus_success() {
+    void readPaymentStatus_success() {
         //Given
         when(commonPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
@@ -111,7 +110,7 @@ public class ReadCommonPaymentStatusServiceTest {
     }
 
     @Test
-    public void readPaymentStatus_failed() {
+    void readPaymentStatus_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))

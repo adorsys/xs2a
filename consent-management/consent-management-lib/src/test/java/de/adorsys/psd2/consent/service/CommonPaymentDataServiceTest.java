@@ -22,22 +22,22 @@ import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpecification;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CommonPaymentDataServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CommonPaymentDataServiceTest {
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks
@@ -49,7 +49,7 @@ public class CommonPaymentDataServiceTest {
     private PisCommonPaymentDataSpecification pisCommonPaymentDataSpecification;
 
     @Test
-    public void getPisCommonPaymentData() {
+    void getPisCommonPaymentData() {
         when(pisCommonPaymentDataSpecification.byPaymentIdAndInstanceId("payment_id", "instance_id")).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(pisCommonPaymentDataRepository.findOne(any(Specification.class))).thenReturn(Optional.of(new PisCommonPaymentData()));
 
@@ -58,7 +58,7 @@ public class CommonPaymentDataServiceTest {
     }
 
     @Test
-    public void getPisCommonPaymentData_instanceIdNotPassed() {
+    void getPisCommonPaymentData_instanceIdNotPassed() {
         when(pisCommonPaymentDataSpecification.byPaymentId("payment_id")).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(pisCommonPaymentDataRepository.findOne(any(Specification.class))).thenReturn(Optional.of(new PisCommonPaymentData()));
 
@@ -67,7 +67,7 @@ public class CommonPaymentDataServiceTest {
     }
 
     @Test
-    public void updateCancelTppRedirectURIs() {
+    void updateCancelTppRedirectURIs() {
         PisCommonPaymentData paymentData = new PisCommonPaymentData();
         paymentData.setAuthorisationTemplate(new AuthorisationTemplateEntity());
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
@@ -80,7 +80,7 @@ public class CommonPaymentDataServiceTest {
     }
 
     @Test
-    public void updateStatusInPaymentData() {
+    void updateStatusInPaymentData() {
         PisCommonPaymentData paymentData = new PisCommonPaymentData();
         assertNull(paymentData.getTransactionStatus());
 
@@ -91,7 +91,7 @@ public class CommonPaymentDataServiceTest {
     }
 
     @Test
-    public void updateCancelTppRedirectURIs_Fail() {
+    void updateCancelTppRedirectURIs_Fail() {
         PisCommonPaymentData paymentData = new PisCommonPaymentData();
         paymentData.setAuthorisationTemplate(new AuthorisationTemplateEntity());
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
@@ -102,7 +102,7 @@ public class CommonPaymentDataServiceTest {
     }
 
     @Test
-    public void updatePaymentCancellationInternalRequestId_Success() {
+    void updatePaymentCancellationInternalRequestId_Success() {
         //Given
         String paymentId = "YK1f8zkXTBIkVeJWOiHzAE";
         OffsetDateTime creationTimestamp = OffsetDateTime.now();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,20 +39,20 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledSc
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CommonDecoupledAisServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CommonDecoupledAisServiceTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String PSU_ID = "Test psuId";
     private static final String AUTHORISATION_ID = "Test authorisationId";
@@ -85,8 +85,8 @@ public class CommonDecoupledAisServiceTest {
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
 
@@ -96,13 +96,13 @@ public class CommonDecoupledAisServiceTest {
         when(request.getConsentId())
             .thenReturn(CONSENT_ID);
 
-        when(requestProviderService.getRequestId()).thenReturn(UUID.randomUUID());
-        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
+            .thenReturn(spiAspspConsentDataProvider);
 
     }
 
     @Test
-    public void proceedDecoupledApproach_by_request_spiAccountConsent_psuData_success() {
+    void proceedDecoupledApproach_by_request_spiAccountConsent_psuData_success() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
@@ -115,7 +115,7 @@ public class CommonDecoupledAisServiceTest {
     }
 
     @Test
-    public void proceedDecoupledApproach_Success() {
+    void proceedDecoupledApproach_Success() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
@@ -130,7 +130,7 @@ public class CommonDecoupledAisServiceTest {
     }
 
     @Test
-    public void proceedDecoupledApproach_Failure_StartScaDecoupledHasError() {
+    void proceedDecoupledApproach_Failure_StartScaDecoupledHasError() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_ERROR_MESSAGE)));
@@ -150,7 +150,7 @@ public class CommonDecoupledAisServiceTest {
     }
 
     @Test
-    public void proceedDecoupledApproach_ShouldContainMethodId() {
+    void proceedDecoupledApproach_ShouldContainMethodId() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));

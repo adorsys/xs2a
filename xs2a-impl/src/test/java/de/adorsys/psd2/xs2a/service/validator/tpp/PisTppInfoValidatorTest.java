@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,20 +23,19 @@ import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisTppInfoValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class PisTppInfoValidatorTest {
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final String TPP_AUTHORITY_ID = "authority id";
     private static final String DIFFERENT_TPP_AUTHORISATION_NUMBER = "different authorisation number";
@@ -54,18 +53,9 @@ public class PisTppInfoValidatorTest {
     @InjectMocks
     private PisTppInfoValidator pisTppInfoValidator;
 
-    @Before
-    public void setUp() {
-        when(tppInfoCheckerService.differsFromTppInRequest(TPP_INFO))
-            .thenReturn(false);
-        when(tppInfoCheckerService.differsFromTppInRequest(DIFFERENT_TPP_INFO))
-            .thenReturn(true);
-
-        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
-    }
-
     @Test
-    public void validateTpp_withSameTppInCommonPaymentAsInRequest_shouldReturnValid() {
+    void validateTpp_withSameTppInCommonPaymentAsInRequest_shouldReturnValid() {
+        when(tppInfoCheckerService.differsFromTppInRequest(TPP_INFO)).thenReturn(false);
         // When
         ValidationResult validationResult = pisTppInfoValidator.validateTpp(TPP_INFO);
 
@@ -76,7 +66,11 @@ public class PisTppInfoValidatorTest {
     }
 
     @Test
-    public void validateTpp_withDifferentTppInCommonPayment_shouldReturnError() {
+    void validateTpp_withDifferentTppInCommonPayment_shouldReturnError() {
+        when(tppInfoCheckerService.differsFromTppInRequest(DIFFERENT_TPP_INFO)).thenReturn(true);
+
+        when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
+
         // When
         ValidationResult validationResult = pisTppInfoValidator.validateTpp(DIFFERENT_TPP_INFO);
 

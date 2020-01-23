@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,20 +30,20 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountRefe
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aAisConsentMapper.class, Xs2aToSpiPsuDataMapper.class, Xs2aToSpiAccountAccessMapper.class,
     Xs2aToSpiAccountReferenceMapper.class})
-public class Xs2aAisConsentMapperTest {
+class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
@@ -53,7 +53,7 @@ public class Xs2aAisConsentMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToAccountConsent() {
+    void mapToAccountConsent() {
         AisAccountConsent aisAccountConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/account-consent.json", AisAccountConsent.class);
         AccountConsent expectedAccountConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-consent.json", AccountConsent.class);
 
@@ -62,13 +62,13 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToAccountConsent_nullValue() {
+    void mapToAccountConsent_nullValue() {
         AccountConsent actualAccountConsent = mapper.mapToAccountConsent(null);
         assertNull(actualAccountConsent);
     }
 
     @Test
-    public void mapToAccountConsentWithNewStatus() {
+    void mapToAccountConsentWithNewStatus() {
         AccountConsent accountConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-consent.json", AccountConsent.class);
         AccountConsent expectedAccountConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-consent-rejected.json", AccountConsent.class);
 
@@ -77,13 +77,13 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToAccountConsentWithNewStatus_nullValue() {
+    void mapToAccountConsentWithNewStatus_nullValue() {
         AccountConsent actualAccountConsent = mapper.mapToAccountConsentWithNewStatus(null, ConsentStatus.REJECTED);
         assertNull(actualAccountConsent);
     }
 
     @Test
-    public void mapToAisAccountAccessInfo() {
+    void mapToAisAccountAccessInfo() {
         Xs2aAccountAccess xs2aAccountAccess = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-access.json", Xs2aAccountAccess.class);
         AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info.json", AisAccountAccessInfo.class);
 
@@ -92,7 +92,7 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToAisAccountAccessInfo_emptyFields() {
+    void mapToAisAccountAccessInfo_emptyFields() {
         Xs2aAccountAccess xs2aAccountAccess = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-access-empty.json", Xs2aAccountAccess.class);
         AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info-empty.json", AisAccountAccessInfo.class);
 
@@ -101,7 +101,7 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToSpiScaConfirmation() {
+    void mapToSpiScaConfirmation() {
         PsuIdData psuIdData = new PsuIdData("psuId", "", "", "");
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
         request.setConsentId(CONSENT_ID);
@@ -115,14 +115,14 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToSpiScaConfirmation_psuIdDataIsNull() {
+    void mapToSpiScaConfirmation_psuIdDataIsNull() {
         SpiScaConfirmation spiScaConfirmation = mapper.mapToSpiScaConfirmation(new UpdateConsentPsuDataReq(), null);
         assertNotNull(spiScaConfirmation);
         assertNull(spiScaConfirmation.getPsuId());
     }
 
     @Test
-    public void mapToSpiUpdateConsentPsuDataReq() {
+    void mapToSpiUpdateConsentPsuDataReq() {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, CONSENT_ID, AUTHORISATION_ID);
         response.setScaAuthenticationData("123456");
         Xs2aAuthenticationObject chosenScaMethod = new Xs2aAuthenticationObject();
@@ -145,13 +145,13 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToSpiUpdateConsentPsuDataReq_nullValue() {
+    void mapToSpiUpdateConsentPsuDataReq_nullValue() {
         UpdateConsentPsuDataReq updateConsentPsuDataReq = mapper.mapToSpiUpdateConsentPsuDataReq(null, new UpdateConsentPsuDataReq());
         assertNull(updateConsentPsuDataReq);
     }
 
     @Test
-    public void mapToCreateAisConsentRequest() {
+    void mapToCreateAisConsentRequest() {
         PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
         TppInfo tppInfo = new TppInfo();
         CreateConsentReq request = new CreateConsentReq();
@@ -181,7 +181,7 @@ public class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    public void mapToCreateAisConsentRequest_nullValue() {
+    void mapToCreateAisConsentRequest_nullValue() {
         PsuIdData psuData = new PsuIdData("1", "2", "3", "4");
         TppInfo tppInfo = new TppInfo();
 

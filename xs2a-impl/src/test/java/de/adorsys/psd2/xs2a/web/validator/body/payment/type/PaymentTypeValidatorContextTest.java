@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,19 @@
 package de.adorsys.psd2.xs2a.web.validator.body.payment.type;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PaymentTypeValidatorContextTest {
+class PaymentTypeValidatorContextTest {
 
     @Test
-    public void getValidator() {
+    void getValidator() {
         List<PaymentTypeValidator> paymentTypeValidators = new ArrayList<>();
         paymentTypeValidators.add(new SinglePaymentTypeValidatorImpl(null, null, null, null, null, null));
         paymentTypeValidators.add(new PeriodicPaymentTypeValidatorImpl(null, null, null, null, null, null));

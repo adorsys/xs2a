@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,23 +32,23 @@ import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.Currency;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class, Xs2aObjectMapper.class,
     HrefLinkMapper.class, StandardPaymentProductsResolver.class, ScaMethodsMapperImpl.class, Xs2aAddressMapperImpl.class,
     RemittanceMapperImpl.class, PurposeCodeMapperImpl.class})
-public class PaymentModelMapperPsd2Test {
+class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
@@ -75,20 +75,18 @@ public class PaymentModelMapperPsd2Test {
     private PurposeCodeMapper purposeCodeMapper;
 
     private JsonReader jsonReader = new JsonReader();
-    private AccountModelMapper accountModelMapper;
-    private AmountModelMapper amountModelMapper;
 
-    @Before
-    public void setUp() {
-        accountModelMapper = new AccountModelMapperImpl();
-        amountModelMapper = new AmountModelMapper(null);
+    @BeforeEach
+    void setUp() {
+        AccountModelMapper accountModelMapper = new AccountModelMapperImpl();
+        AmountModelMapper amountModelMapper = new AmountModelMapper(null);
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, accountModelMapper, tppRedirectUriMapper,
                                             amountModelMapper, hrefLinkMapper, standardPaymentProductsResolver,
                                             scaMethodsMapper, xs2aAddressMapper, remittanceMapper, purposeCodeMapper);
     }
 
     @Test
-    public void mapToPaymentCancellationRequest() {
+    void mapToPaymentCancellationRequest() {
         PisPaymentCancellationRequest actualPaymentCancellationRequest = mapper.mapToPaymentCancellationRequest(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), PAYMENT_ID, Boolean.TRUE, "ok_url", "nok_url");
 
         PisPaymentCancellationRequest expected = jsonReader.getObjectFromFile("json/service/mapper/payment-cancellation-request.json", PisPaymentCancellationRequest.class);
@@ -96,14 +94,14 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToStatusResponse_ShouldMapCorrectly(){
+    void mapToStatusResponse_ShouldMapCorrectly(){
         PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponse(PAYMENT_STATUS_RESPONSE);
         assertEquals(response.getTransactionStatus(), de.adorsys.psd2.model.TransactionStatus.ACCP);
         assertEquals(response.getFundsAvailable(), true);
     }
 
     @Test
-    public void mapToGetPaymentResponse_SinglePayment() {
+    void mapToGetPaymentResponse_SinglePayment() {
         SinglePayment inputData = getSpiSingle();
         PaymentInitiationWithStatusResponse actualResponse = (PaymentInitiationWithStatusResponse) mapper.mapToGetPaymentResponse(inputData, PaymentType.SINGLE, "sepa-credit-transfers");
         PaymentInitiationWithStatusResponse expectedResponse = jsonReader.getObjectFromFile("json/service/mapper/payment-initiation-with-status-response.json", PaymentInitiationWithStatusResponse.class);

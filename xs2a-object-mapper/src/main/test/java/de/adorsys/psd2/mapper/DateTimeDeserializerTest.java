@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,30 +17,30 @@
 package de.adorsys.psd2.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class DateTimeDeserializerTest {
+class DateTimeDeserializerTest {
 
     private Xs2aObjectMapper xs2aObjectMapper;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         xs2aObjectMapper = new Xs2aObjectMapper();
         xs2aObjectMapper.findAndRegisterModules();
     }
 
     @Test
-    public void canDeserialize() {
+    void canDeserialize() {
         assertTrue(xs2aObjectMapper.canDeserialize(xs2aObjectMapper.constructType(LocalDateTime.class)));
     }
 
     @Test
-    public void parseDateTime() throws JsonProcessingException {
+    void parseDateTime() throws JsonProcessingException {
         TestLocalDateTimeObject localDateTimeObject = xs2aObjectMapper.readValue("{\"field1\": \"2018-10-03T23:40:40.324Z\"}", TestLocalDateTimeObject.class);
 
         assertNotNull(localDateTimeObject);

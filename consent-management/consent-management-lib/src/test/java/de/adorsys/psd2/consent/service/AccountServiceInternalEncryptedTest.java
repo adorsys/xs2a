@@ -18,20 +18,20 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.service.AccountService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountServiceInternalEncryptedTest {
+@ExtendWith(MockitoExtension.class)
+class AccountServiceInternalEncryptedTest {
 
     private static final String ENCRYPTED_CONSENT_ID = "encrypted consent ID";
     private static final String CONSENT_ID = "consent ID";
@@ -48,7 +48,7 @@ public class AccountServiceInternalEncryptedTest {
     private AccountService accountService;
 
     @Test
-    public void saveNumberOfTransactions_shouldFail() {
+    void saveNumberOfTransactions_shouldFail() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
 
@@ -61,7 +61,7 @@ public class AccountServiceInternalEncryptedTest {
     }
 
     @Test
-    public void saveNumberOfTransactions_success() {
+    void saveNumberOfTransactions_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(CONSENT_ID));
         when(accountService.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10)). thenReturn(Boolean.TRUE);

@@ -19,12 +19,11 @@ package de.adorsys.psd2.aspsp.profile.web.controller;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -34,8 +33,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileControllerTest {
+@ExtendWith(MockitoExtension.class)
+class AspspProfileControllerTest {
 
 
     @InjectMocks
@@ -44,32 +43,30 @@ public class AspspProfileControllerTest {
     @Mock
     private AspspProfileService aspspProfileService;
 
-    @Before
-    public void setUpAccountServiceMock() {
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(AspspSettingsBuilder.buildAspspSettings());
-        when(aspspProfileService.getScaApproaches())
-            .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
-    }
-
     @Test
-    public void getAspspSettings() {
+    void getAspspSettings() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        AspspSettings expectedSettings = AspspSettingsBuilder.buildAspspSettings();
+        when(aspspProfileService.getAspspSettings())
+            .thenReturn(AspspSettingsBuilder.buildAspspSettings());
 
         //When:
         ResponseEntity<AspspSettings> actualResponse = aspspProfileController.getAspspSettings();
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+
+        AspspSettings expectedSettings = AspspSettingsBuilder.buildAspspSettings();
         assertThat(actualResponse.getBody()).isEqualTo(expectedSettings);
     }
 
     @Test
-    public void getScaApproach() {
+    void getScaApproach() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
+
+        when(aspspProfileService.getScaApproaches())
+            .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
 
         //When:
         ResponseEntity<List<ScaApproach>> actualResponse = aspspProfileController.getScaApproaches();

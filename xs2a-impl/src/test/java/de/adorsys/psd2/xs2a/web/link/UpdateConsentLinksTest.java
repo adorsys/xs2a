@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,18 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdateConsentLinksTest {
+@ExtendWith(MockitoExtension.class)
+class UpdateConsentLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCiu4GLwd6mq";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
@@ -45,13 +45,13 @@ public class UpdateConsentLinksTest {
 
     private Links expectedLinks;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         expectedLinks = new Links();
     }
 
     @Test
-    public void isScaStatusMethodAuthenticated() {
+    void isScaStatusMethodAuthenticated() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.PSUAUTHENTICATED);
         links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
 
@@ -61,7 +61,7 @@ public class UpdateConsentLinksTest {
     }
 
     @Test
-    public void isAnotherScaStatus_failed() {
+    void isAnotherScaStatus_failed() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.FAILED);
         links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
 
@@ -70,7 +70,7 @@ public class UpdateConsentLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodSelectedAndDecoupleApproach() {
+    void isScaStatusMethodSelectedAndDecoupleApproach() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED);
@@ -81,7 +81,7 @@ public class UpdateConsentLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodSelectedAndRedirectApproach() {
+    void isScaStatusMethodSelectedAndRedirectApproach() {
         when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
 
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED);
@@ -93,7 +93,7 @@ public class UpdateConsentLinksTest {
     }
 
     @Test
-    public void isScaStatusFinalised() {
+    void isScaStatusFinalised() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.FINALISED);
         links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
 
@@ -102,7 +102,7 @@ public class UpdateConsentLinksTest {
     }
 
     @Test
-    public void isScaStatusMethodIdentified() {
+    void isScaStatusMethodIdentified() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED);
         links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
 

@@ -19,26 +19,26 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.config.PisPaymentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class UpdatePaymentAfterSpiServiceRemoteTest {
+@ExtendWith(MockitoExtension.class)
+class UpdatePaymentAfterSpiServiceRemoteTest {
     private static final String ENCRYPTED_PAYMENT_ID = "encrypted payment id";
     private static final String URL = "some url";
 
@@ -51,7 +51,7 @@ public class UpdatePaymentAfterSpiServiceRemoteTest {
     private PisPaymentRemoteUrls pisPaymentRemoteUrls;
 
     @Test
-    public void updatePaymentStatus() {
+    void updatePaymentStatus() {
         when(pisPaymentRemoteUrls.updatePaymentStatus()).thenReturn(URL);
         when(consentRestTemplate.exchange(eq(URL), eq(HttpMethod.PUT), isNull(), eq(Void.class), eq(ENCRYPTED_PAYMENT_ID), eq(TransactionStatus.ACSP.name())))
             .thenReturn(new ResponseEntity<>(HttpStatus.OK));
@@ -60,7 +60,7 @@ public class UpdatePaymentAfterSpiServiceRemoteTest {
     }
 
     @Test
-    public void updatePaymentCancellationTppRedirectUri_success() {
+    void updatePaymentCancellationTppRedirectUri_success() {
         ArgumentCaptor<HttpEntity> httpEntityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
         TppRedirectUri tppRedirectUri = new TppRedirectUri("ok_url", "nok_url");
 
