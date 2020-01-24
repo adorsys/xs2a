@@ -3,8 +3,17 @@
 == Table of Contents
 
 * Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+* Bugfix: Payment/Consent status doesn't change after ConfirmationCode validation in xs2a
 
 == Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
 
 Method `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfoWithPath` was removed.
 From now on, use `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfo` method instead.
+
+== Bugfix: Payment/Consent status doesn't change after ConfirmationCode validation in xs2a
+
+From now on, after ConfirmationCode validation in XS2A (`authorisationConfirmationCheckByXs2a = true` in ASPSP profile)
+there is an additional call to SPI Level (`de.adorsys.psd2.xs2a.spi.service.AisConsentSpi#notifyConfirmationCodeValidation` for consent or `de.adorsys.psd2.xs2a.spi.service.PaymentSpi#notifyConfirmationCodeValidation` for payment)
+with validation result. In response, XS2A receives an object with
+authorisation status and consent/payment status and updates them in CMS.
+

@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
@@ -92,5 +93,17 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
      */
     @NotNull
     SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    /**
+     * Notify ASPSP about validation result of confirmation code on XS2A side
+     *
+     * @param contextData                      holder of call's context data (e.g. about PSU and TPP)
+     * @param confirmationCodeValidationResult validation result of confirmation code on XS2A side
+     * @param accountConsent                   Account consent
+     * @param aspspConsentDataProvider         Provides access to read/write encrypted data to be stored in the consent management system
+     * @return Returns a response object, which contains SCA status of authorisation and Consent status
+     */
+    @NotNull
+    SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
 }

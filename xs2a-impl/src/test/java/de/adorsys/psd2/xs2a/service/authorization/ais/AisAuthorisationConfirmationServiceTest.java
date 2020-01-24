@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
@@ -39,6 +40,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -138,12 +140,14 @@ class AisAuthorisationConfirmationServiceTest {
             .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
                             .payload(aisConsentAuthorizationResponse)
                             .build());
+        SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = preparationsForNotifyConfirmationCodeValidation(true);
         // when
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = aisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
+        verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
     }
 
     @Test
@@ -210,14 +214,14 @@ class AisAuthorisationConfirmationServiceTest {
             .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
                             .payload(aisConsentAuthorizationResponse)
                             .build());
+        SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = preparationsForNotifyConfirmationCodeValidation(false);
         // when
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = aisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
         // then
-        // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(0)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
-
+        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
+        verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
     }
 
     @Test
@@ -322,5 +326,23 @@ class AisAuthorisationConfirmationServiceTest {
 
     private PsuIdData buildPsuIdData() {
         return new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
+    }
+
+    private SpiConsentConfirmationCodeValidationResponse preparationsForNotifyConfirmationCodeValidation(boolean confirmationCodeValidationResult) {
+        AccountConsent consent = createConsent();
+        SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = confirmationCodeValidationResult
+                                                                                                        ? new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FINALISED, ConsentStatus.VALID)
+                                                                                                        : new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FAILED, ConsentStatus.REJECTED);
+
+        SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder().payload(spiConsentConfirmationCodeValidationResponse).build();
+        SpiContextData contextData = getSpiContextData();
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
+        when(spiContextDataProvider.provideWithPsuIdData(buildPsuIdData())).thenReturn(contextData);
+        when(aisConsentMapper.mapToSpiAccountConsent(consent)).thenReturn(spiAccountConsent);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).thenReturn(aspspConsentDataProvider);
+        when(aisConsentSpi.notifyConfirmationCodeValidation(contextData, confirmationCodeValidationResult, spiAccountConsent, aspspConsentDataProvider)).thenReturn(spiResponse);
+
+        return spiConsentConfirmationCodeValidationResponse;
     }
 }

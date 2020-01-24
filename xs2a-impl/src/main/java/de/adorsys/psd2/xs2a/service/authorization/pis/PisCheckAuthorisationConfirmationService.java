@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 
@@ -28,4 +29,10 @@ public interface PisCheckAuthorisationConfirmationService {
                                                                            SpiConfirmationCode spiConfirmationCode,
                                                                            SpiPayment payment,
                                                                            SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(SpiContextData contextData,
+                                                                                               boolean confirmationCodeValidationResult,
+                                                                                               SpiPayment payment,
+                                                                                               boolean isCancellation,
+                                                                                               SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

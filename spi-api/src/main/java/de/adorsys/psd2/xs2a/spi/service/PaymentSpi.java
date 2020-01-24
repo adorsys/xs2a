@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -100,4 +101,16 @@ public interface PaymentSpi<T extends SpiPayment, R> {
     @NotNull
     SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
+    /**
+     * Notify ASPSP about validation result of confirmation code on XS2A side
+     *
+     * @param contextData holder of call's context data (e.g. about PSU and TPP)
+     * @param confirmationCodeValidationResult validation result of confirmation code on XS2A side
+     * @param payment payment object
+     * @param isCancellation boolean representing if the notification related to payment cancellation
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return Returns a response object, which contains SCA status of authorisation and Transaction status of payment
+     */
+    @NotNull
+    SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull T payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }
