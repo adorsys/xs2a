@@ -1,3 +1,5 @@
+Actual for XS2A v.1, v.2
+
 #AIS Specific Error Codes Use Cases
 
   ERRORS not implemented so far  

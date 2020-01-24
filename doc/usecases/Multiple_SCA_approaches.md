@@ -1,3 +1,5 @@
+Actual for XS2A v.1, v.2
+
 # How to run the demo of multiple sca approaches
 ASPSP can support several SCA approaches, so now XS2A Interface supports multiple SCA approaches also.
 
