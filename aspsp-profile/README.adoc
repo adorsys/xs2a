@@ -206,5 +206,8 @@ NONE: if ASPSP doesn't support status notifications. |NONE |SCA, PROCESS, LAST, 
 
 |checkUriComplianceToDomainSupported |This field indicates whether ASPSP supports validation of TPP URIs with domain from certificate for compliance.
 
-If parameter = FALSE then TPP URIs should not be checked for compliance. If it is TRUE then TPP URIs should be checked. |FALSE |TRUE, FALSE
+If parameter = FALSE, then TPP URIs should not be checked for compliance.
+
+If parameter = TRUE, then TPP URIs should be checked for compliance to TPP QWAC certificate.
+ |FALSE |TRUE, FALSE
 |===

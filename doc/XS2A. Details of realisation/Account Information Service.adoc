@@ -60,11 +60,11 @@ This function implies a consent resource at the ASPSP to return a list of all av
 
 The ability to create Consent on Account List of Available Accounts depends on successful validation:
 
-* The attribute in ASPSP Profile "availableAccountsConsentSupported" should be set to "TRUE". If Consent on Account List of Available Accounts is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in the ASPSP-Profile "*availableAccountsConsentSupported*" should be set to "TRUE". If Consent on Account List of Available Accounts is not supported in Profile - respond with 405 SERVICE_INVALID;
 * The consent should only contains the "availableAccounts" or “availableAccountsWithBalance” sub attribute within the "access" attribute with value "allAccounts";
 * All possible content of "accounts", "balances", "transactions" fields is ignored if call contains attribute "availableAccounts" or “availableAccountsWithBalance”;
-* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeAvailableAccountsConsentRequired" (true (by default), false);
-* When in profile parameter “scaByOneTimeAvailableAccountsConsentRequired”=false, request contains reccuringIndicator=false and in SPIResponse "multilevelSca"=true, then multilevel flag is ignored and Consent become "Valid" after execution one-factor authorisation (login and password) by one PSU. 
+* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP-Profile "*scaByOneTimeAvailableAccountsConsentRequired*" (true (by default), false);
+* When in profile parameter “*scaByOneTimeAvailableAccountsConsentRequired*”=*false*, request contains reccuringIndicator=false and in SPI Response "multilevelSca"=true, then multilevel flag is ignored and Consent become "Valid" after execution one-factor authorisation (login and password) by one PSU. 
 
 .Consent on Account List of Available Accounts
 |===
@@ -115,7 +115,7 @@ When TPP requests Read Account Data with this consent-id, xs2a should respond ac
 
 The ability to create Bank Offered Consent depends on successful validation:
 
-* The attribute in ASPSP Profile "bankOfferedConsentSupported" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in ASPSP-Profile "*bankOfferedConsentSupported*" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 405 SERVICE_INVALID;
 * The call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array;
 * For this function the Embedded SCA Approach is not supported.
 
@@ -126,10 +126,10 @@ Global consent can be recurring and one-off.
 
 The ability to create Global Consent depends on successful validation:
 
-* The attribute in ASPSP Profile "globalConsentSupported" should be set to "TRUE". If Global consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in ASPSP-Profile "*globalConsentSupported*" should be set to "TRUE". If Global consent is not supported in Profile - respond with 405 SERVICE_INVALID;
 * The call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts";
 * All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalance” fields is ignored if call contains attribute "allPsd2";
-* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP profile "scaByOneTimeGlobalConsentRequired" (true (by default), false).
+* Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP-Profile "*scaByOneTimeGlobalConsentRequired*" (true (by default), false).
 
 .Global Consent
 |===
@@ -216,7 +216,7 @@ After setting finalised status for consent:
 
 === Revoke all consents when account is closed
 
-In case PSU decides to close an account in the bank - ASPSP enables to revoke all AIS and PIIS consents of account in one step. It can be performed via endpoint in the CMS.
+In case PSU decides to close an account in the bank - ASPSP enables to revoke all AIS and PIIS consents of account in one step. It can be performed via endpoint in the CMS-PSU-API.
 
 === Get consent Status Request
 Field *lastActionDate* - is containing the date of the last action on the consent object either through the XS2A interface or the PSU/ASPSP interface having an impact on the status:
@@ -235,7 +235,7 @@ ASPSP may decide whether to support additional account information or not, by se
 
 * *accountOwnerInformationSupported* (boolean, default value is FALSE).
 
-During Consent creation in request the additional account information for AIS as *owner name* can be asking.
+If additional account information is supported by ASPSP, then after authorisation of consent ASPSP will indicate additional account information in Account Details or empty array in Account Details (if consent right to have additional info is not confirmed for this PSU).
 
 Optional field *"additionalInformation"* of type *"Additional Information Access"* in the Consent Request:
 
@@ -245,12 +245,15 @@ then the Message Code *CONSENT_INVALID* is in response with text *"An explicit c
 ** The usage of this data element requires at least one of the entries "accounts", "transactions" or "balances" also to be contained in the object.
 ** If the array is empty, also the arrays for accounts, balances or transactions shall be empty if used. If the array is empty in the request, the TPP is asking for the account owner name of all accessible accounts.
 
-Fields *"availableAccounts"*, *"availableAccountsWithBalance"* and *"allPsd2"* may have values *"allAccounts"* and *"allAccountsWithOwnerName"*.
-So if any of these fields are present in consent request and ASPSP-Profile contains *accountOwnerInformationSupported=true*, new values should be stored in consent.
+In Consent Request body fields *"availableAccounts"*, *"availableAccountsWithBalance"* and *"allPsd2"* may have additional value *"allAccountsWithOwnerName"*.
+So if any of these fields are present in consent request and ASPSP-Profile contains *accountOwnerInformationSupported=true*, new values are stored in consent and passed to SPI together with consent object.
 
-This should be passed to SPI together with consent object. Get Consent of received consent should respond with created consent.
+On SPI Level there is new `SpiAdditionalInformationAccess` field In `SpiAccountConsent` object in `SpiAccountAccess` block which represents TPP desire
+to retrieve additional information (*ownerName*) about PSU by it's account reference.
 
-If additional account information is supported by ASPSP, then after authorisation of consent ASPSP will indicate additional account information in Account Details or empty array in Account Details (if consent right to have additional info is not confirmed for this PSU). And this state of consent should be responded on Get consent.
+This information ASPSP can provide through `ownerName` field in `SpiAccountDetails` object, during invoking `requestAccountList` or `requestAccountDetailForAccount` methods in AccountSpi.
+
+Get Consent Request returns created Consent.
 
 === Account Identifier
 *aspspAccountId* - This field is a specific unique identifier for bank accounts used in payments, AIS, and PIIS consents (known to bank and given by bank) instead of IBAN and to give all consents for account by this identifier.

@@ -21,7 +21,7 @@ Current version of the XS2A Interface supports the following types of payments:
 
 === Country validation
 According to BG Specification every country can have their local requirements for information included in the Payment Request.
-From now on, Payment validation on XS2A side was extended for supporting different countries.
+Payment validation on XS2A side can support different countries.
 
 It is up to ASPSP to decide the for which countries payment validation will be performed.
 Parameter *"countryValidationSupported"* in the ASPSP-Profile, defines for which country the payment is validated.

@@ -11,14 +11,14 @@ In https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP Profile] sup
 forceXs2aBaseLinksUrl: true
 xs2aBaseLinksUrl: "/"
 ```
-- If `forceXs2aBaseLinksUrl` is set to `true`, links in responses (except "scaRedirect") shall be generated with the base URL set by `xs2aBaseLinksUrl`:
+- If *"forceXs2aBaseLinksUrl"* is set to *TRUE*, links in responses (except *"scaRedirect"*) shall be generated with the base URL set by *"xs2aBaseLinksUrl"*:
 
 1. xs2aBaseLinksUrl="/" - for relative link;
 2. xs2aBaseLinksUrl="`http://myhost.com/`" - for global link;
 
-- If `forceXs2aBaseLinksUrl` is set to `false`, links in responses (except "scaRedirect") shall be generated with the base URL of controller (as it is now);
+- If *"forceXs2aBaseLinksUrl"* is set to *FALSE*, links in responses (except *"scaRedirect"*) shall be generated with the base URL of controller (as it is now);
 
-- Default value for `forceXs2aBaseLinksUrl` is `false`.
+- Default value for *"forceXs2aBaseLinksUrl"* is *FALSE*.
 
 |===
 |Option in Profile | | | |
@@ -55,3 +55,25 @@ Each product type (SINGLE, BULK, PERIODIC) may contain payment products accordin
 
 Other payment products, supported by ASPSP, can be added for every payment type.
 If it is needed to receive extra parameters in payment (for example, bank sort code), not supported by BG Specification, ASPSP can add new payment product to Profile and xs2a api will pass payment object of this payment product to Connector side without validation.
+
+=== TPP's role validation
+Since the pasportisation process in place acts without changing the TPP’s certificate, XS2A can't rely entirely on the roles from TPP’s certificate. It is up to ASPSP to decide the way of TPP's role validation.
+
+TPP access to XS2A resources may be verified based on incoming Header, which can be set between ASPSP’s gateway and XS2A, but not before the ASPSP’s gateway (one can use adorsys QwacAssessor (https://adorsys-platform.de/solutions/qwac-assessor/) for it).
+
+ASPSP Gateway is responsible that this Header is prohibited from receiving it from TPP. If the Header is present, TPP’s requests will be validated according to roles in Header. TPP roles will be saved and updated in CMS.
+
+If the Header is not defined, then XS2A checks preferences in the ASPSP-Profile. Parameter *"checkTppRolesFromCertificateSupported"* defines whether the role validation will occur according to certificate or not.
+
+=== Signature and digest verifier
+Requirement of Digital Signature for TPP is configured in ASPSP-Profile by parameter *"tppSignatureRequired"*.
+
+If an ASPSP requires the TPP to send a digital signature (*tppSignatureRequired = TRUE*), it can be validated in XS2A validator module, which contains validators for signature and digest Headers. A keyID check is also added.
+
+=== Validation of TPPs URIs
+Usage of redirection URI (TPP-Redirect-Uri/TPP-Nok-Redirect-URI/TPP- Notification-URI) in domains that are secured by the TPP QWAC is Optional (strong recommendation).
+
+Parameter *"checkUriComplianceToDomainSupported"* in ASPSP-Profile, defines whether ASPSP supports validation of TPP URIs with domain from certificate for compliance or not.
+
+If parameter is set to *TRUE*, and TPP URIs are not compliant, then Response contains tppMessages with text "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate".
+And request is not rejected.

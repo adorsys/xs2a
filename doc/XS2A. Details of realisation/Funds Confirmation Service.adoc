@@ -14,19 +14,23 @@ The overall confirmation of funds service is separated in two phases:
 
 The first part is not mandated to be offered by the XS2A interface, since this could also be an online banking function or even a paper based consent process.
 
-Parameter *piisConsentSupported* in the ASPSP-Profile, defines whether ASPSP supports storing PIIS consent in CMS (created through ASPSP-CMS-API).
+Parameter *"piisConsentSupported"* in the ASPSP-Profile, defines which model of PIIS Consent ASPSP supports:
 
-If *piisConsentSupported = TRUE* then ASPSP stores PIIS consent in CMS and FundsConf request is validated according to this consent.
+* *NOT_SUPPORTED*;
 
-* If ASPSP doesn't provide PIIS Consent to the CMS and TPP requests Funds Confirmation, then response will contain *HTTP code  400 "NO_PIIS_ACTIVATION"*;
-* If PIIS Consent is stored in CMS without TPP-Authorisation-Number , this PIIS consent can be used by any TPP;
-* If TPP-Authorisation-Number is set in consent - PIIS consent is for particular TPP;
-* Funds Confirmation should be requested by the same TPP which is written in Consent. In case when validation is unsuccessful, XS2A sends the response with *HTTP code 400 CONSENT_UNKNOWN*;
-* In case of TPP doesn't have appropriate role in the certificate for initiate Confirmation of Funds request then XS2A sends the response with *HTTP code 401 CERTIFICATE_INVALID* with message: “You don’t have permission to this resource”.
+* *TPP_CONSENT_SUPPORTED* (Establish PIIS Consent through XS2A interface);
 
-If *piisConsentSupported = FALSE* then PIIS consent is not stored in CMS and request is sent to SPI with NULL value. And ANY TPP may request Funds Confirmation.
+* *ASPSP_CONSENT_SUPPORTED* (ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent);
 
-image::PIIS.png[Confirmation of Funds Service (Establish PIIS Consent, Perform Funds Confirmation Request), title='Confirmation of Funds Service (Establish PIIS Consent, Perform Funds Confirmation Request)', align='center']
+* *BOTH_CONSENTS_SUPPORTED*.
+
+There is no information about expiration of Funds Confirmation Consent created by TPP, so it will stay *VALID* until TPP or ASPSP revokes it.
+
+* If TPP has no Valid PIIS Consent and tries to request Funds Confirmation, then response contains *HTTP code  400 "NO_PIIS_ACTIVATION"*;
+* When parameter *"piisConsentSupported"* in the ASPSP-Profile set to *ASPSP_CONSENT_SUPPORTED* and PIIS Consent is stored in CMS without TPP-Authorisation-Number,
+this PIIS consent can be used by any TPP. If TPP-Authorisation-Number is set in consent - PIIS consent is for particular TPP;
+* Funds Confirmation should be requested by the same TPP which is written in Consent. In case when validation is *unsuccessful*, XS2A sends the response with *HTTP code 400 CONSENT_UNKNOWN*.
+* If Establish PIIS Consent through XS2A interface is not supported by ASPSP (parameter *"piisConsentSupported"* = *NOT_SUPPORTED* or *ASPSP_CONSENT_SUPPORTED*), then XS2A sends the response with *HTTP 405 SERVICE_INVALID*.
 
 === PIIS Consent Statuses:
-* While creating PIIS consent, In case of existing old valid consent for TPP, one PSU and one account (Mandatory)-its consent status becomes "RevokedByPSU" as soon as new one for the same TPP, the same PSU and the same account is created with status Valid.
+* While creating PIIS consent by ASPSP, in case of existing old valid consent for TPP, one PSU and one account (Mandatory)-its consent status becomes *"RevokedByPSU"* as soon as new one for the same TPP, the same PSU and the same account is created with status Valid.
