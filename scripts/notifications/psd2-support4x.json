@@ -1,0 +1,19 @@
+
+{ 
+	"blocks": [
+		{
+			"type": "section",
+			"text": {
+				"type": "mrkdwn",
+				"text": "Support4x env: <https://openshift.adorsys.de/console/project/adorsys-psd2-develop/overview|Link to openshift env> :psd2:"
+			}
+		},
+		{
+			"type": "divider"
+		},
+		{
+			"type": "section",
+			"fields": []
+		}
+	]
+}
