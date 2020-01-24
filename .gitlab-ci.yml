@@ -13,7 +13,7 @@ stages:
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
   - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
-
+  - "Notification" # Notify to specific channel about applications versions 
 # ------------------------------------------------------------------
 # variables
 # ------------------------------------------------------------------
@@ -328,7 +328,7 @@ Deploy to Openshift (support):
       "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:support"
       "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
 
-#Build Support-4.x imnages and deploy to support-4.x
+#Build Support-4.x images and deploy to support-4.x
 
 Push to DockerHub (support-4.x):
   stage: "Package"
@@ -349,6 +349,21 @@ Deploy to Openshift (support-4.x):
     DOCKER_TAG: support4x # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT4X} # Openshift target namespace
   <<: *deploy_openshift
+
+Notify Slack channel (support-4.x):
+  image: "bash:4"
+  stage: "Notification"
+  cache: {}
+  only:
+    -  support-4.x
+  variables:
+    HELM_RELEASE: support4x-psd2
+    ENV_JSON_FILE: scripts/notifications/psd2-support4x.json
+    SLACK_CHANNEL: ${SLACK_PSD2_SUPPORT4X_CHANNEL}
+  script:
+    - apk update && apk add jq curl
+    - sleep 60
+    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
 
 # Build NIGHTLY image and deploy (scheduled) to INTEG
 
