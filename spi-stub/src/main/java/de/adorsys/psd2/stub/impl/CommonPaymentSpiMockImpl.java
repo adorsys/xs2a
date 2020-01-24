@@ -103,4 +103,18 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
                    .build();
     }
 
+    @Override
+    public @NotNull SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiPaymentInfo payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        ScaStatus scaStatus  = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
+        TransactionStatus transactionStatus = isCancellation
+                                                  ? confirmationCodeValidationResult ? TransactionStatus.CANC : payment.getPaymentStatus()
+                                                  : confirmationCodeValidationResult ? TransactionStatus.ACSP : TransactionStatus.RJCT;
+
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(scaStatus, transactionStatus);
+
+        return SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                   .payload(response)
+                   .build();
+    }
+
 }

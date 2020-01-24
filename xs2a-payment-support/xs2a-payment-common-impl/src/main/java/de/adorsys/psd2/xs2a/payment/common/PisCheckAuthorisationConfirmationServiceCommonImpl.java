@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -36,5 +37,10 @@ public class PisCheckAuthorisationConfirmationServiceCommonImpl implements PisCh
     @Override
     public SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(SpiContextData contextData, SpiConfirmationCode spiConfirmationCode, SpiPayment payment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return commonPaymentSpi.checkConfirmationCode(contextData, spiConfirmationCode, (SpiPaymentInfo) payment, aspspConsentDataProvider);
+    }
+
+    @Override
+    public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(SpiContextData contextData, boolean confirmationCodeValidationResult, SpiPayment payment, boolean isCancellation, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return commonPaymentSpi.notifyConfirmationCodeValidation(contextData, confirmationCodeValidationResult, (SpiPaymentInfo) payment, isCancellation, aspspConsentDataProvider);
     }
 }

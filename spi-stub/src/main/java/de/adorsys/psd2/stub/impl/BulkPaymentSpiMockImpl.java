@@ -27,10 +27,7 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import lombok.extern.slf4j.Slf4j;
@@ -119,6 +116,20 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         return SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
                    .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
+                   .build();
+    }
+
+    @Override
+    public @NotNull SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiBulkPayment payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        ScaStatus scaStatus = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
+        TransactionStatus transactionStatus = isCancellation
+                                                  ? confirmationCodeValidationResult ? TransactionStatus.CANC : payment.getPaymentStatus()
+                                                  : confirmationCodeValidationResult ? TransactionStatus.ACSP : TransactionStatus.RJCT;
+
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(scaStatus, transactionStatus);
+
+        return SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                   .payload(response)
                    .build();
     }
 
