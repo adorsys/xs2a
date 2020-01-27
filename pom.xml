@@ -227,6 +227,9 @@
             **/*Config.java,pom.xml,/xs2a-server-api/**/*,/xs2a-core-payments/**/*,**/consent-psu-api/**/*,**/consent-core-web/**/*,
             **/consent-aspsp-api/**/*,**/spi-stub/**/*
         </sonar.coverage.exclusions>
+
+        <!--Javadoc-->
+        <javadoc.sourcepath>src/main/java</javadoc.sourcepath>
     </properties>
 
     <dependencyManagement>
@@ -867,6 +870,7 @@ Use it manually to generate javadocs. Don't commit it
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <additionalOptions>-Xdoclint:none</additionalOptions>
+                            <sourcepath>${javadoc.sourcepath}</sourcepath>
                         </configuration>
                         <executions>
                             <execution>
