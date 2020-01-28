@@ -31,7 +31,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_400;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,9 +42,9 @@ class PIIS405ErrorMapperTest {
     private static final String ERROR_CUSTOM_TEXT_JSON_PATH = "json/service/mapper/psd2/piis/Error405NGPIIS-custom-text.json";
     private static final String CUSTOM_ERROR_TEXT = "Custom text";
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_405,
-                                                                       TppMessageInformation.of(SERVICE_INVALID_400, "text"));
+                                                                       TppMessageInformation.of(SERVICE_INVALID_405, "text"));
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.AIS_405,
-                                                                                    TppMessageInformation.of(SERVICE_INVALID_400));
+                                                                                    TppMessageInformation.of(SERVICE_INVALID_405));
 
     private JsonReader jsonReader = new JsonReader();
     @Mock
@@ -63,7 +63,7 @@ class PIIS405ErrorMapperTest {
 
     @Test
     void getMapper_shouldReturnCorrectErrorMapper() {
-        when(messageService.getMessage(SERVICE_INVALID_400.name()))
+        when(messageService.getMessage(SERVICE_INVALID_405.name()))
             .thenReturn("Some %s");
 
         // Given
@@ -79,7 +79,7 @@ class PIIS405ErrorMapperTest {
 
     @Test
     void getMapper_withNoTextInTppMessage_shouldGetTextFromMessageService() {
-        when(messageService.getMessage(SERVICE_INVALID_400.name()))
+        when(messageService.getMessage(SERVICE_INVALID_405.name()))
             .thenReturn(CUSTOM_ERROR_TEXT);
 
         // Given
@@ -91,6 +91,6 @@ class PIIS405ErrorMapperTest {
 
         // Then
         assertEquals(expectedError, actualError);
-        verify(messageService).getMessage(SERVICE_INVALID_400.name());
+        verify(messageService).getMessage(SERVICE_INVALID_405.name());
     }
 }

@@ -748,7 +748,7 @@ class ConsentServiceTest {
 
         // When
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
-            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_405, MessageErrorCode.SERVICE_INVALID_400)));
+            .thenReturn(createValidationResult(false, createMessageError(ErrorType.AIS_400, MessageErrorCode.SERVICE_INVALID_400)));
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -756,7 +756,7 @@ class ConsentServiceTest {
 
         //Then
         assertThat(messageError).isNotNull();
-        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_405);
+        assertThat(messageError.getErrorType()).isEqualTo(ErrorType.AIS_400);
 
         TppMessageInformation tppMessage = messageError.getTppMessage();
 

@@ -4,6 +4,7 @@
 
 * Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
 * Bugfix: Payment/Consent status doesn't change after ConfirmationCode validation in xs2a
+* Bugfix: Update Response Code in Consent Initiation requests for not supported consent types
 
 == Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
 
@@ -17,3 +18,6 @@ there is an additional call to SPI Level (`de.adorsys.psd2.xs2a.spi.service.AisC
 with validation result. In response, XS2A receives an object with
 authorisation status and consent/payment status and updates them in CMS.
 
+== Bugfix: Update Response Code in Consent Initiation requests for not supported consent types
+
+From now on, if TPP sends Consent initiation requests and ASPSP doesn't support certain consent type TPP will receive 400 response code with `SERVICE_INVALID` message.
