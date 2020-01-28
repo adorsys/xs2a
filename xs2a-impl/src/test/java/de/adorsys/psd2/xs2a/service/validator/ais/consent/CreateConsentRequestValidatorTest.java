@@ -348,6 +348,8 @@ class CreateConsentRequestValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
+        when(aspspProfileService.isGlobalConsentSupported())
+            .thenReturn(true);
 
         //When
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
@@ -366,6 +368,8 @@ class CreateConsentRequestValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
+        when(aspspProfileService.isGlobalConsentSupported())
+            .thenReturn(true);
 
         //When
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
@@ -383,6 +387,8 @@ class CreateConsentRequestValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
+        when(aspspProfileService.isAvailableAccountsConsentSupported())
+            .thenReturn(true);
 
         //When
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
@@ -401,11 +407,125 @@ class CreateConsentRequestValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
+        when(aspspProfileService.isAvailableAccountsConsentSupported())
+            .thenReturn(true);
 
         //When
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
         //Then
         assertValidationResultValid(validationResult);
+    }
+
+    @Test
+    void validate_bankOfferedConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(null, null, null);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
+    }
+
+    @Test
+    void validate_globalConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(null, AccountAccessType.ALL_ACCOUNTS, null);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400_FOR_GLOBAL_CONSENT));
+    }
+
+    @Test
+    void validate_globalWithOwnerNameConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400_FOR_GLOBAL_CONSENT));
+    }
+
+    @Test
+    void validate_AvailableAccountsConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(AccountAccessType.ALL_ACCOUNTS, null, null);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
+    }
+
+    @Test
+    void validate_AvailableAccountsWithOwnerNameConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
+    }
+
+    @Test
+    void validate_AvailableAccountsWithBalanceConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(null, null, AccountAccessType.ALL_ACCOUNTS);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
+    }
+
+    @Test
+    void validate_AvailableAccountsWithBalanceWithOwnerNameConsentNotSupported() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(null, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
     }
 
     private AccountReference buildAccountReference() {
@@ -457,4 +577,12 @@ class CreateConsentRequestValidatorTest {
         assertNotNull(messageError);
         assertThat(messageError.getTppMessage().getMessageErrorCode()).isEqualTo(CONSENT_INVALID);
     }
+
+    private CreateConsentReq buildCreateConsentReq(AccountAccessType availableAccounts, AccountAccessType allPsd2, AccountAccessType availableAccountsWithBalance) {
+        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), availableAccounts, allPsd2, availableAccountsWithBalance, null);
+        CreateConsentReq createConsentReq = new CreateConsentReq();
+        createConsentReq.setAccess(accountAccess);
+        return createConsentReq;
+    }
+
 }

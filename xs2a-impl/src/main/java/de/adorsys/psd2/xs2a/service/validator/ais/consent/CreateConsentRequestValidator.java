@@ -34,11 +34,13 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
+import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 
@@ -86,13 +88,13 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         }
 
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_400_FOR_GLOBAL_CONSENT);
+            return ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400_FOR_GLOBAL_CONSENT);
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_400);
+            return ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400);
         }
         if (isNotSupportedAvailableAccounts(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_400);
+            return ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400);
         }
         if (isNotSupportedCombinedServiceIndicator(request)) {
             return ValidationResult.invalid(ErrorType.AIS_400, SESSIONS_NOT_SUPPORTED);
@@ -123,7 +125,7 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
 
     private boolean isConsentGlobal(CreateConsentReq request) {
         return isNotEmptyAccess(request.getAccess())
-                   && request.getAccess().getAllPsd2() == ALL_ACCOUNTS;
+                   && EnumSet.of(ALL_ACCOUNTS, ALL_ACCOUNTS_WITH_OWNER_NAME).contains(request.getAccess().getAllPsd2());
     }
 
     private boolean isNotEmptyAccess(Xs2aAccountAccess access) {
@@ -133,7 +135,11 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {
-        if (Objects.isNull(request.getAccess().getAvailableAccounts())) {
+        Xs2aAccountAccess access = request.getAccess();
+        boolean isConsentWithoutAvailableAccounts = Stream.of(access.getAvailableAccounts(), access.getAvailableAccountsWithBalance())
+                                                        .allMatch(Objects::isNull);
+
+        if (isConsentWithoutAvailableAccounts) {
             return false;
         }
 
@@ -148,7 +154,7 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
     private boolean isNotSupportedAccountOwnerInformation(CreateConsentReq request) {
         Xs2aAccountAccess access = request.getAccess();
 
-        AccountAccessType allAccountsWithOwnerName = AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME;
+        AccountAccessType allAccountsWithOwnerName = ALL_ACCOUNTS_WITH_OWNER_NAME;
         boolean isConsentWithAdditionalInformation = Stream.of(isConsentWithAdditionalInformationAccess(access),
                                                                access.getAvailableAccounts() == allAccountsWithOwnerName,
                                                                access.getAvailableAccountsWithBalance() == allAccountsWithOwnerName,
