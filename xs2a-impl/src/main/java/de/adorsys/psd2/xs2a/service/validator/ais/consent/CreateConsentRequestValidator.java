@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.ais.AccountAccessType.ALL_ACCOUNTS;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -82,13 +83,13 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
         }
 
         if (isNotSupportedGlobalConsentForAllPsd2(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_400_FOR_GLOBAL_CONSENT);
+            return ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400_FOR_GLOBAL_CONSENT);
         }
         if (isNotSupportedBankOfferedConsent(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_400);
+            return ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400);
         }
         if (isNotSupportedAvailableAccounts(request)) {
-            return ValidationResult.invalid(ErrorType.AIS_405, SERVICE_INVALID_400);
+            return ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400);
         }
         if (isNotSupportedCombinedServiceIndicator(request)) {
             return ValidationResult.invalid(ErrorType.AIS_400, SESSIONS_NOT_SUPPORTED);
@@ -135,7 +136,11 @@ public class CreateConsentRequestValidator implements BusinessValidator<CreateCo
     }
 
     private boolean isNotSupportedAvailableAccounts(CreateConsentReq request) {
-        if (Objects.isNull(request.getAccess().getAvailableAccounts())) {
+        Xs2aAccountAccess access = request.getAccess();
+        boolean isConsentWithoutAvailableAccounts = Stream.of(access.getAvailableAccounts(), access.getAvailableAccountsWithBalance())
+                                          .allMatch(Objects::isNull);
+
+        if (isConsentWithoutAvailableAccounts) {
             return false;
         }
 
