@@ -1,0 +1,222 @@
+@startuml
+actor PSU
+entity TPP
+entity XS2A
+entity SPI
+entity SPI
+entity CMS
+entity Online_banking
+entity Core_banking
+note right of CMS
+For an Authorisation Call
+CMS-PSU-API is used
+end note
+== Parameter in the ASPSP-Profile\nauthorisationConfirmationRequestMandated = TRUE ==
+PSU->TPP: Initiate payment
+activate TPP
+activate PSU
+TPP -> XS2A: REST Call Initiate payment\nPOST "/v1/payments/{payment-product}"
+activate XS2A
+XS2A->SPI: Java Call SPIinitiatePayment
+activate SPI
+|||
+SPI-->XS2A: SpiSinglePaymentInitiationResponse
+deactivate SPI
+|||
+XS2A-->TPP:Payment initiation response
+deactivate XS2A
+|||
+TPP->XS2A: REST Call Initiate authorisation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
+activate XS2A
+note left
+         in case of Multilevel SCA
+         the authorisation steps
+         should be repeated for other PSU
+end note
+|||
+XS2A-->TPP:Start authorisation response\n"link_SCARedirect+"link_confirmation" "
+deactivate XS2A
+TPP-->PSU: Feedback to the customer\nAuthorise the transaction
+deactivate TPP
+|||
+PSU->Online_banking: PSU re-direct to an authorisation webpage of the ASPSP
+deactivate PSU
+activate Online_banking
+|||
+Online_banking->CMS: REST Call GetPaymentByRedirectId\n"GET/psu-api/v1/payment/redirect/{redirect-id}"
+activate CMS
+|||
+CMS-->Online_banking: CmsPaymentResponse
+|||
+Online_banking->CMS: REST Call UpdatePsuIdPayment\n"PUT/psu-api/v1/payment/authorisation/\n{authorisation-id}/psu-data"
+|||
+CMS-->Online_banking: Response "http Codes: 200 successful or 400 error"
+deactivate CMS
+|||
+Online_banking-->PSU: Authorisation Process Response
+deactivate Online_banking
+activate PSU
+|||
+PSU->Online_banking: The PSU Authorises the Payment
+activate Online_banking
+|||
+Online_banking->CMS: REST Call UpdateAuthorisationStatus to "unconfirmed"\n"PUT/psu-api/v1/payment/{payment-id}/authorisation/\n{authorisation-id}/status/{status}\n+Confirmation Code"
+activate CMS
+|||
+CMS-->Online_banking: Response "http Codes: 200 successful or 400 error"
+|||
+deactivate CMS
+Online_banking-->PSU: Redirect back to TPP with Confirmation Code
+deactivate Online_banking
+PSU->TPP: Redirect back to TPP
+activate TPP
+deactivate PSU
+note right of TPP
+Additional Authorisation Confirmation Call
+end note
+TPP->XS2A: PUT Call Authorisation Confirmation\n"PUT /v1/{payment-service}/{payment- product}\n/{paymentId}/authorisations/{authorisationId}"
+deactivate TPP
+|||
+group authorisationConfirmationCheckByXs2a = FALSE
+activate XS2A
+XS2A->SPI: Java Call checkConfirmationCode
+activate SPI
+|||
+SPI-->Core_banking: Perform Confirmation Code validation
+activate Core_banking
+|||
+Core_banking-->SPI: Validation Result Response
+|||
+Core_banking-->Core_banking: Execute Payment
+|||
+Core_banking->SPI: REST Call UpdatePaymentStatus\n"PUT/psu-api/v1/payment/{payment-id}/status/{status}"
+deactivate Core_banking
+|||
+SPI-->Core_banking: Response "http Codes: 200 successful or 400 error"
+|||
+SPI-->XS2A: SpiConfirmationCodeCheckingResponse
+deactivate SPI
+deactivate XS2A
+deactivate PSU
+|||
+end
+|||
+group authorisationConfirmationCheckByXs2a = TRUE
+XS2A->CMS: REST Call getPisAuthorisationById\nwith Confirmation Code
+activate XS2A
+activate CMS
+|||
+CMS-->XS2A: Authorisation object Response
+deactivate CMS
+|||
+XS2A->XS2A: Check Confirmation Code
+|||
+XS2A->SPI: Java Call notifyConfirmationCodeValidation
+activate SPI
+|||
+SPI->Core_banking: Authorise Payment
+activate Core_banking
+|||
+Core_banking-->SPI: Transaction Status Response
+deactivate Core_banking
+|||
+SPI-->XS2A: SpiPaymentConfirmationCodeValidationResponse\n(Transaction+SCA Status)
+deactivate SPI
+|||
+XS2A->CMS: REST Call Update Authorisation
+activate CMS
+|||
+CMS-->XS2A: UpdateAuthorisation Response
+|||
+XS2A->CMS: REST Call Update Payment status
+|||
+CMS-->XS2A: UpdatePayment status Response
+deactivate CMS
+|||
+end
+|||
+XS2A-->TPP: scaStatus Response
+|||
+deactivate PSU
+activate TPP
+|||
+TPP->XS2A: REST Call get payment status\n"GET/v1/{payment-service}/{paymentId}/status"
+|||
+XS2A->CMS: REST Call GetPaymentById
+activate CMS
+|||
+CMS-->XS2A: Payment Object Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call SPI GetPaymentStatusByid
+activate SPI
+|||
+SPI->Core_banking: GetPaymentStatusById
+activate Core_banking
+|||
+Core_banking-->SPI: Transaction Status Response
+deactivate Core_banking
+|||
+SPI-->XS2A: Transaction Status Response
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateTransactionStatus
+activate CMS
+|||
+CMS->XS2A: UpdateTransactionStatus Response
+deactivate CMS
+|||
+XS2A-->TPP: Transaction Status Response
+deactivate XS2A
+|||
+TPP->XS2A: REST Call Get Payment Request "GET/v1/\n{payment-service}/{paymentId}"
+deactivate TPP
+activate XS2A
+XS2A->CMS: REST Call GetPaymentById
+activate CMS
+|||
+CMS-->XS2A: Payment Object Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call SPIGetPaymentbyId
+activate SPI
+|||
+SPI->Core_banking: GetPaymentById
+activate Core_banking
+|||
+Core_banking-->SPI: Payment Object Response
+deactivate Core_banking
+SPI-->XS2A: SpiSinglrPayment /\nSpiPeriodicPayment /\nSpiBulkPayment /\nSpiPaymentInfo
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdatePayment
+activate CMS
+|||
+CMS-->XS2A: UpdatePayment Response
+deactivate CMS
+|||
+XS2A-->TPP: Get Payment Response
+deactivate XS2A
+activate TPP
+|||
+TPP->XS2A: REST Call Get Authorisation Sub-resources\n"GET/v1/{payment-service}/{payment-product}\n/{paymentId/authorisations}"
+activate XS2A
+|||
+XS2A->CMS: GetAuthorisationsByPaymentId
+activate CMS
+|||
+CMS-->XS2A: GetAuthorisationsByPaymentId Response
+deactivate CMS
+XS2A-->TPP: Authorisation Ids List
+|||
+TPP->XS2A: REST Call Get Authorisation\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorisationId}"
+XS2A->CMS: GetAuthorisationScaStatus
+activate CMS
+|||
+CMS-->XS2A: GetAuthorisationScaStatus Response
+deactivate CMS
+XS2A-->TPP: Sca Status
+deactivate XS2A
+deactivate TPP
+@enduml
+
