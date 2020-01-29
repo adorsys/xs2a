@@ -166,6 +166,8 @@ NOTE: This definition implies that the current available scaStatus "finalised" i
 
 In case where a confirmation is processed but the preceding SCA method failed, then XS2A responds with *HTTP code 400 SCA_INVALID*. 
 
+image::PaymentRedirectWithConfirmationCode.png[Payment Initiation in Redirect Approach with Authorisation Confirmation Code, title='Payment Initiation in Redirect Approach with Authorisation Confirmation Code', align='center']
+
 === Authorisation (SCA) Statuses
 Statuses which are defined finalised:
 

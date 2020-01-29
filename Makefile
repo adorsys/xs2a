@@ -16,7 +16,7 @@ prepare_pages:
 
 .PHONY : prepare_diagrams
 prepare_diagrams: prepare_pages
-	cd pages/doc && plantuml **/*.puml
+	cd pages/doc && plantuml **/*.puml -DPLANTUML_LIMIT_SIZE=8192
 
 pages : prepare_pages prepare_diagrams
 	cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
