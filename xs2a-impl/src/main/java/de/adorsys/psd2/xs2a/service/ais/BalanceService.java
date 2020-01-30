@@ -22,6 +22,7 @@ import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
@@ -49,6 +50,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 
 @Slf4j
@@ -85,7 +88,7 @@ public class BalanceService {
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!accountConsentOptional.isPresent()) {
-            log.info("Account-ID [{}], Consent-ID [{}]. Get balances report failed. Account consent not found by id",
+            log.info("Account-ID [{}], Consent-ID [{}]. Get balances report failed. Account consent not found by ID",
                      accountId, consentId);
             return ResponseObject.<Xs2aBalancesReport>builder()
                        .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
@@ -132,7 +135,7 @@ public class BalanceService {
 
     private ResponseObject<Xs2aBalancesReport> checkSpiResponse(String consentId, String accountId, SpiResponse<List<SpiAccountBalance>> spiResponse) {
 
-        log.info("Account-ID [{}], Consent-ID: [{}]. Get balances report failed: couldn't get balances by account id.",
+        log.info("Account-ID [{}], Consent-ID: [{}]. Get balances report failed: error on SPI level",
                  accountId, consentId);
         return ResponseObject.<Xs2aBalancesReport>builder()
                    .fail(new MessageError(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)))
@@ -146,9 +149,16 @@ public class BalanceService {
                                                                                    String requestUri,
                                                                                    List<SpiAccountBalance> payload) {
         Xs2aAccountAccess access = accountConsent.getAspspAccess();
-        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getBalances(), accountId);
+        List<AccountReference> balances = access.getBalances();
+        if (hasNoAccessToSource(balances)) {
+            return ResponseObject.<Xs2aBalancesReport>builder()
+                       .fail(AIS_401, TppMessageInformation.of(CONSENT_INVALID))
+                       .build();
+        }
 
-        Xs2aBalancesReport balancesReport = balanceReportMapper.mapToXs2aBalancesReport(requestedAccountReference, payload);
+        SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(balances, accountId);
+
+        Xs2aBalancesReport balancesReport = balanceReportMapper.mapToXs2aBalancesReportSpi(requestedAccountReference, payload);
 
         ResponseObject<Xs2aBalancesReport> response = ResponseObject.<Xs2aBalancesReport>builder()
                                                           .body(balancesReport)
@@ -159,5 +169,10 @@ public class BalanceService {
                                            requestUri, accountHelperService.needsToUpdateUsage(accountConsent), accountId, null);
 
         return response;
+    }
+
+    private boolean hasNoAccessToSource(List<AccountReference> references) {
+        return references.stream()
+                   .allMatch(AccountReference::isNotIbanAccount);
     }
 }

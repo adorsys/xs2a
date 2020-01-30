@@ -1,0 +1,35 @@
+{
+  "resourceId": "_-rBr7CwR34mv9MVVeEJcE",
+  "iban": "DE80760700240271232400",
+  "currency": "EUR",
+  "name": "anton.brueckner",
+  "product": "Cash24",
+  "cashAccountType": "CASH",
+  "linkedAccounts": "4Zm0EEUDQrIlq6SJlPbinI",
+  "accountStatus": "enabled",
+  "usageType": "PRIV",
+  "balances": [
+    {
+      "balanceAmount": {
+        "currency": "EUR",
+        "amount": "2001.00"
+      },
+      "balanceType": "INTERIM_AVAILABLE",
+      "lastChangeDateTime": "2020-05-31T15:16:16.37Z",
+      "referenceDate": "2020-03-31T19:12:13.37Z",
+      "lastCommittedTransaction": null
+    },
+    {
+      "balanceAmount": {
+        "currency": "EUR",
+        "amount": "1001.00"
+      },
+      "balanceType": "CLOSING_BOOKED",
+      "lastChangeDateTime": "2020-05-31T15:16:16.37Z",
+      "referenceDate": "2020-03-31T19:12:13.37Z"
+    }
+  ],
+  "ownerName": null,
+  "_links": {
+  }
+}

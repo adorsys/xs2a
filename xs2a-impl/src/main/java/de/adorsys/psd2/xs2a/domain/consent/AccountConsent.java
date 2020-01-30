@@ -23,12 +23,12 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Data
 @AllArgsConstructor
@@ -105,5 +105,28 @@ public class AccountConsent {
         return authorisations.stream()
                    .filter(auth -> auth.getId().equals(authorisationId))
                    .findFirst();
+    }
+
+    public boolean isConsentWithNotIbanAccount() {
+        if (access == null) {
+            return false;
+        }
+
+        return Stream.of(access.getAccounts(), access.getBalances(), access.getTransactions())
+                   .filter(Objects::nonNull)
+                   .flatMap(Collection::stream)
+                   .allMatch(acc -> StringUtils.isAllBlank(acc.getIban(), acc.getBban(), acc.getMsisdn()));
+    }
+
+    public boolean isConsentWithNotCardAccount() {
+        if (access == null) {
+            return false;
+
+        }
+
+        return Stream.of(access.getAccounts(), access.getBalances(), access.getTransactions())
+                   .filter(Objects::nonNull)
+                   .flatMap(Collection::stream)
+                   .allMatch(acc -> StringUtils.isAllBlank(acc.getMaskedPan(), acc.getPan()));
     }
 }

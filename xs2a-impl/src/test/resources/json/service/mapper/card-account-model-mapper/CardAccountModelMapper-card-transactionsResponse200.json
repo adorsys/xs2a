@@ -1,0 +1,212 @@
+{
+  "cardAccount": {
+    "currency": "USD",
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "pan": "2222"
+  },
+  "cardTransactions": {
+    "booked": [
+      {
+        "cardTransactionId": "1",
+        "terminalId": "4",
+        "bookingDate": "2017-01-01",
+        "transactionDate": "2017-01-01",
+        "transactionAmount": {
+          "currency": "USD",
+          "amount": "100"
+        },
+        "currencyExchange": [
+          {
+            "sourceCurrency": "USD",
+            "exchangeRate": "27",
+            "unitCurrency": "UAH",
+            "targetCurrency": "UAH",
+            "quotationDate": "2018-02-02",
+            "contractIdentification": "identification"
+          }
+        ],
+        "proprietaryBankTransactionCode": "very secret code"
+      }
+    ],
+    "pending": [
+      {
+        "cardTransactionId": "2",
+        "terminalId": "4",
+        "bookingDate": "2017-01-01",
+        "transactionDate": "2017-01-01",
+        "transactionAmount": {
+          "currency": "USD",
+          "amount": "100"
+        },
+        "currencyExchange": [
+          {
+            "sourceCurrency": "USD",
+            "exchangeRate": "27",
+            "unitCurrency": "UAH",
+            "targetCurrency": "UAH",
+            "quotationDate": "2018-02-02",
+            "contractIdentification": "identification"
+          }
+        ],
+        "proprietaryBankTransactionCode": "very secret code"
+      }
+    ],
+    "_links": {
+      "scaRedirect": {
+        "href": "http://scaRedirect"
+      },
+      "scaOAuth": {
+        "href": "http://scaOAuth"
+      },
+      "updatePsuIdentification": {
+        "href": "http://updatePsuIdentification"
+      },
+      "updateProprietaryData": {
+        "href": "http://updateProprietaryData"
+      },
+      "updatePsuAuthentication": {
+        "href": "http://updatePsuAuthentication"
+      },
+      "selectAuthenticationMethod": {
+        "href": "http://selectAuthenticationMethod"
+      },
+      "self": {
+        "href": "http://self"
+      },
+      "status": {
+        "href": "http://status"
+      },
+      "account": {
+        "href": "http://account"
+      },
+      "balances": {
+        "href": "http://balances"
+      },
+      "transactions": {
+        "href": "http://transactions"
+      },
+      "first": {
+        "href": "http://first"
+      },
+      "next": {
+        "href": "http://next"
+      },
+      "previous": {
+        "href": "http://previous"
+      },
+      "last": {
+        "href": "http://last"
+      },
+      "download": {
+        "href": "http://download"
+      },
+      "startAuthorisation": {
+        "href": "http://startAuthorisation"
+      },
+      "startAuthorisationWithPsuIdentification": {
+        "href": "http://startAuthorisationWithPsuIdentification"
+      },
+      "startAuthorisationWithPsuAuthentication": {
+        "href": "http://startAuthorisationWithPsuAuthentication"
+      },
+      "startAuthorisationWithAuthenticationMethodSelection": {
+        "href": "http://startAuthorisationWithAuthenticationMethodSelection"
+      },
+      "startAuthorisationWithTransactionAuthorisation": {
+        "href": "http://startAuthorisationWithTransactionAuthorisation"
+      },
+      "scaStatus": {
+        "href": "http://scaStatus"
+      },
+      "authoriseTransaction": {
+        "href": "http://authoriseTransaction"
+      }
+    }
+  },
+  "balances": [
+    {
+      "balanceAmount": {
+        "currency": "USD",
+        "amount": "100"
+      },
+      "balanceType": "authorised",
+      "lastChangeDateTime": "2018-03-31T15:16:16.37Z",
+      "referenceDate": "2019-03-21",
+      "lastCommittedTransaction": "lastCommittedTransaction"
+    }
+  ],
+  "_links": {
+    "scaRedirect": {
+      "href": "http://scaRedirect"
+    },
+    "scaOAuth": {
+      "href": "http://scaOAuth"
+    },
+    "updatePsuIdentification": {
+      "href": "http://updatePsuIdentification"
+    },
+    "updateProprietaryData": {
+      "href": "http://updateProprietaryData"
+    },
+    "updatePsuAuthentication": {
+      "href": "http://updatePsuAuthentication"
+    },
+    "selectAuthenticationMethod": {
+      "href": "http://selectAuthenticationMethod"
+    },
+    "self": {
+      "href": "http://self"
+    },
+    "status": {
+      "href": "http://status"
+    },
+    "account": {
+      "href": "http://account"
+    },
+    "balances": {
+      "href": "http://balances"
+    },
+    "transactions": {
+      "href": "http://transactions"
+    },
+    "first": {
+      "href": "http://first"
+    },
+    "next": {
+      "href": "http://next"
+    },
+    "previous": {
+      "href": "http://previous"
+    },
+    "last": {
+      "href": "http://last"
+    },
+    "download": {
+      "href": "http://download"
+    },
+    "startAuthorisation": {
+      "href": "http://startAuthorisation"
+    },
+    "startAuthorisationWithPsuIdentification": {
+      "href": "http://startAuthorisationWithPsuIdentification"
+    },
+    "startAuthorisationWithPsuAuthentication": {
+      "href": "http://startAuthorisationWithPsuAuthentication"
+    },
+    "startAuthorisationWithAuthenticationMethodSelection": {
+      "href": "http://startAuthorisationWithAuthenticationMethodSelection"
+    },
+    "startAuthorisationWithTransactionAuthorisation": {
+      "href": "http://startAuthorisationWithTransactionAuthorisation"
+    },
+    "scaStatus": {
+      "href": "http://scaStatus"
+    },
+    "authoriseTransaction": {
+      "href": "http://authoriseTransaction"
+    }
+  }
+}

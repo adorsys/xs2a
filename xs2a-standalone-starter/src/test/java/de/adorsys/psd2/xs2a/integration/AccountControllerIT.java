@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
@@ -100,6 +101,7 @@ class AccountControllerIT {
     private static final String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    private static final String IBAN = "DE62500105179972514662";
     private HttpHeaders httpHeaders = new HttpHeaders();
     private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
@@ -343,14 +345,20 @@ class AccountControllerIT {
     }
 
     private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(IBAN);
+
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), null, 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
     }
 
     private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(IBAN);
+
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
         return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, false, LocalDate.now().plusDays(1), null, 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());

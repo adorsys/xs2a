@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.repository.impl;
 
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingServiceV1;
+import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingServiceV2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,9 +43,13 @@ class ChecksumCalculatingFactoryTest {
     @Mock
     private ChecksumCalculatingServiceV1 v001;
 
+    @Mock
+    private ChecksumCalculatingServiceV2 v002;
+
     @BeforeEach
     void init() {
         when(v001.getVersion()).thenReturn("001");
+        when(v002.getVersion()).thenReturn("002");
         factory.init();
     }
 
@@ -83,7 +88,7 @@ class ChecksumCalculatingFactoryTest {
 
         // Then
         assertTrue(actualResult.isPresent());
-        assertEquals(v001.getVersion(), actualResult.get().getVersion());
+        assertEquals(v002.getVersion(), actualResult.get().getVersion());
     }
 
     private static String getCorrectChecksum() {

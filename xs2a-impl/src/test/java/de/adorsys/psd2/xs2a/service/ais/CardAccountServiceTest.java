@@ -1,0 +1,656 @@
+/*
+ * Copyright 2018-2020 adorsys GmbH & Co KG
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.adorsys.psd2.xs2a.service.ais;
+
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.service.TppService;
+import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardAccountDetailsValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardAccountListValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetCardAccountDetailsRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetCardAccountListConsentObject;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiCardAccountDetails;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.CardAccountSpi;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
+import de.adorsys.xs2a.reader.JsonReader;
+import org.apache.commons.collections.CollectionUtils;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class CardAccountServiceTest {
+
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final String CONSENT_ID = "Test consentId";
+    private static final String ACCOUNT_ID = "Test accountId";
+
+    private static final String REQUEST_URI = "request/uri";
+    private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
+    private static final AccountReference ACCOUNT_REFERENCE = jsonReader.getObjectFromFile("json/service/account/xs2a-account-reference-full.json", AccountReference.class);
+    private static final AccountReference ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS = jsonReader.getObjectFromFile("json/service/account/xs2a-account-reference-without-bank_ids.json", AccountReference.class);
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
+    private static final MessageError VALIDATION_ERROR = buildMessageError();
+
+    private AccountConsent accountConsent;
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    private GetCardAccountListConsentObject getCardAccountListConsentObject;
+    private SpiAccountReference spiAccountReference;
+    private GetCardAccountDetailsRequestObject getCardAccountDetailsRequestObject;
+
+    @InjectMocks
+    private CardAccountService cardAccountService;
+
+    @Mock
+    private CardAccountSpi cardAccountSpi;
+    @Mock
+    private SpiToXs2aAccountDetailsMapper accountDetailsMapper;
+    @Mock
+    private Xs2aAisConsentService aisConsentService;
+    @Mock
+    private Xs2aAisConsentMapper consentMapper;
+    @Mock
+    private TppService tppService;
+    @Mock
+    private SpiCardAccountDetails spiCardAccountDetails;
+    @Mock
+    private Xs2aCardAccountDetails xs2aAccountDetails;
+    @Mock
+    private Xs2aEventService xs2aEventService;
+    @Mock
+    private AccountReferenceInConsentUpdater accountReferenceUpdater;
+    @Mock
+    private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private GetCardAccountListValidator getCardAccountListValidator;
+    @Mock
+    private GetCardAccountDetailsValidator getCardAccountDetailsValidator;
+    @Mock
+    private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
+    @Mock
+    private AccountHelperService accountHelperService;
+    @Mock
+    private LoggingContextService loggingContextService;
+
+    @BeforeEach
+    void setUp() {
+        accountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE));
+        spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
+        getCardAccountListConsentObject = buildGetAccountListConsentObject();
+        spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
+        getCardAccountDetailsRequestObject = buildCommonAccountRequestObject();
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+    }
+
+    @Test
+    void getAccountDetailsList_Failure_NoAccountConsent() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_UNKNOWN_400);
+    }
+
+    @Test
+    void getAccountDetailsList_Failure_AllowedAccountDataHasError() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(getCardAccountListValidator.validate(getCardAccountListConsentObject))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    void getAccountDetailsList_Failure_SpiResponseHasError() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildErrorSpiResponse());
+
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(FORMAT_ERROR))
+                            .build());
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, FORMAT_ERROR);
+    }
+
+    @Test
+    void getAccountDetailsList_Failure_AccountConsentUpdatedIsEmpty() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+
+        List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+
+        List<Xs2aCardAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+
+        when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+
+        when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AccountConsent>builder()
+                            .error(CmsError.LOGICAL_ERROR)
+                            .build());
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_UNKNOWN_400);
+    }
+
+    @Test
+    void getAccountDetailsList_Success() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+
+        List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+
+        List<Xs2aCardAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+
+        when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+
+        when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AccountConsent>builder()
+                            .payload(accountConsent)
+                            .build());
+
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+
+        Xs2aCardAccountListHolder body = actualResponse.getBody();
+
+        assertThat(CollectionUtils.isNotEmpty(body.getCardAccountDetails())).isTrue();
+
+        List<Xs2aCardAccountDetails> accountDetailsList = body.getCardAccountDetails();
+
+        assertThat(CollectionUtils.isNotEmpty(accountDetailsList)).isTrue();
+        assertThat(CollectionUtils.isEqualCollection(accountDetailsList, xs2aAccountDetailsList)).isTrue();
+    }
+
+    @Test
+    void getAccountDetailsList_shouldUpdateAccountReferences() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+
+        AccountConsent accountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS));
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+
+        List<Xs2aCardAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+
+        when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+
+        AccountConsent updatedAccountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE));
+        when(accountReferenceUpdater.updateCardAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList))
+            .thenReturn(CmsResponse.<AccountConsent>builder()
+                            .payload(updatedAccountConsent)
+                            .build());
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+        Xs2aCardAccountListHolder responseBody = actualResponse.getBody();
+        assertThat(responseBody.getCardAccountDetails()).isEqualTo(xs2aAccountDetailsList);
+
+        verify(accountReferenceUpdater).updateCardAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList);
+        assertThat(responseBody.getAccountConsent()).isEqualTo(updatedAccountConsent);
+    }
+
+    @Test
+    void getAccountList_withInvalidConsent_shouldReturnValidationError() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        verify(getCardAccountListValidator).validate(getCardAccountListConsentObject);
+
+        assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    void getAccountList_shouldRecordStatusIntoLoggingContext() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+        List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+        when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(Collections.singletonList(xs2aAccountDetails));
+        when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AccountConsent>builder()
+                            .payload(accountConsent)
+                            .build());
+        ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
+
+        // When
+        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        verify(loggingContextService).storeConsentStatus(argumentCaptor.capture());
+        assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
+    }
+
+    @Test
+    void consentActionLog_recurringConsentWithIpAddress_needsToUpdateUsageFalse() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+
+        AccountConsent accountConsent = createConsent(true);
+        prepationForGetAccountListRequest(accountConsent);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(false);
+
+        // When
+        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
+    }
+
+    @Test
+    void consentActionLog_recurringConsentWithoutIpAddress_needsToUpdateUsageTrue() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+
+        AccountConsent accountConsent = createConsent(true);
+        prepationForGetAccountListRequest(accountConsent);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(true);
+
+        // When
+        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+    }
+
+    @Test
+    void consentActionLog_oneOffConsentWithIpAddress_needsToUpdateUsageTrue() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+
+        AccountConsent accountConsent = createConsent(false);
+        prepationForGetAccountListRequest(accountConsent);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(true);
+
+        // When
+        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+    }
+
+    @Test
+    void consentActionLog_oneOffConsentWithoutIpAddress_needsToUpdateUsageTrue() {
+        // Given
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(accountConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+
+        AccountConsent accountConsent = createConsent(false);
+        prepationForGetAccountListRequest(accountConsent);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(true);
+
+        // When
+        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+    }
+
+    @Test
+    void getAccountDetails_Failure_NoAccountConsent() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.empty());
+        // When
+        ResponseObject<Xs2aCardAccountDetailsHolder> actualResponse = cardAccountService.getCardAccountDetails(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_UNKNOWN_400);
+    }
+
+    @Test
+    void getAccountDetails_Failure_AllowedAccountDataHasError() {
+        // Given
+        when(getCardAccountDetailsValidator.validate(getCardAccountDetailsRequestObject))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aCardAccountDetailsHolder> actualResponse = cardAccountService.getCardAccountDetails(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    void getAccountDetails_Failure_SpiResponseHasError() {
+        // Given
+        when(getCardAccountDetailsValidator.validate(any(GetCardAccountDetailsRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any()))
+            .thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(cardAccountSpi.requestCardAccountDetailsForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildErrorSpiResponseDetails());
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponseDetails(), ServiceType.AIS))
+            .thenReturn(ErrorHolder
+                            .builder(ErrorType.AIS_400)
+                            .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
+                            .build());
+        // When
+        ResponseObject<Xs2aCardAccountDetailsHolder> actualResponse = cardAccountService.getCardAccountDetails(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, FORMAT_ERROR);
+    }
+
+    @Test
+    void getAccountDetails_failure_accountReferenceNotFoundInAccountAccess() {
+        // Given
+        when(getCardAccountDetailsValidator.validate(getCardAccountDetailsRequestObject))
+            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+
+        // When
+        ResponseObject<Xs2aCardAccountDetailsHolder> actualResponse = cardAccountService.getCardAccountDetails(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_INVALID);
+    }
+
+    @Test
+    void getAccountDetails_Success() {
+        // Given
+        when(getCardAccountDetailsValidator.validate(any(GetCardAccountDetailsRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any()))
+            .thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+        when(cardAccountSpi.requestCardAccountDetailsForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiCardAccountDetails));
+        when(accountDetailsMapper.mapToXs2aCardAccountDetails(spiCardAccountDetails))
+            .thenReturn(xs2aAccountDetails);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        // When
+        ResponseObject<Xs2aCardAccountDetailsHolder> actualResponse = cardAccountService.getCardAccountDetails(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+
+        Xs2aCardAccountDetails body = actualResponse.getBody().getCardAccountDetails();
+
+        assertThat(body).isNotNull();
+        assertThat(body).isEqualTo(xs2aAccountDetails);
+    }
+
+    private void assertResponseHasNoErrors(ResponseObject actualResponse) {
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isFalse();
+    }
+
+    private void assertThatErrorIs(ResponseObject actualResponse, MessageErrorCode messageErrorCode) {
+        assertThat(actualResponse).isNotNull();
+        assertThat(actualResponse.hasError()).isTrue();
+
+        TppMessageInformation tppMessage = actualResponse.getError().getTppMessage();
+
+        assertThat(tppMessage).isNotNull();
+        assertThat(tppMessage.getMessageErrorCode()).isEqualTo(messageErrorCode);
+    }
+
+    private void prepationForGetAccountListRequest(AccountConsent accountConsent) {
+        List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+
+        List<Xs2aCardAccountDetails> xs2aCardAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+        when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aCardAccountDetailsList);
+        when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AccountConsent>builder()
+                            .payload(accountConsent)
+                            .build());
+    }
+
+    // Needed because SpiResponse is final, so it's impossible to mock it
+    private <T> SpiResponse<T> buildSuccessSpiResponse(T payload) {
+        return SpiResponse.<T>builder()
+                   .payload(payload)
+                   .build();
+    }
+
+    // Needed because SpiResponse is final, so it's impossible to mock it
+    private SpiResponse<List<SpiCardAccountDetails>> buildErrorSpiResponse() {
+        return SpiResponse.<List<SpiCardAccountDetails>>builder()
+                   .error(new TppMessage(FORMAT_ERROR))
+                   .build();
+    }
+
+    // Needed because SpiResponse is final, so it's impossible to mock it
+    private SpiResponse<SpiCardAccountDetails> buildErrorSpiResponseDetails() {
+        return SpiResponse.<SpiCardAccountDetails>builder()
+                   .error(new TppMessage(FORMAT_ERROR))
+                   .build();
+    }
+
+    private static AccountConsent createConsent(Xs2aAccountAccess access) {
+        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    }
+
+    private static AccountConsent createConsent(boolean recurringIndicator) {
+        String fileName = recurringIndicator
+                              ? "json/AccountConsentRecurringIndicatorTrue.json"
+                              : "json/AccountConsentRecurringIndicatorFalse.json";
+        return jsonReader.getObjectFromFile(fileName, AccountConsent.class);
+    }
+
+    private static TppInfo createTppInfo() {
+        TppInfo tppInfo = new TppInfo();
+        tppInfo.setAuthorisationNumber(UUID.randomUUID().toString());
+        return tppInfo;
+    }
+
+    private static Xs2aAccountAccess createAccountAccess(AccountReference accountReference) {
+        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null, null);
+    }
+
+    @NotNull
+    private static MessageError buildMessageError() {
+        return new MessageError(ErrorType.AIS_401, of(CONSENT_INVALID));
+    }
+
+    @NotNull
+    private GetCardAccountListConsentObject buildGetAccountListConsentObject() {
+        return new GetCardAccountListConsentObject(accountConsent, REQUEST_URI);
+    }
+
+    @NotNull
+    private GetCardAccountDetailsRequestObject buildCommonAccountRequestObject() {
+        return new GetCardAccountDetailsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI);
+    }
+
+}

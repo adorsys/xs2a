@@ -1,0 +1,1129 @@
+[
+  {
+    "cardTransactionId": "ERbI5GiJQEAuTkb1SNE63A",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-27",
+    "bookingDate": "2020-01-27",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "rYdcmCvXRt4k75RRUOANV0",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-24",
+    "bookingDate": "2020-01-24",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "ujOf0BMYRMkuKKLDbIhwDI",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-21",
+    "bookingDate": "2020-01-21",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "SDNQVvEpQw8vncheVbJG-Y",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-21",
+    "bookingDate": "2020-01-21",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "RW078EuIT_0pkffmTPG7tE",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-21",
+    "bookingDate": "2020-01-21",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "-YKPy8dxTG0nY_LlTDLc-U",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-17",
+    "bookingDate": "2020-01-17",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "tEYQF7E-Qt8r04suTn5-LY",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-15",
+    "bookingDate": "2020-01-15",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "LPyTZvd3RIogM843VtoA5w",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "96KLS6H_R40p0cMAGTLUoc",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "ExjgBORSRmUogVJu8XL8zA",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "oHZt2jKnTDQh_Od9ccNNgo",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "1MgbF4-bREEvUMpzsGs1gc",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "NOQ1g_oER8sjFbVYy4AIkc",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "kTE7cozjTAUgu4cAuK7Ck0",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "P_qEvWNVQTomrJDqQN3kkQ",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "q7bPaf9HQKMpWQEHqpG9FI",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "ROm4IzPdQM0i2UeMhO9Rcs",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "M8WpWjaoTckpPPjb_MfuPg",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "M65mqWkwRh4js8BQhvgR2M",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "wzS73msCQeIkQq2SaV_5A8",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "RthtbgjsScsqXjKK6TME4c",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "VMfcSYrrQN0nZkQt1IfdsU",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "0jMxymhpSewj1vytyXrhzA",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 0.01
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "QUUFKxFGT4cmA__I-YEfPw",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-14",
+    "bookingDate": "2020-01-14",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "57NTn9AKSf0iOFSNAs94BY",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-11",
+    "bookingDate": "2020-01-11",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "SDjWVLacRoIgFR-ERsITfI",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-11",
+    "bookingDate": "2020-01-11",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "nmQAtO8cTSYg3mVoL5Ta2A",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -150.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -150.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -150.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "zKUhee3OQRsj6oqgbolgSk",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -100.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -100.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -100.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "6pLMRVD-RlMpvyPD3ixf2M",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -2300.00
+    },
+    "currencyExchange": [
+      null
+    ],
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -2300.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -2300.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "lk-fUy_JTe0gK2Tlk4HxdY",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -250.00
+    },
+    "currencyExchange": [
+      null,
+      null
+    ],
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -250.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -250.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "6D9xittPT2QoLGVfUAA-WI",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 2300.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 2300.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 2300.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "M0Ax35AkSXQrboNtlLKhRg",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -900.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -900.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -900.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "fWmRAA8kRGwo78MwFXR8wQ",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": -700.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": -700.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": -700.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  },
+  {
+    "cardTransactionId": "TnePEICuT9AmrwENzgkaIc",
+    "terminalId": "terminalId",
+    "transactionDate": "2020-01-09",
+    "bookingDate": "2020-01-09",
+    "transactionAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "currencyExchange": null,
+    "originalAmount": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFee": {
+      "currency": "EUR",
+      "amount": 30000.00
+    },
+    "markupFeePercentage": "markupFeePercentage",
+    "cardAcceptorId": null,
+    "cardAcceptorAddress": {
+      "streetName": "street",
+      "buildingNumber": "buildNum",
+      "townName": "town",
+      "postCode": "post",
+      "country": "EU"
+    },
+    "merchantCategoryCode": "merchantCategoryCode",
+    "maskedPAN": "493702******0836",
+    "transactionDetails": "transactionDetails",
+    "invoiced": false,
+    "proprietaryBankTransactionCode": null
+  }
+]

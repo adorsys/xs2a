@@ -25,10 +25,7 @@ import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AisConsentAction;
-import de.adorsys.psd2.consent.domain.account.AspspAccountAccessHolder;
-import de.adorsys.psd2.consent.domain.account.TppAccountAccessHolder;
+import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
@@ -42,6 +39,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -265,7 +263,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             // https://rules.sonarsource.com/java/RSPEC-3655
             // but we have isPresent in the code before.
             updateAisConsentUsage(consent, request); //NOSONAR
-            logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
+            logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId()); //NOSONAR
         }
 
         return CmsResponse.<CmsResponse.VoidResponse>builder()
@@ -317,13 +315,43 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         AisConsent consent = consentOptional.get();
-        consent.addAspspAccountAccess(new AspspAccountAccessHolder(request).getAccountAccesses());
+
+        Set<AspspAccountAccess> aspspAccesses = new AspspAccountAccessHolder(request).getAccountAccesses();
+
+        List<AspspAccountAccess> cmsAccesses = consent.getAspspAccountAccesses();
+
+        consent.setAspspAccountAccesses(getUpdatedAccesses(cmsAccesses, aspspAccesses));
 
         AisConsent aisConsent = aisConsentRepository.verifyAndUpdate(consent);
 
         return CmsResponse.<AisAccountConsent>builder()
                    .payload(consentMapper.mapToAisAccountConsent(aisConsent))
                    .build();
+    }
+
+    private AspspAccountAccess enrichAccount(Set<AspspAccountAccess> accounts, AspspAccountAccess element) {
+
+        return accounts.stream()
+                   .filter(a -> a.getAccountIdentifier().equals(element.getAccountIdentifier())
+                                    && a.getAccountReferenceType() == element.getAccountReferenceType()
+                                    && a.getCurrency() == element.getCurrency()
+                                    && a.getTypeAccess() == (element.getTypeAccess()))
+                   .findFirst()
+                   .orElse(element);
+    }
+
+    private List<AspspAccountAccess> getUpdatedAccesses(List<AspspAccountAccess> cmsAccesses, Set<AspspAccountAccess> requestAccesses) {
+        if (CollectionUtils.isEmpty(cmsAccesses)) {
+            return new ArrayList<>(requestAccesses);
+        }
+
+        Set<AspspAccountAccess> updatedCmsAccesses = new HashSet<>();
+
+        for (AspspAccountAccess access : cmsAccesses) {
+            updatedCmsAccesses.add(enrichAccount(requestAccesses, access));
+        }
+
+        return new ArrayList<>(updatedCmsAccesses);
     }
 
     @Override

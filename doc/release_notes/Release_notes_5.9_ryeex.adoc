@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Bugfix: Payment endpoints return incorrect HTTP status code on providing unknown payment ID
+* Implement cards accounts
 
 == Bugfix: Payment endpoints return incorrect HTTP status code on providing unknown payment ID
 
@@ -13,3 +14,16 @@ The following endpoints were affected by this change:
 - Payment information request (`GET /v1/{payment_service}/{payment_product}/{payment_id}`)
 - Payment initiation status request (`GET /v1/{payment_service}/{payment_product}/{payment_id}/status`)
 - Payment cancellation request (`DELETE /v1/{payment_service}/{payment_product}/{payment_id}`)
+
+== Implement cards accounts
+
+From now on, XS2A supports new interface - card account with endpoints described below:
+
+- Read list of card accounts (`GET /v1/card-accounts`)
+- Read card account balances (`GET /v1/card-accounts/{account-id}/balances`)
+- Read card transaction list of an account (`GET /v1/card-accounts/{account-id}/transactions`)
+- Read details about a card account (`GET /v1/card-accounts/{account-id}`)
+
+To use card account interface, one should add parameter to ASPSP profile in `supportedAccountReferenceFields` field (`MASKED_PAN` or/and `PAN`).
+For providing access to card accounts standard AIS consent should be used. Corresponding changes were made to SPI level.
+

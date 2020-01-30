@@ -1,0 +1,10 @@
+{
+  "aspspAccountId": "3278921mxl-n2131-13nw",
+  "resourceId": "Test accountId",
+  "iban": "DE89370400440532013000",
+  "bban": "DE89370400440532013000",
+  "pan": "4937023494670836",
+  "maskedPan": "493702******0836",
+  "msisdn": "Test MSISDN",
+  "currency": "EUR"
+}
