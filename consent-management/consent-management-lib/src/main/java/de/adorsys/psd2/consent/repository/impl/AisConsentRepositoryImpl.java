@@ -113,7 +113,7 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
         byte[] checksumFromDb = entity.getChecksum();
 
         if (checksumFromDb != null
-                && wasStatusValidBefore(entity)
+                && wasStatusHoldBefore(entity)
                 && !calculatingService.verifyConsentWithChecksum(entity, checksumFromDb)) {
             log.warn("AIS consent checksum verification failed! AIS consent ID: [{}]. Contact ASPSP for details.", entity.getExternalId());
             return false;
@@ -126,7 +126,8 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
                    && EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED).contains(entity.getPreviousConsentStatus());
     }
 
-    private boolean wasStatusValidBefore(AisConsent entity) {
-        return entity.getPreviousConsentStatus() == VALID;
+    private boolean wasStatusHoldBefore(AisConsent entity) {
+        return entity.getPreviousConsentStatus() == VALID
+                   || entity.getPreviousConsentStatus().isFinalisedStatus();
     }
 }

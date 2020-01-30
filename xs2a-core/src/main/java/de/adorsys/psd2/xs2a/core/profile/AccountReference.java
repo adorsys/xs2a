@@ -24,9 +24,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Comparator;
-import java.util.Currency;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,7 +48,7 @@ public class AccountReference {
     @ApiModelProperty(value = "PAN: Primary Account Number (PAN) of a card, can be tokenized by the ASPSP due to PCI DSS requirements.", example = "2356 5746 3217 1234")
     private String pan;
 
-    @ApiModelProperty(value = "MASKEDPAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxx1234")
+    @ApiModelProperty(value = "MASKED_PAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxx1234")
     private String maskedPan;
 
     @ApiModelProperty(value = "MSISDN: An alias to access a payment account via a registered mobile phone number. This alias might be needed e.g. in the payment initiation service, cp. Section 5.3.1. The support of this alias must be explicitly documented by the ASPSP for the corresponding API calls.", example = "+49(0)911 360698-0")
@@ -103,5 +101,15 @@ public class AccountReference {
                    .filter(type -> StringUtils.isNotBlank(type.getFieldValue(this)))
                    .collect(Collectors.toSet());
 
+    }
+
+    @JsonIgnore
+    public boolean isNotCardAccount() {
+        return StringUtils.isAllBlank(pan, maskedPan);
+    }
+
+    @JsonIgnore
+    public boolean isNotIbanAccount() {
+        return StringUtils.isAllBlank(iban, bban, msisdn);
     }
 }

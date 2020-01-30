@@ -25,6 +25,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 
@@ -43,8 +44,14 @@ public class AccountAccessMultipleAccountsValidator {
     }
 
     private boolean validateAccountReferenceSize(List<AccountReference> accounts, List<AccountReference> balances) {
-        return CollectionUtils.isNotEmpty(accounts)
+        // This filtering allows to skip all card accounts (with masked PAN or PAN inside in case of ) and allows the further flow
+        // to be finished.
+        List<AccountReference> filteredAccountReferences = accounts.stream()
+                                                               .filter(AccountReference::isNotCardAccount)
+                                                               .collect(Collectors.toList());
+
+        return CollectionUtils.isNotEmpty(filteredAccountReferences)
                    && CollectionUtils.isNotEmpty(balances)
-                   && accounts.size() > balances.size();
+                   && filteredAccountReferences.size() > balances.size();
     }
 }

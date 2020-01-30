@@ -1,0 +1,32 @@
+{
+  "cardTransactionId": "ERbI5GiJQEAuTkb1SNE63A",
+  "terminalId": "terminalId",
+  "transactionDate": "2020-01-27",
+  "bookingDate": "2020-01-27",
+  "transactionAmount": {
+    "currency": "EUR",
+    "amount": "30000.00"
+  },
+  "originalAmount": {
+    "currency": "EUR",
+    "amount": "30000.00"
+  },
+  "markupFee": {
+    "currency": "EUR",
+    "amount": "30000.00"
+  },
+  "markupFeePercentage": "markupFeePercentage",
+  "cardAcceptorAddress": {
+    "streetName": "street",
+    "buildingNumber": "buildNum",
+    "townName": "town",
+    "postCode": "post",
+    "country": {
+      "code": "EU"
+    }
+  },
+  "merchantCategoryCode": "merchantCategoryCode",
+  "maskedPAN": "493702******0836",
+  "transactionDetails": "transactionDetails",
+  "invoiced": false
+}

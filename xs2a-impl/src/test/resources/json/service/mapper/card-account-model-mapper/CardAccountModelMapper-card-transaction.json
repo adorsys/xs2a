@@ -1,0 +1,21 @@
+{
+  "cardTransactionId": "1",
+  "terminalId": "4",
+  "bookingDate": "2017-01-01",
+  "transactionDate": "2017-01-01",
+  "transactionAmount": {
+    "currency": "USD",
+    "amount": "100"
+  },
+  "currencyExchange": [
+    {
+      "sourceCurrency": "USD",
+      "exchangeRate": "27",
+      "unitCurrency": "UAH",
+      "targetCurrency": "UAH",
+      "quotationDate": "2018-02-02",
+      "contractIdentification": "identification"
+    }
+  ],
+  "proprietaryBankTransactionCode": "very secret code"
+}

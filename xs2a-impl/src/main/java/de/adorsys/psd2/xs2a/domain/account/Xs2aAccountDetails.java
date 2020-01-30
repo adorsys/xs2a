@@ -58,7 +58,7 @@ public class Xs2aAccountDetails {
     @Size(max = 35)
     private final String pan;
 
-    @ApiModelProperty(value = "MASKEDPAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxxxx1234")
+    @ApiModelProperty(value = "MASKED_PAN: Primary Account Number (PAN) of a card in a masked form.", example = "2356xxxxxxxx1234")
     @Size(max = 35)
     private final String maskedPan;
 

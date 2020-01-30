@@ -55,4 +55,26 @@ class Xs2aToSpiAddressMapperTest {
         //Then
         assertNull(actualSpiAddress);
     }
+
+    @Test
+    void mapToXs2aAddress() {
+        //Given
+        SpiAddress spiAddress = jsonReader.getObjectFromFile("json/SpiAddress.json", SpiAddress.class);
+        Xs2aAddress expectedXs2aAddress = jsonReader.getObjectFromFile("json/Xs2aAddress.json", Xs2aAddress.class);
+        //When
+        Xs2aAddress actualXs2aAddress = xs2aToSpiAddressMapper.mapToXs2aAddress(spiAddress);
+
+        //Then
+        assertEquals(expectedXs2aAddress, actualXs2aAddress);
+    }
+
+    @Test
+    void mapToXs2aAddress_spiAddressIsNull() {
+        //Given
+        SpiAddress spiAddress = null;
+        //When
+        Xs2aAddress actualXs2aAddress = xs2aToSpiAddressMapper.mapToXs2aAddress(spiAddress);
+        //Then
+        assertNull(actualXs2aAddress);
+    }
 }

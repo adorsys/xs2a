@@ -217,7 +217,7 @@ class BalanceServiceTest {
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
 
-        when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))
+        when(balanceReportMapper.mapToXs2aBalancesReportSpi(spiAccountReference, Collections.emptyList()))
             .thenReturn(xs2aBalancesReport);
 
         when(xs2aBalancesReport.getXs2aAccountReference()).thenReturn(XS2A_ACCOUNT_REFERENCE);
@@ -245,7 +245,7 @@ class BalanceServiceTest {
 
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
-        when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))
+        when(balanceReportMapper.mapToXs2aBalancesReportSpi(spiAccountReference, Collections.emptyList()))
             .thenReturn(xs2aBalancesReport);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
@@ -288,7 +288,7 @@ class BalanceServiceTest {
 
         when(accountSpi.requestBalancesForAccount(SPI_CONTEXT_DATA, spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(Collections.emptyList()));
-        when(balanceReportMapper.mapToXs2aBalancesReport(spiAccountReference, Collections.emptyList()))
+        when(balanceReportMapper.mapToXs2aBalancesReportSpi(spiAccountReference, Collections.emptyList()))
             .thenReturn(xs2aBalancesReport);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);

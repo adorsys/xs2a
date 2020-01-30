@@ -20,6 +20,7 @@ package de.adorsys.psd2.consent.repository.impl;
 import de.adorsys.psd2.consent.domain.sha.ChecksumConstant;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingServiceV1;
+import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingServiceV2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,10 +37,13 @@ public class ChecksumCalculatingFactory {
 
     @Autowired
     private ChecksumCalculatingServiceV1 v001;
+    @Autowired
+    private ChecksumCalculatingServiceV2 v002;
 
     @PostConstruct
     public void init() {
         services.put(v001.getVersion(), v001);
+        services.put(v002.getVersion(), v002);
     }
 
     Optional<ChecksumCalculatingService> getServiceByChecksum(byte[] checksum) {
@@ -60,6 +64,6 @@ public class ChecksumCalculatingFactory {
     }
 
     private ChecksumCalculatingService getDefaultService() {
-        return v001;
+        return v002;
     }
 }

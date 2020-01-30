@@ -177,7 +177,7 @@ If forceXs2aBaseLinksUrl = TRUE then links in responses (except "scaRedirect") s
 
 If forceXs2aBaseLinksUrl = FALSE then links in responses (except "scaRedirect") shall be generated with the base URL of controller. |FALSE |TRUE, FALSE
 |xs2aBaseLinksUrl |This field defines base URL for forceXs2aBaseLinksUrl. |http://myhost.com/ |String
-|supportedAccountReferenceFields |This field defines supported account identifier type. |IBAN |IBAN, BBAN, PAN, MASKEDPAN, MSISDN
+|supportedAccountReferenceFields |This field defines supported account identifier type. |IBAN |IBAN, BBAN, PAN, MASKED_PAN, MSISDN
 |multicurrencyAccountLevelSupported |This field defines abstract level for multicurrency accounts on which the ASPSP offered services might be implemented. |SUBACCOUNT |SUBACCOUNT, AGGREGATION, AGGREGATION_AND_SUBACCOUNT
 |aisPisSessionsSupported |This field defines if ASPSP support Combined_session.
 

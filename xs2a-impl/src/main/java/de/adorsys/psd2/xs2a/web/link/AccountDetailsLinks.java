@@ -27,13 +27,18 @@ public class AccountDetailsLinks extends AbstractLinks {
 
     public AccountDetailsLinks(String httpUrl, String accountId, Xs2aAccountAccess xs2aAccountAccess) {
         super(httpUrl);
-
         boolean isConsentGlobal = xs2aAccountAccess.getAllPsd2() != null;
-        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getBalances(), isConsentGlobal)) {
+        List<AccountReference> balances = xs2aAccountAccess.getBalances();
+        if (hasAccessToSource(balances) &&
+                isValidAccountByAccess(accountId, balances, isConsentGlobal)) {
+
             setBalances(buildPath(UrlHolder.ACCOUNT_BALANCES_URL, accountId));
         }
 
-        if (isValidAccountByAccess(accountId, xs2aAccountAccess.getTransactions(), isConsentGlobal)) {
+        List<AccountReference> transactions = xs2aAccountAccess.getTransactions();
+
+        if (hasAccessToSource(transactions)
+                && isValidAccountByAccess(accountId, transactions, isConsentGlobal)) {
             setTransactions(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_URL, accountId));
         }
     }
@@ -43,5 +48,13 @@ public class AccountDetailsLinks extends AbstractLinks {
                    CollectionUtils.isNotEmpty(allowedAccountData)
                        && allowedAccountData.stream()
                               .anyMatch(a -> accountId.equals(a.getResourceId()));
+    }
+
+    private boolean hasAccessToSource(List<AccountReference> references) {
+        if (CollectionUtils.isEmpty(references)) {
+            return true;
+        }
+        return !references.stream()
+                    .allMatch(AccountReference::isNotIbanAccount);
     }
 }

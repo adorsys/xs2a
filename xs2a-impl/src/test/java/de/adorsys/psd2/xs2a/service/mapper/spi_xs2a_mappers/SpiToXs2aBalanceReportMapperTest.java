@@ -48,7 +48,7 @@ class SpiToXs2aBalanceReportMapperTest {
         SpiAccountReference spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json",
                                                                                SpiAccountReference.class);
 
-        Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReport(spiAccountReference, Collections.singletonList(spiAccountBalance));
+        Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReportSpi(spiAccountReference, Collections.singletonList(spiAccountBalance));
 
         Xs2aBalancesReport expectedXs2aBalancesReport = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-balances-report.json",
                                                                                      Xs2aBalancesReport.class);
@@ -57,7 +57,7 @@ class SpiToXs2aBalanceReportMapperTest {
 
     @Test
     void mapToXs2aBalancesReport_nullValue() {
-        Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReport(null, null);
+        Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReportSpi(null, null);
         assertNull(xs2aBalancesReport);
     }
 }

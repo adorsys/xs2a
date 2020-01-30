@@ -1,0 +1,27 @@
+{
+  "cardAccounts": [
+    {
+      "resourceId": "33333-999999999",
+      "maskedPan": "493702******0836",
+      "currency": "EUR",
+      "name": "Schmidt",
+      "product": "SCT",
+      "status": "enabled",
+      "usage": "PRIV",
+      "details": "details",
+      "creditLimit": {
+        "currency": "EUR",
+        "amount": 10000
+      },
+
+      "_links": {
+        "balances": {
+          "href": "http://localhost/api/v1/accounts/33333-999999999/balances"
+        },
+        "transactions": {
+          "href": "http://localhost/api/v1/accounts/33333-999999999/transactions"
+        }
+      }
+    }
+  ]
+}

@@ -4646,6 +4646,10 @@ components:
           $ref: "#/components/schemas/balanceList"
         _links:
           $ref: "#/components/schemas/_linksAccountDetails"
+        ownerName:
+          description: Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
+          type: string
+          maxLength: 140
 
 
     accountList:
@@ -6499,6 +6503,9 @@ components:
         endToEndIdentification:
           type: string
           maxLength: 35
+        instructionIdentification:
+          type: string
+          maxLength: 35
         debtorAccount:
           $ref: "#/components/schemas/accountReference"
         ultimateDebtor: # N.A.
@@ -6550,6 +6557,9 @@ components:
         - frequency
       properties:
         endToEndIdentification:
+          type: string
+          maxLength: 35
+        instructionIdentification:
           type: string
           maxLength: 35
         debtorAccount:
