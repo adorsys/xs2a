@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,6 +79,8 @@ class OauthModeFilterTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private RequestPathResolver requestPathResolver;
+    @Mock
+    private Xs2aEndpointChecker xs2aEndpointChecker;
 
     @BeforeEach
     void init() {
@@ -85,6 +88,8 @@ class OauthModeFilterTest {
             .thenReturn(ScaApproach.REDIRECT);
         when(requestPathResolver.resolveRequestPath(request))
             .thenReturn(XS2A_PATH);
+        when(xs2aEndpointChecker.isXs2aEndpoint(request))
+            .thenReturn(true);
     }
 
     @Test
