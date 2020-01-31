@@ -70,7 +70,8 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
     private CmsPeriodicPayment mapToCmsPeriodicPayment(PeriodicPaymentInitiationJson periodicPaymentInitiationJson, CmsCommonPayment cmsCommonPayment) {
 
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(cmsCommonPayment.getPaymentProduct());
-
+        fillBasePaymentFields(periodicPayment, cmsCommonPayment);
+        periodicPayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         periodicPayment.setEndToEndIdentification(periodicPaymentInitiationJson.getEndToEndIdentification());
         periodicPayment.setInstructionIdentification(periodicPaymentInitiationJson.getInstructionIdentification());
         periodicPayment.setDebtorAccount(mapToCmsAccountReference(periodicPaymentInitiationJson.getDebtorAccount()));
@@ -98,6 +99,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
 
         CmsBulkPayment bulkPayment = new CmsBulkPayment();
         fillBasePaymentFields(bulkPayment, cmsCommonPayment);
+        bulkPayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         bulkPayment.setBatchBookingPreferred(bulkPaymentInitiationJson.getBatchBookingPreferred());
         bulkPayment.setDebtorAccount(mapToCmsAccountReference(bulkPaymentInitiationJson.getDebtorAccount()));
         bulkPayment.setBatchBookingPreferred(bulkPaymentInitiationJson.getBatchBookingPreferred());

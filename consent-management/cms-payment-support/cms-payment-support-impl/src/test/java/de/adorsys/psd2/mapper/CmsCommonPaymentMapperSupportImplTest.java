@@ -149,6 +149,14 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         payment.setPurposeCode(paymentInitiationJson.getPurposeCode().name());
         payment.setRemittanceInformationStructured(getRemittanceInformationStructured(paymentInitiationJson.getRemittanceInformationStructured()));
+
+        payment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
+        payment.setPaymentId(cmsCommonPayment.getPaymentId());
+        payment.setPsuIdDatas(cmsCommonPayment.getPsuIdDatas());
+        payment.setTppInfo(cmsCommonPayment.getTppInfo());
+        payment.setCreationTimestamp(cmsCommonPayment.getCreationTimestamp());
+        payment.setStatusChangeTimestamp(cmsCommonPayment.getStatusChangeTimestamp());
+
         return payment;
     }
 
@@ -165,6 +173,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setDebtorAccount((getAccount(paymentInitiationJson.getDebtorAccount())));
         payment.setBatchBookingPreferred(paymentInitiationJson.getBatchBookingPreferred());
         payment.setRequestedExecutionDate(paymentInitiationJson.getRequestedExecutionDate());
+        payment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
 
         payment.setPayments(getBulkPayments(paymentInitiationJson.getPayments().get(0)));
         return payment;

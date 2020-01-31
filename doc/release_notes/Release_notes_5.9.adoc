@@ -2,3 +2,8 @@
 
 == Table of Contents
 
+* Bugfix: missing properties for bulk and periodic payments in cms-psu-api
+
+== Bugfix: missing properties for bulk and periodic payments in cms-psu-api
+
+Fixed missing properties for bulk and periodic payments in the response of `CmsPsuPisService#getPayment`, `CmsPsuPisService#checkRedirectAndGetPayment` and `CmsPsuPisService#checkRedirectAndGetPaymentForCancellation` methods in case of using `cms-payment-support-impl` module.
