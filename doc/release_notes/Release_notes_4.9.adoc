@@ -1,4 +1,39 @@
 = Release notes v.4.9
 
 == Table of Contents
+* Migrate to jUnit 5.x and Mockito 3.x
+* Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+* Bugfix: Update Response Code in Consent Initiation requests for not supported consent types
+* Bugfix: Payment endpoints return incorrect HTTP status code on providing unknown payment ID
+* Fixing that expiration of an AIS consent changes its validUntil date
+
+== Migrate to jUnit 5.x and Mockito 3.x
+
+From now on, project uses jUnit 5.x and Mockito 3.x for testing.
+
+== Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+
+Method `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfoWithPath` was removed.
+From now on, use `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfo` method instead.
+
+== Bugfix: Update Response Code in Consent Initiation requests for not supported consent types
+
+From now on, if TPP sends Consent initiation requests and ASPSP doesn't support certain consent type TPP will receive 400 response code with `SERVICE_INVALID` message.
+
+== Bugfix: Payment endpoints return incorrect HTTP status code on providing unknown payment ID
+
+From now on, PIS endpoints that take payment ID as a path parameter will return `RESOURCE_UNKNOWN` error with HTTP status
+code `403` instead of `400` or `404` if the payment couldn't be located by the provided ID.
+
+The following endpoints were affected by this change:
+
+- Payment information request (`GET /v1/{payment_service}/{payment_product}/{payment_id}`)
+- Payment initiation status request (`GET /v1/{payment_service}/{payment_product}/{payment_id}/status`)
+- Payment cancellation request (`DELETE /v1/{payment_service}/{payment_product}/{payment_id}`)
+
+== Fixing that expiration of an AIS consent changes its validUntil date
+
+From now on, expiration of an AIS consent does not change its `validUntil` date. A second value
+`expireDate` has been introduced, which indicates the date of expiration. The `expireDate` is properly
+propagated to SPI, CMS-PSU and CMS-ASPSP APIs.
 
