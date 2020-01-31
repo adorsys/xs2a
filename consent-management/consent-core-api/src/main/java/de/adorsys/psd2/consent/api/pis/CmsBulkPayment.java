@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@ import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class CmsBulkPayment extends BaseCmsPayment {
     private boolean batchBookingPreferred;
     private CmsAccountReference debtorAccount;
@@ -37,4 +39,7 @@ public class CmsBulkPayment extends BaseCmsPayment {
         return PaymentType.BULK;
     }
 
+    public TransactionStatus getTransactionStatus() {
+        return paymentStatus;
+    }
 }
