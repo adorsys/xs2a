@@ -21,7 +21,7 @@
     <parent>
         <groupId>de.adorsys.psd2</groupId>
         <artifactId>consent-management</artifactId>
-        <version>5.8</version>
+        <version>5.9</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -62,14 +62,14 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

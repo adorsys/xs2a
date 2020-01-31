@@ -19,20 +19,20 @@ package de.adorsys.psd2.xs2a.component.logger.request;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
-public class RequestResponseLogMessageTest {
+@ExtendWith(MockitoExtension.class)
+class RequestResponseLogMessageTest {
     private static final String REQUEST_URI_MESSAGE_FORMAT = "uri: [%s]";
     private static final String REQUEST_URI_QUERY_MESSAGE_FORMAT = "uri: [%s?%s]";
     private static final String REQUEST_HEADERS_MESSAGE_FORMAT = "requestHeaders: [%s: %s, %s: %s]";
@@ -56,7 +56,7 @@ public class RequestResponseLogMessageTest {
     private MockHttpServletResponse response = new MockHttpServletResponse();
 
     @Test
-    public void withRequestUri_shouldAddRequestUri() {
+    void withRequestUri_shouldAddRequestUri() {
         // Given
         String requestUri = "some request uri";
         request.setRequestURI(requestUri);
@@ -72,7 +72,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestUri_shouldAddQueryParamsIfPresent() {
+    void withRequestUri_shouldAddQueryParamsIfPresent() {
         // Given
         String requestUri = "some request uri";
         request.setRequestURI(requestUri);
@@ -90,7 +90,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestHeaders_shouldAddRequestHeaders() {
+    void withRequestHeaders_shouldAddRequestHeaders() {
         // Given
         String firstHeaderName = "Header 1";
         String firstHeaderValue = "Header 1 value";
@@ -113,7 +113,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestHeaders__withNoHeadersInRequest_shouldAddEmptyHeaders() {
+    void withRequestHeaders__withNoHeadersInRequest_shouldAddEmptyHeaders() {
         // Given
         String expectedMessage = String.format(EMPTY_REQUEST_HEADERS_MESSAGE_FORMAT, "");
 
@@ -127,7 +127,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestHeaders_withNullHeaderNamesInRequest_shouldSkipHeaders() {
+    void withRequestHeaders_withNullHeaderNamesInRequest_shouldSkipHeaders() {
         // Given
         NoHeaderNamesHttpServletRequest noHeaderNamesHttpServletRequest = new NoHeaderNamesHttpServletRequest();
 
@@ -141,7 +141,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestPayload_shouldAddJsonPayload() {
+    void withRequestPayload_shouldAddJsonPayload() {
         // Given
         byte[] jsonPayload = jsonReader.getBytesFromFile(REQUEST_BODY_JSON_PATH);
         request.setContent(jsonPayload);
@@ -161,7 +161,7 @@ public class RequestResponseLogMessageTest {
 
 
     @Test
-    public void withRequestPayload_shouldAddMultipartPayloadIfPresent() {
+    void withRequestPayload_shouldAddMultipartPayloadIfPresent() {
         // Given
         String multipartXmlValue = "some xml part";
         request.setParameter(MULTIPART_XML_PART, multipartXmlValue);
@@ -183,7 +183,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestPayload_withNonMultiReadServletRequest_shouldSkipPayload() {
+    void withRequestPayload_withNonMultiReadServletRequest_shouldSkipPayload() {
         // Given
         byte[] jsonPayload = jsonReader.getBytesFromFile(REQUEST_BODY_JSON_PATH);
         request.setContent(jsonPayload);
@@ -199,7 +199,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withRequestPayload_withoutPayloadInRequest_shouldAddEmptyPayload() {
+    void withRequestPayload_withoutPayloadInRequest_shouldAddEmptyPayload() {
         // Given
         MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(request);
 
@@ -215,7 +215,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withResponseStatus_shouldAddResponseStatus() {
+    void withResponseStatus_shouldAddResponseStatus() {
         // Given
         HttpStatus responseStatus = HttpStatus.OK;
         response.setStatus(responseStatus.value());
@@ -232,7 +232,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withResponseHeaders_shouldAddResponseHeaders() {
+    void withResponseHeaders_shouldAddResponseHeaders() {
         // Given
         String firstHeaderName = "Response header 1";
         String firstHeaderValue = "Response header 1 value";
@@ -255,7 +255,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withResponseHeaders__withNoHeadersInRequest_shouldAddEmptyHeaders() {
+    void withResponseHeaders__withNoHeadersInRequest_shouldAddEmptyHeaders() {
         // Given
         String expectedMessage = String.format(EMPTY_RESPONSE_HEADERS_MESSAGE_FORMAT, "");
 
@@ -269,7 +269,7 @@ public class RequestResponseLogMessageTest {
     }
 
     @Test
-    public void withResponseBody_shouldAddResponseBody() throws IOException {
+    void withResponseBody_shouldAddResponseBody() throws IOException {
         // Given
         MultiReadHttpServletResponse multiReadResponse = new MultiReadHttpServletResponse(response);
         byte[] jsonPayload = jsonReader.getBytesFromFile(RESPONSE_BODY_JSON_PATH);

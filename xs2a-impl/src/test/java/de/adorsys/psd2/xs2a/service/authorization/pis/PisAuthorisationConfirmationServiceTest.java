@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,38 +26,40 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAuthorisationConfirmationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisAuthorisationConfirmationServiceTest {
     private static final String PAYMENT_ID = "c713a32c-15ff-4f90-afa0-34a500359844";
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String CONFIRMATION_CODE = "123456";
@@ -68,8 +70,6 @@ public class PisAuthorisationConfirmationServiceTest {
     private PisAuthorisationConfirmationService pisAuthorisationConfirmationService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private RequestProviderService requestProviderService;
     @Mock
     private Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
     @Mock
@@ -88,9 +88,11 @@ public class PisAuthorisationConfirmationServiceTest {
     private SpiPayment payment;
     @Mock
     private SpiAspspConsentDataProvider aspspConsentDataProvider;
+    @Mock
+    private Xs2aUpdatePaymentAfterSpiService xs2aUpdatePaymentAfterSpiService;
 
     @Test
-    public void processAuthorisationConfirmation_success_checkOnSpi() {
+    void processAuthorisationConfirmation_success_checkOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
@@ -125,7 +127,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_success_checkOnXs2a() {
+    void processAuthorisationConfirmation_success_checkOnXs2a() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
@@ -137,17 +139,31 @@ public class PisAuthorisationConfirmationServiceTest {
                                                                                                         .payload(authorisationResponse)
                                                                                                         .build());
 
-        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(expectedResult)).thenReturn(buildUpdatePisCommonPaymentPsuDataRequest(psuIdData));
+        UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(psuIdData);
+
+        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(expectedResult)).thenReturn(updatePisCommonPaymentPsuDataRequest);
+
+        SpiContextData contextData = getSpiContextData();
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FAILED, TransactionStatus.RJCT);
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder().payload(response).build();
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(authorisationResponse, request.getPaymentService(), request.getPaymentProduct())).thenReturn(payment);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
+        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(expectedResult)).thenReturn(updatePisCommonPaymentPsuDataRequest);
+        when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
+        when(pisCheckAuthorisationConfirmationService.notifyConfirmationCodeValidation(contextData, true, payment, false, aspspConsentDataProvider)).thenReturn(spiResponse);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request, IS_CANCELLATION);
 
         // then
         assertThat(actualResult).isEqualTo(expectedResult);
+
+        verify(pisAuthorisationServiceEncrypted, times(1)).updatePisAuthorisation(AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
+        verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, response.getTransactionStatus());
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_NoAuthorisation() {
+    void processAuthorisationConfirmation_failed_NoAuthorisation() {
         // given
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
 
@@ -169,7 +185,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_WrongScaStatus() {
+    void processAuthorisationConfirmation_failed_WrongScaStatus() {
         // given
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
 
@@ -195,7 +211,7 @@ public class PisAuthorisationConfirmationServiceTest {
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_wrongCode() {
+    void processAuthorisationConfirmation_failed_wrongCode() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
@@ -208,23 +224,34 @@ public class PisAuthorisationConfirmationServiceTest {
 
         GetPisAuthorisationResponse authorisationResponse = buildGetPisAuthorisationResponse();
 
-
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);
         when(pisAuthorisationServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
                                                                                                         .payload(authorisationResponse)
                                                                                                         .build());
+        UpdatePisCommonPaymentPsuDataRequest updatePisCommonPaymentPsuDataRequest = buildUpdatePisCommonPaymentPsuDataRequest(psuIdData);
+        updatePisCommonPaymentPsuDataRequest.setScaStatus(ScaStatus.FAILED);
 
-        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(expectedResult)).thenReturn(buildUpdatePisCommonPaymentPsuDataRequest(psuIdData));
+        when(pisCommonPaymentMapper.mapToCmsUpdateCommonPaymentPsuDataReq(expectedResult)).thenReturn(updatePisCommonPaymentPsuDataRequest);
+
+        SpiContextData contextData = getSpiContextData();
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FAILED, TransactionStatus.RJCT);
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder().payload(response).build();
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(authorisationResponse, request.getPaymentService(), request.getPaymentProduct())).thenReturn(payment);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
+        when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
+        when(pisCheckAuthorisationConfirmationService.notifyConfirmationCodeValidation(contextData, false, payment, false, aspspConsentDataProvider)).thenReturn(spiResponse);
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request, IS_CANCELLATION);
 
         // then
         assertThat(actualResult).isEqualTo(expectedResult);
+        verify(pisAuthorisationServiceEncrypted, times(1)).updatePisAuthorisation(AUTHORISATION_ID, updatePisCommonPaymentPsuDataRequest);
+        verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, response.getTransactionStatus());
     }
 
     @Test
-    public void processAuthorisationConfirmation_failed_errorOnSpi() {
+    void processAuthorisationConfirmation_failed_errorOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();

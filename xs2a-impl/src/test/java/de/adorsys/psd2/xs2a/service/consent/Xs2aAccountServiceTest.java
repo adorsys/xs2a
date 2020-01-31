@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@
 package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aAccountServiceTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aAccountServiceTest {
 
     private static final String CONSENT_ID = "consent ID";
     private static final String ACCOUNT_ID = "account ID";
@@ -37,7 +37,7 @@ public class Xs2aAccountServiceTest {
     private AccountServiceEncrypted accountServiceEncrypted;
 
     @Test
-    public void saveNumberOfTransaction() {
+    void saveNumberOfTransaction() {
         xs2aAccountService.saveNumberOfTransaction(CONSENT_ID, ACCOUNT_ID, 5);
         verify(accountServiceEncrypted).saveNumberOfTransactions(CONSENT_ID, ACCOUNT_ID, 5);
     }

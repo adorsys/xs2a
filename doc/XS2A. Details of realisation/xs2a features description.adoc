@@ -13,8 +13,12 @@ include::Account Information Service.adoc[Account Information Service]
 
 include::Read Account Data Requests.adoc[Read Account Data Requests]
 
-include::Funds Confirmation Service.adoc[Funds Confirmation Service]
+include::Read Card Account Data Request.adoc[Card Account]
 
 include::Multicurrency Accounts.adoc[Multicurrency Accounts]
+
+include::Funds Confirmation Service.adoc[Funds Confirmation Service]
+
+include::Resource Status Notification Service.adoc[Resource Status Notification Service]
 
 include::Common features.adoc[Common features]

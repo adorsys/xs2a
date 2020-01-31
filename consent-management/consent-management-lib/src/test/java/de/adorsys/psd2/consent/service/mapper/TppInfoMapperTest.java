@@ -19,26 +19,26 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {TppInfoMapperImpl.class})
-public class TppInfoMapperTest {
+class TppInfoMapperTest {
 
     @Autowired
     private TppInfoMapper mapper;
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToTppInfoEntity() {
+    void mapToTppInfoEntity() {
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
 
         TppInfoEntity actualTppInfoEntity = mapper.mapToTppInfoEntity(tppInfo);
@@ -48,13 +48,13 @@ public class TppInfoMapperTest {
     }
 
     @Test
-    public void mapToTppInfoEntity_nullValue() {
+    void mapToTppInfoEntity_nullValue() {
         TppInfoEntity actualTppInfoEntity = mapper.mapToTppInfoEntity(null);
         assertNull(actualTppInfoEntity);
     }
 
     @Test
-    public void mapToTppInfoEntity_withNullTppRedirectUri_shouldNotMapTppRedirectUris() {
+    void mapToTppInfoEntity_withNullTppRedirectUri_shouldNotMapTppRedirectUris() {
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
         tppInfo.setCancelTppRedirectUri(null);
 
@@ -65,7 +65,7 @@ public class TppInfoMapperTest {
     }
 
     @Test
-    public void mapToTppInfoEntity_withNullTppRoles_shouldMapRolesToEmptyList() {
+    void mapToTppInfoEntity_withNullTppRoles_shouldMapRolesToEmptyList() {
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
         tppInfo.setCancelTppRedirectUri(null);
 
@@ -77,7 +77,7 @@ public class TppInfoMapperTest {
     }
 
     @Test
-    public void mapToTppInfo() {
+    void mapToTppInfo() {
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
 
         TppInfo actualTppInfo = mapper.mapToTppInfo(tppInfoEntity);
@@ -87,7 +87,7 @@ public class TppInfoMapperTest {
     }
 
     @Test
-    public void mapToTppInfo_withoutLinks_shouldNotMapRedirectUri() {
+    void mapToTppInfo_withoutLinks_shouldNotMapRedirectUri() {
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
 
         TppInfo actualTppInfo = mapper.mapToTppInfo(tppInfoEntity);
@@ -98,7 +98,7 @@ public class TppInfoMapperTest {
     }
 
     @Test
-    public void mapToTppInfo_withNullTppRoles_shouldMapRolesToEmptyList() {
+    void mapToTppInfo_withNullTppRoles_shouldMapRolesToEmptyList() {
         TppInfo actualTppInfo = mapper.mapToTppInfo(new TppInfoEntity());
 
         assertNotNull(actualTppInfo);
@@ -107,7 +107,7 @@ public class TppInfoMapperTest {
     }
 
     @Test
-    public void mapToTppInfo_nullValue() {
+    void mapToTppInfo_nullValue() {
         TppInfo actualTppInfo = mapper.mapToTppInfo(null);
         assertNull(actualTppInfo);
     }

@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
@@ -34,11 +33,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,8 +46,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aPisCommonPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aPisCommonPaymentServiceTest {
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -74,7 +73,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     private Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
     @Test
-    public void createCommonPayment_by_request_success() {
+    void createCommonPayment_by_request_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder().payload(CREATE_PIS_COMMON_PAYMENT_RESPONSE).build());
@@ -87,7 +86,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void createCommonPayment_by_request_failed() {
+    void createCommonPayment_by_request_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.createCommonPayment(PIS_PAYMENT_INFO))
             .thenReturn(CmsResponse.<CreatePisCommonPaymentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
@@ -100,7 +99,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void getPisCommonPaymentById_success() {
+    void getPisCommonPaymentById_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder().payload(PIS_COMMON_PAYMENT_RESPONSE).build());
@@ -114,7 +113,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void getPisCommonPaymentById_failed() {
+    void getPisCommonPaymentById_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID))
             .thenReturn(CmsResponse.<PisCommonPaymentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
@@ -127,7 +126,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_success() {
+    void isAuthenticationMethodDecoupled_success() {
         //Given
         when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -140,7 +139,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_failed() {
+    void isAuthenticationMethodDecoupled_failed() {
         //Given
         when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
@@ -153,7 +152,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_success() {
+    void saveAuthenticationMethods_success() {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
@@ -168,7 +167,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_failed() {
+    void saveAuthenticationMethods_failed() {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
@@ -183,7 +182,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void updateMultilevelSca() {
+    void updateMultilevelSca() {
         // Given
         when(pisCommonPaymentServiceEncrypted.updateMultilevelSca(PAYMENT_ID, true))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -196,7 +195,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus_success() {
+    void updatePisAuthorisationStatus_success() {
         // Given
         when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -209,7 +208,7 @@ public class Xs2aPisCommonPaymentServiceTest {
     }
 
     @Test
-    public void updatePisAuthorisationStatus_failure() {
+    void updatePisAuthorisationStatus_failure() {
         // Given
         when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
@@ -220,13 +219,6 @@ public class Xs2aPisCommonPaymentServiceTest {
         // Then
         assertThat(result).isFalse();
     }
-
-    private static UpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest() {
-        UpdatePisCommonPaymentPsuDataRequest request = new UpdatePisCommonPaymentPsuDataRequest();
-        request.setAuthorizationId(AUTHORISATION_ID);
-        return request;
-    }
-
 
     private static TppInfo buildTppInfo() {
         TppInfo tppInfo = new TppInfo();

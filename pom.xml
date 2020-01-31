@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>5.8</version>
+    <version>5.9</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -174,11 +174,8 @@
         <archunit-junit4.version>0.9.1</archunit-junit4.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <assertj.version>2.6.0</assertj.version>
-        <mockito.version>2.27.0</mockito.version>
         <aspectj.version>1.9.2</aspectj.version>
-        <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito-all.version>1.10.19</mockito-all.version>
         <postgresql.version>42.2.4</postgresql.version>
         <mariadb.version>2.3.0</mariadb.version>
         <h2.version>1.4.197</h2.version>
@@ -215,6 +212,9 @@
         <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
         <logback-classic.version>1.2.3</logback-classic.version>
 
+        <junit-jupiter.version>5.5.2</junit-jupiter.version>
+        <mockito.version>3.2.4</mockito.version>
+
         <!--Sonar -->
 
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>
@@ -227,6 +227,9 @@
             **/*Config.java,pom.xml,/xs2a-server-api/**/*,/xs2a-core-payments/**/*,**/consent-psu-api/**/*,**/consent-core-web/**/*,
             **/consent-aspsp-api/**/*,**/spi-stub/**/*
         </sonar.coverage.exclusions>
+
+        <!--Javadoc-->
+        <javadoc.sourcepath>src/main/java</javadoc.sourcepath>
     </properties>
 
     <dependencyManagement>
@@ -387,13 +390,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
@@ -403,13 +399,6 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -558,13 +547,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito-all.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
@@ -644,6 +626,19 @@
                 <version>${tomitribe-http-signatures.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -800,7 +795,7 @@ Use it manually to generate javadocs. Don't commit it
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
+                <version>3.0.0-M4</version>
                 <configuration>
                     <includes>
                         <include>**/*IT.java</include>
@@ -875,6 +870,7 @@ Use it manually to generate javadocs. Don't commit it
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <additionalOptions>-Xdoclint:none</additionalOptions>
+                            <sourcepath>${javadoc.sourcepath}</sourcepath>
                         </configuration>
                         <executions>
                             <execution>

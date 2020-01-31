@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,20 @@ package de.adorsys.psd2.xs2a.web.validator.body.cancelpayment;
 
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CancelPaymentBodyValidatorImplTest {
+@ExtendWith(MockitoExtension.class)
+class CancelPaymentBodyValidatorImplTest {
     @InjectMocks
     private CancelPaymentBodyValidatorImpl cancelPaymentBodyValidator;
 
@@ -41,14 +41,14 @@ public class CancelPaymentBodyValidatorImplTest {
     private MessageError messageError;
     private HttpServletRequest request;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         messageError = new MessageError();
         request = new MockHttpServletRequest();
     }
 
     @Test
-    public void validate() {
+    void validate() {
         cancelPaymentBodyValidator.validate(request, messageError);
         verify(tppRedirectUriBodyValidator).validate(request, messageError);
     }

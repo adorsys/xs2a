@@ -18,25 +18,25 @@ package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentTest {
     private static final PsuData PSU_DATA = new PsuData("psu", null, null, null, null);
     private static final TppInfoEntity TPP_INFO = new TppInfoEntity();
 
     @Test
-    public void isWrongConsentData_shouldReturnTrue_emptyPsuDataList() {
+    void isWrongConsentData_shouldReturnTrue_emptyPsuDataList() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.emptyList(), TPP_INFO, false);
 
@@ -48,7 +48,7 @@ public class AisConsentTest {
     }
 
     @Test
-    public void isWrongConsentData_shouldReturnTrue_tppInfoNull() {
+    void isWrongConsentData_shouldReturnTrue_tppInfoNull() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), null, false);
 
@@ -60,7 +60,7 @@ public class AisConsentTest {
     }
 
     @Test
-    public void isWrongConsentData_shouldReturnFalse() {
+    void isWrongConsentData_shouldReturnFalse() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, false);
 
@@ -72,7 +72,7 @@ public class AisConsentTest {
     }
 
     @Test
-    public void isNonReccuringAlreadyUsed_shouldReturnFalse_recurringConsent() {
+    void isNonReccuringAlreadyUsed_shouldReturnFalse_recurringConsent() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, true);
 
@@ -84,7 +84,7 @@ public class AisConsentTest {
     }
 
     @Test
-    public void isNonReccuringAlreadyUsed_shouldReturnFalse_nonRecurringWithoutOldUsages() {
+    void isNonReccuringAlreadyUsed_shouldReturnFalse_nonRecurringWithoutOldUsages() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, false);
         aisConsent.setUsages(Collections.singletonList(buildAisConsentUsage(LocalDate.now())));
@@ -97,7 +97,7 @@ public class AisConsentTest {
     }
 
     @Test
-    public void isNonReccuringAlreadyUsed_shouldReturnTrue_nonRecurringWithOldUsages() {
+    void isNonReccuringAlreadyUsed_shouldReturnTrue_nonRecurringWithOldUsages() {
         // Given
         AisConsent aisConsent = buildAisConsent(Collections.singletonList(PSU_DATA), TPP_INFO, false);
         aisConsent.setUsages(Arrays.asList(buildAisConsentUsage(LocalDate.now()),

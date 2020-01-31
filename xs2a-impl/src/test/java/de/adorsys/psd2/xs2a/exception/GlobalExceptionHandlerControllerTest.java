@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -37,8 +37,8 @@ import java.time.LocalDate;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class GlobalExceptionHandlerControllerTest {
+@ExtendWith(MockitoExtension.class)
+class GlobalExceptionHandlerControllerTest {
     @Mock
     private ResponseErrorMapper responseErrorMapper;
     @Mock
@@ -52,7 +52,7 @@ public class GlobalExceptionHandlerControllerTest {
     private GlobalExceptionHandlerController globalExceptionHandlerController;
 
     @Test
-    public void methodArgumentTypeMismatchException_shouldReturnFormatError() throws NoSuchMethodException {
+    void methodArgumentTypeMismatchException_shouldReturnFormatError() throws NoSuchMethodException {
         // Given
         when(serviceTypeDiscoveryService.getServiceType())
             .thenReturn(ServiceType.AIS);

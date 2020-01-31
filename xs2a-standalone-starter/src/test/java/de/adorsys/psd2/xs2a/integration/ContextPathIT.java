@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,9 +45,9 @@ import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -56,7 +56,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -75,7 +75,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -85,7 +85,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class ContextPathIT {
+class ContextPathIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CREATE_CONSENT_REQUEST_JSON_PATH = "/json/account/req/DedicatedConsent.json";
     private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_CONTEXT_PATH = "/json/account/res/contextpath/CreateAisConsent_implicit_redirect_withContextPath_response.json";
@@ -117,8 +117,8 @@ public class ContextPathIT {
     @MockBean
     private AspspDataService aspspDataService;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         httpHeadersImplicit.add("Content-Type", "application/json");
         httpHeadersImplicit.add("x-request-id", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersImplicit.add("PSU-ID", "PSU-123");
@@ -145,12 +145,12 @@ public class ContextPathIT {
     }
 
     @Test
-    public void createConsent_withCustomContextPath_shouldCreateConsent() throws Exception {
+    void createConsent_withCustomContextPath_shouldCreateConsent() throws Exception {
         createConsent_withCustomContextPath(httpHeadersImplicit, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_CONTEXT_PATH);
     }
 
     @Test
-    public void createConsent_withCustomContextPathAndForcedXs2aBaseUrl_shouldCreateConsentWithForcedLinks() throws Exception {
+    void createConsent_withCustomContextPathAndForcedXs2aBaseUrl_shouldCreateConsentWithForcedLinks() throws Exception {
         when(aspspProfileService.getAspspSettings())
             .thenReturn(AspspSettingsBuilder.buildAspspSettingsWithForcedXs2aBaseUrl("http://myhost.com/mypath/"));
 

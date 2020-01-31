@@ -19,25 +19,25 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {AuthorisationTemplateMapperImpl.class})
-public class AuthorisationTemplateMapperTest {
+class AuthorisationTemplateMapperTest {
 
     @Autowired
     private AuthorisationTemplateMapper mapper;
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToAuthorisationTemplate_success() {
+    void mapToAuthorisationTemplate_success() {
         AuthorisationTemplateEntity authorisationTemplateEntity = jsonReader.getObjectFromFile("json/service/mapper/authorisation-template-entity.json", AuthorisationTemplateEntity.class);
 
         AuthorisationTemplate actualAuthorisationTemplate = mapper.mapToAuthorisationTemplate(authorisationTemplateEntity);
@@ -47,7 +47,7 @@ public class AuthorisationTemplateMapperTest {
     }
 
     @Test
-    public void mapToAuthorisationTemplate_shouldNotMapRedirectUri() {
+    void mapToAuthorisationTemplate_shouldNotMapRedirectUri() {
         AuthorisationTemplateEntity authorisationTemplateEntity = jsonReader.getObjectFromFile("json/service/mapper/authorisation-template-entity.json", AuthorisationTemplateEntity.class);
         authorisationTemplateEntity.setRedirectUri(null);
         authorisationTemplateEntity.setCancelRedirectUri(null);
@@ -61,7 +61,7 @@ public class AuthorisationTemplateMapperTest {
     }
 
     @Test
-    public void mapToAuthorisationTemplate_nullValue() {
+    void mapToAuthorisationTemplate_nullValue() {
         AuthorisationTemplate authorisationTemplate = mapper.mapToAuthorisationTemplate(null);
         assertNull(authorisationTemplate);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AmountValidatorTest {
+class AmountValidatorTest {
 
     private static final String CORRECT_AMOUNT = "123.56";
     private static final String WRONG_AMOUNT_1 = "+123.56";
@@ -39,56 +39,56 @@ public class AmountValidatorTest {
     private AmountValidator validator;
     private MessageError messageError = new MessageError();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.PIIS_400);
         validator = new AmountValidator(errorBuildingServiceMock);
     }
 
     @Test
-    public void doValidation_success() {
+    void doValidation_success() {
         validator.validateAmount(CORRECT_AMOUNT, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void doValidation_wrong_1() {
+    void doValidation_wrong_1() {
         validator.validateAmount(WRONG_AMOUNT_1, messageError);
         assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
-    public void doValidation_wrong_2() {
+    void doValidation_wrong_2() {
         validator.validateAmount(WRONG_AMOUNT_2, messageError);
         assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
-    public void doValidation_wrong_3() {
+    void doValidation_wrong_3() {
         validator.validateAmount(WRONG_AMOUNT_3, messageError);
         assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
-    public void doValidation_wrong_4() {
+    void doValidation_wrong_4() {
         validator.validateAmount(WRONG_AMOUNT_4, messageError);
         assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
-    public void doValidation_wrong_5() {
+    void doValidation_wrong_5() {
         validator.validateAmount(WRONG_AMOUNT_5, messageError);
         assertThatErrorIs(FORMAT_ERROR_WRONG_FORMAT_VALUE, "amount");
     }
 
     @Test
-    public void doValidation_empty() {
+    void doValidation_empty() {
         validator.validateAmount("", messageError);
         assertThatErrorIs(FORMAT_ERROR_EMPTY_FIELD, "amount");
     }
 
     @Test
-    public void doValidation_null() {
+    void doValidation_null() {
         validator.validateAmount(null, messageError);
         assertThatErrorIs(FORMAT_ERROR_NULL_VALUE, "amount");
     }

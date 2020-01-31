@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,9 +43,9 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,7 +54,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -71,7 +71,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -81,7 +81,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class InitiatePaymentsNotSuccessfulIT {
+class InitiatePaymentsNotSuccessfulIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String SINGLE_PAYMENT_REQUEST_JSON_PATH = "/json/payment/req/SinglePaymentInitiate_request.json";
     private static final String PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH = "/json/account/res/PsuIpAddressMissingErrorMessage.json";
@@ -89,7 +89,6 @@ public class InitiatePaymentsNotSuccessfulIT {
 
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
-    private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
     private static final String INITIATE_SINGLE_PAYMENT_URL = UrlBuilder.buildInitiatePaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT);
 
     private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
@@ -110,8 +109,8 @@ public class InitiatePaymentsNotSuccessfulIT {
     @MockBean
     private SinglePaymentSpi singlePaymentSpi;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", "application/json");
         headerMap.put("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
@@ -134,7 +133,7 @@ public class InitiatePaymentsNotSuccessfulIT {
     }
 
     @Test
-    public void initiateSinglePayment_withoutPsuIpAddress_notSuccessful() throws Exception {
+    void initiateSinglePayment_withoutPsuIpAddress_notSuccessful() throws Exception {
         //Given
         makePreparations(ScaApproach.EMBEDDED);
         MockHttpServletRequestBuilder requestBuilder = makeRequestBuilder(INITIATE_SINGLE_PAYMENT_URL, httpHeadersWithoutPsuIpAddress, IOUtils.resourceToString(SINGLE_PAYMENT_REQUEST_JSON_PATH, UTF_8));

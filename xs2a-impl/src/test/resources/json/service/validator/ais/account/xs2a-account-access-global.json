@@ -1,3 +1,6 @@
 {
-  "allPsd2": "allAccounts"
+  "accounts": [],
+  "balances": [],
+  "allPsd2": "allAccounts",
+  "transactions": []
 }

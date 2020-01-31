@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,19 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.ScaMethods;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ScaMethodsMapperImpl.class})
-public class ScaMethodsMapperTest {
+class ScaMethodsMapperTest {
 
     @Autowired
     private ScaMethodsMapper scaMethodsMapper;
@@ -39,7 +39,7 @@ public class ScaMethodsMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToScaMethods_withNull_shouldReturnNull() {
+    void mapToScaMethods_withNull_shouldReturnNull() {
         // When
         ScaMethods scaMethods = scaMethodsMapper.mapToScaMethods(null);
 
@@ -48,7 +48,7 @@ public class ScaMethodsMapperTest {
     }
 
     @Test
-    public void mapToScaMethods_withRealData_success() {
+    void mapToScaMethods_withRealData_success() {
         // Given
         de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject authenticationObject =
             jsonReader.getObjectFromFile("json/service/mapper/xs2a-authentication-objects-list.json", de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject.class);

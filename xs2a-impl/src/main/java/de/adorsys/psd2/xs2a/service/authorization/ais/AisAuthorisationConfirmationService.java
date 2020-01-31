@@ -38,6 +38,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -111,15 +112,33 @@ public class AisAuthorisationConfirmationService {
     }
 
     private UpdateConsentPsuDataResponse checkAuthorisationConfirmationXs2a(UpdateConsentPsuDataReq request, String confirmationCodeFromDb) {
-        String confirmationCodeReceived = request.getConfirmationCode();
+        String consentId = request.getConsentId();
+        String authorisationId = request.getAuthorisationId();
+        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        if (!accountConsentOptional.isPresent()) {
+            return buildConsentNotFoundErrorResponse(consentId, authorisationId);
+        }
 
-        boolean codeCorrect = StringUtils.equals(confirmationCodeReceived, confirmationCodeFromDb);
+        SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(request.getPsuData());
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsentOptional.get());
+        SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
+        boolean codeCorrect = StringUtils.equals(request.getConfirmationCode(), confirmationCodeFromDb);
+
+        SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = aisConsentSpi.notifyConfirmationCodeValidation(contextData, codeCorrect, spiAccountConsent, aspspDataProvider);
+
+        if (spiResponse.hasError()) {
+            return buildConfirmationCodeValidationResultSpiErrorResponse(spiResponse, consentId, authorisationId);
+        }
 
         UpdateConsentPsuDataResponse response = codeCorrect
-                                                    ? new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, request.getConsentId(), request.getAuthorisationId())
-                                                    : buildScaConfirmationCodeErrorResponse(request.getConsentId(), request.getAuthorisationId());
+                                                    ? new UpdateConsentPsuDataResponse(spiResponse.getPayload().getScaStatus(), consentId, authorisationId)
+                                                    : buildScaConfirmationCodeErrorResponse(consentId, authorisationId);
 
-        aisConsentService.updateConsentAuthorisationStatus(request.getAuthorisationId(), response.getScaStatus());
+        if (spiResponse.isSuccessful()) {
+            SpiConsentConfirmationCodeValidationResponse payload = spiResponse.getPayload();
+            aisConsentService.updateConsentAuthorisationStatus(authorisationId, payload.getScaStatus());
+            aisConsentService.updateConsentStatus(consentId, payload.getConsentStatus());
+        }
 
         return response;
     }
@@ -179,6 +198,15 @@ public class AisAuthorisationConfirmationService {
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
     }
+
+    private UpdateConsentPsuDataResponse buildConfirmationCodeValidationResultSpiErrorResponse(SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse, String consentId, String authorisationId) {
+        ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
+
+        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: error occurred at SPI.", authorisationId);
+
+        return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
+    }
+
 
     private UpdateConsentPsuDataResponse buildConsentNotFoundErrorResponse(String consentId, String authorisationId) {
         ErrorHolder errorHolder = ErrorHolder.builder(AIS_403)

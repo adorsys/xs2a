@@ -1,0 +1,143 @@
+{
+  "instanceId": "UNDEFINED",
+  "id": 28,
+  "externalId": "36bcf324-6d13-49ed-8970-825d8c2142ea",
+  "recurringIndicator": true,
+  "tppRedirectPreferred": false,
+  "combinedServiceIndicator": false,
+  "requestDateTime": "2019-12-06T17:03:13.36",
+  "lastActionDate": "2019-12-06",
+  "validUntil": "2021-10-10",
+  "psuDataList": [
+    {
+      "instanceId": "UNDEFINED",
+      "id": 28,
+      "psuId": "anton.brueckner"
+    }
+  ],
+  "tppInfo": {
+    "instanceId": "UNDEFINED",
+    "id": 1,
+    "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+    "tppName": "",
+    "tppRoles": [
+      "AISP",
+      "PISP",
+      "PIISP"
+    ],
+    "authorityId": "DE-FAKENCA",
+    "authorityName": "Trust Service Provider AG",
+    "country": "Germany",
+    "organisation": "Fictional Corporation AG",
+    "organisationUnit": "Information Technology",
+    "city": "Nuremberg",
+    "state": "Bayern"
+  },
+  "authorisationTemplate": {
+    "id": 28,
+    "redirectUri": "",
+    "nokRedirectUri": ""
+  },
+  "tppNotificationContentPreferred": [],
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "allowedFrequencyPerDay": 4,
+  "tppFrequencyPerDay": 15,
+  "usages": [],
+  "accesses": [
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "BALANCE",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "TRANSACTION",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "DE80760700240271232400",
+      "currency": "EUR",
+      "typeAccess": "TRANSACTION",
+      "accountReferenceType": "iban"
+    }
+  ],
+  "aspspAccountAccesses": [
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "BALANCE",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "TRANSACTION",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "DE80760700240271232400",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "iban"
+    }
+  ],
+  "authorizations": [
+    {
+      "instanceId": "UNDEFINED",
+      "id": 31,
+      "externalId": "8d64115f-9747-4140-ba55-f6dce02c6ade",
+      "psuData": {
+        "instanceId": "UNDEFINED",
+        "id": 28,
+        "psuId": "anton.brueckner"
+      },
+      "scaStatus": "failed",
+      "redirectUrlExpirationTimestamp": "2019-12-06T17:03:16.11+02:00",
+      "authorisationExpirationTimestamp": "2019-12-07T17:03:13.488+02:00",
+      "tppOkRedirectUri": "",
+      "tppNokRedirectUri": "",
+      "availableScaMethods": [],
+      "scaApproach": "REDIRECT"
+    },
+    {
+      "instanceId": "UNDEFINED",
+      "id": 32,
+      "externalId": "9a612c8b-1bc6-41c3-8db2-60648a3153e9",
+      "psuData": {
+        "instanceId": "UNDEFINED",
+        "id": 28,
+        "psuId": "anton.brueckner"
+      },
+      "scaStatus": "finalised",
+      "redirectUrlExpirationTimestamp": "2019-12-06T17:13:16.112+02:00",
+      "authorisationExpirationTimestamp": "2019-12-07T17:03:16.114+02:00",
+      "tppOkRedirectUri": "",
+      "tppNokRedirectUri": "",
+      "availableScaMethods": [],
+      "scaApproach": "REDIRECT"
+    }
+  ],
+  "aisConsentRequestType": "DEDICATED_ACCOUNTS",
+  "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
+  "multilevelScaRequired": false,
+  "statusChangeTimestamp": "2019-12-06T17:03:32.972+02:00",
+  "ownerNameType": "NONE",
+  "ownerAddressType": "NONE",
+  "internalRequestId": "bdb36439-0e07-4037-a8a1-171c969fb0d7",
+  "previousConsentStatus": "VALID"
+}

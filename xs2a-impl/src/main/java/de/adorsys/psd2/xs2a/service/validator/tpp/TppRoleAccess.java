@@ -34,6 +34,7 @@ public class TppRoleAccess {
     static {
         TppRoleAccess.builder()
             .linkTppRolePatterns(ACCOUNTS_PATH, TppRole.AISP)
+            .linkTppRolePatterns(CARD_ACCOUNTS_PATH, TppRole.AISP)
             .linkTppRolePatterns(CONSENTS_PATH, TppRole.AISP)
             .linkTppRolePatterns(BULK_PAYMENTS_PATH, TppRole.PISP)
             .linkTppRolePatterns(SINGLE_PAYMENTS_PATH, TppRole.PISP)

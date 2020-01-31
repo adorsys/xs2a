@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.event.mapper.EventMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.UUID;
@@ -42,8 +42,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aEventServiceTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aEventServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String PAYMENT_ID = "0795805d-651b-4e00-88fb-a34248337bbd";
     private static final String URI = "/v1/consents";
@@ -73,8 +73,8 @@ public class Xs2aEventServiceTest {
     private PsuIdDataBO psuIdData;
 
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuIdData = jsonReader.getObjectFromFile("json/service/event/psu-id-data.json", PsuIdDataBO.class);
 
         when(eventService.recordEvent(eventCaptor.capture())).thenReturn(true);
@@ -83,7 +83,7 @@ public class Xs2aEventServiceTest {
     }
 
     @Test
-    public void recordAisTppRequest_withBody() {
+    void recordAisTppRequest_withBody() {
         // Given
 
         // When
@@ -104,7 +104,7 @@ public class Xs2aEventServiceTest {
     }
 
     @Test
-    public void recordAisTppRequest_bodyIsNull() {
+    void recordAisTppRequest_bodyIsNull() {
         // Given
 
         // When
@@ -125,7 +125,7 @@ public class Xs2aEventServiceTest {
     }
 
     @Test
-    public void recordPisTppRequest_withBody() {
+    void recordPisTppRequest_withBody() {
         // Given
 
         // When
@@ -146,7 +146,7 @@ public class Xs2aEventServiceTest {
     }
 
     @Test
-    public void recordPisTppRequest_bodyIsNull() {
+    void recordPisTppRequest_bodyIsNull() {
         // Given
 
         // When
@@ -167,7 +167,7 @@ public class Xs2aEventServiceTest {
     }
 
     @Test
-    public void recordTppRequest_withBody() {
+    void recordTppRequest_withBody() {
         // Given
 
         // When
@@ -188,7 +188,7 @@ public class Xs2aEventServiceTest {
     }
 
     @Test
-    public void recordTppRequest_bodyIsNull() {
+    void recordTppRequest_bodyIsNull() {
         // Given
 
         // When

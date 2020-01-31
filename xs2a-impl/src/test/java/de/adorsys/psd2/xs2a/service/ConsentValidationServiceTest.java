@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,23 +30,23 @@ import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAutho
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConsentValidationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ConsentValidationServiceTest {
     private static final String PSU_ID = "123456789";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final String AUTHORISATION_ID = "authorisation id";
@@ -81,15 +81,15 @@ public class ConsentValidationServiceTest {
     private ArgumentCaptor<CommonConsentObject> commonConsentObjectCaptor;
     private ArgumentCaptor<CreateConsentAuthorisationObject> consentAuthorisationPOArgumentCaptor;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         accountConsent = jsonReader.getObjectFromFile("json/service/account-consent.json", AccountConsent.class);
         commonConsentObjectCaptor = ArgumentCaptor.forClass(CommonConsentObject.class);
         consentAuthorisationPOArgumentCaptor = ArgumentCaptor.forClass(CreateConsentAuthorisationObject.class);
     }
 
     @Test
-    public void validateConsentOnCreate() {
+    void validateConsentOnCreate() {
         ArgumentCaptor<CreateConsentRequestObject> createConsentRequestObjectCaptor = ArgumentCaptor.forClass(CreateConsentRequestObject.class);
         CreateConsentReq createConsentReq = new CreateConsentReq();
         when(createConsentRequestValidator.validate(createConsentRequestObjectCaptor.capture())).thenReturn(ValidationResult.valid());
@@ -102,7 +102,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentOnGettingStatusById() {
+    void validateConsentOnGettingStatusById() {
         when(getAccountConsentsStatusByIdValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
         service.validateConsentOnGettingStatusById(accountConsent);
@@ -112,7 +112,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentOnDelete() {
+    void validateConsentOnDelete() {
         when(deleteAccountConsentsByIdValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
         service.validateConsentOnDelete(accountConsent);
@@ -122,7 +122,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentOnGettingById() {
+    void validateConsentOnGettingById() {
         when(getAccountConsentByIdValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
         service.validateConsentOnGettingById(accountConsent);
@@ -132,7 +132,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentAuthorisationOnCreate() {
+    void validateConsentAuthorisationOnCreate() {
         when(createConsentAuthorisationValidator.validate(consentAuthorisationPOArgumentCaptor.capture())).thenReturn(ValidationResult.valid());
 
         service.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(accountConsent, new PsuIdData(null, null, null, null, null)));
@@ -142,7 +142,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentPsuDataOnUpdate() {
+    void validateConsentPsuDataOnUpdate() {
         ArgumentCaptor<UpdateConsentPsuDataRequestObject> updateConsentPsuDataRequestObjectCaptor = ArgumentCaptor.forClass(UpdateConsentPsuDataRequestObject.class);
         UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
 
@@ -156,7 +156,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentAuthorisationOnGettingById() {
+    void validateConsentAuthorisationOnGettingById() {
         when(getConsentAuthorisationsValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
         service.validateConsentAuthorisationOnGettingById(accountConsent);
@@ -166,7 +166,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void validateConsentAuthorisationScaStatus() {
+    void validateConsentAuthorisationScaStatus() {
         ArgumentCaptor<GetConsentAuthorisationScaStatusPO> getConsentAuthorisationScaStatusPOCaptor = ArgumentCaptor.forClass(GetConsentAuthorisationScaStatusPO.class);
 
         when(getConsentAuthorisationScaStatusValidator.validate(getConsentAuthorisationScaStatusPOCaptor.capture())).thenReturn(ValidationResult.valid());
@@ -179,7 +179,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void buildWarningMessages_emptySet() {
+    void buildWarningMessages_emptySet() {
         // Given
         Set<TppMessageInformation> emptySet = new HashSet<>();
         CreateConsentReq createConsentReq = new CreateConsentReq();
@@ -198,7 +198,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void buildWarningMessages_warningsFromUriHeaderValidator() {
+    void buildWarningMessages_warningsFromUriHeaderValidator() {
         // Given
         Set<TppMessageInformation> emptySet = new HashSet<>();
         Set<TppMessageInformation> uriHeaderValidatorSet = new HashSet<>();
@@ -220,7 +220,7 @@ public class ConsentValidationServiceTest {
     }
 
     @Test
-    public void buildWarningMessages_warningsNotificationDataValidator() {
+    void buildWarningMessages_warningsNotificationDataValidator() {
         // Given
         Set<TppMessageInformation> emptySet = new HashSet<>();
         Set<TppMessageInformation> notificationDataValidatorSet = new HashSet<>();

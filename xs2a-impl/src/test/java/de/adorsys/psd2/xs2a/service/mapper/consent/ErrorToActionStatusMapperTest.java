@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,23 +19,23 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ErrorToActionStatusMapper.class})
-public class ErrorToActionStatusMapperTest {
+class ErrorToActionStatusMapperTest {
 
     @Autowired
     private ErrorToActionStatusMapper mapper;
 
     @Test
-    public void mapActionStatusError() {
+    void mapActionStatusError() {
         assertEquals(ActionStatus.CONSENT_LIMIT_EXCEEDED, mapper.mapActionStatusError(MessageErrorCode.ACCESS_EXCEEDED, false, null));
         assertEquals(ActionStatus.CONSENT_INVALID_STATUS, mapper.mapActionStatusError(MessageErrorCode.CONSENT_EXPIRED, false, null));
         assertEquals(ActionStatus.CONSENT_NOT_FOUND, mapper.mapActionStatusError(MessageErrorCode.CONSENT_UNKNOWN_400, false, null));

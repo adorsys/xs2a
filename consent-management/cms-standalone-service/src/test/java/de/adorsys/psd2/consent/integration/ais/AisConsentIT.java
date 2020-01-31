@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.integration.ais;
 
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
@@ -30,27 +31,26 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("integration-test")
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
 public class AisConsentIT {
@@ -74,14 +74,14 @@ public class AisConsentIT {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
     }
 
     @Test
-    public void createAisConsent_successWithNewStatus() {
+    public void createAisConsent_successWithNewStatus() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -93,7 +93,7 @@ public class AisConsentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         aisConsentService.updateConsentStatusById(savedEntity.getExternalId(), ConsentStatus.EXPIRED);
@@ -108,7 +108,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void createAisConsent_successWithTheSameStatus() {
+    public void createAisConsent_successWithTheSameStatus() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -120,7 +120,7 @@ public class AisConsentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         aisConsentService.updateConsentStatusById(savedEntity.getExternalId(), ConsentStatus.RECEIVED);
@@ -131,11 +131,11 @@ public class AisConsentIT {
         entities = aisConsentJpaRepository.findAll();
         AisConsent updatedEntity = entities.iterator().next();
         assertEquals(ConsentStatus.RECEIVED, updatedEntity.getConsentStatus());
-        assertTrue(updatedEntity.getStatusChangeTimestamp().equals(updatedEntity.getCreationTimestamp()));
+        assertEquals(updatedEntity.getStatusChangeTimestamp(), updatedEntity.getCreationTimestamp());
     }
 
-    @Test(expected = PersistenceException.class)
-    public void createAisConsent_failShouldThrowException() {
+    @Test
+    public void createAisConsent_failShouldThrowException() throws WrongChecksumException {
         // Given
         CreateAisConsentRequest createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -147,19 +147,19 @@ public class AisConsentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         // New status is null
         aisConsentService.updateConsentStatusById(savedEntity.getExternalId(), null);
 
-        // Then
-        // Here the exception should be thrown
-        flushAndClearPersistenceContext();
+        assertThrows(
+            PersistenceException.class, this::flushAndClearPersistenceContext
+        );
     }
 
     @Test
-    public void getConsentsForPsu_successWithDifferentPsu() {
+    public void getConsentsForPsu_successWithDifferentPsu() throws WrongChecksumException {
         //Given
         PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
         PsuIdData aspsp1 = buildPsuIdData("aspsp1", "aspsp1 corporate id");

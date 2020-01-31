@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,13 @@ import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,11 +35,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ConsentScheduleTaskTest {
+@ExtendWith(MockitoExtension.class)
+class ConsentScheduleTaskTest {
 
     @InjectMocks
     private ConsentScheduleTask scheduleTask;
@@ -48,7 +51,7 @@ public class ConsentScheduleTaskTest {
     private ArgumentCaptor<ArrayList<AisConsent>> consentCaptor;
 
     @Test
-    public void checkConsentStatus_allConsentsExpired() {
+    void checkConsentStatus_allConsentsExpired() {
         List<AisConsent> availableConsents = new ArrayList<>();
         availableConsents.add(createConsent(RECEIVED));
         availableConsents.add(createConsent(VALID));
@@ -66,11 +69,11 @@ public class ConsentScheduleTaskTest {
     }
 
     @Test
-    public void checkConsentStatus_notAllConsentsExpired() {
+    void checkConsentStatus_notAllConsentsExpired() {
         List<AisConsent> availableConsents = new ArrayList<>();
         availableConsents.add(createConsent(RECEIVED));
         AisConsent consent = createConsent(VALID);
-        consent.setExpireDate(LocalDate.now().plusDays(1));
+        consent.setValidUntil(LocalDate.now().plusDays(1));
         availableConsents.add(consent);
         when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(availableConsents);
 
@@ -87,7 +90,7 @@ public class ConsentScheduleTaskTest {
     }
 
     @Test
-    public void checkConsentStatus_nullValue() {
+    void checkConsentStatus_nullValue() {
 
         when(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID))).thenReturn(null);
 
@@ -104,7 +107,7 @@ public class ConsentScheduleTaskTest {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setConsentStatus(consentStatus);
         aisConsent.setExternalId(consentStatus.toString());
-        aisConsent.setExpireDate(LocalDate.now().minusDays(1));
+        aisConsent.setValidUntil(LocalDate.now().minusDays(1));
         return aisConsent;
     }
 }

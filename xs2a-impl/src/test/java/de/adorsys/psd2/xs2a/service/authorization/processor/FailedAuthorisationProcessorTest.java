@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AuthorisationProcessorService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FailedAuthorisationProcessorTest {
+@ExtendWith(MockitoExtension.class)
+class FailedAuthorisationProcessorTest {
 
     @InjectMocks
     private FailedAuthorisationProcessor processor;
@@ -39,12 +39,12 @@ public class FailedAuthorisationProcessorTest {
     private AuthorisationProcessorService processorService;
 
     @Test
-    public void scaStatus() {
+    void scaStatus() {
         assertEquals(ScaStatus.FAILED, processor.getScaStatus());
     }
 
     @Test
-    public void execute() {
+    void execute() {
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(null, null, null, null);
         when(processorService.doScaFailed(request)).thenReturn(new AuthorisationProcessorResponse());
 

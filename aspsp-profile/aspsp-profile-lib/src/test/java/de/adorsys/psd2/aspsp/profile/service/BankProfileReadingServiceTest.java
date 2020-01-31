@@ -2,30 +2,30 @@ package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class BankProfileReadingServiceTest {
+ class BankProfileReadingServiceTest {
     private BankProfileReadingService bankProfileReadingService;
 
-    @Before
-    public void setUp(){
+    @BeforeEach
+     void setUp(){
         bankProfileReadingService = new BankProfileReadingService();
         bankProfileReadingService.setResourceLoader(new DefaultResourceLoader());
     }
 
     @Test
-    public void profileConfigurationWithAdditionalFields() {
+     void profileConfigurationWithAdditionalFields() {
         ProfileConfiguration defaultConfiguration = bankProfileReadingService.getProfileConfiguration();
 
-        Whitebox.setInternalState(bankProfileReadingService,
-                                  "customBankProfile",
-                                  "classpath:bank_profile_additional_fields.yml");
+        ReflectionTestUtils.setField(bankProfileReadingService,
+                                      "customBankProfile",
+                                      "classpath:bank_profile_additional_fields.yml");
 
 
         ProfileConfiguration configurationWithCustomProfile = bankProfileReadingService.getProfileConfiguration();
@@ -35,10 +35,10 @@ public class BankProfileReadingServiceTest {
     }
 
     @Test
-    public void profileConfigurationWithoutUsualFields() {
+     void profileConfigurationWithoutUsualFields() {
         ProfileConfiguration defaultConfiguration = bankProfileReadingService.getProfileConfiguration();
 
-        Whitebox.setInternalState(bankProfileReadingService,
+        ReflectionTestUtils.setField(bankProfileReadingService,
                                   "customBankProfile",
                                   "classpath:bank_profile_missing_fields.yml");
 
@@ -49,10 +49,10 @@ public class BankProfileReadingServiceTest {
     }
 
     @Test
-    public void profileConfigurationScaRedirectFlowOAUTH() {
+     void profileConfigurationScaRedirectFlowOAUTH() {
         //Given
         //When
-        Whitebox.setInternalState(bankProfileReadingService,
+        ReflectionTestUtils.setField(bankProfileReadingService,
                                   "customBankProfile",
                                   "classpath:bank_profile_sca_redirect_flow_oauth.yml");
 
@@ -62,10 +62,10 @@ public class BankProfileReadingServiceTest {
     }
 
     @Test
-    public void profileConfigurationScaRedirectFlowRedirect() {
+     void profileConfigurationScaRedirectFlowRedirect() {
         //Given
         //When
-        Whitebox.setInternalState(bankProfileReadingService,
+        ReflectionTestUtils.setField(bankProfileReadingService,
                                   "customBankProfile",
                                   "classpath:bank_profile_sca_redirect_flow_redirect.yml");
 

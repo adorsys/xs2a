@@ -20,11 +20,11 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,8 +32,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisPsuDataServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PisPsuDataServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String WRONG_ID = "wrong id";
     private static final List<PsuIdData> LIST_PSU_DATA = getListPisPayment();
@@ -45,7 +45,7 @@ public class PisPsuDataServiceTest {
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
     @Test
-    public void getPsuDataByPaymentId_success() {
+    void getPsuDataByPaymentId_success() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(PAYMENT_ID))
             .thenReturn(CmsResponse.<List<PsuIdData>>builder().payload(LIST_PSU_DATA).build());
@@ -58,7 +58,7 @@ public class PisPsuDataServiceTest {
     }
 
     @Test
-    public void getPsuDataByPaymentId_failed() {
+    void getPsuDataByPaymentId_failed() {
         //Given
         when(pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(WRONG_ID))
             .thenReturn(CmsResponse.<List<PsuIdData>>builder().error(CmsError.TECHNICAL_ERROR).build());

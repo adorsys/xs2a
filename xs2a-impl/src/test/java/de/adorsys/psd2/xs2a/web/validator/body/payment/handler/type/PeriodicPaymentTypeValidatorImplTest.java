@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,17 +36,15 @@ import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.PaymentVal
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PeriodicPaymentTypeValidatorImplTest {
+class PeriodicPaymentTypeValidatorImplTest {
 
     private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
     private static final String VALUE_71_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
@@ -59,8 +57,8 @@ public class PeriodicPaymentTypeValidatorImplTest {
     private Xs2aAddress address;
     private PaymentValidationConfig validationConfig;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         JsonReader jsonReader = new JsonReader();
         messageError = new MessageError();
         periodicPayment = jsonReader.getObjectFromFile("json/validation/periodic-payment.json", PeriodicPayment.class);
@@ -85,18 +83,18 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void getPaymentType() {
+    void getPaymentType() {
         assertEquals(PaymentType.PERIODIC, validator.getPaymentType());
     }
 
     @Test
-    public void doValidation_success() {
+    void doValidation_success() {
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void doValidation_endToEndIdentification_tooLong_error() {
+    void doValidation_endToEndIdentification_tooLong_error() {
         periodicPayment.setEndToEndIdentification(VALUE_36_LENGHT);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -105,7 +103,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructionIdentification_tooLong_error() {
+    void doValidation_instructionIdentification_tooLong_error() {
         periodicPayment.setInstructionIdentification(VALUE_36_LENGHT);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -114,7 +112,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_debtorAccount_null_error() {
+    void doValidation_debtorAccount_null_error() {
         periodicPayment.setDebtorAccount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -123,7 +121,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_null_error() {
+    void doValidation_instructedAmount_null_error() {
         periodicPayment.setInstructedAmount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -132,7 +130,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_currency_null_error() {
+    void doValidation_instructedAmount_currency_null_error() {
         Xs2aAmount instructedAmount = periodicPayment.getInstructedAmount();
         instructedAmount.setCurrency(null);
 
@@ -142,7 +140,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_amount_null_error() {
+    void doValidation_instructedAmount_amount_null_error() {
         Xs2aAmount instructedAmount = periodicPayment.getInstructedAmount();
         instructedAmount.setAmount(null);
 
@@ -152,7 +150,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_instructedAmount_amount_wrong_format_error() {
+    void doValidation_instructedAmount_amount_wrong_format_error() {
         Xs2aAmount instructedAmount = periodicPayment.getInstructedAmount();
         instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
@@ -162,7 +160,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorAccount_null_error() {
+    void doValidation_creditorAccount_null_error() {
         periodicPayment.setCreditorAccount(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -171,7 +169,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_null_error() {
+    void doValidation_creditorName_null_error() {
         periodicPayment.setCreditorName(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -180,7 +178,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_creditorName_tooLong_error() {
+    void doValidation_creditorName_tooLong_error() {
         periodicPayment.setCreditorName(VALUE_71_LENGHT);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -189,7 +187,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_requestedExecutionDate_error() {
+    void doValidation_requestedExecutionDate_error() {
         periodicPayment.setRequestedExecutionDate(LocalDate.now().minusDays(1));
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -197,13 +195,13 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validateAccount_success() {
+    void validateAccount_success() {
         validator.validateAccount(accountReference, messageError, validationConfig);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validateAccount_iban_error() {
+    void validateAccount_iban_error() {
         accountReference.setIban("123");
 
         validator.validateAccount(accountReference, messageError, validationConfig);
@@ -212,7 +210,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validateAccount_bban_error() {
+    void validateAccount_bban_error() {
         accountReference.setBban("123");
 
         validator.validateAccount(accountReference, messageError, validationConfig);
@@ -221,7 +219,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_pan_tooLong_error() {
+    void doValidation_pan_tooLong_error() {
         accountReference.setPan(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError, validationConfig);
@@ -230,7 +228,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_maskedPan_tooLong_error() {
+    void doValidation_maskedPan_tooLong_error() {
         accountReference.setMaskedPan(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError, validationConfig);
@@ -239,7 +237,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_Msisdn_tooLong_error() {
+    void doValidation_Msisdn_tooLong_error() {
         accountReference.setMsisdn(VALUE_36_LENGHT);
 
         validator.validateAccount(accountReference, messageError, validationConfig);
@@ -248,13 +246,13 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_success() {
+    void validatorAddress_success() {
         validator.validateAddress(address, messageError, validationConfig);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validatorAddress_street_tooLong_error() {
+    void validatorAddress_street_tooLong_error() {
         address.setStreetName(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -263,7 +261,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_buildingNumber_tooLong_error() {
+    void validatorAddress_buildingNumber_tooLong_error() {
         address.setBuildingNumber(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -272,7 +270,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_city_tooLong_error() {
+    void validatorAddress_city_tooLong_error() {
         address.setTownName(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -281,7 +279,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_postalCode_tooLong_error() {
+    void validatorAddress_postalCode_tooLong_error() {
         address.setPostCode(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -290,7 +288,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_country_null_error() {
+    void validatorAddress_country_null_error() {
         address.setCountry(null);
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -299,7 +297,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_country_codeBlank_error() {
+    void validatorAddress_country_codeBlank_error() {
         address.getCountry().setCode("");
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -308,7 +306,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_country_codeFormat_error() {
+    void validatorAddress_country_codeFormat_error() {
         address.getCountry().setCode("zz");
 
         validator.validateAddress(address, messageError, validationConfig);
@@ -316,7 +314,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_startDate_null_error() {
+    void validatorAddress_startDate_null_error() {
         periodicPayment.setStartDate(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -325,7 +323,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_startDate_beforeNow_error() {
+    void validatorAddress_startDate_beforeNow_error() {
         periodicPayment.setStartDate(LocalDate.now().minusDays(1));
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -334,7 +332,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_frequency_null_error() {
+    void validatorAddress_frequency_null_error() {
         periodicPayment.setFrequency(null);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
@@ -343,7 +341,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void validatorAddress_paymentPeriod_error() {
+    void validatorAddress_paymentPeriod_error() {
         periodicPayment.setStartDate(LocalDate.now().plusDays(2)); // Start date bigger than end date
         periodicPayment.setEndDate(LocalDate.now().plusDays(1));
 
@@ -352,7 +350,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_ultimate_debtor_error() {
+    void doValidation_ultimate_debtor_error() {
         periodicPayment.setUltimateDebtor(VALUE_71_LENGHT);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
@@ -361,7 +359,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_ultimate_creditor_error() {
+    void doValidation_ultimate_creditor_error() {
         periodicPayment.setUltimateCreditor(VALUE_71_LENGHT);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
@@ -370,7 +368,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_no_reference_error() {
+    void doValidation_remittance_no_reference_error() {
         Remittance remittance = new Remittance();
         remittance.setReference(null);
         periodicPayment.setRemittanceInformationStructured(remittance);
@@ -381,7 +379,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_reference_error() {
+    void doValidation_remittance_reference_error() {
         Remittance remittance = new Remittance();
         remittance.setReference(VALUE_36_LENGHT);
         periodicPayment.setRemittanceInformationStructured(remittance);
@@ -392,7 +390,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_reference_type_error() {
+    void doValidation_remittance_reference_type_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
         remittance.setReferenceType(VALUE_36_LENGHT);
@@ -404,7 +402,7 @@ public class PeriodicPaymentTypeValidatorImplTest {
     }
 
     @Test
-    public void doValidation_remittance_reference_tissuer_error() {
+    void doValidation_remittance_reference_tissuer_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
         remittance.setReferenceIssuer(VALUE_36_LENGHT);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,18 +34,17 @@ import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCheckAuthorisationConfirmationServiceSupportImplTest {
+@ExtendWith(MockitoExtension.class)
+class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     private static final String STANDARD_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String RAW_PAYMENT_PRODUCT = "raw-product";
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(null, null, null, null, null);
@@ -73,14 +72,11 @@ public class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     @InjectMocks
     private PisCheckAuthorisationConfirmationServiceSupportImpl pisCheckAuthorisationConfirmationServiceSupport;
 
-    @Before
-    public void setUp() {
-        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
-    }
-
     @Test
-    public void checkConfirmationCode_raw() {
+    void checkConfirmationCode_raw() {
         // Given
+        when(standardPaymentProductsResolver.isRawPaymentProduct(RAW_PAYMENT_PRODUCT)).thenReturn(true);
+
         SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, PaymentType.SINGLE);
 
         SpiConfirmationCodeCheckingResponse spiConfirmationCodeCheckingResponse = new SpiConfirmationCodeCheckingResponse(ScaStatus.PSUIDENTIFIED);
@@ -103,7 +99,7 @@ public class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     }
 
     @Test
-    public void checkConfirmationCode_single() {
+    void checkConfirmationCode_single() {
         // Given
         SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.SINGLE);
 
@@ -129,7 +125,7 @@ public class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     }
 
     @Test
-    public void checkConfirmationCode_periodic() {
+    void checkConfirmationCode_periodic() {
         // Given
         SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.PERIODIC);
 
@@ -155,7 +151,7 @@ public class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     }
 
     @Test
-    public void checkConfirmationCode_bulk() {
+    void checkConfirmationCode_bulk() {
         // Given
         SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.BULK);
 

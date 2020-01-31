@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.request.RequestPathResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED_NO_T
 
 @Slf4j
 @Component
-public class OauthModeFilter extends GlobalAbstractExceptionFilter {
+public class OauthModeFilter extends AbstractXs2aFilter {
     // Map which defines XS2A endpoints, which can use OAuth2 authorisation and their POST and DELETE HTTP methods.
     private static final Map<String, List<String>> OAUTH2_ENDPOINTS_WITH_METHODS = new HashMap<>();
 
@@ -66,8 +67,8 @@ public class OauthModeFilter extends GlobalAbstractExceptionFilter {
     private final TppErrorMessageWriter tppErrorMessageWriter;
     private final RequestPathResolver requestPathResolver;
 
-    public OauthModeFilter(TppErrorMessageWriter tppErrorMessageWriter, AspspProfileServiceWrapper aspspProfileService, RequestProviderService requestProviderService, ScaApproachResolver scaApproachResolver, TppErrorMessageWriter tppErrorMessageWriter1, RequestPathResolver requestPathResolver) {
-        super(tppErrorMessageWriter);
+    public OauthModeFilter(TppErrorMessageWriter tppErrorMessageWriter, AspspProfileServiceWrapper aspspProfileService, RequestProviderService requestProviderService, ScaApproachResolver scaApproachResolver, TppErrorMessageWriter tppErrorMessageWriter1, RequestPathResolver requestPathResolver, Xs2aEndpointChecker xs2aEndpointChecker) {
+        super(tppErrorMessageWriter, xs2aEndpointChecker);
         this.aspspProfileService = aspspProfileService;
         this.requestProviderService = requestProviderService;
         this.scaApproachResolver = scaApproachResolver;

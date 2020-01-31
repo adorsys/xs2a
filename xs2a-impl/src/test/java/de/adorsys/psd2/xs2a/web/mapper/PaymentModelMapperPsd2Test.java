@@ -33,27 +33,26 @@ import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.validation.Validation;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class,
     HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class})
-public class PaymentModelMapperPsd2Test {
-
+class PaymentModelMapperPsd2Test {
     private static final String STANDARD_PAYMENT_TYPE = "sepa-credit-transfers";
     private static final String NON_STANDARD_PAYMENT_TYPE = "pain.001-sepa-credit-transfers";
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
@@ -81,8 +80,8 @@ public class PaymentModelMapperPsd2Test {
     private Xs2aObjectMapper xs2aObjectMapper;
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ValueValidatorService validatorService = new ValueValidatorService(Validation.buildDefaultValidatorFactory().getValidator());
         AmountModelMapper amountModelMapper = new AmountModelMapper(validatorService);
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, tppRedirectUriMapper, amountModelMapper,
@@ -91,7 +90,7 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToGetPaymentResponse_standardPayment() {
+    void mapToGetPaymentResponse_standardPayment() {
         CommonPayment payment = new CommonPayment();
         payment.setPaymentData(jsonReader.getBytesFromFile("json/service/mapper/common-payment.json"));
         payment.setTransactionStatus(TransactionStatus.RCVD);
@@ -109,7 +108,7 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToGetPaymentResponse_nonStandardPayment() {
+    void mapToGetPaymentResponse_nonStandardPayment() {
         CommonPayment payment = new CommonPayment();
         payment.setPaymentData(jsonReader.getBytesFromFile("json/service/mapper/common-payment.json"));
         payment.setTransactionStatus(TransactionStatus.RCVD);
@@ -120,7 +119,7 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToPaymentCancellationRequest() {
+    void mapToPaymentCancellationRequest() {
         PisPaymentCancellationRequest actualPaymentCancellationRequest = mapper.mapToPaymentCancellationRequest(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), PAYMENT_ID, Boolean.TRUE, "ok_url", "nok_url");
 
         PisPaymentCancellationRequest expected = jsonReader.getObjectFromFile("json/service/mapper/payment-cancellation-request.json", PisPaymentCancellationRequest.class);
@@ -128,14 +127,14 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToStatusResponse_ShouldMapCorrectly() {
+    void mapToStatusResponse_ShouldMapCorrectly() {
         PaymentInitiationStatusResponse200Json response = mapper.mapToStatusResponseJson(PAYMENT_STATUS_RESPONSE);
         assertEquals(de.adorsys.psd2.model.TransactionStatus.ACCP, response.getTransactionStatus());
         assertEquals(true, response.getFundsAvailable());
     }
 
     @Test
-    public void mapToStatusResponseRaw_shouldReturnBytesFromResponse() {
+    void mapToStatusResponseRaw_shouldReturnBytesFromResponse() {
         // Given
         byte[] rawPaymentStatusBody = "some raw body".getBytes();
         GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody);
@@ -148,7 +147,7 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToPaymentInitiationResponse() {
+    void mapToPaymentInitiationResponse() {
         PaymentInitiationResponse paymentInitiationResponse = mock(PaymentInitiationResponse.class);
         when(paymentInitiationResponse.getTransactionStatus()).thenReturn(TransactionStatus.RCVD);
         when(paymentInitiationResponse.getPaymentId()).thenReturn(PAYMENT_ID);
@@ -168,7 +167,7 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToPaymentRequestParameters() {
+    void mapToPaymentRequestParameters() {
         TppNotificationData tppNotificationData = new TppNotificationData(NOTIFICATION_MODES, "notification.uri");
         PaymentInitiationParameters expected = new PaymentInitiationParameters();
         expected.setPaymentProduct(PAYMENT_PRODUCT);
@@ -186,7 +185,7 @@ public class PaymentModelMapperPsd2Test {
     }
 
     @Test
-    public void mapToPaymentInitiationCancelResponse() {
+    void mapToPaymentInitiationCancelResponse() {
         CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
         cancelPaymentResponse.setTransactionStatus(TransactionStatus.CANC);
         de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject authenticationObjec = new de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject();

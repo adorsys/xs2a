@@ -18,14 +18,14 @@ package de.adorsys.psd2.validator.signature.service;
 
 import de.adorsys.psd2.validator.signature.service.algorithm.EncodingAlgorithm;
 import de.adorsys.psd2.validator.signature.service.algorithm.HashingAlgorithm;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DigestTest {
+class DigestTest {
     private static final String REQUEST_BODY = "{\"hello\": \"world\"}";
     private static final Charset UTF8_CHARSET = StandardCharsets.UTF_8;
     private static final String EQUAL_SEPARATOR = "=";
@@ -40,7 +40,7 @@ public class DigestTest {
     private static final String EXPECTED_DIGEST_HEADER_512_VALUE = HASHING_ALGORITHM_512 + EQUAL_SEPARATOR + DIGEST_VALUE_512;
 
     @Test
-    public void build_256() {
+    void build_256() {
         // given
         EncodingAlgorithm encodingAlgorithm = EncodingAlgorithm.BASE64;
         HashingAlgorithm hashingAlgorithm = HashingAlgorithm.SHA256;
@@ -58,7 +58,7 @@ public class DigestTest {
     }
 
     @Test
-    public void build_512() {
+    void build_512() {
         // given
         EncodingAlgorithm encodingAlgorithm = EncodingAlgorithm.BASE64;
         HashingAlgorithm hashingAlgorithm = HashingAlgorithm.SHA512;

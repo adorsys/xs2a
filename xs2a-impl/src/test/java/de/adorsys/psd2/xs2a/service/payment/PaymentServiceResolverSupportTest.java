@@ -42,7 +42,7 @@
 //import de.adorsys.psd2.xs2a.service.payment.support.status.ReadSinglePaymentStatusService;
 //import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 //import org.junit.Before;
-//import org.junit.Test;
+//import org.junit.jupiter.api.Test;
 //import org.junit.runner.RunWith;
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;

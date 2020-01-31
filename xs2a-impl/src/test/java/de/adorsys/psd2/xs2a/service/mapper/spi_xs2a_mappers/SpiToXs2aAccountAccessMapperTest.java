@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aAccountAccessMapper.class, SpiToXs2aAccountReferenceMapperImpl.class})
-public class SpiToXs2aAccountAccessMapperTest {
+class SpiToXs2aAccountAccessMapperTest {
 
     @Autowired
     private SpiToXs2aAccountAccessMapper mapper;
@@ -40,7 +40,7 @@ public class SpiToXs2aAccountAccessMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void getAccessForGlobalOrAllAvailableAccountsConsent() {
+    void getAccessForGlobalOrAllAvailableAccountsConsent() {
         CreateConsentReq createConsentReq = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/create-consent-request.json", CreateConsentReq.class);
         Xs2aAccountAccess actualXs2aAccountAccess = mapper.getAccessForGlobalOrAllAvailableAccountsConsent(createConsentReq);
 
@@ -49,7 +49,7 @@ public class SpiToXs2aAccountAccessMapperTest {
     }
 
     @Test
-    public void mapToAccountAccess() {
+    void mapToAccountAccess() {
         SpiAccountAccess spiAccountAccess = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-access.json", SpiAccountAccess.class);
         Optional<Xs2aAccountAccess> actualXs2aAccountAccess = mapper.mapToAccountAccess(spiAccountAccess);
 
@@ -59,7 +59,7 @@ public class SpiToXs2aAccountAccessMapperTest {
     }
 
     @Test
-    public void mapToAccountAccess_nullValue() {
-       assertFalse(mapper.mapToAccountAccess(null).isPresent());
+    void mapToAccountAccess_nullValue() {
+        assertFalse(mapper.mapToAccountAccess(null).isPresent());
     }
 }

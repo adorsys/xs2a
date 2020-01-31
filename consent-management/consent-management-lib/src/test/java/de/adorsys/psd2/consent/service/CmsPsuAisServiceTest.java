@@ -33,6 +33,7 @@ import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentAuthorisationRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.impl.AisConsentRepositoryImpl;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.repository.specification.AisConsentAuthorizationSpecification;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
@@ -50,13 +51,13 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -65,12 +66,11 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.function.Function;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsPsuAisServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CmsPsuAisServiceTest {
 
     @InjectMocks
     private CmsPsuAisServiceInternal cmsPsuAisService;
@@ -128,8 +128,8 @@ public class CmsPsuAisServiceTest {
     private JsonReader jsonReader;
     private AuthenticationDataHolder authenticationDataHolder;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuIdData = buildPsuIdData(CORRECT_PSU_ID);
         psuData = buildPsuData(CORRECT_PSU_ID);
         jsonReader = new JsonReader();
@@ -140,28 +140,17 @@ public class CmsPsuAisServiceTest {
         aisConsentAuthorization = buildAisConsentAuthorisation();
         aisConsents = buildAisConsents();
         authenticationDataHolder = new AuthenticationDataHolder(METHOD_ID, AUTHENTICATION_DATA);
-
-        when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
-        when(aisConsentAuthorisationRepository.save(aisConsentAuthorization)).thenReturn(aisConsentAuthorization);
-
-        //noinspection unchecked
-        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
-        //noinspection unchecked
-        when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(mockAisConsentAuthorization));
-
-        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
     }
 
     @Test
-    public void updatePsuDataInConsentSuccess() throws AuthorisationIsExpiredException {
+    void updatePsuDataInConsentSuccess() throws AuthorisationIsExpiredException {
         // Given
         //noinspection unchecked
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsentAuthorization));
-        when(psuDataMapper.mapToPsuData(psuIdData))
-            .thenReturn(psuData);
-        when(cmsPsuService.definePsuDataForAuthorisation(any(), anyList()))
-            .thenReturn(Optional.of(psuData));
+        when(psuDataMapper.mapToPsuData(psuIdData)).thenReturn(psuData);
+        when(cmsPsuService.definePsuDataForAuthorisation(any(), anyList())).thenReturn(Optional.of(psuData));
+
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
 
         // When
         boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -173,7 +162,9 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updatePsuDataInConsentFail() throws AuthorisationIsExpiredException {
+    void updatePsuDataInConsentFail() throws AuthorisationIsExpiredException {
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID_NOT_EXIST), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -184,7 +175,12 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void getConsentSuccess() {
+    void getConsentSuccess() {
+        when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         Optional<CmsAisAccountConsent> consent = cmsPsuAisService.getConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -196,21 +192,27 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void getConsentFail() {
+    void getConsentFail() {
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID_NOT_EXIST), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
+
         // When
         Optional<CmsAisAccountConsent> consent = cmsPsuAisService.getConsent(psuIdData, EXTERNAL_CONSENT_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
-        assertTrue(!consent.isPresent());
+        assertFalse(consent.isPresent());
         verify(aisConsentSpecification, times(1))
             .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
-    public void getConsentSuccessStatusNotChanged() {
+    void getConsentSuccessStatusNotChanged() {
         //Given
         ConsentStatus consentStatus = ConsentStatus.TERMINATED_BY_TPP;
         AisConsent aisConsentTerminatedByTpp = buildConsentByStatusAndExpireDate(consentStatus, LocalDate.now().minusDays(1));
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
         when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(aisConsentTerminatedByTpp));
         when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsentTerminatedByTpp)).thenReturn(mockCmsAisAccountConsent);
 
@@ -226,10 +228,17 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAuthorisationStatusSuccess() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatusSuccess() throws AuthorisationIsExpiredException {
         // When
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsentAuthorization));
+
+        when(aisConsentAuthorisationRepository.save(aisConsentAuthorization)).thenReturn(aisConsentAuthorization);
 
         // Then
         boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
@@ -240,11 +249,15 @@ public class CmsPsuAisServiceTest {
             .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
         verify(aisConsentAuthorizationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(aisConsentAuthorisationRepository, times(1)).save(aisConsentAuthorization);
+        assertEquals(ScaStatus.RECEIVED, aisConsentAuthorization.getScaStatus());
     }
 
     @Test
-    public void updateAuthorisationStatusFail() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatusFail() throws AuthorisationIsExpiredException {
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID_NOT_EXIST, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
@@ -257,11 +270,13 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void getConsentsForPsuSuccess() {
+    void getConsentsForPsuSuccess() {
         // Given
         when(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentJpaRepository.findAll(any(Specification.class))).thenReturn(aisConsents);
+        when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsent)).thenReturn(aisAccountConsent);
+
 
         // When
         List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -273,7 +288,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void getConsentsForPsuFail() {
+    void getConsentsForPsuFail() {
         // When
         List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsu(psuIdDataWrong, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -284,8 +299,13 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void confirmConsentSuccess() {
+    void confirmConsentSuccess() throws WrongChecksumException {
         // Given
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         when(aisConsentService.findAndTerminateOldConsentsByNewConsentId(anyString()))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
@@ -304,7 +324,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void confirmConsentFail() {
+    void confirmConsentFail() throws WrongChecksumException {
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.confirmConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -315,8 +335,13 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void rejectConsentSuccess() {
+    void rejectConsentSuccess() throws WrongChecksumException {
         // Given
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         AisConsent aisConsentRejected = buildConsentByStatus(ConsentStatus.REJECTED);
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsentRejected)).thenReturn(aisConsentRejected);
 
@@ -330,7 +355,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void rejectConsentFail() {
+    void rejectConsentFail() throws WrongChecksumException {
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.rejectConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -341,8 +366,13 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void revokeConsentSuccess() {
+    void revokeConsentSuccess() throws WrongChecksumException {
         // Given
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         AisConsent aisConsentRevoked = buildConsentByStatus(ConsentStatus.REVOKED_BY_PSU);
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsentRevoked)).thenReturn(aisConsentRevoked);
 
@@ -356,7 +386,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void revokeConsentFail() {
+    void revokeConsentFail() throws WrongChecksumException {
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.revokeConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -367,12 +397,16 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void authorisePartiallyConsentSuccess() {
+    void authorisePartiallyConsentSuccess() throws WrongChecksumException {
         //Given
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         AisConsent aisConsent = buildConsentByStatus(ConsentStatus.PARTIALLY_AUTHORISED);
         aisConsent.setMultilevelScaRequired(true);
-        when(aisConsentRepositoryImpl.verifyAndSave(aisConsent))
-            .thenReturn(aisConsent);
+        when(aisConsentRepositoryImpl.verifyAndSave(aisConsent)).thenReturn(aisConsent);
         ArgumentCaptor<AisConsent> argumentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         // When
         boolean updateAuthorisationStatus = cmsPsuAisService.authorisePartiallyConsent(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -385,7 +419,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void confirmConsent_FinalisedStatus_Fail() {
+    void confirmConsent_FinalisedStatus_Fail() throws WrongChecksumException {
         // When
         boolean result = cmsPsuAisService.confirmConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -396,7 +430,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void rejectConsent_FinalisedStatus_Fail() {
+    void rejectConsent_FinalisedStatus_Fail() throws WrongChecksumException {
         // When
         boolean result = cmsPsuAisService.rejectConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -407,7 +441,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void revokeConsent_FinalisedStatus_Fail() {
+    void revokeConsent_FinalisedStatus_Fail() throws WrongChecksumException {
         // When
         boolean result = cmsPsuAisService.revokeConsent(FINALISED_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
@@ -418,7 +452,13 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAuthorisationStatus_FinalisedStatus_Fail() throws AuthorisationIsExpiredException {
+    void updateAuthorisationStatus_FinalisedStatus_Fail() throws AuthorisationIsExpiredException {
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent), Optional.empty());
+
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(eq(FINALISED_AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         boolean result = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, FINALISED_AUTHORISATION_ID, ScaStatus.SCAMETHODSELECTED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
@@ -431,8 +471,9 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void getConsentByRedirectId_Fail_AuthorisationNotFound() throws RedirectUrlIsExpiredException {
+    void getConsentByRedirectId_Fail_AuthorisationNotFound() throws RedirectUrlIsExpiredException {
         // Given
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
 
@@ -445,15 +486,31 @@ public class CmsPsuAisServiceTest {
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
-    @Test(expected = RedirectUrlIsExpiredException.class)
-    public void getConsentByRedirectId_Fail_RedirectExpire() throws RedirectUrlIsExpiredException {
+    @Test
+    void getConsentByRedirectId_Fail_RedirectExpire() {
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(mockAisConsentAuthorization));
+
+        when(mockAisConsentAuthorization.isRedirectUrlNotExpired()).thenReturn(false);
+        when(aisConsentAuthorisationRepository.save(mockAisConsentAuthorization)).thenReturn(mockAisConsentAuthorization);
+
         // When
-        cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        assertThrows(
+            RedirectUrlIsExpiredException.class,
+            () -> cmsPsuAisService.checkRedirectAndGetConsent(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID)
+        );
+
+        verify(mockAisConsentAuthorization).setScaStatus(ScaStatus.FAILED);
     }
 
     @Test
-    public void getConsentByRedirectId_Fail_NullAisConsent() throws RedirectUrlIsExpiredException {
+    void getConsentByRedirectId_Fail_NullAisConsent() throws RedirectUrlIsExpiredException {
         // Given
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(mockAisConsentAuthorization));
+
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired()).thenReturn(true);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(null);
 
@@ -467,8 +524,12 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void getConsentByRedirectId_Success() throws RedirectUrlIsExpiredException {
+    void getConsentByRedirectId_Success() throws RedirectUrlIsExpiredException {
         // Given
+        when(aisConsentAuthorizationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(mockAisConsentAuthorization));
+
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired()).thenReturn(true);
         when(mockAisConsentAuthorization.getConsent()).thenReturn(aisConsent);
         when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsent)).thenReturn(mockCmsAisAccountConsent);
@@ -486,7 +547,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAccountAccessInConsent_Success() {
+    void updateAccountAccessInConsent_Success() throws WrongChecksumException {
         // Given
         int frequencyPerDay = 777;
         String iban = "DE67597874259856475273";
@@ -498,6 +559,11 @@ public class CmsPsuAisServiceTest {
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, validUntil, frequencyPerDay, Boolean.TRUE, Boolean.TRUE);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
         when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
@@ -506,7 +572,7 @@ public class CmsPsuAisServiceTest {
         assertSame(aspspAccountAccessesChecked.size(), aspspAccountAccesses.size());
         assertSame(aspspAccountAccessesChecked.get(0).getAccountIdentifier(), iban);
         assertSame(aspspAccountAccessesChecked.get(0).getCurrency(), currency);
-        assertSame(argument.getValue().getExpireDate(), validUntil);
+        assertSame(argument.getValue().getValidUntil(), validUntil);
         assertEquals(argument.getValue().getAllowedFrequencyPerDay(), frequencyPerDay);
         assertEquals(getUsageCounter(argument.getValue()), frequencyPerDay);
         assertTrue(argument.getValue().isRecurringIndicator());
@@ -516,7 +582,7 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void updateAccountAccessInConsent_NoAdditionalAccountInformation_Success() {
+    void updateAccountAccessInConsent_NoAdditionalAccountInformation_Success() throws WrongChecksumException {
         // Given
         AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
         AisAccountAccess aisAccountAccess = getAisAccountAccess(accountReference);
@@ -525,6 +591,11 @@ public class CmsPsuAisServiceTest {
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, LocalDate.now(), 777, Boolean.TRUE, Boolean.TRUE);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
         when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
@@ -539,12 +610,12 @@ public class CmsPsuAisServiceTest {
 
         assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
         assertEquals(0, countAccessesByType.apply(TypeAccess.OWNER_ADDRESS).longValue());
-        assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.NONE);
+        assertEquals(AdditionalAccountInformationType.NONE, aisConsent.getOwnerNameType());
         assertTrue(saved);
     }
 
     @Test
-    public void updateAccountAccessInConsent_AdditionalAccountInformation_Success() {
+    void updateAccountAccessInConsent_AdditionalAccountInformation_Success() throws WrongChecksumException {
         // Given
         AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
         AisAccountAccess aisAccountAccess = getAisAccountAccessWithAdditionalAccountInformation(accountReference);
@@ -553,6 +624,11 @@ public class CmsPsuAisServiceTest {
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, LocalDate.now(), 777, Boolean.TRUE, Boolean.TRUE);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
         when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
@@ -566,12 +642,12 @@ public class CmsPsuAisServiceTest {
                                                                            .count();
 
         assertEquals(1L, countAccessesByType.apply(TypeAccess.OWNER_NAME).longValue());
-        assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
+        assertEquals(AdditionalAccountInformationType.DEDICATED_ACCOUNTS, aisConsent.getOwnerNameType());
         assertTrue(saved);
     }
 
     @Test
-    public void updateAccountAccessInConsent_AdditionalAccountInformation_AllAvailableAccounts_Success() {
+    void updateAccountAccessInConsent_AdditionalAccountInformation_AllAvailableAccounts_Success() throws WrongChecksumException {
         // Given
         AccountReference accountReference = getAccountReference("DE67597874259856475273", Currency.getInstance("EUR"));
         AisAccountAccess aisAccountAccess = getAisAccountAccessWithAdditionalAccountInformationAllAvailableAccounts(accountReference);
@@ -580,6 +656,11 @@ public class CmsPsuAisServiceTest {
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(aisAccountAccess, LocalDate.now(), 777, Boolean.TRUE, Boolean.TRUE);
         ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
         when(aisConsentMapper.mapAspspAccountAccesses(aisAccountAccess)).thenReturn(aspspAccountAccesses);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         // When
         boolean saved = cmsPsuAisService.updateAccountAccessInConsent(EXTERNAL_CONSENT_ID, accountAccessRequest, DEFAULT_SERVICE_INSTANCE_ID);
         // Then
@@ -594,32 +675,34 @@ public class CmsPsuAisServiceTest {
 
         assertEquals(0, count.apply(TypeAccess.OWNER_NAME).longValue());
         assertEquals(0, count.apply(TypeAccess.OWNER_ADDRESS).longValue());
-        assertEquals(aisConsent.getOwnerNameType(), AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS);
+        assertEquals(AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS, aisConsent.getOwnerNameType());
         assertTrue(saved);
     }
 
     @Test
-    public void getPsuDataAuthorisations_Success() {
+    void getPsuDataAuthorisations_Success() {
         // Given
         AisConsent consent = buildAisConsentWithFinalisedAuthorisation();
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(consent));
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(consent));
 
         // When
         Optional<List<CmsAisPsuDataAuthorisation>> actualResult = cmsPsuAisService.getPsuDataAuthorisations(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
-        assertThat(actualResult.get().size()).isEqualTo(1);
-        assertThat(actualResult.get().get(0).getScaStatus()).isEqualTo(ScaStatus.FINALISED);
+        assertEquals(1, actualResult.get().size());
+        assertEquals(ScaStatus.FINALISED, actualResult.get().get(0).getScaStatus());
     }
 
     @Test
-    public void getPsuDataAuthorisationsEmptyPsuData_Success() {
+    void getPsuDataAuthorisationsEmptyPsuData_Success() {
         // Given
         AisConsent consent = buildAisConsentWithFinalisedAuthorisationNoPsuData();
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(consent));
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(consent));
 
         // When
         Optional<List<CmsAisPsuDataAuthorisation>> actualResult = cmsPsuAisService.getPsuDataAuthorisations(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -630,7 +713,11 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void saveAccountAccessInConsent_Consent_Finalised_Failed() {
+    void saveAccountAccessInConsent_Consent_Finalised_Failed() {
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(""))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.ofNullable(aisConsent));
+
         // Given
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
         // When
@@ -640,7 +727,10 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void saveAccountAccessInConsent_Consent_Unknown_Failed() {
+    void saveAccountAccessInConsent_Consent_Unknown_Failed() {
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID_NOT_EXIST), eq(""))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
         // Given
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
         // When
@@ -650,8 +740,9 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void saveAccountAccessInConsent_AccessIsNull() {
+    void saveAccountAccessInConsent_AccessIsNull() {
         // Given
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(aisConsent));
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
@@ -662,7 +753,9 @@ public class CmsPsuAisServiceTest {
     }
 
     @Test
-    public void saveAccountAccessInConsent_InvalidValidUntil() {
+    void saveAccountAccessInConsent_InvalidValidUntil() {
+        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
         when(aisConsentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(aisConsent));
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, LocalDate.now().minusDays(1), 1, null, null);
 
@@ -753,7 +846,7 @@ public class CmsPsuAisServiceTest {
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/AisConsent.json", AisConsent.class);
 
         aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
-        aisConsent.setExpireDate(LocalDate.now().plusDays(1));
+        aisConsent.setValidUntil(LocalDate.now().plusDays(1));
         aisConsent.setLastActionDate(LocalDate.now());
         aisConsent.setPsuDataList(Collections.singletonList(psuData));
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
@@ -769,10 +862,10 @@ public class CmsPsuAisServiceTest {
         return aisConsent;
     }
 
-    private AisConsent buildConsentByStatusAndExpireDate(ConsentStatus status, LocalDate expireDate) {
+    private AisConsent buildConsentByStatusAndExpireDate(ConsentStatus status, LocalDate validUntil) {
         AisConsent aisConsent = buildConsent();
         aisConsent.setConsentStatus(status);
-        aisConsent.setExpireDate(expireDate);
+        aisConsent.setValidUntil(validUntil);
         return aisConsent;
     }
 
@@ -787,7 +880,7 @@ public class CmsPsuAisServiceTest {
     private CmsAisAccountConsent buildSpiAccountConsent() {
         return new CmsAisAccountConsent(aisConsent.getId().toString(),
                                         null, false,
-                                        null, 0,
+                                        null, null, 0,
                                         null, null,
                                         false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
                                         OffsetDateTime.now());

@@ -17,10 +17,7 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.ActionStatus;
-import de.adorsys.psd2.consent.api.CmsError;
-import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.CmsScaMethod;
+import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -44,13 +41,12 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMa
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -59,11 +55,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aAisConsentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aAisConsentServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -111,14 +107,10 @@ public class Xs2aAisConsentServiceTest {
     @Mock
     private LoggingContextService loggingContextService;
 
-    @Before
-    public void setUp() {
-        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
-    }
-
     @Test
-    public void createConsent_success() {
+    void createConsent_success() throws WrongChecksumException {
         //Given
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1, INTERNAL_REQUEST_ID))
@@ -139,8 +131,9 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createConsent_failed() {
+    void createConsent_failed() throws WrongChecksumException {
         //Given
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCreateAisConsentRequest(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1, INTERNAL_REQUEST_ID))
@@ -155,9 +148,8 @@ public class Xs2aAisConsentServiceTest {
         assertFalse(actualResponse.isPresent());
     }
 
-
     @Test
-    public void getAccountConsentById_success() {
+    void getAccountConsentById_success() {
         //Given
         when(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID))
             .thenReturn(CmsResponse.<AisAccountConsent>builder().payload(AIS_ACCOUNT_CONSENT).build());
@@ -173,7 +165,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentById_failed() {
+    void getAccountConsentById_failed() {
         //Given
         when(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID))
             .thenReturn(CmsResponse.<AisAccountConsent>builder().error(CmsError.TECHNICAL_ERROR).build());
@@ -186,7 +178,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_success() {
+    void findAndTerminateOldConsentsByNewConsentId_success() {
         //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -199,7 +191,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void findAndTerminateOldConsentsByNewConsentId_false() {
+    void findAndTerminateOldConsentsByNewConsentId_false() {
         //Given
         when(aisConsentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
@@ -212,7 +204,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createAisConsentAuthorization_success() {
+    void createAisConsentAuthorization_success() {
         //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
@@ -234,7 +226,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createAisConsentAuthorization_false() {
+    void createAisConsentAuthorization_false() {
         //Given
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
@@ -249,7 +241,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_success() {
+    void getAccountConsentAuthorizationById_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().payload(AIS_CONSENT_AUTHORIZATION_RESPONSE).build());
@@ -265,7 +257,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAccountConsentAuthorizationById_failed() {
+    void getAccountConsentAuthorizationById_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
             .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
@@ -278,7 +270,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_success() {
+    void getAuthorisationSubResources_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
             .thenReturn(CmsResponse.<List<String>>builder().payload(STRING_LIST).build());
@@ -292,7 +284,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationSubResources_failed() {
+    void getAuthorisationSubResources_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(CONSENT_ID))
             .thenReturn(CmsResponse.<List<String>>builder().error(CmsError.TECHNICAL_ERROR).build());
@@ -305,7 +297,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_success() {
+    void getAuthorisationScaStatus_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(CmsResponse.<ScaStatus>builder().payload(SCA_STATUS).build());
@@ -319,7 +311,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void getAuthorisationScaStatus_failed() {
+    void getAuthorisationScaStatus_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(CmsResponse.<ScaStatus>builder().error(CmsError.TECHNICAL_ERROR).build());
@@ -332,7 +324,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_success() {
+    void isAuthenticationMethodDecoupled_success() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -345,7 +337,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void isAuthenticationMethodDecoupled_failed() {
+    void isAuthenticationMethodDecoupled_failed() {
         //Given
         when(aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
@@ -358,7 +350,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_success() {
+    void saveAuthenticationMethods_success() {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
@@ -373,7 +365,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void saveAuthenticationMethods_failed() {
+    void saveAuthenticationMethods_failed() {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
@@ -388,7 +380,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void updateConsentStatus_shouldStoreConsentStatusInLoggingContext() {
+    void updateConsentStatus_shouldStoreConsentStatusInLoggingContext() throws WrongChecksumException {
         // Given
         when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
@@ -402,7 +394,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void updateConsentStatus_failure_shouldNotStoreConsentStatusInLoggingContext() {
+    void updateConsentStatus_failure_shouldNotStoreConsentStatusInLoggingContext() throws WrongChecksumException {
         // Given
         when(aisConsentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
@@ -416,7 +408,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void consentActionLog() {
+    void consentActionLog() throws WrongChecksumException {
         //Given
         ActionStatus actionStatus = ActionStatus.SUCCESS;
         ArgumentCaptor<AisConsentActionRequest> argumentCaptor = ArgumentCaptor.forClass(AisConsentActionRequest.class);
@@ -434,8 +426,9 @@ public class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    public void createConsentCheckInternalRequestId() {
+    void createConsentCheckInternalRequestId() throws WrongChecksumException {
         //Given
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
         ArgumentCaptor<CreateAisConsentRequest> argumentCaptor = ArgumentCaptor.forClass(CreateAisConsentRequest.class);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
@@ -480,7 +473,7 @@ public class Xs2aAisConsentServiceTest {
     }
 
     private static AccountConsent createConsent(String id) {
-        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), LocalDate.now(), 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
     }
 
     private static CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {

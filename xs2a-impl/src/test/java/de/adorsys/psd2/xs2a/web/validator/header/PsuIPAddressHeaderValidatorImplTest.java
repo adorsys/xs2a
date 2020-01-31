@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,15 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PsuIPAddressHeaderValidatorImplTest {
-
+class PsuIPAddressHeaderValidatorImplTest {
     private static final String CORRECT_IP_ADDRESS = "192.168.7.40";
     private static final String CORRECT_V6_IP_ADDRESS = "2001:0db8:85a3:0000:0000:8a2e:0370:7334";
     private static final String WRONG_IP_ADDRESS = "683.168.11.56";
@@ -41,55 +39,55 @@ public class PsuIPAddressHeaderValidatorImplTest {
     private MessageError messageError;
     private Map<String, String> headers;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         validator = new PsuIPAddressHeaderValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400));
         messageError = new MessageError();
         headers = new HashMap<>();
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         headers.put(validator.getHeaderName(), CORRECT_IP_ADDRESS);
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_ipAddressV6_success() {
+    void validate_ipAddressV6_success() {
         headers.put(validator.getHeaderName(), CORRECT_V6_IP_ADDRESS);
         validator.validate(headers, messageError);
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
-    public void validate_absentHeader_error() {
+    void validate_absentHeader_error() {
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR_ABSENT_HEADER, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
-    public void validate_nullHeader_error() {
+    void validate_nullHeader_error() {
         headers.put(validator.getHeaderName(), null);
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_HEADER, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
-    public void validate_blankHeader_error() {
+    void validate_blankHeader_error() {
         headers.put(validator.getHeaderName(), "");
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR_BLANK_HEADER, messageError.getTppMessage().getMessageErrorCode());
-        assertEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(PSU_IP_ADDRESS_HEADER_NAME, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
-    public void validate_ipAddress_error() {
+    void validate_ipAddress_error() {
         headers.put(validator.getHeaderName(), WRONG_IP_ADDRESS);
         validator.validate(headers, messageError);
 
@@ -97,7 +95,7 @@ public class PsuIPAddressHeaderValidatorImplTest {
     }
 
     @Test
-    public void validate_ipAddressV6_error() {
+    void validate_ipAddressV6_error() {
         headers.put(validator.getHeaderName(), WRONG_V6_IP_ADDRESS);
         validator.validate(headers, messageError);
 

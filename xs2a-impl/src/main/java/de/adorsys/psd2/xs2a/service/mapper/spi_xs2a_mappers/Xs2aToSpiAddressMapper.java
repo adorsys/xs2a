@@ -38,4 +38,19 @@ public class Xs2aToSpiAddressMapper {
             address.getPostCode(),
             Optional.ofNullable(address.getCountry()).map(Xs2aCountryCode::getCode).orElse(""));
     }
+
+    public Xs2aAddress mapToXs2aAddress(SpiAddress address) {
+        if (address == null) {
+            return null;
+        }
+
+        Xs2aAddress xs2aAddress = new Xs2aAddress();
+        xs2aAddress.setStreetName(address.getStreetName());
+        xs2aAddress.setBuildingNumber(address.getBuildingNumber());
+        xs2aAddress.setTownName(address.getTownName());
+        xs2aAddress.setPostCode(address.getPostCode());
+        xs2aAddress.setCountry(new Xs2aCountryCode(address.getCountry()));
+
+        return xs2aAddress;
+    }
 }

@@ -24,23 +24,23 @@ import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentUsageRepository;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class OneOffConsentExpirationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class OneOffConsentExpirationServiceTest {
 
     private static final String ACCOUNT_RESOURCE_ID = "account 1";
     private static final String BALANCE_RESOURCE_ID = "balance 1";
@@ -55,7 +55,7 @@ public class OneOffConsentExpirationServiceTest {
     private AisConsentTransactionRepository aisConsentTransactionRepository;
 
     @Test
-    public void isConsentExpired_allAvailableAccounts_shouldReturnTrue() {
+    void isConsentExpired_allAvailableAccounts_shouldReturnTrue() {
         // Given
         AisConsent aisConsent = new AisConsent();
         aisConsent.setAisConsentRequestType(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
@@ -68,7 +68,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_bankOffered_shouldReturnFalse() {
+    void isConsentExpired_bankOffered_shouldReturnFalse() {
         // Given
         AisConsent aisConsent = new AisConsent();
         aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
@@ -81,7 +81,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_globalFullAccesses_notUsed_shouldReturnFalse() {
+    void isConsentExpired_globalFullAccesses_notUsed_shouldReturnFalse() {
         // Given
         AisConsent aisConsent = new AisConsent();
         aisConsent.setAisConsentRequestType(AisConsentRequestType.GLOBAL);
@@ -95,7 +95,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_globalFullAccesses_fullyUsed_shouldReturnTrue() {
+    void isConsentExpired_globalFullAccesses_fullyUsed_shouldReturnTrue() {
         // Given
         AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
         aisConsentTransaction.setNumberOfTransactions(2);
@@ -119,7 +119,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_dedicatedFullAccesses_notUsed_shouldReturnFalse() {
+    void isConsentExpired_dedicatedFullAccesses_notUsed_shouldReturnFalse() {
         // Given
         AisConsent aisConsent = new AisConsent();
         aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
@@ -133,7 +133,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_dedicatedWithoutBalances_partiallyUsed_shouldReturnFalse() {
+    void isConsentExpired_dedicatedWithoutBalances_partiallyUsed_shouldReturnFalse() {
         // Given
         AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
         aisConsentTransaction.setNumberOfTransactions(2);
@@ -153,7 +153,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_dedicatedWithoutBalances_fullyUsed_shouldReturnTrue() {
+    void isConsentExpired_dedicatedWithoutBalances_fullyUsed_shouldReturnTrue() {
         // Given
         AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
         aisConsentTransaction.setNumberOfTransactions(2);
@@ -176,7 +176,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_dedicatedWithoutTransactions_partiallyUsed_shouldReturnFalse() {
+    void isConsentExpired_dedicatedWithoutTransactions_partiallyUsed_shouldReturnFalse() {
         // Given
         AisConsent aisConsent = new AisConsent();
         aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
@@ -189,7 +189,7 @@ public class OneOffConsentExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpired_dedicatedWithoutTransactions_fullyUsed_shouldReturnTrue() {
+    void isConsentExpired_dedicatedWithoutTransactions_fullyUsed_shouldReturnTrue() {
         // Given
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), anyString()))
             .thenReturn(2);

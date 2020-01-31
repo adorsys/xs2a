@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,20 @@ package de.adorsys.psd2.xs2a.config.factory;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class PisScaStageAuthorisationFactoryTest {
-
+class PisScaStageAuthorisationFactoryTest {
     @Test
-    public void getCancellationServiceName() {
+    void getCancellationServiceName() {
         assertThat(PisScaStageAuthorisationFactory.getCancellationServiceName(ScaApproach.REDIRECT, ScaStatus.FINALISED))
             .isEqualTo("PIS_CANCELLATION_REDIRECT_FINALISED");
     }
 
     @Test
-    public void getServiceName() {
+    void getServiceName() {
         assertThat(PisScaStageAuthorisationFactory.getServiceName(ScaApproach.EMBEDDED, ScaStatus.FINALISED))
             .isEqualTo("PIS_EMBEDDED_FINALISED");
     }

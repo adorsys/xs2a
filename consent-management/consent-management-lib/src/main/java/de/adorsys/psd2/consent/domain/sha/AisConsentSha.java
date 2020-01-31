@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.List;
 public class AisConsentSha {
     private boolean recurringIndicator;
     private boolean combinedServiceIndicator;
-    private LocalDate expireDate;
+    private LocalDate expireDate; //TODO: This variable should be renamed to validUntil https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1159
     private int tppFrequencyPerDay;
     private List<TppAccountAccessSha> accesses;
     private List<AspspAccountAccessSha> aspspAccountAccesses;

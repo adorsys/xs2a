@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,32 +22,34 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SpiAccountConsentModelsTest {
+@ExtendWith(MockitoExtension.class)
+class SpiAccountConsentModelsTest {
     private static final String CREATE_CONSENT_REQ_JSON_PATH = "/json/CreateAccountConsentReqTest.json";
     private static final String NO_DEDICATE_REQ_PATH = "/json/CreateConsentsNoDedicateAccountReqTest.json";
-    private final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
-    private static final Charset UTF_8 = Charset.forName("utf-8");
+    private static final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
+
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Test
-    public void createConsentReq_jsonTest() throws IOException {
+    void createConsentReq_jsonTest() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq expectedRequest = getCreateConsentsRequestTest();
@@ -60,7 +62,7 @@ public class SpiAccountConsentModelsTest {
     }
 
     @Test
-    public void shouldFail_createConsentReqValidation_json() throws IOException {
+    void shouldFail_createConsentReqValidation_json() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_WRONG_JSON_PATH, UTF_8);
 
@@ -74,7 +76,7 @@ public class SpiAccountConsentModelsTest {
     }
 
     @Test
-    public void shouldFail_createConsentReqValidation_object() {
+    void shouldFail_createConsentReqValidation_object() {
         //Given:
         CreateConsentReq wrongCreateConsentsRequest = getCreateConsentsRequestTest();
         wrongCreateConsentsRequest.setAccess(null);
@@ -97,7 +99,7 @@ public class SpiAccountConsentModelsTest {
 
 
     @Test
-    public void createConsentReqValidation() throws IOException {
+    void createConsentReqValidation() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(CREATE_CONSENT_REQ_JSON_PATH, UTF_8);
         CreateConsentReq actualRequest = xs2aObjectMapper.readValue(requestStringJson, CreateConsentReq.class);
@@ -110,7 +112,7 @@ public class SpiAccountConsentModelsTest {
     }
 
     @Test
-    public void createConsentNoDedicateAccountReq_jsonTest() throws IOException {
+    void createConsentNoDedicateAccountReq_jsonTest() throws IOException {
         //Given:
         String requestStringJson = IOUtils.resourceToString(NO_DEDICATE_REQ_PATH, UTF_8);
         CreateConsentReq expectedRequest = getAicNoDedicatedAccountRequest();

@@ -19,11 +19,9 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aUsageType;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountStatus;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountType;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiUsageType;
+import de.adorsys.psd2.xs2a.spi.domain.account.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -38,6 +36,7 @@ import java.util.stream.Collectors;
 public class SpiToXs2aAccountDetailsMapper {
     private final SpiToXs2aBalanceMapper balanceMapper;
     private final SpiToXs2aAddressMapper spiToXs2aAddressMapper;
+    private final SpiToXs2aAmountMapper spiToXs2aAmountMapper;
 
     public Xs2aAccountDetails mapToXs2aAccountDetails(SpiAccountDetails accountDetails) {
         return Optional.ofNullable(accountDetails)
@@ -66,6 +65,28 @@ public class SpiToXs2aAccountDetailsMapper {
                    .orElse(null);
     }
 
+    public Xs2aCardAccountDetails mapToXs2aCardAccountDetails(SpiCardAccountDetails cardAccountDetails) {
+        return Optional.ofNullable(cardAccountDetails)
+                   .map(ad -> new Xs2aCardAccountDetails(
+                            ad.getAspspAccountId(),
+                            ad.getResourceId(),
+                            ad.getMaskedPan(),
+                            ad.getCurrency(),
+                            ad.getName(),
+                            ad.getProduct(),
+                            mapToAccountType(ad.getCashSpiAccountType()),
+                            mapToAccountStatus(ad.getSpiAccountStatus()),
+                            mapToXs2aUsageType(ad.getUsageType()),
+                            ad.getDetails(),
+                            balanceMapper.mapToXs2aBalanceList(ad.getBalances()),
+                            Optional.ofNullable(cardAccountDetails.getCreditLimit()).map(spiToXs2aAmountMapper::mapToXs2aAmount).orElse(null),
+                            ad.getOwnerName()
+                        )
+                   )
+                   .orElse(null);
+
+    }
+
     public List<Xs2aAccountDetails> mapToXs2aAccountDetailsList(List<SpiAccountDetails> accountDetails) {
         if (CollectionUtils.isEmpty(accountDetails)) {
             return new ArrayList<>();
@@ -73,6 +94,16 @@ public class SpiToXs2aAccountDetailsMapper {
 
         return accountDetails.stream()
                    .map(this::mapToXs2aAccountDetails)
+                   .collect(Collectors.toList());
+    }
+
+    public List<Xs2aCardAccountDetails> mapToXs2aCardAccountDetailsList(List<SpiCardAccountDetails> cardAccountDetails) {
+        if (CollectionUtils.isEmpty(cardAccountDetails)) {
+            return new ArrayList<>();
+        }
+
+        return cardAccountDetails.stream()
+                   .map(this::mapToXs2aCardAccountDetails)
                    .collect(Collectors.toList());
     }
 

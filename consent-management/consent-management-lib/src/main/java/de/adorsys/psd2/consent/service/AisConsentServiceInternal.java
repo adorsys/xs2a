@@ -19,15 +19,13 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AisConsentAction;
-import de.adorsys.psd2.consent.domain.account.AspspAccountAccessHolder;
-import de.adorsys.psd2.consent.domain.account.TppAccountAccessHolder;
+import de.adorsys.psd2.consent.domain.account.*;
 import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
@@ -41,6 +39,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,8 +56,8 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AisConsentServiceInternal implements AisConsentService {
+
     private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AisConsentVerifyingRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
@@ -80,8 +79,9 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return create consent response, containing consent and its encrypted ID
      */
     @Override
-    @Transactional
-    public CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<CreateAisConsentResponse> createConsent(CreateAisConsentRequest request) throws WrongChecksumException {
+
         if (request.getAllowedFrequencyPerDay() == null) {
             log.info("TPP ID: [{}]. Consent cannot be created, because request contains no allowed frequency per day",
                      request.getTppInfo().getAuthorisationNumber());
@@ -142,12 +142,16 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return Boolean
      */
     @Override
-    @Transactional
-    public CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) {
-        Optional<Boolean> responseOptional = getActualAisConsent(consentId).map(c -> setStatusAndSaveConsent(c, status));
-        if (responseOptional.isPresent()) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) throws WrongChecksumException {
+        Optional<AisConsent> consentOptional = getActualAisConsent(consentId);
+
+        if (consentOptional.isPresent()) {
+            AisConsent consent = consentOptional.get();
+            boolean result = setStatusAndSaveConsent(consent, status);
+
             return CmsResponse.<Boolean>builder()
-                       .payload(responseOptional.get())
+                       .payload(result)
                        .build();
         }
 
@@ -248,8 +252,8 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @param request {@link AisConsentActionRequest} needed parameters for logging usage AIS consent
      */
     @Override
-    @Transactional
-    public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request) throws WrongChecksumException {
         Optional<AisConsent> consentOpt = getActualAisConsent(request.getConsentId());
         if (consentOpt.isPresent()) {
             AisConsent consent = consentOpt.get();
@@ -259,7 +263,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             // https://rules.sonarsource.com/java/RSPEC-3655
             // but we have isPresent in the code before.
             updateAisConsentUsage(consent, request); //NOSONAR
-            logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
+            logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId()); //NOSONAR
         }
 
         return CmsResponse.<CmsResponse.VoidResponse>builder()
@@ -275,9 +279,9 @@ public class AisConsentServiceInternal implements AisConsentService {
      * @return String   consent ID
      */
     @Override
-    @Transactional
-    public CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
-        Optional<AisConsent> consentOptional = getActualAisConsent(consentId);
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<String> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) throws WrongChecksumException {
+        Optional<AisConsent> consentOptional = aisConsentRepository.getActualAisConsent(consentId);
 
         if (!consentOptional.isPresent()) {
             log.info("Consent ID [{}]. Update aspsp account access failed, because consent not found",
@@ -298,9 +302,9 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     @Override
-    @Transactional
-    public CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) {
-        Optional<AisConsent> consentOptional = getActualAisConsent(consentId);
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<AisAccountConsent> updateAspspAccountAccessWithResponse(String consentId, AisAccountAccessInfo request) throws WrongChecksumException {
+        Optional<AisConsent> consentOptional = aisConsentRepository.getActualAisConsent(consentId);
 
         if (!consentOptional.isPresent()) {
             log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
@@ -311,11 +315,43 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         AisConsent consent = consentOptional.get();
-        consent.addAspspAccountAccess(new AspspAccountAccessHolder(request).getAccountAccesses());
+
+        Set<AspspAccountAccess> aspspAccesses = new AspspAccountAccessHolder(request).getAccountAccesses();
+
+        List<AspspAccountAccess> cmsAccesses = consent.getAspspAccountAccesses();
+
+        consent.setAspspAccountAccesses(getUpdatedAccesses(cmsAccesses, aspspAccesses));
+
+        AisConsent aisConsent = aisConsentRepository.verifyAndUpdate(consent);
 
         return CmsResponse.<AisAccountConsent>builder()
-                   .payload(consentMapper.mapToAisAccountConsent(aisConsentRepository.verifyAndUpdate(consent)))
+                   .payload(consentMapper.mapToAisAccountConsent(aisConsent))
                    .build();
+    }
+
+    private AspspAccountAccess enrichAccount(Set<AspspAccountAccess> accounts, AspspAccountAccess element) {
+
+        return accounts.stream()
+                   .filter(a -> a.getAccountIdentifier().equals(element.getAccountIdentifier())
+                                    && a.getAccountReferenceType() == element.getAccountReferenceType()
+                                    && a.getCurrency() == element.getCurrency()
+                                    && a.getTypeAccess() == (element.getTypeAccess()))
+                   .findFirst()
+                   .orElse(element);
+    }
+
+    private List<AspspAccountAccess> getUpdatedAccesses(List<AspspAccountAccess> cmsAccesses, Set<AspspAccountAccess> requestAccesses) {
+        if (CollectionUtils.isEmpty(cmsAccesses)) {
+            return new ArrayList<>(requestAccesses);
+        }
+
+        Set<AspspAccountAccess> updatedCmsAccesses = new HashSet<>();
+
+        for (AspspAccountAccess access : cmsAccesses) {
+            updatedCmsAccesses.add(enrichAccount(requestAccesses, access));
+        }
+
+        return new ArrayList<>(updatedCmsAccesses);
     }
 
     @Override
@@ -337,8 +373,8 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     @Override
-    @Transactional
-    public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
+    @Transactional(rollbackFor = WrongChecksumException.class)
+    public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) throws WrongChecksumException {
         Optional<AisConsent> aisConsentOptional = aisConsentJpaRepository.findByExternalId(consentId);
         if (!aisConsentOptional.isPresent()) {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
@@ -349,11 +385,20 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         AisConsent consent = aisConsentOptional.get();
         consent.setMultilevelScaRequired(multilevelScaRequired);
+
         aisConsentRepository.verifyAndSave(consent);
 
         return CmsResponse.<Boolean>builder()
                    .payload(true)
                    .build();
+    }
+
+    private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
+        if (consent != null && consent.shouldConsentBeExpired()) {
+            return aisConsentConfirmationExpirationService.expireConsent(consent);
+        }
+
+        return consent;
     }
 
     private AisConsent createConsentFromRequest(CreateAisConsentRequest request) {
@@ -364,7 +409,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAllowedFrequencyPerDay(request.getAllowedFrequencyPerDay());
         consent.setTppFrequencyPerDay(request.getRequestedFrequencyPerDay());
         consent.setRequestDateTime(LocalDateTime.now());
-        consent.setExpireDate(adjustExpireDate(request.getValidUntil()));
+        consent.setValidUntil(adjustExpireDate(request.getValidUntil()));
         consent.setPsuDataList(psuDataMapper.mapToPsuDataList(Collections.singletonList(request.getPsuData())));
         consent.setTppInfo(tppInfoMapper.mapToTppInfoEntity(request.getTppInfo()));
         AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
@@ -434,14 +479,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
-    private AisConsent checkAndUpdateOnExpiration(AisConsent consent) {
-        if (aisConsentConfirmationExpirationService.isConsentExpiredOrFinalised(consent)) {
-            aisConsentConfirmationExpirationService.expireConsent(consent);
-        }
-        return consent;
-    }
-
-    private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) {
+    private boolean setStatusAndSaveConsent(AisConsent consent, ConsentStatus status) throws WrongChecksumException {
         if (consent.getConsentStatus().isFinalisedStatus()) {
             log.info("Consent ID: [{}], Consent status [{}]. Update consent status by ID failed, because consent status is finalised",
                      consent.getExternalId(), consent.getConsentStatus());
@@ -449,11 +487,14 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(status);
-        return Optional.ofNullable(aisConsentRepository.verifyAndSave(consent))
+
+        AisConsent aisConsent = aisConsentRepository.verifyAndSave(consent);
+
+        return Optional.ofNullable(aisConsent)
                    .isPresent();
     }
 
-    private void updateAisConsentUsage(AisConsent consent, AisConsentActionRequest request) {
+    private void updateAisConsentUsage(AisConsent consent, AisConsentActionRequest request) throws WrongChecksumException {
         if (!request.isUpdateUsage()) {
             return;
         }
@@ -464,6 +505,7 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         consent.setLastActionDate(LocalDate.now());
+
         aisConsentRepository.verifyAndSave(consent);
     }
 

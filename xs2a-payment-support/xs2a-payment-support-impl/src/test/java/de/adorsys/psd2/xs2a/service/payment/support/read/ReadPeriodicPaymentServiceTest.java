@@ -41,12 +41,12 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -58,8 +58,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadPeriodicPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadPeriodicPaymentServiceTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
@@ -92,13 +92,17 @@ public class ReadPeriodicPaymentServiceTest {
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private PisCommonPaymentResponse pisCommonPaymentResponse;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPayments(PIS_PAYMENTS);
         pisCommonPaymentResponse.setPaymentProduct(PRODUCT);
         pisCommonPaymentResponse.setPaymentData(PAYMENT_BODY);
+    }
 
+    @Test
+    void getPayment_success() {
+        // Given
         when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
             .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
@@ -111,11 +115,7 @@ public class ReadPeriodicPaymentServiceTest {
             .thenReturn(PERIODIC_PAYMENT);
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
-    }
 
-    @Test
-    public void getPayment_success() {
-        // Given
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(SOME_ENCRYPTED_PAYMENT_ID, TransactionStatus.RCVD)).thenReturn(true);
 
         // When
@@ -129,7 +129,21 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
+    void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
+        // Given
+        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
+            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ContentType.JSON.getType(), SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiPeriodicPayment>builder()
+                            .payload(SPI_PERIODIC_PAYMENT)
+                            .build());
+        when(spiToXs2aPaymentMapperSupport.mapToPeriodicPayment(SPI_PERIODIC_PAYMENT))
+            .thenReturn(PERIODIC_PAYMENT);
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         // When
         PaymentInformationResponse<CommonPayment> actualResponse = readPeriodicPaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
@@ -141,8 +155,11 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_spiPaymentFactory_createSpiPeriodicPayment_failed() {
+    void getPayment_spiPaymentFactory_createSpiPeriodicPayment_failed() {
         // Given
+        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
+            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
@@ -161,7 +178,7 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_emptyPaymentData() {
+    void getPayment_emptyPaymentData() {
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_400)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_PAYMENT_NOT_FOUND))
@@ -180,8 +197,19 @@ public class ReadPeriodicPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_periodicPaymentSpi_getPaymentById_failed() {
+    void getPayment_periodicPaymentSpi_getPaymentById_failed() {
         // Given
+        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
+            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ContentType.JSON.getType(), SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiPeriodicPayment>builder()
+                            .payload(SPI_PERIODIC_PAYMENT)
+                            .build());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         SpiResponse<SpiPeriodicPayment> spiResponseError = SpiResponse.<SpiPeriodicPayment>builder()
                                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                                .build();

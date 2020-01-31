@@ -23,21 +23,21 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsToXs2APaymentSupportMapperTest {
+@ExtendWith(MockitoExtension.class)
+class CmsToXs2APaymentSupportMapperTest {
     private static final byte[] PAYMENT_BODY = "some payment body".getBytes();
     private static final String PAYMENT_ID =
         "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
@@ -57,7 +57,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToSinglePayment() {
+    void mapToSinglePayment() {
         // Given
         SinglePayment rawSinglePayment = jsonReader.getObjectFromFile("json/support/mapper/raw-xs2a-single-payment.json", SinglePayment.class);
         when(rawToXs2aPaymentMapper.mapToSinglePayment(PAYMENT_BODY)).thenReturn(rawSinglePayment);
@@ -73,7 +73,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     }
 
     @Test
-    public void mapToSinglePayment_null() {
+    void mapToSinglePayment_null() {
         // When
         SinglePayment actual = cmsToXs2APaymentSupportMapper.mapToSinglePayment(null);
 
@@ -82,7 +82,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     }
 
     @Test
-    public void mapToPeriodicPayment() {
+    void mapToPeriodicPayment() {
         // Given
         PeriodicPayment rawPeriodicPayment = jsonReader.getObjectFromFile("json/support/mapper/raw-xs2a-periodic-payment.json", PeriodicPayment.class);
         when(rawToXs2aPaymentMapper.mapToPeriodicPayment(PAYMENT_BODY)).thenReturn(rawPeriodicPayment);
@@ -98,7 +98,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     }
 
     @Test
-    public void mapToPeriodicPayment_null() {
+    void mapToPeriodicPayment_null() {
         // When
         PeriodicPayment actual = cmsToXs2APaymentSupportMapper.mapToPeriodicPayment(null);
 
@@ -107,7 +107,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     }
 
     @Test
-    public void mapToBulkPayment() {
+    void mapToBulkPayment() {
         // Given
         BulkPayment rawBulkPayment = jsonReader.getObjectFromFile("json/support/mapper/raw-xs2a-bulk-payment.json", BulkPayment.class);
         when(rawToXs2aPaymentMapper.mapToBulkPayment(PAYMENT_BODY)).thenReturn(rawBulkPayment);
@@ -123,7 +123,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     }
 
     @Test
-    public void mapToBulkPayment_nullPayments() {
+    void mapToBulkPayment_nullPayments() {
         // Given
         BulkPayment rawBulkPayment = jsonReader.getObjectFromFile("json/support/mapper/raw-xs2a-bulk-payment.json", BulkPayment.class);
         rawBulkPayment.setPayments(null);
@@ -141,7 +141,7 @@ public class CmsToXs2APaymentSupportMapperTest {
     }
 
     @Test
-    public void mapToBulkPayment_null() {
+    void mapToBulkPayment_null() {
         // When
         BulkPayment actual = cmsToXs2APaymentSupportMapper.mapToBulkPayment(null);
 

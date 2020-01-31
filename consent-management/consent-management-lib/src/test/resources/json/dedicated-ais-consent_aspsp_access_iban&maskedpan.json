@@ -1,0 +1,141 @@
+{
+  "instanceId": "UNDEFINED",
+  "id": 30,
+  "externalId": "b6f706b2-3340-44a4-a3de-e1fba1fb044c",
+  "recurringIndicator": true,
+  "tppRedirectPreferred": false,
+  "combinedServiceIndicator": false,
+  "requestDateTime": "2019-12-06T17:03:13.36",
+  "lastActionDate": "2019-12-06",
+  "validUntil": "2021-10-10",
+  "psuDataList": [
+    {
+      "instanceId": "UNDEFINED",
+      "id": 30,
+      "psuId": "marion.mueller",
+      "psuIdType": null,
+      "psuCorporateId": null,
+      "psuCorporateIdType": null
+    }
+  ],
+  "tppInfo": {
+    "instanceId": "UNDEFINED",
+    "id": 1,
+    "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+    "tppName": "",
+    "tppRoles": [
+      "AISP",
+      "PISP",
+      "PIISP"
+    ],
+    "authorityId": "DE-FAKENCA",
+    "authorityName": "Trust Service Provider AG",
+    "country": "Germany",
+    "organisation": "Fictional Corporation AG",
+    "organisationUnit": "Information Technology",
+    "city": "Nuremberg",
+    "state": "Bayern"
+  },
+  "authorisationTemplate": {
+    "id": 30,
+    "redirectUri": "TPP-Redirect-URI",
+    "nokRedirectUri": "TPP-Nok-Redirect-URI",
+    "cancelRedirectUri": null,
+    "cancelNokRedirectUri": null
+  },
+  "tppNotificationUri": null,
+  "tppNotificationContentPreferred": [],
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "allowedFrequencyPerDay": 4,
+  "tppFrequencyPerDay": 400,
+  "usages": [],
+  "accesses": [
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "BALANCE",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "TRANSACTION",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "maskedPan"
+    },
+    {
+      "accountIdentifier": "DE69760700240340283600",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "iban"
+    }
+  ],
+  "aspspAccountAccesses": [
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "BALANCE",
+      "accountReferenceType": "maskedPan",
+      "resourceId": "10023-999999999",
+      "aspspAccountId": "DE69760700240340283600"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "TRANSACTION",
+      "accountReferenceType": "maskedPan",
+      "resourceId": "10023-999999999",
+      "aspspAccountId": "DE69760700240340283600"
+    },
+    {
+      "accountIdentifier": "525412******3241",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "maskedPan",
+      "resourceId": "10023-999999999",
+      "aspspAccountId": "DE69760700240340283600"
+    },
+    {
+      "accountIdentifier": "DE69760700240340283600",
+      "currency": "EUR",
+      "typeAccess": "ACCOUNT",
+      "accountReferenceType": "iban",
+      "resourceId": "10023-999999999",
+      "aspspAccountId": "DE69760700240340283600"
+    }
+  ],
+  "authorizations": [
+    {
+      "instanceId": "UNDEFINED",
+      "id": 35,
+      "externalId": "a6f63f5c-af35-433f-b34e-cf2f42c3c58f",
+      "psuData": {
+        "instanceId": "UNDEFINED",
+        "id": 30,
+        "psuId": "marion.mueller"
+      },
+      "scaStatus": "finalised",
+      "tppOkRedirectUri": "TPP-Redirect-URI",
+      "tppNokRedirectUri": "TPP-Nok-Redirect-URI",
+      "availableScaMethods": [],
+      "scaApproach": "REDIRECT"
+    }
+  ],
+  "aisConsentRequestType": "DEDICATED_ACCOUNTS",
+  "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
+  "availableAccounts": null,
+  "allPsd2": null,
+  "availableAccountsWithBalance": null,
+  "multilevelScaRequired": false,
+  "statusChangeTimestamp": "2019-12-06T17:03:32.972+02:00",
+  "ownerNameType": "NONE",
+  "ownerAddressType": "NONE",
+  "internalRequestId": "61ab78e7-956a-47a6-88c0-82557ebea963",
+  "previousConsentStatus": "VALID"
+}

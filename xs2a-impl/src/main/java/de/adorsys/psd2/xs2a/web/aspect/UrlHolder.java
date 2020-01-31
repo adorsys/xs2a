@@ -37,6 +37,12 @@ public class UrlHolder {
     public static final String ACCOUNT_TRANSACTIONS_URL = "/v1/accounts/{accountId}/transactions";
     public static final String ACCOUNT_TRANSACTIONS_DOWNLOAD_URL = "/v1/accounts/{accountId}/transactions/download/{downloadId}";
 
+    // CARD
+    public static final String CARD_LINK_URL = "/v1/card-accounts/{accountId}";
+    public static final String CARD_BALANCES_URL = "/v1/card-accounts/{accountId}/balances";
+    public static final String CARD_TRANSACTIONS_URL = "/v1/card-accounts/{accountId}/transactions";
+    public static final String CARD_TRANSACTIONS_DOWNLOAD_URL = "/v1/card-accounts/{accountId}/transactions/download/{downloadId}";
+
     private UrlHolder() {
     }
 }

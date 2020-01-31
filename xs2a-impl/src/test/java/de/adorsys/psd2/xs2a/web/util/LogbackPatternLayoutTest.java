@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,16 +28,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class LogbackPatternLayoutTest {
+class LogbackPatternLayoutTest {
     private final ObjectMapper mapper = new ObjectMapper();
     private final LogbackPatternLayout layout = new LogbackPatternLayout();
     private final String mask = LogbackPatternLayout.MASK;
 
     @Test
-    public void testFieldsAndObjectsMask() throws IOException {
+    void testFieldsAndObjectsMask() throws IOException {
         //Given
         Map<String, Object> testMap = new HashMap<>();
         testMap.put("password", "password");
@@ -55,12 +55,13 @@ public class LogbackPatternLayoutTest {
         //When
         String testMapRepresentationModified = layout.modifyMessage(testMapRepresentation);
         //Then
-        Map<String, Object> map = mapper.readValue(testMapRepresentationModified, new TypeReference<HashMap<String,Object>>() {});
+        Map<String, Object> map = mapper.readValue(testMapRepresentationModified, new TypeReference<HashMap<String, Object>>() {
+        });
         map.forEach((key, value) -> assertEquals(mask, value));
     }
 
     @Test
-    public void testAuthorizationHeaderMask() {
+    void testAuthorizationHeaderMask() {
         //Given
         String authorization = "authorization: ";
         String bearer = "Bearer 1234567";
@@ -71,7 +72,7 @@ public class LogbackPatternLayoutTest {
     }
 
     @Test
-    public void testFieldsAndObjectsNoMask() throws IOException {
+    void testFieldsAndObjectsNoMask() throws IOException {
         //Given
         Map<String, Object> testMap = new HashMap<>();
         AccountReference accountReference = new AccountReference();
@@ -84,7 +85,8 @@ public class LogbackPatternLayoutTest {
         //When
         String testMapRepresentationModified = layout.modifyMessage(testMapRepresentation);
         //Then
-        Map<String, Object> map = mapper.readValue(testMapRepresentationModified, new TypeReference<HashMap<String,Object>>() {});
+        Map<String, Object> map = mapper.readValue(testMapRepresentationModified, new TypeReference<HashMap<String, Object>>() {
+        });
         map.forEach((key, value) -> assertNotSame(mask, value));
     }
 }

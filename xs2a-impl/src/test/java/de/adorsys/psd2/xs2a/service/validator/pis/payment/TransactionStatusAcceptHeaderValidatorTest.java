@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,20 +22,20 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TransactionStatusAcceptHeaderValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class TransactionStatusAcceptHeaderValidatorTest {
     private static final String JSON_MEDIA_TYPE = "application/json";
     private static final String ACCEPT_HEADER_JSON_XML = "application/json,application/xml";
     private static final String ACCEPT_HEADER_JSON = "application/json";
@@ -51,7 +51,7 @@ public class TransactionStatusAcceptHeaderValidatorTest {
     private TransactionStatusAcceptHeaderValidator transactionStatusAcceptHeaderValidator;
 
     @Test
-    public void validate_withSupportedHeader_shouldReturnValid() {
+    void validate_withSupportedHeader_shouldReturnValid() {
         // Given
         when(aspspProfileServiceWrapper.getSupportedTransactionStatusFormats())
             .thenReturn(Collections.singletonList(JSON_MEDIA_TYPE));
@@ -67,7 +67,7 @@ public class TransactionStatusAcceptHeaderValidatorTest {
     }
 
     @Test
-    public void validate_withMixedSupportedHeader_shouldReturnValid() {
+    void validate_withMixedSupportedHeader_shouldReturnValid() {
         // Given
         when(aspspProfileServiceWrapper.getSupportedTransactionStatusFormats())
             .thenReturn(Collections.singletonList(JSON_MEDIA_TYPE));
@@ -83,7 +83,7 @@ public class TransactionStatusAcceptHeaderValidatorTest {
     }
 
     @Test
-    public void validate_withWildcardHeader_shouldReturnValid() {
+    void validate_withWildcardHeader_shouldReturnValid() {
         // When
         ValidationResult validationResult = transactionStatusAcceptHeaderValidator.validate(ACCEPT_HEADER_WILDCARD);
 
@@ -93,7 +93,7 @@ public class TransactionStatusAcceptHeaderValidatorTest {
     }
 
     @Test
-    public void validate_withEmptyListInProfile_shouldReturnValid() {
+    void validate_withEmptyListInProfile_shouldReturnValid() {
         // Given
         when(aspspProfileServiceWrapper.getSupportedTransactionStatusFormats())
             .thenReturn(Collections.emptyList());
@@ -109,7 +109,7 @@ public class TransactionStatusAcceptHeaderValidatorTest {
     }
 
     @Test
-    public void validate_withNotSupportedHeader_shouldReturnValidationError() {
+    void validate_withNotSupportedHeader_shouldReturnValidationError() {
         // Given
         when(aspspProfileServiceWrapper.getSupportedTransactionStatusFormats())
             .thenReturn(Collections.singletonList(JSON_MEDIA_TYPE));

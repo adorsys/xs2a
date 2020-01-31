@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,25 +22,25 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountReferenceInConsentUpdaterTest {
+@ExtendWith(MockitoExtension.class)
+class AccountReferenceInConsentUpdaterTest {
     private static final String CONSENT_ID = "consent id";
     private static final String ASPSP_ACCOUNT_ID_1 = "aspsp account id 1";
     private static final String ASPSP_ACCOUNT_ID_2 = "aspsp account id 2";
@@ -59,14 +59,14 @@ public class AccountReferenceInConsentUpdaterTest {
     @InjectMocks
     private AccountReferenceInConsentUpdater accountReferenceInConsentUpdater;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         when(consentMapper.mapToAisAccountAccessInfo(any()))
             .thenReturn(AIS_ACCOUNT_ACCESS_INFO);
     }
 
     @Test
-    public void updateAccountReferences_withGlobalConsent_shouldSetResourceId() {
+    void updateAccountReferences_withGlobalConsent_shouldSetResourceId() {
         // Given
         ArgumentCaptor<Xs2aAccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(Xs2aAccountAccess.class);
 
@@ -107,7 +107,7 @@ public class AccountReferenceInConsentUpdaterTest {
     }
 
     @Test
-    public void updateAccountReferences_shouldSetResourceId() {
+    void updateAccountReferences_shouldSetResourceId() {
         // Given
         ArgumentCaptor<Xs2aAccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(Xs2aAccountAccess.class);
 
@@ -149,7 +149,7 @@ public class AccountReferenceInConsentUpdaterTest {
     }
 
     @Test
-    public void updateAccountReferences_withMultipleAccountReferences_shouldProperlyUpdateResourceId() {
+    void updateAccountReferences_withMultipleAccountReferences_shouldProperlyUpdateResourceId() {
         ArgumentCaptor<Xs2aAccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(Xs2aAccountAccess.class);
 
         // Given
@@ -193,7 +193,7 @@ public class AccountReferenceInConsentUpdaterTest {
     }
 
     @Test
-    public void updateAccountReferences_withResourceIdInAccounts_shouldNotUpdateBalancesOrTransactions() {
+    void updateAccountReferences_withResourceIdInAccounts_shouldNotUpdateBalancesOrTransactions() {
         ArgumentCaptor<Xs2aAccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(Xs2aAccountAccess.class);
 
         // Given

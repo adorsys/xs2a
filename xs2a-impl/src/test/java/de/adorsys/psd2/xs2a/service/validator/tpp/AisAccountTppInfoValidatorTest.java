@@ -22,25 +22,20 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.UUID;
-
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisAccountTppInfoValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class AisAccountTppInfoValidatorTest {
     private static final String TPP_AUTHORITY_ID = "authority id";
     private static final TppInfo TPP_INFO = buildTppInfo("authorisation number");
     private static final TppInfo DIFFERENT_TPP_INFO = buildTppInfo("different authorisation number");
-
-    private static final UUID X_REQUEST_ID = UUID.fromString("1af360bc-13cb-40ab-9aa0-cc0d6af4510c");
 
     @Mock
     private TppInfoCheckerService tppInfoCheckerService;
@@ -48,16 +43,9 @@ public class AisAccountTppInfoValidatorTest {
     @InjectMocks
     private AisAccountTppInfoValidator aisAccountTppInfoValidator;
 
-    @Before
-    public void setUp() {
-        when(tppInfoCheckerService.differsFromTppInRequest(TPP_INFO))
-            .thenReturn(false);
-        when(tppInfoCheckerService.differsFromTppInRequest(DIFFERENT_TPP_INFO))
-            .thenReturn(true);
-    }
-
     @Test
-    public void validateTpp_withSameTppInConsentAsInRequest_shouldReturnValid() {
+    void validateTpp_withSameTppInConsentAsInRequest_shouldReturnValid() {
+        when(tppInfoCheckerService.differsFromTppInRequest(TPP_INFO)).thenReturn(false);
         // When
         ValidationResult validationResult = aisAccountTppInfoValidator.validateTpp(TPP_INFO);
 
@@ -68,11 +56,11 @@ public class AisAccountTppInfoValidatorTest {
     }
 
     @Test
-    public void validateTpp_withDifferentTppInConsent_shouldReturnError() {
+    void validateTpp_withDifferentTppInConsent_shouldReturnError() {
         // Given
         MessageError expectedError = new MessageError(ErrorType.AIS_400,
                                                       TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400_INCORRECT_CERTIFICATE));
-
+        when(tppInfoCheckerService.differsFromTppInRequest(DIFFERENT_TPP_INFO)).thenReturn(true);
         // When
         ValidationResult validationResult = aisAccountTppInfoValidator.validateTpp(DIFFERENT_TPP_INFO);
 

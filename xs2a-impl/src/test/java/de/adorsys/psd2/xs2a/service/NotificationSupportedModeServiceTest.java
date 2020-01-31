@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,34 +20,31 @@ import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NotificationSupportedModeServiceTest {
+@ExtendWith(MockitoExtension.class)
+class NotificationSupportedModeServiceTest {
     private static final String TPP_NOTIFICATION_URI = "http://my.bank.example.com/notification";
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    @Mock
-    private RequestProviderService requestProviderService;
-
     @InjectMocks
     private NotificationSupportedModeService notificationSupportedModeService;
 
     @Test
-    public void resolveNotificationHeaders_no_filtering() {
+    void resolveNotificationHeaders_no_filtering() {
         // Given
         List<NotificationSupportedMode> usedModes = Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST);
         when(aspspProfileServiceWrapper.getNotificationSupportedModes()).thenReturn(Arrays.asList(NotificationSupportedMode.SCA,
@@ -63,7 +60,7 @@ public class NotificationSupportedModeServiceTest {
     }
 
     @Test
-    public void resolveNotificationHeaders_with_filtering() {
+    void resolveNotificationHeaders_with_filtering() {
         // Given
         List<NotificationSupportedMode> usedModes = Arrays.asList(NotificationSupportedMode.SCA,
                                                                   NotificationSupportedMode.LAST);
@@ -79,7 +76,7 @@ public class NotificationSupportedModeServiceTest {
     }
 
     @Test
-    public void resolveNotificationHeaders_empty_modes() {
+    void resolveNotificationHeaders_empty_modes() {
         // Given
         List<NotificationSupportedMode> usedModes = Collections.emptyList();
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
@@ -94,7 +91,7 @@ public class NotificationSupportedModeServiceTest {
     }
 
     @Test
-    public void getProcessedNotificationModes_with_filtering() {
+    void getProcessedNotificationModes_with_filtering() {
         // Given
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST));
@@ -108,7 +105,7 @@ public class NotificationSupportedModeServiceTest {
     }
 
     @Test
-    public void getProcessedNotificationModes_empty() {
+    void getProcessedNotificationModes_empty() {
         // Given
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST));
@@ -123,7 +120,7 @@ public class NotificationSupportedModeServiceTest {
     }
 
     @Test
-    public void getProcessedNotificationModes_supported_none() {
+    void getProcessedNotificationModes_supported_none() {
         // Given
         when(aspspProfileServiceWrapper.getNotificationSupportedModes())
             .thenReturn(Arrays.asList(NotificationSupportedMode.NONE, NotificationSupportedMode.LAST));

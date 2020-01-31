@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +19,30 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(
     classes = {SpiToXs2aTransactionMapperImpl.class, SpiToXs2aAmountMapperImpl.class, SpiToXs2aBalanceMapperImpl.class,
         SpiToXs2aExchangeRateMapperImpl.class, SpiToXs2aAccountReferenceMapperImpl.class})
-public class SpiToXs2aTransactionMapperTest {
+class SpiToXs2aTransactionMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
     @Autowired
     private SpiToXs2aTransactionMapper mapper;
 
     @Test
-    public void mapToXs2aTransaction() {
+    void mapToXs2aTransaction() {
         Transactions transactions = mapper.mapToXs2aTransaction(
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction.json", SpiTransaction.class));
 
@@ -51,12 +51,12 @@ public class SpiToXs2aTransactionMapperTest {
     }
 
     @Test
-    public void mapToXs2aTransaction_nullValue() {
+    void mapToXs2aTransaction_nullValue() {
         assertNull(mapper.mapToXs2aTransaction(null));
     }
 
     @Test
-    public void mapToXs2aTransactionList() {
+    void mapToXs2aTransactionList() {
         List<Transactions> transactions = mapper.mapToXs2aTransactionList(
             Collections.singletonList(jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-transaction.json", SpiTransaction.class)));
 
@@ -65,7 +65,7 @@ public class SpiToXs2aTransactionMapperTest {
     }
 
     @Test
-    public void mapToXs2aTransactionList_nullValue() {
+    void mapToXs2aTransactionList_nullValue() {
         assertNull(mapper.mapToXs2aTransactionList(null));
     }
 

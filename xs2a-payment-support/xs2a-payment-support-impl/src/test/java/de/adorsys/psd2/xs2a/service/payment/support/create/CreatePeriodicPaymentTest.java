@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ import de.adorsys.psd2.xs2a.service.payment.support.create.spi.PeriodicPaymentIn
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -68,8 +68,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreatePeriodicPaymentTest {
+@ExtendWith(MockitoExtension.class)
+class CreatePeriodicPaymentTest {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String IBAN = "DE123456789";
@@ -114,21 +114,22 @@ public class CreatePeriodicPaymentTest {
     @Mock
     private RawToXs2aPaymentMapper rawToXs2aPaymentMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         periodicPaymentInitiationResponse = buildPeriodicPaymentInitiationResponse(new SpiAspspConsentDataProviderFactory(aspspDataService).getInitialAspspConsentDataProvider());
+        when(rawToXs2aPaymentMapper.mapToPeriodicPayment(PAYMENT_BODY)).thenReturn(buildPeriodicPayment());
+    }
+
+    @Test
+    void createPayment_success() {
+        // Given
         when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_ID_DATA))).thenReturn(periodicPaymentInitiationResponse);
-        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForPeriodicPayment());
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
         when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(periodicPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
             .thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
-        when(rawToXs2aPaymentMapper.mapToPeriodicPayment(PAYMENT_BODY)).thenReturn(buildPeriodicPayment());
-    }
 
-    @Test
-    public void createPayment_success() {
         //When
         ResponseObject<PaymentInitiationResponse> actualResponse = createPeriodicPaymentService.createPayment(PAYMENT_BODY, buildPaymentInitiationParameters(), buildTppInfo());
 
@@ -139,8 +140,10 @@ public class CreatePeriodicPaymentTest {
     }
 
     @Test
-    public void createPayment_wrongPsuData_fail() {
+    void createPayment_wrongPsuData_fail() {
         // Given
+        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(WRONG_PSU_DATA))).thenReturn(buildSpiErrorForPeriodicPayment());
+
         PaymentInitiationParameters param = buildPaymentInitiationParameters();
         param.setPsuData(WRONG_PSU_DATA);
 
@@ -153,8 +156,15 @@ public class CreatePeriodicPaymentTest {
     }
 
     @Test
-    public void createPayment_emptyPaymentId_fail() {
+    void createPayment_emptyPaymentId_fail() {
         // Given
+        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_ID_DATA))).thenReturn(periodicPaymentInitiationResponse);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(periodicPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
+            .thenReturn(PAYMENT_INFO);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData()))
             .thenReturn(PIS_COMMON_PAYMENT_FAIL);
 
@@ -167,8 +177,15 @@ public class CreatePeriodicPaymentTest {
     }
 
     @Test
-    public void createPayment_authorisationMethodDecider_isImplicitMethod_fail() {
+    void createPayment_authorisationMethodDecider_isImplicitMethod_fail() {
         // Given
+        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_ID_DATA))).thenReturn(periodicPaymentInitiationResponse);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(periodicPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
+            .thenReturn(PAYMENT_INFO);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
         when(pisScaAuthorisationServiceResolver.getService())
@@ -186,8 +203,15 @@ public class CreatePeriodicPaymentTest {
     }
 
     @Test
-    public void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
+    void createPayment_pisScaAuthorisationService_createCommonPaymentAuthorisation_fail() {
         // Given
+        when(periodicPaymentInitiationService.initiatePayment(any(PeriodicPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_ID_DATA))).thenReturn(periodicPaymentInitiationResponse);
+        when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
+        when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(periodicPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
+            .thenReturn(PAYMENT_INFO);
+        when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+
         when(authorisationMethodDecider.isImplicitMethod(false, false))
             .thenReturn(true);
         when(pisScaAuthorisationServiceResolver.getService())

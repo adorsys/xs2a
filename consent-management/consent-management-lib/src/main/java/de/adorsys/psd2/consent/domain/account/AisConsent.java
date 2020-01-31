@@ -76,9 +76,12 @@ public class AisConsent extends InstanceDependableEntity {
     @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
     private LocalDate lastActionDate;
 
-    @Column(name = "expire_date", nullable = false)
+    @Column(name = "expire_date")
     @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-05-04")
     private LocalDate expireDate;
+
+    @Column(name = "valid_until", nullable = false)  //TODO  Create migration file with not null constraint for "valid_until" https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1160
+    private LocalDate validUntil;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ais_consent_psu_data",
@@ -212,7 +215,7 @@ public class AisConsent extends InstanceDependableEntity {
     }
 
     public boolean isExpiredByDate() {
-        return LocalDate.now().compareTo(expireDate) > 0;
+        return LocalDate.now().compareTo(validUntil) > 0;
     }
 
     public boolean isConfirmationExpired(long expirationPeriodMs) {
@@ -222,10 +225,6 @@ public class AisConsent extends InstanceDependableEntity {
         }
 
         return false;
-    }
-
-    public boolean isStatusNotExpired() {
-        return consentStatus != ConsentStatus.EXPIRED;
     }
 
     public boolean isNotConfirmed() {
@@ -254,6 +253,11 @@ public class AisConsent extends InstanceDependableEntity {
             usages = new ArrayList<>();
         }
         usages.add(aisConsentUsage);
+    }
+
+    public boolean shouldConsentBeExpired() {
+        return !this.getConsentStatus().isFinalisedStatus()
+                   && (this.isExpiredByDate() || this.isNonReccuringAlreadyUsed());
     }
 
     /**

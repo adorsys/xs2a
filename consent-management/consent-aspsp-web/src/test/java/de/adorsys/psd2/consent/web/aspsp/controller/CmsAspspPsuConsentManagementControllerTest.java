@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 import de.adorsys.psd2.consent.aspsp.api.psu.CmsAspspPsuAccountService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -36,8 +36,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPsuConsentManagementControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPsuConsentManagementControllerTest {
     private final String GET_TPP_INFO_URL = "/aspsp-api/v1/psu/consent/all";
     private final String INSTANCE_ID = "UNDEFINED";
     private final String PSU_ID = "marion.mueller";
@@ -53,8 +53,8 @@ public class CmsAspspPsuConsentManagementControllerTest {
     @Mock
     private CmsAspspPsuAccountService cmsAspspPsuAccountService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
         mockMvc = MockMvcBuilders
                       .standaloneSetup(cmsAspspPsuConsentManagementController)
@@ -63,7 +63,7 @@ public class CmsAspspPsuConsentManagementControllerTest {
     }
 
     @Test
-    public void closeAllConsents_Success() throws Exception {
+    void closeAllConsents_Success() throws Exception {
         when(cmsAspspPsuAccountService.revokeAllConsents(ASPSP_ACCOUNT_ID, psuIdData, INSTANCE_ID))
             .thenReturn(true);
 
@@ -79,7 +79,7 @@ public class CmsAspspPsuConsentManagementControllerTest {
     }
 
     @Test
-    public void closeAllConsents_Fail() throws Exception {
+    void closeAllConsents_Fail() throws Exception {
         when(cmsAspspPsuAccountService.revokeAllConsents(ASPSP_ACCOUNT_ID, psuIdData, INSTANCE_ID))
             .thenReturn(false);
 
@@ -95,7 +95,7 @@ public class CmsAspspPsuConsentManagementControllerTest {
     }
 
     @Test
-    public void closeAllConsents_EmptyData() throws Exception {
+    void closeAllConsents_EmptyData() throws Exception {
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("instance-id", INSTANCE_ID);
 

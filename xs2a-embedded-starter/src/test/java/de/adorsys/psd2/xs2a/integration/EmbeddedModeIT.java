@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,16 @@ import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @AutoConfigureTestDatabase
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles({"integration-test", "mock-qwac"})
 @SpringBootTest(classes = Xs2aEmbeddedStarter.class)
 @ContextConfiguration(classes = {
@@ -41,12 +41,12 @@ import org.springframework.test.context.junit4.SpringRunner;
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class EmbeddedModeIT {
+class EmbeddedModeIT {
 
     // Suppress "Tests should include assertions" Sonar rule as this test is not supposed to assert anything
     @SuppressWarnings("squid:S2699")
     @Test
-    public void startWithServicesInEmbeddedMode() {
+    void startWithServicesInEmbeddedMode() {
         // Test whether application starts without any exception
     }
 }

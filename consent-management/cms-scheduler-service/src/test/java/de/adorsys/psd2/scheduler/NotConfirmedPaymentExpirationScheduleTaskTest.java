@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,26 @@ import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.service.PisCommonPaymentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.never;
 
-@RunWith(MockitoJUnitRunner.class)
-public class NotConfirmedPaymentExpirationScheduleTaskTest {
+@ExtendWith(MockitoExtension.class)
+class NotConfirmedPaymentExpirationScheduleTaskTest {
     @InjectMocks
     private NotConfirmedPaymentExpirationScheduleTask scheduleTask;
 
@@ -53,7 +52,7 @@ public class NotConfirmedPaymentExpirationScheduleTaskTest {
     private ArgumentCaptor<ArrayList<PisCommonPaymentData>> commonPaymentDataCaptor;
 
     @Test
-    public void obsoleteNotConfirmedPaymentIfExpired() {
+    void obsoleteNotConfirmedPaymentIfExpired() {
         List<PisCommonPaymentData> pisCommonPaymentDataList = new ArrayList<>();
         pisCommonPaymentDataList.add(new PisCommonPaymentData());
         pisCommonPaymentDataList.add(new PisCommonPaymentData());
@@ -74,7 +73,7 @@ public class NotConfirmedPaymentExpirationScheduleTaskTest {
     }
 
     @Test
-    public void obsoleteNotConfirmedPaymentIfExpired_emptyList() {
+    void obsoleteNotConfirmedPaymentIfExpired_emptyList() {
         when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD)))
             .thenReturn(Collections.emptyList());
 

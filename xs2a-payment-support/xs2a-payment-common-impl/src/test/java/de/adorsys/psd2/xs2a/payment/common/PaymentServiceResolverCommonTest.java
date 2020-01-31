@@ -26,16 +26,16 @@ import de.adorsys.psd2.xs2a.service.payment.read.ReadCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadCommonPaymentStatusService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentServiceResolverCommonTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentServiceResolverCommonTest {
     @Mock
     private CreateCommonPaymentService createCommonPaymentService;
     @Mock
@@ -49,7 +49,7 @@ public class PaymentServiceResolverCommonTest {
     private PaymentServiceResolverCommon paymentServiceResolverCommon;
 
     @Test
-    public void getCreatePaymentService() {
+    void getCreatePaymentService() {
         // When
         CreatePaymentService actualService =
             paymentServiceResolverCommon.getCreatePaymentService(new PaymentInitiationParameters());
@@ -59,7 +59,7 @@ public class PaymentServiceResolverCommonTest {
     }
 
     @Test
-    public void getReadPaymentService() {
+    void getReadPaymentService() {
         // When
         ReadPaymentService actualService =
             paymentServiceResolverCommon.getReadPaymentService(new PisCommonPaymentResponse());
@@ -69,7 +69,7 @@ public class PaymentServiceResolverCommonTest {
     }
 
     @Test
-    public void getReadPaymentStatusService() {
+    void getReadPaymentStatusService() {
         // When
         ReadPaymentStatusService actualService =
             paymentServiceResolverCommon.getReadPaymentStatusService(new PisCommonPaymentResponse());
@@ -79,7 +79,7 @@ public class PaymentServiceResolverCommonTest {
     }
 
     @Test
-    public void getCancelPaymentService() {
+    void getCancelPaymentService() {
         // Given
         PisPaymentCancellationRequest paymentCancellationRequest =
             new PisPaymentCancellationRequest(null, null, null, null, null);

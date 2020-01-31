@@ -5,9 +5,9 @@
   "recurringIndicator": true,
   "tppRedirectPreferred": false,
   "combinedServiceIndicator": false,
-  "requestDateTime":  "2019-12-06T17:03:13.36",
+  "requestDateTime": "2019-12-06T17:03:13.36",
   "lastActionDate": "2019-12-06",
-  "expireDate": "2021-10-10",
+  "validUntil": "2021-10-10",
   "psuDataList": [
     {
       "instanceId": "UNDEFINED",

@@ -19,20 +19,20 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppStopListServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class TppStopListServiceInternalTest {
     private final String AUTHORISATION_NUMBER = "Authorisation number";
     private final String AUTHORISATION_NUMBER_NOT_EXISTING = "Not existing Authorisation number";
     private final String INSTANCE_ID = null;
@@ -47,7 +47,7 @@ public class TppStopListServiceInternalTest {
     private TppStopListEntity tppStopListEntity;
 
     @Test
-    public void checkIfTppBlocked_Fail_EmptyStopList() {
+    void checkIfTppBlocked_Fail_EmptyStopList() {
         when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
@@ -59,7 +59,7 @@ public class TppStopListServiceInternalTest {
     }
 
     @Test
-    public void checkIfTppBlocked_Success_BlockedTpp() {
+    void checkIfTppBlocked_Success_BlockedTpp() {
         when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 
@@ -74,7 +74,7 @@ public class TppStopListServiceInternalTest {
     }
 
     @Test
-    public void checkIfTppBlocked_Success_NonBlockedTpp() {
+    void checkIfTppBlocked_Success_NonBlockedTpp() {
         when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.of(tppStopListEntity));
 

@@ -1,3 +1,5 @@
+Actual for XS2A v.1, v.2
+
 #TAN generation and validation
 
 As a PSU I want to receive e-mail tan (transaction authentication number).

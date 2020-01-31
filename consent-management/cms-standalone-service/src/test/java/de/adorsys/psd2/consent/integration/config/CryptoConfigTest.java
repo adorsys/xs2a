@@ -22,34 +22,34 @@ import de.adorsys.psd2.consent.domain.CryptoAlgorithm;
 import de.adorsys.psd2.consent.repository.CryptoAlgorithmRepository;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProviderHolder;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CryptoConfigTest {
+@ExtendWith(MockitoExtension.class)
+class CryptoConfigTest {
     @InjectMocks
     CryptoConfig cryptoConfig;
     private CryptoAlgorithmRepositoryImpl cryptoAlgorithmRepository = new CryptoAlgorithmRepositoryImpl();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ReflectionTestUtils.setField(cryptoConfig, "defaultDataProviderId", "gQ8wkMeo93");
         ReflectionTestUtils.setField(cryptoConfig, "defaultIdProviderId", "nML0IXWdMa");
     }
 
     @Test
-    public void initCryptoProviders() {
+    void initCryptoProviders() {
         //Given
         cryptoAlgorithmRepository.save(buildCryptoAlgorithm("de.adorsys.psd2.consent.service.security.provider.jwe.JweGsmInstanceFactoryImpl",
                                                             "JWE/GCM/256_#_3_#_256_#_65536_#_PBKDF2WithHmacSHA256",

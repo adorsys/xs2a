@@ -128,8 +128,7 @@ There is an option in ASPSP- Profile *"startAuthorisationMode"* that accepts 3 v
 This force overrides multilevel SCA, signing baskets etc.
 
 === Confirmation of Authorisation
-The NextGenPSD2 TF has decided to define a specific mitigation measure in the NextGenPSD2 XS2A interface for session fixation in addition to mitigation measures
-applicable only in the SCA Redirect Approach and Integrated SCA OAuth Approach.
+For counteraction of the fraud attacks in Redirect Approach, there is additional step for confirmation of Authorisation (Payment Initiation, Establish AIS Consent, Payment Cancellation process).
 
 This solution is following the solution proposal as defined in OAuth2 using an access token resp. a confirmation code for a confirmation command of the TPP
 after the transaction has been authorized by the PSU via a redirection to the ASPSP authentication server.
@@ -166,6 +165,8 @@ If the confirmation of the transaction authorisation is mandated by the ASPSP by
 NOTE: This definition implies that the current available scaStatus "finalised" is still telling the TPP that the full authorisation process (including potentially a confirmation) is successfully completed.
 
 In case where a confirmation is processed but the preceding SCA method failed, then XS2A responds with *HTTP code 400 SCA_INVALID*. 
+
+image::PaymentRedirectWithConfirmationCode.png[Payment Initiation in Redirect Approach with Authorisation Confirmation Code, title='Payment Initiation in Redirect Approach with Authorisation Confirmation Code', align='center']
 
 === Authorisation (SCA) Statuses
 Statuses which are defined finalised:

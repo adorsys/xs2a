@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2019 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -35,7 +19,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-01-23T11:23:49.639198+02:00[Europe/Kiev]")
 
 public class CardAccountDetails   {
   @JsonProperty("resourceId")
@@ -101,6 +85,9 @@ public class CardAccountDetails   {
 
   @JsonProperty("_links")
   private Map _links = null;
+
+  @JsonProperty("ownerName")
+  private String ownerName = null;
 
   public CardAccountDetails resourceId(String resourceId) {
     this.resourceId = resourceId;
@@ -350,6 +337,28 @@ public class CardAccountDetails   {
     this._links = _links;
   }
 
+  public CardAccountDetails ownerName(String ownerName) {
+    this.ownerName = ownerName;
+    return this;
+  }
+
+  /**
+   * Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
+   * @return ownerName
+  **/
+  @ApiModelProperty(value = "Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.")
+
+@Size(max=140)
+
+  @JsonProperty("ownerName")
+  public String getOwnerName() {
+    return ownerName;
+  }
+
+  public void setOwnerName(String ownerName) {
+    this.ownerName = ownerName;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -358,23 +367,25 @@ public class CardAccountDetails   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    CardAccountDetails cardAccountDetails = (CardAccountDetails) o;
+    }
+    CardAccountDetails cardAccountDetails = (CardAccountDetails) o;
     return Objects.equals(this.resourceId, cardAccountDetails.resourceId) &&
-    Objects.equals(this.maskedPan, cardAccountDetails.maskedPan) &&
-    Objects.equals(this.currency, cardAccountDetails.currency) &&
-    Objects.equals(this.name, cardAccountDetails.name) &&
-    Objects.equals(this.product, cardAccountDetails.product) &&
-    Objects.equals(this.status, cardAccountDetails.status) &&
-    Objects.equals(this.usage, cardAccountDetails.usage) &&
-    Objects.equals(this.details, cardAccountDetails.details) &&
-    Objects.equals(this.creditLimit, cardAccountDetails.creditLimit) &&
-    Objects.equals(this.balances, cardAccountDetails.balances) &&
-    Objects.equals(this._links, cardAccountDetails._links);
+        Objects.equals(this.maskedPan, cardAccountDetails.maskedPan) &&
+        Objects.equals(this.currency, cardAccountDetails.currency) &&
+        Objects.equals(this.name, cardAccountDetails.name) &&
+        Objects.equals(this.product, cardAccountDetails.product) &&
+        Objects.equals(this.status, cardAccountDetails.status) &&
+        Objects.equals(this.usage, cardAccountDetails.usage) &&
+        Objects.equals(this.details, cardAccountDetails.details) &&
+        Objects.equals(this.creditLimit, cardAccountDetails.creditLimit) &&
+        Objects.equals(this.balances, cardAccountDetails.balances) &&
+        Objects.equals(this._links, cardAccountDetails._links) &&
+        Objects.equals(this.ownerName, cardAccountDetails.ownerName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(resourceId, maskedPan, currency, name, product, status, usage, details, creditLimit, balances, _links);
+    return Objects.hash(resourceId, maskedPan, currency, name, product, status, usage, details, creditLimit, balances, _links, ownerName);
   }
 
   @Override
@@ -393,6 +404,7 @@ public class CardAccountDetails   {
     sb.append("    creditLimit: ").append(toIndentedString(creditLimit)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
+    sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
     sb.append("}");
     return sb.toString();
   }

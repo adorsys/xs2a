@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,14 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,11 +51,11 @@ import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class Xs2aToSpiSinglePaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class Xs2aToSpiSinglePaymentMapperTest {
     private static final String PAYMENT_ID = "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c";
     private static final String END_TO_END_IDENTIFICATION = "PAYMENT_ID";
     private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
@@ -102,8 +102,8 @@ public class Xs2aToSpiSinglePaymentMapperTest {
     @Spy
     private RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuDataList.addAll(Arrays.asList(buildPsu(PSU_ID_1), buildPsu(PSU_ID_2)));
         spiPsuDataList.addAll(Arrays.asList(buildSpiPsu(PSU_ID_1), buildSpiPsu(PSU_ID_2)));
         when(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(psuDataList))
@@ -119,7 +119,7 @@ public class Xs2aToSpiSinglePaymentMapperTest {
     }
 
     @Test
-    public void mapToSpiSinglePaymentSuccess() {
+    void mapToSpiSinglePaymentSuccess() {
         //Given
         SinglePayment singlePayment = buildSinglePayment();
         //When

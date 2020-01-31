@@ -20,6 +20,6 @@ public enum SupportedAccountReferenceField {
     IBAN,
     BBAN,
     PAN,
-    MASKEDPAN,
+    MASKED_PAN,
     MSISDN
 }

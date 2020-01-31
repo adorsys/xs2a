@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,22 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.AccountDetailsLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AccountAspectTest {
-
+@ExtendWith(MockitoExtension.class)
+class AccountAspectTest {
     private static final String CONSENT_ID = "some consent id";
     private static final String ACCOUNT_ID = "some account id";
     private static final String REQUEST_URI = "/v1/accounts";
@@ -52,23 +51,23 @@ public class AccountAspectTest {
 
     private Xs2aAccountDetails accountDetails;
     private AccountConsent accountConsent;
-    private AspspSettings aspspSettings;
     private ResponseObject responseObject;
     private JsonReader jsonReader = new JsonReader();
     private AccountAspect aspect;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         aspect = new AccountAspect(aspspProfileServiceWrapper);
-        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
         accountConsent = jsonReader.getObjectFromFile("json/aspect/account_consent.json", AccountConsent.class);
         accountDetails = jsonReader.getObjectFromFile("json/aspect/account_details.json", Xs2aAccountDetails.class);
     }
 
     @Test
-    public void getAccountDetailsAspect_success() {
+    void getAccountDetailsAspect_success() {
+        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         responseObject = ResponseObject.<Xs2aAccountDetailsHolder>builder()
                              .body(new Xs2aAccountDetailsHolder(accountDetails, accountConsent))
                              .build();
@@ -80,7 +79,7 @@ public class AccountAspectTest {
     }
 
     @Test
-    public void getAccountDetailsAspect_withError_shouldAddTextErrorMessage() {
+    void getAccountDetailsAspect_withError_shouldAddTextErrorMessage() {
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
@@ -90,7 +89,11 @@ public class AccountAspectTest {
     }
 
     @Test
-    public void getAccountDetailsListAspect_success() {
+    void getAccountDetailsListAspect_success() {
+        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         responseObject = ResponseObject.<Xs2aAccountListHolder>builder()
                              .body(new Xs2aAccountListHolder(Collections.singletonList(accountDetails), accountConsent))
                              .build();
@@ -102,7 +105,7 @@ public class AccountAspectTest {
     }
 
     @Test
-    public void getAccountDetailsListAspect_withError_shouldAddTextErrorMessage() {
+    void getAccountDetailsListAspect_withError_shouldAddTextErrorMessage() {
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();

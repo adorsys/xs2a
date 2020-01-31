@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.integration.builder;
 
-import de.adorsys.psd2.xs2a.integration.HttpHeadersIT;
+import de.adorsys.psd2.xs2a.integration.HttpHeadersMock;
 
 public class HttpHeadersBuilder {
-    public static HttpHeadersIT buildHttpHeaders() {
-        HttpHeadersIT httpHeaders = new HttpHeadersIT();
+    public static HttpHeadersMock buildHttpHeaders() {
+        HttpHeadersMock httpHeaders = new HttpHeadersMock();
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
 

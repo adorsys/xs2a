@@ -23,22 +23,22 @@ import de.adorsys.psd2.consent.config.PisCommonPaymentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisAuthorisationServiceRemoteTest {
+@ExtendWith(MockitoExtension.class)
+class PisAuthorisationServiceRemoteTest {
     private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String URL = "http://base.url";
 
@@ -51,7 +51,7 @@ public class PisAuthorisationServiceRemoteTest {
     private PisCommonPaymentRemoteUrls remotePisCommonPaymentUrls;
 
     @Test
-    public void getAuthorisationScaApproach_created() {
+    void getAuthorisationScaApproach_created() {
         when(remotePisCommonPaymentUrls.getAuthorisationScaApproach()).thenReturn(URL);
         when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
@@ -63,7 +63,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getAuthorisationScaApproach_cancelled() {
+    void getAuthorisationScaApproach_cancelled() {
         when(remotePisCommonPaymentUrls.getCancellationAuthorisationScaApproach()).thenReturn(URL);
         when(consentRestTemplate.getForEntity(URL, AuthorisationScaApproachResponse.class, AUTHORISATION_ID))
             .thenReturn(ResponseEntity.ok(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)));
@@ -75,7 +75,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getPisAuthorisationById() {
+    void getPisAuthorisationById() {
         when(remotePisCommonPaymentUrls.getPisAuthorisationById()).thenReturn(URL);
         GetPisAuthorisationResponse expected = new GetPisAuthorisationResponse();
 
@@ -91,7 +91,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getPisAuthorisationById_withNoBody_shouldReturnEmpty() {
+    void getPisAuthorisationById_withNoBody_shouldReturnEmpty() {
         when(remotePisCommonPaymentUrls.getPisAuthorisationById()).thenReturn(URL);
 
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
@@ -103,7 +103,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getPisAuthorisationById_withCmsRestException_shouldReturnEmpty() {
+    void getPisAuthorisationById_withCmsRestException_shouldReturnEmpty() {
         when(remotePisCommonPaymentUrls.getPisAuthorisationById()).thenReturn(URL);
 
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
@@ -115,7 +115,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getPisCancellationAuthorisationById() {
+    void getPisCancellationAuthorisationById() {
         when(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById()).thenReturn(URL);
         GetPisAuthorisationResponse expected = new GetPisAuthorisationResponse();
 
@@ -131,7 +131,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getPisCancellationAuthorisationById_withNoBody_shouldReturnEmpty() {
+    void getPisCancellationAuthorisationById_withNoBody_shouldReturnEmpty() {
         when(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById()).thenReturn(URL);
 
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))
@@ -143,7 +143,7 @@ public class PisAuthorisationServiceRemoteTest {
     }
 
     @Test
-    public void getPisCancellationAuthorisationById_withCmsRestException_shouldReturnEmpty() {
+    void getPisCancellationAuthorisationById_withCmsRestException_shouldReturnEmpty() {
         when(remotePisCommonPaymentUrls.getPisCancellationAuthorisationById()).thenReturn(URL);
 
         when(consentRestTemplate.exchange(URL, HttpMethod.GET, null, GetPisAuthorisationResponse.class, AUTHORISATION_ID))

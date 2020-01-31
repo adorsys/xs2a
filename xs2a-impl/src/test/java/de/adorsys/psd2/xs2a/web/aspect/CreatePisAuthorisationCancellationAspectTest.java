@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,23 +29,22 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CreatePisAuthorisationCancellationAspectTest {
+@ExtendWith(MockitoExtension.class)
+class CreatePisAuthorisationCancellationAspectTest {
 
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
@@ -65,19 +64,14 @@ public class CreatePisAuthorisationCancellationAspectTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    private AspspSettings aspspSettings;
     private ResponseObject<CancellationAuthorisationResponse> responseObject;
 
-    @Before
-    public void setUp() {
-        JsonReader jsonReader = new JsonReader();
-        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+    @Test
+    void createPisAuthorisationAspect_withStartResponseType_shouldSetAuthorisationCancellationLinks() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
         when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-    }
 
-    @Test
-    public void createPisAuthorisationAspect_withStartResponseType_shouldSetAuthorisationCancellationLinks() {
         when(createResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.START);
         responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                              .body(createResponse)
@@ -91,7 +85,11 @@ public class CreatePisAuthorisationCancellationAspectTest {
     }
 
     @Test
-    public void createPisAuthorisationAspect_withUpdateResponseType_shouldSetUpdatePsuDataLinks() {
+    void createPisAuthorisationAspect_withUpdateResponseType_shouldSetUpdatePsuDataLinks() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         when(updateResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.UPDATE);
 
         responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
@@ -106,7 +104,7 @@ public class CreatePisAuthorisationCancellationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
+    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
         // When
         responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))

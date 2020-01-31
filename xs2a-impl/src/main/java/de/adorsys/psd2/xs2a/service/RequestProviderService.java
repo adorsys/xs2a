@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RequestProviderService {
 
-    private static final String AUTHORISATION_HEADER = HttpHeaders.AUTHORIZATION;
     private static final String TPP_REDIRECT_PREFERRED_HEADER = "tpp-redirect-preferred";
     private static final String X_REQUEST_ID_HEADER = "x-request-id";
     private static final String PSU_ID_HEADER = "psu-id";
@@ -127,7 +126,7 @@ public class RequestProviderService {
 
     public String getOAuth2Token() {
 
-        String headerValue = getHeader(AUTHORISATION_HEADER);
+        String headerValue = getHeader(HttpHeaders.AUTHORIZATION);
 
         return StringUtils.isEmpty(headerValue)
                    ? null

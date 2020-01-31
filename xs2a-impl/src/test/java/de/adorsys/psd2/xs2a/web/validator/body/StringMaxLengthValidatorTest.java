@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,27 +22,27 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static de.adorsys.psd2.xs2a.web.validator.body.StringMaxLengthValidator.MaxLengthRequirement;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class StringMaxLengthValidatorTest {
+class StringMaxLengthValidatorTest {
 
     private StringMaxLengthValidator stringMaxLengthValidator;
     private MessageError messageError;
 
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         messageError = new MessageError();
         ErrorBuildingService errorBuildingService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
         stringMaxLengthValidator = new StringMaxLengthValidator(errorBuildingService);
     }
 
     @Test
-    public void validate_success() {
+    void validate_success() {
         //Given
         MaxLengthRequirement panField = new MaxLengthRequirement("1234567890", "PAN", 35);
 
@@ -54,7 +54,7 @@ public class StringMaxLengthValidatorTest {
     }
 
     @Test
-    public void validate_account_empty_field() {
+    void validate_account_empty_field() {
         //Given
         MaxLengthRequirement panField = new MaxLengthRequirement(null, "PAN", 35);
 
@@ -67,7 +67,7 @@ public class StringMaxLengthValidatorTest {
 
 
     @Test
-    public void validate_long_field_name() {
+    void validate_long_field_name() {
         //Given
         MaxLengthRequirement panField = new MaxLengthRequirement("1234567890", "PAN", 8);
 

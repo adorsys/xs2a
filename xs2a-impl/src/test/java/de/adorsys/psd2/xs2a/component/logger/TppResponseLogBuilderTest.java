@@ -17,20 +17,19 @@
 package de.adorsys.psd2.xs2a.component.logger;
 
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TppResponseLogBuilderTest {
-    private static final String X_REQUEST_ID_HEADER = "x-request-id";
-
+@ExtendWith(MockitoExtension.class)
+class TppResponseLogBuilderTest {
     @Mock
     private HttpServletResponse httpServletResponse;
     @Mock
@@ -40,7 +39,7 @@ public class TppResponseLogBuilderTest {
     private TppResponseLogBuilder tppResponseLogBuilder;
 
     @Test
-    public void withTpp_shouldAddTppId() {
+    void withTpp_shouldAddTppId() {
         // When
         tppResponseLogBuilder.withTpp(tppInfo);
 
@@ -48,11 +47,11 @@ public class TppResponseLogBuilderTest {
         //noinspection ResultOfMethodCallIgnored
         verify(tppInfo).getAuthorisationNumber();
         verifyNoMoreInteractions(tppInfo);
-        verifyZeroInteractions(httpServletResponse);
+        verifyNoMoreInteractions(httpServletResponse);
     }
 
     @Test
-    public void withResponseStatus_shouldAddResponseStatus() {
+    void withResponseStatus_shouldAddResponseStatus() {
         // When
         tppResponseLogBuilder.withResponseStatus();
 

@@ -21,32 +21,28 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AisConsentConfirmationExpirationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class AisConsentConfirmationExpirationServiceTest {
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final LocalDate TODAY = LocalDate.now();
-    private static final LocalDate YESTERDAY = LocalDate.now().minusDays(1);
 
     @InjectMocks
     private AisConsentConfirmationExpirationService expirationService;
@@ -57,7 +53,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     private AspspProfileService aspspProfileService;
 
     @Test
-    public void expireConsent() {
+    void expireConsent() {
         // Given
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         // When
@@ -72,24 +68,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void isConsentExpiredOrFinalised_False() {
-        Stream.of(null,
-                  buildAisConsent(ConsentStatus.REJECTED, TOMORROW),
-                  buildAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
-            .map(expirationService::isConsentExpiredOrFinalised) //When
-            .forEach(Assert::assertFalse); //Then
-    }
-
-    @Test
-    public void isConsentExpiredOrFinalised_True() {
-        Stream.of(buildAisConsent(ConsentStatus.RECEIVED, YESTERDAY),
-                  buildNonReccuringAlreadyUsedAisConsent(ConsentStatus.RECEIVED, TOMORROW)) //Given
-            .map(expirationService::isConsentExpiredOrFinalised) //When
-            .forEach(Assert::assertTrue); //Then
-    }
-
-    @Test
-    public void updateConsentOnConfirmationExpiration() {
+    void updateConsentOnConfirmationExpiration() {
         // Given
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
 
@@ -102,7 +81,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void checkAndUpdateOnConfirmationExpiration_expired() {
+    void checkAndUpdateOnConfirmationExpiration_expired() {
         // Given
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
         when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(100L));
@@ -119,7 +98,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void checkAndUpdateOnConfirmationExpiration_nonExpired() {
+    void checkAndUpdateOnConfirmationExpiration_nonExpired() {
         // Given
         when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(86400L));
 
@@ -132,7 +111,7 @@ public class AisConsentConfirmationExpirationServiceTest {
     }
 
     @Test
-    public void updateConsentListOnConfirmationExpiration() {
+    void updateConsentListOnConfirmationExpiration() {
         // Given
         ArgumentCaptor<List<AisConsent>> aisConsentListCaptor = ArgumentCaptor.forClass(List.class);
 
@@ -144,19 +123,10 @@ public class AisConsentConfirmationExpirationServiceTest {
         assertEquals(ConsentStatus.REJECTED, aisConsentListCaptor.getValue().get(0).getConsentStatus());
     }
 
-    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate expireDate) {
+    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate validUntil) {
         AisConsent aisConsent = new AisConsent();
         aisConsent.setConsentStatus(consentStatus);
-        aisConsent.setExpireDate(expireDate);
-        return aisConsent;
-    }
-
-    private AisConsent buildNonReccuringAlreadyUsedAisConsent(ConsentStatus consentStatus, LocalDate expireDate) {
-        AisConsent aisConsent = buildAisConsent(consentStatus, expireDate);
-        aisConsent.setRecurringIndicator(false);
-        AisConsentUsage usage = new AisConsentUsage();
-        usage.setUsageDate(YESTERDAY);
-        aisConsent.setUsages(Collections.singletonList(usage));
+        aisConsent.setValidUntil(validUntil);
         return aisConsent;
     }
 

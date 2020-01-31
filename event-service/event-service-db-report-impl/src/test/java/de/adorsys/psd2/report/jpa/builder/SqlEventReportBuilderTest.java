@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@
 
 package de.adorsys.psd2.report.jpa.builder;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SqlEventReportBuilderTest {
-    public static final String TEST_REQUEST_NAME = "json/test_event_report_db.sql";
+class SqlEventReportBuilderTest {
+    private static final String TEST_REQUEST_NAME = "json/test_event_report_db.sql";
 
     private SqlEventReportBuilder builder;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         builder = new SqlEventReportBuilder();
-        Whitebox.setInternalState(builder, "schemaName", "event");
-        Whitebox.setInternalState(builder, "sqlRequestFileName", TEST_REQUEST_NAME);
+        ReflectionTestUtils.setField(builder, "schemaName", "event");
+        ReflectionTestUtils.setField(builder, "sqlRequestFileName", TEST_REQUEST_NAME);
     }
 
     @Test
-    public void test_period() {
+    void test_period() {
         // Given
         String expectedSql = "select * from event\n" +
                                  "where timestamp between :periodFrom and :periodTo order by timestamp ";
@@ -51,7 +51,7 @@ public class SqlEventReportBuilderTest {
     }
 
     @Test
-    public void test_instanceId() {
+    void test_instanceId() {
         // Given
         String expectedSql = "select * from event\n" +
                                  "where ev.instance_id = :instanceId order by timestamp ";
@@ -67,7 +67,7 @@ public class SqlEventReportBuilderTest {
     }
 
     @Test
-    public void test_consentId() {
+    void test_consentId() {
         // Given
         String expectedSql = "select * from event\n" +
                                  "where ev.consent_id = :consentId order by timestamp ";
@@ -83,7 +83,7 @@ public class SqlEventReportBuilderTest {
     }
 
     @Test
-    public void test_paymentId() {
+    void test_paymentId() {
         // Given
         String expectedSql = "select * from event\n" +
                                  "where ev.payment_id = :paymentId order by timestamp ";
@@ -99,7 +99,7 @@ public class SqlEventReportBuilderTest {
     }
 
     @Test
-    public void test_eventType() {
+    void test_eventType() {
         // Given
         String expectedSql = "select * from event\n" +
                                  "where ev.event_type = :eventType order by timestamp ";
@@ -115,7 +115,7 @@ public class SqlEventReportBuilderTest {
     }
 
     @Test
-    public void test_eventOrigin() {
+    void test_eventOrigin() {
         // Given
         String expectedSql = "select * from event\n" +
                                  "where ev.event_origin = :eventOrigin order by timestamp ";

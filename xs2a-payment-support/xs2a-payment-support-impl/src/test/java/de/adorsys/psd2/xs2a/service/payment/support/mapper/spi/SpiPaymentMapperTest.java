@@ -29,11 +29,11 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -42,11 +42,11 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Currency;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SpiPaymentMapperTest {
+@ExtendWith(MockitoExtension.class)
+class SpiPaymentMapperTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGz";
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(2020, 1, 2, 10, 0, 0, 0, ZoneOffset.UTC);
@@ -83,7 +83,7 @@ public class SpiPaymentMapperTest {
                                                        .build();
 
     @Test
-    public void mapToSpiSinglePayment() {
+    void mapToSpiSinglePayment() {
         // Given
         SpiPaymentInfo spiPayment = buildSpiPaymentInfo();
         byte[] paymentBody = jsonReader.getBytesFromFile("json/support/mapper/single-payment-initiation.json");
@@ -105,7 +105,7 @@ public class SpiPaymentMapperTest {
     }
 
     @Test
-    public void mapToSpiPeriodicPayment() {
+    void mapToSpiPeriodicPayment() {
         // Given
         SpiPaymentInfo spiPayment = buildSpiPaymentInfo();
         byte[] paymentBody = jsonReader.getBytesFromFile("json/support/mapper/periodic-payment-initiation.json");
@@ -127,7 +127,7 @@ public class SpiPaymentMapperTest {
     }
 
     @Test
-    public void mapToSpiBulkPayment() {
+    void mapToSpiBulkPayment() {
         // Given
         SpiPaymentInfo spiPayment = buildSpiPaymentInfo();
         byte[] paymentBody = jsonReader.getBytesFromFile("json/support/mapper/bulk-payment-initiation.json");

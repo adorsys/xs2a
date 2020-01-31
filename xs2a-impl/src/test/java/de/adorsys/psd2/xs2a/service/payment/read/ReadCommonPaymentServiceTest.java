@@ -40,20 +40,19 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ReadCommonPaymentServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ReadCommonPaymentServiceTest {
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final String PRODUCT = "sepa-credit-transfers";
     private static final CommonPaymentData COMMON_PAYMENT = buildCommonPaymentData();
@@ -81,8 +80,8 @@ public class ReadCommonPaymentServiceTest {
     @Mock
     private SpiErrorMapper spiErrorMapper;
 
-    @Before
-    public void init() {
+    @Test
+    void getPayment_success() {
         when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT)).thenReturn(SPI_PAYMENT_INFO);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aPaymentInfoMapper.mapToXs2aPaymentInfo(any())).thenReturn(PIS_PAYMENT_INFO);
@@ -92,10 +91,7 @@ public class ReadCommonPaymentServiceTest {
                             .build());
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
-    }
 
-    @Test
-    public void getPayment_success() {
         // When
         PaymentInformationResponse<CommonPayment> actualResponse = readCommonPaymentService.getPayment(COMMON_PAYMENT, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
@@ -105,7 +101,16 @@ public class ReadCommonPaymentServiceTest {
     }
 
     @Test
-    public void getPayment_failed() {
+    void getPayment_failed() {
+        when(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(COMMON_PAYMENT)).thenReturn(SPI_PAYMENT_INFO);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(commonPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ACCEPT_MEDIA_TYPE, SPI_PAYMENT_INFO, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiPaymentInfo>builder()
+                            .payload(SPI_PAYMENT_INFO)
+                            .build());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
+            .thenReturn(spiAspspConsentDataProvider);
+
         // Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))

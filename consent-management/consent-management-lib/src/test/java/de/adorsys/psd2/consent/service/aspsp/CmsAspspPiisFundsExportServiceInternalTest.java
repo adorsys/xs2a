@@ -23,12 +23,12 @@ import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecifi
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -37,12 +37,12 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPiisFundsExportServiceInternalTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPiisFundsExportServiceInternalTest {
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final String WRONG_TPP_AUTHORISATION_NUMBER = "wrong authorisation number";
     private static final LocalDate CREATION_DATE_FROM = LocalDate.of(2019, 1, 1);
@@ -70,17 +70,14 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     private PsuIdData psuIdData;
     private PsuIdData wrongPsuIdData;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         psuIdData = buildPsuIdData(PSU_ID);
         wrongPsuIdData = buildPsuIdData(WRONG_PSU_ID);
-
-        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
-            .thenReturn(Collections.singletonList(buildPiisConsent()));
     }
 
     @Test
-    public void exportConsentsByTpp_success() {
+    void exportConsentsByTpp_success() {
         // Given
         when(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
                                                                                               CREATION_DATE_FROM,
@@ -91,6 +88,8 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
+        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
+            .thenReturn(Collections.singletonList(buildPiisConsent()));
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -106,7 +105,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByTpp_success_nullInstanceId() {
+    void exportConsentsByTpp_success_nullInstanceId() {
         // Given
         when(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER,
                                                                                               CREATION_DATE_FROM,
@@ -117,6 +116,8 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
+        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
+            .thenReturn(Collections.singletonList(buildPiisConsent()));
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -132,7 +133,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
+    void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
 
         // When
@@ -148,7 +149,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByTpp_failure_nullTppAuthorisationNumber() {
+    void exportConsentsByTpp_failure_nullTppAuthorisationNumber() {
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByTpp(null, CREATION_DATE_FROM,
@@ -161,7 +162,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByTpp_failure_blankTppAuthorisationNumber() {
+    void exportConsentsByTpp_failure_blankTppAuthorisationNumber() {
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByTpp("", CREATION_DATE_FROM,
@@ -174,7 +175,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_success() {
+    void exportConsentsByPsu_success() {
         // Given
         when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
                                                                                       CREATION_DATE_FROM,
@@ -184,6 +185,8 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
+        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
+            .thenReturn(Collections.singletonList(buildPiisConsent()));
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -199,7 +202,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_success_nullInstanceId() {
+    void exportConsentsByPsu_success_nullInstanceId() {
         // Given
         when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
                                                                                       CREATION_DATE_FROM,
@@ -209,6 +212,8 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
+        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
+            .thenReturn(Collections.singletonList(buildPiisConsent()));
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -224,7 +229,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_failure_wrongPsuIdData() {
+    void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
 
         // When
@@ -240,7 +245,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_failure_nullPsuIdData() {
+    void exportConsentsByPsu_failure_nullPsuIdData() {
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByPsu(null, CREATION_DATE_FROM,
@@ -253,7 +258,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByPsu_failure_emptyPsuIdData() {
+    void exportConsentsByPsu_failure_emptyPsuIdData() {
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByPsu(buildEmptyPsuIdData(), CREATION_DATE_FROM,
@@ -266,7 +271,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByAccountId_success() {
+    void exportConsentsByAccountId_success() {
         // Given
         when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
                                                                                            CREATION_DATE_FROM,
@@ -276,6 +281,8 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
+        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
+            .thenReturn(Collections.singletonList(buildPiisConsent()));
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -291,7 +298,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByAccountId__success_nullInstanceId() {
+    void exportConsentsByAccountId__success_nullInstanceId() {
         // Given
         when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
                                                                                            CREATION_DATE_FROM,
@@ -301,6 +308,8 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
         when(piisConsentRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
         PiisConsent expectedConsent = buildPiisConsent();
+        when(piisConsentMapper.mapToPiisConsentList(Collections.singletonList(buildPiisConsentEntity())))
+            .thenReturn(Collections.singletonList(buildPiisConsent()));
 
         // When
         Collection<PiisConsent> piisConsents =
@@ -316,7 +325,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByAccountId_wrongAspspAccountId() {
+    void exportConsentsByAccountId_wrongAspspAccountId() {
         // Given
 
         // When
@@ -332,7 +341,7 @@ public class CmsAspspPiisFundsExportServiceInternalTest {
     }
 
     @Test
-    public void exportConsentsByAccountId__failure_blankAspspAccountId() {
+    void exportConsentsByAccountId__failure_blankAspspAccountId() {
         // When
         Collection<PiisConsent> piisConsents =
             cmsAspspPiisFundsExportServiceInternal.exportConsentsByAccountId("", CREATION_DATE_FROM,

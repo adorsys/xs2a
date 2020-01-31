@@ -19,23 +19,24 @@ package de.adorsys.psd2.aspsp.profile.web.controller;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileUpdateService;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileUpdateControllerTest {
+@ExtendWith(MockitoExtension.class)
+class AspspProfileUpdateControllerTest {
     @Mock
     private AspspProfileUpdateService aspspProfileUpdateService;
 
@@ -43,7 +44,7 @@ public class AspspProfileUpdateControllerTest {
     private AspspProfileUpdateController aspspProfileUpdateController;
 
     @Test
-    public void updateScaApproach_withValidApproach() {
+    void updateScaApproach_withValidApproach() {
         // Given
         String requestedScaApproach = "REDIRECT";
         ScaApproach scaApproach = ScaApproach.REDIRECT;
@@ -58,7 +59,7 @@ public class AspspProfileUpdateControllerTest {
     }
 
     @Test
-    public void updateScaApproach_withLowercaseApproach() {
+    void updateScaApproach_withLowercaseApproach() {
         // Given
         String requestedScaApproach = "redirect";
         ScaApproach scaApproach = ScaApproach.REDIRECT;
@@ -73,7 +74,7 @@ public class AspspProfileUpdateControllerTest {
     }
 
     @Test
-    public void updateScaApproach_withLeadingAndTrailingSpaces() {
+    void updateScaApproach_withLeadingAndTrailingSpaces() {
         // Given
         String requestedScaApproach = " REDIRECT ";
         ScaApproach scaApproach = ScaApproach.REDIRECT;
@@ -87,19 +88,22 @@ public class AspspProfileUpdateControllerTest {
         verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void updateScaApproach_withInvalidApproach_shouldThrowException() {
+    @Test
+    void updateScaApproach_withInvalidApproach_shouldThrowException() {
         // Given
         String requestedScaApproach = "invalid value";
 
         // When
-        aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach));
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach))
+        );
 
         verify(aspspProfileUpdateService, never()).updateScaApproaches(anyList());
     }
 
     @Test
-    public void updateAspspSettings() {
+    void updateAspspSettings() {
         // Given
         AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
 

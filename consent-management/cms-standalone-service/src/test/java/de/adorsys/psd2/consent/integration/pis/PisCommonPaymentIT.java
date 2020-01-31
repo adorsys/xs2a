@@ -28,27 +28,26 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("integration-test")
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
 public class PisCommonPaymentIT {
@@ -70,7 +69,7 @@ public class PisCommonPaymentIT {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
 
@@ -90,7 +89,7 @@ public class PisCommonPaymentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         pisCommonPaymentService.updateCommonPaymentStatusById(savedEntity.getPaymentId(), TransactionStatus.RJCT);
@@ -117,7 +116,7 @@ public class PisCommonPaymentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         pisCommonPaymentService.updateCommonPaymentStatusById(savedEntity.getPaymentId(), TransactionStatus.RCVD);
@@ -128,10 +127,10 @@ public class PisCommonPaymentIT {
         entities = pisCommonPaymentDataRepository.findAll();
         PisCommonPaymentData updatedEntity = entities.iterator().next();
         assertEquals(TransactionStatus.RCVD, updatedEntity.getTransactionStatus());
-        assertTrue(updatedEntity.getStatusChangeTimestamp().equals(updatedEntity.getCreationTimestamp()));
+        assertEquals(updatedEntity.getStatusChangeTimestamp(), updatedEntity.getCreationTimestamp());
     }
 
-    @Test(expected = PersistenceException.class)
+    @Test
     public void createPisCommonPayment_failShouldThrowException() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
@@ -144,15 +143,15 @@ public class PisCommonPaymentIT {
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
-        assertTrue(savedEntity.getStatusChangeTimestamp().equals(savedEntity.getCreationTimestamp()));
+        assertEquals(savedEntity.getStatusChangeTimestamp(), savedEntity.getCreationTimestamp());
 
         // When
         // New status is null
         pisCommonPaymentService.updateCommonPaymentStatusById(savedEntity.getPaymentId(), null);
 
-        // Then
-        // Here the exception should be thrown
-        flushAndClearPersistenceContext();
+        assertThrows(
+            PersistenceException.class, this::flushAndClearPersistenceContext
+        );
     }
 
     private PisPaymentInfo buildPisPaymentInfo() {

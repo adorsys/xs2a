@@ -19,16 +19,16 @@ package de.adorsys.psd2.aspsp.profile.mapper;
 import de.adorsys.psd2.aspsp.profile.domain.migration.NewProfileConfiguration;
 import de.adorsys.psd2.aspsp.profile.domain.migration.OldProfileConfiguration;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NewProfileConfigurationMapperTest {
+ class NewProfileConfigurationMapperTest {
     private JsonReader jsonReader = new JsonReader();
     private NewProfileConfigurationMapper newProfileConfigurationMapper = new NewProfileConfigurationMapper();
 
     @Test
-    public void mapToNewProfileConfiguration() {
+     void mapToNewProfileConfiguration() {
         // Given
         OldProfileConfiguration oldProfileConfiguration = jsonReader.getObjectFromFile("json/mapper/old-profile-configuration.json", OldProfileConfiguration.class);
         NewProfileConfiguration expectedProfile = jsonReader.getObjectFromFile("json/mapper/new-profile-configuration.json", NewProfileConfiguration.class);

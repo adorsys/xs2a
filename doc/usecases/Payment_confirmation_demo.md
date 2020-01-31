@@ -1,3 +1,5 @@
+Actual for XS2A v.1, v.2
+
 #Payment confirmation demo for redirect approach 
 
 "Payment confirmation demo" are test pages and services for showing how XS2A interface will work with TPP's payment initiation request through redirect SCA approach.

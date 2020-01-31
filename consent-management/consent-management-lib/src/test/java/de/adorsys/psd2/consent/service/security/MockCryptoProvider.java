@@ -26,7 +26,7 @@ public class MockCryptoProvider implements CryptoProvider {
     private final boolean alwaysFail;
     private final String cryptoProviderId;
 
-    public MockCryptoProvider(String cryptoProviderId, boolean alwaysFail) {
+    MockCryptoProvider(String cryptoProviderId, boolean alwaysFail) {
         this.alwaysFail = alwaysFail;
         this.cryptoProviderId = cryptoProviderId;
     }

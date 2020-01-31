@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,24 +21,24 @@ import de.adorsys.psd2.xs2a.web.validator.body.BodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.HeaderValidator;
 import de.adorsys.psd2.xs2a.web.validator.path.PathParameterValidator;
 import de.adorsys.psd2.xs2a.web.validator.query.QueryParameterValidator;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AbstractMethodValidatorTest {
+@ExtendWith(MockitoExtension.class)
+class AbstractMethodValidatorTest {
     private static final String QUERY_PARAMETER_NAME = "some-query-param";
     private static final String QUERY_PARAMETER_VALUE = "some value";
 
@@ -62,8 +62,8 @@ public class AbstractMethodValidatorTest {
     private MockHttpServletRequest request;
 
     @SuppressWarnings("unchecked")
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         messageError = new MessageError();
         request = new MockHttpServletRequest();
         request.addHeader("Content-Type", "application/json");
@@ -83,7 +83,7 @@ public class AbstractMethodValidatorTest {
     }
 
     @Test
-    public void validate() {
+    void validate() {
         messageError = methodValidator.validate(request, messageError);
 
         verify(headerValidator, times(1)).validate(headersCaptor.capture(), eq(messageError));

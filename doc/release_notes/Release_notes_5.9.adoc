@@ -1,0 +1,69 @@
+= Release notes v.5.9
+
+== Table of Contents
+* Migrate to jUnit 5.x and Mockito 3.x
+* Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+* Bugfix: Update Response Code in Consent Initiation requests for not supported consent types
+* Bugfix: Payment endpoints return incorrect HTTP status code on providing unknown payment ID
+* Bugfix: Fixing that expiration of an AIS consent changes its validUntil date
+* Bugfix: Payment/Consent status doesn't change after ConfirmationCode validation in xs2a
+* Bugfix: Prevent OauthModeFilter from executing for non-XS2A endpoints
+* Implement cards accounts
+* Bugfix: Missing properties for bulk and periodic payments in cms-psu-api
+
+== Migrate to jUnit 5.x and Mockito 3.x
+
+From now on, project uses jUnit 5.x and Mockito 3.x for testing.
+
+== Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
+
+Method `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfoWithPath` was removed.
+From now on, use `de.adorsys.psd2.consent.web.aspsp.controller.CmsAspspTppInfoController.getTppInfo` method instead.
+
+== Bugfix: Update Response Code in Consent Initiation requests for not supported consent types
+
+From now on, if TPP sends Consent initiation requests and ASPSP doesn't support certain consent type TPP will receive 400 response code with `SERVICE_INVALID` message.
+
+== Bugfix: Payment endpoints return incorrect HTTP status code on providing unknown payment ID
+
+From now on, PIS endpoints that take payment ID as a path parameter will return `RESOURCE_UNKNOWN` error with HTTP status
+code `403` instead of `400` or `404` if the payment couldn't be located by the provided ID.
+
+The following endpoints were affected by this change:
+
+- Payment information request (`GET /v1/{payment_service}/{payment_product}/{payment_id}`)
+- Payment initiation status request (`GET /v1/{payment_service}/{payment_product}/{payment_id}/status`)
+- Payment cancellation request (`DELETE /v1/{payment_service}/{payment_product}/{payment_id}`)
+
+== Fixing that expiration of an AIS consent changes its validUntil date
+
+From now on, expiration of an AIS consent does not change its `validUntil` date. A second value
+`expireDate` has been introduced, which indicates the date of expiration. The `expireDate` is properly
+propagated to SPI, CMS-PSU and CMS-ASPSP APIs.
+
+== Bugfix: Payment/Consent status doesn't change after ConfirmationCode validation in xs2a
+
+From now on, after ConfirmationCode validation in XS2A (`authorisationConfirmationCheckByXs2a = true` in ASPSP profile)
+there is an additional call to SPI Level (`de.adorsys.psd2.xs2a.spi.service.AisConsentSpi#notifyConfirmationCodeValidation` for consent or `de.adorsys.psd2.xs2a.spi.service.PaymentSpi#notifyConfirmationCodeValidation` for payment)
+with validation result. In response, XS2A receives an object with
+authorisation status and consent/payment status and updates them in CMS.
+
+== Bugfix: Prevent OauthModeFilter from executing for non-XS2A endpoints
+
+From now on, OauthModeFilter is not being executed for non-XS2A endpoints
+
+== Implement cards accounts
+
+From now on, XS2A supports new interface - card account with endpoints described below:
+
+- Read list of card accounts (`GET /v1/card-accounts`)
+- Read card account balances (`GET /v1/card-accounts/{account-id}/balances`)
+- Read card transaction list of an account (`GET /v1/card-accounts/{account-id}/transactions`)
+- Read details about a card account (`GET /v1/card-accounts/{account-id}`)
+
+To use card account interface, one should add parameter to ASPSP profile in `supportedAccountReferenceFields` field (`MASKED_PAN` or/and `PAN`).
+For providing access to card accounts standard AIS consent should be used. Corresponding changes were made to SPI level.
+
+== Bugfix: missing properties for bulk and periodic payments in cms-psu-api
+
+Fixed missing properties for bulk and periodic payments in the response of `CmsPsuPisService#getPayment`, `CmsPsuPisService#checkRedirectAndGetPayment` and `CmsPsuPisService#checkRedirectAndGetPaymentForCancellation` methods in case of using `cms-payment-support-impl` module.

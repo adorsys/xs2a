@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ package de.adorsys.psd2.xs2a.domain;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ContentTypeTest {
+class ContentTypeTest {
 
     private final Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
     @Test
-    public void testContentTypeWithoutCharset() throws IOException {
+    void testContentTypeWithoutCharset() throws IOException {
         Container expected = new Container(ContentType.JSON);
 
         String contentTypeJson = "{ \"contentType\": \"application/json\" }";
@@ -39,7 +39,7 @@ public class ContentTypeTest {
     }
 
     @Test
-    public void testContentTypeWithCharset() throws IOException {
+    void testContentTypeWithCharset() throws IOException {
         Container expected = new Container(ContentType.XML);
 
         String contentTypeJson = "{ \"contentType\": \"application/xml; charset=utf-8\" }";

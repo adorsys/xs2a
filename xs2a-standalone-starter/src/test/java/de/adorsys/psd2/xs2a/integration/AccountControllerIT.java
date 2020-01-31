@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
@@ -53,9 +54,9 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -67,7 +68,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -86,7 +87,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -96,10 +97,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class AccountControllerIT {
+class AccountControllerIT {
     private static final String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    private static final String IBAN = "DE62500105179972514662";
     private HttpHeaders httpHeaders = new HttpHeaders();
     private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
@@ -133,8 +135,8 @@ public class AccountControllerIT {
     @MockBean
     private SpiAspspConsentDataProvider aspspConsentDataProvider;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
@@ -172,7 +174,7 @@ public class AccountControllerIT {
     }
 
     @Test
-    public void getTransactions_ShouldFail_WithoutEndSlash() throws Exception {
+    void getTransactions_ShouldFail_WithoutEndSlash() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrl(ACCOUNT_ID));
         requestBuilder.headers(httpHeaders);
 
@@ -185,7 +187,7 @@ public class AccountControllerIT {
     }
 
     @Test
-    public void getTransactions_ShouldFail_WithEndSlash() throws Exception {
+    void getTransactions_ShouldFail_WithEndSlash() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionsUrl(ACCOUNT_ID));
         requestBuilder.headers(httpHeaders);
@@ -199,7 +201,7 @@ public class AccountControllerIT {
     }
 
     @Test
-    public void getAccountList_WithoutPsuIpAddressWithNoUsageCounter_ShouldFail() throws Exception {
+    void getAccountList_WithoutPsuIpAddressWithNoUsageCounter_ShouldFail() throws Exception {
         // Given
         AccountConsent accountConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(xs2aAisConsentMapper.mapToAccountConsent(new AisAccountConsent())).willReturn(accountConsent);
@@ -217,7 +219,7 @@ public class AccountControllerIT {
     }
 
     @Test
-    public void getAccountList_WithPsuIpAddressWithNoUsageCounter_Success() throws Exception {
+    void getAccountList_WithPsuIpAddressWithNoUsageCounter_Success() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
@@ -227,7 +229,7 @@ public class AccountControllerIT {
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
         given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
-        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
+        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyList())).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
@@ -250,7 +252,7 @@ public class AccountControllerIT {
     }
 
     @Test
-    public void getAccountList_WithPsuIpAddressWithNoUsageCounter_oneOffConsent_AccessExceeded() throws Exception {
+    void getAccountList_WithPsuIpAddressWithNoUsageCounter_oneOffConsent_AccessExceeded() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeaders);
@@ -260,7 +262,7 @@ public class AccountControllerIT {
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
         given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
-        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
+        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyList())).willReturn(Collections.singletonList(accountDetails));
 
         AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
@@ -283,7 +285,7 @@ public class AccountControllerIT {
     }
 
     @Test
-    public void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
+    void getAccountList_TwoRequestSuccessfulThirdRequestFailed() throws Exception {
         // Given
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
@@ -293,7 +295,7 @@ public class AccountControllerIT {
         SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
 
         given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
-        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyListOf(SpiAccountDetails.class))).willReturn(Collections.singletonList(accountDetails));
+        given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyList())).willReturn(Collections.singletonList(accountDetails));
 
         for (int usage = 2; usage >= 0; usage--) {
             AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
@@ -343,15 +345,21 @@ public class AccountControllerIT {
     }
 
     private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), 10,
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(IBAN);
+
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
+        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), null, 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
     }
 
     private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess,false, LocalDate.now().plusDays(1), 10,
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(IBAN);
+
+        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
+        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, false, LocalDate.now().plusDays(1), null, 10,
                                   null, ConsentStatus.VALID, false, false,
                                   null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
     }

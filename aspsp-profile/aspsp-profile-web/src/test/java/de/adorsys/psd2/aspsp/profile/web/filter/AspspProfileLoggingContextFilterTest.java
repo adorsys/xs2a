@@ -18,13 +18,13 @@ package de.adorsys.psd2.aspsp.profile.web.filter;
 
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.logger.context.RequestInfo;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -37,8 +37,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AspspProfileLoggingContextFilterTest {
+@ExtendWith(MockitoExtension.class)
+class AspspProfileLoggingContextFilterTest {
     private static final String ASPSP_PROFILE_PATH = "/api/v1/aspsp-profile";
     private static final String CUSTOM_PATH = "/api/v1/";
     private static final String X_REQUEST_ID_HEADER_NAME = "X-Request-ID";
@@ -56,7 +56,7 @@ public class AspspProfileLoggingContextFilterTest {
     private AspspProfileLoggingContextFilter aspspProfileLoggingContextFilter;
 
     @Test
-    public void doFilter_onAspspProfileEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
+    void doFilter_onAspspProfileEndpoint_shouldHandleLoggingContext() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, ASPSP_PROFILE_PATH);
         mockRequest.addHeader(INTERNAL_REQUEST_ID_HEADER_NAME, INTERNAL_REQUEST_ID);
@@ -75,7 +75,7 @@ public class AspspProfileLoggingContextFilterTest {
     }
 
     @Test
-    public void doFilter_onAspspProfileEndpointAndNoHeaders_shouldHandleLoggingContext() throws ServletException, IOException {
+    void doFilter_onAspspProfileEndpointAndNoHeaders_shouldHandleLoggingContext() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, ASPSP_PROFILE_PATH);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -92,7 +92,7 @@ public class AspspProfileLoggingContextFilterTest {
     }
 
     @Test
-    public void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
+    void doFilter_onCustomEndpoint_shouldSkipFilter() throws ServletException, IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, CUSTOM_PATH);
         mockRequest.addHeader(INTERNAL_REQUEST_ID_HEADER_NAME, INTERNAL_REQUEST_ID);

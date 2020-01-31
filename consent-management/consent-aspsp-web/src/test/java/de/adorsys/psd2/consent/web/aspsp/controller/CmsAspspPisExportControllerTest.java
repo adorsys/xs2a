@@ -24,12 +24,12 @@ import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,8 +48,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspPisExportControllerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspPisExportControllerTest {
     private final String PSU_ID = "marion.mueller";
     private final String TPP_ID = "PSDDE-FAKENCA-87B2AC";
     private final String ACCOUNT_ID = "account_id";
@@ -65,7 +65,6 @@ public class CmsAspspPisExportControllerTest {
     private JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private PsuIdData psuIdData;
-    private CmsPayment cmsPayment;
     private Collection<CmsPayment> cmsPayments;
 
     @InjectMocks
@@ -74,12 +73,12 @@ public class CmsAspspPisExportControllerTest {
     @Mock
     private CmsAspspPisExportService cmsAspspPisExportService;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
         psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
-        cmsPayment = getCmsPayment();
+        CmsPayment cmsPayment = getCmsPayment();
         cmsPayments = Collections.singletonList(cmsPayment);
 
         httpHeaders.add("psu-id", PSU_ID);
@@ -94,7 +93,7 @@ public class CmsAspspPisExportControllerTest {
     }
 
     @Test
-    public void getPaymentsByTpp() throws Exception {
+    void getPaymentsByTpp() throws Exception {
         when(cmsAspspPisExportService.exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
             .thenReturn(cmsPayments);
 
@@ -108,7 +107,7 @@ public class CmsAspspPisExportControllerTest {
     }
 
     @Test
-    public void getPaymentsByPsu() throws Exception {
+    void getPaymentsByPsu() throws Exception {
         when(cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
             .thenReturn(cmsPayments);
 
@@ -122,7 +121,7 @@ public class CmsAspspPisExportControllerTest {
     }
 
     @Test
-    public void getPaymentsByAccountId() throws Exception {
+    void getPaymentsByAccountId() throws Exception {
         when(cmsAspspPisExportService.exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
             .thenReturn(cmsPayments);
 

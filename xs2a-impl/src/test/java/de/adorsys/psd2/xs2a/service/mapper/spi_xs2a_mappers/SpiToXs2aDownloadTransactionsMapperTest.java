@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,29 +20,29 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionsDownloadResponse;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aDownloadTransactionsMapperImpl.class})
-public class SpiToXs2aDownloadTransactionsMapperTest {
+class SpiToXs2aDownloadTransactionsMapperTest {
 
     @Autowired
     private SpiToXs2aDownloadTransactionsMapper mapper;
     private JsonReader jsonReader = new JsonReader();
 
     @Test
-    public void mapToXs2aTransactionsDownloadResponseTest() throws IOException {
+    void mapToXs2aTransactionsDownloadResponseTest() throws IOException {
         // Given
         SpiTransactionsDownloadResponse spiTransactionsDownloadResponse =
             new SpiTransactionsDownloadResponse(new ByteArrayInputStream("test stream".getBytes()), "all_my_transactions.json", 100000);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,22 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class TransactionAspectTest {
-
+@ExtendWith(MockitoExtension.class)
+class TransactionAspectTest {
     private static final String CONSENT_ID = "some consent id";
     private static final String ACCOUNT_ID = "some account id";
     private static final String RESOURCE_ID = "some resource id";
@@ -55,21 +54,21 @@ public class TransactionAspectTest {
     @Mock
     private Xs2aTransactionsReport transactionsReport;
 
-    private AspspSettings aspspSettings;
     private ResponseObject responseObject;
     private JsonReader jsonReader = new JsonReader();
     private TransactionAspect aspect;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         aspect = new TransactionAspect(aspspProfileServiceWrapper);
-        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
     }
 
     @Test
-    public void getTransactionsReportByPeriod_successReport() {
+    void getTransactionsReportByPeriod_successReport() {
+        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
         xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
 
         when(transactionsReport.getAccountReport()).thenReturn(new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null));
@@ -83,7 +82,7 @@ public class TransactionAspectTest {
     }
 
     @Test
-    public void getTransactionsReportByPeriod_withError_shouldAddTextErrorMessage() {
+    void getTransactionsReportByPeriod_withError_shouldAddTextErrorMessage() {
         xs2aTransactionsReportByPeriodRequest = jsonReader.getObjectFromFile("json/Xs2aTransactionsReportByPeriodRequest.json", Xs2aTransactionsReportByPeriodRequest.class);
 
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
@@ -97,7 +96,7 @@ public class TransactionAspectTest {
     }
 
     @Test
-    public void getTransactionDetailsAspect_successNotHugeReport() {
+    void getTransactionDetailsAspect_successNotHugeReport() {
         responseObject = ResponseObject.<Transactions>builder()
                              .body(new Transactions())
                              .build();
@@ -109,7 +108,7 @@ public class TransactionAspectTest {
     }
 
     @Test
-    public void getTransactionDetailsAspect_withError_shouldAddTextErrorMessage() {
+    void getTransactionDetailsAspect_withError_shouldAddTextErrorMessage() {
         responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();
@@ -119,7 +118,7 @@ public class TransactionAspectTest {
     }
 
     @Test
-    public void downloadTransactionsAspect_successNotHugeReport() {
+    void downloadTransactionsAspect_successNotHugeReport() {
         responseObject = ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
                              .body(new Xs2aTransactionsDownloadResponse())
                              .build();
@@ -131,7 +130,7 @@ public class TransactionAspectTest {
     }
 
     @Test
-    public void downloadTransactionsAspect_withError_shouldAddTextErrorMessage() {
+    void downloadTransactionsAspect_withError_shouldAddTextErrorMessage() {
         responseObject = ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
                              .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                              .build();

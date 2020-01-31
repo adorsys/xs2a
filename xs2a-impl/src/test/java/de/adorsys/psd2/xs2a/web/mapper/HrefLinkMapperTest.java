@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,27 +19,27 @@ package de.adorsys.psd2.xs2a.web.mapper;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class HrefLinkMapperTest {
+class HrefLinkMapperTest {
     private static final String LINK_NAME = "scaStatus";
     private static final String LINK_PATH = "http://localhost/v1/payments/";
 
     private HrefLinkMapper hrefMapper;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         hrefMapper = new HrefLinkMapper(xs2aObjectMapper);
     }
 
     @Test
-    public void mapToLinksMap_withValidMap_shouldReturnLinks() {
+    void mapToLinksMap_withValidMap_shouldReturnLinks() {
         // Given
         Links links = new Links();
         links.setScaStatus(new HrefType(LINK_PATH));
@@ -57,7 +57,7 @@ public class HrefLinkMapperTest {
     }
 
     @Test
-    public void mapToLinksMap_withNullMap_shouldReturnNull() {
+    void mapToLinksMap_withNullMap_shouldReturnNull() {
         //When:
         Map<String, HrefType> linkMap = hrefMapper.mapToLinksMap(null);
 

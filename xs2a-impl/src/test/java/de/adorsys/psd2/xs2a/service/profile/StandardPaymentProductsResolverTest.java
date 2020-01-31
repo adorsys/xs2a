@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package de.adorsys.psd2.xs2a.service.profile;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StandardPaymentProductsResolverTest {
+class StandardPaymentProductsResolverTest {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         standardPaymentProductsResolver = new StandardPaymentProductsResolver();
     }
 
     @Test
-    public void isRawPaymentProduct() {
+    void isRawPaymentProduct() {
         assertFalse(standardPaymentProductsResolver.isRawPaymentProduct("instant-sepa-credit-transfers"));
         assertFalse(standardPaymentProductsResolver.isRawPaymentProduct("target-2-payments"));
         assertFalse(standardPaymentProductsResolver.isRawPaymentProduct("cross-border-credit-transfers"));

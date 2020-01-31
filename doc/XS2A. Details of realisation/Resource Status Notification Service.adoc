@@ -1,0 +1,28 @@
+// toc-title definition MUST follow document title without blank line!
+== Resource Status Notification Service
+:toc-title:
+:imagesdir: ../usecases/diagrams
+:toc: left
+
+toc::[]
+TPP can implicitly subscribe for a Resource Status Notification Service for all the related POST commands for the Payment Initiation Request, the Establish Account Information Request or the Signing Basket Request.
+
+NOTE: The notification services will also be available for cancellation processes which require SCA based authentication of PSUs. These services will then be supported by the ASPSP if requested before by the TPP for the related resource initiation process. So, the "notification service" support function is stored within the created resource.
+
+There is a parameter in the ASPSP-profile "aspspNotificationsSupported", which defines whether ASPSP supports resource status notification services. Possible values:
+
+* *SCA* (a notification on every change of the scaStatus attribute for all related authorisation processes.);
+
+* *PROCESS* (a notification on all changes of consentStatus or transactionStatus attributes.);
+
+* *LAST* (only a notification on the last consentStatus or transactionStatus as available in the XS2A interface);
+
+* *NONE*.
+
+It can be set from 1 to 3 values simultaniously, or set *NONE* if ASPSP doesn't support status notifications.
+
+In case of TPP requests content which is not supported by ASPSP, then response contains header *ASPSP-Notification-Support=FALSE* and *NO* header *ASPSP-Notification-Content*.
+
+In case of Notification generally not supported by the ASPSP (*aspspNotificationsSupported = NONE*), then response does not contain headers (ASPSP-Notification-Support or ASPSP-Notification-Content).
+
+Resource Notification Push Service will be implemented in the future and will allow TPP to receive push notifications about every change of Transaction/Consent/SCA statuses.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,21 +25,20 @@ import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.PaymentInitiationLinks;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PaymentInitiationAspectTest {
+@ExtendWith(MockitoExtension.class)
+class PaymentInitiationAspectTest {
 
     @InjectMocks
     private PaymentInitiationAspect aspect;
@@ -53,19 +52,14 @@ public class PaymentInitiationAspectTest {
     @Mock
     private PaymentInitiationParameters requestParameters;
 
-    private AspspSettings aspspSettings;
     private ResponseObject responseObject;
 
-    @Before
-    public void setUp() {
-        JsonReader jsonReader = new JsonReader();
-        aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+    @Test
+    void createPaymentAspect_success() {
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
         when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
         when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-    }
 
-    @Test
-    public void createPaymentAspect_success() {
         when(requestParameters.isTppExplicitAuthorisationPreferred()).thenReturn(true);
         when(paymentInitiationResponse.isMultilevelScaRequired()).thenReturn(true);
         when(authorisationMethodDecider.isExplicitMethod(true, true)).thenReturn(true);
@@ -82,7 +76,7 @@ public class PaymentInitiationAspectTest {
     }
 
     @Test
-    public void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
+    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
 
         // When
         responseObject = ResponseObject.builder()

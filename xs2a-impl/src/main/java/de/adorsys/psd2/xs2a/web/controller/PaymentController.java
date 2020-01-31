@@ -63,7 +63,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_404;
 
 
@@ -265,7 +264,7 @@ public class PaymentController implements PaymentApi {
         ResponseObject<CancelPaymentResponse> serviceResponse = PaymentType.getByValue(paymentService)
                                                                     .map(type -> xs2aPaymentService.cancelPayment(paymentCancellationRequest))
                                                                     .orElseGet(ResponseObject.<CancelPaymentResponse>builder()
-                                                                                   .fail(ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR))::build);
+                                                                                   .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
 
         if (serviceResponse.hasError()) {
             return responseErrorMapper.generateErrorResponse(serviceResponse.getError());

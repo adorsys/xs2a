@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +26,11 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-public class CreateConsentReqTest {
-
+class CreateConsentReqTest {
     private static final String IBAN = "IBAN ";
 
     @Test
-    public void getAccountReferences_all() {
+    void getAccountReferences_all() {
         //Given:
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(getAccess(getRefs(1), getRefs(2), getRefs(3)));
@@ -42,7 +41,7 @@ public class CreateConsentReqTest {
     }
 
     @Test
-    public void getAccountReferences_1_null() {
+    void getAccountReferences_1_null() {
         //Given:
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(getAccess(null, getRefs(2), getRefs(3)));
@@ -53,7 +52,7 @@ public class CreateConsentReqTest {
     }
 
     @Test
-    public void getAccountReferences_all_null() {
+    void getAccountReferences_all_null() {
         //Given:
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(getAccess(null, null, null));

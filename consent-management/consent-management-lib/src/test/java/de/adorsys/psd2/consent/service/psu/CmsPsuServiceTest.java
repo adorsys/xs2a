@@ -17,17 +17,17 @@
 package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.domain.PsuData;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsPsuServiceTest {
+@ExtendWith(MockitoExtension.class)
+class CmsPsuServiceTest {
     private static final String PSU_ID_1 = "psu id 1";
     private static final String PSU_ID_2 = "psu id 2";
     private static final String PSU_ID_3 = "psu id 3";
@@ -45,97 +45,97 @@ public class CmsPsuServiceTest {
     CmsPsuService cmsPsuService;
 
     @Test
-    public void definePsuDataForAuthorisation_PsuIsExistInList() {
+    void definePsuDataForAuthorisation_PsuIsExistInList() {
         Optional<PsuData> actualResult = cmsPsuService.definePsuDataForAuthorisation(PSU_DATA_1, PSU_DATA_LIST);
 
-        assertThat(actualResult.isPresent()).isTrue();
-        assertThat(actualResult.get()).isEqualTo(PSU_DATA_LIST.get(0));
+        assertTrue(actualResult.isPresent());
+        assertEquals(PSU_DATA_LIST.get(0), actualResult.get());
     }
 
     @Test
-    public void definePsuDataForAuthorisation_PsuIsNotExistInList() {
+    void definePsuDataForAuthorisation_PsuIsNotExistInList() {
         Optional<PsuData> actualResult = cmsPsuService.definePsuDataForAuthorisation(PSU_DATA_3, PSU_DATA_LIST);
 
-        assertThat(actualResult.isPresent()).isTrue();
-        assertThat(actualResult.get()).isEqualTo(PSU_DATA_3);
+        assertTrue(actualResult.isPresent());
+        assertEquals(PSU_DATA_3, actualResult.get());
     }
 
     @Test
-    public void enrichPsuData_PsuIsExistInList() {
+    void enrichPsuData_PsuIsExistInList() {
         List<PsuData> actualResult = cmsPsuService.enrichPsuData(PSU_DATA_1, PSU_DATA_LIST);
 
-        assertThat(actualResult.size()).isEqualTo(2);
-        assertThat(actualResult.containsAll(Arrays.asList(PSU_DATA_1, PSU_DATA_2))).isTrue();
+        assertEquals(2, actualResult.size());
+        assertTrue(actualResult.containsAll(Arrays.asList(PSU_DATA_1, PSU_DATA_2)));
     }
 
     @Test
-    public void enrichPsuData_PsuIsNotExistInList() {
+    void enrichPsuData_PsuIsNotExistInList() {
         List<PsuData> actualResult = cmsPsuService.enrichPsuData(PSU_DATA_3, PSU_DATA_LIST);
 
-        assertThat(actualResult.size()).isEqualTo(3);
-        assertThat(actualResult.containsAll(Arrays.asList(PSU_DATA_1, PSU_DATA_2, PSU_DATA_3))).isTrue();
+        assertEquals(3, actualResult.size());
+        assertTrue(actualResult.containsAll(Arrays.asList(PSU_DATA_1, PSU_DATA_2, PSU_DATA_3)));
     }
 
     @Test
-    public void isPsuDataNew_PsuIsExistInList() {
+    void isPsuDataNew_PsuIsExistInList() {
         boolean actualResult = cmsPsuService.isPsuDataNew(PSU_DATA_1, PSU_DATA_LIST);
 
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
     }
 
     @Test
-    public void isPsuDataNew_PsuIsNull() {
+    void isPsuDataNew_PsuIsNull() {
         boolean actualResult = cmsPsuService.isPsuDataNew(null, PSU_DATA_LIST);
 
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
     }
 
     @Test
-    public void isPsuDataNew_PsuIsNotExistInList() {
+    void isPsuDataNew_PsuIsNotExistInList() {
         boolean actualResult = cmsPsuService.isPsuDataNew(PSU_DATA_3, PSU_DATA_LIST);
 
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
     }
 
     @Test
-    public void isPsuDataListEqual_shouldReturnTrue_sameList() {
+    void isPsuDataListEqual_shouldReturnTrue_sameList() {
         boolean actualResult = cmsPsuService.isPsuDataListEqual(PSU_DATA_LIST, PSU_DATA_LIST);
 
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
     }
 
     @Test
-    public void isPsuDataListEqual_shouldReturnTrue_sameContentExceptId() {
+    void isPsuDataListEqual_shouldReturnTrue_sameContentExceptId() {
         List<PsuData> psuDataList = Arrays.asList(buildPsuDataWithId(PSU_ID_1, 1L), buildPsuDataWithId(PSU_ID_2, 2L));
         List<PsuData> anotherPsuDataList = Arrays.asList(buildPsuDataWithId(PSU_ID_1, 3L), buildPsuDataWithId(PSU_ID_2, 4L));
 
         boolean actualResult = cmsPsuService.isPsuDataListEqual(psuDataList, anotherPsuDataList);
 
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
     }
 
     @Test
-    public void isPsuDataListEqual_shouldReturnTrue_emptyLists() {
+    void isPsuDataListEqual_shouldReturnTrue_emptyLists() {
         boolean actualResult = cmsPsuService.isPsuDataListEqual(Collections.emptyList(), Collections.emptyList());
 
-        assertThat(actualResult).isTrue();
+        assertTrue(actualResult);
     }
 
     @Test
-    public void isPsuDataListEqual_shouldReturnFalse_differentPsuIds() {
+    void isPsuDataListEqual_shouldReturnFalse_differentPsuIds() {
         List<PsuData> psuDataList = Arrays.asList(PSU_DATA_1, PSU_DATA_2);
         List<PsuData> anotherPsuDataList = Arrays.asList(PSU_DATA_2, PSU_DATA_3);
 
         boolean actualResult = cmsPsuService.isPsuDataListEqual(psuDataList, anotherPsuDataList);
 
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
     }
 
     @Test
-    public void isPsuDataListEqual_shouldReturnFalse_oneEmptyList() {
+    void isPsuDataListEqual_shouldReturnFalse_oneEmptyList() {
         boolean actualResult = cmsPsuService.isPsuDataListEqual(PSU_DATA_LIST, Collections.emptyList());
 
-        assertThat(actualResult).isFalse();
+        assertFalse(actualResult);
     }
 
     private PsuData buildPsuDataWithId(String psuId, Long databaseId) {

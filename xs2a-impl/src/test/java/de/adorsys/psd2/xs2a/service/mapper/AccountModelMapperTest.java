@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,18 +30,17 @@ import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
-import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapperImpl;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -49,13 +48,13 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {AccountModelMapperImpl.class, AccountModelMapperTest.TestConfiguration.class, Xs2aAddressMapperImpl.class})
-public class AccountModelMapperTest {
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = {AccountModelMapperImpl.class, AccountModelMapperTest.TestConfiguration.class})
+class AccountModelMapperTest {
 
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
     private static final String BYTE_ARRAY_IN_STRING = "000000000000000=";
@@ -77,15 +76,15 @@ public class AccountModelMapperTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @After
-    public void resetMocks() {
+    @AfterEach
+    void resetMocks() {
         // Resetting is necessary because these mocks are injected into the mapper as singleton beans
         // and are not being recreated after each test
         Mockito.reset(mockedHrefLinkMapper, mockedAmountModelMapper, mockedPurposeCodeMapper);
     }
 
     @Test
-    public void mapToAccountList() {
+    void mapToAccountList() {
         // Given
         Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
         });
@@ -115,7 +114,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountDetails() {
+    void mapToAccountDetails() {
         Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
         });
         Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
@@ -133,7 +132,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountReference_success() {
+    void mapToAccountReference_success() {
         AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-reference.json", AccountReference.class);
         de.adorsys.psd2.model.AccountReference actualAccountReference = mapper.mapToAccountReference(accountReference);
 
@@ -143,13 +142,13 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountReference_nullValue() {
+    void mapToAccountReference_nullValue() {
         de.adorsys.psd2.model.AccountReference accountReference = mapper.mapToAccountReference(null);
         assertNull(accountReference);
     }
 
     @Test
-    public void mapToAccountReferences() {
+    void mapToAccountReferences() {
         AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-account-reference.json", AccountReference.class);
         List<de.adorsys.psd2.model.AccountReference> actualAccountReferences = mapper.mapToAccountReferences(Collections.singletonList(accountReference));
 
@@ -161,7 +160,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToBalance_ReadAccountBalanceResponse200() {
+    void mapToBalance_ReadAccountBalanceResponse200() {
         // Given
         Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
         Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
@@ -188,7 +187,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToReportExchangeRate_success() {
+    void mapToReportExchangeRate_success() {
         Xs2aExchangeRate xs2aExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-exchange-rate.json", Xs2aExchangeRate.class);
         ReportExchangeRate reportExchangeRate = mapper.mapToReportExchangeRate(xs2aExchangeRate);
 
@@ -199,13 +198,13 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToReportExchangeRate_nullValue() {
+    void mapToReportExchangeRate_nullValue() {
         ReportExchangeRate reportExchangeRate = mapper.mapToReportExchangeRate(null);
         assertNull(reportExchangeRate);
     }
 
     @Test
-    public void mapToTransaction_success() {
+    void mapToTransaction_success() {
         Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
         Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
         when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
@@ -221,7 +220,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToTransactionDetails_success() {
+    void mapToTransactionDetails_success() {
         Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
         Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
         when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
@@ -239,7 +238,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToTransactionsResponseRaw_success() {
+    void mapToTransactionsResponseRaw_success() {
         Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
 
         byte[] actualByteArray = mapper.mapToTransactionsResponseRaw(xs2aTransactionsReport);
@@ -248,7 +247,7 @@ public class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToTransactionsResponse200Json_success() {
+    void mapToTransactionsResponse200Json_success() {
         // Given
         Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
         });
@@ -401,7 +400,7 @@ public class AccountModelMapperTest {
     }
 
     @Configuration
-    public static class TestConfiguration {
+    static class TestConfiguration {
         @Bean
         public HrefLinkMapper mockHrefLinkMapper() {
             return mock(HrefLinkMapper.class);

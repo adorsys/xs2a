@@ -1,21 +1,35 @@
 {
-  "id": "33333-999999999",
-  "iban": "DE371234599997",
+  "resourceId": "_-rBr7CwR34mv9MVVeEJcE",
+  "iban": "DE80760700240271232400",
   "currency": "EUR",
-  "name": "Schmidt",
-  "accountType": "SCT",
-  "bic": "GENODEF1N02",
+  "name": "anton.brueckner",
+  "product": "Cash24",
+  "cashSpiAccountType": "CASH",
+  "spiAccountStatus": "ENABLED",
+  "linkedAccounts": "4Zm0EEUDQrIlq6SJlPbinI",
+  "usageType": "PRIV",
   "balances": [
     {
-      "interimAvailable": {
-        "spiAmount": {
-          "currency": "EUR",
-          "amount": "1000"
-        },
-        "lastActionDateTime": "2018-05-15T14:42:08.486+0000",
-        "date": "2018-05-15T14:42:08.486+0000"
-      }
+      "spiBalanceAmount": {
+        "currency": "EUR",
+        "amount": 2001.00
+      },
+      "spiBalanceType": "INTERIM_AVAILABLE",
+      "lastChangeDateTime": "2020-05-31T15:16:16.37Z",
+      "referenceDate": "2020-03-31T19:12:13.37Z",
+      "lastCommittedTransaction": null,
+      "creditLimitIncluded": null
+    },
+    {
+      "spiBalanceAmount": {
+        "currency": "EUR",
+        "amount": 1001.00
+      },
+      "spiBalanceType": "CLOSING_BOOKED",
+      "lastChangeDateTime": "2020-05-31T15:16:16.37Z",
+      "referenceDate": "2020-03-31T19:12:13.37Z",
+      "lastCommittedTransaction": null,
+      "creditLimitIncluded": null
     }
-  ],
-  "_links": {}
+  ]
 }

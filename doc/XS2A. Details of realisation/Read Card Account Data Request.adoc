@@ -1,0 +1,28 @@
+// toc-title definition MUST follow document title without blank line!
+== Read Card Account Data
+:toc-title:
+:imagesdir: ../usecases/diagrams
+:toc: left
+
+toc::[]
+Functionality allows ASPSP to deliver Card accounts related information through XS2A interface (details, transactions, balances, etc.).
+This endpoint is not directly related to credit cards as such, but the financial account behind the related cards.
+
+Read an additional information of card accounts:
+
+* Read Card Account List;
+
+* Read Card Account Details;
+
+* Read Card Account Balance;
+
+* Read Card Account Transaction List.
+
+is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system. Accesses to Card accounts information Services is granted
+by establishing AIS Consent.
+
+The ability to create Consent on Account List of Available Accounts depends on successful validation:
+
+* The attribute in the ASPSP-Profile *"supportedAccountReferenceFields"* should contain account identifier *"pan"* or *"maskedPan"*.
+If ASPSP doesn't support such type of account reference, then XS2A responds with *http 400 FORMAT_ERROR* "Attribute pan/maskedPan is not supported by ASPSP".
+

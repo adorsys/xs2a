@@ -27,21 +27,21 @@ import de.adorsys.psd2.core.payment.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CmsCorePaymentMapper.class, Xs2aObjectMapper.class})
-public class CorePaymentsConvertServiceTest {
+class CorePaymentsConvertServiceTest {
     private CorePaymentsConvertService corePaymentsConvertService;
 
     @Autowired
@@ -56,8 +56,8 @@ public class CorePaymentsConvertServiceTest {
     private PisPayment pisPayment;
     private CmsCommonPayment cmsCommonPayment;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
         cmsCommonPayment = new CmsCommonPayment("payments");
 
@@ -66,7 +66,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void buildPaymentData_singlePayment() throws JsonProcessingException {
+    void buildPaymentData_singlePayment() throws JsonProcessingException {
         byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.singletonList(pisPayment), PaymentType.SINGLE);
 
         PaymentInitiationJson expectedPaymentInitiationJson = jsonReader.getObjectFromFile("json/service/mapper/payment-initiation-resp.json", PaymentInitiationJson.class);
@@ -75,7 +75,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void buildPaymentData_singlePayment_emptyPayments() {
+    void buildPaymentData_singlePayment_emptyPayments() {
         // When
         byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.emptyList(), PaymentType.SINGLE);
 
@@ -84,7 +84,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void buildPaymentData_periodicPayment() throws JsonProcessingException {
+    void buildPaymentData_periodicPayment() throws JsonProcessingException {
         byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.singletonList(pisPayment), PaymentType.PERIODIC);
 
         PeriodicPaymentInitiationJson expectedPeriodicPaymentInitiationJson = jsonReader.getObjectFromFile("json/service/mapper/periodic-payment-initiation-resp.json", PeriodicPaymentInitiationJson.class);
@@ -93,7 +93,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void buildPaymentData_periodicPayment_emptyPayments() {
+    void buildPaymentData_periodicPayment_emptyPayments() {
         // When
         byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.emptyList(), PaymentType.PERIODIC);
 
@@ -102,7 +102,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void buildPaymentData_bulkPayment() throws JsonProcessingException {
+    void buildPaymentData_bulkPayment() throws JsonProcessingException {
         byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.singletonList(pisPayment), PaymentType.BULK);
 
         BulkPaymentInitiationJson expectedBulkPaymentInitiationJson = jsonReader.getObjectFromFile("json/service/mapper/bulk-payment-initiation-resp.json", BulkPaymentInitiationJson.class);
@@ -111,7 +111,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void buildPaymentData_bulkPayment_emptyPayments() {
+    void buildPaymentData_bulkPayment_emptyPayments() {
         // When
         byte[] actual = corePaymentsConvertService.buildPaymentData(Collections.emptyList(), PaymentType.BULK);
 
@@ -120,7 +120,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void expandCommonPaymentWithCorePayment_singlePayment() {
+    void expandCommonPaymentWithCorePayment_singlePayment() {
         corePaymentsConvertService = new CorePaymentsConvertService(null, null, cmsCommonPaymentMapper);
         cmsCommonPayment.setPaymentType(PaymentType.SINGLE);
 
@@ -130,7 +130,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void expandCommonPaymentWithCorePayment_periodicPayment() {
+    void expandCommonPaymentWithCorePayment_periodicPayment() {
         cmsCommonPayment.setPaymentType(PaymentType.PERIODIC);
 
         corePaymentsConvertService.expandCommonPaymentWithCorePayment(cmsCommonPayment);
@@ -139,7 +139,7 @@ public class CorePaymentsConvertServiceTest {
     }
 
     @Test
-    public void expandCommonPaymentWithCorePayment_bulkPayment() {
+    void expandCommonPaymentWithCorePayment_bulkPayment() {
         cmsCommonPayment.setPaymentType(PaymentType.BULK);
 
         corePaymentsConvertService.expandCommonPaymentWithCorePayment(cmsCommonPayment);

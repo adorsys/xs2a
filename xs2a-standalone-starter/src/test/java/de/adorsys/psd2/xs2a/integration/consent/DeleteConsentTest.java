@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,9 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationConfirmati
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +50,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -67,7 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -77,7 +77,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class DeleteConsentTest {
+class DeleteConsentTest {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String CONSENT_PATH = "json/consent/AisAccountConsentInternalResponse.json";
     private static final String WRONG_TPP_RESPONSE_PATH = "/json/consent/res/WrongTppResponse.json";
@@ -104,8 +104,8 @@ public class DeleteConsentTest {
 
     private JsonReader jsonReader = new JsonReader();
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         httpHeaders.setAll(buildRequestHeaders());
 
         given(aspspProfileService.getAspspSettings())
@@ -125,7 +125,7 @@ public class DeleteConsentTest {
     }
 
     @Test
-    public void deleteConsent_successful() throws Exception {
+    void deleteConsent_successful() throws Exception {
         // Given
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
             .willReturn(CmsResponse.<AisAccountConsent>builder()
@@ -147,7 +147,7 @@ public class DeleteConsentTest {
     }
 
     @Test
-    public void deleteConsent_withWrongTpp_shouldReturnConsentInvalid() throws Exception {
+    void deleteConsent_withWrongTpp_shouldReturnConsentInvalid() throws Exception {
         // Given
         String wrongTppId = "Wrong TPP ID";
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))

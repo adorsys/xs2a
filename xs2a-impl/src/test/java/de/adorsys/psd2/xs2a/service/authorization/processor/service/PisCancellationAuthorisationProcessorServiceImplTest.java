@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,16 +25,16 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisAuthorisationProcessorRequest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PisCancellationAuthorisationProcessorServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class PisCancellationAuthorisationProcessorServiceImplTest {
     private static final String TEST_PAYMENT_ID = "12345676";
     private static final String TEST_AUTHORISATION_ID = "assddsff";
     private static final PsuIdData TEST_PSU_DATA = new PsuIdData("test-user", null, null, null, null);
@@ -44,20 +44,20 @@ public class PisCancellationAuthorisationProcessorServiceImplTest {
     @InjectMocks
     private PisCancellationAuthorisationProcessorServiceImpl pisCancellationAuthorisationProcessorService;
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void doScaExempted_success() {
+    @Test
+    void doScaExempted_success() {
         // When
-        pisCancellationAuthorisationProcessorService.doScaExempted(buildAuthorisationProcessorRequest());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void doScaStarted_success() {
-        // When
-        pisCancellationAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest());
+        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaExempted(buildAuthorisationProcessorRequest()));
     }
 
     @Test
-    public void doScaFinalised_success() {
+    void doScaStarted_success() {
+        // When
+        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest()));
+    }
+
+    @Test
+    void doScaFinalised_success() {
         // When
         AuthorisationProcessorResponse actual = pisCancellationAuthorisationProcessorService.doScaFinalised(buildAuthorisationProcessorRequest());
 
@@ -71,10 +71,10 @@ public class PisCancellationAuthorisationProcessorServiceImplTest {
         assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void doScaFailed_success() {
+    @Test
+    void doScaFailed_success() {
         // When
-        pisCancellationAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest());
+        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest()));
     }
 
     private AuthorisationProcessorRequest buildEmptyAuthorisationProcessorRequest() {

@@ -1,3 +1,5 @@
+Actual for XS2A v.1, v.2
+
 #Get information from ASPSP Profile service
 
 As an ASPSP I want to store my settings in separate file and give an access to them via REST API.

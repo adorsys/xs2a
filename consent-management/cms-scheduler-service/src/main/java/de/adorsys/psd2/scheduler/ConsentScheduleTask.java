@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -59,6 +60,7 @@ public class ConsentScheduleTask {
 
     private AisConsent updateConsentParameters(AisConsent consent) {
         consent.setConsentStatus(ConsentStatus.EXPIRED);
+        consent.setExpireDate(LocalDate.now());
         return consent;
     }
 }

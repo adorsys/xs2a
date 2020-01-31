@@ -16,21 +16,21 @@
 
 package de.adorsys.psd2.consent.web.aspsp.advice;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.context.request.WebRequest;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CmsAspspExceptionHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class CmsAspspExceptionHandlerTest {
     private static final String ERROR_MESSAGE = "Http message is not readable";
 
     @InjectMocks
@@ -40,7 +40,7 @@ public class CmsAspspExceptionHandlerTest {
     private WebRequest webRequest;
 
     @Test
-    public void handleHttpMessageNotReadable() {
+    void handleHttpMessageNotReadable() {
         HttpMessageNotReadableException exception = new HttpMessageNotReadableException(ERROR_MESSAGE);
         HttpHeaders headers = new HttpHeaders();
         HttpStatus status = HttpStatus.OK;

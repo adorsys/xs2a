@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentCancellationRe
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,7 +61,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -79,7 +79,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles({"integration-test", "mock-qwac"})
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(
     classes = Xs2aStandaloneStarter.class)
@@ -89,7 +89,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class CancelPaymentIT {
+class CancelPaymentIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final PaymentType SINGLE_PAYMENT_TYPE = PaymentType.SINGLE;
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
@@ -125,8 +125,8 @@ public class CancelPaymentIT {
     @Qualifier("consentRestTemplate")
     private RestTemplate consentRestTemplate;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         // common actions for all tests
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
@@ -177,7 +177,7 @@ public class CancelPaymentIT {
     }
 
     @Test
-    public void cancelPayment_explicit_redirect_withMandatedAuthorisation_successful() throws Exception {
+    void cancelPayment_explicit_redirect_withMandatedAuthorisation_successful() throws Exception {
         // Given
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
@@ -185,19 +185,19 @@ public class CancelPaymentIT {
     }
 
     @Test
-    public void cancelPayment_explicit_embedded_withMandatedAuthorisation_successful() throws Exception {
+    void cancelPayment_explicit_embedded_withMandatedAuthorisation_successful() throws Exception {
         // Given
         cancelPayment_withNotMandatedAuthorisation_successful(httpHeadersExplicit, EMBEDDED_SCA_APPROACH);
     }
 
     @Test
-    public void cancelPayment_explicit_redirect_withNotMandatedAuthorisation_successful() throws Exception {
+    void cancelPayment_explicit_redirect_withNotMandatedAuthorisation_successful() throws Exception {
         // Given
         cancelPayment_withNotMandatedAuthorisation_successful(httpHeadersExplicit, REDIRECT_SCA_APPROACH);
     }
 
     @Test
-    public void cancelPayment_explicit_embedded_withNotMandatedAuthorisation_successful() throws Exception {
+    void cancelPayment_explicit_embedded_withNotMandatedAuthorisation_successful() throws Exception {
         // Given
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
@@ -228,7 +228,7 @@ public class CancelPaymentIT {
             .andExpect(content().json(IOUtils.resourceToString(responseJsonPath, UTF_8)));
     }
 
-    public void cancelPayment_withNotMandatedAuthorisation_successful(HttpHeaders httpHeaders, ScaApproach scaApproach) throws Exception {
+    void cancelPayment_withNotMandatedAuthorisation_successful(HttpHeaders httpHeaders, ScaApproach scaApproach) throws Exception {
         // Given
         given(aspspDataService.readAspspConsentData(ENCRYPTED_PAYMENT_ID)).willReturn(Optional.of(ASPSP_CONSENT_DATA));
 
