@@ -15,45 +15,21 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x|version 6.x|version 7.x
 
-|31.01.2020|4.9|5.9| |
-
-a|
-
-a|* Change error codes according to NISP Test Specification v1.3.5-1.4.2
-
-* Bugfix: Expiration of AIS consent changes its validUntil date
-
-* Remove deprecated getTppInfoWithPath method in CmsAspspTppInfoController
-
-a|* All fixes and updates from v.4.9
-
-* New feature: Add endpoint Read Card Account list
-
-* New feature: Add endpoint Read Card Account details
-
-* New feature: Add endpoint Read Card Account Balance
-
-* New feature: Add endpoint Read Card Account Transaction list
-
-* Simplify checksum verification for read operations on account
-
-* Bugfix: Payment\Consent status doesn't change after ConfirmationCode validation in xs2a
-
-* Refactor authorisation
-
-a|
-
-a|
-
 |14.02.2020|4.10|5.10| |
 
 a|
 
-a|* Bugfix: In case of XML format payments the response type is still "applications/json"
+a|* Bugfix: Fix validation of Profile settings for supported payment types and products
 
-* Fix javadoc warnings
+* Bugfix: In case of XML format payments the response type is still "applications/json"
+
+* Bugfix: Read Account Details request return error for global consent
+
+* Bugfix: Expiration of one-off consent is not working correctly for consent with access to multiple accounts
 
 a|* All fixes and updates from v.4.10
+
+* Refactor authorisation
 
 * Remove "owner_address_type" column from "ais_consent" table
 
@@ -63,8 +39,6 @@ a|* All fixes and updates from v.4.10
 
 * Adjust checksum service after consent model refactoring
 
-* Create new SPI method for handling consent wrapper
-
 a|
 
 a|
@@ -73,15 +47,23 @@ a|
 
 a|
 
-a|
+a|* Fix javadoc warnings
+
+* Fix disabled test in EventReportRepositoryImplIT
+
+* Remove unused AisConsentServiceBase#updateAspspAccountAccess
 
 a|* All fixes and updates from v.4.11
+
+* Create new SPI method for handling consent wrapper
+
+* Migrate data of Funds Confirmation consent v1
 
 * Add not null constraint for "valid_until" field in "ais_consent" table
 
 * Delete specific constructor in SpiAccountConsent
 
-* Migrate data of Funds Confirmation consent v1
+* Rename expireDate property in AisConsentSha to validUntil and migrate existings AIS checksums
 
 a|
 
