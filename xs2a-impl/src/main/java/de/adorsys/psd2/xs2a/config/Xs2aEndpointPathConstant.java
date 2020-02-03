@@ -25,6 +25,7 @@ public class Xs2aEndpointPathConstant {
     public static final String BULK_PAYMENTS_PATH = "/v1/bulk-payments/**";
     public static final String PERIODIC_PAYMENTS_PATH = "/v1/periodic-payments/**";
     public static final String SIGNING_BASKETS_PATH = "/v1/signing-baskets/**";
+    public static final String GLOBAL_PATH= "/v1/**";
 
     private Xs2aEndpointPathConstant() {}
 

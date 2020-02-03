@@ -22,7 +22,6 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.mapper.ValidationResultMapper;
 import de.adorsys.psd2.xs2a.service.validator.*;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +40,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRequestObject> {
     private final PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
-    private final PaymentTypeAndProductValidator paymentProductAndTypeValidator;
     private final CountryPaymentValidatorResolver countryPaymentValidatorResolver;
     private final ValidationResultMapper validationResultMapper;
     private final TppUriHeaderValidator tppUriHeaderValidator;
@@ -62,18 +60,14 @@ public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRe
     @Override
     public ValidationResult validate(@NotNull CreatePaymentRequestObject createPaymentRequestObject) {
         PaymentInitiationParameters paymentInitiationParameters = createPaymentRequestObject.getPaymentInitiationParameters();
-        PaymentType paymentType = paymentInitiationParameters.getPaymentType();
-        String paymentProduct = paymentInitiationParameters.getPaymentProduct();
-
-        ValidationResult productAndTypeValidationResult = paymentProductAndTypeValidator.validateTypeAndProduct(paymentType, paymentProduct);
-        if (productAndTypeValidationResult.isNotValid()) {
-            return productAndTypeValidationResult;
-        }
 
         ValidationResult psuDataValidationResult = psuDataInInitialRequestValidator.validate(paymentInitiationParameters.getPsuData());
         if (psuDataValidationResult.isNotValid()) {
             return psuDataValidationResult;
         }
+
+        PaymentType paymentType = paymentInitiationParameters.getPaymentType();
+        String paymentProduct = paymentInitiationParameters.getPaymentProduct();
 
         PaymentBusinessValidator countrySpecificBusinessValidator = countryPaymentValidatorResolver.getPaymentBusinessValidator();
         de.adorsys.psd2.xs2a.core.service.validator.ValidationResult countrySpecificValidationResult = countrySpecificBusinessValidator.validate(createPaymentRequestObject.getPayment(), paymentProduct, paymentType);
