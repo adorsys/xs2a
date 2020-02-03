@@ -84,7 +84,7 @@ class ErrorBuildingServiceTest {
         ValidationResult validationResult = buildValidationResult(MessageErrorCode.FORMAT_ERROR);
 
         // When
-        errorBuildingService.buildErrorResponse(response, validationResult.getMessageError());
+        errorBuildingService.buildFormatErrorResponse(response, validationResult.getMessageError());
 
         // Then
         String outputMessage = response.getContentAsString();
@@ -105,7 +105,7 @@ class ErrorBuildingServiceTest {
         ValidationResult validationResult = buildValidationResult(MessageErrorCode.EXECUTION_DATE_INVALID);
 
         // When
-        errorBuildingService.buildErrorResponse(response, validationResult.getMessageError());
+        errorBuildingService.buildFormatErrorResponse(response, validationResult.getMessageError());
 
         // Then
         String outputMessage = response.getContentAsString();

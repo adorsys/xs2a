@@ -33,7 +33,8 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorMapperContainer;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
-import de.adorsys.psd2.xs2a.web.interceptor.RequestValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.PaymentParametersValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,7 @@ public class WebConfig implements WebMvcConfigurer {
     private final RequestResponseLogger requestResponseLogger;
     private final LoggingContextService loggingContextService;
     private final PathParameterExtractor pathParameterExtractor;
+    private final PaymentParametersValidationInterceptor paymentParametersValidationInterceptor;
 
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
@@ -96,6 +98,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new RequestResponseLoggingInterceptor(requestResponseLogger, requestProviderService)).addPathPatterns(getAllXs2aEndpointPaths());
         registry.addInterceptor(new TppStopListInterceptor(errorMapperContainer, tppService, tppStopListService, serviceTypeDiscoveryService, errorTypeMapper, xs2aObjectMapper, requestProviderService))
             .addPathPatterns(getAllXs2aEndpointPaths());
+
+        // This interceptor cannot use some definite path from constants, as payment services have nothing common in
+        // their URLs (payment-service and payment-type can be broken).
+        registry.addInterceptor(paymentParametersValidationInterceptor).addPathPatterns(GLOBAL_PATH);
+
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
     }
 

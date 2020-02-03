@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.interceptor;
+package de.adorsys.psd2.xs2a.web.interceptor.validator;
 
 import de.adorsys.psd2.xs2a.exception.MessageError;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -71,7 +71,7 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
                 // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
                 log.warn("InR-ID: [{}], X-Request-ID: [{}]. Validation of incoming request failed. Error msg: [{}]",
                          requestProviderService.getInternalRequestId(), requestProviderService.getRequestIdString(), initialMessageError);
-                errorBuildingService.buildErrorResponse(response, initialMessageError);
+                errorBuildingService.buildFormatErrorResponse(response, initialMessageError);
                 return false;
             }
         }
