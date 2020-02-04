@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,33 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.dto;
 
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 
-@Value
-public class CommonAccountBalanceRequestObject implements TppInfoProvider {
+import java.time.LocalDate;
+import java.util.List;
 
+@Value
+public class CardTransactionsReportByPeriodObject implements TppInfoProvider {
     private AccountConsent accountConsent;
     private String accountId;
     private String requestUri;
+    private Boolean deltaList;
+    private String acceptHeader;
+    private BookingStatus bookingStatus;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
 
     @Override
     public TppInfo getTppInfo() {
         return accountConsent.getTppInfo();
+    }
+
+    public List<AccountReference> getTransactions() {
+        return accountConsent.getAspspAccess().getTransactions();
     }
 }

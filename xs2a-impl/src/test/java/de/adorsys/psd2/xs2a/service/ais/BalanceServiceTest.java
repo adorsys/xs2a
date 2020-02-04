@@ -43,7 +43,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceRepo
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetBalancesReportValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -95,7 +95,7 @@ class BalanceServiceTest {
     private SpiAccountReference spiAccountReference;
     private AccountConsent accountConsent;
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
-    private CommonAccountBalanceRequestObject commonAccountBalanceRequestObject;
+    private GetAccountBalanceRequestObject getAccountBalanceRequestObject;
 
     @InjectMocks
     private BalanceService balanceService;
@@ -130,7 +130,7 @@ class BalanceServiceTest {
         accountConsent = createConsent(createAccountAccess());
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
-        commonAccountBalanceRequestObject = buildCommonAccountBalanceRequestObject();
+        getAccountBalanceRequestObject = buildCommonAccountBalanceRequestObject();
     }
 
     @Test
@@ -150,7 +150,7 @@ class BalanceServiceTest {
     void getBalancesReport_Failure_AllowedAccountDataHasError() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
-        when(getBalancesReportValidator.validate(commonAccountBalanceRequestObject))
+        when(getBalancesReportValidator.validate(getAccountBalanceRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -163,7 +163,7 @@ class BalanceServiceTest {
     @Test
     void getBalancesReport_Failure_SpiResponseHasError() {
         // Given
-        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+        when(getBalancesReportValidator.validate(any(GetAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
@@ -193,7 +193,7 @@ class BalanceServiceTest {
     void getBalancesReport_Failure_ConsentNotContainsAccountReference() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
-        when(getBalancesReportValidator.validate(commonAccountBalanceRequestObject))
+        when(getBalancesReportValidator.validate(getAccountBalanceRequestObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -206,7 +206,7 @@ class BalanceServiceTest {
     @Test
     void getBalancesReport_Success() {
         // Given
-        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+        when(getBalancesReportValidator.validate(any(GetAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
@@ -235,7 +235,7 @@ class BalanceServiceTest {
     @Test
     void getBalancesReport_Success_ShouldRecordEvent() {
         // Given
-        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+        when(getBalancesReportValidator.validate(any(GetAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
@@ -264,21 +264,21 @@ class BalanceServiceTest {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
-        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+        when(getBalancesReportValidator.validate(any(GetAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
         ResponseObject<Xs2aBalancesReport> actualResponse = balanceService.getBalancesReport(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
 
         // Then
-        verify(getBalancesReportValidator).validate(commonAccountBalanceRequestObject);
+        verify(getBalancesReportValidator).validate(getAccountBalanceRequestObject);
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
     }
 
     @Test
     void getBalancesReport_shouldRecordStatusIntoLoggingContext() {
         // Given
-        when(getBalancesReportValidator.validate(any(CommonAccountBalanceRequestObject.class)))
+        when(getBalancesReportValidator.validate(any(GetAccountBalanceRequestObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(accountConsent));
 
@@ -361,7 +361,7 @@ class BalanceServiceTest {
     }
 
     @NotNull
-    private CommonAccountBalanceRequestObject buildCommonAccountBalanceRequestObject() {
-        return new CommonAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI);
+    private GetAccountBalanceRequestObject buildCommonAccountBalanceRequestObject() {
+        return new GetAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI);
     }
 }

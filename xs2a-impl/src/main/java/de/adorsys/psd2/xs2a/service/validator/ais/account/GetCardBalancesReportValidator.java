@@ -17,11 +17,12 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetCardAccountDetailsRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetCardAccountBalanceRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -30,40 +31,43 @@ import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 
 /**
- * Validator to be used for validating get account details request according to some business rules
+ * Validator to be used for validating get balances report request according to some business rules
  */
 @Component
 @RequiredArgsConstructor
-public class GetCardAccountDetailsValidator extends AbstractAccountTppValidator<GetCardAccountDetailsRequestObject> {
+public class GetCardBalancesReportValidator extends AbstractAccountTppValidator<GetCardAccountBalanceRequestObject> {
     private final AccountConsentValidator accountConsentValidator;
     private final AccountReferenceAccessValidator accountReferenceAccessValidator;
     private final OauthConsentValidator oauthConsentValidator;
 
     /**
-     * Validates get card account details request
+     * Validates get card balances report request
      *
-     * @param requestObject information object
+     * @param consentObject consent information object
      * @return valid result if the consent is valid, invalid result with appropriate error otherwise
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(GetCardAccountDetailsRequestObject requestObject) {
-        AccountConsent accountConsent = requestObject.getAccountConsent();
+    protected ValidationResult executeBusinessValidation(GetCardAccountBalanceRequestObject consentObject) {
+
+        AccountConsent accountConsent = consentObject.getAccountConsent();
 
         if (accountConsent.isConsentWithNotCardAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(), requestObject.getAccounts(), requestObject.getAccountId(), accountConsent.getAisConsentRequestType());
+        Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAspspAccess();
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountAccess,
+                                                                                                     accountAccess.getBalances(), consentObject.getAccountId(), accountConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(consentObject.getAccountConsent());
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }
 
-        return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
+        return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
     }
 }

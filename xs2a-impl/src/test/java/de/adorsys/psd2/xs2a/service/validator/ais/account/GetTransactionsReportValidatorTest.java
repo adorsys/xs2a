@@ -45,6 +45,7 @@ import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.PENDING;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -414,6 +415,10 @@ class GetTransactionsReportValidatorTest {
     }
 
     private Xs2aAccountAccess buildXs2aAccountAccess() {
-        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.singletonList(accountReference), null, null, null, null);
+        AccountReference ibanAccountReference = new AccountReference();
+        ibanAccountReference.setIban("DE69760700240340283600");
+        List<AccountReference> accountReferences = Collections.singletonList(ibanAccountReference);
+
+        return new Xs2aAccountAccess(accountReferences, accountReferences, accountReferences, null, null, null, null);
     }
 }

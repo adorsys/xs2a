@@ -22,17 +22,20 @@ import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetAccountBalanceRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 
 /**
  * Validator to be used for validating get balances report request according to some business rules
  */
 @Component
 @RequiredArgsConstructor
-public class GetBalancesReportValidator extends AbstractAccountTppValidator<CommonAccountBalanceRequestObject> {
+public class GetBalancesReportValidator extends AbstractAccountTppValidator<GetAccountBalanceRequestObject> {
     private final AccountConsentValidator accountConsentValidator;
     private final AccountReferenceAccessValidator accountReferenceAccessValidator;
     private final OauthConsentValidator oauthConsentValidator;
@@ -45,11 +48,18 @@ public class GetBalancesReportValidator extends AbstractAccountTppValidator<Comm
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(CommonAccountBalanceRequestObject consentObject) {
+    protected ValidationResult executeBusinessValidation(GetAccountBalanceRequestObject consentObject) {
+
         AccountConsent accountConsent = consentObject.getAccountConsent();
+
+        if (accountConsent.isConsentWithNotIbanAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+            return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
+        }
+
         Xs2aAccountAccess accountAccess = accountConsent.getAspspAccess();
         ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountAccess,
                                                                                                      accountAccess.getBalances(), consentObject.getAccountId(), accountConsent.getAisConsentRequestType());
+
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
