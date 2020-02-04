@@ -175,6 +175,10 @@ All requests to the CMS concerning any consentID should be validated for mandato
 * If the date of "validUntil" is in the past, then XS2A sends the response with HTTP code 401 CONSENT_EXPIRED;
 * In case TPP tries to initiate new authorisation for expired consent, XS2A sends the response with HTTP code 403 CONSENT_EXPIRED.
 
+=== Frequency Per Day
+Value frequencyPerDay is adjusted according to profile setting “*accountAccessFrequencyPerDay*” and *cannot be more* than it is set in the ASPSP-Profile.
+
+
 === Counting of frequencyPerDay
 Attribute *"accountAccessFrequencyPerDay"* in the ASPSP-Profile indicates the requested maximum frequency for an access without PSU involvement per day. For a one-off access, this attribute is set to "1"."
 
