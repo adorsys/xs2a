@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
@@ -79,7 +80,7 @@ class GetTransactionDetailsValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
             .thenReturn(ValidationResult.valid());
 
@@ -100,7 +101,7 @@ class GetTransactionDetailsValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getBalances(), ACCOUNT_ID))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getBalances(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
             .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
 
         // When
@@ -142,7 +143,7 @@ class GetTransactionDetailsValidatorTest {
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
         return new AccountConsent("id", accountAccess, accountAccess, false, null, null, 0,
                                   null, null, false, false,
-                                  Collections.emptyList(), tppInfo, null, false,
+                                  Collections.emptyList(), tppInfo, AisConsentRequestType.DEDICATED_ACCOUNTS, false,
                                   Collections.emptyList(), null, Collections.emptyMap());
     }
 }

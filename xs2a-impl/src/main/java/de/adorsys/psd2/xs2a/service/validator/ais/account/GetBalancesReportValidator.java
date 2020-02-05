@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
@@ -44,13 +45,16 @@ public class GetBalancesReportValidator extends AbstractAccountTppValidator<Comm
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonAccountBalanceRequestObject consentObject) {
-        Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAspspAccess();
+        AccountConsent accountConsent = consentObject.getAccountConsent();
+        Xs2aAccountAccess accountAccess = accountConsent.getAspspAccess();
         ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountAccess,
-                                                                                                     accountAccess.getBalances(), consentObject.getAccountId());
+                                                                                                     accountAccess.getBalances(),
+                                                                                                     consentObject.getAccountId(),
+                                                                                                     accountConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
 
-        return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
+        return accountConsentValidator.validate(accountConsent, consentObject.getRequestUri());
     }
 }

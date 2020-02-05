@@ -130,7 +130,7 @@ public class AccountDetailsService {
 
     private SpiResponse<SpiAccountDetails> getSpiResponse(AccountConsent accountConsent, String consentId,
                                                           String accountId, boolean withBalance) {
-        Xs2aAccountAccess access = accountConsent.getAccess();
+        Xs2aAccountAccess access = accountConsent.getAspspAccess();
         SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getAccounts(), accountId);
 
         return accountSpi.requestAccountDetailForAccount(accountHelperService.getSpiContextData(),

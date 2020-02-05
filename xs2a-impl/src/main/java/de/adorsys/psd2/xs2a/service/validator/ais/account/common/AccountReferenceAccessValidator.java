@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -35,8 +36,13 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 @RequiredArgsConstructor
 public class AccountReferenceAccessValidator {
 
-    public ValidationResult validate(Xs2aAccountAccess accountAccess, List<AccountReference> references, String accountId) {
-        if (isConsentForAllAvailableAccounts(accountAccess) || !isValidAccountByAccess(accountId, references)) {
+    public ValidationResult validate(Xs2aAccountAccess accountAccess, List<AccountReference> references, String accountId, AisConsentRequestType consentRequestType) {
+        if (AisConsentRequestType.GLOBAL ==consentRequestType){
+            return ValidationResult.valid();
+        }
+
+        if (isConsentForAllAvailableAccounts(accountAccess)
+                || !isValidAccountByAccess(accountId, references)) {
             return ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID);
         }
 
