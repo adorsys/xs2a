@@ -871,6 +871,7 @@ Use it manually to generate javadocs. Don't commit it
                         <configuration>
                             <additionalOptions>-Xdoclint:none</additionalOptions>
                             <sourcepath>${javadoc.sourcepath}</sourcepath>
+                            <detectOfflineLinks>false</detectOfflineLinks>
                         </configuration>
                         <executions>
                             <execution>
