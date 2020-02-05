@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ErrorType;
@@ -51,14 +52,21 @@ class AccountReferenceAccessValidatorTest {
     @Test
     void validate_success() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
-        ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS);
+        assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    void validate_success_global() {
+        accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID, AisConsentRequestType.GLOBAL);
         assertTrue(validationResult.isValid());
     }
 
     @Test
     void validate_notValidByAccountId() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
-        ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), WRONG_ACCOUNT_ID);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.singletonList(accountReference), WRONG_ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS);
 
         assertFalse(validationResult.isValid());
         assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
@@ -68,7 +76,7 @@ class AccountReferenceAccessValidatorTest {
     @Test
     void validate_notValidAvailableAccount() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-available_accounts.json", Xs2aAccountAccess.class);
-        ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS);
 
         assertFalse(validationResult.isValid());
         assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
@@ -78,7 +86,7 @@ class AccountReferenceAccessValidatorTest {
     @Test
     void validate_notValidAvailableAccountWithValances() {
         accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-available_accounts_with_balances.json", Xs2aAccountAccess.class);
-        ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID);
+        ValidationResult validationResult = validator.validate(accountAccess, Collections.emptyList(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS);
 
         assertFalse(validationResult.isValid());
         assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());
@@ -88,7 +96,7 @@ class AccountReferenceAccessValidatorTest {
     @Test
     void validate_AccountReferenceWithoutResourceId() {
         AccountReference accountReference = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-reference-without-resource-id.json", AccountReference.class);
-        ValidationResult validationResult = validator.validate(this.accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID);
+        ValidationResult validationResult = validator.validate(this.accountAccess, Collections.singletonList(accountReference), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS);
 
         assertTrue(validationResult.isNotValid());
         assertEquals(ErrorType.AIS_401, validationResult.getMessageError().getErrorType());

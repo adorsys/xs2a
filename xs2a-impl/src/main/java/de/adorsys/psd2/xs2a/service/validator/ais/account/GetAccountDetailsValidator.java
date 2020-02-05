@@ -50,7 +50,9 @@ public class GetAccountDetailsValidator extends AbstractAccountTppValidator<Comm
         AccountConsent accountConsent = commonAccountRequestObject.getAccountConsent();
 
         ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(),
-                                                                                                     commonAccountRequestObject.getAccounts(), commonAccountRequestObject.getAccountId());
+                                                                                                     commonAccountRequestObject.getAccounts(),
+                                                                                                     commonAccountRequestObject.getAccountId(),
+                                                                                                     accountConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
