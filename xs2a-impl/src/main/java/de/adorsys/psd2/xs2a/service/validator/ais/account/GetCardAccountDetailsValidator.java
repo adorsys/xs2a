@@ -47,7 +47,7 @@ public class GetCardAccountDetailsValidator extends AbstractAccountTppValidator<
     protected ValidationResult executeBusinessValidation(GetCardAccountDetailsRequestObject requestObject) {
         AccountConsent accountConsent = requestObject.getAccountConsent();
 
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(), requestObject.getAccounts(), requestObject.getAccountId());
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(), requestObject.getAccounts(), requestObject.getAccountId(), accountConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
