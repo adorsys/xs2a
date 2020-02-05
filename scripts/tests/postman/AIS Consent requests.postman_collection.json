@@ -26972,6 +26972,526 @@
 							"response": []
 						},
 						{
+							"name": "14. Read Account List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.globals.set(\"resource_id\", jsonData.accounts[0].resourceId);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Data exists\", () => {",
+											"    if (jsonData.accounts.length > 0) {",
+											"        const firstAccount = jsonData.accounts[0];",
+											"        ",
+											"        pm.expect(firstAccount).to.have.property('_links');",
+											"        pm.expect(firstAccount._links).to.have.property('balances');",
+											"        pm.expect(firstAccount._links).to.have.property('transactions');",
+											"        pm.expect(firstAccount).to.have.property('resourceId');",
+											"        ",
+											"//",
+											"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
+											"//",
+											"",
+											"        ",
+											"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
+											"//           pm.expect(firstAccount).to.have.property('balances');",
+											"//        }",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessToken",
+											"value": "test data",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "15. Read Account Details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "2b8d1c97-da4a-417e-a512-fb62573a1f66",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Data exists\", () => {",
+											"    if (!(jsonData === null || jsonData.length === 0)) {",
+											"        pm.expect(jsonData.account).to.have.property('_links');",
+											"        pm.expect(jsonData.account._links).to.have.property('balances');",
+											"        pm.expect(jsonData.account._links).to.have.property('transactions');",
+											"        pm.expect(jsonData.account).to.have.property('resourceId');",
+											"        ",
+											"        if (pm.globals.get(\"with_balance\") === \"true\") {",
+											"            pm.expect(jsonData.account).to.have.property('balances');",
+											"        }",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessToken",
+											"value": "test data",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{resource_id}}?withBalance={{with_balance}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts",
+										"{{resource_id}}"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										}
+									]
+								},
+								"description": "Reads details about an account, with balances where required.  It is assumed that a consent of the PSU to  this access is already given and stored on the ASPSP system.  The addressed details of this account depends then on the stored consent addressed by consentId,  respectively the OAuth2 access token.  **NOTE:** The account-id can represent a multicurrency account.  In this case the currency code is set to \"XXX\".  Give detailed information about the addressed account.  Give detailed information about the addressed account together with balance information "
+							},
+							"response": []
+						},
+						{
+							"name": "16. Read Balance",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fa7bf837-9bf3-46c2-9e9e-57f3f5d17d73",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Data exists\", () => {",
+											"    if (!(jsonData === null || jsonData.length === 0)) {",
+											"        pm.expect(jsonData).to.have.property('account');",
+											"        ",
+											"        if (pm.globals.get(\"with_balance\") === \"true\") {",
+											"            pm.expect(jsonData).to.have.property('balances');",
+											"        }",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessToken",
+											"value": "test data",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{resource_id}}/balances",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts",
+										"{{resource_id}}",
+										"balances"
+									]
+								},
+								"description": "Reads account data from a given account addressed by \"account-id\".   **Remark:** This account-id can be a tokenised identification due to data protection reason since the path  information might be logged on intermediary servers within the ASPSP sphere.  This account-id then can be retrieved by the \"GET Account List\" call.  The account-id is constant at least throughout the lifecycle of a given consent. "
+							},
+							"response": []
+						},
+						{
+							"name": "17. Read Transaction List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "985b137b-f19c-4855-9b95-6223c94f5134",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.globals.set(\"transaction_id\", jsonData.transactions.booked[0].transactionId);",
+											"pm.globals.set(\"dowload_link\", jsonData._links.download.href);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Data exists\", () => {",
+											"    if (!(jsonData === null || jsonData.length === 0)) {",
+											"        pm.expect(jsonData).to.have.property('account');",
+											"        ",
+											"        if (jsonData.transactions !== undefined) {",
+											"            const bookingStatus = pm.globals.get(\"booking_status\");",
+											"            ",
+											"            if (bookingStatus === 'booked') {",
+											"                if (jsonData.transactions.pending !== undefined) {",
+											"                    pm.expect().fail();",
+											"                } ",
+											"            }",
+											"            ",
+											"            if (bookingStatus === 'pending') {",
+											"                if (jsonData.transactions.booked !== undefined) {",
+											"                    pm.expect().fail();",
+											"                } ",
+											"            }",
+											"        }",
+											"        ",
+											"        if (pm.globals.get(\"with_balance\") === \"true\") {",
+											"            pm.expect(jsonData).to.have.property('balances');",
+											"        }",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Links exist\", function () {",
+											"    pm.expect(jsonData).to.have.property('transactions');",
+											"    pm.expect(jsonData.transactions).to.have.property('_links');",
+											"",
+											"    pm.expect(jsonData.transactions._links).to.have.property('balances');",
+											"    pm.expect(jsonData.transactions._links).to.have.property('account');",
+											"    pm.expect(jsonData._links).to.have.property('download');",
+											"",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9f33f550-7718-40a7-baca-d060e7b6e992",
+										"exec": [
+											"",
+											"var end = new Date();",
+											"",
+											"",
+											"var dd_end = end.getDate();",
+											"var mm_end = end.getMonth(); ",
+											"var yyyy_end = end.getFullYear() + 1;",
+											"if(dd_end<10) ",
+											"{",
+											"    dd_end='0'+dd_end;",
+											"} ",
+											"",
+											"if(mm_end<10) ",
+											"{",
+											"    mm_end='0'+mm_end;",
+											"} ",
+											"//==========================",
+											"var start = new Date(end-(3600*24*1000*150));",
+											"var dd_start = start.getDate();",
+											"var mm_start = start.getMonth(); ",
+											"var yyyy_start = start.getFullYear();",
+											"if(dd_start<10) ",
+											"{",
+											"    dd_start='0'+dd_start;",
+											"} ",
+											"",
+											"if(mm_start<10) ",
+											"{",
+											"    mm_start='0'+mm_start;",
+											"} ",
+											"",
+											"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+											"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+											"",
+											"",
+											"console.log(\"startFormat : \"+ startFormat);",
+											"console.log(\"endFormat : \"+ endFormat);",
+											"",
+											"pm.globals.set(\"startFormat\", startFormat);",
+											"pm.globals.set(\"endFormat\", endFormat);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessToken",
+											"value": "test data",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{resource_id}}/transactions?bookingStatus={{booking_status}}&withBalance={{with_balance}}&dateFrom=2018-01-01&dateTo=2020-09-30",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts",
+										"{{resource_id}}",
+										"transactions"
+									],
+									"query": [
+										{
+											"key": "bookingStatus",
+											"value": "{{booking_status}}"
+										},
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										},
+										{
+											"key": "dateFrom",
+											"value": "2018-01-01"
+										},
+										{
+											"key": "dateTo",
+											"value": "2020-09-30"
+										}
+									]
+								},
+								"description": "Read transaction reports or transaction lists of a given account adressed by \"account-id\", depending on the steering parameter  \"bookingStatus\" together with balances.  For a given account, additional parameters are e.g. the attributes \"dateFrom\" and \"dateTo\".  The ASPSP might add balance information, if transaction lists without balances are not supported. "
+							},
+							"response": []
+						},
+						{
+							"name": "19 Read Transaction Details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "bd2dfe30-c1a2-4320-87a7-b66095f7f4bd",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Links exists\", () => {",
+											"    if (!(jsonData === null || jsonData.length === 0)) {",
+											"        pm.expect(jsonData).to.have.property('transactionsDetails');",
+											"        pm.expect(jsonData.transactionsDetails).to.have.property('transactionAmount');",
+											"        pm.expect(jsonData.transactionsDetails).to.have.property('transactionId');",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "oauth2",
+									"oauth2": [
+										{
+											"key": "accessToken",
+											"value": "test data",
+											"type": "string"
+										},
+										{
+											"key": "addTokenTo",
+											"value": "header",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{resource_id}}/transactions/{{transaction_id}}?withBalance={{with_balance}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts",
+										"{{resource_id}}",
+										"transactions",
+										"{{transaction_id}}"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										}
+									]
+								},
+								"description": "Reads transaction details from a given transaction addressed by \"resourceId\" on a given account addressed by \"account-id\".  This call is only available on transactions as reported in a JSON format.  **Remark:** Please note that the PATH might be already given in detail by the corresponding entry of the response of the  \"Read Transaction List\" call within the _links subfield. "
+							},
+							"response": []
+						},
+						{
 							"name": "9. Delete Consent global",
 							"event": [
 								{

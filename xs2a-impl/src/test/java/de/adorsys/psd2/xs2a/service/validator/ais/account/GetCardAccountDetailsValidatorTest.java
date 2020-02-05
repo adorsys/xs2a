@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -80,7 +81,7 @@ class GetCardAccountDetailsValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisAccountTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI)).thenReturn(ValidationResult.valid());
         when(oauthConsentValidator.validate(accountConsent)).thenReturn(ValidationResult.valid());
 
@@ -117,7 +118,7 @@ class GetCardAccountDetailsValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisAccountTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(oauthConsentValidator.validate(accountConsent)).thenReturn(ValidationResult.valid());
         ValidationResult validationResultExpected = ValidationResult.invalid(AIS_401, CONSENT_EXPIRED);
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI)).thenReturn(validationResultExpected);
@@ -137,7 +138,7 @@ class GetCardAccountDetailsValidatorTest {
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisAccountTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
         ValidationResult validationResultExpected = ValidationResult.invalid(AIS_401, CONSENT_INVALID);
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID)).thenReturn(validationResultExpected);
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(validationResultExpected);
 
         // When
         ValidationResult validationResult = getCardAccountDetailsValidator.validate(new GetCardAccountDetailsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI));
@@ -153,7 +154,7 @@ class GetCardAccountDetailsValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisAccountTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getAccounts(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         ValidationResult validationResultExpected = ValidationResult.invalid(AIS_401, MessageErrorCode.FORBIDDEN);
         when(oauthConsentValidator.validate(accountConsent)).thenReturn(validationResultExpected);
 
@@ -169,7 +170,7 @@ class GetCardAccountDetailsValidatorTest {
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
         return new AccountConsent("id", buildXs2aAccountAccess(), buildXs2aAccountAccess(), false, null, null, 0,
                                   null, null, false, false,
-                                  Collections.emptyList(), tppInfo, null, false,
+                                  Collections.emptyList(), tppInfo, AisConsentRequestType.DEDICATED_ACCOUNTS, false,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 
