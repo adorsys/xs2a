@@ -42,8 +42,8 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapp
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.GetTransactionsReportValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsReportValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiCardTransactionReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransactionReportParameters;
@@ -77,7 +77,7 @@ public class CardTransactionService {
     private final AspspProfileServiceWrapper aspspProfileService;
     private final Xs2aEventService xs2aEventService;
     private final SpiErrorMapper spiErrorMapper;
-    private final GetTransactionsReportValidator getTransactionsReportValidator;
+    private final GetCardTransactionsReportValidator getCardTransactionsReportValidator;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final AccountHelperService accountHelperService;
     private final LoggingContextService loggingContextService;
@@ -132,16 +132,16 @@ public class CardTransactionService {
 
     private ValidationResult getValidationResultForTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request,
                                                                               AccountConsent accountConsent) {
-        TransactionsReportByPeriodObject validatorObject = new TransactionsReportByPeriodObject(accountConsent,
-                                                                                                request.getAccountId(),
-                                                                                                request.isWithBalance(),
-                                                                                                request.getRequestUri(),
-                                                                                                request.getEntryReferenceFrom(),
-                                                                                                request.getDeltaList(),
-                                                                                                request.getAcceptHeader(),
-                                                                                                request.getBookingStatus(),
-                                                                                                request.getDateFrom());
-        return getTransactionsReportValidator.validate(validatorObject);
+
+        CardTransactionsReportByPeriodObject validatorObject = new CardTransactionsReportByPeriodObject(accountConsent,
+                                                                                                        request.getAccountId(),
+                                                                                                        request.getRequestUri(),
+                                                                                                        request.getDeltaList(),
+                                                                                                        request.getAcceptHeader(),
+                                                                                                        request.getBookingStatus(),
+                                                                                                        request.getDateFrom(),
+                                                                                                        request.getDateTo());
+        return getCardTransactionsReportValidator.validate(validatorObject);
     }
 
     @NotNull

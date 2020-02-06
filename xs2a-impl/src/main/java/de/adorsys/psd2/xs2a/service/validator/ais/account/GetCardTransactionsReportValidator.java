@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,10 @@ import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.TransactionReportAcceptHeaderValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsReportByPeriodObject;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -42,13 +40,12 @@ import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
- * Validator to be used for validating get transactions report request according to some business rules
+ * Validator to be used for validating get card transactions report request according to some business rules
  */
 @Component
 @RequiredArgsConstructor
-public class GetTransactionsReportValidator extends AbstractAccountTppValidator<TransactionsReportByPeriodObject> {
+public class GetCardTransactionsReportValidator extends AbstractAccountTppValidator<CardTransactionsReportByPeriodObject> {
 
-    private final PermittedAccountReferenceValidator permittedAccountReferenceValidator;
     private final AccountConsentValidator accountConsentValidator;
     private final AspspProfileServiceWrapper aspspProfileService;
     private final TransactionReportAcceptHeaderValidator transactionReportAcceptHeaderValidator;
@@ -56,17 +53,17 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
     private final OauthConsentValidator oauthConsentValidator;
 
     /**
-     * Validates get transactions report request
+     * Validates get card transactions report request
      *
      * @param requestObject transaction report information object
      * @return valid result if the consent is valid, invalid result with appropriate error otherwise
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(TransactionsReportByPeriodObject requestObject) { // NOPMD
+    protected ValidationResult executeBusinessValidation(CardTransactionsReportByPeriodObject requestObject) {
         AccountConsent accountConsent = requestObject.getAccountConsent();
 
-        if (accountConsent.isConsentWithNotIbanAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (accountConsent.isConsentWithNotCardAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
@@ -75,7 +72,7 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
             return acceptHeaderValidationResult;
         }
 
-        ValidationResult validationResult = validateTransactionReportParameters(requestObject.getEntryReferenceFrom(), requestObject.getDeltaList(), requestObject.getDateFrom());
+        ValidationResult validationResult = validateCardTransactionReportParameters(requestObject.getDeltaList(), requestObject.getDateFrom());
         if (validationResult.isNotValid()) {
             return validationResult;
         }
@@ -86,14 +83,8 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
             return accountReferenceValidationResult;
         }
 
-        ValidationResult permittedAccountReferenceValidationResult =
-            permittedAccountReferenceValidator.validate(accountConsent, requestObject.getAccountId(), requestObject.isWithBalance());
-
-        if (permittedAccountReferenceValidationResult.isNotValid()) {
-            return permittedAccountReferenceValidationResult;
-        }
-
         BookingStatus bookingStatus = requestObject.getBookingStatus();
+
         if (isNotSupportedBookingStatus(bookingStatus)) {
             return ValidationResult.invalid(AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_BOOKING_STATUS, bookingStatus.getValue()));
         }
@@ -106,25 +97,17 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
         return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
     }
 
-    private ValidationResult validateTransactionReportParameters(String entryReferenceFrom, Boolean deltaList, LocalDate dateFrom) {
+    private ValidationResult validateCardTransactionReportParameters(Boolean deltaList, LocalDate dateFrom) {
         List<TppMessageInformation> tppMessageInformationList = new ArrayList<>();
-        boolean isEntryReferenceFromSupported = aspspProfileService.isEntryReferenceFromSupported();
-        boolean isEntryReferenceFromPresentInRequest = StringUtils.isNotBlank(entryReferenceFrom);
         boolean isNotSearchByPeriod = dateFrom == null;
-
-        if (isDeltaAccessParameterNotSupported(isEntryReferenceFromPresentInRequest, isEntryReferenceFromSupported, isNotSearchByPeriod)) {
-            tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_ENTRY_REFERENCE_FROM));
-        }
         boolean isDeltaListSupported = aspspProfileService.isDeltaListSupported();
         boolean isDeltaListPresentInRequest = BooleanUtils.isTrue(deltaList);
 
-        if (isDeltaAccessParameterNotSupported(isDeltaListPresentInRequest, isDeltaListSupported, isNotSearchByPeriod)) {
+        if (isDeltaAccessParameterNotSupported(isDeltaListSupported, isNotSearchByPeriod)) {
             tppMessageInformationList.add(TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_DELTA_LIST));
         }
 
         boolean isAllParametersPresentAndSupported = isDeltaListSupported
-                                                         && isEntryReferenceFromSupported
-                                                         && isEntryReferenceFromPresentInRequest
                                                          && isDeltaListPresentInRequest;
         if (isAllParametersPresentAndSupported) {
             tppMessageInformationList.add(TppMessageInformation.of(FORMAT_ERROR_MULTIPLE_DELTA_REPORT));
@@ -135,8 +118,8 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
                    : ValidationResult.invalid(AIS_400, tppMessageInformationList.toArray(new TppMessageInformation[0]));
     }
 
-    private boolean isDeltaAccessParameterNotSupported(boolean isParameterPresentInRequest, boolean isParameterSupportedInProfile, boolean isNotSearchByPeriod) {
-        return isParameterPresentInRequest && !isParameterSupportedInProfile && isNotSearchByPeriod;
+    private boolean isDeltaAccessParameterNotSupported(boolean isParameterSupportedInProfile, boolean isNotSearchByPeriod) {
+        return !isParameterSupportedInProfile && isNotSearchByPeriod;
     }
 
     private boolean isNotSupportedBookingStatus(BookingStatus bookingStatus) {

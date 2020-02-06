@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenc
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.PermittedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +62,9 @@ class GetAccountDetailsValidatorTest {
     private static final MessageError PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
 
+    private static final MessageError CONSENT_INVALID_ERROR =
+        new MessageError(ErrorType.AIS_401, TppMessageInformation.of(CONSENT_INVALID));
+
     @InjectMocks
     private GetAccountDetailsValidator getAccountDetailsValidator;
 
@@ -79,8 +83,15 @@ class GetAccountDetailsValidatorTest {
     @Mock
     private OauthConsentValidator oauthConsentValidator;
 
+    private JsonReader jsonReader = new JsonReader();
+    private Xs2aAccountAccess accountAccess;
+    private Xs2aAccountAccess cardAccountAccess;
+
     @BeforeEach
     void setUp() {
+        cardAccountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-pan.json", Xs2aAccountAccess.class);
+        accountAccess = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access.json", Xs2aAccountAccess.class);
+
         // Inject pisTppInfoValidator via setter
         getAccountDetailsValidator.setAisAccountTppInfoValidator(aisAccountTppInfoValidator);
     }
@@ -172,6 +183,24 @@ class GetAccountDetailsValidatorTest {
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
     }
 
+    @Test
+    void validate_withInvalidAccountInConsent_shouldReturnConsentInvalidError() {
+        // Given
+        AccountConsent accountConsent = buildCardAccountConsent(cardAccountAccess);
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+
+        // When
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+
+        // Then
+        verify(aisAccountTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(CONSENT_INVALID_ERROR, validationResult.getMessageError());
+    }
+
     private static TppInfo buildTppInfo(String authorisationNumber) {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
@@ -179,13 +208,17 @@ class GetAccountDetailsValidatorTest {
     }
 
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", buildXs2aAccountAccess(), buildXs2aAccountAccess(), false, null, null, 0,
+        return new AccountConsent("id", accountAccess, accountAccess, false, null, null, 0,
                                   null, null, false, false,
                                   Collections.emptyList(), tppInfo, AisConsentRequestType.DEDICATED_ACCOUNTS, false,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 
-    private Xs2aAccountAccess buildXs2aAccountAccess() {
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
+    private AccountConsent buildCardAccountConsent(Xs2aAccountAccess xs2aAccountAccess) {
+        return new AccountConsent("id", xs2aAccountAccess, xs2aAccountAccess, false, null, null, 0,
+                                  null, null, false, false,
+                                  Collections.emptyList(), GetAccountDetailsValidatorTest.TPP_INFO, null, false,
+                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
+
 }

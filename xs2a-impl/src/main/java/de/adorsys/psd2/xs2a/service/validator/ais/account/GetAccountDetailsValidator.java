@@ -28,6 +28,9 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
+
 /**
  * Validator to be used for validating get account details request according to some business rules
  */
@@ -50,6 +53,10 @@ public class GetAccountDetailsValidator extends AbstractAccountTppValidator<Comm
     @Override
     protected ValidationResult executeBusinessValidation(CommonAccountRequestObject commonAccountRequestObject) {
         AccountConsent accountConsent = commonAccountRequestObject.getAccountConsent();
+
+        if (accountConsent.isConsentWithNotIbanAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+            return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
+        }
 
         ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(),
                                                                                                      commonAccountRequestObject.getAccounts(), commonAccountRequestObject.getAccountId(), accountConsent.getAisConsentRequestType());
