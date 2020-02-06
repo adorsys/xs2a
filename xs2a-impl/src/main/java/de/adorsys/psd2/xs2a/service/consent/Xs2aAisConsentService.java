@@ -21,10 +21,15 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -33,7 +38,6 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -44,6 +48,7 @@ import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCms
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,7 +59,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
-    private final AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
+    private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
@@ -137,7 +142,7 @@ public class Xs2aAisConsentService {
             return;
         }
 
-        if (statusUpdated.isSuccessful() && statusUpdated.getPayload()) {
+        if (statusUpdated.isSuccessful() && BooleanUtils.isTrue(statusUpdated.getPayload())) {
             loggingContextService.storeConsentStatus(consentStatus);
         }
     }
@@ -168,11 +173,11 @@ public class Xs2aAisConsentService {
      * @param psuData   authorisation data about PSU
      * @return CreateAisConsentAuthorizationResponse object with authorisation ID and scaStatus
      */
-    public Optional<CreateAisConsentAuthorizationResponse> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
+    public Optional<CreateAuthorisationResponse> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
         String tppRedirectURI = requestProviderService.getTppRedirectURI();
         String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
-        AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorization(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
-        CmsResponse<CreateAisConsentAuthorizationResponse> authorisationResponse = aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, request);
+        CreateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
+        CmsResponse<CreateAuthorisationResponse> authorisationResponse = authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(consentId), request);
 
         if (authorisationResponse.hasError()) {
             return Optional.empty();
@@ -185,18 +190,17 @@ public class Xs2aAisConsentService {
      * Requests CMS to retrieve AIS consent authorisation by its identifier
      *
      * @param authorizationId String representation of identifier of stored consent authorisation
-     * @param consentId       ID of the consent
      * @return Response containing AIS Consent Authorisation
      */
 
-    public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        CmsResponse<AisConsentAuthorizationResponse> authorisationResponse = aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId);
+    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
+        CmsResponse<Authorisation> authorisationResponse = authorisationServiceEncrypted.getAuthorisationById(authorizationId);
 
         if (authorisationResponse.hasError()) {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(aisConsentAuthorisationMapper.mapToAccountConsentAuthorization(authorisationResponse.getPayload()));
+        return Optional.ofNullable(authorisationResponse.getPayload());
     }
 
     /**
@@ -208,9 +212,9 @@ public class Xs2aAisConsentService {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
                 final String authorizationId = req.getAuthorizationId();
-                final AisConsentAuthorizationRequest request = aisConsentAuthorisationMapper.mapToAisConsentAuthorizationRequest(req);
+                final UpdateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(req);
 
-                aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(authorizationId, request);
+                authorisationServiceEncrypted.updateAuthorisation(authorizationId, request);
             });
     }
 
@@ -221,7 +225,7 @@ public class Xs2aAisConsentService {
      * @param scaStatus       Enum for status of the SCA method applied
      */
     public void updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        aisConsentAuthorisationServiceEncrypted.updateConsentAuthorisationStatus(authorisationId, scaStatus);
+        authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, scaStatus);
     }
 
     /**
@@ -256,7 +260,7 @@ public class Xs2aAisConsentService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
-        CmsResponse<List<String>> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
+        CmsResponse<List<String>> response = authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(consentId));
 
         if (response.hasError()) {
             return Optional.empty();
@@ -273,7 +277,7 @@ public class Xs2aAisConsentService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        CmsResponse<ScaStatus> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
+        CmsResponse<ScaStatus> response = authorisationServiceEncrypted.getAuthorisationScaStatus(authorisationId, new AisAuthorisationParentHolder(consentId));
 
         if (response.hasError()) {
             return Optional.empty();
@@ -290,7 +294,7 @@ public class Xs2aAisConsentService {
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
     public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -302,7 +306,7 @@ public class Xs2aAisConsentService {
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<AuthenticationObject> methods) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -313,7 +317,7 @@ public class Xs2aAisConsentService {
      * @param scaApproach     Chosen SCA approach
      */
     public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        aisConsentAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+        authorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
 
     /**
@@ -337,7 +341,7 @@ public class Xs2aAisConsentService {
      * @return SCA approach
      */
     public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
-        CmsResponse<AuthorisationScaApproachResponse> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
+        CmsResponse<AuthorisationScaApproachResponse> response = authorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
 
         if (response.hasError()) {
             return Optional.empty();

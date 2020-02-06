@@ -16,8 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor;
 
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
@@ -108,7 +109,9 @@ class AuthorisationProcessorTest {
     @Test
     void getProcessorService_PIS_initiation() {
         request.setServiceType(ServiceType.PIS);
-        request.setPaymentAuthorisationType(PaymentAuthorisationType.CREATED);
+        Authorisation authorisation = new Authorisation();
+        authorisation.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        request.setAuthorisation(authorisation);
         when(applicationContext.getBean(PisAuthorisationProcessorServiceImpl.class)).thenReturn(pisAuthorisationProcessorService);
 
         authorisationProcessor.getProcessorService(request);
@@ -119,7 +122,9 @@ class AuthorisationProcessorTest {
     @Test
     void getProcessorService_PIS_cancellation() {
         request.setServiceType(ServiceType.PIS);
-        request.setPaymentAuthorisationType(PaymentAuthorisationType.CANCELLED);
+        Authorisation authorisation = new Authorisation();
+        authorisation.setAuthorisationType(AuthorisationType.PIS_CANCELLATION);
+        request.setAuthorisation(authorisation);
         when(applicationContext.getBean(PisCancellationAuthorisationProcessorServiceImpl.class)).thenReturn(pisCancellationAuthorisationProcessorServiceImpl);
 
         authorisationProcessor.getProcessorService(request);
@@ -130,7 +135,8 @@ class AuthorisationProcessorTest {
     @Test
     void getProcessorService_PIS_noPaymentAuthorisationType() {
         request.setServiceType(ServiceType.PIS);
-        request.setPaymentAuthorisationType(null);
+        Authorisation authorisation = new Authorisation();
+        request.setAuthorisation(authorisation);
 
         assertThrows(IllegalArgumentException.class, () -> authorisationProcessor.getProcessorService(request));
 

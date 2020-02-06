@@ -17,10 +17,11 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
-import de.adorsys.psd2.xs2a.service.validator.authorisation.PisCancellationAuthorisationStatusChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import org.springframework.stereotype.Component;
 
@@ -37,12 +38,12 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
 @Component
 public class CreatePisCancellationAuthorisationValidator extends AbstractPisValidator<CreatePisCancellationAuthorisationObject> {
     private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
-    private final PisCancellationAuthorisationStatusChecker pisCancellationAuthorisationStatusChecker;
+    private final AuthorisationStatusChecker authorisationStatusChecker;
 
     public CreatePisCancellationAuthorisationValidator(AuthorisationPsuDataChecker authorisationPsuDataChecker,
-                                                       PisCancellationAuthorisationStatusChecker pisCancellationAuthorisationStatusChecker) {
+                                                       AuthorisationStatusChecker authorisationStatusChecker) {
         this.authorisationPsuDataChecker = authorisationPsuDataChecker;
-        this.pisCancellationAuthorisationStatusChecker = pisCancellationAuthorisationStatusChecker;
+        this.authorisationStatusChecker = authorisationStatusChecker;
     }
 
     /**
@@ -67,7 +68,7 @@ public class CreatePisCancellationAuthorisationValidator extends AbstractPisVali
         }
 
         // If the cancellation authorisation for this payment ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
-        boolean isFinalised = pisCancellationAuthorisationStatusChecker.isFinalised(psuDataFromRequest, pisCommonPaymentResponse.getAuthorisations());
+        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, pisCommonPaymentResponse.getAuthorisations(), AuthorisationType.PIS_CANCELLATION);
 
         if (isFinalised) {
             return ValidationResult.invalid(PIS_409, STATUS_INVALID);

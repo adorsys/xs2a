@@ -22,11 +22,12 @@ import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -44,7 +45,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class Xs2aPisCommonPaymentServiceTest {
@@ -68,7 +69,7 @@ class Xs2aPisCommonPaymentServiceTest {
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @Mock
-    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @Mock
     private Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
@@ -128,7 +129,7 @@ class Xs2aPisCommonPaymentServiceTest {
     @Test
     void isAuthenticationMethodDecoupled_success() {
         //Given
-        when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
+        when(authorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
@@ -141,7 +142,7 @@ class Xs2aPisCommonPaymentServiceTest {
     @Test
     void isAuthenticationMethodDecoupled_failed() {
         //Given
-        when(pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
+        when(authorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
@@ -156,7 +157,7 @@ class Xs2aPisCommonPaymentServiceTest {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
-        when(pisAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
+        when(authorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         //When
@@ -171,7 +172,7 @@ class Xs2aPisCommonPaymentServiceTest {
         //Given
         when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
             .thenReturn(CMS_SCA_METHOD_LIST);
-        when(pisAuthorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
+        when(authorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         //When
@@ -197,7 +198,7 @@ class Xs2aPisCommonPaymentServiceTest {
     @Test
     void updatePisAuthorisationStatus_success() {
         // Given
-        when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        when(authorisationServiceEncrypted.updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         // When
@@ -210,7 +211,7 @@ class Xs2aPisCommonPaymentServiceTest {
     @Test
     void updatePisAuthorisationStatus_failure() {
         // Given
-        when(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        when(authorisationServiceEncrypted.updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         // When
@@ -218,6 +219,12 @@ class Xs2aPisCommonPaymentServiceTest {
 
         // Then
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void updateScaApproach() {
+        xs2aPisCommonPaymentService.updateScaApproach(AUTHORISATION_ID, ScaApproach.EMBEDDED);
+        verify(authorisationServiceEncrypted, times(1)).updateScaApproach(AUTHORISATION_ID, ScaApproach.EMBEDDED);
     }
 
     private static TppInfo buildTppInfo() {

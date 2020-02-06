@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
@@ -98,7 +98,9 @@ class AisConsentMapperTest {
         AisConsent aisConsent = buildAisConsentEmptyAspspAccesses();
 
         AisAccountAccess expectedAccess = buildAisAccountAccessAccounts();
-        AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
+        List<AuthorisationEntity> authorisations = Collections.singletonList(buildAisConsentAuthorisation());
+
+        AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent, authorisations);
 
         assertEquals(expectedAccess, result.getTppAccess());
         assertEquals(aisConsent.getStatusChangeTimestamp(), result.getStatusChangeTimestamp());
@@ -112,29 +114,16 @@ class AisConsentMapperTest {
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
         when(aisConsentUsageService.getUsageCounterMap(aisConsent)).thenReturn(USAGE_COUNTER);
 
-        // When
-        AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent);
-
-        // Then
-        assertConsentsEquals(expectedAccess, aisConsent, result);
-    }
-
-    @Test
-    void mapToCmsAisAccountConsent() {
-        // Given
-        AisConsent aisConsent = buildAisConsent();
-        AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
-        when(aisConsentUsageService.getUsageCounterMap(aisConsent)).thenReturn(USAGE_COUNTER);
+        List<AuthorisationEntity> authorisations = Collections.singletonList(buildAisConsentAuthorisation());
 
         // When
-        CmsAisAccountConsent result = aisConsentMapper.mapToCmsAisAccountConsent(aisConsent);
+        AisAccountConsent result = aisConsentMapper.mapToAisAccountConsent(aisConsent, authorisations);
 
         // Then
-        assertConsentsEquals(expectedAccess, aisConsent, result);
+        assertConsentsEquals(expectedAccess, authorisations, aisConsent, result);
     }
 
-    private void assertConsentsEquals(AisAccountAccess expectedAccess, AisConsent aisConsent, CmsAisAccountConsent aisAccountConsent) {
-        AisConsentAuthorization aisConsentAuthorization = aisConsent.getAuthorizations().get(0);
+    private void assertConsentsEquals(AisAccountAccess expectedAccess, List<AuthorisationEntity> expectedAuthorisations, AisConsent aisConsent, CmsAisAccountConsent aisAccountConsent) {
         AisAccountConsentAuthorisation aisAccountConsentAuthorisation = aisAccountConsent.getAccountConsentAuthorizations().get(0);
 
         assertEquals(expectedAccess, aisAccountConsent.getAccess());
@@ -151,16 +140,17 @@ class AisConsentMapperTest {
         assertEquals(TPP_INFO, aisAccountConsent.getTppInfo());
         assertEquals(aisConsent.isMultilevelScaRequired(), aisAccountConsent.isMultilevelScaRequired());
         assertFalse(aisAccountConsent.getAccountConsentAuthorizations().isEmpty());
-        assertEquals(aisConsent.getAuthorizations().size(), aisAccountConsent.getAccountConsentAuthorizations().size());
+        assertEquals(expectedAuthorisations.size(), aisAccountConsent.getAccountConsentAuthorizations().size());
         assertEquals(PSU_ID_DATA, aisAccountConsentAuthorisation.getPsuIdData());
-        assertEquals(aisConsentAuthorization.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
+
+        AuthorisationEntity expectedAuthorisation = expectedAuthorisations.get(0);
+        assertEquals(expectedAuthorisation.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
         assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounterMap());
         assertEquals(aisConsent.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
         assertEquals(aisConsent.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
     }
 
-    private void assertConsentsEquals(AisAccountAccess expectedAccess, AisConsent aisConsent, AisAccountConsent aisAccountConsent) {
-        AisConsentAuthorization aisConsentAuthorization = aisConsent.getAuthorizations().get(0);
+    private void assertConsentsEquals(AisAccountAccess expectedAccess, List<AuthorisationEntity> expectedAuthorisations, AisConsent aisConsent, AisAccountConsent aisAccountConsent) {
         AisAccountConsentAuthorisation aisAccountConsentAuthorisation = aisAccountConsent.getAccountConsentAuthorizations().get(0);
 
         assertEquals(expectedAccess, aisAccountConsent.getAspspAccess());
@@ -177,9 +167,11 @@ class AisConsentMapperTest {
         assertEquals(TPP_INFO, aisAccountConsent.getTppInfo());
         assertEquals(aisConsent.isMultilevelScaRequired(), aisAccountConsent.isMultilevelScaRequired());
         assertFalse(aisAccountConsent.getAccountConsentAuthorizations().isEmpty());
-        assertEquals(aisConsent.getAuthorizations().size(), aisAccountConsent.getAccountConsentAuthorizations().size());
+        assertEquals(expectedAuthorisations.size(), aisAccountConsent.getAccountConsentAuthorizations().size());
         assertEquals(PSU_ID_DATA, aisAccountConsentAuthorisation.getPsuIdData());
-        assertEquals(aisConsentAuthorization.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
+
+        AuthorisationEntity expectedAuthorisation = expectedAuthorisations.get(0);
+        assertEquals(expectedAuthorisation.getScaStatus(), aisAccountConsentAuthorisation.getScaStatus());
         assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounterMap());
         assertEquals(aisConsent.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
         assertEquals(aisConsent.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
@@ -207,15 +199,14 @@ class AisConsentMapperTest {
         aisConsent.setTppInfo(TPP_INFO_ENTITY);
         aisConsent.setConsentStatus(ConsentStatus.VALID);
         aisConsent.setAllowedFrequencyPerDay(7);
-        aisConsent.setAuthorizations(Collections.singletonList(buildAisConsentAuthorization()));
         aisConsent.setMultilevelScaRequired(true);
         aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
         aisConsent.setLastActionDate(LocalDate.now());
         return aisConsent;
     }
 
-    private AisConsentAuthorization buildAisConsentAuthorization() {
-        AisConsentAuthorization authorization = new AisConsentAuthorization();
+    private AuthorisationEntity buildAisConsentAuthorisation() {
+        AuthorisationEntity authorization = new AuthorisationEntity();
         authorization.setExternalId(EXTERNAL_ID);
         authorization.setPsuData(PSU_DATA);
         authorization.setScaStatus(ScaStatus.RECEIVED);

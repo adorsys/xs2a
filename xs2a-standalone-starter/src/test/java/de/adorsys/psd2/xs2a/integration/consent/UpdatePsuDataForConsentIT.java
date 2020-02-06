@@ -18,9 +18,12 @@ package de.adorsys.psd2.xs2a.integration.consent;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -31,6 +34,7 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -110,7 +114,7 @@ class UpdatePsuDataForConsentIT {
     @MockBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
-    private AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private AisConsentSpi aisConsentSpi;
 
@@ -140,11 +144,11 @@ class UpdatePsuDataForConsentIT {
     @Test
     void updatePsuData_success() throws Exception {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
-        AisConsentAuthorizationResponse authorizationResponse = new AisConsentAuthorizationResponse();
+        Authorisation authorizationResponse = new Authorisation();
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
         authorizationResponse.setChosenScaApproach(ScaApproach.EMBEDDED);
-        given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(AUTHORISATION_ID, ENCRYPTED_CONSENT_ID))
-            .willReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
+        given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
+            .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(authorizationResponse)
                             .build());
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
@@ -152,7 +156,7 @@ class UpdatePsuDataForConsentIT {
                             .payload(buildAisAccountConsent())
                             .build());
 
-        given(aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
+        given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
                             .build());
@@ -176,12 +180,12 @@ class UpdatePsuDataForConsentIT {
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(spiAuthorizationCodeResult)
                             .build());
-        given(aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(eq(AUTHORISATION_ID), any(AisConsentAuthorizationRequest.class)))
-            .willReturn(CmsResponse.<Boolean>builder()
-                            .payload(true)
+        given(authorisationServiceEncrypted.updateAuthorisation(eq(AUTHORISATION_ID), any(UpdateAuthorisationRequest.class)))
+            .willReturn(CmsResponse.<Authorisation>builder()
+                            .payload(new Authorisation())
                             .build());
 
-        given(aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), anyList()))
+        given(authorisationServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), anyList()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
@@ -200,9 +204,9 @@ class UpdatePsuDataForConsentIT {
     @Test
     void updatePsuData_wrongAuthorisationId() throws Exception {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
-        given(aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, ENCRYPTED_CONSENT_ID))
-            .willReturn(CmsResponse.<AisConsentAuthorizationResponse>builder()
-                            .payload(new AisConsentAuthorizationResponse())
+        given(authorisationServiceEncrypted.getAuthorisationById(WRONG_AUTHORISATION_ID))
+            .willReturn(CmsResponse.<Authorisation>builder()
+                            .payload(new Authorisation())
                             .build());
         given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
             .willReturn(CmsResponse.<AisAccountConsent>builder()

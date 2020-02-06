@@ -17,11 +17,12 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
-import de.adorsys.psd2.xs2a.service.validator.authorisation.PisAuthorisationStatusChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -39,12 +40,12 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class CreatePisAuthorisationValidator extends AbstractPisValidator<CreatePisAuthorisationObject> {
 
     private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
-    private final PisAuthorisationStatusChecker pisAuthorisationStatusChecker;
+    private final AuthorisationStatusChecker authorisationStatusChecker;
 
     public CreatePisAuthorisationValidator(AuthorisationPsuDataChecker authorisationPsuDataChecker,
-                                           PisAuthorisationStatusChecker pisAuthorisationStatusChecker) {
+                                           AuthorisationStatusChecker authorisationStatusChecker) {
         this.authorisationPsuDataChecker = authorisationPsuDataChecker;
-        this.pisAuthorisationStatusChecker = pisAuthorisationStatusChecker;
+        this.authorisationStatusChecker = authorisationStatusChecker;
     }
 
     /**
@@ -74,7 +75,7 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Create
         }
 
         // If the authorisation for this payment ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
-        boolean isFinalised = pisAuthorisationStatusChecker.isFinalised(psuDataFromRequest, pisCommonPaymentResponse.getAuthorisations());
+        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, pisCommonPaymentResponse.getAuthorisations(), AuthorisationType.PIS_CREATION);
 
         if (isFinalised) {
             return ValidationResult.invalid(PIS_409, STATUS_INVALID);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class NotConfirmedConsentExpirationScheduleTask {
         log.info("Not confirmed consent expiration schedule task is run!");
         List<AisConsent> expiredNotConfirmedConsents = aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED))
                                                            .stream()
-                                                           .filter(aisConsentConfirmationExpirationService::isConsentConfirmationExpired)
+                                                           .filter(aisConsentConfirmationExpirationService::isConfirmationExpired)
                                                            .collect(Collectors.toList());
 
         if (!expiredNotConfirmedConsents.isEmpty()) {

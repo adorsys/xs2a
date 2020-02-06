@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,18 +22,17 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.*;
-import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
-import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
-import de.adorsys.psd2.consent.repository.TppInfoRepository;
+import de.adorsys.psd2.consent.repository.*;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -57,7 +56,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AisConsentServiceInternal implements AisConsentService {
-
+    private final AuthorisationRepository authorisationRepository;
     private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AisConsentVerifyingRepository aisConsentRepository;
     private final AisConsentActionRepository aisConsentActionRepository;
@@ -97,7 +96,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
         if (savedConsent.getId() != null) {
             return CmsResponse.<CreateAisConsentResponse>builder()
-                       .payload(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToAisAccountConsent(savedConsent), consent.getTppNotificationContentPreferred()))
+                       .payload(new CreateAisConsentResponse(savedConsent.getExternalId(), consentMapper.mapToAisAccountConsent(savedConsent, Collections.emptyList()), consent.getTppNotificationContentPreferred()))
                        .build();
 
         } else {
@@ -170,20 +169,23 @@ public class AisConsentServiceInternal implements AisConsentService {
     @Override
     @Transactional
     public CmsResponse<AisAccountConsent> getAisAccountConsentById(String consentId) {
-        Optional<AisAccountConsent> consentOptional = aisConsentJpaRepository.findByExternalId(consentId)
-                                                          .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
-                                                          .map(this::checkAndUpdateOnExpiration)
-                                                          .map(consentMapper::mapToAisAccountConsent);
+        Optional<AisConsent> consentOptional = aisConsentJpaRepository.findByExternalId(consentId)
+                                                   .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                   .map(this::checkAndUpdateOnExpiration);
 
-        if (consentOptional.isPresent()) {
+        if (!consentOptional.isPresent()) {
+            log.info("Consent ID [{}]. Get consent by ID failed, because consent not found", consentId);
             return CmsResponse.<AisAccountConsent>builder()
-                       .payload(consentOptional.get())
+                       .error(LOGICAL_ERROR)
                        .build();
         }
 
-        log.info("Consent ID [{}]. Get consent by ID failed, because consent not found", consentId);
+        AisConsent consent = consentOptional.get();
+        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consent.getExternalId(), AuthorisationType.AIS);
+        AisAccountConsent aisAccountConsent = consentMapper.mapToAisAccountConsent(consent, authorisations);
+
         return CmsResponse.<AisAccountConsent>builder()
-                   .error(LOGICAL_ERROR)
+                   .payload(aisAccountConsent)
                    .build();
     }
 
@@ -323,9 +325,10 @@ public class AisConsentServiceInternal implements AisConsentService {
         consent.setAspspAccountAccesses(getUpdatedAccesses(cmsAccesses, aspspAccesses));
 
         AisConsent aisConsent = aisConsentRepository.verifyAndUpdate(consent);
+        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(aisConsent.getExternalId(), AuthorisationType.AIS);
 
         return CmsResponse.<AisAccountConsent>builder()
-                   .payload(consentMapper.mapToAisAccountConsent(aisConsent))
+                   .payload(consentMapper.mapToAisAccountConsent(aisConsent, authorisations))
                    .build();
     }
 

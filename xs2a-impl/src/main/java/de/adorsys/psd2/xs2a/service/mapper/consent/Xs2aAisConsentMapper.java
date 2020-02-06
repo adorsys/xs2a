@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -97,23 +98,6 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    public UpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateConsentPsuDataResponse updatePsuDataResponse,
-                                                                   UpdateConsentPsuDataReq updatePsuDataRequest) {
-        return Optional.ofNullable(updatePsuDataResponse)
-                   .map(data -> {
-                       PsuIdData psuIdDataFromRequest = updatePsuDataRequest.getPsuData();
-                       UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-                       request.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType(), psuIdDataFromRequest.getPsuIpAddress()));
-                       request.setConsentId(updatePsuDataRequest.getConsentId());
-                       request.setAuthorizationId(updatePsuDataRequest.getAuthorizationId());
-                       request.setAuthenticationMethodId(getAuthenticationMethodId(data));
-                       request.setScaAuthenticationData(updatePsuDataRequest.getScaAuthenticationData());
-                       request.setScaStatus(data.getScaStatus());
-                       return request;
-                   })
-                   .orElse(null);
-    }
-
     public UpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
                                                                    AuthorisationProcessorResponse response) {
         return Optional.ofNullable(response)
@@ -128,14 +112,9 @@ public class Xs2aAisConsentMapper {
                                                          .orElse(null));
                        req.setScaAuthenticationData(request.getScaAuthenticationData());
                        req.setScaStatus(data.getScaStatus());
+                       req.setAuthorisationType(AuthorisationType.AIS);
                        return req;
                    })
-                   .orElse(null);
-    }
-
-    private String getAuthenticationMethodId(UpdateConsentPsuDataResponse data) {
-        return Optional.ofNullable(data.getChosenScaMethod())
-                   .map(AuthenticationObject::getAuthenticationMethodId)
                    .orElse(null);
     }
 

@@ -388,7 +388,7 @@ public class PaymentController implements PaymentApi {
         }
 
         AuthorisationResponse authResponse = createAuthResponse.getBody();
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildStartPaymentAuthorisationHeaders(authResponse.getAuthorisationId());
+        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildStartAuthorisationHeaders(authResponse.getAuthorisationId());
 
         return responseMapper.created(ResponseObject.builder()
                                           .body(authorisationMapper.mapToPisCreateOrUpdateAuthorisationResponse(createAuthResponse))
@@ -425,7 +425,7 @@ public class PaymentController implements PaymentApi {
         }
 
         CancellationAuthorisationResponse serviceResponseBody = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(serviceResponseBody.getCancellationId());
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(serviceResponseBody.getCancellationId());
 
         return responseMapper.created(serviceResponse, authorisationModelMapper::mapToStartOrUpdateCancellationResponse, responseHeaders);
     }
@@ -451,7 +451,7 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePaymentCancellationPsuDataHeaders(cancellationId);
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePsuDataHeaders(cancellationId);
 
         return responseMapper.ok(serviceResponse, authorisationMapper::mapToPisUpdatePsuAuthenticationResponse, responseHeaders);
     }
@@ -483,7 +483,7 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildUpdatePaymentInitiationPsuDataHeaders(authorisationId);
+        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildUpdatePsuDataHeaders(authorisationId);
 
         return responseMapper.ok(serviceResponse, authorisationMapper::mapToPisUpdatePsuAuthenticationResponse, responseHeaders);
     }

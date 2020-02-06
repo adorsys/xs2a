@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.UpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
@@ -36,7 +37,7 @@ import java.util.Optional;
 @Component
 public class Xs2aPisCommonPaymentMapper {
 
-    public Optional<Xs2aCreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorisationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
+    public Optional<Xs2aCreatePisAuthorisationResponse> mapToXsa2CreatePisAuthorisationResponse(CreateAuthorisationResponse response, PaymentType paymentType) {
         if (response != null) {
             return Optional.of(new Xs2aCreatePisAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), paymentType, response.getInternalRequestId(), response.getPsuIdData()));
         }
@@ -44,9 +45,9 @@ public class Xs2aPisCommonPaymentMapper {
         return Optional.empty();
     }
 
-    public Optional<Xs2aCreatePisCancellationAuthorisationResponse> mapToXs2aCreatePisCancellationAuthorisationResponse(CreatePisAuthorisationResponse response, PaymentType paymentType) {
+    public Optional<Xs2aCreatePisCancellationAuthorisationResponse> mapToXs2aCreatePisCancellationAuthorisationResponse(CreateAuthorisationResponse response, PaymentType paymentType) {
         if (response != null) {
-            return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), paymentType, response.getCancellationInternalRequestId()));
+            return Optional.of(new Xs2aCreatePisCancellationAuthorisationResponse(response.getAuthorizationId(), response.getScaStatus(), paymentType, response.getInternalRequestId()));
         }
 
         return Optional.empty();
@@ -56,17 +57,16 @@ public class Xs2aPisCommonPaymentMapper {
         return new Xs2aPisCommonPayment(response.getPaymentId(), psuData);
     }
 
-    public UpdatePisCommonPaymentPsuDataRequest mapToCmsUpdateCommonPaymentPsuDataReq(AuthorisationProcessorResponse response) {
+    public UpdateAuthorisationRequest mapToUpdateAuthorisationRequest(AuthorisationProcessorResponse response, AuthorisationType authorisationType) {
         return Optional.ofNullable(response)
                    .map(data -> {
-                       UpdatePisCommonPaymentPsuDataRequest req = new UpdatePisCommonPaymentPsuDataRequest();
+                       UpdateAuthorisationRequest req = new UpdateAuthorisationRequest();
                        req.setPsuData(((Xs2aUpdatePisCommonPaymentPsuDataResponse) response).getPsuData());
-                       req.setPaymentId(data.getPaymentId());
-                       req.setAuthorizationId(data.getAuthorisationId());
                        req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
                                                          .map(AuthenticationObject::getAuthenticationMethodId)
                                                          .orElse(null));
                        req.setScaStatus(data.getScaStatus());
+                       req.setAuthorisationType(authorisationType);
                        return req;
                    })
                    .orElse(null);

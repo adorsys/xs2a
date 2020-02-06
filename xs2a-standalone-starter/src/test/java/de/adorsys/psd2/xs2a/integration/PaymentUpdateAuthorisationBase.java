@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -83,7 +83,7 @@ public abstract class PaymentUpdateAuthorisationBase {
     @MockBean
     protected PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
-    protected PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    protected AuthorisationServiceEncrypted authorisationServiceEncrypted;
 
     public void before() {
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
@@ -131,7 +131,7 @@ public abstract class PaymentUpdateAuthorisationBase {
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(pisCommonPaymentResponse)
                             .build());
-        given(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        given(authorisationServiceEncrypted.updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(Boolean.TRUE)
                             .build());
@@ -158,6 +158,6 @@ public abstract class PaymentUpdateAuthorisationBase {
     }
 
     private Authorisation buildAuthorisation(PsuIdData psuIdData) {
-        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, psuIdData, PaymentAuthorisationType.CREATED);
+         return new Authorisation(AUTHORISATION_ID, psuIdData, PAYMENT_ID, AuthorisationType.PIS_CREATION, ScaStatus.RECEIVED);
     }
 }

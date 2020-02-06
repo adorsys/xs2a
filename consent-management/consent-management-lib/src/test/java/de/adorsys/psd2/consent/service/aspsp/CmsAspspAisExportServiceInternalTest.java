@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,14 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +40,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,6 +73,8 @@ class CmsAspspAisExportServiceInternalTest {
     private AisConsentJpaRepository aisConsentJpaRepository;
     @Mock
     private AisConsentMapper aisConsentMapper;
+    @Mock
+    private AuthorisationRepository authorisationRepository;
 
     @BeforeEach
     void setUp() {
@@ -91,7 +97,12 @@ class CmsAspspAisExportServiceInternalTest {
         when(aisConsentJpaRepository.findAll(any(Specification.class)))
             .thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
-        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
+
+        List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(authorisations);
+
+        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent(), authorisations)).thenReturn(buildAisAccountConsent());
 
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -144,7 +155,12 @@ class CmsAspspAisExportServiceInternalTest {
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(aisConsentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
-        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
+
+        List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(authorisations);
+
+        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent(), authorisations)).thenReturn(buildAisAccountConsent());
 
         // When
         Collection<CmsAisAccountConsent> aisConsents =
@@ -210,7 +226,12 @@ class CmsAspspAisExportServiceInternalTest {
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(aisConsentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(buildAisConsent()));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
-        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent())).thenReturn(buildAisAccountConsent());
+
+        List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(authorisations);
+
+        when(aisConsentMapper.mapToCmsAisAccountConsent(buildAisConsent(), authorisations)).thenReturn(buildAisAccountConsent());
 
         // When
         Collection<CmsAisAccountConsent> aisConsents =

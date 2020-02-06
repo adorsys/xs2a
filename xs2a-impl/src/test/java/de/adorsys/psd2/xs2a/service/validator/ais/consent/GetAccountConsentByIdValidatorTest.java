@@ -60,9 +60,6 @@ class GetAccountConsentByIdValidatorTest {
     void setUp() {
         // Inject pisTppInfoValidator via setter
         getAccountConsentByIdValidator.setAisConsentTppInfoValidator(aisConsentTppInfoValidator);
-
-//        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
-//        when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
     }
 
     @Test

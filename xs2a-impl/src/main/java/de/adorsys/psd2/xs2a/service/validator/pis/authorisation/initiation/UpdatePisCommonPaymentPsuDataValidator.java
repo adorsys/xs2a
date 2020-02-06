@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
@@ -54,11 +53,6 @@ public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsu
     @Override
     protected AuthorisationServiceType getAuthorisationServiceType() {
         return PIS;
-    }
-
-    @Override
-    protected PaymentAuthorisationType getPaymentAuthorisationType() {
-        return PaymentAuthorisationType.CREATED;
     }
 
     @Override

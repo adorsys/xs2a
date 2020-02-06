@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -28,7 +29,10 @@ public class CmsPsuAuthorisation {
     private String psuId;
     private String authorisationId;
     private ScaStatus scaStatus;
+    @Deprecated
+    //todo remove `PaymentAuthorisationType` and rename field back to `authorisationType` https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1197
     private PaymentAuthorisationType authorisationType;
+    private AuthorisationType type;
     private OffsetDateTime redirectUrlExpirationTimestamp;
     private OffsetDateTime authorisationExpirationTimestamp;
     private ScaApproach scaApproach;

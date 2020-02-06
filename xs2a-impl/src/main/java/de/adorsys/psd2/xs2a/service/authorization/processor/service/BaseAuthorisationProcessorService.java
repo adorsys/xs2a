@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -97,8 +97,8 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
     }
 
     PsuIdData extractPsuIdData(UpdateAuthorisationRequest request,
-                               GetPisAuthorisationResponse authorisationResponse) {
+                               Authorisation authorisation) {
         PsuIdData psuDataInRequest = request.getPsuData();
-        return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisationResponse.getPsuIdData();
+        return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisation.getPsuIdData();
     }
 }

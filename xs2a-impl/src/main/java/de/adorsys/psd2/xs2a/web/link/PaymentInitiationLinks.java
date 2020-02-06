@@ -72,7 +72,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
 
         ScaApproach scaApproach = authorisationId == null ?
                                       scaApproachResolver.resolveScaApproach()
-                                      : scaApproachResolver.getInitiationScaApproach(authorisationId);
+                                      : scaApproachResolver.getScaApproach(authorisationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
             addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
         } else if (scaApproach == REDIRECT) {

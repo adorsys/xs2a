@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,26 +28,20 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
-    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
     private final AspspProfileServiceWrapper aspspProfileService;
     /**
      * Checks whether endpoint is accessible for current authorisation
      *
      * @param authorisationId   ID of authorisation process
-     * @param authorisationType payment initiation or cancellation
      * @param confirmationCodeReceived   true if confirmationCode was received in request body
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
-    public boolean isEndpointAccessible(String authorisationId, PaymentAuthorisationType authorisationType, boolean confirmationCodeReceived) {
+    public boolean isEndpointAccessible(String authorisationId, boolean confirmationCodeReceived) {
         boolean confirmationCodeCase = confirmationCodeReceived
                                            && aspspProfileService.isAuthorisationConfirmationRequestMandated();
 
-        CmsResponse<GetPisAuthorisationResponse> authorisationResponse = null;
-        if (authorisationType == PaymentAuthorisationType.CREATED) {
-            authorisationResponse = pisAuthorisationServiceEncrypted.getPisAuthorisationById(authorisationId);
-        } else if (authorisationType == PaymentAuthorisationType.CANCELLED) {
-            authorisationResponse = pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(authorisationId);
-        }
+        CmsResponse<Authorisation> authorisationResponse = authorisationServiceEncrypted.getAuthorisationById(authorisationId);
 
         return Optional.ofNullable(authorisationResponse)
                    .map(CmsResponse::getPayload)

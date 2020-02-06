@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
@@ -79,7 +78,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
         String authorisationId = request.getAuthorisationId();
         boolean confirmationCodeReceived = StringUtils.isNotBlank(request.getConfirmationCode());
 
-        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, getPaymentAuthorisationType(), confirmationCodeReceived)) {
+        if (!pisEndpointAccessCheckerService.isEndpointAccessible(authorisationId, confirmationCodeReceived)) {
             log.info("Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data  has failed: endpoint is not accessible for authorisation", authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, SERVICE_BLOCKED);
         }
@@ -105,7 +104,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
         Authorisation authorisation = authorisationOptional.get();
 
         ValidationResult validationResult = pisPsuDataUpdateAuthorisationCheckerValidator
-                                                .validate(request.getPsuData(), authorisation.getPsuData());
+                                                .validate(request.getPsuData(), authorisation.getPsuIdData());
 
         if (validationResult.isNotValid()) {
             return validationResult;
@@ -129,6 +128,4 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
     }
 
     protected abstract AuthorisationServiceType getAuthorisationServiceType();
-
-    protected abstract PaymentAuthorisationType getPaymentAuthorisationType();
 }

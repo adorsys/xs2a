@@ -60,8 +60,16 @@
   "creationTimestamp": "2019-08-22T11:00:00Z",
   "authorisations": [
     {
-      "id": "5e89f573-800e-4158-bb9c-c7fcc9c701d9",
-      "scaStatus": "received"
+      "authorisationId": "5e89f573-800e-4158-bb9c-c7fcc9c701d9",
+      "psuIdData": {
+        "psuId": "PSU id"
+      },
+      "parentId": "parent id",
+      "scaStatus": "received",
+      "authenticationMethodId": "method id",
+      "scaAuthenticationData": "authentication data",
+      "chosenScaApproach": "REDIRECT",
+      "authorisationType": "AIS"
     }
   ]
 }

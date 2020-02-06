@@ -96,23 +96,6 @@
       "aspspAccountId": "DE69760700240340283600"
     }
   ],
-  "authorizations": [
-    {
-      "instanceId": "UNDEFINED",
-      "id": 35,
-      "externalId": "a6f63f5c-af35-433f-b34e-cf2f42c3c58f",
-      "psuData": {
-        "instanceId": "UNDEFINED",
-        "id": 30,
-        "psuId": "marion.mueller"
-      },
-      "scaStatus": "finalised",
-      "tppOkRedirectUri": "TPP-Redirect-URI",
-      "tppNokRedirectUri": "TPP-Nok-Redirect-URI",
-      "availableScaMethods": [],
-      "scaApproach": "REDIRECT"
-    }
-  ],
   "aisConsentRequestType": "DEDICATED_ACCOUNTS",
   "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
   "availableAccounts": null,

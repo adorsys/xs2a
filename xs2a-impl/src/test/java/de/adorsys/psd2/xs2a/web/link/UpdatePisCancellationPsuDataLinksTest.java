@@ -102,7 +102,7 @@ class UpdatePisCancellationPsuDataLinksTest {
 
     @Test
     void isScaStatusMethodNotSelectedOrDecoupled() {
-        when(scaApproachResolver.getCancellationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
+        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
         links = new UpdatePisCancellationPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.RECEIVED, authenticationObject);
 

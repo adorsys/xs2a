@@ -1,0 +1,22 @@
+{
+  "id": 1,
+  "externalId": "authorisation id",
+  "psuData": {
+    "psuId": "PSU id"
+  },
+  "parentExternalId": "parent id",
+  "scaStatus": "RECEIVED",
+  "authenticationMethodId": "method id",
+  "scaAuthenticationData": "authentication data",
+  "redirectUrlExpirationTimestamp": "2020-02-02T12:00:00Z",
+  "authorisationExpirationTimestamp": "2020-02-02T12:00:00Z",
+  "scaApproach": "REDIRECT",
+  "tppOkRedirectUri": "tpp redirect URI",
+  "tppNokRedirectUri": "tpp nok redirect URI",
+  "availableScaMethods": [
+    {
+      "authenticationMethodId": "some sca method"
+    }
+  ],
+  "authorisationType": "AIS"
+}

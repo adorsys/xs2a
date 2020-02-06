@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2020-01-23-1" author="ssh@adorsys.com.ua">
+        <comment>Create sequence for authorisation ID</comment>
+
+        <createSequence sequenceName="authorisation_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE authorisation_id_seq</sql>
+    </changeSet>
+
+    <changeSet id="2020-01-23-2" author="ssh@adorsys.com.ua">
+        <comment>Create authorisation table</comment>
+
+        <createTable tableName="authorisation">
+            <column name="authorisation_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="VARCHAR(40)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uniq_auth_external_id"/>
+            </column>
+            <column name="psu_id" type="BIGINT"/>
+            <column name="parent_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sca_status" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authentication_method_id" type="VARCHAR(40)"/>
+            <column name="sca_authentication_data" type="VARCHAR(255)"/>
+            <column name="expiration_timestamp" type="datetime"/>
+            <column defaultValue="UNDEFINED" name="instance_id" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sca_approach" type="VARCHAR(255)"/>
+            <column name="redirect_expiration_timestamp" type="datetime"/>
+            <column name="redirect_uri" type="VARCHAR(255)"/>
+            <column name="nok_redirect_uri" type="VARCHAR(255)"/>
+            <column name="authorisation_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2020-01-23-3" author="ssh@adorsys.com.ua">
+        <comment>Add index for parent_id in authorisation table</comment>
+
+        <createIndex tableName="authorisation" indexName="ix_auth_parent_id">
+            <column name="parent_id" type="VARCHAR(255)"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="2020-01-23-4" author="ssh@adorsys.com.ua">
+        <comment>Create auth_available_sca_method table</comment>
+
+        <createTable tableName="auth_available_sca_method">
+            <column name="authentication_method_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="decoupled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authorisation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2020-01-23-5" author="ssh@adorsys.com.ua">
+        <comment>
+            Migrate existing authorisations from ais_consent_authorization table into authorisation table
+        </comment>
+
+        <sql dbms="mariadb,h2">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT NEXT VALUE FOR authorisation_id_seq, auth.external_id, auth.psu_id, consent.external_id,
+            auth.sca_status, auth.authentication_method_id, auth.sca_authentication_data, auth.expiration_timestamp,
+            auth.instance_id, auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri,
+            auth.nok_redirect_uri, 'AIS'
+            FROM ais_consent_authorization auth
+            INNER JOIN ais_consent consent
+            ON auth.consent_id = consent.id
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT nextval('authorisation_id_seq'), auth.external_id, auth.psu_id, consent.external_id, auth.sca_status,
+            auth.authentication_method_id, auth.sca_authentication_data, auth.expiration_timestamp, auth.instance_id,
+            auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri, auth.nok_redirect_uri, 'AIS'
+            FROM ais_consent_authorization auth
+            INNER JOIN ais_consent consent
+            ON auth.consent_id = consent.id
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT authorisation_id_seq.NEXTVAL, auth.external_id, auth.psu_id, consent.external_id, auth.sca_status,
+            auth.authentication_method_id, auth.sca_authentication_data, auth.expiration_timestamp, auth.instance_id,
+            auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri, auth.nok_redirect_uri, 'AIS'
+            FROM ais_consent_authorization auth
+            INNER JOIN ais_consent consent
+            ON auth.consent_id = consent.id
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="2020-01-23-6" author="ssh@adorsys.com.ua">
+        <comment>
+            Migrate existing initiation authorisations from pis_consent_authorization table into authorisation table
+        </comment>
+
+        <sql dbms="mariadb,h2">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT NEXT VALUE FOR authorisation_id_seq, auth.external_id, auth.psu_id, payment.payment_id,
+            auth.sca_status, auth.chosen_sca_method, auth.sca_authentication_data, auth.expiration_timestamp,
+            auth.instance_id, auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri,
+            auth.nok_redirect_uri, 'PIS_CREATION'
+            FROM pis_consent_authorization auth
+            INNER JOIN pis_common_payment payment
+            ON auth.payment_id = payment.id
+            WHERE auth.authorization_type = 'CREATED' OR auth.authorization_type IS NULL
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT nextval('authorisation_id_seq'), auth.external_id, auth.psu_id, payment.payment_id, auth.sca_status,
+            auth.chosen_sca_method, auth.sca_authentication_data, auth.expiration_timestamp, auth.instance_id,
+            auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri, auth.nok_redirect_uri,
+            'PIS_CREATION'
+            FROM pis_consent_authorization auth
+            INNER JOIN pis_common_payment payment
+            ON auth.payment_id = payment.id
+            WHERE auth.authorization_type = 'CREATED' OR auth.authorization_type IS NULL
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT authorisation_id_seq.NEXTVAL, auth.external_id, auth.psu_id, payment.payment_id, auth.sca_status,
+            auth.chosen_sca_method, auth.sca_authentication_data, auth.expiration_timestamp, auth.instance_id,
+            auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri, auth.nok_redirect_uri,
+            'PIS_CREATION'
+            FROM pis_consent_authorization auth
+            INNER JOIN pis_common_payment payment
+            ON auth.payment_id = payment.id
+            WHERE auth.authorization_type = 'CREATED' OR auth.authorization_type IS NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-01-23-7" author="ssh@adorsys.com.ua">
+        <comment>
+            Migrate existing cancellation authorisations from pis_consent_authorization table into authorisation table
+        </comment>
+
+        <sql dbms="mariadb,h2">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT (NEXT VALUE FOR authorisation_id_seq), auth.external_id, auth.psu_id, payment.payment_id,
+            auth.sca_status, auth.chosen_sca_method, auth.sca_authentication_data, auth.expiration_timestamp,
+            auth.instance_id, auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri,
+            auth.nok_redirect_uri, 'PIS_CANCELLATION'
+            FROM pis_consent_authorization auth
+            INNER JOIN pis_common_payment payment
+            ON auth.payment_id = payment.id
+            WHERE auth.authorization_type = 'CANCELLED'
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT nextval('authorisation_id_seq'), auth.external_id, auth.psu_id, payment.payment_id, auth.sca_status,
+            auth.chosen_sca_method, auth.sca_authentication_data, auth.expiration_timestamp, auth.instance_id,
+            auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri, auth.nok_redirect_uri,
+            'PIS_CANCELLATION'
+            FROM pis_consent_authorization auth
+            INNER JOIN pis_common_payment payment
+            ON auth.payment_id = payment.id
+            WHERE auth.authorization_type = 'CANCELLED'
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO authorisation (authorisation_id, external_id, psu_id, parent_id, sca_status,
+            authentication_method_id, sca_authentication_data, expiration_timestamp, instance_id, sca_approach,
+            redirect_expiration_timestamp, redirect_uri, nok_redirect_uri, authorisation_type)
+            SELECT authorisation_id_seq.NEXTVAL, auth.external_id, auth.psu_id, payment.payment_id, auth.sca_status,
+            auth.chosen_sca_method, auth.sca_authentication_data, auth.expiration_timestamp, auth.instance_id,
+            auth.sca_approach, auth.redirect_expiration_timestamp, auth.redirect_uri, auth.nok_redirect_uri,
+            'PIS_CANCELLATION'
+            FROM pis_consent_authorization auth
+            INNER JOIN pis_common_payment payment
+            ON auth.payment_id = payment.id
+            WHERE auth.authorization_type = 'CANCELLED'
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-01-23-8" author="ssh@adorsys.com.ua">
+        <comment>Add foreign key to auth_available_sca_method on authorisation</comment>
+
+        <addForeignKeyConstraint baseColumnNames="authorisation_id" baseTableName="auth_available_sca_method"
+                                 constraintName="fk_auth_av_sca_method_auth" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="authorisation_id" referencedTableName="authorisation"/>
+    </changeSet>
+
+    <changeSet id="2020-01-23-9" author="ssh@adorsys.com.ua">
+        <comment>
+            Migrate existing sca methods from ais_available_sca_method table into auth_available_sca_method table
+        </comment>
+
+        <sql>
+            INSERT INTO auth_available_sca_method (authentication_method_id, decoupled, authorisation_id)
+            SELECT ais_sca.authentication_method_id, ais_sca.decoupled, auth.authorisation_id
+            FROM ais_available_sca_method ais_sca
+            INNER JOIN ais_consent_authorization ais_auth
+            ON ais_sca.authorisation_id = ais_auth.authorization_id
+            INNER JOIN authorisation auth
+            ON ais_auth.external_id = auth.external_id
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-01-23-10" author="ssh@adorsys.com.ua">
+        <comment>
+            Migrate existing sca methods from pis_available_sca_method table into auth_available_sca_method table
+        </comment>
+
+        <sql>
+            INSERT INTO auth_available_sca_method (authentication_method_id, decoupled, authorisation_id)
+            SELECT pis_sca.authentication_method_id, pis_sca.decoupled, auth.authorisation_id
+            FROM pis_available_sca_method pis_sca
+            INNER JOIN pis_consent_authorization pis_auth
+            ON pis_sca.authorisation_id = pis_auth.authorization_id
+            INNER JOIN authorisation auth
+            ON pis_auth.external_id = auth.external_id
+        </sql>
+    </changeSet>
+</databaseChangeLog>

@@ -241,7 +241,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <!-- Fix failsafe and spring-boot repackage not working together -->
                 <configuration>
-                    <classesDirectory>${project.build.directory}/${build.finalName}.jar.original</classesDirectory>
+                    <classesDirectory>${project.build.directory}/${project.build.finalName}.jar.original</classesDirectory>
                 </configuration>
             </plugin>
 		</plugins>

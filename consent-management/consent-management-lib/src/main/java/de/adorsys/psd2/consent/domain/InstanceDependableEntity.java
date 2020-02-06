@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
+@EqualsAndHashCode
 public abstract class InstanceDependableEntity {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 

@@ -45,7 +45,7 @@ class PaymentInitiationHeadersBuilderTest {
     @Test
     void buildInitiatePaymentHeaders_withAuthorisationId_shouldReturnLocationAndScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
@@ -74,7 +74,7 @@ class PaymentInitiationHeadersBuilderTest {
         ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildInitiatePaymentHeaders(null, SELF_LINK, responseHeadersModel);
 
         // Then
-        verify(scaApproachResolver, never()).getInitiationScaApproach(any());
+        verify(scaApproachResolver, never()).getScaApproach(any());
 
         HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
         assertEquals(expectedHttpHeaders, actualHttpHeaders);
@@ -83,14 +83,14 @@ class PaymentInitiationHeadersBuilderTest {
     @Test
     void buildStartPaymentAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
 
         // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildStartPaymentAuthorisationHeaders(AUTHORISATION_ID);
+        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildStartAuthorisationHeaders(AUTHORISATION_ID);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();
@@ -102,14 +102,14 @@ class PaymentInitiationHeadersBuilderTest {
     @Test
     void buildUpdatePaymentInitiationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
 
         // When
-        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildUpdatePaymentInitiationPsuDataHeaders(AUTHORISATION_ID);
+        ResponseHeaders responseHeaders = paymentInitiationHeadersBuilder.buildUpdatePsuDataHeaders(AUTHORISATION_ID);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();

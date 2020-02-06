@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -92,6 +92,6 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
         return new PisAuthorisationProcessorRequest(TEST_SCA_APPROACH,
                                                     TEST_SCA_STATUS,
                                                     request,
-                                                    new GetPisAuthorisationResponse());
+                                                    new Authorisation());
     }
 }

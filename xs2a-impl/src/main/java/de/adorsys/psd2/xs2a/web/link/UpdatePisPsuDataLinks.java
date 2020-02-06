@@ -54,7 +54,7 @@ public class UpdatePisPsuDataLinks extends AbstractLinks {
     }
 
     private boolean isEmbeddedScaApproach(String authorisationId) {
-        return scaApproachResolver.getInitiationScaApproach(authorisationId) == ScaApproach.EMBEDDED;
+        return scaApproachResolver.getScaApproach(authorisationId) == ScaApproach.EMBEDDED;
     }
 
     private boolean isScaStatusFinalised(ScaStatus scaStatus) {
