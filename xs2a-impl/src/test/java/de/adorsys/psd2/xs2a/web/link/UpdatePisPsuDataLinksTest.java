@@ -85,7 +85,7 @@ class UpdatePisPsuDataLinksTest {
 
     @Test
     void isScaStatusMethodSelectedAndEmbeddedApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
+        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
         links = new UpdatePisPsuDataLinks(HTTP_URL, scaApproachResolver, request, ScaStatus.SCAMETHODSELECTED, authenticationObject);
 

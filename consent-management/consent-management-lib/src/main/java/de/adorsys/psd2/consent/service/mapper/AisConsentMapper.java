@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
@@ -60,7 +60,7 @@ public class AisConsentMapper {
      * @param consent AIS consent entity
      * @return mapped AIS consent
      */
-    public AisAccountConsent mapToAisAccountConsent(AisConsent consent) {
+    public AisAccountConsent mapToAisAccountConsent(AisConsent consent, List<AuthorisationEntity> authorisations) {
         AisAccountAccess chosenAccess = getAvailableAccess(consent);
 
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
@@ -82,13 +82,13 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             authorisationTemplateMapper.mapToAuthorisationTemplate(consent.getAuthorisationTemplate()),
             consent.isMultilevelScaRequired(),
-            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
+            mapToAisAccountConsentAuthorisation(authorisations),
             usageCounterMap,
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
     }
 
-    public CmsAisAccountConsent mapToCmsAisAccountConsent(AisConsent consent) {
+    public CmsAisAccountConsent mapToCmsAisAccountConsent(AisConsent consent, List<AuthorisationEntity> authorisations) {
         AisAccountAccess chosenAccess = getAvailableAccess(consent);
 
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
@@ -109,27 +109,10 @@ public class AisConsentMapper {
             tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
             authorisationTemplateMapper.mapToAuthorisationTemplate(consent.getAuthorisationTemplate()),
             consent.isMultilevelScaRequired(),
-            mapToAisAccountConsentAuthorisation(consent.getAuthorizations()),
+            mapToAisAccountConsentAuthorisation(authorisations),
             usageCounterMap,
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
-    }
-
-    public AisConsentAuthorizationResponse mapToAisConsentAuthorizationResponse(AisConsentAuthorization aisConsentAuthorization) {
-        return Optional.ofNullable(aisConsentAuthorization)
-                   .map(conAuth -> {
-                       AisConsentAuthorizationResponse resp = new AisConsentAuthorizationResponse();
-                       resp.setAuthorizationId(conAuth.getExternalId());
-                       resp.setPsuIdData(psuDataMapper.mapToPsuIdData(conAuth.getPsuData()));
-                       resp.setConsentId(conAuth.getConsent().getExternalId());
-                       resp.setScaStatus(conAuth.getScaStatus());
-                       resp.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
-                       resp.setScaAuthenticationData(conAuth.getScaAuthenticationData());
-                       resp.setChosenScaApproach(conAuth.getScaApproach());
-
-                       return resp;
-                   })
-                   .orElse(null);
     }
 
     public Set<AspspAccountAccess> mapAspspAccountAccesses(AisAccountAccess aisAccountAccess) {
@@ -237,7 +220,7 @@ public class AisConsentMapper {
     }
 
 
-    private List<AisAccountConsentAuthorisation> mapToAisAccountConsentAuthorisation(List<AisConsentAuthorization> aisConsentAuthorisations) {
+    private List<AisAccountConsentAuthorisation> mapToAisAccountConsentAuthorisation(List<AuthorisationEntity> aisConsentAuthorisations) {
         if (CollectionUtils.isEmpty(aisConsentAuthorisations)) {
             return Collections.emptyList();
         }
@@ -247,7 +230,7 @@ public class AisConsentMapper {
                    .collect(Collectors.toList());
     }
 
-    private AisAccountConsentAuthorisation mapToAisAccountConsentAuthorisation(AisConsentAuthorization aisConsentAuthorisation) {
+    private AisAccountConsentAuthorisation mapToAisAccountConsentAuthorisation(AuthorisationEntity aisConsentAuthorisation) {
         return Optional.ofNullable(aisConsentAuthorisation)
                    .map(auth -> new AisAccountConsentAuthorisation(auth.getExternalId(),
                                                                    psuDataMapper.mapToPsuIdData(auth.getPsuData()),

@@ -40,7 +40,7 @@ public class UpdatePisAuthorisationLinks extends AbstractLinks {
         if (isScaStatusMethodAuthenticated(scaStatus)) {
             setSelectAuthenticationMethod(authorisationLink);
         } else if (isScaStatusMethodSelected(response.getChosenScaMethod(), scaStatus) &&
-                       scaApproachResolver.getInitiationScaApproach(response.getAuthorisationId()) == EMBEDDED) {
+                       scaApproachResolver.getScaApproach(response.getAuthorisationId()) == EMBEDDED) {
             setAuthoriseTransaction(authorisationLink);
         } else if (isScaStatusMethodIdentified(scaStatus)) {
             setUpdatePsuAuthentication(authorisationLink);

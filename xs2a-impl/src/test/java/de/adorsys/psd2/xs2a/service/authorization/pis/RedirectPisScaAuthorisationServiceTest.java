@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -61,8 +61,8 @@ class RedirectPisScaAuthorisationServiceTest {
     private static final Xs2aPaymentCancellationAuthorisationSubResource XS2A_PAYMENT_CANCELLATION_AUTHORISATION_SUB_RESOURCE = new Xs2aPaymentCancellationAuthorisationSubResource(STRING_LIST);
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null, null);
-    private static final CreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null);
-    private static final CreatePisAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(WRONG_AUTHORISATION_ID, SCA_STATUS, null, null, null);
+    private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
+    private static final CreateAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(WRONG_AUTHORISATION_ID, SCA_STATUS, null, null);
     private static final Xs2aCreatePisCancellationAuthorisationResponse XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE = new Xs2aCreatePisCancellationAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE.getAuthorizationId(), ScaStatus.RECEIVED, PAYMENT_TYPE, null
     );
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
@@ -111,7 +111,7 @@ class RedirectPisScaAuthorisationServiceTest {
     @Test
     void updateCommonPaymentPsuData_success() {
         // Given
-        when(pisAuthorisationConfirmationService.processAuthorisationConfirmation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, false))
+        when(pisAuthorisationConfirmationService.processAuthorisationConfirmation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST))
             .thenReturn(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE);
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = redirectPisScaAuthorisationService.updateCommonPaymentPsuData(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST);
@@ -124,7 +124,7 @@ class RedirectPisScaAuthorisationServiceTest {
     void updateCommonPaymentPsuData_fail() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse errorResponse = buildErrorXs2aUpdatePisCommonPaymentPsuDataResponse();
-        when(pisAuthorisationConfirmationService.processAuthorisationConfirmation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST, false))
+        when(pisAuthorisationConfirmationService.processAuthorisationConfirmation(XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST))
             .thenReturn(errorResponse);
 
         // When

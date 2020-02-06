@@ -19,13 +19,15 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -47,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
     Xs2aToSpiAccountReferenceMapper.class})
 class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
-    private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @Autowired
@@ -124,35 +125,6 @@ class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    void mapToSpiUpdateConsentPsuDataReq() {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, CONSENT_ID, AUTHORISATION_ID);
-        AuthenticationObject chosenScaMethod = new AuthenticationObject();
-        chosenScaMethod.setAuthenticationMethodId("3284932jk6456");
-        response.setChosenScaMethod(chosenScaMethod);
-
-        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
-        PsuIdData psuData = new PsuIdData("1", "2", "3", "4", "5");
-        request.setPsuData(psuData);
-        request.setScaAuthenticationData("123456");
-        request.setConsentId(CONSENT_ID);
-        request.setAuthorizationId(AUTHORISATION_ID);
-
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = mapper.mapToSpiUpdateConsentPsuDataReq(response, request);
-        assertEquals(psuData, updateConsentPsuDataReq.getPsuData());
-        assertEquals(CONSENT_ID, updateConsentPsuDataReq.getConsentId());
-        assertEquals(AUTHORISATION_ID, updateConsentPsuDataReq.getAuthorizationId());
-        assertEquals("3284932jk6456", updateConsentPsuDataReq.getAuthenticationMethodId());
-        assertEquals("123456", updateConsentPsuDataReq.getScaAuthenticationData());
-        assertEquals(ScaStatus.SCAMETHODSELECTED, updateConsentPsuDataReq.getScaStatus());
-    }
-
-    @Test
-    void mapToSpiUpdateConsentPsuDataReq_nullValue() {
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = mapper.mapToSpiUpdateConsentPsuDataReq(null, new UpdateConsentPsuDataReq());
-        assertNull(updateConsentPsuDataReq);
-    }
-
-    @Test
     void mapToCreateAisConsentRequest() {
         PsuIdData psuData = new PsuIdData("1", "2", "3", "4", "5");
         TppInfo tppInfo = new TppInfo();
@@ -201,5 +173,21 @@ class Xs2aAisConsentMapperTest {
         SpiAccountConsent spiAccountConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/spi-account-consent.json", SpiAccountConsent.class);
         //Then
         assertEquals(spiAccountConsentExpected, spiAccountConsent);
+    }
+
+    @Test
+    void mapToSpiUpdateConsentPsuDataReq() {
+        UpdateConsentPsuDataReq updateAuthorisationRequest = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        AuthorisationProcessorResponse authorisationProcessorResponse = jsonReader.getObjectFromFile("json/service/mapper/consent/authorisation-processor-response2.json", AuthorisationProcessorResponse.class);
+
+        UpdateConsentPsuDataReq actual = mapper.mapToSpiUpdateConsentPsuDataReq(updateAuthorisationRequest, authorisationProcessorResponse);
+
+        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToSpiUpdateConsentPsuDataReq_nullValue() {
+        assertNull(mapper.mapToSpiUpdateConsentPsuDataReq(null, null));
     }
 }

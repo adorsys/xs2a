@@ -987,7 +987,7 @@ class PaymentControllerTest {
         when(responseMapper.created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS)))
             .thenReturn(new ResponseEntity(expectedResponse, CREATED));
 
-        when(paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
+        when(paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
 
         // When
         ResponseEntity actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
@@ -1002,7 +1002,7 @@ class PaymentControllerTest {
         assertEquals(expectedResponse, actual.getBody());
 
         verify(responseMapper).created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
-        verify(paymentCancellationHeadersBuilder).buildStartPaymentCancellationAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID);
+        verify(paymentCancellationHeadersBuilder).buildStartAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID);
 
         verify(responseErrorMapper, never()).generateErrorResponse(any(), any());
     }
@@ -1065,7 +1065,7 @@ class PaymentControllerTest {
 
         verify(responseErrorMapper).generateErrorResponse(serviceError);
 
-        verify(paymentCancellationHeadersBuilder, never()).buildStartPaymentCancellationAuthorisationHeaders(anyString());
+        verify(paymentCancellationHeadersBuilder, never()).buildStartAuthorisationHeaders(anyString());
         verify(responseMapper, never()).created(any(), any(), any());
     }
 
@@ -1088,7 +1088,7 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.updatePisCancellationPsuData(request))
             .thenReturn(serviceResponse);
 
-        when(paymentCancellationHeadersBuilder.buildUpdatePaymentCancellationPsuDataHeaders(CANCELLATION_AUTHORISATION_ID))
+        when(paymentCancellationHeadersBuilder.buildUpdatePsuDataHeaders(CANCELLATION_AUTHORISATION_ID))
             .thenReturn(RESPONSE_HEADERS);
 
         UpdatePsuAuthenticationResponse expectedResponse = new UpdatePsuAuthenticationResponse();
@@ -1108,7 +1108,7 @@ class PaymentControllerTest {
         assertEquals(expectedResponse, actual.getBody());
 
         verify(responseMapper).ok(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
-        verify(paymentCancellationHeadersBuilder).buildUpdatePaymentCancellationPsuDataHeaders(CANCELLATION_AUTHORISATION_ID);
+        verify(paymentCancellationHeadersBuilder).buildUpdatePsuDataHeaders(CANCELLATION_AUTHORISATION_ID);
 
         verify(responseErrorMapper, never()).generateErrorResponse(any());
     }
@@ -1171,7 +1171,7 @@ class PaymentControllerTest {
 
         verify(responseErrorMapper).generateErrorResponse(serviceError);
 
-        verify(paymentCancellationHeadersBuilder, never()).buildUpdatePaymentCancellationPsuDataHeaders(anyString());
+        verify(paymentCancellationHeadersBuilder, never()).buildUpdatePsuDataHeaders(anyString());
         verify(responseMapper, never()).created(any(), any(), any());
     }
 
@@ -1194,7 +1194,7 @@ class PaymentControllerTest {
         when(paymentAuthorisationService.updatePisCommonPaymentPsuData(request))
             .thenReturn(serviceResponse);
 
-        when(paymentInitiationHeadersBuilder.buildUpdatePaymentInitiationPsuDataHeaders(AUTHORISATION_ID))
+        when(paymentInitiationHeadersBuilder.buildUpdatePsuDataHeaders(AUTHORISATION_ID))
             .thenReturn(RESPONSE_HEADERS);
 
         UpdatePsuAuthenticationResponse expectedResponse = new UpdatePsuAuthenticationResponse();
@@ -1214,7 +1214,7 @@ class PaymentControllerTest {
         assertEquals(expectedResponse, actual.getBody());
 
         verify(responseMapper).ok(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
-        verify(paymentInitiationHeadersBuilder).buildUpdatePaymentInitiationPsuDataHeaders(AUTHORISATION_ID);
+        verify(paymentInitiationHeadersBuilder).buildUpdatePsuDataHeaders(AUTHORISATION_ID);
 
         verify(responseErrorMapper, never()).generateErrorResponse(any());
     }
@@ -1277,7 +1277,7 @@ class PaymentControllerTest {
 
         verify(responseErrorMapper).generateErrorResponse(serviceError);
 
-        verify(paymentInitiationHeadersBuilder, never()).buildUpdatePaymentInitiationPsuDataHeaders(anyString());
+        verify(paymentInitiationHeadersBuilder, never()).buildUpdatePsuDataHeaders(anyString());
         verify(responseMapper, never()).created(any(), any(), any());
     }
 
@@ -1392,7 +1392,7 @@ class PaymentControllerTest {
         when(responseMapper.created(any(), eq(RESPONSE_HEADERS)))
             .thenReturn(new ResponseEntity(expectedResponse, CREATED));
 
-        when(paymentInitiationHeadersBuilder.buildStartPaymentAuthorisationHeaders(AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
+        when(paymentInitiationHeadersBuilder.buildStartAuthorisationHeaders(AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
 
         // When
         ResponseEntity actual = paymentController.startPaymentAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, body,
@@ -1407,7 +1407,7 @@ class PaymentControllerTest {
         assertEquals(expectedResponse, actual.getBody());
 
         verify(responseMapper).created(any(), eq(RESPONSE_HEADERS));
-        verify(paymentInitiationHeadersBuilder).buildStartPaymentAuthorisationHeaders(AUTHORISATION_ID);
+        verify(paymentInitiationHeadersBuilder).buildStartAuthorisationHeaders(AUTHORISATION_ID);
 
         verify(responseErrorMapper, never()).generateErrorResponse(any(), any());
     }

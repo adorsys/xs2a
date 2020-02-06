@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,15 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -44,7 +49,7 @@ import java.util.List;
 @RequestMapping(path = "api/v1/ais/consent")
 @Api(value = "api/v1/ais/consent", tags = InternalCmsXs2aApiTagName.AIS_CONSENTS)
 public class AisConsentController {
-    private final AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
+    private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
     private final AisConsentServiceEncrypted aisConsentService;
     private final AccountServiceEncrypted accountServiceEncrypted;
 
@@ -200,14 +205,14 @@ public class AisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CreateAisConsentAuthorizationResponse> createConsentAuthorization(
+    public ResponseEntity<CreateAuthorisationResponse> createConsentAuthorization(
         @ApiParam(name = "consent-id",
             value = "The consent identification assigned to the created consent authorization.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("consent-id") String consentId,
-        @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
-        CmsResponse<CreateAisConsentAuthorizationResponse> response = aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(consentId, consentAuthorization);
+        @RequestBody CreateAuthorisationRequest authorisationRequest) {
+        CmsResponse<CreateAuthorisationResponse> response = authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(consentId), authorisationRequest);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -228,10 +233,10 @@ public class AisConsentController {
             required = true)
         @PathVariable("authorization-id") String authorizationId,
         @ApiParam(value = "The following code values are permitted 'VALID', 'REJECTED', 'REVOKED_BY_PSU', 'TERMINATED_BY_TPP'. These values might be extended by ASPSP by more values.", example = "VALID")
-        @RequestBody AisConsentAuthorizationRequest consentAuthorization) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateConsentAuthorization(authorizationId, consentAuthorization);
+        @RequestBody UpdateAuthorisationRequest authorisationRequest) {
+        CmsResponse<Authorisation> response = authorisationServiceEncrypted.updateAuthorisation(authorizationId, authorisationRequest);
 
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && response.getPayload() != null && response.getPayload().getParentId() != null) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
@@ -253,7 +258,7 @@ public class AisConsentController {
             example = "VALID",
             required = true)
         @PathVariable("status") String scaStatus) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateConsentAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -267,7 +272,7 @@ public class AisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<AisConsentAuthorizationResponse> getConsentAuthorization(
+    public ResponseEntity<Authorisation> getConsentAuthorization(
         @ApiParam(name = "consent-id",
             value = "The account consent identification assigned to the created account consent.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
@@ -278,7 +283,7 @@ public class AisConsentController {
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("authorization-id") String authorizationId) {
-        CmsResponse<AisConsentAuthorizationResponse> response = aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(authorizationId, consentId);
+        CmsResponse<Authorisation> response = authorisationServiceEncrypted.getAuthorisationById(authorizationId);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -303,7 +308,7 @@ public class AisConsentController {
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("authorisation-id") String authorisationId) {
-        CmsResponse<ScaStatus> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaStatus(consentId, authorisationId);
+        CmsResponse<ScaStatus> response = authorisationServiceEncrypted.getAuthorisationScaStatus(authorisationId, new AisAuthorisationParentHolder(consentId));
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -323,7 +328,7 @@ public class AisConsentController {
             example = "vOHy6fj2f5IgxHk-kTlhw6sZdTXbRE3bWsu2obq54beYOChP5NvRmfh06nrwumc2R01HygQenchEcdGOlU-U0A==_=_iR74m2PdNyE",
             required = true)
         @PathVariable("consent-id") String consentId) {
-        CmsResponse<List<String>> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationsByConsentId(consentId);
+        CmsResponse<List<String>> response = authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(consentId));
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -346,7 +351,7 @@ public class AisConsentController {
             example = "sms",
             required = true)
         @PathVariable("authentication-method-id") String authenticationMethodId) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
         return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
@@ -362,7 +367,7 @@ public class AisConsentController {
             required = true)
         @PathVariable("authorisation-id") String authorisationId,
         @RequestBody List<CmsScaMethod> methods) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -387,7 +392,7 @@ public class AisConsentController {
             example = "REDIRECT",
             required = true)
         @PathVariable("sca-approach") ScaApproach scaApproach) {
-        CmsResponse<Boolean> response = aisConsentAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
 
         if (response.isSuccessful() && response.getPayload()) {
             return new ResponseEntity<>(true, HttpStatus.OK);
@@ -432,7 +437,7 @@ public class AisConsentController {
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("authorisation-id") String authorisationId) {
-        CmsResponse<AuthorisationScaApproachResponse> response = aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
+        CmsResponse<AuthorisationScaApproachResponse> response = authorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
 
         if (response.hasError()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

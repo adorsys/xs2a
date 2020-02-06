@@ -20,10 +20,18 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.AisConsentStatusResponse;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -32,6 +40,8 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -41,7 +51,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,14 +61,14 @@ class AisConsentControllerTest {
     private static final String ACCOUNT_ID = "testAccountId";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.VALID;
-    private static final AisConsentAuthorizationRequest CONSENT_AUTHORISATION_REQUEST = getConsentAuthorisationRequest();
-    private static final AisConsentAuthorizationRequest WRONG_CONSENT_AUTHORISATION_REQUEST = getWrongConsentAuthorisationRequest();
+    private static final CreateAuthorisationRequest CONSENT_AUTHORISATION_REQUEST = getConsentAuthorisationRequest();
+    private static final UpdateAuthorisationRequest WRONG_CONSENT_AUTHORISATION_REQUEST = getWrongConsentAuthorisationRequest();
     private static final String PSU_ID = "4e5dbef0-2377-483f-9ab9-ad510c1a557a";
     private static final String WRONG_PSU_ID = "Wrong psu id";
     private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String AUTHORISATION_ID_1 = "4400de4c-1c74-4ca0-941d-8f56b828f31d";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorization id";
-    private static final AisConsentAuthorizationResponse CONSENT_AUTHORISATION_RESPONSE = getConsentAuthorisationResponse();
+    private static final Authorisation CONSENT_AUTHORISATION_RESPONSE = getConsentAuthorisationResponse();
 
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
@@ -69,7 +80,10 @@ class AisConsentControllerTest {
     @Mock
     private AccountServiceEncrypted accountServiceEncrypted;
     @Mock
-    private AisConsentAuthorisationServiceEncrypted aisAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
+
+    @Captor
+    private ArgumentCaptor<AisAuthorisationParentHolder> authorisationParentHolderCaptor;
 
     @Test
     void createConsent_success() throws WrongChecksumException {
@@ -154,60 +168,65 @@ class AisConsentControllerTest {
 
     @Test
     void createConsentAuthorization_Success() {
-        when(aisAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(CONSENT_ID), eq(CONSENT_AUTHORISATION_REQUEST)))
-            .thenReturn(CmsResponse.<CreateAisConsentAuthorizationResponse>builder().payload(buildCreateAisConsentAuthorisationResponse()).build());
+        when(authorisationServiceEncrypted.createAuthorisation(authorisationParentHolderCaptor.capture(), eq(CONSENT_AUTHORISATION_REQUEST)))
+            .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(buildCreateAisConsentAuthorisationResponse()).build());
 
         //Given:
-        AisConsentAuthorizationRequest expectedRequest = getConsentAuthorisationRequest();
+        CreateAuthorisationRequest expectedRequest = getConsentAuthorisationRequest();
 
         //When:
-        ResponseEntity<CreateAisConsentAuthorizationResponse> responseEntity = aisConsentController.createConsentAuthorization(CONSENT_ID, expectedRequest);
+        ResponseEntity<CreateAuthorisationResponse> responseEntity = aisConsentController.createConsentAuthorization(CONSENT_ID, expectedRequest);
 
         //Then:
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(AUTHORISATION_ID, responseEntity.getBody().getAuthorizationId());
+        assertEquals(CONSENT_ID, authorisationParentHolderCaptor.getValue().getParentId());
     }
 
     @Test
     void createConsentAuthorization_Fail_WrongConsentId() {
-        when(aisAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(WRONG_CONSENT_ID), eq(CONSENT_AUTHORISATION_REQUEST)))
-            .thenReturn(CmsResponse.<CreateAisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(authorisationServiceEncrypted.createAuthorisation(authorisationParentHolderCaptor.capture(), eq(CONSENT_AUTHORISATION_REQUEST)))
+            .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //Given:
-        AisConsentAuthorizationRequest expectedRequest = getConsentAuthorisationRequest();
+        CreateAuthorisationRequest expectedRequest = getConsentAuthorisationRequest();
 
         //When:
-        ResponseEntity<CreateAisConsentAuthorizationResponse> responseEntity = aisConsentController.createConsentAuthorization(WRONG_CONSENT_ID, expectedRequest);
+        ResponseEntity<CreateAuthorisationResponse> responseEntity = aisConsentController.createConsentAuthorization(WRONG_CONSENT_ID, expectedRequest);
 
         //Then:
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(WRONG_CONSENT_ID, authorisationParentHolderCaptor.getValue().getParentId());
     }
 
     @Test
     void createConsentAuthorization_Fail_WrondRequest() {
-        when(aisAuthorisationServiceEncrypted.createAuthorizationWithResponse(eq(CONSENT_ID), eq(WRONG_CONSENT_AUTHORISATION_REQUEST)))
-            .thenReturn(CmsResponse.<CreateAisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(authorisationServiceEncrypted.createAuthorisation(authorisationParentHolderCaptor.capture(), eq(getConsentAuthorisationRequest())))
+            .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //Given:
-        AisConsentAuthorizationRequest expectedRequest = getWrongConsentAuthorisationRequest();
+        CreateAuthorisationRequest expectedRequest = getConsentAuthorisationRequest();
 
         //When:
-        ResponseEntity<CreateAisConsentAuthorizationResponse> responseEntity = aisConsentController.createConsentAuthorization(CONSENT_ID, expectedRequest);
+        ResponseEntity<CreateAuthorisationResponse> responseEntity = aisConsentController.createConsentAuthorization(CONSENT_ID, expectedRequest);
 
         //Then:
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(CONSENT_ID, authorisationParentHolderCaptor.getValue().getParentId());
     }
 
     @Test
     void updateConsentAuthorization_Success() {
-        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(anyString(), any(AisConsentAuthorizationRequest.class)))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
+        UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
+        Authorisation authorisation = new Authorisation();
+        authorisation.setParentId(CONSENT_ID);
+        when(authorisationServiceEncrypted.updateAuthorisation(anyString(), eq(request)))
+            .thenReturn(CmsResponse.<Authorisation>builder().payload(authorisation).build());
 
         //Given:
-        AisConsentAuthorizationRequest expectedRequest = getConsentAuthorisationRequest();
 
         //When:
-        ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(AUTHORISATION_ID_1, expectedRequest);
+        ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(AUTHORISATION_ID_1, request);
 
         //Then:
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -217,12 +236,12 @@ class AisConsentControllerTest {
     void updateConsentAuthorization_Fail_WrongConsentId() {
 
         //Given:
-        AisConsentAuthorizationRequest expectedRequest = getConsentAuthorisationRequest();
-        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(AUTHORISATION_ID, CONSENT_AUTHORISATION_REQUEST))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
+        UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
+        when(authorisationServiceEncrypted.updateAuthorisation(AUTHORISATION_ID, request))
+            .thenReturn(CmsResponse.<Authorisation>builder().payload(new Authorisation()).build());
 
         //When:
-        ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(AUTHORISATION_ID, expectedRequest);
+        ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(AUTHORISATION_ID, request);
 
         //Then:
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -230,14 +249,13 @@ class AisConsentControllerTest {
 
     @Test
     void updateConsentAuthorization_Fail_WrongAuthorizationId() {
-        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(WRONG_AUTHORISATION_ID, CONSENT_AUTHORISATION_REQUEST))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
-
         //Given:
-        AisConsentAuthorizationRequest expectedRequest = getConsentAuthorisationRequest();
+        UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
+        when(authorisationServiceEncrypted.updateAuthorisation(WRONG_AUTHORISATION_ID, request))
+            .thenReturn(CmsResponse.<Authorisation>builder().payload(new Authorisation()).build());
 
         //When:
-        ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(WRONG_AUTHORISATION_ID, expectedRequest);
+        ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(WRONG_AUTHORISATION_ID, request);
 
         //Then:
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -245,8 +263,8 @@ class AisConsentControllerTest {
 
     @Test
     void updateConsentAuthorization_Fail_WrongRequest() {
-        when(aisAuthorisationServiceEncrypted.updateConsentAuthorization(AUTHORISATION_ID, WRONG_CONSENT_AUTHORISATION_REQUEST))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
+        when(authorisationServiceEncrypted.updateAuthorisation(AUTHORISATION_ID, WRONG_CONSENT_AUTHORISATION_REQUEST))
+            .thenReturn(CmsResponse.<Authorisation>builder().payload(new Authorisation()).build());
         //When:
         ResponseEntity responseEntity = aisConsentController.updateConsentAuthorization(AUTHORISATION_ID, WRONG_CONSENT_AUTHORISATION_REQUEST);
 
@@ -256,11 +274,11 @@ class AisConsentControllerTest {
 
     @Test
     void getConsentAuthorization_Success() {
-        when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(AUTHORISATION_ID), eq(CONSENT_ID)))
-            .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().payload(CONSENT_AUTHORISATION_RESPONSE).build());
+        when(authorisationServiceEncrypted.getAuthorisationById(eq(AUTHORISATION_ID)))
+            .thenReturn(CmsResponse.<Authorisation>builder().payload(CONSENT_AUTHORISATION_RESPONSE).build());
 
         //When:
-        ResponseEntity<AisConsentAuthorizationResponse> responseEntity = aisConsentController.getConsentAuthorization(CONSENT_ID, AUTHORISATION_ID);
+        ResponseEntity<Authorisation> responseEntity = aisConsentController.getConsentAuthorization(CONSENT_ID, AUTHORISATION_ID);
 
         //Then:
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -269,11 +287,11 @@ class AisConsentControllerTest {
 
     @Test
     void getConsentAuthorization_Fail_WrongConsentId() {
-        when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(AUTHORISATION_ID), eq(WRONG_CONSENT_ID)))
-            .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
+            .thenReturn(CmsResponse.<Authorisation>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When:
-        ResponseEntity<AisConsentAuthorizationResponse> responseEntity = aisConsentController.getConsentAuthorization(WRONG_CONSENT_ID, AUTHORISATION_ID);
+        ResponseEntity<Authorisation> responseEntity = aisConsentController.getConsentAuthorization(WRONG_CONSENT_ID, AUTHORISATION_ID);
 
         //Then:
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -281,11 +299,11 @@ class AisConsentControllerTest {
 
     @Test
     void getConsentAuthorization_Fail_WrongAuthorizationId() {
-        when(aisAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(eq(WRONG_AUTHORISATION_ID), eq(CONSENT_ID)))
-            .thenReturn(CmsResponse.<AisConsentAuthorizationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(authorisationServiceEncrypted.getAuthorisationById(eq(WRONG_AUTHORISATION_ID)))
+            .thenReturn(CmsResponse.<Authorisation>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When:
-        ResponseEntity<AisConsentAuthorizationResponse> responseEntity = aisConsentController.getConsentAuthorization(CONSENT_ID, WRONG_AUTHORISATION_ID);
+        ResponseEntity<Authorisation> responseEntity = aisConsentController.getConsentAuthorization(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         //Then:
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -293,7 +311,7 @@ class AisConsentControllerTest {
 
     @Test
     void getConsentAuthorizationScaStatus_success() {
-        when(aisAuthorisationServiceEncrypted.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+        when(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new AisAuthorisationParentHolder(CONSENT_ID)))
             .thenReturn(CmsResponse.<ScaStatus>builder().payload(SCA_STATUS).build());
 
         // When
@@ -306,7 +324,7 @@ class AisConsentControllerTest {
 
     @Test
     void getConsentAuthorizationScaStatus_failure_wrongIds() {
-        when(aisAuthorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
+        when(authorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_AUTHORISATION_ID, new AisAuthorisationParentHolder(WRONG_CONSENT_ID)))
             .thenReturn(CmsResponse.<ScaStatus>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         // When
@@ -319,12 +337,12 @@ class AisConsentControllerTest {
 
     @Test
     void getAuthorisationScaApproach_success() {
-        when(aisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
+        when(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder().payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)).build());
 
         ResponseEntity<AuthorisationScaApproachResponse> response = aisConsentController.getAuthorisationScaApproach(AUTHORISATION_ID);
 
-        verify(aisAuthorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
+        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(ScaApproach.EMBEDDED, response.getBody().getScaApproach());
@@ -332,12 +350,12 @@ class AisConsentControllerTest {
 
     @Test
     void getAuthorisationScaApproach_error() {
-        when(aisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
+        when(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         ResponseEntity<AuthorisationScaApproachResponse> response = aisConsentController.getAuthorisationScaApproach(AUTHORISATION_ID);
 
-        verify(aisAuthorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
+        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertNull(response.getBody());
@@ -365,32 +383,31 @@ class AisConsentControllerTest {
         assertNull(response.getBody());
     }
 
-    private static AisConsentAuthorizationRequest getConsentAuthorisationRequest() {
-        AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();
+    private static CreateAuthorisationRequest getConsentAuthorisationRequest() {
+        CreateAuthorisationRequest request = new CreateAuthorisationRequest();
         request.setPsuData(new PsuIdData(PSU_ID, null, null, null, null));
-        request.setPassword("zzz");
 
         return request;
     }
 
-    private static AisConsentAuthorizationRequest getWrongConsentAuthorisationRequest() {
-        AisConsentAuthorizationRequest request = new AisConsentAuthorizationRequest();
+    private static UpdateAuthorisationRequest getWrongConsentAuthorisationRequest() {
+        UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
         request.setPsuData(new PsuIdData(WRONG_PSU_ID, null, null, null, null));
         request.setPassword("zzz");
 
         return request;
     }
 
-    private static AisConsentAuthorizationResponse getConsentAuthorisationResponse() {
-        AisConsentAuthorizationResponse authorizationResponse = new AisConsentAuthorizationResponse();
-        authorizationResponse.setAuthorizationId(AUTHORISATION_ID);
-        authorizationResponse.setConsentId(CONSENT_ID);
+    private static Authorisation getConsentAuthorisationResponse() {
+        Authorisation authorizationResponse = new Authorisation();
+        authorizationResponse.setAuthorisationId(AUTHORISATION_ID);
+        authorizationResponse.setParentId(CONSENT_ID);
         authorizationResponse.setPsuIdData(new PsuIdData(PSU_ID, null, null, null, null));
 
         return authorizationResponse;
     }
 
-    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorisationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
+    private CreateAuthorisationResponse buildCreateAisConsentAuthorisationResponse() {
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
     }
 }

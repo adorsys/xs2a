@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,25 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
-import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CmsPsuAuthorisationMapper {
-
     @Mapping(target = "psuId", source = "psuData.psuId")
     @Mapping(target = "authorisationId", source = "externalId")
-    @Mapping(target = "authorisationType", source = "authorizationType")
-    CmsPsuAuthorisation mapToCmsPsuAuthorisationPis(PisAuthorization pisAuthorization);
+    @Mapping(target = "authorisationType", expression = "java(authorisationType(authorisationEntity.getAuthorisationType()))")
+    @Mapping(target = "type", source = "authorisationType")
+    CmsPsuAuthorisation mapToCmsPsuAuthorisation(AuthorisationEntity authorisationEntity);
 
-    @Mapping(target = "psuId", source = "psuData.psuId")
-    @Mapping(target = "authorisationId", source = "externalId")
-    @Mapping(target = "authorisationType", ignore = true)
-    CmsPsuAuthorisation mapToCmsPsuAuthorisationAis(AisConsentAuthorization consentAuthorization);
+    default PaymentAuthorisationType authorisationType(AuthorisationType authorisationType) {
+        if (AuthorisationType.PIS_CANCELLATION == authorisationType) {
+            return PaymentAuthorisationType.CANCELLED;
+        }
+        return PaymentAuthorisationType.CREATED;
+    }
 }

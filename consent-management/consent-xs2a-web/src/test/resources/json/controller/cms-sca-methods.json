@@ -1,0 +1,6 @@
+[
+  {
+    "authenticationMethodId": "sms",
+    "decoupled": true
+  }
+]

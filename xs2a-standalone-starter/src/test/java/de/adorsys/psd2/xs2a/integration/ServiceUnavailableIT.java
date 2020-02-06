@@ -22,9 +22,15 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.api.service.AisConsentAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.psd2.consent.api.authorisation.AuthorisationParentHolder;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
@@ -158,7 +164,7 @@ class ServiceUnavailableIT {
     @MockBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
-    private AisConsentAuthorisationServiceEncrypted aisConsentAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private AspspDataService aspspDataService;
     @MockBean
@@ -343,8 +349,8 @@ class ServiceUnavailableIT {
     //Preparations
     private void makePreparationsCms(boolean throwException) throws IOException, WrongChecksumException {
         givenReturnOrThrowException(
-            aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)),
-            buildCmsResponse(buildCmsResponse(buildCreateAisConsentAuthorizationResponse())),
+            authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)),
+            buildCmsResponse(buildCmsResponse(buildCreateAuthorisationResponse())),
             throwException);
         AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(DEDICATED_CONSENT_REQUEST_JSON_PATH, ScaApproach.EMBEDDED, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
         givenReturnOrThrowException(
@@ -360,11 +366,11 @@ class ServiceUnavailableIT {
             buildCmsResponse(aisAccountConsent),
             throwException);
         givenReturnOrThrowException(
-            aisConsentAuthorisationServiceEncrypted.getAccountConsentAuthorizationById(any(String.class), any(String.class)),
+            authorisationServiceEncrypted.getAuthorisationById(anyString()),
             buildCmsResponse(AisConsentAuthorizationResponseBuilder.buildAisConsentAuthorizationResponse(ScaApproach.EMBEDDED)),
             throwException);
         givenReturnOrThrowException(
-            aisConsentAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID),
+            authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID),
             buildCmsResponse(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)),
             throwException);
         givenReturnOrThrowException(
@@ -380,8 +386,8 @@ class ServiceUnavailableIT {
             Optional.of(new AspspConsentData(null, ENCRYPT_CONSENT_ID)),
             throwException);
         givenReturnOrThrowException(
-            aisConsentAuthorisationServiceEncrypted.createAuthorizationWithResponse(any(String.class), any(AisConsentAuthorizationRequest.class)),
-            buildCmsResponse(buildCreateAisConsentAuthorizationResponse()),
+            authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)),
+            buildCmsResponse(buildCreateAuthorisationResponse()),
             throwException);
     }
 
@@ -416,8 +422,8 @@ class ServiceUnavailableIT {
         }
     }
 
-    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, null);
+    private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, null);
     }
 
     private <T> CmsResponse<T> buildCmsResponse(T payload) {

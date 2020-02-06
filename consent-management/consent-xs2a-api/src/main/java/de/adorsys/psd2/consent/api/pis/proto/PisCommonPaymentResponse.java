@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
 
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
-                   .filter(auth -> auth.getId().equals(authorisationId))
+                   .filter(auth -> auth.getAuthorisationId().equals(authorisationId))
                    .findFirst();
     }
 }

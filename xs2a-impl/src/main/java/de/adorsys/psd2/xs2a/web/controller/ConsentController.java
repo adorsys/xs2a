@@ -134,7 +134,7 @@ public class ConsentController implements ConsentApi {
         }
 
         AuthorisationResponse authorisationResponse = createResponse.getBody();
-        ResponseHeaders responseHeaders = consentHeadersBuilder.buildStartConsentAuthorisationHeaders(authorisationResponse.getAuthorisationId());
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildStartAuthorisationHeaders(authorisationResponse.getAuthorisationId());
 
         return responseMapper.created(ResponseObject.builder()
                                           .body(authorisationMapper.mapToAisCreateOrUpdateAuthorisationResponse(createResponse))
@@ -162,7 +162,7 @@ public class ConsentController implements ConsentApi {
             return responseErrorMapper.generateErrorResponse(updateConsentPsuDataResponse.getError());
         }
 
-        ResponseHeaders responseHeaders = consentHeadersBuilder.buildUpdateConsentsPsuDataHeaders(authorisationId);
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildUpdatePsuDataHeaders(authorisationId);
 
         return responseMapper.ok(updateConsentPsuDataResponse, authorisationMapper::mapToAisUpdatePsuAuthenticationResponse, responseHeaders);
     }

@@ -23,21 +23,19 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAction;
-import de.adorsys.psd2.consent.domain.account.AisConsentAuthorization;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
-import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
-import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
-import de.adorsys.psd2.consent.repository.TppInfoRepository;
+import de.adorsys.psd2.consent.repository.*;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -58,7 +56,6 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -90,7 +87,7 @@ class AisConsentServiceInternalTest {
     private static final String NOK_REDIRECT_URI = "not ok";
 
     private AisConsent aisConsent;
-    private List<AisConsentAuthorization> aisConsentAuthorisationList = new ArrayList<>();
+    private List<AuthorisationEntity> aisConsentAuthorisationList = new ArrayList<>();
 
     @InjectMocks
     private AisConsentServiceInternal aisConsentService;
@@ -125,10 +122,12 @@ class AisConsentServiceInternalTest {
     private AisConsentRequestTypeService aisConsentRequestTypeService;
     @Mock
     private AisConsentVerifyingRepository aisConsentVerifyingRepository;
+    @Mock
+    private AuthorisationRepository authorisationRepository;
 
     @BeforeEach
     void setUp() {
-        AisConsentAuthorization aisConsentAuthorisation = buildAisConsentAuthorisation();
+        AuthorisationEntity aisConsentAuthorisation = buildAisConsentAuthorisation();
         aisConsentAuthorisationList.add(aisConsentAuthorisation);
         aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
     }
@@ -139,7 +138,9 @@ class AisConsentServiceInternalTest {
         when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent))
             .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
+        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList)).thenReturn(buildAisAccountConsent());
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(aisConsentAuthorisationList);
 
         // When
         CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
@@ -157,9 +158,11 @@ class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(aisConsent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent))
             .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent))
-            .thenReturn(buildSpiAccountConsent());
+        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList))
+            .thenReturn(buildAisAccountConsent());
         when(aisConsentConfirmationExpirationService.expireConsent(aisConsent)).thenReturn(aisConsent);
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(aisConsentAuthorisationList);
 
         // When
         CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
@@ -177,8 +180,10 @@ class AisConsentServiceInternalTest {
             .thenReturn(Optional.of(aisConsent));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent))
             .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent))
-            .thenReturn(buildSpiAccountConsent());
+        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList))
+            .thenReturn(buildAisAccountConsent());
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(aisConsentAuthorisationList);
 
         // When
         CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
@@ -199,6 +204,9 @@ class AisConsentServiceInternalTest {
             .thenReturn(consent);
         when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
 
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(aisConsentAuthorisationList);
+
         // When
         aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
 
@@ -213,8 +221,9 @@ class AisConsentServiceInternalTest {
             .thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings())
             .thenReturn(getAspspSettings());
-        AisAccountConsent aisAccountConsent = buildSpiAccountConsent();
-        when(consentMapper.mapToAisAccountConsent(aisConsent))
+        AisAccountConsent aisAccountConsent = buildAisAccountConsent();
+
+        when(consentMapper.mapToAisAccountConsent(aisConsent, Collections.emptyList()))
             .thenReturn(aisAccountConsent);
 
         CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, MODES);
@@ -234,8 +243,8 @@ class AisConsentServiceInternalTest {
             .thenReturn(aisConsent);
         when(aspspProfileService.getAspspSettings())
             .thenReturn(getAspspSettings());
-        AisAccountConsent aisAccountConsent = buildSpiAccountConsent();
-        when(consentMapper.mapToAisAccountConsent(aisConsent))
+        AisAccountConsent aisAccountConsent = buildAisAccountConsent();
+        when(consentMapper.mapToAisAccountConsent(aisConsent, Collections.emptyList()))
             .thenReturn(aisAccountConsent);
 
         CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, MODES);
@@ -420,7 +429,9 @@ class AisConsentServiceInternalTest {
         when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
         when(aisConsentVerifyingRepository.verifyAndUpdate(any(AisConsent.class)))
             .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent)).thenReturn(buildSpiAccountConsent());
+        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList)).thenReturn(buildAisAccountConsent());
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(aisConsentAuthorisationList);
 
         AisAccountAccessInfo info = new AisAccountAccessInfo();
         info.setAccounts(ACCOUNTS_2);
@@ -829,7 +840,7 @@ class AisConsentServiceInternalTest {
         assertLogicalError(actual);
     }
 
-    private void assertLogicalError(CmsResponse actual) {
+    private void assertLogicalError(CmsResponse<?> actual) {
         assertFalse(actual.isSuccessful());
         assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
     }
@@ -855,9 +866,8 @@ class AisConsentServiceInternalTest {
         return action;
     }
 
-    private AisConsentAuthorization buildAisConsentAuthorisation() {
-        AisConsentAuthorization aisConsentAuthorisation = new AisConsentAuthorization();
-        aisConsentAuthorisation.setConsent(aisConsent);
+    private AuthorisationEntity buildAisConsentAuthorisation() {
+        AuthorisationEntity aisConsentAuthorisation = new AuthorisationEntity();
         aisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
         aisConsentAuthorisation.setPsuData(PSU_DATA);
         aisConsentAuthorisation.setScaStatus(ScaStatus.RECEIVED);
@@ -888,7 +898,6 @@ class AisConsentServiceInternalTest {
         aisConsent.setExternalId(externalId);
         aisConsent.setValidUntil(validUntil);
         aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
-        aisConsent.setAuthorizations(aisConsentAuthorisationList);
         aisConsent.setPsuDataList(psuDataList);
         AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
         authorisationTemplate.setRedirectUri(REDIRECT_URI);
@@ -932,7 +941,7 @@ class AisConsentServiceInternalTest {
                                              .build());
     }
 
-    private AisAccountConsent buildSpiAccountConsent() {
+    private AisAccountConsent buildAisAccountConsent() {
         return new AisAccountConsent(aisConsent.getId().toString(),
                                      null, null, false,
                                      null, null, 0,

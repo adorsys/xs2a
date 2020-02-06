@@ -38,7 +38,7 @@ public class UpdateConsentLinks extends AbstractLinks {
         if (scaStatus == ScaStatus.PSUAUTHENTICATED) {
             setSelectAuthenticationMethod(authorisationLink);
         } else if (scaStatus == ScaStatus.SCAMETHODSELECTED) {
-            ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
+            ScaApproach scaApproach = scaApproachResolver.getScaApproach(authorisationId);
             if (scaApproach != ScaApproach.DECOUPLED) {
                 setAuthoriseTransaction(authorisationLink);
             }

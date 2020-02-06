@@ -18,16 +18,16 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
-import de.adorsys.psd2.xs2a.service.validator.authorisation.PisAuthorisationStatusChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,7 +75,7 @@ class CreatePisAuthorisationValidatorTest {
     @Mock
     private AuthorisationPsuDataChecker authorisationPsuDataChecker;
     @Mock
-    private PisAuthorisationStatusChecker pisAuthorisationStatusChecker;
+    private AuthorisationStatusChecker authorisationStatusChecker;
 
     @InjectMocks
     private CreatePisAuthorisationValidator createPisAuthorisationValidator;
@@ -200,8 +200,8 @@ class CreatePisAuthorisationValidatorTest {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO);
         commonPaymentResponse.setPsuData(Collections.singletonList(PSU_DATA_1));
-        commonPaymentResponse.setAuthorisations(Collections.singletonList(new Authorisation("1", ScaStatus.FINALISED, PSU_DATA_1, PaymentAuthorisationType.CREATED)));
-        when(pisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList())).thenReturn(true);
+        commonPaymentResponse.setAuthorisations(Collections.singletonList(new Authorisation("1", PSU_DATA_1, "paymentID", AuthorisationType.PIS_CREATION, ScaStatus.FINALISED)));
+        when(authorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.PIS_CREATION))).thenReturn(true);
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
 

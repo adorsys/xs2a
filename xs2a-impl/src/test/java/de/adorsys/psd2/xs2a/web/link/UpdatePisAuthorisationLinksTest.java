@@ -86,7 +86,7 @@ class UpdatePisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodSelectedAndEmbedded() {
-        when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
+        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
 
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setChosenScaMethod(authenticationObject);

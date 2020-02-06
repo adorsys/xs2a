@@ -19,12 +19,12 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.PisCancellationAuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -35,7 +35,7 @@ import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -73,7 +73,6 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -117,10 +116,12 @@ class PaymentStartCancellationAuthorisationIT {
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
-    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
 
     @Captor
-    private ArgumentCaptor<CreatePisAuthorisationRequest> createPisAuthorisationRequestCaptor;
+    private ArgumentCaptor<CreateAuthorisationRequest> createAuthorisationRequestCaptor;
+    @Captor
+    private ArgumentCaptor<PisCancellationAuthorisationParentHolder> pisCancellationAuthorisationParentHolderCaptor;
 
 
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
@@ -153,16 +154,16 @@ class PaymentStartCancellationAuthorisationIT {
                             .build());
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
-        given(pisAuthorisationServiceEncrypted.createAuthorizationCancellation(eq(PAYMENT_ID), createPisAuthorisationRequestCaptor.capture()))
-            .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, PIS_AUTHORISATION_SCA_STATUS, null, null, null))
+        given(authorisationServiceEncrypted.createAuthorisation(pisCancellationAuthorisationParentHolderCaptor.capture(), createAuthorisationRequestCaptor.capture()))
+            .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, PIS_AUTHORISATION_SCA_STATUS, null, null))
                             .build());
 
-        given(pisAuthorisationServiceEncrypted.getPisCancellationAuthorisationById(AUTHORISATION_ID))
-            .willReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+        given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
+            .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(buildGetPisAuthorisationResponse())
                             .build());
-        given(pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
+        given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
                             .build());
@@ -171,10 +172,9 @@ class PaymentStartCancellationAuthorisationIT {
             SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, PAYMENT_ID));
         requestBuilder.headers(httpHeadersExplicit);
 
-        CreatePisAuthorisationRequest expectedCreatePisAuthorisationRequest =
-            new CreatePisAuthorisationRequest(PaymentAuthorisationType.CANCELLED,
-                                              new PsuIdData(PSU_ID, null, null, null, null),
-                                              ScaApproach.EMBEDDED, TPP_REDIRECT_URIs);
+        CreateAuthorisationRequest expectedCreatePisAuthorisationRequest =
+            new CreateAuthorisationRequest(new PsuIdData(PSU_ID, null, null, null, null),
+                                           ScaApproach.EMBEDDED, TPP_REDIRECT_URIs);
 
         //When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -184,18 +184,16 @@ class PaymentStartCancellationAuthorisationIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(IOUtils.resourceToString(AUTHORISATION_RESPONSE, UTF_8)));
 
-        assertEquals(expectedCreatePisAuthorisationRequest, createPisAuthorisationRequestCaptor.getValue());
+        assertEquals(expectedCreatePisAuthorisationRequest, createAuthorisationRequestCaptor.getValue());
+        assertEquals(PAYMENT_ID, pisCancellationAuthorisationParentHolderCaptor.getValue().getParentId());
     }
 
     @NotNull
-    private GetPisAuthorisationResponse buildGetPisAuthorisationResponse() {
-        GetPisAuthorisationResponse getPisAuthorisationResponse = new GetPisAuthorisationResponse();
+    private Authorisation buildGetPisAuthorisationResponse() {
+        Authorisation getPisAuthorisationResponse = new Authorisation();
         getPisAuthorisationResponse.setScaStatus(PIS_AUTHORISATION_SCA_STATUS);
-        getPisAuthorisationResponse.setPaymentType(SINGLE_PAYMENT_TYPE);
-        getPisAuthorisationResponse.setPaymentProduct(SEPA_PAYMENT_PRODUCT);
         PisPaymentInfo paymentInfo = new PisPaymentInfo();
         paymentInfo.setPaymentId(PAYMENT_ID);
-        getPisAuthorisationResponse.setPaymentInfo(paymentInfo);
         return getPisAuthorisationResponse;
     }
 

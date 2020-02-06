@@ -1,0 +1,14 @@
+= Release notes v.5.10
+
+== Table of Contents
+* Authorisation refactoring
+
+
+== Authorisation refactoring
+
+From now on, all authorisation objects for consent, payment and payment cancellation are persisted in a common table `authorisation` in database.
+It’s enough to provide authorisationId and its type to retrieve authorisation object from CMS. The following authorisation types are available: `AIS`, `PIS_CREATION` and `PIS_CANCELLATION`.
+
+`AuthorisationController` is responsible for authorisation in CMS API.
+
+Field `authorisationType` was marked as deprecated in `CmsPsuAuthorisation`, use field `type` instead.

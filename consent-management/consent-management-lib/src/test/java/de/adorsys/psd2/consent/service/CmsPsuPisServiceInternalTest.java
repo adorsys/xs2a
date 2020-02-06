@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,24 +23,21 @@ import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
-import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
-import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
-import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import de.adorsys.psd2.consent.domain.payment.PisAuthorization;
+import de.adorsys.psd2.consent.domain.*;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
-import de.adorsys.psd2.consent.repository.PisAuthorisationRepository;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
+import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.specification.PisAuthorisationSpecification;
+import de.adorsys.psd2.consent.repository.specification.AuthorisationSpecification;
 import de.adorsys.psd2.consent.repository.specification.PisPaymentDataSpecification;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.psu.CmsPsuPisServiceInternal;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -57,10 +54,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -78,7 +72,6 @@ class CmsPsuPisServiceInternalTest {
     private final PsuIdData PSU_ID_DATA = buildPsuIdData();
     private static final String PAYMENT_ID = "payment id";
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    private static final PaymentAuthorisationType AUTHORISATION_TYPE_CREATED = PaymentAuthorisationType.CREATED;
     private static final String METHOD_ID = "SMS";
     private static final String AUTHENTICATION_DATA = "123456";
 
@@ -88,7 +81,7 @@ class CmsPsuPisServiceInternalTest {
     @Mock
     private PisPaymentDataRepository pisPaymentDataRepository;
     @Mock
-    private PisAuthorisationRepository pisAuthorisationRepository;
+    private AuthorisationRepository authorisationRepository;
     @Mock
     private CmsPsuPisMapper cmsPsuPisMapper;
     @Mock
@@ -98,11 +91,13 @@ class CmsPsuPisServiceInternalTest {
     @Mock
     private CommonPaymentDataService commonPaymentDataService;
     @Mock
-    private PisAuthorisationSpecification pisAuthorisationSpecification;
+    private AuthorisationSpecification authorisationSpecification;
     @Mock
     private PisPaymentDataSpecification pisPaymentDataSpecification;
     @Mock
     private CorePaymentsConvertService corePaymentsConvertService;
+    @Mock
+    private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
 
     private AuthenticationDataHolder authenticationDataHolder;
     private PsuData psuData;
@@ -121,29 +116,29 @@ class CmsPsuPisServiceInternalTest {
     void updatePsuInPayment_Success() throws AuthorisationIsExpiredException {
         // Given
         when(psuDataMapper.mapToPsuData(psuIdData)).thenReturn(psuData);
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(buildPisAuthorisation()));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(buildPisAuthorisation()));
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updatePsuInPayment(PSU_ID_DATA, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
-    void updatePsuInPayment_athorisationIsExpired() {
+    void updatePsuInPayment_authorisationIsExpired() {
         // Given
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization pisAuthorization = buildPisAuthorisation();
+        AuthorisationEntity pisAuthorization = buildPisAuthorisation();
         pisAuthorization.setAuthorisationExpirationTimestamp(OffsetDateTime.now().minusDays(1));
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
 
         // When
         assertThrows(
@@ -152,7 +147,7 @@ class CmsPsuPisServiceInternalTest {
         );
 
         // Then
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -165,7 +160,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertFalse(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -266,12 +261,12 @@ class CmsPsuPisServiceInternalTest {
             .thenReturn(CmsResponse.<List<PsuIdData>>builder()
                             .payload(Collections.singletonList(psuIdData))
                             .build());
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization pisAuthorization = buildPisAuthorisation();
+        AuthorisationEntity pisAuthorization = buildPisAuthorisation();
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
-        when(pisAuthorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
+        when(authorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID,
@@ -279,9 +274,9 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertTrue(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(pisAuthorisationRepository, times(1)).save(pisAuthorization);
+        verify(authorisationRepository, times(1)).save(pisAuthorization);
     }
 
     @Test
@@ -291,11 +286,11 @@ class CmsPsuPisServiceInternalTest {
             .thenReturn(CmsResponse.<List<PsuIdData>>builder()
                             .error(CmsError.LOGICAL_ERROR)
                             .build());
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization pisAuthorization = buildPisAuthorisation();
+        AuthorisationEntity pisAuthorization = buildPisAuthorisation();
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, WRONG_PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID,
@@ -303,7 +298,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertFalse(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -317,7 +312,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertFalse(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -331,7 +326,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertFalse(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -345,7 +340,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertFalse(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -380,7 +375,9 @@ class CmsPsuPisServiceInternalTest {
     void getPsuDataAuthorisations_Success() {
         // Given
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
-            .thenReturn(Optional.of(buildPisCommonPaymentDataWithAuthorisation()));
+            .thenReturn(Optional.of(buildPisCommonPaymentData()));
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+            .thenReturn(Collections.singletonList(buildPisAuthorisation()));
 
         // When
         Optional<List<CmsPisPsuDataAuthorisation>> actualResult = cmsPsuPisServiceInternal.getPsuDataAuthorisations(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -388,7 +385,6 @@ class CmsPsuPisServiceInternalTest {
         // Then
         assertTrue(actualResult.isPresent());
         assertEquals(1, actualResult.get().size());
-        assertEquals(AUTHORISATION_TYPE_CREATED, actualResult.get().get(0).getAuthorisationType());
     }
 
     @Test
@@ -414,7 +410,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertFalse(actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(FINALISED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -434,11 +430,13 @@ class CmsPsuPisServiceInternalTest {
     @Test
     void getPaymentByAuthorisationId_Success() throws RedirectUrlIsExpiredException {
         // Given
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization expectedAuthorisation = buildPisAuthorisation();
+        AuthorisationEntity expectedAuthorisation = buildPisAuthorisation();
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
+
+        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(buildPisCommonPaymentData()));
 
         // When
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPayment(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -446,18 +444,18 @@ class CmsPsuPisServiceInternalTest {
         // Then
         assertTrue(actualResult.isPresent());
         assertEquals(AUTHORISATION_ID, actualResult.get().getAuthorisationId());
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     void getPaymentByAuthorisationId_Fail_ExpiredRedirectUrl() {
         // Given
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization expectedAuthorisation = buildExpiredAuthorisation();
+        AuthorisationEntity expectedAuthorisation = buildExpiredAuthorisation();
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
         assertThrows(
@@ -466,7 +464,7 @@ class CmsPsuPisServiceInternalTest {
         );
 
         // Then
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -477,18 +475,20 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertEquals(Optional.empty(), actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     void checkRedirectAndGetPaymentForCancellation_Success() throws RedirectUrlIsExpiredException {
         // Given
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization expectedAuthorisation = buildPisAuthorisation();
+        AuthorisationEntity expectedAuthorisation = buildPisAuthorisation();
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
+
+        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(buildPisCommonPaymentData()));
 
         // When
         Optional<CmsPaymentResponse> actualResult = cmsPsuPisServiceInternal.checkRedirectAndGetPaymentForCancellation(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -496,18 +496,18 @@ class CmsPsuPisServiceInternalTest {
         // Then
         assertTrue(actualResult.isPresent());
         assertEquals(AUTHORISATION_ID, actualResult.get().getAuthorisationId());
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
     void checkRedirectAndGetPaymentForCancellation_Fail_ExpiredRedirectUrl() {
         // Given
-        when(pisAuthorisationSpecification.byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(authorisationSpecification.byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        PisAuthorization expectedAuthorisation = buildExpiredAuthorisation();
+        AuthorisationEntity expectedAuthorisation = buildExpiredAuthorisation();
         //noinspection unchecked
-        when(pisAuthorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
+        when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(expectedAuthorisation));
 
         // When
         assertThrows(
@@ -516,7 +516,7 @@ class CmsPsuPisServiceInternalTest {
         );
 
         // Then
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(EXPIRED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -527,7 +527,7 @@ class CmsPsuPisServiceInternalTest {
 
         // Then
         assertEquals(Optional.empty(), actualResult);
-        verify(pisAuthorisationSpecification, times(1))
+        verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(WRONG_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
@@ -551,17 +551,16 @@ class CmsPsuPisServiceInternalTest {
         );
     }
 
-    private PisAuthorization buildPisAuthorisation() {
-        PisAuthorization pisAuthorisation = new PisAuthorization();
+    private AuthorisationEntity buildPisAuthorisation() {
+        AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
+        pisAuthorisation.setAuthorisationType(AuthorisationType.PIS_CREATION);
         pisAuthorisation.setScaStatus(ScaStatus.PSUAUTHENTICATED);
-        pisAuthorisation.setAuthorizationType(PaymentAuthorisationType.CREATED);
-        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
+        pisAuthorisation.setParentExternalId(PAYMENT_ID);
         pisAuthorisation.setExternalId(AUTHORISATION_ID);
         pisAuthorisation.setPsuData(buildPsuData());
         pisAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plusHours(1));
         pisAuthorisation.setAuthorisationExpirationTimestamp(OffsetDateTime.now().plusHours(1));
-        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
-        pisAuthorisation.setChosenScaMethod(METHOD_ID);
+        pisAuthorisation.setAuthenticationMethodId(METHOD_ID);
         pisAuthorisation.setScaAuthenticationData(AUTHENTICATION_DATA);
 
         return pisAuthorisation;
@@ -581,12 +580,6 @@ class CmsPsuPisServiceInternalTest {
         return pisCommonPaymentData;
     }
 
-    private PisCommonPaymentData buildPisCommonPaymentDataWithAuthorisation() {
-        PisCommonPaymentData pisCommonPaymentData = buildPisCommonPaymentData();
-        pisCommonPaymentData.setAuthorizations(Collections.singletonList(buildFinalisedAuthorisation()));
-        return pisCommonPaymentData;
-    }
-
     private PisCommonPaymentData buildPisCommonPaymentDataWithAuthorisationEmptyPsuData() {
         PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
@@ -597,7 +590,6 @@ class CmsPsuPisServiceInternalTest {
         pisCommonPaymentData.setAuthorisationTemplate(buildAuthorisationTemplate());
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
-        pisCommonPaymentData.setAuthorizations(Collections.singletonList(buildFinalisedAuthorisationNoPsuData()));
         return pisCommonPaymentData;
     }
 
@@ -675,28 +667,10 @@ class CmsPsuPisServiceInternalTest {
         return cmsPayment;
     }
 
-    private PisAuthorization buildFinalisedAuthorisation() {
-        PisAuthorization pisAuthorisation = buildFinalisedAuthorisationNoPsuData();
-        pisAuthorisation.setPsuData(buildPsuData());
-
-        return pisAuthorisation;
-    }
-
-    private PisAuthorization buildFinalisedAuthorisationNoPsuData() {
-        PisAuthorization pisAuthorisation = new PisAuthorization();
-        pisAuthorisation.setScaStatus(ScaStatus.FINALISED);
-        pisAuthorisation.setAuthorizationType(PaymentAuthorisationType.CREATED);
-        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
-        pisAuthorisation.setExternalId(AUTHORISATION_ID);
-
-        return pisAuthorisation;
-    }
-
-    private PisAuthorization buildExpiredAuthorisation() {
-        PisAuthorization pisAuthorisation = new PisAuthorization();
+    private AuthorisationEntity buildExpiredAuthorisation() {
+        AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
+        pisAuthorisation.setAuthorisationType(AuthorisationType.PIS_CREATION);
         pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
-        pisAuthorisation.setAuthorizationType(PaymentAuthorisationType.CREATED);
-        pisAuthorisation.setPaymentData(buildPisCommonPaymentData());
         pisAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);
         pisAuthorisation.setPsuData(buildPsuData());
         pisAuthorisation.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().minusDays(1));

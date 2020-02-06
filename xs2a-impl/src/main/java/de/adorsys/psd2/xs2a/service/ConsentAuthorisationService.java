@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -152,7 +153,7 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        Optional<ScaStatus> scaStatusOptional = aisScaAuthorisationServiceResolver.getServiceInitiation(authorisationId)
+        Optional<ScaStatus> scaStatusOptional = aisScaAuthorisationServiceResolver.getService(authorisationId)
                                                     .getAuthorisationScaStatus(consentId, authorisationId);
 
         if (!scaStatusOptional.isPresent()) {
@@ -177,16 +178,6 @@ public class ConsentAuthorisationService {
         xs2aEventService.recordAisTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
 
         String consentId = updatePsuData.getConsentId();
-        String authorisationId = updatePsuData.getAuthorizationId();
-        boolean confirmationCodeReceived = StringUtils.isNotBlank(updatePsuData.getConfirmationCode());
-
-        if (!endpointAccessCheckerService.isEndpointAccessible(authorisationId, consentId, confirmationCodeReceived)) {
-            log.info("Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data failed: update endpoint is blocked for current authorisation",
-                     consentId, authorisationId);
-            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                       .fail(AIS_403, of(SERVICE_BLOCKED))
-                       .build();
-        }
 
         Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
@@ -195,6 +186,18 @@ public class ConsentAuthorisationService {
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
+
+        String authorisationId = updatePsuData.getAuthorizationId();
+        boolean confirmationCodeReceived = StringUtils.isNotBlank(updatePsuData.getConfirmationCode());
+
+        if (!endpointAccessCheckerService.isEndpointAccessible(authorisationId, confirmationCodeReceived)) {
+            log.info("Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data failed: update endpoint is blocked for current authorisation",
+                     consentId, authorisationId);
+            return ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                       .fail(AIS_403, of(SERVICE_BLOCKED))
+                       .build();
+        }
+
         AccountConsent accountConsent = accountConsentOptional.get();
 
         loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
@@ -225,28 +228,28 @@ public class ConsentAuthorisationService {
     }
 
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData) {
-        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getServiceInitiation(updatePsuData.getAuthorizationId());
+        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
 
-        Optional<AccountConsentAuthorization> authorization = service.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId(), updatePsuData.getConsentId());
+        Optional<Authorisation> authorizationOptional = service.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
-        if (!authorization.isPresent()) {
+        if (!authorizationOptional.isPresent()) {
             log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",
                      updatePsuData.getAuthorizationId());
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
 
-        AccountConsentAuthorization consentAuthorization = authorization.get();
+        Authorisation authorisation = authorizationOptional.get();
 
-        if (consentAuthorization.getChosenScaApproach() == ScaApproach.REDIRECT) {
+        if (authorisation.getChosenScaApproach() == ScaApproach.REDIRECT) {
             return aisAuthorisationConfirmationService.processAuthorisationConfirmation(updatePsuData);
         }
 
         UpdateConsentPsuDataResponse response = (UpdateConsentPsuDataResponse) authorisationChainResponsibilityService.apply(
-            new AisAuthorisationProcessorRequest(consentAuthorization.getChosenScaApproach(),
-                                                 consentAuthorization.getScaStatus(),
+            new AisAuthorisationProcessorRequest(authorisation.getChosenScaApproach(),
+                                                 authorisation.getScaStatus(),
                                                  updatePsuData,
-                                                 consentAuthorization));
+                                                 authorisation));
         loggingContextService.storeScaStatus(response.getScaStatus());
 
         return Optional.ofNullable(response)

@@ -16,45 +16,15 @@
 
 package de.adorsys.psd2.xs2a.web.header;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
-public class PaymentCancellationHeadersBuilder {
-    private final ScaApproachResolver scaApproachResolver;
+public class PaymentCancellationHeadersBuilder extends AbstractHeadersBuilder{
 
-    /**
-     * Builds response headers for successful start payment cancellation authorisation request
-     *
-     * @param authorisationId id of the created cancellation authorisation
-     * @return response headers
-     */
-    public ResponseHeaders buildStartPaymentCancellationAuthorisationHeaders(@NotNull String authorisationId) {
-        return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
-    /**
-     * Builds response headers for successful update payment cancellation PSU Data request
-     *
-     * @param authorisationId id of the cancellation authorisation, used in the request
-     * @return response headers
-     */
-    public ResponseHeaders buildUpdatePaymentCancellationPsuDataHeaders(@NotNull String authorisationId) {
-        return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
-    private ResponseHeaders buildHeadersForExistingAuthorisation(String authorisationId) {
-        ScaApproach authorisationScaApproach = scaApproachResolver.getCancellationScaApproach(authorisationId);
-        return buildScaApproachHeader(authorisationScaApproach);
-    }
-
-    private ResponseHeaders buildScaApproachHeader(ScaApproach scaApproach) {
-        return ResponseHeaders.builder()
-                   .aspspScaApproach(scaApproach)
-                   .build();
+    @Autowired
+    public PaymentCancellationHeadersBuilder(ScaApproachResolver scaApproachResolver) {
+        super(scaApproachResolver);
     }
 }

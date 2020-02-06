@@ -69,7 +69,7 @@ public class CreateAisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_redirectScaApproachOauth() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaOauthRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
@@ -83,7 +83,7 @@ public class CreateAisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_redirectScaApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
@@ -97,7 +97,7 @@ public class CreateAisAuthorisationLinksTest {
     @Test
     void isScaStatusMethodAuthenticated_redirectScaApproach_confirmation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
         when(redirectLinkBuilder.buildAisConfirmationLink(eq(CONSENT_ID), eq(AUTHORISATION_ID))).thenReturn(CONFIRMATION_LINK);
@@ -115,7 +115,7 @@ public class CreateAisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_embeddedScaApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false);
 
@@ -126,7 +126,7 @@ public class CreateAisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_decoupledScaApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false);
 
@@ -137,7 +137,7 @@ public class CreateAisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_oauthScaApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.OAUTH);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.OAUTH);
 
         links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false);
 

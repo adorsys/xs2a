@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -66,8 +66,8 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
     }
 
     @Override
-    public Optional<AccountConsentAuthorization> getAccountConsentAuthorizationById(String authorizationId, String consentId) {
-        return aisConsentService.getAccountConsentAuthorizationById(authorizationId, consentId);
+    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
+        return aisConsentService.getAccountConsentAuthorizationById(authorizationId);
     }
 
     /**

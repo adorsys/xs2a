@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +45,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EmbeddedPisScaAuthorisationServiceTest {
@@ -62,8 +63,8 @@ class EmbeddedPisScaAuthorisationServiceTest {
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null, null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
-    private static final CreatePisAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null);
-    private static final CreatePisAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreatePisAuthorisationResponse(WRONG_AUTHORISATION_ID, SCA_STATUS, null, null, null);
+    private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
+    private static final CreateAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(WRONG_AUTHORISATION_ID, SCA_STATUS, null, null);
     private static final Xs2aCreatePisCancellationAuthorisationResponse XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE = new Xs2aCreatePisCancellationAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE.getAuthorizationId(), ScaStatus.RECEIVED, PAYMENT_TYPE, null);
     private static final Xs2aCreatePisAuthorisationResponse XS2A_CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, PAYMENT_TYPE, null, null, null);
 
@@ -304,6 +305,24 @@ class EmbeddedPisScaAuthorisationServiceTest {
 
         //Then
         assertThat(actualResponse).isEqualTo(ScaApproach.EMBEDDED);
+    }
+
+    @Test
+    void updateAuthorisation() {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
+
+        embeddedPisScaAuthorisationService.updateAuthorisation(request, response);
+        verify(pisAuthorisationService, times(1)).updateAuthorisation(request, response);
+    }
+
+    @Test
+    void updateCancellationAuthorisation() {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
+
+        embeddedPisScaAuthorisationService.updateCancellationAuthorisation(request, response);
+        verify(pisAuthorisationService, times(1)).updateCancellationAuthorisation(request, response);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse buildErrorXs2aUpdatePisCommonPaymentPsuDataResponse() {

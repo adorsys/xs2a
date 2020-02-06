@@ -19,14 +19,14 @@ package de.adorsys.psd2.xs2a.integration;
 
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.PisAuthorisationParentHolder;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -58,9 +58,9 @@ import org.springframework.util.MultiValueMap;
 import java.io.IOException;
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -152,10 +152,6 @@ public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
             .andExpect(content().json(IOUtils.resourceToString(filePath, UTF_8)));
     }
 
-    private CreatePisAuthorisationRequest getPisAuthorisationRequest(ScaApproach scaApproach) {
-        return new CreatePisAuthorisationRequest(PaymentAuthorisationType.CREATED, PsuIdDataBuilder.buildPsuIdData(), scaApproach, TPP_REDIRECT_URIs);
-    }
-
     private void initiateSinglePaymentCustomSuccessful(HttpHeaders headers, ScaApproach scaApproach, String requestContentPath) throws Exception {
         // Given
         makePreparation(scaApproach);
@@ -203,16 +199,17 @@ public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
     }
 
     private void makePreparation(ScaApproach scaApproach) {
-        given(pisAuthorisationServiceEncrypted.createAuthorization(ENCRYPT_PAYMENT_ID, getPisAuthorisationRequest(scaApproach)))
-            .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, null))
+        given(authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID),
+                                                                new CreateAuthorisationRequest(PsuIdDataBuilder.buildPsuIdData(), scaApproach, TPP_REDIRECT_URIs)))
+            .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null))
                             .build());
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(commonPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(PisCommonPaymentResponseBuilder.buildSpiPaymentInitiationResponse());
         given(consentRestTemplate.exchange(anyString(), any(HttpMethod.class), any(), any(Class.class), anyString()))
             .willReturn(ResponseEntity.ok(Boolean.TRUE));
-        given(pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(scaApproach))
                             .build());

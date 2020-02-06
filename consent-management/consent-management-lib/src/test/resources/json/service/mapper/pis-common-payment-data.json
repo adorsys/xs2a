@@ -29,14 +29,6 @@
     "city": "Nuremberg",
     "state": "Bayern"
   },
-  "authorizations": [
-    {
-      "instanceId": "UNDEFINED",
-      "id": "123",
-      "externalId": "5e89f573-800e-4158-bb9c-c7fcc9c701d9",
-      "scaStatus": "received"
-    }
-  ],
   "payments": [
     {
       "instanceId": "UNDEFINED",
@@ -60,5 +52,6 @@
   "creationTimestamp": "2019-08-22T11:00:00Z",
   "multilevelScaRequired": false,
   "aspspAccountId": "some account id",
-  "statusChangeTimestamp": "2019-08-22T11:01:27Z"
+  "statusChangeTimestamp": "2019-08-22T11:01:27Z",
+  "authorisationTemplate": {}
 }

@@ -237,12 +237,12 @@ class PaymentAuthorisationServiceTest {
         // Given
         when(pisScaAuthorisationServiceResolver.getService())
             .thenReturn(pisScaAuthorisationService);
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(buildPisCommonPaymentResponse(), SINGLE, PAYMENT_PRODUCT, PSU_ID_DATA)))
             .thenReturn(ValidationResult.valid());
 
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID)).thenReturn(pisScaAuthorisationService);
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(pisScaAuthorisationService);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse expected = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
 
@@ -319,7 +319,7 @@ class PaymentAuthorisationServiceTest {
     @Test
     void updatePisPsuData_Success_ShouldRecordEvent() {
         // Given:
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
@@ -346,7 +346,7 @@ class PaymentAuthorisationServiceTest {
     @Test
     void updatePisPsuData_shouldStoreStatusesInLoggingContext() {
         // Given:
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
@@ -401,7 +401,7 @@ class PaymentAuthorisationServiceTest {
         // Given:
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400).tppMessages(VALIDATION_ERROR.getTppMessage()).build();
 
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(updatePisCommonPaymentPsuDataValidator.validate(buildUpdatePisCommonPaymentPsuDataPO(buildPisCommonPaymentResponse())))
             .thenReturn(ValidationResult.valid());
@@ -530,7 +530,7 @@ class PaymentAuthorisationServiceTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
         when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
@@ -552,7 +552,7 @@ class PaymentAuthorisationServiceTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
         when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
@@ -576,7 +576,7 @@ class PaymentAuthorisationServiceTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
         when(pisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
-        when(pisScaAuthorisationServiceResolver.getServiceInitiation(AUTHORISATION_ID))
+        when(pisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
         when(getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());

@@ -19,15 +19,18 @@ package de.adorsys.psd2.xs2a.web.header;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
-public class ConsentHeadersBuilder {
-    private final ScaApproachResolver scaApproachResolver;
+public class ConsentHeadersBuilder extends AbstractHeadersBuilder {
+
+    @Autowired
+    public ConsentHeadersBuilder(ScaApproachResolver scaApproachResolver) {
+        super(scaApproachResolver);
+    }
 
     /**
      * Builds response headers for successful create consent request
@@ -46,41 +49,10 @@ public class ConsentHeadersBuilder {
                        .build();
         }
 
-        ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
+        ScaApproach scaApproach = scaApproachResolver.getScaApproach(authorisationId);
         return responseHeadersBuilder
                    .aspspScaApproach(scaApproach)
                    .location(selfLink)
-                   .build();
-    }
-
-    /**
-     * Builds response headers for successful start consent authorisation request
-     *
-     * @param authorisationId id of the created authorisation
-     * @return response headers
-     */
-    public ResponseHeaders buildStartConsentAuthorisationHeaders(@NotNull String authorisationId) {
-        return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
-    /**
-     * Builds response headers for successful update consents PSU Data request
-     *
-     * @param authorisationId id of the authorisation, used in the request
-     * @return response headers
-     */
-    public ResponseHeaders buildUpdateConsentsPsuDataHeaders(@NotNull String authorisationId) {
-        return buildHeadersForExistingAuthorisation(authorisationId);
-    }
-
-    private ResponseHeaders buildHeadersForExistingAuthorisation(String authorisationId) {
-        ScaApproach authorisationScaApproach = scaApproachResolver.getInitiationScaApproach(authorisationId);
-        return buildScaApproachHeader(authorisationScaApproach);
-    }
-
-    private ResponseHeaders buildScaApproachHeader(ScaApproach scaApproach) {
-        return ResponseHeaders.builder()
-                   .aspspScaApproach(scaApproach)
                    .build();
     }
 }

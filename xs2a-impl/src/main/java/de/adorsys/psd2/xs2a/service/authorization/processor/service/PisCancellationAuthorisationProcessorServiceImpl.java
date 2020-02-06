@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -96,14 +96,14 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     @Override
     public AuthorisationProcessorResponse doScaReceived(AuthorisationProcessorRequest authorisationProcessorRequest) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = (Xs2aUpdatePisCommonPaymentPsuDataRequest) authorisationProcessorRequest.getUpdateAuthorisationRequest();
-        GetPisAuthorisationResponse pisAuthorisationResponse = (GetPisAuthorisationResponse) authorisationProcessorRequest.getAuthorisation();
-        return request.isUpdatePsuIdentification() && pisAuthorisationResponse.getChosenScaApproach() != ScaApproach.DECOUPLED
+        Authorisation authorisation = authorisationProcessorRequest.getAuthorisation();
+        return request.isUpdatePsuIdentification() && authorisation.getChosenScaApproach() != ScaApproach.DECOUPLED
                    ? applyIdentification(authorisationProcessorRequest)
                    : applyAuthorisation(authorisationProcessorRequest);
     }
 
     @Override
-    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(GetPisAuthorisationResponse pisAuthorisationResponse,
+    SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
                                                                                   SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
                                                                                   SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentCancellationSpi.verifyScaAuthorisationAndCancelPayment(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);

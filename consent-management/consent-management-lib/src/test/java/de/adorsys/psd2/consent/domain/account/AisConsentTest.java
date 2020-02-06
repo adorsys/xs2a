@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,8 +28,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class AisConsentTest {
@@ -108,6 +108,30 @@ class AisConsentTest {
 
         // Then
         assertTrue(actual);
+    }
+
+    @Test
+    void getInternalRequestId_AisAuthorisation() {
+        // Given
+        AisConsent aisConsent = new AisConsent();
+        String expectedInternalRequestId = "internal-request-id";
+        aisConsent.setInternalRequestId(expectedInternalRequestId);
+
+        // When
+        String actualInternalRequestId = aisConsent.getInternalRequestId(AuthorisationType.AIS);
+
+        // Then
+        assertEquals(expectedInternalRequestId, actualInternalRequestId);
+    }
+
+    @Test
+    void getInternalRequestId_PisAuthorisation_shouldThrowException() {
+        // Given
+        AisConsent aisConsent = new AisConsent();
+
+        // Then
+        assertThrows(IllegalArgumentException.class,
+                     () -> aisConsent.getInternalRequestId(AuthorisationType.PIS_CREATION));
     }
 
     private AisConsent buildAisConsent(List<PsuData> psuDataList, TppInfoEntity tppInfoEntity, boolean recurringIndicator) {

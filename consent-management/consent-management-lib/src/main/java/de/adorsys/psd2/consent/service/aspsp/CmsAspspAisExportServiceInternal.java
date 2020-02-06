@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,13 @@ package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
+import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +48,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     private final AisConsentSpecification aisConsentSpecification;
     private final AisConsentJpaRepository aisConsentJpaRepository;
     private final AisConsentMapper aisConsentMapper;
+    private final AuthorisationRepository authorisationRepository;
 
     @Override
     public Collection<CmsAisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
@@ -62,7 +68,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             instanceId
         ))
                    .stream()
-                   .map(aisConsentMapper::mapToCmsAisAccountConsent)
+                   .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
 
@@ -82,7 +88,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                                  instanceId
         ))
                    .stream()
-                   .map(aisConsentMapper::mapToCmsAisAccountConsent)
+                   .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
 
@@ -104,7 +110,13 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                                       instanceId
         ))
                    .stream()
-                   .map(aisConsentMapper::mapToCmsAisAccountConsent)
+                   .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
+    }
+
+    private CmsAisAccountConsent mapToCmsAisAccountConsentWithAuthorisations(AisConsent aisConsent) {
+        List<AuthorisationEntity> authorisations =
+            authorisationRepository.findAllByParentExternalIdAndAuthorisationType(aisConsent.getExternalId(), AuthorisationType.AIS);
+        return aisConsentMapper.mapToCmsAisAccountConsent(aisConsent, authorisations);
     }
 }

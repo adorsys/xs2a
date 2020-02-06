@@ -23,12 +23,15 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,6 +60,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     private final TppInfoRepository tppInfoRepository;
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final CorePaymentsConvertService corePaymentsConvertService;
+    private final AuthorisationRepository authorisationRepository;
 
     /**
      * Creates new pis common payment with full information about payment
@@ -95,7 +100,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public CmsResponse<TransactionStatus> getPisCommonPaymentStatusById(String paymentId) {
         Optional<TransactionStatus> statusOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
-                                                         .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                         .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                          .map(PisCommonPaymentData::getTransactionStatus);
 
         if (statusOptional.isPresent()) {
@@ -122,9 +127,12 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     public CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String paymentId) {
         Optional<PisCommonPaymentData> paymentOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         if (paymentOptional.isPresent()) {
+            List<AuthorisationEntity> authorisations =
+                authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
             Optional<PisCommonPaymentResponse> responseOptional = paymentOptional
-                                                                      .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
-                                                                      .flatMap(pisCommonPaymentMapper::mapToPisCommonPaymentResponse);
+                                                                      .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                                      .flatMap(p -> pisCommonPaymentMapper.mapToPisCommonPaymentResponse(p, authorisations));
+
 
             if (responseOptional.isPresent()) {
                 PisCommonPaymentResponse pisCommonPaymentResponse = responseOptional.get();
@@ -169,7 +177,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public CmsResponse<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status) {
         Optional<Boolean> isUpdatedOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId)
-                                                  .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdatePaymentDataOnConfirmationExpiration)
+                                                  .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                   .filter(pm -> !pm.getTransactionStatus().isFinalisedStatus())
                                                   .map(pmt -> setStatusAndSaveCommonPaymentData(pmt, status))
                                                   .map(con -> con.getTransactionStatus() == status);

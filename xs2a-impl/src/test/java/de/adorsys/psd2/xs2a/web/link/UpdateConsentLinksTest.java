@@ -71,7 +71,7 @@ class UpdateConsentLinksTest {
 
     @Test
     void isScaStatusMethodSelectedAndDecoupleApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
+        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED);
         links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
@@ -82,7 +82,7 @@ class UpdateConsentLinksTest {
 
     @Test
     void isScaStatusMethodSelectedAndRedirectApproach() {
-        when(scaApproachResolver.getInitiationScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
+        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
 
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED);
         links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);

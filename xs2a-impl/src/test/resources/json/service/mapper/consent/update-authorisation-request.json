@@ -1,0 +1,12 @@
+{
+  "authorisationType": "PIS_CREATION",
+  "psuData": {
+    "psuId": "psu Id",
+    "psuIdType": "psuId Type",
+    "psuCorporateId": "psu Corporate Id",
+    "psuCorporateIdType": "psuCorporate Id Type",
+    "psuIpAddress": "psuIp Address"
+  },
+  "scaStatus": "received",
+  "authenticationMethodId": "card"
+}

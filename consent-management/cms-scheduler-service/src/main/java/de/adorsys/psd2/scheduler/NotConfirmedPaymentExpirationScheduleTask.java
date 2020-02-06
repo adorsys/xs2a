@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class NotConfirmedPaymentExpirationScheduleTask {
 
         List<PisCommonPaymentData> expiredNotConfirmedPaymentDatas = paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD))
                                                                          .stream()
-                                                                         .filter(pisCommonPaymentConfirmationExpirationService::isPaymentDataOnConfirmationExpired)
+                                                                         .filter(pisCommonPaymentConfirmationExpirationService::isConfirmationExpired)
                                                                          .collect(Collectors.toList());
 
         if (!expiredNotConfirmedPaymentDatas.isEmpty()) {

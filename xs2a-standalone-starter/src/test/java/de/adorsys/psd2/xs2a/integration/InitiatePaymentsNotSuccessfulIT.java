@@ -20,7 +20,7 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
@@ -29,7 +29,6 @@ import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -105,7 +104,7 @@ class InitiatePaymentsNotSuccessfulIT {
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
-    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private SinglePaymentSpi singlePaymentSpi;
 
@@ -149,7 +148,7 @@ class InitiatePaymentsNotSuccessfulIT {
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
-        given(pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(scaApproach))
                             .build());
