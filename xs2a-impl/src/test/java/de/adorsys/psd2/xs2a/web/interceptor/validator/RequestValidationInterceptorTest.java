@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.interceptor;
+package de.adorsys.psd2.xs2a.web.interceptor.validator;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.validator.DefaultMethodValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.MethodValidator;
@@ -89,7 +90,7 @@ class RequestValidationInterceptorTest {
     void preHandle_instanceOf_incorrectFormat() throws IOException {
         assertTrue(interceptor.preHandle(request, response, null));
 
-        verify(errorBuildingService, never()).buildErrorResponse(eq(response), any(MessageError.class));
+        verify(errorBuildingService, never()).buildFormatErrorResponse(eq(response), any(MessageError.class));
     }
 
     @Test
@@ -101,7 +102,7 @@ class RequestValidationInterceptorTest {
 
         assertTrue(interceptor.preHandle(request, response, handler));
 
-        verify(errorBuildingService, never()).buildErrorResponse(eq(response), any(MessageError.class));
+        verify(errorBuildingService, never()).buildFormatErrorResponse(eq(response), any(MessageError.class));
     }
 
     @Test
@@ -114,7 +115,7 @@ class RequestValidationInterceptorTest {
 
         assertFalse(interceptor.preHandle(request, response, handler));
 
-        verify(errorBuildingService, times(1)).buildErrorResponse(eq(response), messageErrorCaptor.capture());
+        verify(errorBuildingService, times(1)).buildFormatErrorResponse(eq(response), messageErrorCaptor.capture());
         assertEquals(MessageErrorCode.FORMAT_ERROR, messageErrorCaptor.getValue().getTppMessage().getMessageErrorCode());
     }
 }

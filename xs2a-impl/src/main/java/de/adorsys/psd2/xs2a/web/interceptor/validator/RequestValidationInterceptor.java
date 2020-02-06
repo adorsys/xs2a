@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.interceptor;
+package de.adorsys.psd2.xs2a.web.interceptor.validator;
 
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -68,7 +68,7 @@ public class RequestValidationInterceptor extends HandlerInterceptorAdapter {
             if (!initialMessageError.getTppMessages().isEmpty()) {
                 // Last part of all validations: if there is at least one error - we build response with HTTP code 400.
                 log.warn("Validation of incoming request failed. Error msg: [{}]", initialMessageError);
-                errorBuildingService.buildErrorResponse(response, initialMessageError);
+                errorBuildingService.buildFormatErrorResponse(response, initialMessageError);
                 return false;
             }
         }

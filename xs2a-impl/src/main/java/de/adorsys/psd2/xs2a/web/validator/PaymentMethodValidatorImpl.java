@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.validator;
 
+import de.adorsys.psd2.xs2a.web.Psd2PaymentMethodNameConstant;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.PaymentBodyValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.PaymentHeaderValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,6 @@ import java.util.List;
 
 @Component
 public class PaymentMethodValidatorImpl extends AbstractMethodValidator {
-
-    private static final String METHOD_NAME = "_initiatePayment";
 
     @Autowired
     protected PaymentMethodValidatorImpl(List<PaymentHeaderValidator> headerValidators,
@@ -39,6 +38,6 @@ public class PaymentMethodValidatorImpl extends AbstractMethodValidator {
 
     @Override
     public String getMethodName() {
-        return METHOD_NAME;
+        return Psd2PaymentMethodNameConstant.INITIATE_PAYMENT.getValue();
     }
 }
