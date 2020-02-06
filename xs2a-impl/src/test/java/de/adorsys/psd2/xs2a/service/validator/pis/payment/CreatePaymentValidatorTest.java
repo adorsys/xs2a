@@ -32,7 +32,6 @@ import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,8 +71,6 @@ class CreatePaymentValidatorTest {
     @Mock
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
     @Mock
-    private PaymentTypeAndProductValidator paymentProductAndTypeValidator;
-    @Mock
     private TppUriHeaderValidator tppUriHeaderValidator;
 
     @InjectMocks
@@ -86,8 +83,6 @@ class CreatePaymentValidatorTest {
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
@@ -110,8 +105,6 @@ class CreatePaymentValidatorTest {
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
@@ -134,8 +127,6 @@ class CreatePaymentValidatorTest {
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(payment, paymentInitiationParameters));
@@ -156,8 +147,6 @@ class CreatePaymentValidatorTest {
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
 
         when(standardPaymentProductsResolver.isRawPaymentProduct(rawPaymentProduct)).thenReturn(true);
 
@@ -179,8 +168,6 @@ class CreatePaymentValidatorTest {
     @Test
     void validate_withInvalidPsuData_shouldReturnErrorFromValidator() {
         //Given
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.invalid(PSU_DATA_VALIDATION_ERROR));
 
@@ -200,8 +187,6 @@ class CreatePaymentValidatorTest {
     void validate_withUnsupportedAccountReference_shouldReturnErrorFromValidator() {
         //Given
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.invalid(SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
@@ -244,7 +229,6 @@ class CreatePaymentValidatorTest {
     @Test
     void buildWarningMessages_warningsFromUriHeaderValidator() {
         // Given
-        Set<TppMessageInformation> emptySet = new HashSet<>();
         Set<TppMessageInformation> uriHeaderValidatorSet = new HashSet<>();
         uriHeaderValidatorSet.add(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE));
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
