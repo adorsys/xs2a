@@ -152,6 +152,10 @@ public class RequestProviderService {
         return acceptHeader;
     }
 
+    public String getContentTypeHeader() {
+        return getHeader(HttpHeaders.CONTENT_TYPE);
+    }
+
     public String getEncodedTppQwacCert() {
         return getHeader(TPP_QWAC_CERTIFICATE_HEADER);
     }

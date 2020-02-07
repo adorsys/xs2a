@@ -40,6 +40,7 @@ public class SpiPaymentInfo implements SpiPayment {
     private List<SpiPsuData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
     private OffsetDateTime creationTimestamp;
+    private String contentType;
 
     @JsonCreator
     public SpiPaymentInfo(@JsonProperty("paymentProduct") String paymentProduct) {

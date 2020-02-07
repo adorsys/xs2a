@@ -56,11 +56,10 @@ public class PaymentModelMapperPsd2 {
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final Xs2aObjectMapper xs2aObjectMapper;
 
-    public Object mapToGetPaymentResponse(Object payment, String paymentProduct) {
-        CommonPayment commonPayment = (CommonPayment) payment;
+    public Object mapToGetPaymentResponse(CommonPayment commonPayment) {
         String rawData = convertResponseToRawData(commonPayment.getPaymentData());
 
-        return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)
+        return standardPaymentProductsResolver.isRawPaymentProduct(commonPayment.getPaymentProduct())
                    ? rawData
                    : enrichPaymentWithAdditionalData(rawData, commonPayment);
     }

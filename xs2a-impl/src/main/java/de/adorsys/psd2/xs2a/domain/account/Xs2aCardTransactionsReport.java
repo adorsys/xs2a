@@ -52,7 +52,7 @@ public class Xs2aCardTransactionsReport implements CustomContentTypeProvider {
     @Override
     public MediaType getCustomContentType() {
         if (StringUtils.isBlank(responseContentType)) {
-            return MediaType.parseMediaType(MediaType.APPLICATION_JSON_VALUE);
+            return MediaType.APPLICATION_JSON;
         }
         return MediaType.parseMediaType(responseContentType);
     }
