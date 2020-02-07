@@ -53,10 +53,9 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class,
     HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class})
 class PaymentModelMapperPsd2Test {
-    private static final String STANDARD_PAYMENT_TYPE = "sepa-credit-transfers";
-    private static final String NON_STANDARD_PAYMENT_TYPE = "pain.001-sepa-credit-transfers";
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String NON_STANDARD_PAYMENT_PRODUCT = "pain.001-sepa-credit-transfers";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final boolean FUNDS_AVAILABLE = true;
     private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null);
@@ -94,8 +93,9 @@ class PaymentModelMapperPsd2Test {
         CommonPayment payment = new CommonPayment();
         payment.setPaymentData(jsonReader.getBytesFromFile("json/service/mapper/common-payment.json"));
         payment.setTransactionStatus(TransactionStatus.RCVD);
+        payment.setPaymentProduct(PAYMENT_PRODUCT);
 
-        Map actual = (Map) mapper.mapToGetPaymentResponse(payment, STANDARD_PAYMENT_TYPE);
+        Map actual = (Map) mapper.mapToGetPaymentResponse(payment);
 
         assertEquals(7, actual.size());
         assertEquals("payments", actual.get("paymentType"));
@@ -112,8 +112,9 @@ class PaymentModelMapperPsd2Test {
         CommonPayment payment = new CommonPayment();
         payment.setPaymentData(jsonReader.getBytesFromFile("json/service/mapper/common-payment.json"));
         payment.setTransactionStatus(TransactionStatus.RCVD);
+        payment.setPaymentProduct(NON_STANDARD_PAYMENT_PRODUCT);
 
-        String actual = (String) mapper.mapToGetPaymentResponse(payment, NON_STANDARD_PAYMENT_TYPE);
+        String actual = (String) mapper.mapToGetPaymentResponse(payment);
 
         assertEquals(jsonReader.getStringFromFile("json/service/mapper/common-payment.json"), actual);
     }

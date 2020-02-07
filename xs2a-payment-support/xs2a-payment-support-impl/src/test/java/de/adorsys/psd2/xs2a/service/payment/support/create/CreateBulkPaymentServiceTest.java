@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.payment.create.PisPaymentInfoCreationObject;
 import de.adorsys.psd2.xs2a.service.payment.support.create.spi.BulkPaymentInitiationService;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
@@ -51,7 +52,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,8 +114,7 @@ class CreateBulkPaymentServiceTest {
         when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_DATA))).thenReturn(buildBulkPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(buildBulkPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         //When
@@ -150,8 +149,7 @@ class CreateBulkPaymentServiceTest {
         when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_DATA))).thenReturn(buildBulkPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(buildBulkPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA))
@@ -172,8 +170,7 @@ class CreateBulkPaymentServiceTest {
         when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_DATA))).thenReturn(buildBulkPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(buildBulkPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))
@@ -198,8 +195,7 @@ class CreateBulkPaymentServiceTest {
         when(bulkPaymentInitiationService.initiatePayment(any(BulkPayment.class), eq(PAYMENT_PRODUCT), eq(PSU_DATA))).thenReturn(buildBulkPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(eq(PARAM), eq(TPP_INFO), eq(buildBulkPaymentInitiationResponse), eq(null), eq(INTERNAL_REQUEST_ID), any(OffsetDateTime.class)))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         BulkPaymentInitiationResponse expectedResponse = buildBulkPaymentInitiationResponse(initialSpiAspspConsentDataProvider);

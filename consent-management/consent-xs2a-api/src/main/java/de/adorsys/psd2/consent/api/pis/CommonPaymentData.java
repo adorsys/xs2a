@@ -41,4 +41,6 @@ public interface CommonPaymentData {
     List<PisPayment> getPayments();
 
     OffsetDateTime getCreationTimestamp();
+
+    String getContentType();
 }

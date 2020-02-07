@@ -77,7 +77,8 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         }
 
         String internalRequestId = requestProviderService.getInternalRequestIdString();
-        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData(), internalRequestId, creationTimestamp);
+        String contentType = requestProviderService.getContentTypeHeader();
+        PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(new PisPaymentInfoCreationObject(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData(), internalRequestId, creationTimestamp, contentType));
         response.setInternalRequestId(internalRequestId);
         CreatePisCommonPaymentResponse cmsResponse = pisCommonPaymentService.createCommonPayment(pisPaymentInfo);
         response.setTppNotificationContentPreferred(cmsResponse.getTppNotificationContentPreferred());

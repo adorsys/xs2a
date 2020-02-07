@@ -28,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -157,6 +158,7 @@ class CmsToXs2APaymentSupportMapperTest {
         pisCommonPaymentResponse.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         pisCommonPaymentResponse.setCreationTimestamp(CREATION_TIMESTAMP);
         pisCommonPaymentResponse.setPaymentProduct(PAYMENT_PRODUCT);
+        pisCommonPaymentResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return pisCommonPaymentResponse;
     }
 }

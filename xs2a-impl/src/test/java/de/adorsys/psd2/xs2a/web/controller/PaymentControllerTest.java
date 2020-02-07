@@ -149,10 +149,10 @@ class PaymentControllerTest {
     void getPaymentById() {
         // Given
         when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(CORRECT_PAYMENT_ID)))
-            .thenReturn(ResponseObject.builder().body(getXs2aPayment()).build());
+            .thenReturn(ResponseObject.<CommonPayment>builder().body(getXs2aPayment()).build());
 
         doReturn(new ResponseEntity<>(getPaymentInitiationResponse(de.adorsys.psd2.model.TransactionStatus.ACCP), OK))
-            .when(responseMapper).ok(any());
+            .when(responseMapper).ok(any(), any());
 
         Object expectedBody = getPaymentInitiationResponse(de.adorsys.psd2.model.TransactionStatus.ACCP);
 
@@ -187,7 +187,7 @@ class PaymentControllerTest {
         return response;
     }
 
-    private Object getXs2aPayment() {
+    private CommonPayment getXs2aPayment() {
         SinglePayment payment = new SinglePayment();
         payment.setEndToEndIdentification(CORRECT_PAYMENT_ID);
         return payment;

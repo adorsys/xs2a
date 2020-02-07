@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
@@ -380,6 +381,116 @@ class PaymentServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_PAYMENT_REQUEST_RECEIVED);
+    }
+
+    @Test
+    void getPaymentById_ContentTypeFromDB_ShouldPassContentTypeToSpiAndReturnToTpp() {
+        // Given
+        String contentType = JSON_MEDIA_TYPE;
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        pisCommonPaymentResponse.setContentType(contentType);
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
+        ArgumentCaptor<CommonPaymentData> commonPaymentDataArgumentCaptor = ArgumentCaptor.forClass(CommonPaymentData.class);
+        ArgumentCaptor<String> contentTypeArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        when(readPaymentService.getPayment(commonPaymentDataArgumentCaptor.capture(), eq(null), eq(PAYMENT_ID), contentTypeArgumentCaptor.capture())).thenReturn(new PaymentInformationResponse<>(singlePayment));
+
+        // When
+        ResponseObject<CommonPayment> paymentById = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(commonPaymentDataArgumentCaptor.getValue().getContentType()).isEqualTo(contentType);
+        assertThat(contentTypeArgumentCaptor.getValue()).isEqualTo(contentType);
+        assertThat(paymentById.getBody().getContentType()).isEqualTo(contentType);
+    }
+
+    @Test
+    void getPaymentById_ContentTypeFromAcceptHeader_ShouldPassContentTypeToSpiAndReturnToTpp() {
+        // Given
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        String contentType = JSON_MEDIA_TYPE;
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
+        ArgumentCaptor<PisCommonPaymentResponse> pisCommonPaymentResponseArgumentCaptor = ArgumentCaptor.forClass(PisCommonPaymentResponse.class);
+        ArgumentCaptor<String> contentTypeArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        when(requestProviderService.getAcceptHeader()).thenReturn(contentType);
+        when(readPaymentService.getPayment(pisCommonPaymentResponseArgumentCaptor.capture(), eq(null), eq(PAYMENT_ID), contentTypeArgumentCaptor.capture())).thenReturn(new PaymentInformationResponse<>(singlePayment));
+
+        // When
+        ResponseObject<CommonPayment> paymentById = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(pisCommonPaymentResponseArgumentCaptor.getValue().getContentType()).isEqualTo(contentType);
+        assertThat(contentTypeArgumentCaptor.getValue()).isEqualTo(contentType);
+        assertThat(paymentById.getBody().getContentType()).isEqualTo(contentType);
+    }
+
+    @Test
+    void getPaymentById_ContentTypeFromSPI_ShouldPassContentTypeToSpiAndReturnToTpp() {
+        // Given
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        String contentType = JSON_MEDIA_TYPE;
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
+        ArgumentCaptor<PisCommonPaymentResponse> pisCommonPaymentResponseArgumentCaptor = ArgumentCaptor.forClass(PisCommonPaymentResponse.class);
+        ArgumentCaptor<String> contentTypeArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        when(requestProviderService.getAcceptHeader()).thenReturn(MediaType.ALL_VALUE);
+        singlePayment.setContentType(contentType);
+        when(readPaymentService.getPayment(pisCommonPaymentResponseArgumentCaptor.capture(), eq(null), eq(PAYMENT_ID), contentTypeArgumentCaptor.capture())).thenReturn(new PaymentInformationResponse<>(singlePayment));
+
+        // When
+        ResponseObject<CommonPayment> paymentById = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(pisCommonPaymentResponseArgumentCaptor.getValue().getContentType()).isEqualTo(MediaType.ALL_VALUE);
+        assertThat(contentTypeArgumentCaptor.getValue()).isEqualTo(MediaType.ALL_VALUE);
+        assertThat(paymentById.getBody().getContentType()).isEqualTo(contentType);
+    }
+
+    @Test
+    void getPaymentById_DefaultContentType_SpiContentTypeAbsent_ShouldPassContentTypeToSpiAndReturnToTpp() {
+        // Given
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
+        ArgumentCaptor<PisCommonPaymentResponse> pisCommonPaymentResponseArgumentCaptor = ArgumentCaptor.forClass(PisCommonPaymentResponse.class);
+        ArgumentCaptor<String> contentTypeArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        when(requestProviderService.getAcceptHeader()).thenReturn(MediaType.ALL_VALUE);
+        singlePayment.setContentType("");
+        when(readPaymentService.getPayment(pisCommonPaymentResponseArgumentCaptor.capture(), eq(null), eq(PAYMENT_ID), contentTypeArgumentCaptor.capture())).thenReturn(new PaymentInformationResponse<>(singlePayment));
+
+        // When
+        ResponseObject<CommonPayment> paymentById = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(pisCommonPaymentResponseArgumentCaptor.getValue().getContentType()).isEqualTo(MediaType.ALL_VALUE);
+        assertThat(contentTypeArgumentCaptor.getValue()).isEqualTo(MediaType.ALL_VALUE);
+        assertThat(paymentById.getBody().getContentType()).isEqualTo(JSON_MEDIA_TYPE);
+    }
+
+    @Test
+    void getPaymentById_DefaultContentType_ShouldPassContentTypeToSpiAndReturnToTpp() {
+        // Given
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        when(getPaymentByIdValidator.validate(any(GetPaymentByIdPO.class))).thenReturn(ValidationResult.valid());
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
+        when(paymentServiceResolver.getReadPaymentService(any())).thenReturn(readPaymentService);
+        ArgumentCaptor<PisCommonPaymentResponse> pisCommonPaymentResponseArgumentCaptor = ArgumentCaptor.forClass(PisCommonPaymentResponse.class);
+        ArgumentCaptor<String> contentTypeArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        when(requestProviderService.getAcceptHeader()).thenReturn(MediaType.ALL_VALUE);
+        when(readPaymentService.getPayment(pisCommonPaymentResponseArgumentCaptor.capture(), eq(null), eq(PAYMENT_ID), contentTypeArgumentCaptor.capture())).thenReturn(new PaymentInformationResponse<>(singlePayment));
+
+        // When
+        ResponseObject<CommonPayment> paymentById = paymentService.getPaymentById(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID);
+
+        // Then
+        assertThat(pisCommonPaymentResponseArgumentCaptor.getValue().getContentType()).isEqualTo(MediaType.ALL_VALUE);
+        assertThat(contentTypeArgumentCaptor.getValue()).isEqualTo(MediaType.ALL_VALUE);
+        assertThat(paymentById.getBody().getContentType()).isEqualTo(JSON_MEDIA_TYPE);
     }
 
     @Test

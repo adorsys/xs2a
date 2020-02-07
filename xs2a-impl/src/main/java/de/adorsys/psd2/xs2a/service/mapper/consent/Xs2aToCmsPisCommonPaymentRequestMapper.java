@@ -27,11 +27,11 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.service.payment.create.PisPaymentInfoCreationObject;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,38 +42,28 @@ import java.util.stream.Collectors;
 public class Xs2aToCmsPisCommonPaymentRequestMapper {
     private final Xs2aRemittanceMapper xs2aRemittanceMapper;
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData, String internalRequestId, OffsetDateTime creationTimestamp) {
-        PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
-        paymentInfo.setInternalRequestId(internalRequestId);
-        paymentInfo.setPaymentData(paymentData);
-        paymentInfo.setCreationTimestamp(creationTimestamp);
-        paymentInfo.setTppNotificationUri(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
-        paymentInfo.setNotificationSupportedModes(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
-        return paymentInfo;
-    }
+    public PisPaymentInfo mapToPisPaymentInfo(PisPaymentInfoCreationObject creationObject) {
+        PaymentInitiationParameters paymentInitiationParameters = creationObject.getPaymentInitiationParameters();
+        PaymentInitiationResponse response = creationObject.getResponse();
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response) {
         PisPaymentInfo paymentInfo = new PisPaymentInfo();
         paymentInfo.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
         paymentInfo.setPaymentType(paymentInitiationParameters.getPaymentType());
         paymentInfo.setTransactionStatus(response.getTransactionStatus());
-        paymentInfo.setTppInfo(tppInfo);
+        paymentInfo.setTppInfo(creationObject.getTppInfo());
         paymentInfo.setPaymentId(response.getPaymentId());
         paymentInfo.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
         paymentInfo.setMultilevelScaRequired(response.isMultilevelScaRequired());
         paymentInfo.setAspspAccountId(response.getAspspAccountId());
         paymentInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
-        return paymentInfo;
-    }
+        paymentInfo.setInternalRequestId(creationObject.getInternalRequestId());
+        paymentInfo.setPaymentData(creationObject.getPaymentData());
+        paymentInfo.setCreationTimestamp(creationObject.getCreationTimestamp());
+        paymentInfo.setTppNotificationUri(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
+        paymentInfo.setNotificationSupportedModes(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
+        paymentInfo.setContentType(creationObject.getContentType());
 
-    public PisCommonPaymentRequest mapToCmsCommonPaymentRequest(CommonPayment commonPayment, String paymentProduct) {
-        PisCommonPaymentRequest request = new PisCommonPaymentRequest();
-        request.setPaymentId(commonPayment.getPaymentId());
-        request.setPaymentProduct(paymentProduct);
-        request.setPaymentType(commonPayment.getPaymentType());
-        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
-        request.setTppInfo(new TppInfo());
-        return request;
+        return paymentInfo;
     }
 
     public PisCommonPaymentRequest mapToCmsSinglePisCommonPaymentRequest(SinglePayment singlePayment, String paymentProduct) {

@@ -40,6 +40,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -146,6 +147,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
         assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiSinglePayment.getRemittanceInformationStructured());
         assertEquals(singlePayment.getCreationTimestamp(), spiSinglePayment.getCreationTimestamp());
+        assertEquals(singlePayment.getContentType(), spiSinglePayment.getContentType());
     }
 
     private SinglePayment buildSinglePayment() {
@@ -170,6 +172,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setPurposeCode(PURPOSE_CODE);
         singlePayment.setRemittanceInformationStructured(REMITTANCE);
         singlePayment.setCreationTimestamp(OffsetDateTime.now());
+        singlePayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return singlePayment;
     }
 

@@ -67,6 +67,7 @@ public class PisCommonPaymentMapper {
 
         commonPaymentData.setTppNotificationUri(paymentInfo.getTppNotificationUri());
         commonPaymentData.setTppNotificationContentPreferred(paymentInfo.getNotificationSupportedModes());
+        commonPaymentData.setContentType(paymentInfo.getContentType());
 
         return commonPaymentData;
     }
@@ -87,6 +88,7 @@ public class PisCommonPaymentMapper {
                        response.setMultilevelScaRequired(cmd.isMultilevelScaRequired());
                        response.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
                        response.setCreationTimestamp(cmd.getCreationTimestamp());
+                       response.setContentType(cmd.getContentType());
                        return response;
                    });
     }

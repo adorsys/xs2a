@@ -33,5 +33,6 @@
     "uri" : "uri",
     "nokUri" : "nokUri"
   },
-  "aspspAccountId": "some account id"
+  "aspspAccountId": "some account id",
+  "contentType": "application/json"
 }

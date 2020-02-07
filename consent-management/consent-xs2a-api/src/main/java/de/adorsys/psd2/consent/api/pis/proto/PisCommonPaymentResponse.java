@@ -71,6 +71,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "Timestamp of the payment creation")
     private OffsetDateTime creationTimestamp;
 
+    @ApiModelProperty(value = "Response content type")
+    private String contentType;
+
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
                    .filter(auth -> auth.getAuthorisationId().equals(authorisationId))

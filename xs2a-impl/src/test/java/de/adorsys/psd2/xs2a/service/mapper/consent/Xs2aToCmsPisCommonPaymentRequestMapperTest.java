@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.service.payment.create.PisPaymentInfoCreationObject;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,7 +59,8 @@ class Xs2aToCmsPisCommonPaymentRequestMapperTest {
         expected.setStatusChangeTimestamp(null);
 
         // When
-        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA, null, expected.getCreationTimestamp());
+        PisPaymentInfoCreationObject creationObject = new PisPaymentInfoCreationObject(paymentInitiationParameters, tppInfo, response, PAYMENT_DATA, null, expected.getCreationTimestamp(), expected.getContentType());
+        PisPaymentInfo actual = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(creationObject);
 
         // Then
         assertEquals(expected, actual);
