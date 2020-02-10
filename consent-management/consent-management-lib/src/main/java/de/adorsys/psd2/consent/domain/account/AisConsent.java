@@ -151,11 +151,6 @@ public class AisConsent extends InstanceDependableEntity implements Authorisable
     @Enumerated(value = EnumType.STRING)
     private AdditionalAccountInformationType ownerNameType = AdditionalAccountInformationType.NONE;
 
-    @Deprecated //TODO remove this column in 5.10 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1124
-    @Column(name = "owner_address_type")
-    @Enumerated(value = EnumType.STRING)
-    private AdditionalAccountInformationType ownerAddressType = AdditionalAccountInformationType.NONE;
-
     @Column(name = "int_req_id")
     private String internalRequestId;
 
