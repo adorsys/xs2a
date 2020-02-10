@@ -67,10 +67,10 @@ public class OneOffConsentExpirationService {
             Optional<AisConsentTransaction> transactionOptional = aisConsentTransactionRepository.findByConsentIdAndResourceId(consent, resourceId);
 
             int transactions = transactionOptional
-                                    .map(AisConsentTransaction::getNumberOfTransactions)
-                                    .orElse(0);
+                                   .map(AisConsentTransaction::getNumberOfTransactions)
+                                   .orElse(0);
 
-            int maximumNumberOfGetRequestsForConsent = getMaximumNumberOfGetRequestsForConsentsAccount(consent, transactions);
+            int maximumNumberOfGetRequestsForConsent = getMaximumNumberOfGetRequestsForConsentsAccount(consent.getAspspAccountAccesses(), resourceId, transactions);
             int numberOfUsedGetRequestsForConsent = aisConsentUsageRepository.countByConsentIdAndResourceId(consent.getId(), resourceId);
 
             // There are some available not used get requests - omit all other iterations.
@@ -87,45 +87,35 @@ public class OneOffConsentExpirationService {
      * This method returns maximum number of possible get requests for the definite consent for ONE account
      * except the main get call - readAccountList.
      */
-    private int getMaximumNumberOfGetRequestsForConsentsAccount(AisConsent consent, int numberOfTransactions) {
-        switch (consent.getAisConsentRequestType()) {
-            case DEDICATED_ACCOUNTS:
-                List<AspspAccountAccess> aspspAccountAccesses = consent.getAspspAccountAccesses();
+    private int getMaximumNumberOfGetRequestsForConsentsAccount(List<AspspAccountAccess> aspspAccountAccesses, String resourceId, int numberOfTransactions) {
+        List<AspspAccountAccess> filteredByResourceId = aspspAccountAccesses.stream().filter(access -> access.getResourceId().equals(resourceId)).collect(Collectors.toList());
 
-                // Consent was given only for accounts: readAccountDetails for each account.
-                if (aspspAccountAccesses.size() == 1) {
-                    return 1;
-                }
-
-                // Consent was given for accounts, balances and transactions.
-                if (aspspAccountAccesses.size() == 3) {
-                    return 3 + numberOfTransactions;
-                }
-
-                // Consent was given for accounts and balances.
-                if (aspspAccountAccesses
-                        .stream()
-                        .noneMatch(aspspAccountAccess -> aspspAccountAccess.getTypeAccess() == TypeAccess.TRANSACTION)) {
-
-                    // Value 2 corresponds to the readAccountDetails and readBalances.
-                    return 2;
-                }
-
-                // Consent was given for accounts and transactions.
-                if (aspspAccountAccesses
-                        .stream()
-                        .noneMatch(aspspAccountAccess -> aspspAccountAccess.getTypeAccess() == TypeAccess.BALANCE)) {
-
-                    // Value 2 corresponds to the readAccountDetails and readTransactions. Plus each account's transactions.
-                    return 2 + numberOfTransactions;
-                }
-
-            case GLOBAL:
-                // Value 3 corresponds to the number of static get requests in scope of each account: readAccountDetails,
-                // readBalances, readTransactionList.
-                return 3 + numberOfTransactions;
-            default:
-                throw new UnsupportedOperationException("Not supported AIS consent type.");
+        // Consent was given only for accounts: readAccountDetails for each account.
+        if (filteredByResourceId
+                .stream()
+                .allMatch(access -> access.getTypeAccess() == TypeAccess.ACCOUNT)) {
+            return 1;
         }
+
+        // Consent was given for accounts and balances.
+        if (filteredByResourceId
+                .stream()
+                .noneMatch(access -> access.getTypeAccess() == TypeAccess.TRANSACTION)) {
+
+            // Value 2 corresponds to the readAccountDetails and readBalances.
+            return 2;
+        }
+
+        // Consent was given for accounts and transactions.
+        if (filteredByResourceId
+                .stream()
+                .noneMatch(access -> access.getTypeAccess() == TypeAccess.BALANCE)) {
+
+            // Value 2 corresponds to the readAccountDetails and readTransactions. Plus each account's transactions.
+            return 2 + numberOfTransactions;
+        }
+
+        // Consent was given for accounts, balances and transactions.
+        return 3 + numberOfTransactions;
     }
 }
