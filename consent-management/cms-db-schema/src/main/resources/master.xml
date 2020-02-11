@@ -131,4 +131,5 @@
     <include relativeToChangelogFile="true" file="migration/0084-remove-tpp-redirect-uri-from-tpp-info-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0085-add-instruction-identification-column-to-pis-payment-data-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0086-add-column-valid-until-to-ais-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0087-add-column-content-type-to-pis-common-payment-table.xml"/>
 </databaseChangeLog>

@@ -46,6 +46,7 @@ public class Xs2aToSpiPaymentInfoMapper {
         info.setPaymentData(commonPaymentData.getPaymentData());
         info.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(commonPaymentData.getPsuData()));
         info.setStatusChangeTimestamp(commonPaymentData.getStatusChangeTimestamp());
+        info.setContentType(commonPaymentData.getContentType());
         return info;
     }
 }

@@ -35,10 +35,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
-import de.adorsys.psd2.xs2a.domain.pis.GetPaymentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
 import de.adorsys.psd2.xs2a.service.PaymentService;
@@ -106,18 +103,14 @@ public class PaymentController implements PaymentApi {
                                                 String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage,
                                                 String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
-        ResponseObject serviceResponse = PaymentType.getByValue(paymentService)
+        ResponseObject<CommonPayment> serviceResponse = PaymentType.getByValue(paymentService)
                                              .map(pt -> xs2aPaymentService.getPaymentById(pt, paymentProduct, paymentId))
-                                             .orElseGet(ResponseObject.builder()
+                                             .orElseGet(ResponseObject.<CommonPayment>builder()
                                                             .fail(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404))::build);
 
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(ResponseObject.builder()
-                                           .body(paymentModelMapperPsd2
-                                                     .mapToGetPaymentResponse(serviceResponse.getBody(),
-                                                                              PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service: " + paymentService)),
-                                                                              paymentProduct)).build());
+                   : responseMapper.ok(serviceResponse, paymentModelMapperPsd2::mapToGetPaymentResponse);
     }
 
     //Method for JSON format payments

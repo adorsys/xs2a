@@ -46,9 +46,11 @@ import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -107,12 +109,14 @@ class ReadSinglePaymentServiceTest {
         pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPayments(PIS_PAYMENTS);
         pisCommonPaymentResponse.setPaymentProduct(PRODUCT);
+        pisCommonPaymentResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     @Test
     void getPayment_success() {
         // Given
-        when(spiPaymentFactory.createSpiSinglePayment(PIS_PAYMENTS.get(0), PRODUCT)).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
+        ArgumentCaptor<PisPayment> pisPaymentArgumentCaptor = ArgumentCaptor.forClass(PisPayment.class);
+        when(spiPaymentFactory.createSpiSinglePayment(pisPaymentArgumentCaptor.capture(), eq(PRODUCT))).thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
 
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA)).thenReturn(SPI_CONTEXT_DATA);
         when(singlePaymentSpi.getPaymentById(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
@@ -133,6 +137,7 @@ class ReadSinglePaymentServiceTest {
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(SINGLE_PAYMENT);
         assertThat(actualResponse.getErrorHolder()).isNull();
+        assertThat(pisPaymentArgumentCaptor.getValue().getContentType()).isEqualTo(pisCommonPaymentResponse.getContentType());
     }
 
     @Test

@@ -45,9 +45,11 @@ import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.util.Collections;
 import java.util.List;
@@ -98,6 +100,7 @@ class ReadBulkPaymentServiceTest {
         pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPayments(PIS_PAYMENTS);
         pisCommonPaymentResponse.setPaymentProduct(PRODUCT);
+        pisCommonPaymentResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     @Test
@@ -105,8 +108,9 @@ class ReadBulkPaymentServiceTest {
         // Given
         when(spiToXs2aBulkPaymentMapper.mapToXs2aBulkPayment(SPI_BULK_PAYMENT))
             .thenReturn(BULK_PAYMENT);
-
-        when(spiPaymentFactory.createSpiBulkPayment(PIS_PAYMENTS, PRODUCT))
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<PisPayment>> pisPaymentListArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        when(spiPaymentFactory.createSpiBulkPayment(pisPaymentListArgumentCaptor.capture(), eq(PRODUCT)))
             .thenReturn(Optional.of(SPI_BULK_PAYMENT));
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
@@ -123,6 +127,7 @@ class ReadBulkPaymentServiceTest {
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(BULK_PAYMENT);
         assertThat(actualResponse.getErrorHolder()).isNull();
+        assertThat(pisPaymentListArgumentCaptor.getValue().get(0).getContentType()).isEqualTo(pisCommonPaymentResponse.getContentType());
     }
 
     @Test

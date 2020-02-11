@@ -44,9 +44,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
 
-import static de.adorsys.psd2.xs2a.core.profile.PaymentType.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +55,7 @@ class PaymentModelMapperTest {
     private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
     private static final String IBAN = "DE1234567890";
     private static final String CURRENCY = "EUR";
-    private static final String STANDARD_PAYMENT_TYPE = "sepa-credit-transfers";
+    private static final String STANDARD_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String NON_STANDARD_PAYMENT_TYPE = "pain.001-sepa-credit-transfers";
     private static final String NON_STANDARD_PAYMENT_DATA_STRING = "Test payment data";
     private static final String CREDITOR_AGENT = "TestAgent";
@@ -102,11 +100,11 @@ class PaymentModelMapperTest {
     @Test
     void mapToGetPaymentResponse12_Single_success() {
         // Given
-        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
+        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_PRODUCT)).thenReturn(false);
         when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
 
         //When
-        PaymentInitiationWithStatusResponse result = (PaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildSinglePayment(TransactionStatus.RCVD), SINGLE, STANDARD_PAYMENT_TYPE);
+        PaymentInitiationWithStatusResponse result = (PaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildSinglePayment(TransactionStatus.RCVD));
 
         //Then
         assertThat(result).isNotNull();
@@ -129,11 +127,11 @@ class PaymentModelMapperTest {
     @Test
     void mapToGetPaymentResponse12_Periodic_success() {
         // Given
-        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
+        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_PRODUCT)).thenReturn(false);
         when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
 
         //When
-        PeriodicPaymentInitiationWithStatusResponse result = (PeriodicPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildPeriodicPayment(TransactionStatus.RCVD), PERIODIC, STANDARD_PAYMENT_TYPE);
+        PeriodicPaymentInitiationWithStatusResponse result = (PeriodicPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildPeriodicPayment(TransactionStatus.RCVD));
 
         //Then
         assertThat(result).isNotNull();
@@ -161,11 +159,11 @@ class PaymentModelMapperTest {
     @Test
     void mapToGetPaymentResponse12_Bulk_success() {
         // Given
-        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_TYPE)).thenReturn(false);
+        when(standardPaymentProductsResolver.isRawPaymentProduct(STANDARD_PAYMENT_PRODUCT)).thenReturn(false);
         when(amountModelMapper.mapToAmount(buildXs2aAmount())).thenReturn(getAmount12(true, true));
 
         //When
-        BulkPaymentInitiationWithStatusResponse result = (BulkPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildBulkPayment(TransactionStatus.RCVD), BULK, STANDARD_PAYMENT_TYPE);
+        BulkPaymentInitiationWithStatusResponse result = (BulkPaymentInitiationWithStatusResponse) paymentModelMapperPsd2.mapToGetPaymentResponse(buildBulkPayment(TransactionStatus.RCVD));
 
         //Then
         assertThat(result).isNotNull();
@@ -196,7 +194,7 @@ class PaymentModelMapperTest {
         when(standardPaymentProductsResolver.isRawPaymentProduct(NON_STANDARD_PAYMENT_TYPE)).thenReturn(true);
 
         //When
-        String result = (String) paymentModelMapperPsd2.mapToGetPaymentResponse(buildNonStandardPayment(), any(), NON_STANDARD_PAYMENT_TYPE);
+        String result = (String) paymentModelMapperPsd2.mapToGetPaymentResponse(buildNonStandardPayment());
 
         //Then
         assertThat(result).isNotNull();
@@ -244,6 +242,7 @@ class PaymentModelMapperTest {
     private CommonPayment buildNonStandardPayment() {
         CommonPayment commonPayment = new CommonPayment();
         commonPayment.setPaymentData(NON_STANDARD_PAYMENT_DATA_STRING.getBytes());
+        commonPayment.setPaymentProduct(NON_STANDARD_PAYMENT_TYPE);
         return commonPayment;
     }
 
@@ -273,6 +272,7 @@ class PaymentModelMapperTest {
         payment.setUltimateCreditor(ULTIMATE_CREDITOR);
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(PURPOSE_CODE));
         payment.setRemittanceInformationStructured(REMITTANCE);
+        payment.setPaymentProduct(STANDARD_PAYMENT_PRODUCT);
         return payment;
     }
 
@@ -297,6 +297,7 @@ class PaymentModelMapperTest {
         payment.setUltimateCreditor(ULTIMATE_CREDITOR);
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(PURPOSE_CODE));
         payment.setRemittanceInformationStructured(REMITTANCE);
+        payment.setPaymentProduct(STANDARD_PAYMENT_PRODUCT);
         return payment;
     }
 
@@ -307,6 +308,7 @@ class PaymentModelMapperTest {
         payment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
         payment.setPayments(Collections.singletonList(buildSinglePayment(status)));
         payment.setTransactionStatus(status);
+        payment.setPaymentProduct(STANDARD_PAYMENT_PRODUCT);
         return payment;
     }
 }

@@ -115,4 +115,7 @@ public class PisPayment {
 
     @ApiModelProperty(value = "Batch booking preferred")
     private Boolean batchBookingPreferred;
+
+    @ApiModelProperty(value = "Content type")
+    private String contentType;
 }

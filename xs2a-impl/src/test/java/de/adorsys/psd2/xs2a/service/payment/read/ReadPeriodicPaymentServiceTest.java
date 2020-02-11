@@ -46,9 +46,11 @@ import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -99,6 +101,7 @@ class ReadPeriodicPaymentServiceTest {
         pisCommonPaymentResponse = new PisCommonPaymentResponse();
         pisCommonPaymentResponse.setPayments(PIS_PAYMENTS);
         pisCommonPaymentResponse.setPaymentProduct(PRODUCT);
+        pisCommonPaymentResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
     }
 
     @Test
@@ -117,7 +120,8 @@ class ReadPeriodicPaymentServiceTest {
         when(spiToXs2aPeriodicPaymentMapper.mapToXs2aPeriodicPayment(SPI_PERIODIC_PAYMENT))
             .thenReturn(PERIODIC_PAYMENT);
 
-        when(spiPaymentFactory.createSpiPeriodicPayment(PIS_PAYMENTS.get(0), PRODUCT))
+        ArgumentCaptor<PisPayment> pisPaymentArgumentCaptor = ArgumentCaptor.forClass(PisPayment.class);
+        when(spiPaymentFactory.createSpiPeriodicPayment(pisPaymentArgumentCaptor.capture(), eq(PRODUCT)))
             .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
 
         // When
@@ -128,6 +132,7 @@ class ReadPeriodicPaymentServiceTest {
         assertThat(actualResponse.getPayment()).isNotNull();
         assertThat(actualResponse.getPayment()).isEqualTo(PERIODIC_PAYMENT);
         assertThat(actualResponse.getErrorHolder()).isNull();
+        assertThat(pisPaymentArgumentCaptor.getValue().getContentType()).isEqualTo(pisCommonPaymentResponse.getContentType());
     }
 
     @Test

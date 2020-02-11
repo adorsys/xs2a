@@ -70,6 +70,7 @@ public class CmsToXs2aPaymentMapper {
                        periodic.setUltimateCreditor(p.getUltimateCreditor());
                        periodic.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
                        periodic.setPurposeCode(PurposeCode.fromValue(p.getPurposeCode()));
+                       periodic.setContentType(p.getContentType());
                        return periodic;
                    }).orElse(null);
     }
@@ -98,6 +99,7 @@ public class CmsToXs2aPaymentMapper {
                        single.setUltimateDebtor(p.getUltimateDebtor());
                        single.setRemittanceInformationStructured(xs2aRemittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
                        single.setPurposeCode(PurposeCode.fromValue(p.getPurposeCode()));
+                       single.setContentType(p.getContentType());
                        return single;
                    }).orElse(null);
     }
@@ -117,6 +119,7 @@ public class CmsToXs2aPaymentMapper {
         bulk.setTransactionStatus(firstPayment.getTransactionStatus());
         bulk.setPsuDataList(firstPayment.getPsuDataList());
         bulk.setStatusChangeTimestamp(firstPayment.getStatusChangeTimestamp());
+        bulk.setContentType(firstPayment.getContentType());
         return bulk;
     }
 

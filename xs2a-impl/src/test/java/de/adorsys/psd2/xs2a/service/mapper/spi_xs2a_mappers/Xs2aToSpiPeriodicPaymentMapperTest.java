@@ -39,6 +39,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -151,6 +152,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(ULTIMATE_CREDITOR, spiPeriodicPayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiPeriodicPayment.getPurposeCode());
         assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructured());
+        assertEquals(periodicPayment.getContentType(), spiPeriodicPayment.getContentType());
     }
 
     private PeriodicPayment buildPeriodicPayment() {
@@ -179,6 +181,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         periodicPayment.setPurposeCode(PURPOSE_CODE);
         periodicPayment.setRemittanceInformationStructured(REMITTANCE);
+        periodicPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return periodicPayment;
     }
 

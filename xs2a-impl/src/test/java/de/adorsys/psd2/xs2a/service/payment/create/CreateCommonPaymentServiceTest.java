@@ -50,14 +50,18 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -113,17 +117,22 @@ class CreateCommonPaymentServiceTest {
     @Test
     void createPayment_success() {
         // Given
+        ArgumentCaptor<PisPaymentInfo> pisPaymentInfoArgumentCaptor = ArgumentCaptor.forClass(PisPaymentInfo.class);
         when(commonPaymentInitiationService.initiatePayment(COMMON_PAYMENT, PRODUCT, PSU_DATA)).thenReturn(commonPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, commonPaymentInitiationResponse, COMMON_PAYMENT.getPaymentData(), INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
+        String contentTypeHeader = MediaType.APPLICATION_JSON_VALUE;
+        when(requestProviderService.getContentTypeHeader()).thenReturn(contentTypeHeader);
 
         //When
         ResponseObject<PaymentInitiationResponse> actualResponse = createCommonPaymentService.createPayment(PAYMENT_DATA_IN_BYTES, buildPaymentInitiationParameters(), TPP_INFO);
 
         //Then
+        verify(pisCommonPaymentService).createCommonPayment(pisPaymentInfoArgumentCaptor.capture());
+        PisPaymentInfo pisPaymentInfo = pisPaymentInfoArgumentCaptor.getValue();
+        assertThat(pisPaymentInfo.getContentType()).isEqualTo(contentTypeHeader);
         assertThat(actualResponse.hasError()).isFalse();
         assertThat(actualResponse.getBody().getPaymentId()).isEqualTo(PAYMENT_ID);
         assertThat(actualResponse.getBody().getTransactionStatus()).isEqualTo(TransactionStatus.RCVD);
@@ -156,8 +165,7 @@ class CreateCommonPaymentServiceTest {
         when(commonPaymentInitiationService.initiatePayment(COMMON_PAYMENT, PRODUCT, PSU_DATA)).thenReturn(commonPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, commonPaymentInitiationResponse, COMMON_PAYMENT.getPaymentData(), INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA))
@@ -177,8 +185,7 @@ class CreateCommonPaymentServiceTest {
         when(commonPaymentInitiationService.initiatePayment(COMMON_PAYMENT, PRODUCT, PSU_DATA)).thenReturn(commonPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, commonPaymentInitiationResponse, COMMON_PAYMENT.getPaymentData(), INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))
@@ -202,8 +209,7 @@ class CreateCommonPaymentServiceTest {
         when(commonPaymentInitiationService.initiatePayment(COMMON_PAYMENT, PRODUCT, PSU_DATA)).thenReturn(commonPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PSU_DATA)).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, commonPaymentInitiationResponse, COMMON_PAYMENT.getPaymentData(), INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))
@@ -266,6 +272,8 @@ class CreateCommonPaymentServiceTest {
     }
 
     private static PisPaymentInfo buildPisPaymentInfoRequest() {
-        return new PisPaymentInfo();
+        PisPaymentInfo pisPaymentInfo = new PisPaymentInfo();
+        pisPaymentInfo.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        return pisPaymentInfo;
     }
 }

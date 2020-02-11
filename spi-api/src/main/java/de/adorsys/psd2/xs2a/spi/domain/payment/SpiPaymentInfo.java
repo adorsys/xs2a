@@ -37,6 +37,7 @@ public class SpiPaymentInfo implements SpiPayment {
     private byte[] paymentData;
     private List<SpiPsuData> psuDataList;
     private OffsetDateTime statusChangeTimestamp;
+    private String contentType;
 
     public SpiPaymentInfo(String paymentProduct) {
         this.paymentProduct = paymentProduct;
