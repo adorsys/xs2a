@@ -134,6 +134,7 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
             pmt.setTransactionStatus(commonPaymentData.getTransactionStatus());
             pmt.setPsuDataList(commonPaymentData.getPsuData());
             pmt.setStatusChangeTimestamp(commonPaymentData.getStatusChangeTimestamp());
+            pmt.setContentType(commonPaymentData.getContentType());
         });
 
         return pisPayments;

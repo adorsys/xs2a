@@ -41,6 +41,7 @@ import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -162,6 +163,7 @@ class CmsToXs2aPaymentMapperTest {
         assertEquals(pisPayment.getUltimateCreditor(), periodicPayment.getUltimateCreditor());
         assertEquals(pisPayment.getPurposeCode(), periodicPayment.getPurposeCode().toString());
         assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), periodicPayment.getRemittanceInformationStructured());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, periodicPayment.getContentType());
     }
 
     @Test
@@ -220,6 +222,7 @@ class CmsToXs2aPaymentMapperTest {
         assertEquals(pisPayment.getUltimateCreditor(), singlePayment.getUltimateCreditor());
         assertEquals(pisPayment.getPurposeCode(), singlePayment.getPurposeCode().toString());
         assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), singlePayment.getRemittanceInformationStructured());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, singlePayment.getContentType());
     }
 
     @Test
@@ -284,6 +287,8 @@ class CmsToXs2aPaymentMapperTest {
         assertEquals(pisPayment.getUltimateCreditor(), firstPayment.getUltimateCreditor());
         assertEquals(pisPayment.getPurposeCode(), firstPayment.getPurposeCode().toString());
         assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), firstPayment.getRemittanceInformationStructured());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, firstPayment.getContentType());
+        assertEquals(MediaType.APPLICATION_JSON_VALUE, bulkPayment.getContentType());
     }
 
     @Test
@@ -345,6 +350,7 @@ class CmsToXs2aPaymentMapperTest {
         pisPayment.setPsuDataList(PSU_ID_DATA_LIST);
         pisPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         pisPayment.setBatchBookingPreferred(Boolean.TRUE);
+        pisPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return pisPayment;
     }
 

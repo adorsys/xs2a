@@ -19,13 +19,16 @@ package de.adorsys.psd2.xs2a.domain.pis;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
-public class CommonPayment {
+public class CommonPayment implements CustomContentTypeProvider {
     protected String paymentId;
     protected String paymentProduct;
     protected TransactionStatus transactionStatus;
@@ -34,4 +37,13 @@ public class CommonPayment {
     protected List<PsuIdData> psuDataList;
     protected OffsetDateTime statusChangeTimestamp;
     protected String creditorId;
+    private String contentType;
+
+    @Override
+    public MediaType getCustomContentType() {
+        if (StringUtils.isBlank(contentType)) {
+            return MediaType.APPLICATION_JSON;
+        }
+        return MediaType.parseMediaType(contentType);
+    }
 }

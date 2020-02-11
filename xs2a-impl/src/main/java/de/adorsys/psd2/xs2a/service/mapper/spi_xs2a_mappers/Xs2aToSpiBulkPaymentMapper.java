@@ -47,6 +47,7 @@ public class Xs2aToSpiBulkPaymentMapper {
         bulk.setPayments(mapToListSpiSinglePayment(payment.getPayments(), paymentProduct));
         bulk.setPsuDataList(xs2aToSpiPsuDataMapper.mapToSpiPsuDataList(payment.getPsuDataList()));
         bulk.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
+        bulk.setContentType(payment.getContentType());
         return bulk;
     }
 

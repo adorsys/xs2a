@@ -64,4 +64,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Internal request ID")
     private String internalRequestId;
+
+    @ApiModelProperty(value = "Response content type")
+    private String contentType;
 }

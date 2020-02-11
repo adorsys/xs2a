@@ -22,9 +22,11 @@ import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -41,6 +43,7 @@ public class RequestProviderService {
     private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
     private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
     private static final String PSU_CORPORATE_ID_TYPE_HEADER = "psu-corporate-id-type";
+    private static final String ACCEPT_HEADER = "accept";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
@@ -114,6 +117,25 @@ public class RequestProviderService {
 
     public String getTppNokRedirectURI() {
         return getHeader(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI);
+    }
+
+    /**
+     * Returns Accept header from the request. If the header is absent, returns any instead(*{@literal /}*)
+     *
+     * @return accept header
+     */
+    @NotNull
+    public String getAcceptHeader() {
+        String acceptHeader = getHeader(ACCEPT_HEADER);
+        if (acceptHeader == null) {
+            return MediaType.ALL_VALUE;
+        }
+
+        return acceptHeader;
+    }
+
+    public String getContentTypeHeader() {
+        return getHeader(HttpHeaders.CONTENT_TYPE);
     }
 
     private String getHeader(String headerName) {

@@ -71,6 +71,7 @@ public class PisCommonPaymentMapper {
         }
         commonPaymentData.setAuthorisationTemplate(authorisationTemplate);
         commonPaymentData.setInternalRequestId(paymentInfo.getInternalRequestId());
+        commonPaymentData.setContentType(paymentInfo.getContentType());
         return commonPaymentData;
     }
 
@@ -137,6 +138,7 @@ public class PisCommonPaymentMapper {
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
                        response.setMultilevelScaRequired(cmd.isMultilevelScaRequired());
                        response.setAuthorisations(cmsAuthorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
+                       response.setContentType(cmd.getContentType());
                        return response;
                    });
     }

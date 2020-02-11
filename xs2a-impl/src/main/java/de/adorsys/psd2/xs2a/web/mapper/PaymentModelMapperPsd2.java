@@ -61,7 +61,11 @@ public class PaymentModelMapperPsd2 {
     private final RemittanceMapper remittanceMapper;
     private final PurposeCodeMapper purposeCodeMapper;
 
-    public Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
+    public Object mapToGetPaymentResponse(CommonPayment payment) {
+        return mapToGetPaymentResponse(payment, payment.getPaymentType(), payment.getPaymentProduct());
+    }
+
+    private Object mapToGetPaymentResponse(Object payment, PaymentType type, String paymentProduct) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct)) {
             return convertResponseToRawData(((CommonPayment) payment).getPaymentData());
         }

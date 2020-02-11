@@ -103,7 +103,7 @@ class PaymentModelMapperPsd2Test {
     @Test
     void mapToGetPaymentResponse_SinglePayment() {
         SinglePayment inputData = getSpiSingle();
-        PaymentInitiationWithStatusResponse actualResponse = (PaymentInitiationWithStatusResponse) mapper.mapToGetPaymentResponse(inputData, PaymentType.SINGLE, "sepa-credit-transfers");
+        PaymentInitiationWithStatusResponse actualResponse = (PaymentInitiationWithStatusResponse) mapper.mapToGetPaymentResponse(inputData);
         PaymentInitiationWithStatusResponse expectedResponse = jsonReader.getObjectFromFile("json/service/mapper/payment-initiation-with-status-response.json", PaymentInitiationWithStatusResponse.class);
         assertEquals(expectedResponse, actualResponse);
     }
@@ -120,6 +120,7 @@ class PaymentModelMapperPsd2Test {
         spiPayment.setRemittanceInformationUnstructured("Ref. Number WBG-1222");
         spiPayment.setRequestedExecutionDate(LocalDate.of(2025, 5, 5));
         spiPayment.setTransactionStatus(TransactionStatus.RCVD);
+        spiPayment.setPaymentProduct(PAYMENT_PRODUCT);
         return spiPayment;
     }
 

@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.service.payment.create.PisPaymentInfoCreationObject;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -40,24 +41,24 @@ import java.util.stream.Collectors;
 public class Xs2aToCmsPisCommonPaymentRequestMapper {
     private final Xs2aRemittanceMapper xs2aRemittanceMapper;
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response, byte[] paymentData, String internalRequestId) {
-        PisPaymentInfo paymentInfo = mapToPisPaymentInfo(paymentInitiationParameters, tppInfo, response);
-        paymentInfo.setInternalRequestId(internalRequestId);
-        paymentInfo.setPaymentData(paymentData);
-        return paymentInfo;
-    }
+    public PisPaymentInfo mapToPisPaymentInfo(PisPaymentInfoCreationObject creationObject) {
+        PaymentInitiationParameters paymentInitiationParameters = creationObject.getPaymentInitiationParameters();
+        PaymentInitiationResponse response = creationObject.getResponse();
 
-    public PisPaymentInfo mapToPisPaymentInfo(PaymentInitiationParameters paymentInitiationParameters, TppInfo tppInfo, PaymentInitiationResponse response) {
         PisPaymentInfo paymentInfo = new PisPaymentInfo();
         paymentInfo.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
         paymentInfo.setPaymentType(paymentInitiationParameters.getPaymentType());
         paymentInfo.setTransactionStatus(response.getTransactionStatus());
-        paymentInfo.setTppInfo(tppInfo);
+        paymentInfo.setTppInfo(creationObject.getTppInfo());
         paymentInfo.setPaymentId(response.getPaymentId());
         paymentInfo.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
         paymentInfo.setMultilevelScaRequired(response.isMultilevelScaRequired());
         paymentInfo.setAspspAccountId(response.getAspspAccountId());
         paymentInfo.setTppRedirectUri(paymentInitiationParameters.getTppRedirectUri());
+        paymentInfo.setInternalRequestId(creationObject.getInternalRequestId());
+        paymentInfo.setPaymentData(creationObject.getPaymentData());
+        paymentInfo.setContentType(creationObject.getContentType());
+
         return paymentInfo;
     }
 

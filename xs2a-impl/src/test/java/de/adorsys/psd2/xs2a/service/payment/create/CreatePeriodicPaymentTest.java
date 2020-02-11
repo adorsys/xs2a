@@ -62,6 +62,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -118,8 +119,7 @@ class CreatePeriodicPaymentTest {
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         //When
@@ -138,8 +138,7 @@ class CreatePeriodicPaymentTest {
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         //When
@@ -175,8 +174,7 @@ class CreatePeriodicPaymentTest {
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData()))
@@ -196,8 +194,7 @@ class CreatePeriodicPaymentTest {
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))
@@ -222,8 +219,7 @@ class CreatePeriodicPaymentTest {
         when(periodicPaymentInitiationService.initiatePayment(buildPeriodicPayment(), "sepa-credit-transfers", PSU_ID_DATA)).thenReturn(periodicPaymentInitiationResponse);
         when(pisCommonPaymentService.createCommonPayment(PAYMENT_INFO)).thenReturn(PIS_COMMON_PAYMENT_RESPONSE);
         when(xs2aPisCommonPaymentMapper.mapToXs2aPisCommonPayment(PIS_COMMON_PAYMENT_RESPONSE, PARAM.getPsuData())).thenReturn(PIS_COMMON_PAYMENT);
-        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(PARAM, TPP_INFO, periodicPaymentInitiationResponse, null, INTERNAL_REQUEST_ID))
-            .thenReturn(PAYMENT_INFO);
+        when(xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(any(PisPaymentInfoCreationObject.class))).thenReturn(PAYMENT_INFO);
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
         when(authorisationMethodDecider.isImplicitMethod(false, false))

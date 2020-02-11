@@ -42,6 +42,8 @@ import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentReque
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -120,7 +122,7 @@ public class PaymentService {
      * @param encryptedPaymentId ASPSP identifier of the payment
      * @return Response containing information about payment or corresponding error
      */
-    public ResponseObject getPaymentById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
+    public ResponseObject<CommonPayment> getPaymentById(PaymentType paymentType, String paymentProduct, String encryptedPaymentId) {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
@@ -130,7 +132,7 @@ public class PaymentService {
         if (!pisCommonPaymentOptional.isPresent()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by ID",
                      internalRequestId, xRequestId, encryptedPaymentId);
-            return ResponseObject.builder()
+            return ResponseObject.<CommonPayment>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
@@ -140,27 +142,31 @@ public class PaymentService {
         if (validationResult.isNotValid()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Get payment - validation failed: {}",
                      internalRequestId, xRequestId, encryptedPaymentId, validationResult.getMessageError());
-            return ResponseObject.builder()
+            return ResponseObject.<CommonPayment>builder()
                        .fail(validationResult.getMessageError())
                        .build();
         }
 
         PsuIdData psuIdData = getPsuIdDataFromRequest();
+        String contentType = Optional.ofNullable(commonPaymentResponse.getContentType()).orElseGet(requestProviderService::getAcceptHeader);
+        commonPaymentResponse.setContentType(contentType);
         ReadPaymentService readPaymentService = paymentServiceResolver.getReadPaymentService(commonPaymentResponse);
-        PaymentInformationResponse response = readPaymentService.getPayment(commonPaymentResponse, psuIdData, encryptedPaymentId);
+        PaymentInformationResponse<CommonPayment> response = readPaymentService.getPayment(commonPaymentResponse, psuIdData, encryptedPaymentId);
 
         if (response.hasError()) {
             log.info("InR-ID: [{}], X-Request-ID: [{}], Payment-ID [{}]. Read Payment failed: {}",
                      internalRequestId, xRequestId, encryptedPaymentId, response.getErrorHolder());
-            return ResponseObject.builder()
+            return ResponseObject.<CommonPayment>builder()
                        .fail(response.getErrorHolder())
                        .build();
         }
 
         CommonPayment commonPayment = response.getPayment();
+        String responseContentType = resolveContentType(contentType, commonPayment.getContentType());
+        commonPayment.setContentType(responseContentType);
         loggingContextService.storeTransactionStatus(commonPayment.getTransactionStatus());
 
-        return ResponseObject.builder()
+        return ResponseObject.<CommonPayment>builder()
                    .body(commonPayment)
                    .build();
     }
@@ -302,5 +308,13 @@ public class PaymentService {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
         log.info("X-Request-ID: [{}]. Corresponding PSU-ID {} was provided from request.", requestProviderService.getRequestId(), psuIdData);
         return psuIdData;
+    }
+
+    private String resolveContentType(String contentTypeBeforeSpi, String contentTypeAfterSpi) {
+        String responseContentType = StringUtils.defaultIfBlank(contentTypeAfterSpi, contentTypeBeforeSpi);
+        if (MediaType.ALL_VALUE.equals(responseContentType)) {
+            responseContentType = MediaType.APPLICATION_JSON_VALUE;
+        }
+        return responseContentType;
     }
 }

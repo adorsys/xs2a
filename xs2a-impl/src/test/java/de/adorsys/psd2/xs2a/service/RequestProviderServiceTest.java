@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -46,6 +47,10 @@ class RequestProviderServiceTest {
     private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {
     });
     private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9861d849-3302-4162-b79d-c5f8e543cdb0");
+    private static final String ACCEPT_HEADER = "accept";
+    private static final String ACCEPT_HEADER_JSON = "application/json";
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
+    private static final String CONTENT_TYPE_VALUE = MediaType.APPLICATION_JSON;
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -99,6 +104,28 @@ class RequestProviderServiceTest {
         // Then
         verify(internalRequestIdService).getInternalRequestId();
         assertEquals(INTERNAL_REQUEST_ID, actualInternalRequestId);
+    }
+
+    @Test
+    void getContentTypeHeader() {
+        //Given
+        when(httpServletRequest.getHeader(CONTENT_TYPE_HEADER)).thenReturn(CONTENT_TYPE_VALUE);
+        //When
+        String contentTypeHeader = requestProviderService.getContentTypeHeader();
+        //Then
+        assertEquals(CONTENT_TYPE_VALUE, contentTypeHeader);
+    }
+
+    @Test
+    void getAcceptHeader() {
+        // Given
+        when(httpServletRequest.getHeader(ACCEPT_HEADER)).thenReturn(ACCEPT_HEADER_JSON);
+
+        // When
+        String actual = requestProviderService.getAcceptHeader();
+
+        // Then
+        assertEquals(ACCEPT_HEADER_JSON, actual);
     }
 
     private PsuIdData buildPsuIdData() {

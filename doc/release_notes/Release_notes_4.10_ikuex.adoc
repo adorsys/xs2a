@@ -1,0 +1,14 @@
+= Release notes v.4.10
+
+== Table of Contents
+
+* Bugfix: In case of XML format payments the response type is still "applications/json"
+
+== Bugfix: In case of XML format payments the response type is still "applications/json"
+
+From now on, content-type of payment initiation is being saved in CMS database.
+When TPP retrieves payment information (`GET /v1/{payment-service}/{payment-product}/{paymentId}`) this content-type is passed to SPI level and returns back to XS2A.
+In case when content-type is absent in database (read old payments) this value will be obtained from `Accept` header.
+If ASPSP doesn't provide payment content-type TPP will receive content-type that was passed to ASPSP.
+If there is no information about content-type from the above-mentioned resources (database, `Accept` header, SPI response) TPP will receive default value `application/json`.
+
