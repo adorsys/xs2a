@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.authorization.processor.model;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -30,10 +31,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class AuthorisationProcessorResponse implements AuthorisationResponse {
-
     protected String consentId;
     protected String paymentId;
     protected String authorisationId;
+    protected PsuIdData psuData;
 
     protected ScaStatus scaStatus;
     protected List<AuthenticationObject> availableScaMethods;

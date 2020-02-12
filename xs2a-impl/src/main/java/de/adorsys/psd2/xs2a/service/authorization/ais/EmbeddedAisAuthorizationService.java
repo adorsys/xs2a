@@ -89,7 +89,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             log.info("Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
                      request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
         } else {
-            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(request, response));
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
         }
 
         return response;

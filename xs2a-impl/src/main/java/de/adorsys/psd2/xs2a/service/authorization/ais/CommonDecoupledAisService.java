@@ -64,10 +64,10 @@ public class CommonDecoupledAisService {
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
                 aisConsentService.updateConsentAuthorisationStatus(authorisationId, ScaStatus.FAILED);
             }
-            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId);
+            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuData);
         }
 
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, consentId, authorisationId);
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, consentId, authorisationId, psuData);
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
         response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(authenticationMethodId));
         return response;

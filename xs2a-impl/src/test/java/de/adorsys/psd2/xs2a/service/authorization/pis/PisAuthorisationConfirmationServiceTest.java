@@ -108,8 +108,8 @@ class PisAuthorisationConfirmationServiceTest {
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(false);
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
-                                                                                                        .payload(authorisationResponse)
-                                                                                                        .build());
+                                                                                                  .payload(authorisationResponse)
+                                                                                                  .build());
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID)).thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                                                                                                .payload(commonPaymentResponse)
@@ -143,8 +143,8 @@ class PisAuthorisationConfirmationServiceTest {
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
-                                                                                                        .payload(authorisationResponse)
-                                                                                                        .build());
+                                                                                                  .payload(authorisationResponse)
+                                                                                                  .build());
 
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID)).thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
@@ -154,7 +154,7 @@ class PisAuthorisationConfirmationServiceTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         SpiContextData contextData = getSpiContextData();
-        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FAILED, TransactionStatus.RJCT);
+        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, TransactionStatus.ACSP);
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder().payload(response).build();
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
@@ -181,14 +181,15 @@ class PisAuthorisationConfirmationServiceTest {
 
 
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
-                                                                                                        .error(TECHNICAL_ERROR)
-                                                                                                        .build());
+                                                                                                  .error(TECHNICAL_ERROR)
+                                                                                                  .build());
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
         // then
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getErrorHolder()).isEqualToComparingFieldByField(expectedResult.getErrorHolder());
     }
 
     @Test
@@ -207,14 +208,15 @@ class PisAuthorisationConfirmationServiceTest {
 
 
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
-                                                                                                        .payload(authorisationResponse)
-                                                                                                        .build());
+                                                                                                  .payload(authorisationResponse)
+                                                                                                  .build());
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
         // then
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getErrorHolder()).isEqualToComparingFieldByField(expectedResult.getErrorHolder());
     }
 
     @Test
@@ -233,8 +235,8 @@ class PisAuthorisationConfirmationServiceTest {
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
-                                                                                                        .payload(authorisationResponse)
-                                                                                                        .build());
+                                                                                                  .payload(authorisationResponse)
+                                                                                                  .build());
 
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID)).thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
@@ -254,7 +256,8 @@ class PisAuthorisationConfirmationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
         // then
-        assertThat(actualResult).isEqualTo(expectedResult);
+        assertThat(actualResult.hasError()).isTrue();
+        assertThat(actualResult.getErrorHolder()).isEqualToComparingFieldByField(expectedResult.getErrorHolder());
         verify(xs2aUpdatePaymentAfterSpiService, times(1)).updatePaymentStatus(PAYMENT_ID, response.getTransactionStatus());
     }
 
@@ -278,8 +281,8 @@ class PisAuthorisationConfirmationServiceTest {
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(false);
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
-                                                                                                        .payload(authorisationResponse)
-                                                                                                        .build());
+                                                                                                  .payload(authorisationResponse)
+                                                                                                  .build());
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
         when(pisCommonPaymentServiceEncrypted.getCommonPaymentById(PAYMENT_ID)).thenReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                                                                                                .payload(commonPaymentResponse)

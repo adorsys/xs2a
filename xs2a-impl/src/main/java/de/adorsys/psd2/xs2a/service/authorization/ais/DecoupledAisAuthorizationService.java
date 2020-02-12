@@ -73,7 +73,7 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
             log.info("Consent-ID [{}], Authentication-ID [{}], PSU-ID [{}]. Update consent authorisation has failed. Error msg: {}.",
                      request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData().getPsuId(), response.getErrorHolder());
         } else {
-            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToSpiUpdateConsentPsuDataReq(request, response));
+            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
         }
 
         return response;

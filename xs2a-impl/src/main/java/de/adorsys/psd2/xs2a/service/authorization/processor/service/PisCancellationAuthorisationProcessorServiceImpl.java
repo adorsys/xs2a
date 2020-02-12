@@ -153,7 +153,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     }
 
     @Override
-    void updatePaymentData(String paymentId, SpiResponse spiResponse) {
+    void updatePaymentData(String paymentId, SpiResponse<Object> spiResponse) {
         updatePaymentAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.CANC);
     }
 
