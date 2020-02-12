@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -36,7 +38,9 @@ import java.util.Optional;
 public class SecurityDataService {
     private static final String SEPARATOR = "_=_";
     private String serverKey;
+
     private final CryptoProviderHolder cryptoProviderHolder;
+    private final Random random = new SecureRandom();
 
     @Autowired
     public SecurityDataService(Environment environment, CryptoProviderHolder cryptoProviderHolder) {
@@ -55,7 +59,7 @@ public class SecurityDataService {
      * @return String encrypted external consent ID
      */
     public Optional<String> encryptId(String originalId) {
-        String consentKey = RandomStringUtils.random(16, true, true);
+        String consentKey = RandomStringUtils.random(16, 0, 0, true, true, null, random);
 
         String compositeConsentId = concatWithSeparator(originalId, consentKey, cryptoProviderHolder.getDefaultDataProvider().getCryptoProviderId());
 
@@ -148,7 +152,7 @@ public class SecurityDataService {
     private Optional<String> decryptCompositeId(String encryptedId) {
         String encryptedCompositeId = encryptedId.substring(0, encryptedId.indexOf(SEPARATOR));
 
-        byte[] bytesCompositeId = decode64(encryptedCompositeId, true);
+        byte[] bytesCompositeId = decode64(encryptedCompositeId);
         if (bytesCompositeId == null) {
             log.info("ID: [{}]. Couldn't decrypt composite id", encryptedId);
             return Optional.empty();
@@ -163,11 +167,9 @@ public class SecurityDataService {
                    .filter(StringUtils::isAsciiPrintable);
     }
 
-    private byte[] decode64(String raw, boolean urlsafe) {
+    private byte[] decode64(String raw) {
         try {
-            return urlsafe
-                       ? Base64.getUrlDecoder().decode(raw)
-                       : Base64.getDecoder().decode(raw);
+            return Base64.getUrlDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
             log.info("ID: [{}]. Input id has wrong format", raw);
             return null;
