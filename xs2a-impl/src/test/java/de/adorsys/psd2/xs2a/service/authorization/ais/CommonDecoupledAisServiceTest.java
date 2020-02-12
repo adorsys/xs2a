@@ -170,7 +170,7 @@ class CommonDecoupledAisServiceTest {
     }
 
     private static UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(METHOD_SELECTED_SCA_STATUS, CONSENT_ID, AUTHORISATION_ID);
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(METHOD_SELECTED_SCA_STATUS, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
         response.setPsuMessage(PSU_SUCCESS_MESSAGE);
         response.setChosenScaMethod(new AuthenticationObject());
         return response;

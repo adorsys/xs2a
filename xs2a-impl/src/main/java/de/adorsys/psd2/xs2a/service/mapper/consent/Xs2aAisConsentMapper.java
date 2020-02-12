@@ -98,13 +98,12 @@ public class Xs2aAisConsentMapper {
                    .orElse(null);
     }
 
-    public UpdateConsentPsuDataReq mapToSpiUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
-                                                                   AuthorisationProcessorResponse response) {
+    public UpdateConsentPsuDataReq mapToUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
+                                                                AuthorisationProcessorResponse response) {
         return Optional.ofNullable(response)
                    .map(data -> {
-                       PsuIdData psuIdDataFromRequest = request.getPsuData();
                        UpdateConsentPsuDataReq req = new UpdateConsentPsuDataReq();
-                       req.setPsuData(new PsuIdData(psuIdDataFromRequest.getPsuId(), psuIdDataFromRequest.getPsuIdType(), psuIdDataFromRequest.getPsuCorporateId(), psuIdDataFromRequest.getPsuCorporateIdType(), psuIdDataFromRequest.getPsuIpAddress()));
+                       req.setPsuData(response.getPsuData());
                        req.setConsentId(request.getBusinessObjectId());
                        req.setAuthorizationId(request.getAuthorisationId());
                        req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
@@ -263,9 +262,9 @@ public class Xs2aAisConsentMapper {
     }
 
     private AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess accountAdditionalInformationAccess) {
-        return  Optional.ofNullable(accountAdditionalInformationAccess)
-                       .map(info -> new AdditionalInformationAccess(info.getOwnerName()))
-                       .orElse(null);
+        return Optional.ofNullable(accountAdditionalInformationAccess)
+                   .map(info -> new AdditionalInformationAccess(info.getOwnerName()))
+                   .orElse(null);
     }
 
     private AccountAccessType getAccessType(String type) {

@@ -516,6 +516,7 @@ class AisAuthorisationProcessorServiceImplTest {
         assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
 
         verify(xs2aAisConsentService).updateConsentStatus(ENCRYPTED_CONSENT_ID, ConsentStatus.REJECTED);
+        verify(xs2aAisConsentService).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);
         verify(aisConsentSpi, never()).requestAuthorisationCode(any(), any(), any(), any());
     }
 
@@ -1700,7 +1701,8 @@ class AisAuthorisationProcessorServiceImplTest {
     }
 
     private UpdateConsentPsuDataResponse buildDecoupledUpdateConsentPsuDataResponse() {
-        UpdateConsentPsuDataResponse decoupledResponse = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, ENCRYPTED_CONSENT_ID, AUTHORISATION_ID);
+        PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
+        UpdateConsentPsuDataResponse decoupledResponse = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, psuIdData);
         decoupledResponse.setPsuMessage(DECOUPLED_PSU_MESSAGE);
         decoupledResponse.setChosenScaMethod(DECOUPLED_SCA_METHOD);
         return decoupledResponse;

@@ -180,14 +180,14 @@ class Xs2aAisConsentMapperTest {
         UpdateConsentPsuDataReq updateAuthorisationRequest = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
         AuthorisationProcessorResponse authorisationProcessorResponse = jsonReader.getObjectFromFile("json/service/mapper/consent/authorisation-processor-response2.json", AuthorisationProcessorResponse.class);
 
-        UpdateConsentPsuDataReq actual = mapper.mapToSpiUpdateConsentPsuDataReq(updateAuthorisationRequest, authorisationProcessorResponse);
+        UpdateConsentPsuDataReq actual = mapper.mapToUpdateConsentPsuDataReq(updateAuthorisationRequest, authorisationProcessorResponse);
 
-        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req-mapped.json", UpdateConsentPsuDataReq.class);
         assertEquals(expected, actual);
     }
 
     @Test
     void mapToSpiUpdateConsentPsuDataReq_nullValue() {
-        assertNull(mapper.mapToSpiUpdateConsentPsuDataReq(null, null));
+        assertNull(mapper.mapToUpdateConsentPsuDataReq(null, null));
     }
 }

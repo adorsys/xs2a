@@ -112,7 +112,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     }
 
     @Override
-    void updatePaymentData(String paymentId, SpiResponse spiResponse) {
+    void updatePaymentData(String paymentId, SpiResponse<Object> spiResponse) {
         SpiPaymentExecutionResponse payload = (SpiPaymentExecutionResponse) spiResponse.getPayload();
         TransactionStatus paymentStatus = payload.getTransactionStatus();
 

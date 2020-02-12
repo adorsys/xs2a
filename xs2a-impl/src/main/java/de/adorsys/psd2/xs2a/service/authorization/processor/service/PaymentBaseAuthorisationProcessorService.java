@@ -134,10 +134,10 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
         SpiPayment payment = getSpiPayment(request.getPaymentId());
 
-        SpiResponse spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
-                                                                          spiScaConfirmation,
-                                                                          contextData,
-                                                                          aspspConsentDataProvider);
+        SpiResponse<Object> spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
+                                                                                  spiScaConfirmation,
+                                                                                  contextData,
+                                                                                  aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
@@ -154,7 +154,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, paymentId, authorisationId, psuData);
     }
 
-    abstract void updatePaymentData(String paymentId, SpiResponse spiResponse);
+    abstract void updatePaymentData(String paymentId, SpiResponse<Object> spiResponse);
 
     abstract SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(SpiPayment payment, String authenticationMethodId,
                                                                               SpiContextData spiContextData,

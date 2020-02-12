@@ -93,7 +93,7 @@ class AisAuthorisationConfirmationServiceTest {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID);
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, psuIdData);
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
 
         SpiConfirmationCode spiConfirmationCode = new SpiConfirmationCode(request.getConfirmationCode());
@@ -131,7 +131,7 @@ class AisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_success_checkOnXs2a() {
         // given
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID);
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, buildPsuIdData());
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
         Authorisation aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
 
