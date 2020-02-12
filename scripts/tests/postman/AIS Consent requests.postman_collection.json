@@ -1,19 +1,19 @@
 {
-	"info": {
-		"_postman_id": "0868b7db-facc-4e9e-a585-e701a2573604",
-		"name": "AIS Consent requests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Available accounts",
-			"item": [
-				{
-					"name": "Consent available accounts EMBEDDED 0 SCA methods",
-					"item": [
-						{
-							"name": "1. Update ASPSP profile settings",
-							"event": [
+  "info": {
+    "_postman_id": "c9a27ff7-4034-427b-8e65-cb0d31690ef9",
+    "name": "AIS Consent requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Available accounts",
+      "item": [
+        {
+          "name": "Consent available accounts EMBEDDED 0 SCA methods",
+          "item": [
+            {
+              "name": "1. Update ASPSP profile settings",
+              "event": [
 								{
 									"listen": "test",
 									"script": {
@@ -424,14 +424,25 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a83e55e2-cbf1-4ee0-a09c-d93e63f13091",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
+                    "id": "a83e55e2-cbf1-4ee0-a09c-d93e63f13091",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.test(\"SCA status is present\", () => {",
+                      "    pm.expect(jsonData).to.have.property('scaStatus');",
+                      "});",
+                      "",
+                      "pm.test(\"SCA status is failed\", () => {",
+                      "    const scaStatus = jsonData.scaStatus;",
+                      "    pm.expect(scaStatus).to.eql('failed');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
 								}
 							],
 							"request": {
@@ -470,20 +481,25 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "28ab1dd5-91be-4d5c-8787-d15d44c4b931",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Test consent status\", () => {",
-											"    pm.expect(jsonData).to.have.property('consentStatus');",
-											"});"
-										],
-										"type": "text/javascript"
-									}
+                    "id": "28ab1dd5-91be-4d5c-8787-d15d44c4b931",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.test(\"Consent status is present\", () => {",
+                      "    pm.expect(jsonData).to.have.property('consentStatus');",
+                      "});",
+                      "",
+                      "pm.test(\"Consent status is rejected\", () => {",
+                      "    const consentStatus = jsonData.consentStatus;",
+                      "    pm.expect(consentStatus).to.eql('rejected');",
+                      "});"
+                    ],
+                    "type": "text/javascript"
+                  }
 								}
 							],
 							"request": {

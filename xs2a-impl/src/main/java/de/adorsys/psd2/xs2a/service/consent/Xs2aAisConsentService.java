@@ -59,6 +59,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
+    // ToDo move authorisation-related methods out of the service https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1198
     private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
