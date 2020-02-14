@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.*;
@@ -95,17 +95,17 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("CommonPaymentSpi#checkConfirmationCode: contextData {}, spiConfirmationCode{}, spiPaymentInfo {}, aspspConsentData {}", contextData, spiConfirmationCode.getConfirmationCode(), payment, aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("CommonPaymentSpi#checkConfirmationCode: contextData {}, spiCheckConfirmationCodeRequest{}, authorisationId {}, aspspConsentData {}", contextData, spiCheckConfirmationCodeRequest.getConfirmationCode(), spiCheckConfirmationCodeRequest.getAuthorisationId(), aspspConsentDataProvider.loadAspspConsentData());
 
-        return SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
-                   .payload(new SpiConfirmationCodeCheckingResponse(ScaStatus.FINALISED))
+        return SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                   .payload(new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, TransactionStatus.ACSP))
                    .build();
     }
 
     @Override
     public @NotNull SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiPaymentInfo payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        ScaStatus scaStatus  = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
+        ScaStatus scaStatus = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
         TransactionStatus transactionStatus = isCancellation
                                                   ? confirmationCodeValidationResult ? TransactionStatus.CANC : payment.getPaymentStatus()
                                                   : confirmationCodeValidationResult ? TransactionStatus.ACSP : TransactionStatus.RJCT;

@@ -2,9 +2,16 @@
 
 == Table of Contents
 * Bugfix: payment type and payment product validation
+* SPI model change: checking confirmation code
 
 == Bugfix: payment type and payment product validation
 
 From now on, all XS2A endpoints for TPP which deal with payment services, are being validated for proper payment type
 and product before the request body validation. Wrong payment type causes `400 PARAMETER_NOT_SUPPORTED` error, and
 wrong payment product causes `404 PRODUCT_UNKNOWN`.
+
+== SPI model change: checking confirmation code
+
+Responses from ASPSP-Connector for checking AIS/PIS confirmation code were changed. Ais consent object used now
+is `de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse`. This object stores status of
+AIS consent and status of its authorisation. For PIS payment the response is `de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse`, containing the authorisation status and payment transaction status.

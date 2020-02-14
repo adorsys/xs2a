@@ -16,18 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.BulkPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
@@ -46,12 +44,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     private static final String STANDARD_PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String RAW_PAYMENT_PRODUCT = "raw-product";
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(null, null, null, null, null);
-    private static final SpiConfirmationCode SPI_CONFIRMATION_CODE = new SpiConfirmationCode(null);
-    private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(STANDARD_PAYMENT_PRODUCT);
-    private static final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(STANDARD_PAYMENT_PRODUCT);
-    private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
+    private static final SpiCheckConfirmationCodeRequest SPI_CONFIRMATION_CODE = new SpiCheckConfirmationCodeRequest(null, AUTHORISATION_ID);
 
     @Mock
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
@@ -79,23 +75,23 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
 
         SpiPaymentInfo rawSpiPayment = buildSpiPaymentInfo(RAW_PAYMENT_PRODUCT, PaymentType.SINGLE);
 
-        SpiConfirmationCodeCheckingResponse spiConfirmationCodeCheckingResponse = new SpiConfirmationCodeCheckingResponse(ScaStatus.PSUIDENTIFIED);
-        SpiResponse<SpiConfirmationCodeCheckingResponse> expectedResponse = SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
-                                                                                .payload(spiConfirmationCodeCheckingResponse)
-                                                                                .build();
-        when(commonPaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, rawSpiPayment, mockSpiAspspConsentDataProvider))
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                                                                                         .payload(spiConfirmationCodeCheckingResponse)
+                                                                                         .build();
+        when(commonPaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, mockSpiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
 
         // When
-        SpiResponse<SpiConfirmationCodeCheckingResponse> spiConfirmationCodeCheckingResponseSpiResponse =
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiConfirmationCodeCheckingResponseSpiResponse =
             pisCheckAuthorisationConfirmationServiceSupport.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, rawSpiPayment, mockSpiAspspConsentDataProvider);
 
         // Then
         assertEquals(expectedResponse, spiConfirmationCodeCheckingResponseSpiResponse);
 
-        verify(singlePaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(periodicPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(bulkPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
+        verify(singlePaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(periodicPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(bulkPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
     }
 
     @Test
@@ -103,25 +99,23 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
         // Given
         SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.SINGLE);
 
-        when(spiPaymentMapper.mapToSpiSinglePayment(standardSpiPayment)).thenReturn(SPI_SINGLE_PAYMENT);
-
-        SpiConfirmationCodeCheckingResponse spiConfirmationCodeCheckingResponse = new SpiConfirmationCodeCheckingResponse(ScaStatus.PSUIDENTIFIED);
-        SpiResponse<SpiConfirmationCodeCheckingResponse> expectedResponse = SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
-                                                                                .payload(spiConfirmationCodeCheckingResponse)
-                                                                                .build();
-        when(singlePaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, SPI_SINGLE_PAYMENT, mockSpiAspspConsentDataProvider))
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                                                                                         .payload(spiConfirmationCodeCheckingResponse)
+                                                                                         .build();
+        when(singlePaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, mockSpiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
 
         // When
-        SpiResponse<SpiConfirmationCodeCheckingResponse> spiConfirmationCodeCheckingResponseSpiResponse =
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiConfirmationCodeCheckingResponseSpiResponse =
             pisCheckAuthorisationConfirmationServiceSupport.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, standardSpiPayment, mockSpiAspspConsentDataProvider);
 
         // Then
         assertEquals(expectedResponse, spiConfirmationCodeCheckingResponseSpiResponse);
 
-        verify(commonPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(periodicPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(bulkPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
+        verify(commonPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(periodicPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(bulkPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
     }
 
     @Test
@@ -129,25 +123,23 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
         // Given
         SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.PERIODIC);
 
-        when(spiPaymentMapper.mapToSpiPeriodicPayment(standardSpiPayment)).thenReturn(SPI_PERIODIC_PAYMENT);
-
-        SpiConfirmationCodeCheckingResponse spiConfirmationCodeCheckingResponse = new SpiConfirmationCodeCheckingResponse(ScaStatus.PSUIDENTIFIED);
-        SpiResponse<SpiConfirmationCodeCheckingResponse> expectedResponse = SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
-                                                                                .payload(spiConfirmationCodeCheckingResponse)
-                                                                                .build();
-        when(periodicPaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, SPI_PERIODIC_PAYMENT, mockSpiAspspConsentDataProvider))
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                                                                                         .payload(spiConfirmationCodeCheckingResponse)
+                                                                                         .build();
+        when(periodicPaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, mockSpiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
 
         // When
-        SpiResponse<SpiConfirmationCodeCheckingResponse> spiConfirmationCodeCheckingResponseSpiResponse =
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiConfirmationCodeCheckingResponseSpiResponse =
             pisCheckAuthorisationConfirmationServiceSupport.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, standardSpiPayment, mockSpiAspspConsentDataProvider);
 
         // Then
         assertEquals(expectedResponse, spiConfirmationCodeCheckingResponseSpiResponse);
 
-        verify(commonPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(singlePaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(bulkPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
+        verify(commonPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(singlePaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(bulkPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
     }
 
     @Test
@@ -155,25 +147,23 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
         // Given
         SpiPaymentInfo standardSpiPayment = buildSpiPaymentInfo(STANDARD_PAYMENT_PRODUCT, PaymentType.BULK);
 
-        when(spiPaymentMapper.mapToSpiBulkPayment(standardSpiPayment)).thenReturn(SPI_BULK_PAYMENT);
-
-        SpiConfirmationCodeCheckingResponse spiConfirmationCodeCheckingResponse = new SpiConfirmationCodeCheckingResponse(ScaStatus.PSUIDENTIFIED);
-        SpiResponse<SpiConfirmationCodeCheckingResponse> expectedResponse = SpiResponse.<SpiConfirmationCodeCheckingResponse>builder()
-                                                                                .payload(spiConfirmationCodeCheckingResponse)
-                                                                                .build();
-        when(bulkPaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, SPI_BULK_PAYMENT, mockSpiAspspConsentDataProvider))
+        SpiPaymentConfirmationCodeValidationResponse spiConfirmationCodeCheckingResponse = new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.PSUIDENTIFIED, TransactionStatus.ACSP);
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> expectedResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
+                                                                                         .payload(spiConfirmationCodeCheckingResponse)
+                                                                                         .build();
+        when(bulkPaymentSpi.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, mockSpiAspspConsentDataProvider))
             .thenReturn(expectedResponse);
 
         // When
-        SpiResponse<SpiConfirmationCodeCheckingResponse> spiConfirmationCodeCheckingResponseSpiResponse =
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiConfirmationCodeCheckingResponseSpiResponse =
             pisCheckAuthorisationConfirmationServiceSupport.checkConfirmationCode(SPI_CONTEXT_DATA, SPI_CONFIRMATION_CODE, standardSpiPayment, mockSpiAspspConsentDataProvider);
 
         // Then
         assertEquals(expectedResponse, spiConfirmationCodeCheckingResponseSpiResponse);
 
-        verify(commonPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(singlePaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
-        verify(periodicPaymentSpi, never()).checkConfirmationCode(any(), any(), any(), any());
+        verify(commonPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(singlePaymentSpi, never()).checkConfirmationCode(any(), any(), any());
+        verify(periodicPaymentSpi, never()).checkConfirmationCode(any(), any(), any());
     }
 
     @NotNull

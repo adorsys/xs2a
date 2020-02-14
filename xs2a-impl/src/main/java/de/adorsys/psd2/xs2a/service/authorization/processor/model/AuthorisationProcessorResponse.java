@@ -17,7 +17,9 @@
 package de.adorsys.psd2.xs2a.service.authorization.processor.model;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -37,6 +39,9 @@ public class AuthorisationProcessorResponse implements AuthorisationResponse {
     protected PsuIdData psuData;
 
     protected ScaStatus scaStatus;
+    protected ConsentStatus consentStatus;
+    protected TransactionStatus transactionStatus;
+
     protected List<AuthenticationObject> availableScaMethods;
     protected AuthenticationObject chosenScaMethod;
     protected ChallengeData challengeData;

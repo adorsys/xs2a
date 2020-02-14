@@ -19,13 +19,12 @@ package de.adorsys.psd2.xs2a.spi.service;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import org.jetbrains.annotations.NotNull;
@@ -85,14 +84,13 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
     /**
      * Checks confirmation data at the ASPSP side in case of XS2A not supporting validation of this data. Used only with redirect SCA Approach.
      *
-     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
-     * @param spiConfirmationCode      object with confirmation code
-     * @param accountConsent           Account consent
-     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @param contextData                     holder of call's context data (e.g. about PSU and TPP)
+     * @param spiCheckConfirmationCodeRequest object with confirmation code and authorisation ID
+     * @param aspspConsentDataProvider        Provides access to read/write encrypted data to be stored in the consent management system
      * @return Returns a response object, which contains checking result - if the confirmation data was correct or not
      */
     @NotNull
-    SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiConfirmationCode spiConfirmationCode, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiConsentConfirmationCodeValidationResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Notify ASPSP about validation result of confirmation code on XS2A side

@@ -41,8 +41,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -149,20 +148,26 @@ public class PisAuthorisationConfirmationService {
         SpiPayment payment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponseCmsResponse.getPayload());
 
         SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
-        SpiConfirmationCode spiConfirmationCode = new SpiConfirmationCode(request.getConfirmationCode());
-        SpiResponse<SpiConfirmationCodeCheckingResponse> spiResponse = pisCheckAuthorisationConfirmationService.checkConfirmationCode(contextData, spiConfirmationCode, payment, aspspConsentDataProvider);
+        SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest = new SpiCheckConfirmationCodeRequest(request.getConfirmationCode(), authorisationResponse.getAuthorisationId());
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = spiResponse.hasError()
+        SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = pisCheckAuthorisationConfirmationService.checkConfirmationCode(contextData, spiCheckConfirmationCodeRequest, payment, aspspConsentDataProvider);
+
+        boolean spiError = spiResponse.hasError();
+
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = spiError
                                                                  ? buildConfirmationCodeSpiErrorResponse(spiResponse, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData())
                                                                  : new Xs2aUpdatePisCommonPaymentPsuDataResponse(spiResponse.getPayload().getScaStatus(), request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
 
-        UpdateAuthorisationRequest updatePaymentRequest = pisCommonPaymentMapper.mapToUpdateAuthorisationRequest(response, authorisationResponse.getAuthorisationType());
-        authorisationServiceEncrypted.updateAuthorisation(request.getAuthorisationId(), updatePaymentRequest);
+        if (!spiError) {
+            UpdateAuthorisationRequest updatePaymentRequest = pisCommonPaymentMapper.mapToUpdateAuthorisationRequest(response, authorisationResponse.getAuthorisationType());
+            authorisationServiceEncrypted.updateAuthorisation(request.getAuthorisationId(), updatePaymentRequest);
+            xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), response.getTransactionStatus());
+        }
 
         return response;
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildConfirmationCodeSpiErrorResponse(SpiResponse<SpiConfirmationCodeCheckingResponse> spiResponse, String paymentId, String authorisationId, PsuIdData psuData) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildConfirmationCodeSpiErrorResponse(SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse, String paymentId, String authorisationId, PsuIdData psuData) {
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
 
         log.info("Authorisation-ID: [{}]. Update payment PSU data failed: error occurred at SPI.", authorisationId);

@@ -22,8 +22,9 @@ import lombok.Value;
  * Class that stores authorisation confirmation data in case when it is checked at the ASPSP side.
  */
 @Value
-public class SpiConfirmationCode {
+public class SpiCheckConfirmationCodeRequest {
 
     private String confirmationCode;
+    private String authorisationId;
 
 }
