@@ -1,3 +1,38 @@
 = Release notes v.4.10
 
 == Table of Contents
+* Bugfix: payment type and payment product validation
+* Bugfix: In case of XML format payments the response type is still "applications/json"
+* Bugfix: Read Account Details request returns an error for global consent
+* Fixing expiration of one-off consents containing multiple accounts
+
+== Bugfix: payment type and payment product validation
+
+From now on, all XS2A endpoints for TPP which deal with payment services, are being validated for proper payment type
+and product before the request body validation. Wrong payment type causes `400 PARAMETER_NOT_SUPPORTED` error, and
+wrong payment product causes `404 PRODUCT_UNKNOWN`.
+
+== Bugfix: In case of XML format payments the response type is still "applications/json"
+
+From now on, content-type of payment initiation is being saved in CMS database.
+When TPP retrieves payment information (`GET /v1/{payment-service}/{payment-product}/{paymentId}`) this content-type is passed to SPI level and returns back to XS2A.
+In case when content-type is absent in database (read old payments) this value will be obtained from `Accept` header.
+If ASPSP doesn't provide payment content-type TPP will receive content-type that was passed to ASPSP.
+If there is no information about content-type from the above-mentioned resources (database, `Accept` header, SPI response) TPP will receive default value `application/json`.
+
+== Bugfix: Read Account Details request returns an error for global consent
+
+From now on, AIS endpoint 'Read account details' (`GET /v1/accounts/{account-id}`) for global consent returns correct result with data by required account ID.
+
+== Fixing expiration of one-off consents containing multiple accounts
+
+From now on, expiration of one-off consents containing multiple accounts works as expected.
+A one off consent containing multiple accounts expires, if following requests have been executed.
+
+* `GET /v1/accounts` - once, for all accounts
+* `GET /v1/accounts/{account-id}` - once, for each account
+* `GET /v1/accounts/{account-id}/balances` - once, for each account (only if the consent is permitted to get balances)
+* `GET /v1/accounts/{account-id}/transactions` - once, for each account (only if the consent is permitted to get
+transactions)
+* `GET /v1/accounts/{account-id}/transactions/{transactionId}` - `t` times, for each account, where `t` is the number of
+transactions attached to the account (only if the consent is permitted to get transactions)

@@ -1,9 +1,0 @@
-= Release notes v.4.10
-
-== Table of Contents
-* Bugfix: Read Account Details request returns an error for global consent
-
-
-== Bugfix: Read Account Details request returns an error for global consent
-
-From now on, AIS endpoint 'Read account details' (`GET /v1/accounts/{account-id}`) for global consent returns correct result with data by required account ID.
