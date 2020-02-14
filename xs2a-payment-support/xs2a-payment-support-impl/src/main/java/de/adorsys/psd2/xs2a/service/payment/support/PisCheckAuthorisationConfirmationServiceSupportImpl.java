@@ -22,9 +22,8 @@ import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiConfirmationCode;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiConfirmationCodeCheckingResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -43,19 +42,18 @@ public class PisCheckAuthorisationConfirmationServiceSupportImpl implements PisC
     private final SpiPaymentMapper spiPaymentMapper;
 
     @Override
-    public SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(SpiContextData contextData, SpiConfirmationCode spiConfirmationCode, SpiPayment payment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> checkConfirmationCode(SpiContextData contextData, SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest, SpiPayment payment, SpiAspspConsentDataProvider aspspConsentDataProvider) {
         if (standardPaymentProductsResolver.isRawPaymentProduct(payment.getPaymentProduct())) {
-            return checkConfirmationCode(commonPaymentSpi, (SpiPaymentInfo) payment, contextData, spiConfirmationCode, aspspConsentDataProvider);
+            return checkConfirmationCode(commonPaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
         }
         PaymentType paymentType = payment.getPaymentType();
         if (PaymentType.SINGLE == paymentType) {
-            return checkConfirmationCode(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), contextData, spiConfirmationCode, aspspConsentDataProvider);
+            return checkConfirmationCode(singlePaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
         } else if (PaymentType.PERIODIC == paymentType) {
-            return checkConfirmationCode(periodicPaymentSpi, spiPaymentMapper.mapToSpiPeriodicPayment(payment), contextData, spiConfirmationCode, aspspConsentDataProvider);
+            return checkConfirmationCode(periodicPaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
         } else {
-            return checkConfirmationCode(bulkPaymentSpi, spiPaymentMapper.mapToSpiBulkPayment(payment), contextData, spiConfirmationCode, aspspConsentDataProvider);
+            return checkConfirmationCode(bulkPaymentSpi, contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
         }
-
     }
 
     @Override
@@ -82,11 +80,10 @@ public class PisCheckAuthorisationConfirmationServiceSupportImpl implements PisC
         return paymentSpi.notifyConfirmationCodeValidation(contextData, confirmationCodeValidationResult, payment, isCancellation, aspspConsentDataProvider);
     }
 
-    private <T extends SpiPayment> SpiResponse<SpiConfirmationCodeCheckingResponse> checkConfirmationCode(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
-                                                                                                          T payment,
-                                                                                                          SpiContextData contextData,
-                                                                                                          SpiConfirmationCode spiConfirmationCode,
-                                                                                                          SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return paymentSpi.checkConfirmationCode(contextData, spiConfirmationCode, payment, aspspConsentDataProvider);
+    private <T extends SpiPayment> SpiResponse<SpiPaymentConfirmationCodeValidationResponse> checkConfirmationCode(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
+                                                                                                                   SpiContextData contextData,
+                                                                                                                   SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest,
+                                                                                                                   SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return paymentSpi.checkConfirmationCode(contextData, spiCheckConfirmationCodeRequest, aspspConsentDataProvider);
     }
 }

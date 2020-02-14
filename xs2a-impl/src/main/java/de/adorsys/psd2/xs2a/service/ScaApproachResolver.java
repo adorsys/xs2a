@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
@@ -95,36 +94,23 @@ public class ScaApproachResolver {
      * @return SCA approach, stored in the authorisation
      */
     @NotNull
-    public ScaApproach getInitiationScaApproach(@NotNull String authorisationId) {
-        return resolveScaApproach(authorisationId, PaymentAuthorisationType.CREATED);
-    }
-
-    /**
-     * Gets SCA approach from the existing cancellation authorisation
-     *
-     * @param authorisationId authorisation identifier
-     * @return SCA approach, stored in the authorisation
-     */
-    @NotNull
-    public ScaApproach getCancellationScaApproach(@NotNull String authorisationId) {
-        return resolveScaApproach(authorisationId, PaymentAuthorisationType.CANCELLED);
+    public ScaApproach getScaApproach(@NotNull String authorisationId) {
+        return resolveScaApproach(authorisationId);
     }
 
     @NotNull
-    private ScaApproach resolveScaApproach(@NotNull String authorisationId, PaymentAuthorisationType authorisationType) {
+    private ScaApproach resolveScaApproach(@NotNull String authorisationId) {
         Optional<AuthorisationScaApproachResponse> scaApproachResponse = Optional.empty();
         ServiceType serviceType = serviceTypeDiscoveryService.getServiceType();
         if (serviceType == ServiceType.AIS) {
             scaApproachResponse = xs2aAisConsentService.getAuthorisationScaApproach(authorisationId);
         } else if (serviceType == ServiceType.PIS) {
-            scaApproachResponse = pisAuthorisationService.getAuthorisationScaApproach(authorisationId, authorisationType);
+            scaApproachResponse = pisAuthorisationService.getAuthorisationScaApproach(authorisationId);
         }
 
         if (!scaApproachResponse.isPresent()) {
-            log.info("Couldn't retrieve SCA approach from the authorisation with id: {} and type: {}",
-                     authorisationId, authorisationType);
-            throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId +
-                                                   " or type: " + authorisationType);
+            log.info("Couldn't retrieve SCA approach from the authorisation with id: {}", authorisationId);
+            throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId );
         }
 
         return scaApproachResponse.get().getScaApproach();

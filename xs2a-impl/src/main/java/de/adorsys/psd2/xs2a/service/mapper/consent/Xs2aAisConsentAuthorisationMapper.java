@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationRequest;
-import de.adorsys.psd2.consent.api.ais.AisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import lombok.RequiredArgsConstructor;
@@ -34,31 +34,11 @@ import java.util.Optional;
 public class Xs2aAisConsentAuthorisationMapper {
     private final TppRedirectUriMapper tppRedirectUriMapper;
 
-    public AccountConsentAuthorization mapToAccountConsentAuthorization(
-        AisConsentAuthorizationResponse spiConsentAuthorization) {
-        return Optional.ofNullable(spiConsentAuthorization)
-                   .map(conAuth -> {
-                       AccountConsentAuthorization consentAuthorization = new AccountConsentAuthorization();
-
-                       consentAuthorization.setId(conAuth.getAuthorizationId());
-                       consentAuthorization.setConsentId(conAuth.getConsentId());
-                       consentAuthorization.setPsuIdData(conAuth.getPsuIdData());
-                       consentAuthorization.setScaStatus(conAuth.getScaStatus());
-                       consentAuthorization.setAuthenticationMethodId(conAuth.getAuthenticationMethodId());
-                       consentAuthorization.setScaAuthenticationData(conAuth.getScaAuthenticationData());
-                       consentAuthorization.setPassword(conAuth.getPassword());
-                       consentAuthorization.setChosenScaApproach(conAuth.getChosenScaApproach());
-                       return consentAuthorization;
-                   })
-                   .orElse(null);
-    }
-
-    public AisConsentAuthorizationRequest mapToAisConsentAuthorization(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {
+    public CreateAuthorisationRequest mapToAuthorisationRequest(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
-                       AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                       CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
                        consentAuthorization.setPsuData(psuData);
-                       consentAuthorization.setScaStatus(scaStatus);
                        consentAuthorization.setScaApproach(scaApproach);
                        consentAuthorization.setTppRedirectURIs(tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectURI,tppNOKRedirectURI));
                        return consentAuthorization;
@@ -66,15 +46,16 @@ public class Xs2aAisConsentAuthorisationMapper {
                    .orElse(null);
     }
 
-    public AisConsentAuthorizationRequest mapToAisConsentAuthorizationRequest(UpdateConsentPsuDataReq updatePsuData) {
+    public UpdateAuthorisationRequest mapToAuthorisationRequest(UpdateConsentPsuDataReq updatePsuData) {
         return Optional.ofNullable(updatePsuData)
                    .map(data -> {
-                       AisConsentAuthorizationRequest consentAuthorization = new AisConsentAuthorizationRequest();
+                       UpdateAuthorisationRequest consentAuthorization = new UpdateAuthorisationRequest();
                        consentAuthorization.setPsuData(data.getPsuData());
                        consentAuthorization.setScaStatus(data.getScaStatus());
                        consentAuthorization.setAuthenticationMethodId(data.getAuthenticationMethodId());
                        consentAuthorization.setPassword(data.getPassword());
                        consentAuthorization.setScaAuthenticationData(data.getScaAuthenticationData());
+                       consentAuthorization.setAuthorisationType(AuthorisationType.AIS);
 
                        return consentAuthorization;
                    })

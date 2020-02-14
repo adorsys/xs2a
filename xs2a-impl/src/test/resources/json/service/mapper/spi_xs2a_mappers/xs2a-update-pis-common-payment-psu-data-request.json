@@ -9,7 +9,7 @@
   "authenticationMethodId": "authenticationMethodId",
   "scaAuthenticationData": "tanNumber",
   "password": "password",
-  "paymentProduct": "paymentProduct",
+  "paymentProduct": "sepa-credit-transfers",
   "paymentService": "payments"
 }
 

@@ -45,7 +45,7 @@ class ConsentHeadersBuilderTest {
     @Test
     void buildCreateConsentHeaders_withAuthorisationId_shouldReturnLocationAndScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
@@ -74,7 +74,7 @@ class ConsentHeadersBuilderTest {
         ResponseHeaders responseHeaders = consentHeadersBuilder.buildCreateConsentHeaders(null, SELF_LINK, responseHeadersModel);
 
         // Then
-        verify(scaApproachResolver, never()).getInitiationScaApproach(any());
+        verify(scaApproachResolver, never()).getScaApproach(any());
 
         HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
         assertEquals(expectedHttpHeaders, actualHttpHeaders);
@@ -83,14 +83,14 @@ class ConsentHeadersBuilderTest {
     @Test
     void buildStartConsentAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
 
         // When
-        ResponseHeaders responseHeaders = consentHeadersBuilder.buildStartConsentAuthorisationHeaders(AUTHORISATION_ID);
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildStartAuthorisationHeaders(AUTHORISATION_ID);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();
@@ -102,14 +102,14 @@ class ConsentHeadersBuilderTest {
     @Test
     void buildUpdateConsentsPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
 
         // When
-        ResponseHeaders responseHeaders = consentHeadersBuilder.buildUpdateConsentsPsuDataHeaders(AUTHORISATION_ID);
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildUpdatePsuDataHeaders(AUTHORISATION_ID);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();

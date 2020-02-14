@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
 
@@ -23,5 +24,6 @@ import lombok.Value;
 public class SpiConfirmationCodeCheckingResponse {
 
     private ScaStatus scaStatus;
+    private ConsentStatus consentStatus;
 
 }

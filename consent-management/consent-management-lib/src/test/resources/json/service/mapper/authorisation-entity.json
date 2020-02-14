@@ -1,0 +1,18 @@
+{
+  "externalId": "a23b979a-ca16-4ef8-a008-046a46067b0b",
+  "parentExternalId": "329d04d9-cb42-4fb5-8265-de58fa00366d",
+  "psuData": {
+    "psuId": "PSU ID",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+    "psuIpAddress": "PSU IP ADDRESS"
+  },
+  "scaApproach": "EMBEDDED",
+  "tppOkRedirectUri": "ok.uri",
+  "tppNokRedirectUri": "nok.uri",
+  "scaStatus": "PSUIDENTIFIED",
+  "availableScaMethods": [],
+  "authorisationType": "PIS_CREATION",
+  "instanceId": "UNDEFINED"
+}

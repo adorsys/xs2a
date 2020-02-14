@@ -1,0 +1,59 @@
+= Release notes v.5.10
+
+== Table of Contents
+* Authorisation refactoring
+* Bugfix: payment type and payment product validation
+* SPI model change: checking confirmation code
+* Bugfix: In case of XML format payments the response type is still "applications/json"
+* Remove "ownerAddressType" field from "AisConsent" object
+* Bugfix: Read Account Details request returns an error for global consent
+* Fixing expiration of one-off consents containing multiple accounts
+
+== Authorisation refactoring
+
+From now on, all authorisation objects for consent, payment and payment cancellation are persisted in a common table `authorisation` in database.
+It’s enough to provide authorisationId and its type to retrieve authorisation object from CMS. The following authorisation types are available: `AIS`, `PIS_CREATION` and `PIS_CANCELLATION`.
+
+`AuthorisationController` is responsible for authorisation in CMS API.
+
+Field `authorisationType` was marked as deprecated in `CmsPsuAuthorisation`, use field `type` instead.
+
+== Bugfix: payment type and payment product validation
+
+From now on, all XS2A endpoints for TPP which deal with payment services, are being validated for proper payment type
+and product before the request body validation. Wrong payment type causes `400 PARAMETER_NOT_SUPPORTED` error, and
+wrong payment product causes `404 PRODUCT_UNKNOWN`.
+
+== SPI model change: checking confirmation code
+
+Responses from ASPSP-Connector for checking AIS/PIS confirmation code were changed. Ais consent object used now
+is `de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse`. This object stores status of
+AIS consent and status of its authorisation. For PIS payment the response is `de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse`, containing the authorisation status and payment transaction status.
+
+== Bugfix: In case of XML format payments the response type is still "applications/json"
+
+From now on, content-type of payment initiation is being saved in CMS database.
+When TPP retrieves payment information (`GET /v1/{payment-service}/{payment-product}/{paymentId}`) this content-type is passed to SPI level and returns back to XS2A.
+In case when content-type is absent in database (read old payments) this value will be obtained from `Accept` header.
+If ASPSP doesn't provide payment content-type TPP will receive content-type that was passed to ASPSP.
+If there is no information about content-type from the above-mentioned resources (database, `Accept` header, SPI response) TPP will receive default value `application/json`.
+
+== Remove "ownerAddressType" field from "AisConsent" object
+
+Field `ownerAddressType` from `AisConsent` object was removed.
+
+== Bugfix: Read Account Details request returns an error for global consent
+
+From now on, AIS endpoint 'Read account details' (`GET /v1/accounts/{account-id}`) for global consent returns correct result with data by required account ID.
+
+== Fixing expiration of one-off consents containing multiple accounts
+From now on, expiration of one-off consents containing multiple accounts works as expected.
+A one off consent containing multiple accounts expires, if following requests have been executed.
+
+* `GET /v1/accounts` - once, for all accounts
+* `GET /v1/accounts/{account-id}` - once, for each account
+* `GET /v1/accounts/{account-id}/balances` - once, for each account (only if the consent is permitted to get balances)
+* `GET /v1/accounts/{account-id}/transactions` - once, for each account (only if the consent is permitted to get
+transactions)
+* `GET /v1/accounts/{account-id}/transactions/{transactionId}` - `t` times, for each account, where `t` is the number of
+transactions attached to the account (only if the consent is permitted to get transactions)

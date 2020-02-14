@@ -210,7 +210,7 @@ class ConsentControllerTest {
 
         when(consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD))
             .thenReturn(responseObject);
-        when(consentHeadersBuilder.buildStartConsentAuthorisationHeaders(any())).thenReturn(responseHeaders);
+        when(consentHeadersBuilder.buildStartAuthorisationHeaders(any())).thenReturn(responseHeaders);
 
         // When
         ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, CONSENT_ID,

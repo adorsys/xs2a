@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,6 @@ import static org.mockito.Mockito.when;
 class AisEndpointAccessCheckerServiceTest {
 
     private static final String AUTHORISATION_ID = "11111111";
-    private static final String CONSENT_ID = "22222222";
 
     @InjectMocks
     private AisEndpointAccessCheckerService aisEndpointAccessCheckerService;
@@ -54,10 +53,10 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.RECEIVED, ScaApproach.REDIRECT)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID, true);
+        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertFalse(actual);
     }
@@ -68,10 +67,10 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.REDIRECT)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID, true);
+        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertTrue(actual);
     }
@@ -82,10 +81,10 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.DECOUPLED)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID, true);
+        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertTrue(actual);
     }
@@ -96,19 +95,19 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
+        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.EMBEDDED)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONSENT_ID, true);
+        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertTrue(actual);
     }
 
-    private AccountConsentAuthorization buildAccountConsentAuthorization(ScaStatus scaStatus, ScaApproach scaApproach) {
-        AccountConsentAuthorization accountConsentAuthorization = new AccountConsentAuthorization();
-        accountConsentAuthorization.setChosenScaApproach(scaApproach);
-        accountConsentAuthorization.setScaStatus(scaStatus);
-        return accountConsentAuthorization;
+    private Authorisation buildAccountConsentAuthorization(ScaStatus scaStatus, ScaApproach scaApproach) {
+        Authorisation authorisation = new Authorisation();
+        authorisation.setChosenScaApproach(scaApproach);
+        authorisation.setScaStatus(scaStatus);
+        return authorisation;
     }
 
 }

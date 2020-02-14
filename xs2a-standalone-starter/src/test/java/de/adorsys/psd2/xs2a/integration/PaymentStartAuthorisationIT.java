@@ -20,11 +20,10 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationRequest;
-import de.adorsys.psd2.consent.api.pis.authorisation.CreatePisAuthorisationResponse;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.consent.api.authorisation.PisAuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.*;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
@@ -35,8 +34,8 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -133,7 +132,7 @@ class PaymentStartAuthorisationIT {
     @MockBean
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
     @MockBean
-    private PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
+    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private AspspDataService aspspDataService;
     @MockBean
@@ -147,7 +146,9 @@ class PaymentStartAuthorisationIT {
     private RestTemplate consentRestTemplate;
 
     @Captor
-    private ArgumentCaptor<CreatePisAuthorisationRequest> createPisAuthorisationRequestCaptor;
+    private ArgumentCaptor<CreateAuthorisationRequest> createAuthorisationRequest;
+    @Captor
+    private ArgumentCaptor<PisAuthorisationParentHolder> parentHolderCaptor;
 
 
     private HttpHeaders httpHeadersExplicit = new HttpHeaders();
@@ -181,16 +182,16 @@ class PaymentStartAuthorisationIT {
                             .build());
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
-        given(pisAuthorisationServiceEncrypted.createAuthorization(eq(PAYMENT_ID), createPisAuthorisationRequestCaptor.capture()))
-            .willReturn(CmsResponse.<CreatePisAuthorisationResponse>builder()
-                            .payload(new CreatePisAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, null, buildPsuIdData()))
+        given(authorisationServiceEncrypted.createAuthorisation(parentHolderCaptor.capture(), createAuthorisationRequest.capture()))
+            .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, buildPsuIdData()))
                             .build());
 
-        given(pisAuthorisationServiceEncrypted.getPisAuthorisationById(AUTHORISATION_ID))
-            .willReturn(CmsResponse.<GetPisAuthorisationResponse>builder()
+        given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
+            .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED))
                             .build());
-        given(pisAuthorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CREATED))
+        given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
                             .build());
@@ -204,7 +205,7 @@ class PaymentStartAuthorisationIT {
             .willReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                             .payload(new SpiAvailableScaMethodsResponse(Collections.singletonList(authenticationObject)))
                             .build());
-        given(pisAuthorisationServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any()))
+        given(authorisationServiceEncrypted.saveAuthenticationMethods(eq(AUTHORISATION_ID), any()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
@@ -238,20 +239,17 @@ class PaymentStartAuthorisationIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().json(IOUtils.resourceToString(AUTH_RESP, UTF_8)));
 
-        assertEquals(PaymentAuthorisationType.CREATED, createPisAuthorisationRequestCaptor.getValue().getAuthorizationType());
-        assertEquals(PSU_ID, createPisAuthorisationRequestCaptor.getValue().getPsuData().getPsuId());
-        assertEquals(ScaApproach.EMBEDDED, createPisAuthorisationRequestCaptor.getValue().getScaApproach());
+        assertEquals(PSU_ID, createAuthorisationRequest.getValue().getPsuData().getPsuId());
+        assertEquals(ScaApproach.EMBEDDED, createAuthorisationRequest.getValue().getScaApproach());
+        assertEquals(PAYMENT_ID, parentHolderCaptor.getValue().getParentId());
     }
 
     @NotNull
-    private GetPisAuthorisationResponse buildGetPisAuthorisationResponse(ScaStatus scaStatus) {
-        GetPisAuthorisationResponse getPisAuthorisationResponse = new GetPisAuthorisationResponse();
+    private Authorisation buildGetPisAuthorisationResponse(ScaStatus scaStatus) {
+        Authorisation getPisAuthorisationResponse = new Authorisation();
         getPisAuthorisationResponse.setScaStatus(scaStatus);
-        getPisAuthorisationResponse.setPaymentType(SINGLE_PAYMENT_TYPE);
-        getPisAuthorisationResponse.setPaymentProduct(SEPA_PAYMENT_PRODUCT);
-        PisPaymentInfo paymentInfo = new PisPaymentInfo();
-        paymentInfo.setPaymentId(PAYMENT_ID);
-        getPisAuthorisationResponse.setPaymentInfo(paymentInfo);
+        getPisAuthorisationResponse.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        getPisAuthorisationResponse.setParentId(PAYMENT_ID);
         return getPisAuthorisationResponse;
     }
 
@@ -267,7 +265,8 @@ class PaymentStartAuthorisationIT {
     }
 
     private Authorisation buildAuthorisation() {
-        return new Authorisation(AUTHORISATION_ID, ScaStatus.RECEIVED, new PsuIdData(PSU_ID, null, null, null, null), PaymentAuthorisationType.CREATED);
+        return new Authorisation(AUTHORISATION_ID, new PsuIdData(PSU_ID, null, null, null, null),
+                                 PAYMENT_ID, AuthorisationType.PIS_CREATION, ScaStatus.RECEIVED);
     }
 
     private PsuIdData buildPsuIdData() {

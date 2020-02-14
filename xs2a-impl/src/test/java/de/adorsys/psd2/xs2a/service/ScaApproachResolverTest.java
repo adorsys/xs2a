@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
@@ -353,30 +352,16 @@ class ScaApproachResolverTest {
 
     @Test
     void resolveScaApproach_scaApproachResponseIsEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID));
-    }
-
-
-    @Test
-    void getCancellationScaApproach() {
-        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.PIS);
-        when(pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID, PaymentAuthorisationType.CANCELLED))
-            .thenReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT)));
-
-        ScaApproach scaApproach = scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID);
-
-        assertThat(scaApproach).isEqualTo(REDIRECT);
-        verify(pisAuthorisationService, times(1))
-            .getAuthorisationScaApproach(eq(AUTHORISATION_ID), eq(PaymentAuthorisationType.CANCELLED));
+        assertThrows(IllegalArgumentException.class, () -> scaApproachResolver.getScaApproach(AUTHORISATION_ID));
     }
 
     @Test
-    void getInitiationScaApproach() {
+    void getScaApproach() {
         when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.AIS);
         when(xs2aAisConsentService.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT)));
 
-        ScaApproach scaApproach = scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID);
+        ScaApproach scaApproach = scaApproachResolver.getScaApproach(AUTHORISATION_ID);
 
         assertThat(scaApproach).isEqualTo(REDIRECT);
         verify(xs2aAisConsentService, times(1))

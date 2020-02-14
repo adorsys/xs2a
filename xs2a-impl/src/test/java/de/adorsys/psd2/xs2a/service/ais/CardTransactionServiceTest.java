@@ -48,8 +48,8 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapp
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.GetTransactionsReportValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.TransactionsReportByPeriodObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsReportValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
@@ -114,7 +114,7 @@ class CardTransactionServiceTest {
 
     private SpiAccountReference spiAccountReference;
     private AccountConsent accountConsent;
-    private TransactionsReportByPeriodObject transactionsReportByPeriodObject;
+    private CardTransactionsReportByPeriodObject cardTransactionsReportByPeriodObject;
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     private JsonReader jsonReader = new JsonReader();
 
@@ -140,7 +140,7 @@ class CardTransactionServiceTest {
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
-    private GetTransactionsReportValidator getTransactionsReportValidator;
+    private GetCardTransactionsReportValidator getCardTransactionsReportValidator;
     @Mock
     private SpiAspspConsentDataProviderFactory spiAspspConsentDataProviderFactory;
     @Mock
@@ -156,7 +156,7 @@ class CardTransactionServiceTest {
     void setUp() {
         accountConsent = createConsent(createAccountAccess());
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
-        transactionsReportByPeriodObject = buildTransactionsReportByPeriodObject();
+        cardTransactionsReportByPeriodObject = buildTransactionsReportByPeriodObject();
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
@@ -177,9 +177,9 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_Failure_AllowedAccountDataHasError() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(getTransactionsReportValidator.validate(transactionsReportByPeriodObject))
+        when(getCardTransactionsReportValidator.validate(cardTransactionsReportByPeriodObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -192,7 +192,7 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_Failure_SpiResponseHasError() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(spiAccountReference);
@@ -220,9 +220,9 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_failure_accountReferenceNotFoundInAccountAccess() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(getTransactionsReportValidator.validate(transactionsReportByPeriodObject))
+        when(getCardTransactionsReportValidator.validate(cardTransactionsReportByPeriodObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
@@ -235,7 +235,7 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_With406ErrorInSpiTransactionReport() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(spiAccountReference);
@@ -258,7 +258,7 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_Success() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(spiAccountReference);
@@ -298,7 +298,7 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_WhenConsentIsGlobal_Success() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(spiAccountReference);
@@ -342,7 +342,7 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_Success_ShouldRecordEvent() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(spiAccountReference);
@@ -372,21 +372,21 @@ class CardTransactionServiceTest {
     @Test
     void getCardTransactionsReportByPeriod_withInvalidConsent_shouldReturnValidationError() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
         ResponseObject<Xs2aCardTransactionsReport> actualResponse = cardTransactionService.getCardTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
 
         // Then
-        verify(getTransactionsReportValidator).validate(transactionsReportByPeriodObject);
+        verify(getCardTransactionsReportValidator).validate(cardTransactionsReportByPeriodObject);
         assertThatErrorIs(actualResponse, CONSENT_INVALID);
     }
 
     @Test
     void getCardTransactionsReportByPeriod_shouldRecordStatusInLoggingContext() {
         // Given
-        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(spiAccountReference);
@@ -489,8 +489,8 @@ class CardTransactionServiceTest {
         return new SpiCardTransactionReport(BASE64_STRING_EXAMPLE, Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null);
     }
 
-    private TransactionsReportByPeriodObject buildTransactionsReportByPeriodObject() {
-        return new TransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS, DATE_FROM);
+    private CardTransactionsReportByPeriodObject buildTransactionsReportByPeriodObject() {
+        return new CardTransactionsReportByPeriodObject(accountConsent, ACCOUNT_ID, REQUEST_URI, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS, DATE_FROM, DATE_TO);
     }
 
     private static Xs2aTransactionsReportByPeriodRequest buildXs2aTransactionsReportByPeriodRequest() {

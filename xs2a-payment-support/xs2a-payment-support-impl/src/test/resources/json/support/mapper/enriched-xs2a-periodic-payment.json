@@ -42,5 +42,6 @@
   "endDate": "2020-12-02",
   "transactionStatus": "ACCP",
   "statusChangeTimestamp": "2019-12-27T12:00:00Z",
-  "creationTimestamp": "2019-12-27T14:00:00Z"
+  "creationTimestamp": "2019-12-27T14:00:00Z",
+  "contentType": "application/json"
 }

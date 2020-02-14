@@ -58,7 +58,7 @@ class PaymentCancellationUpdateAuthorisationIT extends PaymentUpdateAuthorisatio
     @SuppressWarnings("squid:S2699")
     @Test
     void updatePaymentPsuData_failed_psu_authorisation_psu_request_are_different() throws Exception {
-        given(pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
+        given(authorisationServiceEncrypted.updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());

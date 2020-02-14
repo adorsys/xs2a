@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,19 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.authorisation.GetPisAuthorisationResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
-import de.adorsys.psd2.consent.domain.payment.*;
+import de.adorsys.psd2.consent.domain.payment.PisAddress;
+import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
+import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.domain.payment.PisRemittance;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,17 +42,7 @@ public class PisCommonPaymentMapper {
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
     private final AccountReferenceMapper accountReferenceMapper;
-    private final CmsAuthorisationMapper cmsAuthorisationMapper;
-
-    public List<PisPaymentData> mapToPisPaymentDataList(List<PisPayment> payments, PisCommonPaymentData pisCommonPayment) {
-        if (CollectionUtils.isEmpty(payments)) {
-            return Collections.emptyList();
-        }
-
-        return payments.stream()
-                   .map(p -> mapToPisPaymentData(p, pisCommonPayment))
-                   .collect(Collectors.toList());
-    }
+    private final AuthorisationMapper authorisationMapper;
 
     public PisCommonPaymentData mapToPisCommonPaymentData(PisPaymentInfo paymentInfo) {
         PisCommonPaymentData commonPaymentData = new PisCommonPaymentData();
@@ -76,60 +67,12 @@ public class PisCommonPaymentMapper {
 
         commonPaymentData.setTppNotificationUri(paymentInfo.getTppNotificationUri());
         commonPaymentData.setTppNotificationContentPreferred(paymentInfo.getNotificationSupportedModes());
+        commonPaymentData.setContentType(paymentInfo.getContentType());
 
         return commonPaymentData;
     }
 
-    private PisPaymentData mapToPisPaymentData(PisPayment payment, PisCommonPaymentData pisCommonPayment) {
-        return Optional.ofNullable(payment)
-                   .map(pm -> {
-                       PisPaymentData pisPaymentData = new PisPaymentData();
-                       pisPaymentData.setPaymentId(pm.getPaymentId());
-                       pisPaymentData.setEndToEndIdentification(pm.getEndToEndIdentification());
-                       pisPaymentData.setInstructionIdentification(pm.getInstructionIdentification());
-                       pisPaymentData.setDebtorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getDebtorAccount()));
-                       pisPaymentData.setUltimateDebtor(pm.getUltimateDebtor());
-                       pisPaymentData.setAmount(pm.getAmount());
-                       pisPaymentData.setCurrency(pm.getCurrency());
-                       pisPaymentData.setCreditorAccount(accountReferenceMapper.mapToAccountReferenceEntity(pm.getCreditorAccount()));
-                       pisPaymentData.setCreditorAgent(pm.getCreditorAgent());
-                       pisPaymentData.setCreditorName(pm.getCreditorName());
-                       pisPaymentData.setCreditorAddress(mapToPisAddress(pm.getCreditorAddress()));
-                       pisPaymentData.setRemittanceInformationUnstructured(pm.getRemittanceInformationUnstructured());
-                       pisPaymentData.setRemittanceInformationStructured(mapToPisRemittance(pm.getRemittanceInformationStructured()));
-                       pisPaymentData.setRequestedExecutionDate(pm.getRequestedExecutionDate());
-                       pisPaymentData.setRequestedExecutionTime(pm.getRequestedExecutionTime());
-                       pisPaymentData.setUltimateCreditor(pm.getUltimateCreditor());
-                       pisPaymentData.setPurposeCode(pm.getPurposeCode());
-                       pisPaymentData.setStartDate(pm.getStartDate());
-                       pisPaymentData.setEndDate(pm.getEndDate());
-                       pisPaymentData.setExecutionRule(pm.getExecutionRule());
-                       pisPaymentData.setFrequency(pm.getFrequency());
-                       pisPaymentData.setDayOfExecution(pm.getDayOfExecution());
-                       pisPaymentData.setPaymentData(pisCommonPayment);
-                       pisPaymentData.setBatchBookingPreferred(pm.getBatchBookingPreferred());
-
-                       return pisPaymentData;
-                   }).orElse(null);
-    }
-
-    public GetPisAuthorisationResponse mapToGetPisAuthorizationResponse(PisAuthorization pis) {
-        GetPisAuthorisationResponse response = new GetPisAuthorisationResponse();
-        Optional.ofNullable(pis.getPaymentData())
-            .ifPresent(paymentData -> {
-                response.setPayments(mapToPisPaymentList(paymentData.getPayments(), paymentData.getCreationTimestamp()));
-                response.setPaymentId(paymentData.getPaymentId());
-                response.setPaymentType(paymentData.getPaymentType());
-                response.setPaymentInfo(mapToPisPaymentInfo(paymentData));
-            });
-        response.setScaStatus(pis.getScaStatus());
-        response.setPsuIdData(psuDataMapper.mapToPsuIdData(pis.getPsuData()));
-        response.setChosenScaApproach(pis.getScaApproach());
-        response.setScaAuthenticationData(pis.getScaAuthenticationData());
-        return response;
-    }
-
-    public Optional<PisCommonPaymentResponse> mapToPisCommonPaymentResponse(PisCommonPaymentData commonPaymentData) {
+    public Optional<PisCommonPaymentResponse> mapToPisCommonPaymentResponse(PisCommonPaymentData commonPaymentData, List<AuthorisationEntity> authorisations) {
         return Optional.ofNullable(commonPaymentData)
                    .map(cmd -> {
                        PisCommonPaymentResponse response = new PisCommonPaymentResponse();
@@ -143,35 +86,17 @@ public class PisCommonPaymentMapper {
                        response.setTransactionStatus(cmd.getTransactionStatus());
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
                        response.setMultilevelScaRequired(cmd.isMultilevelScaRequired());
-                       response.setAuthorisations(cmsAuthorisationMapper.mapToAuthorisations(cmd.getAuthorizations()));
+                       response.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
                        response.setCreationTimestamp(cmd.getCreationTimestamp());
+                       response.setContentType(cmd.getContentType());
                        return response;
                    });
     }
 
-    private PisPaymentInfo mapToPisPaymentInfo(PisCommonPaymentData paymentData) {
-        return Optional.ofNullable(paymentData)
-                   .map(dta -> {
-                            PisPaymentInfo paymentInfo = new PisPaymentInfo();
-                            paymentInfo.setPaymentId(dta.getPaymentId());
-                            paymentInfo.setPaymentProduct(dta.getPaymentProduct());
-                            paymentInfo.setPaymentType(dta.getPaymentType());
-                            paymentInfo.setTransactionStatus(dta.getTransactionStatus());
-                            paymentInfo.setPaymentData(dta.getPayment());
-                            paymentInfo.setPsuDataList(psuDataMapper.mapToPsuIdDataList(dta.getPsuDataList()));
-                            paymentInfo.setTppInfo(tppInfoMapper.mapToTppInfo(dta.getTppInfo()));
-                            paymentInfo.setCreationTimestamp(paymentData.getCreationTimestamp());
-
-                            return paymentInfo;
-                        }
-                   )
-                   .orElse(null);
-    }
-
     private List<PisPayment> mapToPisPaymentList(List<PisPaymentData> payments, OffsetDateTime offsetDateTime) {
         List<PisPayment> pisPayments = payments.stream()
-                                       .map(this::mapToPisPayment)
-                                       .collect(Collectors.toList());
+                                           .map(this::mapToPisPayment)
+                                           .collect(Collectors.toList());
 
         pisPayments.forEach(pisPayment -> pisPayment.setCreationTimestamp(offsetDateTime));
         return pisPayments;
@@ -210,18 +135,6 @@ public class PisCommonPaymentMapper {
                    }).orElse(null);
     }
 
-    private PisRemittance mapToPisRemittance(CmsRemittance remittance) {
-        return Optional.ofNullable(remittance)
-                   .map(r -> {
-                       PisRemittance pisRemittance = new PisRemittance();
-                       pisRemittance.setReference(r.getReference());
-                       pisRemittance.setReferenceIssuer(r.getReferenceIssuer());
-                       pisRemittance.setReferenceType(r.getReferenceType());
-                       return pisRemittance;
-                   })
-                   .orElse(null);
-    }
-
     private CmsRemittance mapToCmsRemittance(PisRemittance pisRemittance) {
         return Optional.ofNullable(pisRemittance)
                    .map(r -> {
@@ -247,18 +160,4 @@ public class PisCommonPaymentMapper {
                    }).orElse(null);
     }
 
-
-    private PisAddress mapToPisAddress(CmsAddress cmsAddress) {
-        return Optional.ofNullable(cmsAddress)
-                   .map(adr -> {
-                       PisAddress pisAddress = new PisAddress();
-                       pisAddress.setStreet(adr.getStreet());
-                       pisAddress.setBuildingNumber(adr.getBuildingNumber());
-                       pisAddress.setCity(adr.getCity());
-                       pisAddress.setPostalCode(adr.getPostalCode());
-                       pisAddress.setCountry(adr.getCountry());
-
-                       return pisAddress;
-                   }).orElse(null);
-    }
 }

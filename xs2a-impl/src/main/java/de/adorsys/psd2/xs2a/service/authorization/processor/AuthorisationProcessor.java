@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -68,10 +68,10 @@ public abstract class AuthorisationProcessor {
         if (request.getServiceType() == ServiceType.AIS) {
             return applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class);
         } else if (request.getServiceType() == ServiceType.PIS &&
-                       request.getPaymentAuthorisationType() == PaymentAuthorisationType.CREATED) {
+                       request.getAuthorisation().getAuthorisationType() == AuthorisationType.PIS_CREATION) {
             return applicationContext.getBean(PisAuthorisationProcessorServiceImpl.class);
         } else if (request.getServiceType() == ServiceType.PIS &&
-                       request.getPaymentAuthorisationType() == PaymentAuthorisationType.CANCELLED) {
+                       request.getAuthorisation().getAuthorisationType() == AuthorisationType.PIS_CANCELLATION) {
             return applicationContext.getBean(PisCancellationAuthorisationProcessorServiceImpl.class);
         }
         throw new IllegalArgumentException("Authorisation processor service is unknown: " + request);

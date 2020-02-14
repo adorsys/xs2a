@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
@@ -62,7 +63,13 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
      */
     @NotNull
     @Override
-    protected ValidationResult executeBusinessValidation(TransactionsReportByPeriodObject requestObject) {
+    protected ValidationResult executeBusinessValidation(TransactionsReportByPeriodObject requestObject) { // NOPMD
+        AccountConsent accountConsent = requestObject.getAccountConsent();
+
+        if (accountConsent.isConsentWithNotIbanAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+            return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
+        }
+
         ValidationResult acceptHeaderValidationResult = transactionReportAcceptHeaderValidator.validate(requestObject.getAcceptHeader());
         if (acceptHeaderValidationResult.isNotValid()) {
             return acceptHeaderValidationResult;
@@ -73,10 +80,8 @@ public class GetTransactionsReportValidator extends AbstractAccountTppValidator<
             return validationResult;
         }
 
-        AccountConsent accountConsent = requestObject.getAccountConsent();
-
         ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAspspAccess(),
-                                                                                                     requestObject.getTransactions(), requestObject.getAccountId());
+                                                                                                     requestObject.getTransactions(), requestObject.getAccountId(), accountConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }

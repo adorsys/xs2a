@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -26,8 +27,8 @@ import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
-import de.adorsys.psd2.xs2a.service.validator.authorisation.AisAuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
+import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +69,7 @@ class CreateConsentAuthorisationValidatorTest {
     @Mock
     private AuthorisationPsuDataChecker authorisationPsuDataChecker;
     @Mock
-    private AisAuthorisationStatusChecker aisAuthorisationStatusChecker;
+    private AuthorisationStatusChecker aisAuthorisationStatusChecker;
 
     @InjectMocks
     private CreateConsentAuthorisationValidator createConsentAuthorisationValidator;
@@ -137,7 +138,7 @@ class CreateConsentAuthorisationValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsentWithPsuIdDataAndAuthorisation();
         CreateConsentAuthorisationObject createPisAuthorisationPO = new CreateConsentAuthorisationObject(accountConsent, PSU_DATA);
-        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList())).thenReturn(true);
+        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.AIS))).thenReturn(true);
 
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 

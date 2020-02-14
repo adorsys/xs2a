@@ -59,14 +59,14 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
 
         when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD)))
             .thenReturn(pisCommonPaymentDataList);
-        when(pisCommonPaymentConfirmationExpirationService.isPaymentDataOnConfirmationExpired(any(PisCommonPaymentData.class))).thenReturn(true, false);
+        when(pisCommonPaymentConfirmationExpirationService.isConfirmationExpired(any(PisCommonPaymentData.class))).thenReturn(true, false);
         when(pisCommonPaymentConfirmationExpirationService.updatePaymentDataListOnConfirmationExpiration(commonPaymentDataCaptor.capture()))
             .thenReturn(Collections.emptyList());
 
         scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
 
         verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD));
-        verify(pisCommonPaymentConfirmationExpirationService, times(2)).isPaymentDataOnConfirmationExpired(any(PisCommonPaymentData.class));
+        verify(pisCommonPaymentConfirmationExpirationService, times(2)).isConfirmationExpired(any(PisCommonPaymentData.class));
         verify(pisCommonPaymentConfirmationExpirationService, times(1)).updatePaymentDataListOnConfirmationExpiration(anyList());
 
         assertEquals(1, commonPaymentDataCaptor.getValue().size());
@@ -80,7 +80,7 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
         scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
 
         verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD));
-        verify(pisCommonPaymentConfirmationExpirationService, never()).isPaymentDataOnConfirmationExpired(any(PisCommonPaymentData.class));
+        verify(pisCommonPaymentConfirmationExpirationService, never()).isConfirmationExpired(any(PisCommonPaymentData.class));
         verify(pisCommonPaymentConfirmationExpirationService, never()).updatePaymentDataListOnConfirmationExpiration(anyList());
     }
 }

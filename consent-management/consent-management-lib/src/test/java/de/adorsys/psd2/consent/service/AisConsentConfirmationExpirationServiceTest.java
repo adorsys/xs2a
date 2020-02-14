@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,10 +46,12 @@ class AisConsentConfirmationExpirationServiceTest {
     private static final LocalDate TODAY = LocalDate.now();
 
     @InjectMocks
-    private AisConsentConfirmationExpirationService expirationService;
+    private AisConsentConfirmationExpirationServiceImpl expirationService;
 
     @Mock
     private AisConsentJpaRepository aisConsentJpaRepository;
+    @Mock
+    private AuthorisationRepository authorisationRepository;
     @Mock
     private AspspProfileService aspspProfileService;
 
@@ -73,7 +76,7 @@ class AisConsentConfirmationExpirationServiceTest {
         ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
 
         // When
-        expirationService.updateConsentOnConfirmationExpiration(buildAisConsent(ConsentStatus.RECEIVED, TOMORROW));
+        expirationService.updateOnConfirmationExpiration(buildAisConsent(ConsentStatus.RECEIVED, TOMORROW));
 
         // Then
         verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());

@@ -1,9 +1,0 @@
-{
-  "psuId": "PSU ID",
-  "authorisationId": "123",
-  "scaStatus": "RECEIVED",
-  "authorisationType": "CREATED",
-  "scaApproach": "EMBEDDED",
-  "tppOkRedirectUri": "OK redirect",
-  "tppNokRedirectUri": "Not OK redirect"
-}

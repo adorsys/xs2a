@@ -35,6 +35,7 @@ public class SpiPeriodicPayment extends SpiSinglePayment {
     private PisExecutionRule executionRule;
     private FrequencyCode frequency;
     private PisDayOfExecution dayOfExecution;
+    private String contentType;
 
     public SpiPeriodicPayment(String paymentProduct) {
         super(paymentProduct);

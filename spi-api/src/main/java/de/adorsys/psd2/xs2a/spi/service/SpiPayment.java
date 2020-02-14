@@ -37,4 +37,6 @@ public interface SpiPayment {
     OffsetDateTime getStatusChangeTimestamp();
 
     List<SpiPsuData> getPsuDataList();
+
+    String getContentType();
 }

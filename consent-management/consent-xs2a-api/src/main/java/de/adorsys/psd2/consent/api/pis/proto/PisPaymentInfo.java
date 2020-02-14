@@ -74,4 +74,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "List of notification modes. It could be values: SCA, PROCESS, LAST or NONE ")
     private List<NotificationSupportedMode> notificationSupportedModes;
+
+    @ApiModelProperty(value = "Response content type")
+    private String contentType;
 }

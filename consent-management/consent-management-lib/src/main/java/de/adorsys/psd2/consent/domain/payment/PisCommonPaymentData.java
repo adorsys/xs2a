@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package de.adorsys.psd2.consent.domain.payment;
 
-import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
-import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
-import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.*;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
@@ -33,8 +32,9 @@ import java.util.List;
 import java.util.Objects;
 
 @Data
+@EqualsAndHashCode
 @Entity(name = "pis_common_payment")
-public class PisCommonPaymentData extends InstanceDependableEntity {
+public class PisCommonPaymentData extends InstanceDependableEntity implements Authorisable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pis_common_payment_generator")
     @SequenceGenerator(name = "pis_common_payment_generator", sequenceName = "pis_common_payment_id_seq", allocationSize = 1)
@@ -84,11 +84,6 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
     @OneToMany(mappedBy = "paymentData",
         cascade = CascadeType.ALL,
         orphanRemoval = true)
-    private List<PisAuthorization> authorizations = new ArrayList<>();
-
-    @OneToMany(mappedBy = "paymentData",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
     private List<PisPaymentData> payments = new ArrayList<>();
 
     @Column(name = "creation_timestamp", nullable = false)
@@ -108,6 +103,9 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
 
     @Column(name = "canc_int_req_id")
     private String cancellationInternalRequestId;
+
+    @Column(name = "content_type")
+    private String contentType;
 
     @Transient
     private TransactionStatus previousTransactionStatus;
@@ -146,6 +144,22 @@ public class PisCommonPaymentData extends InstanceDependableEntity {
 
     public boolean isFinalised() {
         return transactionStatus.isFinalisedStatus();
+    }
+
+    @Override
+    public String getExternalId() {
+        return paymentId;
+    }
+
+    @Override
+    public String getInternalRequestId(AuthorisationType authorisationType) {
+        if (authorisationType == AuthorisationType.PIS_CREATION) {
+            return internalRequestId;
+        } else if (authorisationType == AuthorisationType.PIS_CANCELLATION) {
+            return cancellationInternalRequestId;
+        }
+
+        throw new IllegalArgumentException("Invalid authorisation type: " + authorisationType);
     }
 }
 

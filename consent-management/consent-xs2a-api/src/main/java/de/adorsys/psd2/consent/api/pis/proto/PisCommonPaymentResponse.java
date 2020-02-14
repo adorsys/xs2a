@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,9 +71,12 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "Timestamp of the payment creation")
     private OffsetDateTime creationTimestamp;
 
+    @ApiModelProperty(value = "Response content type")
+    private String contentType;
+
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
-                   .filter(auth -> auth.getId().equals(authorisationId))
+                   .filter(auth -> auth.getAuthorisationId().equals(authorisationId))
                    .findFirst();
     }
 }

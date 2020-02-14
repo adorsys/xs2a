@@ -13,5 +13,6 @@
       "psuCorporateIdType": "psuCorporate Id Type",
       "psuIpAddress": "psuIp Address"
     }
-  ]
+  ],
+  "contentType":"application/json"
 }

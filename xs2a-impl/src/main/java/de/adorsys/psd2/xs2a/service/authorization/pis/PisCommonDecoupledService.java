@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
@@ -59,7 +59,7 @@ public class PisCommonDecoupledService {
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
-        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.CREATED);
+        return proceedDecoupled(request, payment, authenticationMethodId, AuthorisationType.PIS_CREATION);
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
@@ -67,26 +67,27 @@ public class PisCommonDecoupledService {
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
-        return proceedDecoupled(request, payment, authenticationMethodId, PaymentAuthorisationType.CANCELLED);
+        return proceedDecoupled(request, payment, authenticationMethodId, AuthorisationType.PIS_CANCELLATION);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId, PaymentAuthorisationType scaType) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment,
+                                                                       String authenticationMethodId, AuthorisationType authorisationType) {
         String authenticationId = request.getAuthorisationId();
         String paymentId = request.getPaymentId();
         PsuIdData psuData = request.getPsuData();
         SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
         SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = null;
 
-        switch (scaType) {
-            case CREATED:
+        switch (authorisationType) {
+            case PIS_CREATION:
                 spiResponse = paymentAuthorisationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentDataProvider);
                 break;
-            case CANCELLED:
+            case PIS_CANCELLATION:
                 spiResponse = paymentCancellationSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authenticationId, authenticationMethodId, payment, aspspConsentDataProvider);
                 break;
             default:
-                log.info("Payment-ID [{}]. Payment Authorisation Type {} is not supported.", paymentId, scaType);
-                throw new IllegalArgumentException("This SCA type is not supported: " + scaType);
+                log.info("Payment-ID [{}]. Payment Authorisation Type {} is not supported.", paymentId, authorisationType);
+                throw new IllegalArgumentException("This SCA type is not supported: " + authorisationType);
         }
 
         if (spiResponse.hasError()) {

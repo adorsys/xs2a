@@ -16,12 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentAuthorizationResponse;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.jupiter.api.Test;
@@ -60,7 +64,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Mock
     private UpdateConsentPsuDataReq updateConsentPsuDataRequest;
     @Mock
-    private AccountConsentAuthorization consentAuthorization;
+    private Authorisation authorisation;
     @Mock
     private UpdateConsentPsuDataResponse updateConsentPsuDataResponse;
     @Mock
@@ -82,25 +86,25 @@ class EmbeddedAisAuthorizationServiceTest {
     @Test
     void getAccountConsentAuthorizationById_success() {
         // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID))
-            .thenReturn(Optional.of(consentAuthorization));
+        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+            .thenReturn(Optional.of(authorisation));
 
         // When
-        Optional<AccountConsentAuthorization> actualResponse = authorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID, CONSENT_ID);
+        Optional<Authorisation> actualResponse = authorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(consentAuthorization);
+        assertThat(actualResponse.get()).isEqualTo(authorisation);
     }
 
     @Test
     void getAccountConsentAuthorizationById_wrongId_fail() {
         // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID))
+        when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<AccountConsentAuthorization> actualResponse = authorizationService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID, WRONG_CONSENT_ID);
+        Optional<Authorisation> actualResponse = authorizationService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -118,7 +122,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_Success() {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
-            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+            .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
@@ -148,7 +152,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Test
     void createConsentAuthorizationNoPsuAuthentification_Success() {
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
-            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+            .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
@@ -166,7 +170,7 @@ class EmbeddedAisAuthorizationServiceTest {
     void createConsentAuthorizationNoPsuIdentification_Success() {
         PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
-            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
+            .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);
 
@@ -201,7 +205,7 @@ class EmbeddedAisAuthorizationServiceTest {
         assertThat(actual.isPresent()).isFalse();
     }
 
-    private CreateAisConsentAuthorizationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAisConsentAuthorizationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
+    private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
     }
 }

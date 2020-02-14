@@ -96,7 +96,7 @@ class PaymentInitiationLinksTest {
     @Test
     void scaApproachEmbeddedAndExplicitMethodAndNotMultiLevelScaRequired() {
         response.setMultilevelScaRequired(false);
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -110,7 +110,7 @@ class PaymentInitiationLinksTest {
     @Test
     void scaApproachEmbedded_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
         response.setMultilevelScaRequired(false);
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -124,7 +124,7 @@ class PaymentInitiationLinksTest {
     @Test
     void scaApproachEmbeddedAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
         response.setMultilevelScaRequired(true);
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -142,7 +142,7 @@ class PaymentInitiationLinksTest {
         paymentRequestParameters.setPsuData(psuIdData);
 
         response.setMultilevelScaRequired(true);
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -155,7 +155,7 @@ class PaymentInitiationLinksTest {
 
     @Test
     void scaApproachEmbeddedAndImplicitMethodAndPsuDataIsEmpty() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -172,7 +172,7 @@ class PaymentInitiationLinksTest {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         paymentRequestParameters.setPsuData(psuIdData);
 
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.EMBEDDED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -188,7 +188,7 @@ class PaymentInitiationLinksTest {
     void scaApproachDecoupledAndExplicitMethodAndNotMultiLevelScaRequired() {
         response.setMultilevelScaRequired(false);
 
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -203,7 +203,7 @@ class PaymentInitiationLinksTest {
     void scaApproach_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
         response.setMultilevelScaRequired(false);
 
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -217,7 +217,7 @@ class PaymentInitiationLinksTest {
     void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
         response.setMultilevelScaRequired(true);
 
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -235,7 +235,7 @@ class PaymentInitiationLinksTest {
 
         response.setMultilevelScaRequired(true);
 
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -248,7 +248,7 @@ class PaymentInitiationLinksTest {
 
     @Test
     void scaApproachDecoupledAndImplicitMethodAndPsuDataIsEmpty() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -265,7 +265,7 @@ class PaymentInitiationLinksTest {
         psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
         paymentRequestParameters.setPsuData(psuIdData);
 
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -279,7 +279,7 @@ class PaymentInitiationLinksTest {
 
     @Test
     void scaApproachOAuth() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.OAUTH);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -293,7 +293,7 @@ class PaymentInitiationLinksTest {
 
     @Test
     void scaApproachRedirectAndExplicitMethod() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
 
         links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
@@ -306,7 +306,7 @@ class PaymentInitiationLinksTest {
 
     @Test
     void scaApproachRedirectAndImplicitMethod() {
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
 
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
@@ -324,7 +324,7 @@ class PaymentInitiationLinksTest {
     @Test
     public void scaApproachRedirectAndImplicitMethod_confirmation() {
         // Given
-        when(scaApproachResolver.getInitiationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
 
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);

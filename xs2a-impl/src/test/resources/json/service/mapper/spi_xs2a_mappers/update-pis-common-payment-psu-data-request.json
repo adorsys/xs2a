@@ -1,7 +1,7 @@
 {
-  "paymentId": "paymentId",
-  "authorizationId": "authorizationId",
-  "psuData": {
+  "parentId": "paymentId",
+  "authorisationId": "authorizationId",
+  "psuIdData": {
     "psuId": "psuId"
   },
   "authenticationMethodId": "authenticationMethodId",

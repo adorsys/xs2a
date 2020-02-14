@@ -36,6 +36,6 @@ public class PermittedAccountReferenceValidator {
                                                        ? accountAccess.getBalances()
                                                        : accountAccess.getAccounts();
 
-        return accountReferenceAccessValidator.validate(accountAccess, accountReferences, accountId);
+        return accountReferenceAccessValidator.validate(accountAccess, accountReferences, accountId, accountConsent.getAisConsentRequestType());
     }
 }

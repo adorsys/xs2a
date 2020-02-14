@@ -55,6 +55,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setPurposeCode(payment.getPurposeCode());
         single.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
         single.setCreationTimestamp(payment.getCreationTimestamp());
+        single.setContentType(payment.getContentType());
         return single;
     }
 }

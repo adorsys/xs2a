@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndProductValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import org.junit.jupiter.api.Test;
@@ -63,8 +62,6 @@ class CreatePaymentValidatorTest {
     @Mock
     private PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
     @Mock
-    private PaymentTypeAndProductValidator paymentProductAndTypeValidator;
-    @Mock
     private PaymentBusinessValidator paymentBusinessValidator;
     @Mock
     private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
@@ -82,8 +79,7 @@ class CreatePaymentValidatorTest {
     void validate_withValidSinglePayment_shouldReturnValid() {
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.SINGLE);
 
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
             .thenReturn(paymentBusinessValidator);
@@ -108,8 +104,7 @@ class CreatePaymentValidatorTest {
     void validate_withValidPeriodicPayment_shouldReturnValid() {
         // Given
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.PERIODIC);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
             .thenReturn(paymentBusinessValidator);
@@ -134,8 +129,7 @@ class CreatePaymentValidatorTest {
     void validate_withValidBulkPayment_shouldReturnValid() {
         // Given
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.BULK);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
             .thenReturn(paymentBusinessValidator);
@@ -162,8 +156,7 @@ class CreatePaymentValidatorTest {
         String rawPaymentProduct = "raw";
 
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PSU_DATA, PaymentType.SINGLE, rawPaymentProduct);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
             .thenReturn(paymentBusinessValidator);
@@ -189,8 +182,6 @@ class CreatePaymentValidatorTest {
         //Given
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.invalid(PSU_DATA_VALIDATION_ERROR));
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
-            .thenReturn(ValidationResult.valid());
 
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
 
@@ -208,8 +199,7 @@ class CreatePaymentValidatorTest {
         //Given
         when(paymentBusinessValidator.validate(any(), anyString(), any()))
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.invalid(BUSINESS_VALIDATION_ERROR));
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
-        when(paymentProductAndTypeValidator.validateTypeAndProduct(any(PaymentType.class), anyString()))
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
             .thenReturn(paymentBusinessValidator);

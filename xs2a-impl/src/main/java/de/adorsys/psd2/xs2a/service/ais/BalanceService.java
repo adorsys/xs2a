@@ -36,7 +36,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceRepo
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetBalancesReportValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CommonAccountBalanceRequestObject;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -120,7 +120,7 @@ public class BalanceService {
 
     private ValidationResult getValidationResultForCommonAccountBalanceRequest(String accountId, String requestUri, AccountConsent accountConsent) {
         return getBalancesReportValidator.validate(
-            new CommonAccountBalanceRequestObject(accountConsent, accountId, requestUri));
+            new GetAccountBalanceRequestObject(accountConsent, accountId, requestUri));
     }
 
     private SpiResponse<List<SpiAccountBalance>> getSpiResponse(AccountConsent accountConsent, String consentId, String accountId) {

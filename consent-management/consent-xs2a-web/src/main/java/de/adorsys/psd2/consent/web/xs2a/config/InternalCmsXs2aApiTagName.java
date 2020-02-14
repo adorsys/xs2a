@@ -26,4 +26,9 @@ public class InternalCmsXs2aApiTagName {
     public static final String PIS_PAYMENTS = "PIS, Payments";
     public static final String PIS_PSU_DATA = "PIS, PSU Data";
     public static final String TPP = "TPP";
+    public static final String AUTHORISATIONS = "AUTHORISATIONS";
+
+    private InternalCmsXs2aApiTagName() {
+
+    }
 }

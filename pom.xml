@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>5.9</version>
+    <version>5.10</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -871,6 +871,7 @@ Use it manually to generate javadocs. Don't commit it
                         <configuration>
                             <additionalOptions>-Xdoclint:none</additionalOptions>
                             <sourcepath>${javadoc.sourcepath}</sourcepath>
+                            <detectOfflineLinks>false</detectOfflineLinks>
                         </configuration>
                         <executions>
                             <execution>

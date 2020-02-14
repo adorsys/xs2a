@@ -75,6 +75,7 @@ public class CmsToXs2aPaymentSupportMapper {
         xs2aCommonPayment.setTransactionStatus(commonPaymentData.getTransactionStatus());
         xs2aCommonPayment.setStatusChangeTimestamp(commonPaymentData.getStatusChangeTimestamp());
         xs2aCommonPayment.setCreationTimestamp(commonPaymentData.getCreationTimestamp());
+        xs2aCommonPayment.setContentType(commonPaymentData.getContentType());
         return xs2aCommonPayment;
     }
 

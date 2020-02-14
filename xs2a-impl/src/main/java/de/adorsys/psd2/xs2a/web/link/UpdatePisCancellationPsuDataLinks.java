@@ -52,6 +52,6 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
     }
 
     private boolean isDecoupledScaApproach(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        return scaApproachResolver.getCancellationScaApproach(request.getAuthorisationId()) == ScaApproach.DECOUPLED;
+        return scaApproachResolver.getScaApproach(request.getAuthorisationId()) == ScaApproach.DECOUPLED;
     }
 }

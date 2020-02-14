@@ -22,15 +22,18 @@ import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -44,10 +47,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -71,7 +71,8 @@ class PisCommonPaymentServiceInternalTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private CorePaymentsConvertService corePaymentsConvertService;
-
+    @Mock
+    private AuthorisationRepository authorisationRepository;
 
     private PisCommonPaymentData pisCommonPaymentData;
     private static final String PAYMENT_ID = "5bbde955ca10e8e4035a10c2";
@@ -142,7 +143,7 @@ class PisCommonPaymentServiceInternalTest {
     void getPisCommonPaymentStatusById_success() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
 
         // When
@@ -157,7 +158,7 @@ class PisCommonPaymentServiceInternalTest {
     void getPisCommonPaymentStatusById_logicalError() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(null);
 
         // When
@@ -172,10 +173,15 @@ class PisCommonPaymentServiceInternalTest {
     void getCommonPaymentById_success() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
-        when(pisCommonPaymentMapper.mapToPisCommonPaymentResponse(pisCommonPaymentData))
+
+        List<AuthorisationEntity> authorisations = buildAuthorisations();
+        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+            .thenReturn(authorisations);
+
+        when(pisCommonPaymentMapper.mapToPisCommonPaymentResponse(pisCommonPaymentData, authorisations))
             .thenReturn(Optional.of(pisCommonPaymentResponse));
 
         // When
@@ -190,10 +196,8 @@ class PisCommonPaymentServiceInternalTest {
     void getCommonPaymentById_logicalError() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
-        when(pisCommonPaymentMapper.mapToPisCommonPaymentResponse(pisCommonPaymentData))
-            .thenReturn(Optional.empty());
 
         // When
         CmsResponse<PisCommonPaymentResponse> actual = pisCommonPaymentService.getCommonPaymentById(PAYMENT_ID);
@@ -207,7 +211,7 @@ class PisCommonPaymentServiceInternalTest {
     void updateCommonPaymentStatusById_success() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
 
         // When
@@ -225,7 +229,7 @@ class PisCommonPaymentServiceInternalTest {
         // Given
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.ACCC);
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdatePaymentDataOnConfirmationExpiration(pisCommonPaymentData))
+        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
 
         // When
@@ -321,6 +325,12 @@ class PisCommonPaymentServiceInternalTest {
         PisCommonPaymentData pisCommonPaymentData = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-data.json", PisCommonPaymentData.class);
         pisCommonPaymentData.setAuthorisationTemplate(new AuthorisationTemplateEntity());
         return pisCommonPaymentData;
+    }
+
+    private List<AuthorisationEntity> buildAuthorisations() {
+        AuthorisationEntity pisAuthorization = new AuthorisationEntity();
+        pisAuthorization.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        return Collections.singletonList(pisAuthorization);
     }
 }
 

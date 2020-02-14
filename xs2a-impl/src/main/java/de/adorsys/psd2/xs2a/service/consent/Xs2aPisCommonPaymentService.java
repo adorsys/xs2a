@@ -18,17 +18,14 @@ package de.adorsys.psd2.xs2a.service.consent;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.PisAuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,8 +38,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aPisCommonPaymentService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    private final PisAuthorisationServiceEncrypted pisAuthorisationServiceEncrypted;
-    private final Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper;
+    private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
     private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
@@ -67,28 +63,8 @@ public class Xs2aPisCommonPaymentService {
         return Optional.ofNullable(response.getPayload());
     }
 
-    public void updateCommonPayment(CommonPayment commonPayment, PaymentInitiationParameters paymentInitiationParameters, String paymentId) {
-        PisCommonPaymentRequest pisCommonPaymentRequest = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsCommonPaymentRequest(commonPayment, paymentInitiationParameters.getPaymentProduct());
-        pisCommonPaymentServiceEncrypted.updateCommonPayment(pisCommonPaymentRequest, paymentId);
-    }
-
-    public void updateSinglePaymentInCommonPayment(SinglePayment singlePayment, PaymentInitiationParameters paymentInitiationParameters, String paymentId) {
-        PisCommonPaymentRequest pisCommonPaymentRequest = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsSinglePisCommonPaymentRequest(singlePayment, paymentInitiationParameters.getPaymentProduct());
-        pisCommonPaymentServiceEncrypted.updateCommonPayment(pisCommonPaymentRequest, paymentId);
-    }
-
-    public void updatePeriodicPaymentInCommonPayment(PeriodicPayment periodicPayment, PaymentInitiationParameters paymentInitiationParameters, String paymentId) {
-        PisCommonPaymentRequest pisCommonPaymentRequest = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsPeriodicPisCommonPaymentRequest(periodicPayment, paymentInitiationParameters.getPaymentProduct());
-        pisCommonPaymentServiceEncrypted.updateCommonPayment(pisCommonPaymentRequest, paymentId);
-    }
-
-    public void updateBulkPaymentInCommonPayment(BulkPayment bulkPayment, PaymentInitiationParameters paymentInitiationParameters, String paymentId) {
-        PisCommonPaymentRequest pisCommonPaymentRequest = xs2aToCmsPisCommonPaymentRequestMapper.mapToCmsBulkPisCommonPaymentRequest(bulkPayment, paymentInitiationParameters.getPaymentProduct());
-        pisCommonPaymentServiceEncrypted.updateCommonPayment(pisCommonPaymentRequest, paymentId);
-    }
-
     public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.updatePisAuthorisationStatus(authorisationId, scaStatus);
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, scaStatus);
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -100,7 +76,7 @@ public class Xs2aPisCommonPaymentService {
      * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
      */
     public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -112,7 +88,7 @@ public class Xs2aPisCommonPaymentService {
      * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
      */
     public boolean saveAuthenticationMethods(String authorisationId, List<AuthenticationObject> methods) {
-        CmsResponse<Boolean> response = pisAuthorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
+        CmsResponse<Boolean> response = authorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -123,7 +99,7 @@ public class Xs2aPisCommonPaymentService {
      * @param scaApproach     sca approach
      */
     public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        pisAuthorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+        authorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
 
     /**

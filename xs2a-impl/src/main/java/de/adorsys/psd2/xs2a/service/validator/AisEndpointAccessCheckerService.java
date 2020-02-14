@@ -31,15 +31,14 @@ public class AisEndpointAccessCheckerService extends EndpointAccessChecker {
      * Checks whether endpoint is accessible for current authorisation
      *
      * @param authorisationId ID of authorisation process
-     * @param consentId       ID of consent
      * @param confirmationCodeReceived   true if confirmationCode was received in request body
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
-    public boolean isEndpointAccessible(String authorisationId, String consentId, boolean confirmationCodeReceived) {
+    public boolean isEndpointAccessible(String authorisationId, boolean confirmationCodeReceived) {
          boolean confirmationCodeCase = confirmationCodeReceived
                                            && aspspProfileService.isAuthorisationConfirmationRequestMandated();
 
-        return aisConsentService.getAccountConsentAuthorizationById(authorisationId, consentId)
+        return aisConsentService.getAccountConsentAuthorizationById(authorisationId)
                    .map(a -> isAccessible(a.getChosenScaApproach(), a.getScaStatus(), confirmationCodeCase))
                    .orElse(true);
     }

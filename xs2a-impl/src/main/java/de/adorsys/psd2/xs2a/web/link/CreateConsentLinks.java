@@ -44,7 +44,7 @@ public class CreateConsentLinks extends AbstractLinks {
 
         ScaApproach scaApproach = authorisationId == null
                                       ? scaApproachResolver.resolveScaApproach()
-                                      : scaApproachResolver.getInitiationScaApproach(authorisationId);
+                                      : scaApproachResolver.getScaApproach(authorisationId);
 
         if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproach)) {
             buildLinkForEmbeddedAndDecoupledScaApproach(consentId, authorisationId, explicitMethod, signingBasketModeActive);

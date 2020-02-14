@@ -34,5 +34,6 @@
   },
   "creationTimestamp": "2019-08-22T11:00:00Z",
   "multilevelScaRequired": false,
-  "aspspAccountId": "some account id"
+  "aspspAccountId": "some account id",
+  "contentType": "application/json"
 }

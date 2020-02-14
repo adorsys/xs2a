@@ -45,7 +45,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
-        ScaApproach cancellationScaApproach = scaApproachResolver.getCancellationScaApproach(authorisationId);
+        ScaApproach cancellationScaApproach = scaApproachResolver.getScaApproach(authorisationId);
         if (EnumSet.of(EMBEDDED, DECOUPLED).contains(cancellationScaApproach)) {
             setUpdatePsuAuthentication(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (cancellationScaApproach == REDIRECT) {

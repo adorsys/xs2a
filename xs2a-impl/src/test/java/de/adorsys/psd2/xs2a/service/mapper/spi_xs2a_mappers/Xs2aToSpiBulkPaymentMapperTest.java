@@ -32,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -98,6 +99,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
         assertEquals(spiPsuDataList, spiBulkPayment.getPsuDataList());
         assertEquals(STATUS_CHANGE_TIMESTAMP, spiBulkPayment.getStatusChangeTimestamp());
         assertEquals(payment.getCreationTimestamp(), spiBulkPayment.getCreationTimestamp());
+        assertEquals(payment.getContentType(), spiBulkPayment.getContentType());
     }
 
     @NotNull
@@ -113,6 +115,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
         payment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
         payment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
         payment.setCreationTimestamp(OffsetDateTime.now());
+        payment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return payment;
     }
 

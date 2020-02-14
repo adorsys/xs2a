@@ -42,14 +42,14 @@ class PaymentCancellationHeadersBuilderTest {
     @Test
     void buildStartPaymentCancellationAuthorisationHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
 
         // When
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartPaymentCancellationAuthorisationHeaders(AUTHORISATION_ID);
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(AUTHORISATION_ID);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();
@@ -61,14 +61,14 @@ class PaymentCancellationHeadersBuilderTest {
     @Test
     void buildUpdatePaymentCancellationPsuDataHeaders_shouldReturnScaApproachFromAuthorisation() {
         // Given
-        when(scaApproachResolver.getCancellationScaApproach(AUTHORISATION_ID))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(SCA_APPROACH);
 
         HttpHeaders expectedHttpHeaders = new HttpHeaders();
         expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
 
         // When
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePaymentCancellationPsuDataHeaders(AUTHORISATION_ID);
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePsuDataHeaders(AUTHORISATION_ID);
 
         // Then
         verify(scaApproachResolver, never()).resolveScaApproach();

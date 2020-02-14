@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -44,6 +45,7 @@ import org.springframework.http.MediaType;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.PENDING;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -118,7 +120,7 @@ class GetTransactionsReportValidatorTest {
         when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(false);
 
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.invalid(PERMITTED_ACCOUNT_REFERENCE_VALIDATION_ERROR));
 
@@ -144,7 +146,7 @@ class GetTransactionsReportValidatorTest {
         when(aspspProfileService.getAvailableBookingStatuses()).thenReturn(Collections.singletonList(BOOKING_STATUS));
 
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
         when(accountConsentValidator.validate(accountConsent, REQUEST_URI))
@@ -196,7 +198,7 @@ class GetTransactionsReportValidatorTest {
         when(aspspProfileService.isEntryReferenceFromSupported()).thenReturn(false);
 
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID))
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
             .thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
 
         // When
@@ -256,7 +258,7 @@ class GetTransactionsReportValidatorTest {
     void validate_withDeltaListNoSupportedDateFromPresent_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
         when(oauthConsentValidator.validate(accountConsent))
@@ -305,7 +307,7 @@ class GetTransactionsReportValidatorTest {
     void validate_withEntryReferenceFromNoSupportedDateFromPresent_shouldReturnValid() {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
         when(oauthConsentValidator.validate(accountConsent))
@@ -379,7 +381,7 @@ class GetTransactionsReportValidatorTest {
         // Given
         AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE)).thenReturn(ValidationResult.valid());
-        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID)).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(accountConsent.getAccess(), accountConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS)).thenReturn(ValidationResult.valid());
         when(permittedAccountReferenceValidator.validate(accountConsent, ACCOUNT_ID, WITH_BALANCE))
             .thenReturn(ValidationResult.valid());
 
@@ -408,11 +410,15 @@ class GetTransactionsReportValidatorTest {
     private AccountConsent buildAccountConsent(TppInfo tppInfo) {
         return new AccountConsent("id", buildXs2aAccountAccess(), buildXs2aAccountAccess(), false, null, null, 0,
                                   null, null, false, false,
-                                  Collections.emptyList(), tppInfo, null, false,
+                                  Collections.emptyList(), tppInfo, AisConsentRequestType.DEDICATED_ACCOUNTS, false,
                                   Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
     }
 
     private Xs2aAccountAccess buildXs2aAccountAccess() {
-        return new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.singletonList(accountReference), null, null, null, null);
+        AccountReference ibanAccountReference = new AccountReference();
+        ibanAccountReference.setIban("DE69760700240340283600");
+        List<AccountReference> accountReferences = Collections.singletonList(ibanAccountReference);
+
+        return new Xs2aAccountAccess(accountReferences, accountReferences, accountReferences, null, null, null, null);
     }
 }

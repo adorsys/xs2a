@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "fce1bd09-112b-487f-b60f-f7c8c3ea272b",
+		"_postman_id": "81f41159-fe8b-42ec-9b62-d6d6c412f6af",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -21435,7 +21435,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2020-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
+									"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}",
@@ -21941,7 +21941,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2020-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
+									"raw": "{\n      \"batchBookingPreferred\": \"false\",\n      \"requestedExecutionDate\": \"2030-02-02\",\n      \"debtorAccount\": {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_none}}\"\n      },\n      \"payments\": [\n        {\n          \"endToEndIdentification\": \"WBG-123456789\",\n          \"instructedAmount\": {\n            \"amount\": \"520.00\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n\t\t\t\"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"WBG\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"56\",\n            \"townName\": \"Nürnberg\",\n            \"country\": \"DE\",\n            \"postCode\": \"90543\",\n            \"streetName\": \"WBG Straße\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number WBG-1234\"\n        },\n        {\n          \"endToEndIdentification\": \"RI-234567890\",\n          \"instructedAmount\": {\n            \"amount\": \"71.07\",\n            \"currency\": \"EUR\"\n          },\n          \"creditorAccount\": {\n            \"currency\": \"EUR\",\n            \"iban\": \"{{iban_none}}\"\n          },\n          \"creditorAgent\": \"AAAADEBBXXX\",\n          \"creditorName\": \"Grünstrom\",\n          \"creditorAddress\": {\n            \"buildingNumber\": \"74\",\n            \"townName\": \"Dresden\",\n            \"country\": \"DE\",\n            \"postCode\": \"01067\",\n            \"streetName\": \"Kaisergasse\"\n          },\n          \"remittanceInformationUnstructured\": \"Ref. Number GRUENSTROM-2444\"\n        }\n      ]\n    }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/bulk-payments/{{payment_product}}",
@@ -35490,15 +35490,15 @@
 											"script": {
 												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -35566,15 +35566,15 @@
 											"script": {
 												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -35963,15 +35963,15 @@
 											"script": {
 												"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -36030,15 +36030,15 @@
 											"script": {
 												"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -36679,15 +36679,15 @@
 											"script": {
 												"id": "f3e03308-7fd2-47cd-96bb-9d187a805961",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is v\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -36733,15 +36733,15 @@
 											"script": {
 												"id": "f3e03308-7fd2-47cd-96bb-9d187a805961",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -36786,15 +36786,15 @@
 											"script": {
 												"id": "ec7ce7b6-3c7d-4f8e-8f05-fea52fac37e3",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is v\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -36841,15 +36841,15 @@
 											"script": {
 												"id": "ec7ce7b6-3c7d-4f8e-8f05-fea52fac37e3",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -36895,15 +36895,15 @@
 											"script": {
 												"id": "a30ec669-f747-467d-a73c-06e31f79f35d",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -36948,15 +36948,15 @@
 											"script": {
 												"id": "a30ec669-f747-467d-a73c-06e31f79f35d",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -37000,15 +37000,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -37054,15 +37054,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -37778,15 +37778,15 @@
 											"script": {
 												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is v\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -37854,15 +37854,15 @@
 											"script": {
 												"id": "83f45a10-10ef-4c2b-b9f1-3e29d0ae53fa",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -38671,15 +38671,15 @@
 											"script": {
 												"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is v\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -38738,15 +38738,15 @@
 											"script": {
 												"id": "f8ee040e-1fd9-415f-9d19-bad3df14d8a4",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -39807,15 +39807,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -39861,15 +39861,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -39914,15 +39914,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -39976,15 +39976,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -40037,15 +40037,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 403', () => {",
-													"   pm.response.to.have.status(403);",
+													"pm.test('Status code is 404', () => {",
+													"   pm.response.to.have.status(404);",
 													"});",
 													"",
-													"pm.test(\"Error code is PRODUCT_INVALID\", () => {",
+													"pm.test(\"Error code is PRODUCT_UNKNOWN\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('PRODUCT_INVALID');",
-													"    pm.expect(error.text).to.eql('Payment product invalid for addressed payment');",
+													"    pm.expect(error.code).to.eql('PRODUCT_UNKNOWN');",
+													"    pm.expect(error.text).to.eql('Wrong payment product: notAProduct');",
 													"});",
 													""
 												],
@@ -40097,15 +40097,15 @@
 											"script": {
 												"id": "5130ce0a-c88d-42f8-ad5f-34e86e3f09aa",
 												"exec": [
-													"pm.test('Status code is 405', () => {",
-													"   pm.response.to.have.status(405);",
+													"pm.test('Status code is 400', () => {",
+													"   pm.response.to.have.status(400);",
 													"});",
 													"",
-													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"pm.test(\"Error code is PARAMETER_NOT_SUPPORTED\", () => {",
 													"    const jsonData = pm.response.json();",
 													"    const error = jsonData.tppMessages[0];",
-													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-													"    pm.expect(error.text).to.eql('Wrong payment service');",
+													"    pm.expect(error.code).to.eql('PARAMETER_NOT_SUPPORTED');",
+													"    pm.expect(error.text).to.eql('Wrong payment type: bulk-payments');",
 													"});"
 												],
 												"type": "text/javascript"

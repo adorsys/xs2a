@@ -22,8 +22,6 @@ Parameter *"piisConsentSupported"* in the ASPSP-Profile, defines which model of 
 
 * *ASPSP_CONSENT_SUPPORTED* (ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent);
 
-* *BOTH_CONSENTS_SUPPORTED*.
-
 There is no information about expiration of Funds Confirmation Consent created by TPP, so it will stay *VALID* until TPP or ASPSP revokes it.
 
 * If TPP has no Valid PIIS Consent and tries to request Funds Confirmation, then response contains *HTTP code  400 "NO_PIIS_ACTIVATION"*;

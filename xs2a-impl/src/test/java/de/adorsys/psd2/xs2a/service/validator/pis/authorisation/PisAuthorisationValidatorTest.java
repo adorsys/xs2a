@@ -18,10 +18,10 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -55,8 +55,7 @@ class PisAuthorisationValidatorTest {
 
     @Test
     void validate_withValidAuthorisation_shouldReturnValid() {
-        PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, SCA_STATUS, PSU_ID_DATA,
-                                                                                                   PaymentAuthorisationType.CREATED));
+        PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, PSU_ID_DATA, "paymentId", AuthorisationType.PIS_CREATION, SCA_STATUS));
 
         // When
         ValidationResult validationResult = pisAuthorisationValidator.validate(AUTHORISATION_ID, paymentResponse);
@@ -70,8 +69,7 @@ class PisAuthorisationValidatorTest {
     @Test
     void validate_withUnknownAuthorisationId_shouldReturnUnknownError() {
         // Given
-        PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, SCA_STATUS, PSU_ID_DATA,
-                                                                                                   PaymentAuthorisationType.CREATED));
+        PisCommonPaymentResponse paymentResponse = buildPisCommonPaymentResponse(new Authorisation(AUTHORISATION_ID, PSU_ID_DATA, "paymentId", AuthorisationType.PIS_CREATION, SCA_STATUS));
 
         // When
         ValidationResult validationResult = pisAuthorisationValidator.validate(UNKNOWN_AUTHORISATION_ID, paymentResponse);

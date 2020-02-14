@@ -1,6 +1,19 @@
 {
-  "instanceId": "UNDEFINED",
   "id": "123",
   "externalId": "5e89f573-800e-4158-bb9c-c7fcc9c701d9",
-  "scaStatus": "received"
+  "parentExternalId": "329d04d9-cb42-4fb5-8265-de58fa00366d",
+  "psuData": {
+    "psuId": "PSU ID",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+    "psuIpAddress": "PSU IP ADDRESS"
+  },
+  "scaApproach": "EMBEDDED",
+  "tppOkRedirectUri": "ok.uri",
+  "tppNokRedirectUri": "nok.uri",
+  "scaStatus": "received",
+  "availableScaMethods": [],
+  "authorisationType": "PIS_CREATION",
+  "instanceId": "UNDEFINED"
 }
