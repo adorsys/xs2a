@@ -1,5 +1,8 @@
 {
-  "access": {
+  "consentData": {
+    "combinedServiceIndicator": false
+  },
+  "tppAccountAccesses": {
     "accounts": [
       {
         "resourceId": "11111-999999999",
@@ -22,7 +25,7 @@
       }
     ]
   },
-  "aspspAccess": {},
+  "aspspAccountAccesses": {},
   "recurringIndicator": true,
   "validUntil": "2037-08-06",
   "frequencyPerDay": "4",
@@ -32,5 +35,6 @@
     }
   ],
   "statusChangeTimestamp": "2019-08-22T11:01:27Z",
-  "creationTimestamp": "2019-08-22T11:00:00Z"
+  "creationTimestamp": "2019-08-22T11:00:00Z",
+  "consentTppInformation": {}
 }

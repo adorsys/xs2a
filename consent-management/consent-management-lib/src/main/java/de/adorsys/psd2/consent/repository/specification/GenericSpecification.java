@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,20 +138,6 @@ public abstract class GenericSpecification {
      */
     protected <T> Specification<T> byTppAuthorisationNumberWithoutJoin(@Nullable String tppAuthorisationNumber) {
         return provideSpecificationForEntityAttribute(TPP_AUTHORISATION_NUMBER_ATTRIBUTE, tppAuthorisationNumber);
-    }
-
-    /**
-     * Returns specification for some entity for filtering data by aspsp account id.
-     *
-     * <p>
-     * If optional parameter is not provided, this specification will not affect resulting data.
-     *
-     * @param aspspAccountId Bank specific account identifier
-     * @param <T>            type of the entity, for which this specification will be created
-     * @return resulting specification
-     */
-    protected <T> Specification<T> byAspspAccountId(@Nullable String aspspAccountId) {
-        return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
     }
 
     /**

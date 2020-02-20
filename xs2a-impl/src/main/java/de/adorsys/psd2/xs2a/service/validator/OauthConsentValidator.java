@@ -16,19 +16,19 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OauthConsentValidator extends OauthValidator<AccountConsent> {
+public class OauthConsentValidator extends OauthValidator<AisConsent> {
     private static final MessageError MESSAGE_ERROR = new MessageError(ErrorType.AIS_403, TppMessageInformation.of(MessageErrorCode.FORBIDDEN));
 
     public OauthConsentValidator(RequestProviderService requestProviderService,
@@ -38,8 +38,8 @@ public class OauthConsentValidator extends OauthValidator<AccountConsent> {
     }
 
     @Override
-    protected boolean checkObjectForTokenAbsence(AccountConsent accountConsent) {
-        return accountConsent.getConsentStatus() == ConsentStatus.VALID;
+    protected boolean checkObjectForTokenAbsence(AisConsent aisConsent) {
+        return aisConsent.getConsentStatus() == ConsentStatus.VALID;
     }
 
     @Override

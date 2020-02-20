@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
-import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
-import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.consent.api.*;
-import de.adorsys.psd2.consent.api.ais.*;
-import de.adorsys.psd2.consent.domain.AuthorisationEntity;
-import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
-import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
+import com.fasterxml.jackson.core.type.TypeReference;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
+import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAction;
-import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
-import de.adorsys.psd2.consent.repository.*;
-import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.mapper.TppInfoMapper;
-import de.adorsys.psd2.consent.service.psu.CmsPsuService;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.AisConsentActionRepository;
+import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
+import de.adorsys.psd2.consent.service.account.AccountAccessUpdater;
+import de.adorsys.psd2.consent.service.mapper.AccessMapper;
+import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -51,919 +44,159 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AisConsentServiceInternalTest {
-    private static final long CONSENT_ID = 1;
-    private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
-    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
-    private static final String PSU_ID = "psu-id-1";
-    private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
-    private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null, null);
-    private static final String FINALISED_CONSENT_ID = "9b112130-6a96-4941-a220-2da8a4af2c65";
-    private static final String AUTHORISATION_NUMBER = "Test Authorisation Number";
-    private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
-    private static final String INSTANCE_ID = "UNDEFINED";
-    private static final String REQUEST_URI = "request/uri";
-    private static final String TPP_ID = "tppId";
-    private static final String EUR = "EUR";
-    private static final String USD = "USD";
-    private static final List<AccountInfo> ACCOUNTS_1 = Arrays.asList(
-        AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency(EUR).build(),
-        AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-2").currency(USD).build(),
-        AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-3").currency(EUR).build(),
-        AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-3").currency(USD).build());
-    private static final List<AccountInfo> ACCOUNTS_2 = Arrays.asList(
-        AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency(EUR).build(),
-        AccountInfo.builder().resourceId(UUID.randomUUID().toString()).accountIdentifier("iban-1").currency(USD).build());
-    private static final List<NotificationSupportedMode> MODES = Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA);
-    private static final String REDIRECT_URI = "ok";
-    private static final String NOK_REDIRECT_URI = "not ok";
+    private static final String CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
+    private static final String TPP_ID = "TPP ID";
+    private static final String REQUEST_URI = "/v1/accounts";
 
-    private AisConsent aisConsent;
-    private List<AuthorisationEntity> aisConsentAuthorisationList = new ArrayList<>();
-
-    @InjectMocks
-    private AisConsentServiceInternal aisConsentService;
+    private JsonReader jsonReader = new JsonReader();
 
     @Mock
-    private AisConsentMapper consentMapper;
-    @Mock
-    private AisConsentJpaRepository aisConsentJpaRepository;
-    @Mock
-    private PsuDataMapper psuDataMapper;
-    @Mock
-    private TppInfoMapper tppInfoMapper;
-    @Mock
-    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
-    @Mock
-    private AspspProfileService aspspProfileService;
-    @Mock
-    private AisConsent aisConsentMocked;
-    @Mock
-    private TppInfoEntity tppInfoMocked;
-    @Mock
-    private PsuData psuDataMocked;
-    @Mock
-    private CmsPsuService cmsPsuService;
-    @Mock
-    private AisConsentUsageService aisConsentUsageService;
+    private AisConsentVerifyingRepository aisConsentRepository;
     @Mock
     private AisConsentActionRepository aisConsentActionRepository;
     @Mock
-    private TppInfoRepository tppInfoRepository;
-    @Mock
-    private AisConsentRequestTypeService aisConsentRequestTypeService;
-    @Mock
-    private AisConsentVerifyingRepository aisConsentVerifyingRepository;
-    @Mock
     private AuthorisationRepository authorisationRepository;
+    @Mock
+    private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
+    @Mock
+    private AisConsentUsageService aisConsentUsageService;
+    @Mock
+    private OneOffConsentExpirationService oneOffConsentExpirationService;
+    @Mock
+    private CmsConsentMapper cmsConsentMapper;
+    @Mock
+    private AccessMapper accessMapper;
+    @Mock
+    private AccountAccessUpdater accountAccessUpdater;
 
-    @BeforeEach
-    void setUp() {
-        AuthorisationEntity aisConsentAuthorisation = buildAisConsentAuthorisation();
-        aisConsentAuthorisationList.add(aisConsentAuthorisation);
-        aisConsent = buildConsent(EXTERNAL_CONSENT_ID);
+    @InjectMocks
+    private AisConsentServiceInternal aisConsentServiceInternal;
+
+    @Test
+    void checkConsentAndSaveActionLog_shouldSaveActionLog() throws WrongChecksumException {
+        AisConsentActionRequest aisConsentActionRequest = new AisConsentActionRequest(TPP_ID, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
+        ArgumentCaptor<AisConsentAction> aisConsentActionCaptor = ArgumentCaptor.forClass(AisConsentAction.class);
+
+        CmsResponse<CmsResponse.VoidResponse> response = aisConsentServiceInternal.checkConsentAndSaveActionLog(aisConsentActionRequest);
+
+        assertTrue(response.isSuccessful());
+        verify(aisConsentActionRepository).save(aisConsentActionCaptor.capture());
+        AisConsentAction capturedAction = aisConsentActionCaptor.getValue();
+        assertEquals(TPP_ID, capturedAction.getTppId());
+        assertEquals(CONSENT_ID, capturedAction.getRequestedConsentId());
+        assertEquals(ActionStatus.SUCCESS, capturedAction.getActionStatus());
     }
 
     @Test
-    void shouldReturnAisConsent_whenGetConsentByIdIsCalled() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent))
-            .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList)).thenReturn(buildAisAccountConsent());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
-            .thenReturn(aisConsentAuthorisationList);
+    void checkConsentAndSaveActionLog_noConsent() throws WrongChecksumException {
+        AisConsentActionRequest aisConsentActionRequest = new AisConsentActionRequest(TPP_ID, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.empty());
 
-        // When
-        CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+        CmsResponse<CmsResponse.VoidResponse> response = aisConsentServiceInternal.checkConsentAndSaveActionLog(aisConsentActionRequest);
 
-        // Then
-        assertTrue(retrievedConsent.isSuccessful());
-        assertEquals(retrievedConsent.getPayload().getId(), aisConsent.getId().toString());
+        assertTrue(response.isSuccessful());
+        verify(aisConsentActionRepository, never()).save(any());
+        verify(aisConsentUsageService, never()).incrementUsage(any(), any());
     }
 
     @Test
-    void getAisAccountConsentById_checkAndUpdateOnExpirationInvoked() {
-        // Given
-        AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now().minusDays(1));
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent))
-            .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList))
-            .thenReturn(buildAisAccountConsent());
-        when(aisConsentConfirmationExpirationService.expireConsent(aisConsent)).thenReturn(aisConsent);
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
-            .thenReturn(aisConsentAuthorisationList);
+    void checkConsentAndSaveActionLog_shouldExpireOldConsents() throws WrongChecksumException {
+        AisConsentActionRequest aisConsentActionRequest = new AisConsentActionRequest(TPP_ID, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity-past-validUntil.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
+        ConsentEntity expiredConsent = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity-past-validUntil-expired.json", ConsentEntity.class);
+        when(aisConsentConfirmationExpirationService.expireConsent(consentEntity)).thenReturn(expiredConsent);
 
-        // When
-        CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+        CmsResponse<CmsResponse.VoidResponse> response = aisConsentServiceInternal.checkConsentAndSaveActionLog(aisConsentActionRequest);
 
-        // Then
-        assertTrue(retrievedConsent.isSuccessful());
-        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(aisConsent);
+        assertTrue(response.isSuccessful());
+        verify(aisConsentConfirmationExpirationService).expireConsent(consentEntity);
     }
 
     @Test
-    void getAisAccountConsentById_checkAndUpdateOnExpirationNotInvoked() {
-        // Given
-        AisConsent aisConsent = buildConsent(EXTERNAL_CONSENT_ID, Collections.singletonList(psuDataMocked), LocalDate.now());
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(aisConsent))
-            .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList))
-            .thenReturn(buildAisAccountConsent());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
-            .thenReturn(aisConsentAuthorisationList);
+    void checkConsentAndSaveActionLog_shouldIncrementUsage() throws WrongChecksumException {
+        AisConsentActionRequest aisConsentActionRequest = new AisConsentActionRequest(TPP_ID, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
 
-        // When
-        CmsResponse<AisAccountConsent> retrievedConsent = aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
+        CmsResponse<CmsResponse.VoidResponse> response = aisConsentServiceInternal.checkConsentAndSaveActionLog(aisConsentActionRequest);
 
-        // Then
-        assertTrue(retrievedConsent.isSuccessful());
-        verify(aisConsentJpaRepository, never()).save(any(AisConsent.class));
+        assertTrue(response.isSuccessful());
+        verify(aisConsentUsageService).incrementUsage(consentEntity, aisConsentActionRequest);
     }
 
     @Test
-    void getAisAccountConsentById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
-        // Given
-        AisConsent consent = buildUsedNonRecurringConsent();
+    void checkConsentAndSaveActionLog_noUpdateUsageInRequest_shouldIgnoreUsage() throws WrongChecksumException {
+        AisConsentActionRequest aisConsentActionRequest = new AisConsentActionRequest(TPP_ID, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
 
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(consent));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
-            .thenReturn(consent);
-        when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
+        CmsResponse<CmsResponse.VoidResponse> response = aisConsentServiceInternal.checkConsentAndSaveActionLog(aisConsentActionRequest);
 
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
-            .thenReturn(aisConsentAuthorisationList);
-
-        // When
-        aisConsentService.getAisAccountConsentById(EXTERNAL_CONSENT_ID);
-
-        // Then
-        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
+        assertTrue(response.isSuccessful());
+        verify(aisConsentUsageService, never()).incrementUsage(any(), any());
     }
 
     @Test
-    void createConsent_shouldReturnCreateAisConsentResponse() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(getAspspSettings());
-        AisAccountConsent aisAccountConsent = buildAisAccountConsent();
+    void checkConsentAndSaveActionLog_shouldExpireOneOffConsents() throws WrongChecksumException {
+        AisConsentActionRequest aisConsentActionRequest = new AisConsentActionRequest(TPP_ID, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity-one-off.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
+        CmsConsent cmsConsent = jsonReader.getObjectFromFile("json/service/ais-consent-service/cms-consent-one-off.json", CmsConsent.class);
+        when(cmsConsentMapper.mapToCmsConsent(eq(consentEntity), anyList(), anyMap())).thenReturn(cmsConsent);
+        when(oneOffConsentExpirationService.isConsentExpired(cmsConsent, 1L)).thenReturn(true);
+        ArgumentCaptor<ConsentEntity> consentEntityCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
 
-        when(consentMapper.mapToAisAccountConsent(aisConsent, Collections.emptyList()))
-            .thenReturn(aisAccountConsent);
+        CmsResponse<CmsResponse.VoidResponse> response = aisConsentServiceInternal.checkConsentAndSaveActionLog(aisConsentActionRequest);
 
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, MODES);
-
-        // When
-        CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
-
-        // Then
-        assertTrue(actual.isSuccessful());
-        assertEquals(expected, actual.getPayload());
+        assertTrue(response.isSuccessful());
+        verify(aisConsentRepository).verifyAndSave(consentEntityCaptor.capture());
+        ConsentEntity capturedConsentEntity = consentEntityCaptor.getValue();
+        assertEquals(ConsentStatus.EXPIRED, capturedConsentEntity.getConsentStatus());
     }
 
     @Test
-    void createConsent_shouldReturnCreateAisConsentResponse_withTppRedirectUri() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(getAspspSettings());
-        AisAccountConsent aisAccountConsent = buildAisAccountConsent();
-        when(consentMapper.mapToAisAccountConsent(aisConsent, Collections.emptyList()))
-            .thenReturn(aisAccountConsent);
+    void updateAspspAccountAccess() throws WrongChecksumException {
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
+        List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<List<AspspAccountAccess>>() {
+        });
+        AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
+        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS)).thenReturn(existingAccountAccess);
+        AisAccountAccessInfo aisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/ais-consent-service/ais-account-access-info.json", AisAccountAccessInfo.class);
+        AccountAccess requestedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-requested.json", AccountAccess.class);
+        when(accessMapper.mapToAccountAccess(aisAccountAccessInfo)).thenReturn(requestedAccountAccess);
+        AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
+        when(accountAccessUpdater.updateAccountReferencesInAccess(existingAccountAccess, requestedAccountAccess)).thenReturn(updatedAccountAccess);
+        CmsConsent cmsConsent = jsonReader.getObjectFromFile("json/service/ais-consent-service/cms-consent.json", CmsConsent.class);
+        when(cmsConsentMapper.mapToCmsConsent(eq(consentEntity), anyList(), anyMap())).thenReturn(cmsConsent);
+        when(aisConsentRepository.verifyAndUpdate(consentEntity)).thenReturn(consentEntity);
 
-        CreateAisConsentResponse expected = new CreateAisConsentResponse(EXTERNAL_CONSENT_ID, aisAccountConsent, MODES);
-        CreateAisConsentRequest request = buildCorrectCreateAisConsentRequest();
-        request.setTppRedirectUri(new TppRedirectUri(REDIRECT_URI, NOK_REDIRECT_URI));
+        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
 
-        // When
-        CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(request);
-
-        // Then
-        assertTrue(actual.isSuccessful());
-        assertEquals(expected, actual.getPayload());
+        assertTrue(response.isSuccessful());
+        verify(accountAccessUpdater).updateAccountReferencesInAccess(existingAccountAccess, requestedAccountAccess);
     }
 
     @Test
-    void createConsent_frequencyPerDay_isNull_shouldReturnLogicalError() throws WrongChecksumException {
-        // Given
-        CreateAisConsentRequest request = buildCorrectCreateAisConsentRequest();
-        request.setAllowedFrequencyPerDay(null);
+    void updateAspspAccountAccess_noConsent() throws WrongChecksumException {
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.empty());
+        AisAccountAccessInfo aisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/ais-consent-service/ais-account-access-info.json", AisAccountAccessInfo.class);
 
-        // When
-        CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(request);
+        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
 
-        // Then
-        assertLogicalError(actual);
-    }
-
-    @Test
-    void createConsent_id_isNull_shouldReturnTechnicalError() throws WrongChecksumException {
-        // Given
-        aisConsent.setId(null);
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(getAspspSettings());
-
-        // When
-        CmsResponse<CreateAisConsentResponse> actual = aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
-
-        // Then
-        assertFalse(actual.isSuccessful());
-        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
-    }
-
-    @Test
-    void createConsent_AdjustValidUntil_ZeroLifeTime() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
-
-        int maxConsentValidityDays = 0;
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(getAspspSettings(maxConsentValidityDays));
-        int validDays = 5;
-        LocalDate validUntil = LocalDate.now().plusDays(validDays - 1);
-
-        // When
-        aisConsentService.createConsent(buildCorrectCreateAisConsentRequest(validUntil));
-
-        // Then
-        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
-        assertEquals(argument.getValue().getValidUntil(), validUntil);
-    }
-
-    @Test
-    void createConsent_AdjustValidUntil_NoAdjustment() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any()))
-            .thenReturn(aisConsent);
-        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
-
-        int maxConsentValidityDays = 10;
-        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(maxConsentValidityDays));
-        int validDays = 5;
-        LocalDate validUntil = LocalDate.now().plusDays(validDays - 1);
-
-        // When
-        aisConsentService.createConsent(buildCorrectCreateAisConsentRequest(validUntil));
-
-        // Then
-        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
-        assertEquals(argument.getValue().getValidUntil(), validUntil);
-    }
-
-    @Test
-    void createConsent_AdjustValidUntil_AdjustmentToLifeTime() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
-
-        int maxConsentValidityDays = 5;
-        when(aspspProfileService.getAspspSettings()).thenReturn(getAspspSettings(maxConsentValidityDays));
-        int validDays = 10;
-        LocalDate validUntil = LocalDate.now().plusDays(validDays - 1);
-
-        // When
-        aisConsentService.createConsent(buildCorrectCreateAisConsentRequest(validUntil));
-
-        // Then
-        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
-        assertEquals(argument.getValue().getValidUntil(), LocalDate.now().plusDays(maxConsentValidityDays - 1));
-    }
-
-    @Test
-    void createConsent_checkLastActionDate() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        when(aspspProfileService.getAspspSettings())
-            .thenReturn(getAspspSettings());
-        ArgumentCaptor<AisConsent> argument = ArgumentCaptor.forClass(AisConsent.class);
-
-        // When
-        aisConsentService.createConsent(buildCorrectCreateAisConsentRequest());
-
-        // Then
-        verify(aisConsentVerifyingRepository).verifyAndSave(argument.capture());
-        assertEquals(LocalDate.now(), argument.getValue().getLastActionDate());
-    }
-
-    @Test
-    void updateAccountAccessById() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-
-        AisAccountAccessInfo info = new AisAccountAccessInfo();
-        info.setAccounts(ACCOUNTS_2);
-
-        // When
-        CmsResponse<String> consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
-        // Then
-        assertTrue(consentId.isSuccessful());
-
-        // Given
-        info = new AisAccountAccessInfo();
-        info.setAccounts(ACCOUNTS_1);
-
-        // When
-        consentId = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info);
-        // Then
-        assertTrue(consentId.isSuccessful());
-
-        // When
-        CmsResponse<String> actual = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
-        // Then
-        assertFalse(actual.isSuccessful());
-    }
-
-    @Test
-    void updateAccountAccess_checksumBad_shouldReturnChecksumError() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenThrow(WrongChecksumException.class);
-
-        AisAccountAccessInfo info = new AisAccountAccessInfo();
-        info.setAccounts(ACCOUNTS_2);
-
-        // When
-        assertThrows(WrongChecksumException.class, () -> aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID, info));
-    }
-
-    @Test
-    void updateAccountAccessByIdWithResponse_noEntity_shouldReturnLogicalError() throws WrongChecksumException {
-        // When
-        CmsResponse<AisAccountConsent> actual = aisConsentService.updateAspspAccountAccessWithResponse(FINALISED_CONSENT_ID, buildAccess());
-
-        // Then
-        assertLogicalError(actual);
-    }
-
-    @Test
-    void updateAccountAccessByIdWithResponse_success() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID_NOT_EXIST)).thenReturn(Optional.empty());
-        when(aisConsentVerifyingRepository.verifyAndUpdate(any(AisConsent.class)))
-            .thenReturn(aisConsent);
-        when(consentMapper.mapToAisAccountConsent(aisConsent, aisConsentAuthorisationList)).thenReturn(buildAisAccountConsent());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
-            .thenReturn(aisConsentAuthorisationList);
-
-        AisAccountAccessInfo info = new AisAccountAccessInfo();
-        info.setAccounts(ACCOUNTS_2);
-
-        // When
-        CmsResponse<AisAccountConsent> consentId = aisConsentService.updateAspspAccountAccessWithResponse(EXTERNAL_CONSENT_ID, info);
-        // Then
-        assertTrue(consentId.isSuccessful());
-
-        // Given
-        info = new AisAccountAccessInfo();
-        info.setAccounts(ACCOUNTS_1);
-
-        // When
-        consentId = aisConsentService.updateAspspAccountAccessWithResponse(EXTERNAL_CONSENT_ID, info);
-        // Then
-        assertTrue(consentId.isSuccessful());
-
-        // When
-        CmsResponse<String> actual = aisConsentService.updateAspspAccountAccess(EXTERNAL_CONSENT_ID_NOT_EXIST, buildAccess());
-        // Then
-        assertFalse(actual.isSuccessful());
-    }
-
-    @Test
-    void updateAccountAccessByIdWithResponse_checksumBad_shouldReturnChecksumError() throws WrongChecksumException {
-        // Given
-        when(aisConsentVerifyingRepository.getActualAisConsent(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(aisConsentVerifyingRepository.verifyAndUpdate(any(AisConsent.class)))
-            .thenThrow(WrongChecksumException.class);
-
-        AisAccountAccessInfo info = new AisAccountAccessInfo();
-        info.setAccounts(ACCOUNTS_2);
-
-        // When
-        assertThrows(WrongChecksumException.class, () -> aisConsentService.updateAspspAccountAccessWithResponse(EXTERNAL_CONSENT_ID, info));
-    }
-
-
-    @Test
-    void getPsuDataByConsentId_success() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        when(psuDataMapper.mapToPsuIdDataList(anyList())).thenReturn(Collections.singletonList(PSU_ID_DATA));
-
-        // When
-        CmsResponse<List<PsuIdData>> psuDataList = aisConsentService.getPsuDataByConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertEquals(PSU_ID_DATA, psuDataList.getPayload().get(0));
-    }
-
-    @Test
-    void getPsuDataByConsentId_noPsuData_shouldReturnLogicalError() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        // When
-        CmsResponse<List<PsuIdData>> actual = aisConsentService.getPsuDataByConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertLogicalError(actual);
-    }
-
-    @Test
-    void updateMultilevelScaRequired_success() throws WrongChecksumException {
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        // When
-        CmsResponse<Boolean> actual = aisConsentService.updateMultilevelScaRequired(EXTERNAL_CONSENT_ID, true);
-
-        // Then
-        assertTrue(actual.getPayload());
-    }
-
-    @Test
-    void updateMultilevelScaRequired_checksumBad_shouldReturnChecksumError() throws WrongChecksumException {
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-
-        // Given
-        when(aisConsentVerifyingRepository.verifyAndSave(any(AisConsent.class)))
-            .thenThrow(WrongChecksumException.class);
-
-        // When
-        assertThrows(WrongChecksumException.class, () -> aisConsentService.updateMultilevelScaRequired(EXTERNAL_CONSENT_ID, true));
-    }
-
-    @Test
-    void updateMultilevelScaRequired_noEntity_shouldReturnFalse() throws WrongChecksumException {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        // When
-        CmsResponse<Boolean> actual = aisConsentService.updateMultilevelScaRequired(EXTERNAL_CONSENT_ID, true);
-
-        // Then
-        assertFalse(actual.getPayload());
-    }
-
-    @Test
-    void updateConsentStatusById_UpdateFinalisedStatus_Fail() throws WrongChecksumException {
-        // Given
-        AisConsent finalisedConsent = buildFinalisedConsent();
-        when(aisConsentJpaRepository.findByExternalId(FINALISED_CONSENT_ID))
-            .thenReturn(Optional.of(finalisedConsent));
-
-        // When
-        CmsResponse<Boolean> actual = aisConsentService.updateConsentStatusById(FINALISED_CONSENT_ID, ConsentStatus.EXPIRED);
-
-        // Then
-        assertLogicalError(actual);
-    }
-
-    @Test
-    void updateConsentStatusById_noActualConsent_shouldReturnFalse() throws WrongChecksumException {
-        // Given
-        AisConsent nonFinalisedConsent = buildFinalisedConsent();
-        nonFinalisedConsent.setConsentStatus(ConsentStatus.PARTIALLY_AUTHORISED);
-        when(aisConsentJpaRepository.findByExternalId(FINALISED_CONSENT_ID))
-            .thenReturn(Optional.of(nonFinalisedConsent));
-
-        // When
-        CmsResponse<Boolean> result = aisConsentService.updateConsentStatusById(FINALISED_CONSENT_ID, ConsentStatus.EXPIRED);
-
-        // Then
-        assertTrue(result.isSuccessful());
-        assertEquals(Boolean.FALSE, result.getPayload());
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_failure_consentNotFound() {
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID_NOT_EXIST))
-            .thenReturn(Optional.empty());
-
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID_NOT_EXIST)
-        );
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_success_newConsentRecurringIndicatorIsFalse() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-
-        when(aisConsentMocked.isOneAccessType())
-            .thenReturn(true);
-
-        // When
-        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertTrue(result.isSuccessful());
-
-        assertFalse(result.getPayload());
-        verify(aisConsentJpaRepository, never()).findOldConsentsByNewConsentParams(any(), any(), any(), any(), any());
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_failure_wrongConsentData() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-
-        when(aisConsentMocked.isWrongConsentData())
-            .thenReturn(true);
-
-        // When
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID)
-        );
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_success_oldConsentsEmpty() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-
-        when(aisConsentMocked.getTppInfo())
-            .thenReturn(tppInfoMocked);
-
-        when(tppInfoMocked.getAuthorisationNumber())
-            .thenReturn(AUTHORISATION_NUMBER);
-
-        when(aisConsentMocked.getInstanceId())
-            .thenReturn(INSTANCE_ID);
-
-        when(aisConsentMocked.getExternalId())
-            .thenReturn(EXTERNAL_CONSENT_ID);
-
-        // When
-        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertTrue(result.isSuccessful());
-
-        assertFalse(result.getPayload());
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_success() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-
-        when(aisConsentMocked.getTppInfo())
-            .thenReturn(tppInfoMocked);
-
-        List<PsuData> psuDataList = Collections.singletonList(psuDataMocked);
-        when(aisConsentMocked.getPsuDataList())
-            .thenReturn(psuDataList);
-
-        when(psuDataMocked.getPsuId())
-            .thenReturn(PSU_ID);
-
-        when(tppInfoMocked.getAuthorisationNumber())
-            .thenReturn(AUTHORISATION_NUMBER);
-
-        when(aisConsentMocked.getInstanceId())
-            .thenReturn(INSTANCE_ID);
-
-        when(aisConsentMocked.getExternalId())
-            .thenReturn(EXTERNAL_CONSENT_ID);
-
-        when(cmsPsuService.isPsuDataListEqual(psuDataList, psuDataList))
-            .thenReturn(true);
-
-        AisConsent oldConsent = buildConsent(EXTERNAL_CONSENT_ID_NOT_EXIST);
-        List<AisConsent> oldConsents = Collections.singletonList(oldConsent);
-        when(aisConsentJpaRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
-            .thenReturn(oldConsents);
-
-        // When
-        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertTrue(result.isSuccessful());
-
-        assertTrue(result.getPayload());
-        assertEquals(ConsentStatus.REJECTED, oldConsent.getConsentStatus());
-        verify(aisConsentJpaRepository).saveAll(oldConsents);
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_success_multilevel_SCA() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-
-        when(aisConsentMocked.getTppInfo())
-            .thenReturn(tppInfoMocked);
-
-        List<PsuData> psuDataList = Collections.singletonList(psuDataMocked);
-        when(aisConsentMocked.getPsuDataList())
-            .thenReturn(psuDataList);
-
-        when(psuDataMocked.getPsuId())
-            .thenReturn(PSU_ID);
-
-        when(tppInfoMocked.getAuthorisationNumber())
-            .thenReturn(AUTHORISATION_NUMBER);
-
-        when(aisConsentMocked.getInstanceId())
-            .thenReturn(INSTANCE_ID);
-
-        when(aisConsentMocked.getExternalId())
-            .thenReturn(EXTERNAL_CONSENT_ID);
-
-        when(cmsPsuService.isPsuDataListEqual(psuDataList, psuDataList))
-            .thenReturn(true);
-
-        AisConsent oldConsent = buildConsent(EXTERNAL_CONSENT_ID_NOT_EXIST);
-        oldConsent.setConsentStatus(ConsentStatus.PARTIALLY_AUTHORISED);
-        List<AisConsent> oldConsents = Collections.singletonList(oldConsent);
-        when(aisConsentJpaRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID), AUTHORISATION_NUMBER, INSTANCE_ID, EXTERNAL_CONSENT_ID, EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
-            .thenReturn(oldConsents);
-
-        // When
-        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertTrue(result.isSuccessful());
-
-        assertTrue(result.getPayload());
-        assertEquals(ConsentStatus.REJECTED, oldConsent.getConsentStatus());
-        verify(aisConsentJpaRepository).saveAll(oldConsents);
-
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_shouldFail_unequalPsuDataLists() {
-        // Given
-        List<PsuData> psuDataList = Collections.singletonList(psuDataMocked);
-
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(aisConsentMocked));
-        when(aisConsentMocked.getTppInfo())
-            .thenReturn(tppInfoMocked);
-        when(aisConsentMocked.getPsuDataList())
-            .thenReturn(psuDataList);
-        when(psuDataMocked.getPsuId())
-            .thenReturn(PSU_ID);
-        when(tppInfoMocked.getAuthorisationNumber())
-            .thenReturn(AUTHORISATION_NUMBER);
-        when(aisConsentMocked.getInstanceId())
-            .thenReturn(INSTANCE_ID);
-        when(aisConsentMocked.getExternalId())
-            .thenReturn(EXTERNAL_CONSENT_ID);
-
-        // When
-        CmsResponse<Boolean> result = aisConsentService.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertTrue(result.isSuccessful());
-
-        assertFalse(result.getPayload());
-        verify(aisConsentJpaRepository, never()).save(any(AisConsent.class));
-    }
-
-    @Test
-    void checkConsentAndSaveActionLog() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.empty());
-
-        try {
-            aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null));
-            assertTrue(true);
-        } catch (Exception ex) {
-            fail("Exception should not be appeared.");
-        }
-    }
-
-    @Test
-    void checkConsentAndSaveActionLog_updateUsageCounter() throws WrongChecksumException {
-        AisConsentAction action = buildAisConsentAction();
-        when(aisConsentActionRepository.save(action)).thenReturn(action);
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID)).thenReturn(Optional.ofNullable(aisConsent));
-        // When
-        AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
-        aisConsentService.checkConsentAndSaveActionLog(request);
-        // Then
-        verify(aisConsentUsageService, atLeastOnce()).incrementUsage(aisConsent, request);
-    }
-
-    @Test
-    void checkConsentAndSaveActionLog_NotUpdateUsageCounter() throws WrongChecksumException {
-        // When
-        AisConsentActionRequest request = new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
-        aisConsentService.checkConsentAndSaveActionLog(request);
-        // Then
-        verify(aisConsentUsageService, never()).incrementUsage(aisConsent, request);
-    }
-
-    @Test
-    void checkConsentAndSaveActionLog_withValidUsedNonRecurringConsent_shouldExpireConsent() throws WrongChecksumException {
-        // Given
-        AisConsent consent = buildUsedNonRecurringConsent();
-
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(consent));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
-            .thenReturn(consent);
-        when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
-
-        // When
-        aisConsentService.checkConsentAndSaveActionLog(new AisConsentActionRequest(TPP_ID, EXTERNAL_CONSENT_ID, ActionStatus.SUCCESS, "/uri", false, null, null));
-
-        // Then
-        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
-    }
-
-    @Test
-    void getConsentStatusById_withValidUsedNonRecurringConsent_shouldExpireConsent() {
-        // Given
-        AisConsent consent = buildUsedNonRecurringConsent();
-
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.of(consent));
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent))
-            .thenReturn(consent);
-        when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
-
-        // When
-        CmsResponse<ConsentStatus> consentStatusById = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertTrue(consentStatusById.isSuccessful());
-        verify(aisConsentConfirmationExpirationService, atLeastOnce()).expireConsent(consent);
-    }
-
-    @Test
-    void getConsentStatusById_noEntity_shouldReturnLogicalError() {
-        // Given
-        when(aisConsentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
-            .thenReturn(Optional.empty());
-
-        // When
-        CmsResponse<ConsentStatus> actual = aisConsentService.getConsentStatusById(EXTERNAL_CONSENT_ID);
-
-        // Then
-        assertLogicalError(actual);
-    }
-
-    private void assertLogicalError(CmsResponse<?> actual) {
-        assertFalse(actual.isSuccessful());
-        assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
-    }
-
-    @NotNull
-    private AisConsent buildUsedNonRecurringConsent() {
-        AisConsent consent = buildConsent(EXTERNAL_CONSENT_ID);
-
-        AisConsentUsage usage = new AisConsentUsage();
-        usage.setUsageDate(LocalDate.of(2019, 6, 3));
-
-        consent.setUsages(Collections.singletonList(usage));
-        consent.setConsentStatus(ConsentStatus.VALID);
-        return consent;
-    }
-
-    private AisConsentAction buildAisConsentAction() {
-        AisConsentAction action = new AisConsentAction();
-        action.setActionStatus(ActionStatus.SUCCESS);
-        action.setRequestedConsentId(EXTERNAL_CONSENT_ID);
-        action.setTppId(TPP_ID);
-        action.setRequestDate(LocalDate.now());
-        return action;
-    }
-
-    private AuthorisationEntity buildAisConsentAuthorisation() {
-        AuthorisationEntity aisConsentAuthorisation = new AuthorisationEntity();
-        aisConsentAuthorisation.setExternalId(AUTHORISATION_ID);
-        aisConsentAuthorisation.setPsuData(PSU_DATA);
-        aisConsentAuthorisation.setScaStatus(ScaStatus.RECEIVED);
-        return aisConsentAuthorisation;
-    }
-
-    @NotNull
-    private AspspSettings getAspspSettings() {
-        return getAspspSettings(1);
-    }
-
-    @NotNull
-    private AspspSettings getAspspSettings(int maxConsentValidityDays) {
-        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, 0, maxConsentValidityDays, false), null, null, null, null), null, null, null);
-    }
-
-    private AisConsent buildConsent(String externalId) {
-        return buildConsent(externalId, Collections.singletonList(psuDataMocked));
-    }
-
-    private AisConsent buildConsent(String externalId, List<PsuData> psuDataList) {
-        return buildConsent(externalId, psuDataList, LocalDate.now());
-    }
-
-    private AisConsent buildConsent(String externalId, List<PsuData> psuDataList, LocalDate validUntil) {
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(CONSENT_ID);
-        aisConsent.setExternalId(externalId);
-        aisConsent.setValidUntil(validUntil);
-        aisConsent.setConsentStatus(ConsentStatus.RECEIVED);
-        aisConsent.setPsuDataList(psuDataList);
-        AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
-        authorisationTemplate.setRedirectUri(REDIRECT_URI);
-        authorisationTemplate.setNokRedirectUri(NOK_REDIRECT_URI);
-        aisConsent.setAuthorisationTemplate(authorisationTemplate);
-        aisConsent.setOwnerNameType(AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
-        return aisConsent;
-    }
-
-    private CreateAisConsentRequest buildCorrectCreateAisConsentRequest() {
-        return buildCorrectCreateAisConsentRequest(LocalDate.now());
-    }
-
-    private CreateAisConsentRequest buildCorrectCreateAisConsentRequest(LocalDate validUntil) {
-        CreateAisConsentRequest request = new CreateAisConsentRequest();
-        request.setAccess(buildAccess());
-        request.setCombinedServiceIndicator(true);
-        request.setAllowedFrequencyPerDay(2);
-        request.setRequestedFrequencyPerDay(5);
-        request.setPsuData(PSU_ID_DATA);
-        request.setRecurringIndicator(true);
-        request.setTppInfo(buildTppInfo());
-        request.setValidUntil(validUntil);
-        request.setTppRedirectPreferred(true);
-        request.setNotificationSupportedModes(MODES);
-        return request;
-    }
-
-    private AisAccountAccessInfo buildAccess() {
-        AisAccountAccessInfo info = new AisAccountAccessInfo();
-        info.setAccounts(buildAccountsInfo());
-        info.setAccountAdditionalInformationAccess(new AccountAdditionalInformationAccess(Collections.singletonList(AccountInfo.builder().build())));
-        return info;
-    }
-
-    private List<AccountInfo> buildAccountsInfo() {
-        return Collections.singletonList(AccountInfo.builder()
-                                             .resourceId(UUID.randomUUID().toString())
-                                             .accountIdentifier("iban-1")
-                                             .currency(EUR)
-                                             .build());
-    }
-
-    private AisAccountConsent buildAisAccountConsent() {
-        return new AisAccountConsent(aisConsent.getId().toString(),
-                                     null, null, false,
-                                     null, null, 0,
-                                     null, null,
-                                     false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), OffsetDateTime.now(),
-                                     OffsetDateTime.now());
-
-    }
-
-    private AisConsent buildFinalisedConsent() {
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(CONSENT_ID);
-        aisConsent.setExternalId(EXTERNAL_CONSENT_ID);
-        aisConsent.setValidUntil(LocalDate.now());
-        aisConsent.setConsentStatus(ConsentStatus.REJECTED);
-        return aisConsent;
-    }
-
-    private TppInfo buildTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber("tpp-id-1");
-        return tppInfo;
+        assertTrue(response.hasError());
+        assertEquals(CmsError.LOGICAL_ERROR, response.getError());
     }
 }
-

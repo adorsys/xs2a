@@ -16,23 +16,27 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
+import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
+import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
-import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
-import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
+import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,56 +46,25 @@ public class AisConsentMapper {
     private final TppInfoMapper tppInfoMapper;
     private final AisConsentUsageService aisConsentUsageService;
     private final AuthorisationTemplateMapper authorisationTemplateMapper;
+    private final ConsentDataMapper consentDataMapper;
+    private final ConsentTppInformationMapper consentTppInformationMapper;
+    private final AccessMapper accessMapper;
 
-    private AisAccountAccess getAvailableAccess(AisConsent consent) {
-        AisAccountAccess tppAccountAccess = mapToAisAccountAccess(consent);
-        AisAccountAccess aspspAccountAccess = mapToAspspAisAccountAccess(consent);
+    private AisAccountAccess getAvailableAccess(AisConsent aisConsent) {
+        AisAccountAccess tppAccountAccess = mapToAisAccountAccess(aisConsent);
+        AisAccountAccess aspspAccountAccess = mapToAspspAisAccountAccess(aisConsent);
 
-        return tppAccountAccess.getAllPsd2() != null
-                   ? tppAccountAccess
-                   : aspspAccountAccess.isNotEmpty() ? aspspAccountAccess : tppAccountAccess;
+        if (tppAccountAccess.getAllPsd2() != null
+                || !aspspAccountAccess.isNotEmpty()) {
+            return tppAccountAccess;
+        }
+
+        return aspspAccountAccess;
     }
 
-    /**
-     * Maps AisConsent to AisAccountConsent with accesses populated with account references, provided by ASPSP.
-     * <p>
-     * If no account references were provided by the ASPSP, TPP accesses will be used instead.
-     *
-     * @param consent AIS consent entity
-     * @return mapped AIS consent
-     */
-    public AisAccountConsent mapToAisAccountConsent(AisConsent consent, List<AuthorisationEntity> authorisations) {
-        AisAccountAccess chosenAccess = getAvailableAccess(consent);
-
-        Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
-
-        return new AisAccountConsent(
-            consent.getExternalId(),
-            chosenAccess,
-            mapToAspspAisAccountAccess(consent),
-            consent.isRecurringIndicator(),
-            consent.getValidUntil(),
-            consent.getExpireDate(),
-            consent.getAllowedFrequencyPerDay(),
-            consent.getLastActionDate(),
-            consent.getConsentStatus(),
-            consent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE),
-            consent.isTppRedirectPreferred(),
-            consent.getAisConsentRequestType(),
-            psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
-            tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
-            authorisationTemplateMapper.mapToAuthorisationTemplate(consent.getAuthorisationTemplate()),
-            consent.isMultilevelScaRequired(),
-            mapToAisAccountConsentAuthorisation(authorisations),
-            usageCounterMap,
-            consent.getCreationTimestamp(),
-            consent.getStatusChangeTimestamp());
-    }
-
-    public CmsAisAccountConsent mapToCmsAisAccountConsent(AisConsent consent, List<AuthorisationEntity> authorisations) {
-        AisAccountAccess chosenAccess = getAvailableAccess(consent);
-
-        Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
+    public CmsAisAccountConsent mapToCmsAisAccountConsent(ConsentEntity consent, List<AuthorisationEntity> authorisations) {
+        AisConsent aisConsent = mapToAisConsent(consent, authorisations);
+        AisAccountAccess chosenAccess = getAvailableAccess(aisConsent);
 
         return new CmsAisAccountConsent(
             consent.getExternalId(),
@@ -99,118 +72,77 @@ public class AisConsentMapper {
             consent.isRecurringIndicator(),
             consent.getValidUntil(),
             consent.getExpireDate(),
-            consent.getAllowedFrequencyPerDay(),
+            consent.getFrequencyPerDay(),
             consent.getLastActionDate(),
             consent.getConsentStatus(),
-            consent.getAccesses().stream().anyMatch(a -> a.getTypeAccess() == TypeAccess.BALANCE),
-            consent.isTppRedirectPreferred(),
-            consent.getAisConsentRequestType(),
-            psuDataMapper.mapToPsuIdDataList(consent.getPsuDataList()),
-            tppInfoMapper.mapToTppInfo(consent.getTppInfo()),
-            authorisationTemplateMapper.mapToAuthorisationTemplate(consent.getAuthorisationTemplate()),
+            aisConsent.isWithBalance(),
+            consent.getTppInformation().isTppRedirectPreferred(),
+            aisConsent.getConsentRequestType(),
+            aisConsent.getPsuIdDataList(),
+            tppInfoMapper.mapToTppInfo(consent.getTppInformation().getTppInfo()),
+            aisConsent.getAuthorisationTemplate(),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(authorisations),
-            usageCounterMap,
+            aisConsent.getUsageCounterMap(),
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp());
     }
 
-    public Set<AspspAccountAccess> mapAspspAccountAccesses(AisAccountAccess aisAccountAccess) {
-        Set<AspspAccountAccess> accesses = new HashSet<>();
-        accesses.addAll(getAspspAccountAccesses(TypeAccess.ACCOUNT, aisAccountAccess.getAccounts()));
-        accesses.addAll(getAspspAccountAccesses(TypeAccess.BALANCE, aisAccountAccess.getBalances()));
-        accesses.addAll(getAspspAccountAccesses(TypeAccess.TRANSACTION, aisAccountAccess.getTransactions()));
-        AdditionalInformationAccess info = aisAccountAccess.getAccountAdditionalInformationAccess();
-        if (info != null) {
-            BiConsumer<List<AccountReference>, TypeAccess> updateAccesses = (list, type) -> {
-                if (CollectionUtils.isNotEmpty(list)) {
-                    accesses.addAll(getAspspAccountAccesses(type, list));
-                }
-            };
-            updateAccesses.accept(info.getOwnerName(), TypeAccess.OWNER_NAME);
-        }
-        return accesses;
+    public AisConsent mapToAisConsent(ConsentEntity entity, List<AuthorisationEntity> authorisations) {
+        AisConsentData aisConsentData = consentDataMapper.mapToAisConsentData(entity.getData());
+
+        Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(entity);
+
+        return new AisConsent(aisConsentData,
+                              entity.getExternalId(),
+                              entity.getInternalRequestId(),
+                              entity.getConsentStatus(),
+                              entity.getFrequencyPerDay(),
+                              entity.isRecurringIndicator(),
+                              entity.isMultilevelScaRequired(),
+                              entity.getValidUntil(),
+                              entity.getExpireDate(),
+                              entity.getLastActionDate(),
+                              entity.getCreationTimestamp(),
+                              entity.getStatusChangeTimestamp(),
+                              consentTppInformationMapper.mapToConsentTppInformation(entity.getTppInformation()),
+                              authorisationTemplateMapper.mapToAuthorisationTemplate(entity.getAuthorisationTemplate()),
+                              psuDataMapper.mapToPsuIdDataList(entity.getPsuDataList()),
+                              mapToAccountConsentAuthorisations(authorisations),
+                              usageCounterMap,
+                              accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(), entity.getOwnerNameType()),
+                              accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(), entity.getOwnerNameType()));
     }
 
-    private AisAccountAccess mapToAisAccountAccess(AisConsent consent) {
-        List<TppAccountAccess> accesses = consent.getAccesses();
-        return new AisAccountAccess(mapToInitialAccountReferences(accesses, TypeAccess.ACCOUNT),
-                                    mapToInitialAccountReferences(accesses, TypeAccess.BALANCE),
-                                    mapToInitialAccountReferences(accesses, TypeAccess.TRANSACTION),
-                                    getAccessType(consent.getAvailableAccounts()),
-                                    getAccessType(consent.getAllPsd2()),
-                                    getAccessType(consent.getAvailableAccountsWithBalance()),
-                                    mapToInitialAdditionalInformationAccess(accesses, consent)
-        );
+    public AccountAccess mapToAccountAccess(AisAccountAccess accountAccess) {
+        return new AccountAccess(ListUtils.emptyIfNull(accountAccess.getAccounts()),
+                                 ListUtils.emptyIfNull(accountAccess.getBalances()),
+                                 ListUtils.emptyIfNull(accountAccess.getTransactions()),
+                                 accountAccess.getAccountAdditionalInformationAccess());
     }
 
-    private List<AccountReference> mapToInitialAccountReferences(List<TppAccountAccess> aisAccounts, TypeAccess typeAccess) {
-        return aisAccounts.stream()
-                   .filter(a -> a.getTypeAccess() == typeAccess)
-                   .map(access -> new AccountReference(access.getAccountReferenceType(), access.getAccountIdentifier(), access.getCurrency()))
-                   .collect(Collectors.toList());
+    private AisAccountAccess mapToAisAccountAccess(AisConsent aisConsent) {
+        AccountAccess tppAccesses = aisConsent.getTppAccountAccesses();
+        AisConsentData consentData = aisConsent.getConsentData();
+        return new AisAccountAccess(tppAccesses.getAccounts(),
+                                    tppAccesses.getBalances(),
+                                    tppAccesses.getTransactions(),
+                                    getAccessType(consentData.getAvailableAccounts()),
+                                    getAccessType(consentData.getAllPsd2()),
+                                    getAccessType(consentData.getAvailableAccountsWithBalance()),
+                                    tppAccesses.getAdditionalInformationAccess());
     }
 
-    private AisAccountAccess mapToAspspAisAccountAccess(AisConsent consent) {
-        List<AspspAccountAccess> accesses = consent.getAspspAccountAccesses();
-        return new AisAccountAccess(mapToAccountReferences(accesses, TypeAccess.ACCOUNT),
-                                    mapToAccountReferences(accesses, TypeAccess.BALANCE),
-                                    mapToAccountReferences(accesses, TypeAccess.TRANSACTION),
-                                    getAccessType(consent.getAvailableAccounts()),
-                                    getAccessType(consent.getAllPsd2()),
-                                    getAccessType(consent.getAvailableAccountsWithBalance()),
-                                    mapToAspspAdditionalInformationAccess(accesses, consent)
-        );
-    }
-
-    private AdditionalInformationAccess mapToInitialAdditionalInformationAccess(List<TppAccountAccess> accesses, AisConsent consent) {
-        return consent.checkNoneAdditionalAccountInformation()
-                   ? null
-                   : new AdditionalInformationAccess(mapToAdditionalInformationInitialAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses));
-    }
-
-    private List<AccountReference> mapToAdditionalInformationInitialAccountReferences(AdditionalAccountInformationType type, TypeAccess typeAccess, List<TppAccountAccess> accesses) {
-        return type == AdditionalAccountInformationType.DEDICATED_ACCOUNTS
-                   ? mapToInitialAccountReferences(accesses, typeAccess)
-                   : type == AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS ? Collections.emptyList() : null;
-    }
-
-    private AdditionalInformationAccess mapToAspspAdditionalInformationAccess(List<AspspAccountAccess> accesses, AisConsent consent) {
-        return consent.checkNoneAdditionalAccountInformation()
-                   ? null
-                   : new AdditionalInformationAccess(mapToAdditionalInformationAspspAccountReferences(consent.getOwnerNameType(), TypeAccess.OWNER_NAME, accesses));
-    }
-
-    private List<AccountReference> mapToAdditionalInformationAspspAccountReferences(AdditionalAccountInformationType type, TypeAccess typeAccess, List<AspspAccountAccess> accesses) {
-        return type == AdditionalAccountInformationType.DEDICATED_ACCOUNTS
-                   ? mapToAccountReferences(accesses, typeAccess)
-                   : type == AdditionalAccountInformationType.ALL_AVAILABLE_ACCOUNTS ? Collections.emptyList() : null;
-    }
-
-    private List<AccountReference> mapToAccountReferences(List<AspspAccountAccess> aisAccounts, TypeAccess typeAccess) {
-        return aisAccounts.stream()
-                   .filter(a -> a.getTypeAccess() == typeAccess)
-                   .map(access -> new AccountReference(access.getAccountReferenceType(), access.getAccountIdentifier(), access.getCurrency(), access.getResourceId(), access.getAspspAccountId()))
-                   .collect(Collectors.toList());
-    }
-
-    private Set<AspspAccountAccess> getAspspAccountAccesses(TypeAccess typeAccess, List<AccountReference> accountReferences) {
-        return Optional.ofNullable(accountReferences)
-                   .map(lst -> lst.stream()
-                                   .map(acc -> mapToAspspAccountAccess(typeAccess, acc))
-                                   .collect(Collectors.toSet()))
-                   .orElse(Collections.emptySet());
-    }
-
-    private AspspAccountAccess mapToAspspAccountAccess(TypeAccess typeAccess, AccountReference accountReference) {
-        AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
-
-        return new AspspAccountAccess(selector.getAccountValue(),
-                                      typeAccess,
-                                      selector.getAccountReferenceType(),
-                                      accountReference.getCurrency(),
-                                      accountReference.getResourceId(),
-                                      accountReference.getAspspAccountId());
+    private AisAccountAccess mapToAspspAisAccountAccess(AisConsent aisConsent) {
+        AccountAccess aspspAccesses = aisConsent.getAspspAccountAccesses();
+        AisConsentData consentData = aisConsent.getConsentData();
+        return new AisAccountAccess(aspspAccesses.getAccounts(),
+                                    aspspAccesses.getBalances(),
+                                    aspspAccesses.getTransactions(),
+                                    getAccessType(consentData.getAvailableAccounts()),
+                                    getAccessType(consentData.getAllPsd2()),
+                                    getAccessType(consentData.getAvailableAccountsWithBalance()),
+                                    aspspAccesses.getAdditionalInformationAccess());
     }
 
     private String getAccessType(AccountAccessType type) {
@@ -230,6 +162,16 @@ public class AisConsentMapper {
                    .collect(Collectors.toList());
     }
 
+    private List<AccountConsentAuthorization> mapToAccountConsentAuthorisations(List<AuthorisationEntity> aisConsentAuthorisations) {
+        if (CollectionUtils.isEmpty(aisConsentAuthorisations)) {
+            return Collections.emptyList();
+        }
+
+        return aisConsentAuthorisations.stream()
+                   .map(this::mapToAccountConsentAuthorisation)
+                   .collect(Collectors.toList());
+    }
+
     private AisAccountConsentAuthorisation mapToAisAccountConsentAuthorisation(AuthorisationEntity aisConsentAuthorisation) {
         return Optional.ofNullable(aisConsentAuthorisation)
                    .map(auth -> new AisAccountConsentAuthorisation(auth.getExternalId(),
@@ -237,4 +179,24 @@ public class AisConsentMapper {
                                                                    auth.getScaStatus()))
                    .orElse(null);
     }
+
+    private AccountConsentAuthorization mapToAccountConsentAuthorisation(AuthorisationEntity aisConsentAuthorisation) {
+        return Optional.ofNullable(aisConsentAuthorisation)
+                   .map(auth -> {
+                       AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
+
+                       authorisation.setId(auth.getExternalId());
+                       authorisation.setConsentId(auth.getParentExternalId());
+                       authorisation.setPsuIdData(psuDataMapper.mapToPsuIdData(auth.getPsuData()));
+                       authorisation.setScaStatus(auth.getScaStatus());
+                       authorisation.setPassword(null);
+                       authorisation.setChosenScaApproach(auth.getScaApproach());
+                       authorisation.setAuthenticationMethodId(auth.getAuthenticationMethodId());
+                       authorisation.setScaAuthenticationData(auth.getScaAuthenticationData());
+
+                       return authorisation;
+                   })
+                   .orElse(null);
+    }
+
 }

@@ -17,6 +17,9 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
@@ -57,6 +60,9 @@ public class ConsentModelMapper {
                        createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
                        createAisConsentRequest.setTppRedirectUri(tppRedirectUri);
                        createAisConsentRequest.setTppNotificationData(tppNotificationData);
+                       createAisConsentRequest.setAvailableAccounts(mapToAccountAccessTypeFromAvailableAccounts(cnst.getAccess().getAvailableAccounts()));
+                       createAisConsentRequest.setAllPsd2(mapToAccountAccessTypeFromAllPsd2Enum(cnst.getAccess().getAllPsd2()));
+                       createAisConsentRequest.setAvailableAccountsWithBalance(mapToAccountAccessTypeFromAvailableAccountsWithBalance(cnst.getAccess().getAvailableAccountsWithBalance()));
                        return createAisConsentRequest;
                    })
                    .orElse(null);
@@ -82,11 +88,11 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    public ConsentInformationResponse200Json mapToConsentInformationResponse200Json(AccountConsent accountConsent) {
-        return Optional.ofNullable(accountConsent)
+    public ConsentInformationResponse200Json mapToConsentInformationResponse200Json(AisConsent aisConsent) {
+        return Optional.ofNullable(aisConsent)
                    .map(consent ->
                             new ConsentInformationResponse200Json()
-                                .access(mapToAccountAccessDomain(consent.getAccess()))
+                                .access(mapToAccountAccessDomain(consent))
                                 .recurringIndicator(consent.isRecurringIndicator())
                                 .validUntil(consent.getValidUntil())
                                 .frequencyPerDay(consent.getFrequencyPerDay())
@@ -96,16 +102,13 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private Xs2aAccountAccess mapToAccountAccessInner(AccountAccess accountAccess) {
+    private AccountAccess mapToAccountAccessInner(de.adorsys.psd2.model.AccountAccess accountAccess) {
         return Optional.ofNullable(accountAccess)
                    .map(acs ->
-                            new Xs2aAccountAccess(
+                            new AccountAccess(
                                 mapToXs2aAccountReferences(acs.getAccounts()),
                                 mapToXs2aAccountReferences(acs.getBalances()),
                                 mapToXs2aAccountReferences(acs.getTransactions()),
-                                mapToAccountAccessTypeFromAvailableAccounts(acs.getAvailableAccounts()),
-                                mapToAccountAccessTypeFromAllPsd2Enum(acs.getAllPsd2()),
-                                mapToAccountAccessTypeFromAvailableAccountsWithBalance(acs.getAvailableAccountsWithBalance()),
                                 mapToAdditionalInformationAccess(acs.getAdditionalInformation())
                             ))
                    .orElse(null);
@@ -117,30 +120,32 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private AccountAccess mapToAccountAccessDomain(Xs2aAccountAccess accountAccess) {
+    private de.adorsys.psd2.model.AccountAccess mapToAccountAccessDomain(AisConsent aisConsent) {
+        AccountAccess accountAccess = aisConsent.getAccess();
+        AisConsentData consentData = aisConsent.getConsentData();
         return Optional.ofNullable(accountAccess)
                    .map(access -> {
-                            AccountAccess mappedAccountAccess = new AccountAccess();
-                            mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
-                            mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
-                            mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
-                            mappedAccountAccess.setAvailableAccounts(
-                                AccountAccess.AvailableAccountsEnum.fromValue(
-                                    Optional.ofNullable(access.getAvailableAccounts())
-                                        .map(AccountAccessType::getDescription)
-                                        .orElse(null)
-                                )
-                            );
-                            mappedAccountAccess.setAllPsd2(
-                                AccountAccess.AllPsd2Enum.fromValue(
-                                    Optional.ofNullable(access.getAllPsd2())
-                                        .map(AccountAccessType::getDescription)
-                                        .orElse(null)
-                                )
-                            );
+                       de.adorsys.psd2.model.AccountAccess mappedAccountAccess = new de.adorsys.psd2.model.AccountAccess();
+                       mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
+                       mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
+                       mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
+                       mappedAccountAccess.setAvailableAccounts(
+                           de.adorsys.psd2.model.AccountAccess.AvailableAccountsEnum.fromValue(
+                               Optional.ofNullable(consentData.getAvailableAccounts())
+                                   .map(AccountAccessType::getDescription)
+                                   .orElse(null)
+                           )
+                       );
+                       mappedAccountAccess.setAllPsd2(
+                           de.adorsys.psd2.model.AccountAccess.AllPsd2Enum.fromValue(
+                               Optional.ofNullable(consentData.getAllPsd2())
+                                   .map(AccountAccessType::getDescription)
+                                   .orElse(null)
+                           )
+                       );
                             mappedAccountAccess.setAvailableAccountsWithBalance(
-                                AccountAccess.AvailableAccountsWithBalanceEnum.fromValue(
-                                    Optional.ofNullable(access.getAvailableAccountsWithBalance())
+                                de.adorsys.psd2.model.AccountAccess.AvailableAccountsWithBalanceEnum.fromValue(
+                                    Optional.ofNullable(consentData.getAvailableAccountsWithBalance())
                                         .map(AccountAccessType::getDescription)
                                         .orElse(null)
                                 )
@@ -167,19 +172,19 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAvailableAccounts(AccountAccess.AvailableAccountsEnum accountsEnum) {
+    private AccountAccessType mapToAccountAccessTypeFromAvailableAccounts(de.adorsys.psd2.model.AccountAccess.AvailableAccountsEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(AccountAccess.AllPsd2Enum allPsd2Enum) {
+    private AccountAccessType mapToAccountAccessTypeFromAllPsd2Enum(de.adorsys.psd2.model.AccountAccess.AllPsd2Enum allPsd2Enum) {
         return Optional.ofNullable(allPsd2Enum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);
     }
 
-    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalance(AccountAccess.AvailableAccountsWithBalanceEnum accountsEnum) {
+    private AccountAccessType mapToAccountAccessTypeFromAvailableAccountsWithBalance(de.adorsys.psd2.model.AccountAccess.AvailableAccountsWithBalanceEnum accountsEnum) {
         return Optional.ofNullable(accountsEnum)
                    .flatMap(en -> AccountAccessType.getByDescription(en.toString()))
                    .orElse(null);

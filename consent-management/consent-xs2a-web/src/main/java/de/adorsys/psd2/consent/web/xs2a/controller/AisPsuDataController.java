@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
@@ -36,7 +36,7 @@ import java.util.List;
 @RequestMapping(path = "api/v1/ais")
 @Api(value = "api/v1/ais", tags = InternalCmsXs2aApiTagName.AIS_PSU_DATA)
 public class AisPsuDataController {
-    private final AisConsentServiceEncrypted aisConsentService;
+    private final ConsentServiceEncrypted aisConsentService;
 
     @GetMapping(path = "/consent/{consent-id}/psu-data")
     @ApiOperation(value = "Get psu data list by given consent id.")

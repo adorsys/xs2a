@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +64,7 @@ public class JsonReader {
         try {
             return xs2aObjectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. "  + e.getMessage());
+            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. " + e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class JsonReader {
      */
     public String getStringFromFile(String fileName) {
         try {
-            return IOUtils.toString(getResourceAsStream(fileName), Charset.defaultCharset());
+            return IOUtils.toString(getResourceAsStream(fileName), StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new ParseContentJsonReaderException("Exception during reading \'" + fileName + "\' file.");
         }
@@ -97,7 +97,7 @@ public class JsonReader {
         try {
             return xs2aObjectMapper.readValue(json, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. "  + e.getMessage());
+            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. " + e.getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ public class JsonReader {
             return xs2aObjectMapper.readValue(json,
                                               xs2aObjectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. "  + e.getMessage());
+            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. " + e.getMessage());
         }
     }
 
@@ -119,7 +119,7 @@ public class JsonReader {
             return xs2aObjectMapper.readValue(resourcePath,
                                               xs2aObjectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. "  + e.getMessage());
+            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. " + e.getMessage());
         }
     }
 

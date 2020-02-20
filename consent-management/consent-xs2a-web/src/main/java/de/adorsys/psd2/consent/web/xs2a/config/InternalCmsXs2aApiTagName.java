@@ -20,6 +20,7 @@ public class InternalCmsXs2aApiTagName {
     public static final String AIS_CONSENTS = "AIS, Consents";
     public static final String AIS_PSU_DATA = "AIS, PSU Data";
     public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";
+    public static final String CONSENTS = "Consents";
     public static final String EVENTS = "Events";
     public static final String PIIS_CONSENTS = "PIIS, Consents";
     public static final String PIS_COMMON_PAYMENT = "PIS, Common Payment";

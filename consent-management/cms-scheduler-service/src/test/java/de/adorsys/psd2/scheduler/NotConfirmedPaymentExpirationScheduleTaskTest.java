@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotConfirmedPaymentExpirationScheduleTaskTest {
+
     @InjectMocks
     private NotConfirmedPaymentExpirationScheduleTask scheduleTask;
 
@@ -53,19 +54,23 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
 
     @Test
     void obsoleteNotConfirmedPaymentIfExpired() {
+        // Given
         List<PisCommonPaymentData> pisCommonPaymentDataList = new ArrayList<>();
         pisCommonPaymentDataList.add(new PisCommonPaymentData());
         pisCommonPaymentDataList.add(new PisCommonPaymentData());
 
-        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD)))
+        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
             .thenReturn(pisCommonPaymentDataList);
-        when(pisCommonPaymentConfirmationExpirationService.isConfirmationExpired(any(PisCommonPaymentData.class))).thenReturn(true, false);
+        when(pisCommonPaymentConfirmationExpirationService.isConfirmationExpired(any(PisCommonPaymentData.class)))
+            .thenReturn(true, false);
         when(pisCommonPaymentConfirmationExpirationService.updatePaymentDataListOnConfirmationExpiration(commonPaymentDataCaptor.capture()))
             .thenReturn(Collections.emptyList());
 
+        // When
         scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
 
-        verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD));
+        // Then
+        verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
         verify(pisCommonPaymentConfirmationExpirationService, times(2)).isConfirmationExpired(any(PisCommonPaymentData.class));
         verify(pisCommonPaymentConfirmationExpirationService, times(1)).updatePaymentDataListOnConfirmationExpiration(anyList());
 
@@ -74,12 +79,15 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
 
     @Test
     void obsoleteNotConfirmedPaymentIfExpired_emptyList() {
-        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD)))
+        // Given
+        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
             .thenReturn(Collections.emptyList());
 
+        // When
         scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
 
-        verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD));
+        // Then
+        verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
         verify(pisCommonPaymentConfirmationExpirationService, never()).isConfirmationExpired(any(PisCommonPaymentData.class));
         verify(pisCommonPaymentConfirmationExpirationService, never()).updatePaymentDataListOnConfirmationExpiration(anyList());
     }

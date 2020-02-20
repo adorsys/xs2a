@@ -67,7 +67,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void createAuthorisation() {
-        // When
+        // Given
         when(authorisationRemoteUrls.createAuthorisation()).thenReturn(URL);
 
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AUTHORISATION_TYPE, PARENT_ID);
@@ -87,7 +87,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void createAuthorisation_cmsRestException() {
-        // When
+        // Given
         when(authorisationRemoteUrls.createAuthorisation()).thenReturn(URL);
 
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AUTHORISATION_TYPE, PARENT_ID);
@@ -106,7 +106,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void getAuthorisationById() {
-        // When
+        // Given
         when(authorisationRemoteUrls.getAuthorisationById()).thenReturn(URL);
 
         Authorisation controllerResponse = new Authorisation();
@@ -124,7 +124,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void getAuthorisationById_cmsRestException() {
-        // When
+        // Given
         when(authorisationRemoteUrls.getAuthorisationById()).thenReturn(URL);
 
         when(consentRestTemplate.getForEntity(URL, Authorisation.class, AUTHORISATION_ID))
@@ -140,7 +140,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void updateAuthorisation() {
-        // When
+        // Given
         when(authorisationRemoteUrls.updateAuthorisation()).thenReturn(URL);
 
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
@@ -160,7 +160,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void updateAuthorisation_cmsRestException() {
-        // When
+        // Given
         when(authorisationRemoteUrls.updateAuthorisation()).thenReturn(URL);
 
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
@@ -179,7 +179,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void updateAuthorisationStatus() {
-        // When
+        // Given
         when(authorisationRemoteUrls.updateAuthorisationStatus()).thenReturn(URL);
 
         ScaStatus scaStatus = ScaStatus.RECEIVED;
@@ -195,7 +195,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void updateAuthorisationStatus_cmsRestException() {
-        // When
+        // Given
         when(authorisationRemoteUrls.updateAuthorisationStatus()).thenReturn(URL);
 
         ScaStatus scaStatus = ScaStatus.RECEIVED;
@@ -213,7 +213,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void getAuthorisationsByParentId() {
-        // When
+        // Given
         when(authorisationRemoteUrls.getAuthorisationsByParentId()).thenReturn(URL);
 
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AUTHORISATION_TYPE, PARENT_ID);
@@ -233,7 +233,7 @@ class AuthorisationServiceRemoteTest {
 
     @Test
     void getAuthorisationsByParentId_cmsRestException() {
-        // When
+        // Given
         when(authorisationRemoteUrls.getAuthorisationsByParentId()).thenReturn(URL);
 
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AUTHORISATION_TYPE, PARENT_ID);

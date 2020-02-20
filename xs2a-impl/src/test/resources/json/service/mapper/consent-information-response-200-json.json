@@ -1,11 +1,39 @@
 {
   "access": {
-    "accounts": [],
-    "balances": [],
-    "transactions": []
+    "accounts": [
+      {
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "iban": "Test IBAN",
+        "bban": "Test BBAN",
+        "pan": "Test PAN",
+        "maskedPan": "Test MASKED_PAN",
+        "msisdn": "Test MSISDN",
+        "currency": "EUR"
+      }
+    ]
   },
-  "recurringIndicator": "false",
-  "validUntil": "2019-08-22",
+  "recurringIndicator": false,
+  "validUntil": "2030-12-31",
   "frequencyPerDay": 4,
+  "lastActionDate": "2019-12-31",
   "consentStatus": "valid"
 }

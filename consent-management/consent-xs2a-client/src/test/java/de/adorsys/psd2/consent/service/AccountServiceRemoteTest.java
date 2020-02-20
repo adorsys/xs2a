@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
+import de.adorsys.psd2.consent.config.AccountRemoteUrls;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceRemoteTest {
-
     private static final String URL = "http://ais/consent/transactions/save";
     private static final String CONSENT_ID = "consent ID";
     private static final String RESOURCE_ID = "resource ID";
@@ -43,7 +42,7 @@ class AccountServiceRemoteTest {
     private RestTemplate restTemplate;
 
     @Mock
-    private AisConsentRemoteUrls remoteAisConsentUrls;
+    private AccountRemoteUrls accountRemoteUrls;
 
     @InjectMocks
     private AccountServiceRemote accountServiceRemote;
@@ -51,7 +50,7 @@ class AccountServiceRemoteTest {
     @Test
     void saveNumberOfTransactions() {
         // Given
-        when(remoteAisConsentUrls.saveNumberOfTransactions()).thenReturn(URL);
+        when(accountRemoteUrls.saveNumberOfTransactions()).thenReturn(URL);
         when(restTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(NUMBER_OF_TRANSACTIONS), Boolean.class, CONSENT_ID, RESOURCE_ID))
             .thenReturn(new ResponseEntity<>(true, HttpStatus.OK));
 

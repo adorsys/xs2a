@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AisConsentUsageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,8 +35,8 @@ public class AisConsentUsageService {
     private final AisConsentUsageRepository aisConsentUsageRepository;
 
     @Transactional
-    public void incrementUsage(AisConsent aisConsent, AisConsentActionRequest request) {
-        AisConsentUsage aisConsentUsage = getUsage(aisConsent, request.getRequestUri());
+    public void incrementUsage(ConsentEntity consent, AisConsentActionRequest request) {
+        AisConsentUsage aisConsentUsage = getUsage(consent, request.getRequestUri());
         int usage = aisConsentUsage.getUsage();
         aisConsentUsage.setUsage(++usage);
         aisConsentUsage.setResourceId(request.getResourceId());
@@ -45,25 +45,25 @@ public class AisConsentUsageService {
     }
 
     @Transactional
-    public void resetUsage(AisConsent aisConsent) {
-        List<AisConsentUsage> aisConsentUsageList = aisConsentUsageRepository.findReadByConsentAndUsageDate(aisConsent, LocalDate.now());
+    public void resetUsage(ConsentEntity consent) {
+        List<AisConsentUsage> aisConsentUsageList = aisConsentUsageRepository.findReadByConsentAndUsageDate(consent, LocalDate.now());
         aisConsentUsageList.forEach(acu -> acu.setUsage(0));
         aisConsentUsageRepository.saveAll(aisConsentUsageList);
     }
 
     @Transactional
-    public Map<String, Integer> getUsageCounterMap(AisConsent aisConsent) {
-        return aisConsentUsageRepository.findReadByConsentAndUsageDate(aisConsent, LocalDate.now())
+    public Map<String, Integer> getUsageCounterMap(ConsentEntity consent) {
+        return aisConsentUsageRepository.findReadByConsentAndUsageDate(consent, LocalDate.now())
                    .stream()
                    .collect(Collectors.toMap(AisConsentUsage::getRequestUri,
-                                             u -> Math.max(aisConsent.getAllowedFrequencyPerDay() - u.getUsage(), 0)));
+                                             u -> Math.max(consent.getFrequencyPerDay() - u.getUsage(), 0)));
     }
 
-    private AisConsentUsage getUsage(AisConsent aisConsent, String requestUri) {
-        return aisConsentUsageRepository.findWriteByConsentAndUsageDateAndRequestUri(aisConsent, LocalDate.now(), requestUri)
+    private AisConsentUsage getUsage(ConsentEntity consent, String requestUri) {
+        return aisConsentUsageRepository.findWriteByConsentAndUsageDateAndRequestUri(consent, LocalDate.now(), requestUri)
                    .orElseGet(() -> {
-                       AisConsentUsage usage = new AisConsentUsage(aisConsent, requestUri);
-                       aisConsent.addUsage(usage);
+                       AisConsentUsage usage = new AisConsentUsage(consent, requestUri);
+                       consent.addUsage(usage);
                        return usage;
                    });
     }

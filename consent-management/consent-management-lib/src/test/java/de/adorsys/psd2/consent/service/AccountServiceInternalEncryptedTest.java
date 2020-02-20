@@ -33,10 +33,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceInternalEncryptedTest {
 
-    private static final String ENCRYPTED_CONSENT_ID = "encrypted consent ID";
-    private static final String CONSENT_ID = "consent ID";
+    private static final String ENCRYPTED_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
+    private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
 
-    private static final String RESOURCE_ID = "resource ID";
+    private static final String RESOURCE_ID = "LGCGDC4KTx0tgnpZGYTTr8";
 
     @InjectMocks
     private AccountServiceInternalEncrypted accountServiceInternalEncrypted;
@@ -64,7 +64,7 @@ class AccountServiceInternalEncryptedTest {
     void saveNumberOfTransactions_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(CONSENT_ID));
-        when(accountService.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10)). thenReturn(Boolean.TRUE);
+        when(accountService.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10)).thenReturn(Boolean.TRUE);
 
         // When
         boolean result = accountServiceInternalEncrypted.saveNumberOfTransactions(ENCRYPTED_CONSENT_ID, RESOURCE_ID, 10);

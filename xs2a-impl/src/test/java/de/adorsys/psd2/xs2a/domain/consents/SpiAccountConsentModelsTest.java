@@ -20,7 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.core.data.AccountAccess;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -126,7 +126,7 @@ class SpiAccountConsentModelsTest {
 
     private CreateConsentReq getAicNoDedicatedAccountRequest() {
 
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
+        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);
@@ -158,7 +158,7 @@ class SpiAccountConsentModelsTest {
         List<AccountReference> balances = Arrays.asList(iban1, iban2, iban3);
         List<AccountReference> transactions = Arrays.asList(iban4, maskedPan);
 
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), balances, transactions, null, null, null, null);
+        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), balances, transactions, null);
 
         CreateConsentReq aicRequestObj = new CreateConsentReq();
         aicRequestObj.setAccess(accountAccess);

@@ -1,0 +1,28 @@
+{
+  "accounts": [
+    {
+      "iban": "DE80760700240271232400",
+      "currency": "EUR"
+    }
+  ],
+  "balances": [
+    {
+      "iban": "DE80760700240271232500",
+      "currency": "USD"
+    }
+  ],
+  "transactions": [
+    {
+      "iban": "DE80760700240271232600",
+      "currency": "CHF"
+    }
+  ],
+  "additionalInformationAccess": {
+    "ownerName": [
+      {
+        "iban": "DE80760700240271232700",
+        "currency": "UAH"
+      }
+    ]
+  }
+}

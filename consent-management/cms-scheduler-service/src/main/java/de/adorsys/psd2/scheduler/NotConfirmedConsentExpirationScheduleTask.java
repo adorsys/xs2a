@@ -16,12 +16,13 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,18 +36,19 @@ import java.util.stream.Collectors;
 @Component
 public class NotConfirmedConsentExpirationScheduleTask {
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
-    private final AisConsentJpaRepository aisConsentJpaRepository;
+    private final ConsentJpaRepository consentJpaRepository;
 
     @Scheduled(cron = "${not-confirmed-consent-expiration.cron.expression}")
     @Transactional
     public void obsoleteNotConfirmedConsentIfExpired() {
         log.info("Not confirmed consent expiration schedule task is run!");
-        List<AisConsent> expiredNotConfirmedConsents = aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED))
-                                                           .stream()
-                                                           .filter(aisConsentConfirmationExpirationService::isConfirmationExpired)
-                                                           .collect(Collectors.toList());
 
-        if (!expiredNotConfirmedConsents.isEmpty()) {
+        List<ConsentEntity> expiredNotConfirmedConsents = consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED))
+                                                              .stream()
+                                                              .filter(aisConsentConfirmationExpirationService::isConfirmationExpired)
+                                                              .collect(Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(expiredNotConfirmedConsents)) {
             aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpiration(expiredNotConfirmedConsents);
         }
     }

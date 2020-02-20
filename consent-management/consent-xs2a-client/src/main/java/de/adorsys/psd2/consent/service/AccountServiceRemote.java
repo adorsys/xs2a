@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,15 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
-import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
+import de.adorsys.psd2.consent.config.AccountRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,21 +33,21 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class AccountServiceRemote implements AccountServiceEncrypted {
-
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
-    private final AisConsentRemoteUrls remoteAisConsentUrls;
+    private final AccountRemoteUrls accountRemoteUrls;
 
     @Override
     public boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions) {
         try {
-            return consentRestTemplate.exchange(remoteAisConsentUrls.saveNumberOfTransactions(),
-                                                HttpMethod.PUT, new HttpEntity<>(numberOfTransactions), Boolean.class, consentId, resourceId)
-                       .getBody();
+            ResponseEntity<Boolean> response = consentRestTemplate.exchange(accountRemoteUrls.saveNumberOfTransactions(),
+                                                                            HttpMethod.PUT, new HttpEntity<>(numberOfTransactions), Boolean.class, consentId, resourceId);
+
+            return BooleanUtils.isTrue(response.getBody());
         } catch (CmsRestException cmsRestException) {
             log.info("Couldn't save number of transactions to CMS");
         }
-        return false;
 
+        return false;
     }
 }

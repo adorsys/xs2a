@@ -17,14 +17,15 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -41,8 +42,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
@@ -296,10 +295,17 @@ class ConsentModelMapperTest {
     @Test
     void mapToConsentInformationResponse200Json_WithCorrectInput() {
         // Given
-        Xs2aAccountAccess accountAccess = createAccountAccess();
-        AccountConsent accountConsent = createConsent(accountAccess);
+        AisConsent accountConsent = getAisConsent();
+
         ConsentInformationResponse200Json expected = jsonReader.getObjectFromFile("json/service/mapper/consent-information-response-200-json.json",
                                                                                   ConsentInformationResponse200Json.class);
+
+        de.adorsys.psd2.model.AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/account-reference.json",
+                                                                                               de.adorsys.psd2.model.AccountReference.class);
+        when(accountModelMapper.mapToAccountReferences(accountConsent.getAccess().getAccounts()))
+            .thenReturn(Collections.singletonList(accountReference));
+
+
         // When
         ConsentInformationResponse200Json actual = consentModelMapper.mapToConsentInformationResponse200Json(accountConsent);
         // Then
@@ -342,14 +348,11 @@ class ConsentModelMapperTest {
         return new LinkedHashMap();
     }
 
-    private AccountConsent createConsent(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.of(2019, 8, 22), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
-    }
-
-    private TppInfo createTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(UUID.randomUUID().toString());
-        return tppInfo;
+    private AisConsent getAisConsent() {
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
+        AisConsentData consentData = new AisConsentData(null, null, null, false);
+        aisConsent.setConsentData(consentData);
+        return aisConsent;
     }
 
     private static AccountReference buildXs2aAccountReference() {
@@ -380,8 +383,8 @@ class ConsentModelMapperTest {
         return accountReference;
     }
 
-    private static Xs2aAccountAccess createAccountAccess() {
+    private static AccountAccess createAccountAccess() {
         AccountReference accountReference = buildXs2aAccountReference();
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null, null);
+        return new AccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null);
     }
 }

@@ -48,6 +48,12 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-core-consents</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-xs2a-api</artifactId>
             <version>${project.version}</version>
         </dependency>

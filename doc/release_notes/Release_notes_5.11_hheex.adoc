@@ -1,0 +1,10 @@
+= Release notes v.5.11
+
+== Table of Contents
+* Bugfix: Update expiration rule for not authorised payments and consents
+
+== Bugfix: Update expiration rule for not authorised payments and consents
+
+The rule for payments and consents expiration was changed. From now on, not authorised payments (consents) with statuses `RCVD`
+or `PATC` (`RECEIVED` or `PARTIALLY_AUTHORISED` in case of consents) become expired after period of time set in
+ASPSP-Profile in `notConfirmedPaymentExpirationTimeMs` (`notConfirmedConsentExpirationTimeMs` for consents).

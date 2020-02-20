@@ -19,10 +19,9 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
-import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
@@ -33,6 +32,7 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -40,7 +40,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.*;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
-import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,7 +107,7 @@ class ConsentUpdateAuthorisationIT {
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
-    private AisConsentServiceEncrypted aisConsentService;
+    private ConsentServiceEncrypted aisConsentService;
 
     @BeforeEach
     void setUp() {
@@ -154,12 +154,13 @@ class ConsentUpdateAuthorisationIT {
         PsuIdData psuIdDataAuthorisation = buildPsuIdDataAuthorisation(psuIdAuthorisation);
         HttpHeadersMock httpHeaders = buildHttpHeaders(psuIdHeader);
 
-        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(CONSENT_PATH, scaApproach, CONSENT_ID, xs2aObjectMapper, new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdDataAuthorisation, ScaStatus.RECEIVED));
+        Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdDataAuthorisation, CONSENT_ID, AuthorisationType.AIS, ScaStatus.RECEIVED);
+        CmsConsent cmsConsent = CmsConsentBuilder.buildCmsConsent(CONSENT_PATH, scaApproach, CONSENT_ID, xs2aObjectMapper, authorisation);
 
 
-        given(aisConsentService.getAisAccountConsentById(CONSENT_ID))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(aisAccountConsent)
+        given(aisConsentService.getConsentById(CONSENT_ID))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(cmsConsent)
                             .build());
         given(authorisationServiceEncrypted.getAuthorisationById(any(String.class)))
             .willReturn(CmsResponse.<Authorisation>builder()

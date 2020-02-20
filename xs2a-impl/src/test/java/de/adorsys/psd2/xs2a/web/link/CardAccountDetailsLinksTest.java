@@ -16,35 +16,40 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CardAccountDetailsLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String ACCOUNT_ID = "33333-999999999";
     private static final String WRONG_ACCOUNT_ID = "wrong_account_id";
 
-    private Xs2aAccountAccess xs2aAccountAccess;
-    private Xs2aAccountAccess xs2aAccountAccessGlobal;
+    private AccountAccess accountAccess;
+    private AisConsent aisConsent;
     private Links expectedLinks;
 
     @BeforeEach
     void setUp() {
         JsonReader jsonReader = new JsonReader();
-        xs2aAccountAccess = jsonReader.getObjectFromFile("json/link/account_access.json", Xs2aAccountAccess.class);
-        xs2aAccountAccessGlobal = jsonReader.getObjectFromFile("json/link/account_access-global.json", Xs2aAccountAccess.class);
+        accountAccess = jsonReader.getObjectFromFile("json/link/account_access.json", AccountAccess.class);
+        aisConsent = new AisConsent();
+        aisConsent.setAspspAccountAccesses(accountAccess);
+        aisConsent.setConsentData(new AisConsentData(null, null, null, true));
         expectedLinks = new Links();
     }
 
     @Test
     void create_success() {
-        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, xs2aAccountAccess);
+        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, aisConsent);
 
         expectedLinks.setBalances(new HrefType("http://url/v1/card-accounts/33333-999999999/balances"));
         expectedLinks.setTransactions(new HrefType("http://url/v1/card-accounts/33333-999999999/transactions"));
@@ -53,7 +58,8 @@ class CardAccountDetailsLinksTest {
 
     @Test
     void create_globalConsent_success() {
-        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, xs2aAccountAccessGlobal);
+        aisConsent.setConsentData(new AisConsentData(null, AccountAccessType.ALL_ACCOUNTS, null, true));
+        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, aisConsent);
 
         expectedLinks.setBalances(new HrefType("http://url/v1/card-accounts/33333-999999999/balances"));
         expectedLinks.setTransactions(new HrefType("http://url/v1/card-accounts/33333-999999999/transactions"));
@@ -62,8 +68,8 @@ class CardAccountDetailsLinksTest {
 
     @Test
     void create_balancesDoNotMatchByAccountId() {
-        xs2aAccountAccess.getBalances().get(0).setResourceId(WRONG_ACCOUNT_ID);
-        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, xs2aAccountAccess);
+        accountAccess.getBalances().get(0).setResourceId(WRONG_ACCOUNT_ID);
+        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, aisConsent);
 
         expectedLinks.setTransactions(new HrefType("http://url/v1/card-accounts/33333-999999999/transactions"));
         assertEquals(expectedLinks, links);
@@ -71,8 +77,8 @@ class CardAccountDetailsLinksTest {
 
     @Test
     void create_transactionsDoNotMatchByAccountId() {
-        xs2aAccountAccess.getTransactions().get(0).setResourceId(WRONG_ACCOUNT_ID);
-        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, xs2aAccountAccess);
+        accountAccess.getTransactions().get(0).setResourceId(WRONG_ACCOUNT_ID);
+        CardAccountDetailsLinks links = new CardAccountDetailsLinks(HTTP_URL, ACCOUNT_ID, aisConsent);
 
         expectedLinks.setBalances(new HrefType("http://url/v1/card-accounts/33333-999999999/balances"));
         assertEquals(expectedLinks, links);

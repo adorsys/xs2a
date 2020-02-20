@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,8 +36,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceInternalTest {
 
-    private static final String CONSENT_ID = "consent ID";
-    private static final String RESOURCE_ID = "resource ID";
+    private static final String CONSENT_ID = "fa6e687b-1ac9-4b1a-9c74-357c35c82ba1";
+    private static final String RESOURCE_ID = "LGCGDC4KTx0tgnpZGYTTr8";
 
     @InjectMocks
     private AccountServiceInternal accountServiceInternal;
@@ -46,12 +46,12 @@ class AccountServiceInternalTest {
     private AisConsentTransactionRepository aisConsentTransactionRepository;
 
     @Mock
-    private AisConsentJpaRepository aisConsentJpaRepository;
+    private ConsentJpaRepository consentJpaRepository;
 
     @Test
     void saveNumberOfTransactions_shouldFail() {
         // Given
-        when(aisConsentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
+        when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
@@ -64,7 +64,7 @@ class AccountServiceInternalTest {
     @Test
     void saveNumberOfTransactions_success() {
         // Given
-        when(aisConsentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new AisConsent()));
+        when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new ConsentEntity()));
 
         // When
         boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);

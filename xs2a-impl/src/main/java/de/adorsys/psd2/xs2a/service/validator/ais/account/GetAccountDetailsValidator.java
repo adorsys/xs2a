@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessValidator;
@@ -52,35 +52,35 @@ public class GetAccountDetailsValidator extends AbstractAccountTppValidator<Comm
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonAccountRequestObject commonAccountRequestObject) {
-        AccountConsent accountConsent = commonAccountRequestObject.getAccountConsent();
+        AisConsent aisConsent = commonAccountRequestObject.getAisConsent();
 
-        if (accountConsent.isConsentWithNotIbanAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (aisConsent.isConsentWithNotIbanAccount() && !aisConsent.isConsentForAllAvailableAccounts() && !aisConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(),
-                                                                                                     commonAccountRequestObject.getAccounts(), commonAccountRequestObject.getAccountId(), accountConsent.getAisConsentRequestType());
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(aisConsent,
+                                                                                                     commonAccountRequestObject.getAccounts(), commonAccountRequestObject.getAccountId(), aisConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
 
         ValidationResult permittedAccountReferenceValidationResult =
-            permittedAccountReferenceValidator.validate(accountConsent, commonAccountRequestObject.getAccountId(), commonAccountRequestObject.isWithBalance());
+            permittedAccountReferenceValidator.validate(aisConsent, commonAccountRequestObject.getAccountId(), commonAccountRequestObject.isWithBalance());
 
         if (permittedAccountReferenceValidationResult.isNotValid()) {
             return permittedAccountReferenceValidationResult;
         }
 
-        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(commonAccountRequestObject.getAccountConsent(), commonAccountRequestObject.isWithBalance());
+        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(aisConsent, commonAccountRequestObject.isWithBalance());
         if (accountAccessValidationResult.isNotValid()) {
             return accountAccessValidationResult;
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(aisConsent);
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }
 
-        return accountConsentValidator.validate(accountConsent, commonAccountRequestObject.getRequestUri());
+        return accountConsentValidator.validate(aisConsent, commonAccountRequestObject.getRequestUri());
     }
 }

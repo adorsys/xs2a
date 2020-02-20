@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Data
 public class AdditionalPsuData {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "additional_psu_data_generator")
     @SequenceGenerator(name = "additional_psu_data_generator", sequenceName = "additional_psu_data_id_seq", allocationSize = 1)
     private Long id;

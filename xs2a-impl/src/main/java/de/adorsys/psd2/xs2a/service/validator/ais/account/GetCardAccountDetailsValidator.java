@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
@@ -48,22 +48,22 @@ public class GetCardAccountDetailsValidator extends AbstractAccountTppValidator<
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(GetCardAccountDetailsRequestObject requestObject) {
-        AccountConsent accountConsent = requestObject.getAccountConsent();
+        AisConsent aisConsent = requestObject.getAisConsent();
 
-        if (accountConsent.isConsentWithNotCardAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (aisConsent.isConsentWithNotCardAccount() && !aisConsent.isConsentForAllAvailableAccounts() && !aisConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAccess(), requestObject.getAccounts(), requestObject.getAccountId(), accountConsent.getAisConsentRequestType());
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(aisConsent, requestObject.getAccounts(), requestObject.getAccountId(), aisConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(aisConsent);
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }
 
-        return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
+        return accountConsentValidator.validate(aisConsent, requestObject.getRequestUri());
     }
 }

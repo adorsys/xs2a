@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 
@@ -26,10 +26,10 @@ import lombok.Value;
  */
 @Value
 public class CommonConsentObject implements TppInfoProvider {
-    private final AccountConsent accountConsent;
+    private final AisConsent aisConsent;
 
     @Override
     public TppInfo getTppInfo() {
-        return accountConsent.getTppInfo();
+        return aisConsent.getTppInfo();
     }
 }

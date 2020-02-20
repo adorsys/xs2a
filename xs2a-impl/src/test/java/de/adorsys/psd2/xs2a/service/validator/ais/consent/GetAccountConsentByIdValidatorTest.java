@@ -16,11 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
@@ -65,15 +66,15 @@ class GetAccountConsentByIdValidatorTest {
     @Test
     void validate_withValidConsentObject_shouldReturnValid() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
-        when(oauthConsentValidator.validate(accountConsent)).thenReturn(ValidationResult.valid());
+        AisConsent aisConsent = buildAisConsent(TPP_INFO);
+        when(oauthConsentValidator.validate(aisConsent)).thenReturn(ValidationResult.valid());
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getAccountConsentByIdValidator.validate(new CommonConsentObject(accountConsent));
+        ValidationResult validationResult = getAccountConsentByIdValidator.validate(new CommonConsentObject(aisConsent));
 
         // Then
-        verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisConsentTppInfoValidator).validateTpp(aisConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -83,7 +84,7 @@ class GetAccountConsentByIdValidatorTest {
     @Test
     void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        AisConsent accountConsent = buildAisConsent(INVALID_TPP_INFO);
         when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
@@ -103,10 +104,18 @@ class GetAccountConsentByIdValidatorTest {
         return tppInfo;
     }
 
-    private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", null, null, false, null, null, 0,
-                                  null, null, false, false,
-                                  Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent buildAisConsent(TppInfo tppInfo) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setId("id");
+        aisConsent.setFrequencyPerDay(0);
+        aisConsent.setPsuIdDataList(Collections.emptyList());
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(tppInfo);
+        aisConsent.setConsentTppInformation(consentTppInformation);
+        aisConsent.setAuthorisations(Collections.emptyList());
+        aisConsent.setUsages(Collections.emptyMap());
+        aisConsent.setCreationTimestamp(OffsetDateTime.now());
+
+        return aisConsent;
     }
 }

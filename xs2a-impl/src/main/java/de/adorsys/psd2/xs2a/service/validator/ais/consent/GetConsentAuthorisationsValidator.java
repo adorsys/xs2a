@@ -41,6 +41,6 @@ public class GetConsentAuthorisationsValidator extends AbstractConsentTppValidat
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CommonConsentObject consentObject) {
-        return oauthConsentValidator.validate(consentObject.getAccountConsent());
+        return oauthConsentValidator.validate(consentObject.getAisConsent());
     }
 }

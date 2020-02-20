@@ -19,10 +19,12 @@ package de.adorsys.psd2.xs2a.integration.consent;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
@@ -31,14 +33,19 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationConfirmationService;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,13 +62,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -78,10 +84,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aInterfaceConfig.class
 })
 class DeleteConsentTest {
-    private static final Charset UTF_8 = StandardCharsets.UTF_8;
-    private static final String CONSENT_PATH = "json/consent/AisAccountConsentInternalResponse.json";
-    private static final String WRONG_TPP_RESPONSE_PATH = "/json/consent/res/WrongTppResponse.json";
-
     private static final String ENCRYPTED_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
@@ -98,9 +100,14 @@ class DeleteConsentTest {
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    private ConsentServiceEncrypted consentServiceEncrypted;
     @MockBean
     private PisAuthorisationConfirmationService pisAuthorisationConfirmationService;
+    @MockBean
+    private AisConsentSpi aisConsentSpi;
+
+    @Autowired
+    private ConsentDataMapper consentDataMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -127,11 +134,15 @@ class DeleteConsentTest {
     @Test
     void deleteConsent_successful() throws Exception {
         // Given
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(buildAisAccountConsent(TPP_INFO))
+        doReturn(CmsResponse.<CmsConsent>builder()
+                     .payload(buildCmsConsent(TPP_INFO))
+                     .build())
+            .when(consentServiceEncrypted).getConsentById(ENCRYPTED_CONSENT_ID);
+        given(aisConsentSpi.revokeAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
+            .willReturn(SpiResponse.<SpiResponse.VoidResponse>builder()
+                            .payload(SpiResponse.voidResponse())
                             .build());
-        given(aisConsentServiceEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, ConsentStatus.TERMINATED_BY_TPP))
+        given(consentServiceEncrypted.updateConsentStatusById(ENCRYPTED_CONSENT_ID, ConsentStatus.TERMINATED_BY_TPP))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
@@ -150,9 +161,9 @@ class DeleteConsentTest {
     void deleteConsent_withWrongTpp_shouldReturnConsentInvalid() throws Exception {
         // Given
         String wrongTppId = "Wrong TPP ID";
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(buildAisAccountConsent(TppInfoBuilder.buildTppInfo(wrongTppId)))
+        given(consentServiceEncrypted.getConsentById(ENCRYPTED_CONSENT_ID))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(buildCmsConsent(TppInfoBuilder.buildTppInfo(wrongTppId)))
                             .build());
 
         MockHttpServletRequestBuilder requestBuilder = delete(UrlBuilder.buildDeleteConsentUrl(ENCRYPTED_CONSENT_ID));
@@ -163,7 +174,7 @@ class DeleteConsentTest {
 
         //Then
         resultActions.andExpect(status().isForbidden())
-            .andExpect(content().json(IOUtils.resourceToString(WRONG_TPP_RESPONSE_PATH, UTF_8)));
+            .andExpect(content().json(jsonReader.getStringFromFile("json/consent/res/wrong-tpp-response.json")));
     }
 
     @NotNull
@@ -180,9 +191,13 @@ class DeleteConsentTest {
         return headerMap;
     }
 
-    private AisAccountConsent buildAisAccountConsent(TppInfo tppInfo) {
-        AisAccountConsent consent = jsonReader.getObjectFromFile(CONSENT_PATH, AisAccountConsent.class);
-        consent.setTppInfo(tppInfo);
+    private CmsConsent buildCmsConsent(TppInfo tppInfo) {
+        AisConsentData aisConsentData = jsonReader.getObjectFromFile("json/consent/ais-consent-data.json", AisConsentData.class);
+        CmsConsent consent = jsonReader.getObjectFromFile("json/consent/cms-consent-response.json", CmsConsent.class);
+        ConsentTppInformation tppInformation = new ConsentTppInformation();
+        tppInformation.setTppInfo(tppInfo);
+        consent.setTppInformation(tppInformation);
+        consent.setConsentData(consentDataMapper.getBytesFromAisConsentData(aisConsentData));
         return consent;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import lombok.Value;
 
 import java.util.List;
@@ -25,6 +25,6 @@ import java.util.List;
 @Value
 public class Xs2aCreateAisConsentResponse {
     private String consentId;
-    private AccountConsent accountConsent;
+    private AisConsent aisConsent;
     private List<NotificationSupportedMode> tppNotificationContentPreferred;
 }

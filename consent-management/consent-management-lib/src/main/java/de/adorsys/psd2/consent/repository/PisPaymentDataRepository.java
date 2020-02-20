@@ -27,5 +27,5 @@ import java.util.Optional;
 public interface PisPaymentDataRepository extends CrudRepository<PisPaymentData, Long>, JpaSpecificationExecutor<PisPaymentData> {
     Optional<List<PisPaymentData>> findByPaymentIdAndPaymentDataTransactionStatusIn(String paymentId, List<TransactionStatus> statuses);
 
-    Optional<List<PisPaymentData>> findByPaymentId(String paymentId); //TODO It should be changed after BulkPayment will be added to the Database https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/446
+    Optional<List<PisPaymentData>> findByPaymentId(String paymentId);
 }

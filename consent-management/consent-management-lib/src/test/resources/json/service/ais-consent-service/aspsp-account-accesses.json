@@ -1,0 +1,22 @@
+[
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE89370400440532013000",
+    "typeAccess": "ACCOUNT"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE80760700240271232400",
+    "typeAccess": "BALANCE"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE89370400440532015000",
+    "typeAccess": "TRANSACTION"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE89370400440532013000",
+    "typeAccess": "OWNER_NAME"
+  }
+]

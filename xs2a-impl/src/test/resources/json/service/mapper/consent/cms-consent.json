@@ -1,0 +1,81 @@
+{
+  "id": "c966f143-f6a2-41db-9036-8abaeeef3af7",
+  "tppAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "aspspAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "tppInformation": {
+    "tppRedirectPreferred": true,
+    "tppFrequencyPerDay": 11,
+    "tppNotificationUri": "tpp notification uri",
+    "tppInfo": {
+    },
+    "tppNotificationSupportedModes": [ "none" ]
+  },
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "tppRedirectUri",
+      "nokUri": "tppNokRedirectUri"
+    },
+    "cancelTppRedirectUri": {
+      "uri": "cancelTppRedirectUri",
+      "nokUri": "cancelTppNokRedirectUri"
+    }
+  },
+  "internalRequestId": "5c2d5564-367f-4e03-a621-6bef76fa4208",
+  "frequencyPerDay": 10,
+  "validUntil": "2021-02-19",
+  "psuIdDataList": [
+    {
+      "psuId": "psuId"
+    }
+  ],
+  "recurringIndicator": true,
+  "multilevelScaRequired": false,
+  "lastActionDate": "2020-02-18",
+  "authorisations": []
+}

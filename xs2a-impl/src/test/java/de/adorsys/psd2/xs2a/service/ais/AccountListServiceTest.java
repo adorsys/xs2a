@@ -19,9 +19,11 @@ package de.adorsys.psd2.xs2a.service.ais;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -31,12 +33,9 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -57,7 +56,6 @@ import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,9 +64,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -79,25 +78,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AccountListServiceTest {
     private static final JsonReader jsonReader = new JsonReader();
-    private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
+    private static final String ASPSP_ACCOUNT_ID = "0000921mxl-n2131-13nw";
     private static final boolean WITH_BALANCE = false;
-    private static final String CONSENT_ID = "Test consentId";
-    private static final String ACCOUNT_ID = "Test accountId";
-    private static final String IBAN = "Test IBAN";
-    private static final String BBAN = "Test BBAN";
-    private static final String PAN = "Test PAN";
-    private static final String MASKED_PAN = "Test MASKED_PAN";
-    private static final String MSISDN = "Test MSISDN";
+    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
+    private static final String ACCOUNT_ID = "3278921mxl-n2131-13nw";
+    private static final String IBAN = "DE52500105173911841934";
+    private static final String BBAN = "89370400440532010000";
+    private static final String PAN = "2356 5746 3217 1234";
+    private static final String MASKED_PAN = "235657******1234";
+    private static final String MSISDN = "+49(0)911 360698-0";
     private static final String REQUEST_URI = "request/uri";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
-    private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = buildSpiAccountConsent();
+    private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final List<SpiAccountDetails> EMPTY_ACCOUNT_DETAILS_LIST = Collections.emptyList();
     private static final AccountReference XS2A_ACCOUNT_REFERENCE = buildXs2aAccountReference();
-    private static final AccountReference XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS = buildXs2aAccountReferenceWithoutAspspIds();
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
-    private static final MessageError VALIDATION_ERROR = buildMessageError();
+    private static final MessageError CONSENT_INVALID_401_ERROR = new MessageError(ErrorType.AIS_401, of(CONSENT_INVALID));
 
-    private AccountConsent accountConsent;
+    private AisConsent aisConsent;
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     private GetAccountListConsentObject getAccountListConsentObject;
 
@@ -135,7 +133,7 @@ class AccountListServiceTest {
 
     @BeforeEach
     void setUp() {
-        accountConsent = createConsent(createAccountAccess(XS2A_ACCOUNT_REFERENCE));
+        aisConsent = createConsent(false);
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
         getAccountListConsentObject = buildGetAccountListConsentObject();
     }
@@ -143,7 +141,8 @@ class AccountListServiceTest {
     @Test
     void getAccountDetailsList_Failure_NoAccountConsent() {
         // Given
-        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.empty());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.empty());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -154,11 +153,11 @@ class AccountListServiceTest {
 
     @Test
     void getAccountDetailsList_Failure_AllowedAccountDataHasError() {
+        // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-
+            .thenReturn(Optional.of(aisConsent));
         when(getAccountListValidator.validate(getAccountListConsentObject))
-            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+            .thenReturn(ValidationResult.invalid(CONSENT_INVALID_401_ERROR));
 
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
@@ -167,19 +166,17 @@ class AccountListServiceTest {
 
     @Test
     void getAccountDetailsList_Failure_SpiResponseHasError() {
+        // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-
+            .thenReturn(Optional.of(aisConsent));
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildErrorSpiResponse());
-
         when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
@@ -195,7 +192,7 @@ class AccountListServiceTest {
     void getAccountDetailsList_Failure_AccountConsentUpdatedIsEmpty() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
@@ -204,16 +201,14 @@ class AccountListServiceTest {
 
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
 
         List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
-
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
-
-        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AccountConsent>builder().error(CmsError.LOGICAL_ERROR).build());
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AisConsent>builder().error(CmsError.LOGICAL_ERROR).build());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -226,17 +221,18 @@ class AccountListServiceTest {
     void getAccountDetailsList_Success() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
 
         List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
 
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
 
@@ -244,8 +240,8 @@ class AccountListServiceTest {
 
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
-
-        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AisConsent>builder().payload(aisConsent).build());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -254,11 +250,8 @@ class AccountListServiceTest {
         assertResponseHasNoErrors(actualResponse);
 
         Xs2aAccountListHolder body = actualResponse.getBody();
-
         assertThat(CollectionUtils.isNotEmpty(body.getAccountDetails())).isTrue();
-
         List<Xs2aAccountDetails> accountDetailsList = body.getAccountDetails();
-
         assertThat(CollectionUtils.isNotEmpty(accountDetailsList)).isTrue();
         assertThat(CollectionUtils.isEqualCollection(accountDetailsList, xs2aAccountDetailsList)).isTrue();
     }
@@ -268,19 +261,20 @@ class AccountListServiceTest {
         // Given
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
 
-        AccountConsent accountConsent = createConsent(createAccountAccess(XS2A_ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS));
+        AisConsent aisConsent = createConsent(false);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
 
         List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
 
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
-
         when(accountSpi.requestAccountList(SPI_CONTEXT_DATA, WITH_BALANCE, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
 
@@ -288,10 +282,9 @@ class AccountListServiceTest {
 
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
-
-        AccountConsent updatedAccountConsent = createConsent(createAccountAccess(XS2A_ACCOUNT_REFERENCE));
-        when(accountReferenceUpdater.updateAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList))
-            .thenReturn(CmsResponse.<AccountConsent>builder().payload(updatedAccountConsent).build());
+        AisConsent updatedAccountConsent = createConsent(false);
+        when(accountReferenceUpdater.updateAccountReferences(CONSENT_ID, aisConsent, xs2aAccountDetailsList))
+            .thenReturn(CmsResponse.<AisConsent>builder().payload(updatedAccountConsent).build());
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -300,8 +293,8 @@ class AccountListServiceTest {
         Xs2aAccountListHolder responseBody = actualResponse.getBody();
         assertThat(responseBody.getAccountDetails()).isEqualTo(xs2aAccountDetailsList);
 
-        verify(accountReferenceUpdater).updateAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList);
-        assertThat(responseBody.getAccountConsent()).isEqualTo(updatedAccountConsent);
+        verify(accountReferenceUpdater).updateAccountReferences(CONSENT_ID, aisConsent, xs2aAccountDetailsList);
+        assertThat(responseBody.getAisConsent()).isEqualTo(updatedAccountConsent);
     }
 
     @Test
@@ -321,9 +314,9 @@ class AccountListServiceTest {
     void getAccountList_withInvalidConsent_shouldReturnValidationError() {
         // Given
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
+            .thenReturn(ValidationResult.invalid(CONSENT_INVALID_401_ERROR));
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
 
         // When
         ResponseObject<Xs2aAccountListHolder> actualResponse = accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -340,9 +333,11 @@ class AccountListServiceTest {
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+            .thenReturn(Optional.of(aisConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
         List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
@@ -352,7 +347,7 @@ class AccountListServiceTest {
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
         when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
+            .thenReturn(CmsResponse.<AisConsent>builder().payload(aisConsent).build());
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
         // When
@@ -369,12 +364,15 @@ class AccountListServiceTest {
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
-        AccountConsent accountConsent = createConsent(true);
+            .thenReturn(Optional.of(aisConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+        AisConsent accountConsent = createConsent(true);
         prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent)).thenReturn(false);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(false);
 
         // When
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -389,12 +387,15 @@ class AccountListServiceTest {
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
-        AccountConsent accountConsent = createConsent(true);
+            .thenReturn(Optional.of(aisConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+        AisConsent accountConsent = createConsent(true);
         prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent)).thenReturn(true);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(true);
 
         // When
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -409,10 +410,10 @@ class AccountListServiceTest {
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
-        AccountConsent accountConsent = createConsent(false);
+        AisConsent accountConsent = createConsent(false);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent)).thenReturn(true);
 
@@ -429,12 +430,15 @@ class AccountListServiceTest {
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
-        AccountConsent accountConsent = createConsent(false);
+            .thenReturn(Optional.of(aisConsent));
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
+            .thenReturn(ActionStatus.SUCCESS);
+        AisConsent accountConsent = createConsent(false);
         prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent)).thenReturn(true);
+        when(accountHelperService.needsToUpdateUsage(accountConsent))
+            .thenReturn(true);
 
         // When
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
@@ -458,7 +462,7 @@ class AccountListServiceTest {
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(messageErrorCode);
     }
 
-    private void prepationForGetAccountListRequest(AccountConsent accountConsent) {
+    private void prepationForGetAccountListRequest(AisConsent aisConsent) {
         List<SpiAccountDetails> spiAccountDetailsList = Collections.singletonList(spiAccountDetails);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
@@ -467,7 +471,7 @@ class AccountListServiceTest {
         List<Xs2aAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
         when(accountDetailsMapper.mapToXs2aAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
-        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AccountConsent>builder().payload(accountConsent).build());
+        when(accountReferenceUpdater.updateAccountReferences(eq(CONSENT_ID), any(), anyList())).thenReturn(CmsResponse.<AisConsent>builder().payload(aisConsent).build());
     }
 
     // Needed because SpiResponse is final, so it's impossible to mock it
@@ -489,43 +493,31 @@ class AccountListServiceTest {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
-    private static AccountReference buildXs2aAccountReferenceWithoutAspspIds() {
-        return new AccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+    private AisConsent createConsent(boolean recurringIndicator) {
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
+
+        aisConsent.setConsentData(new AisConsentData(null,
+                                                     null,
+                                                     null,
+                                                     false));
+        aisConsent.setTppAccountAccesses(createAccountAccess());
+        aisConsent.setAspspAccountAccesses(createAccountAccess());
+
+        if (recurringIndicator) {
+            aisConsent.setRecurringIndicator(true);
+        }
+
+        return aisConsent;
     }
 
-    private static AccountConsent createConsent(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private static AccountAccess createAccountAccess() {
+        return new AccountAccess(Collections.singletonList(AccountListServiceTest.XS2A_ACCOUNT_REFERENCE),
+                                 Collections.singletonList(AccountListServiceTest.XS2A_ACCOUNT_REFERENCE),
+                                 Collections.singletonList(AccountListServiceTest.XS2A_ACCOUNT_REFERENCE),
+                                 null);
     }
 
-    private static AccountConsent createConsent(boolean recurringIndicator) {
-        String fileName = recurringIndicator
-                              ? "json/AccountConsentRecurringIndicatorTrue.json"
-                              : "json/AccountConsentRecurringIndicatorFalse.json";
-        return jsonReader.getObjectFromFile(fileName, AccountConsent.class);
-    }
-
-    private static TppInfo createTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(UUID.randomUUID().toString());
-        return tppInfo;
-    }
-
-    private static Xs2aAccountAccess createAccountAccess(AccountReference accountReference) {
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null, null);
-    }
-
-    @NotNull
-    private static MessageError buildMessageError() {
-        return new MessageError(ErrorType.AIS_401, of(CONSENT_INVALID));
-    }
-
-    @NotNull
-    private static SpiAccountConsent buildSpiAccountConsent() {
-        return new SpiAccountConsent();
-    }
-
-    @NotNull
     private GetAccountListConsentObject buildGetAccountListConsentObject() {
-        return new GetAccountListConsentObject(accountConsent, WITH_BALANCE, REQUEST_URI);
+        return new GetAccountListConsentObject(aisConsent, WITH_BALANCE, REQUEST_URI);
     }
 }

@@ -57,12 +57,13 @@ class PiisConsentServiceInternalTest {
     private static final AccountReferenceSelector SELECTOR_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN);
     private static final Specification<PiisConsentEntity> SPECIFICATION_IBAN = (root, cq, cb) -> null;
 
+    @InjectMocks
+    private PiisConsentServiceInternal piisConsentServiceInternal;
+
     @Mock
     private PiisConsentRepository piisConsentRepository;
     @Mock
     private PiisConsentMapper piisConsentMapper;
-    @InjectMocks
-    private PiisConsentServiceInternal piisConsentServiceInternal;
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
 

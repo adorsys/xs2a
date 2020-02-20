@@ -1,0 +1,18 @@
+{
+  "id": 1,
+  "externalId": "4b112130-6a96-4941-a220-2da8a4af2c65",
+  "consentStatus": "EXPIRED",
+  "consentType": "AIS",
+  "frequencyPerDay": 4,
+  "recurringIndicator": true,
+  "multilevelScaRequired": false,
+  "psuDataList": [
+  ],
+  "tppInformation": {
+  },
+  "authorisationTemplate": {
+    "redirectUri": "Mock tppOkRedirectUri",
+    "nokRedirectUri": "Mock tppNokRedirectUri"
+  },
+  "validUntil": "2019-01-01"
+}

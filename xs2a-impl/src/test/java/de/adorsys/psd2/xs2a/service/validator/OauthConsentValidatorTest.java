@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.validator;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -30,9 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.OffsetDateTime;
-import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORBIDDEN;
@@ -58,10 +55,10 @@ class OauthConsentValidatorTest {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
-        AccountConsent accountConsent = buildAccountConsent(ConsentStatus.VALID);
+        AisConsent aisConsent = buildAccountConsent(ConsentStatus.VALID);
         when(requestProviderService.getOAuth2Token()).thenReturn("");
         //When
-        ValidationResult validationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult validationResult = oauthConsentValidator.validate(aisConsent);
         //Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -73,10 +70,10 @@ class OauthConsentValidatorTest {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
-        AccountConsent accountConsent = buildAccountConsent(ConsentStatus.VALID);
+        AisConsent aisConsent = buildAccountConsent(ConsentStatus.VALID);
         when(requestProviderService.getOAuth2Token()).thenReturn(null);
         //When
-        ValidationResult validationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult validationResult = oauthConsentValidator.validate(aisConsent);
         //Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -88,10 +85,10 @@ class OauthConsentValidatorTest {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
-        AccountConsent accountConsent = buildAccountConsent(ConsentStatus.VALID);
+        AisConsent aisConsent = buildAccountConsent(ConsentStatus.VALID);
         when(requestProviderService.getOAuth2Token()).thenReturn(TOKEN);
         //When
-        ValidationResult validationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult validationResult = oauthConsentValidator.validate(aisConsent);
         //Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -102,9 +99,9 @@ class OauthConsentValidatorTest {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
-        AccountConsent accountConsent = buildAccountConsent(ConsentStatus.VALID);
+        AisConsent aisConsent = buildAccountConsent(ConsentStatus.VALID);
         //When
-        ValidationResult validationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult validationResult = oauthConsentValidator.validate(aisConsent);
         //Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -114,9 +111,9 @@ class OauthConsentValidatorTest {
     void validate_valid_approachEmbedded_flowOauth_statusValid() {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
-        AccountConsent accountConsent = buildAccountConsent(ConsentStatus.VALID);
+        AisConsent aisConsent = buildAccountConsent(ConsentStatus.VALID);
         //When
-        ValidationResult validationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult validationResult = oauthConsentValidator.validate(aisConsent);
         //Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -127,18 +124,17 @@ class OauthConsentValidatorTest {
         //Given
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.OAUTH);
-        AccountConsent accountConsent = buildAccountConsent(ConsentStatus.RECEIVED);
+        AisConsent aisConsent = buildAccountConsent(ConsentStatus.RECEIVED);
         //When
-        ValidationResult validationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult validationResult = oauthConsentValidator.validate(aisConsent);
         //Then
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
     }
 
-    private AccountConsent buildAccountConsent(ConsentStatus consentStatus) {
-        return new AccountConsent("id", null, null, false, null, null, 0,
-                                  null, consentStatus, false, false,
-                                  Collections.emptyList(), null, null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent buildAccountConsent(ConsentStatus consentStatus) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setConsentStatus(consentStatus);
+        return aisConsent;
     }
 }
