@@ -1,0 +1,20 @@
+{
+  "accounts": [
+    {
+      "resourceId": "11111-999999999",
+      "currency": "EUR"
+    }
+  ],
+  "balances": [
+    {
+      "resourceId": "11111-999999999",
+      "currency": "EUR"
+    }
+  ],
+  "transactions": [
+    {
+      "resourceId": "11111-999999999",
+      "currency": "EUR"
+    }
+  ]
+}

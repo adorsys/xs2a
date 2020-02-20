@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -47,33 +47,33 @@ class NonRecurringConsentExpirationScheduleTaskTest {
     private NonRecurringConsentExpirationScheduleTask scheduleTask;
 
     @Mock
-    private AisConsentJpaRepository aisConsentJpaRepository;
+    private ConsentJpaRepository consentJpaRepository;
 
     @Captor
-    private ArgumentCaptor<ArrayList<AisConsent>> consentsCaptor;
+    private ArgumentCaptor<ArrayList<ConsentEntity>> consentsCaptor;
 
     @Test
     void expireUsedNonRecurringConsent() {
-        List<AisConsent> aisConsents = new ArrayList<>();
+        List<ConsentEntity> aisConsents = new ArrayList<>();
         aisConsents.add(createConsent(RECEIVED));
         aisConsents.add(createConsent(VALID));
 
-        when(aisConsentJpaRepository.findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class)))
+        when(consentJpaRepository.findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class)))
             .thenReturn(aisConsents);
-        when(aisConsentJpaRepository.saveAll(consentsCaptor.capture())).thenReturn(Collections.emptyList());
+        when(consentJpaRepository.saveAll(consentsCaptor.capture())).thenReturn(Collections.emptyList());
 
         scheduleTask.expireUsedNonRecurringConsent();
 
-        verify(aisConsentJpaRepository, times(1)).findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class));
-        verify(aisConsentJpaRepository, times(1)).saveAll(anyList());
+        verify(consentJpaRepository, times(1)).findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class));
+        verify(consentJpaRepository, times(1)).saveAll(anyList());
 
         assertEquals(2, consentsCaptor.getValue().size());
         consentsCaptor.getValue().forEach(c -> assertEquals(EXPIRED, c.getConsentStatus()));
     }
 
     @NotNull
-    private AisConsent createConsent(ConsentStatus consentStatus) {
-        AisConsent aisConsent = new AisConsent();
+    private ConsentEntity createConsent(ConsentStatus consentStatus) {
+        ConsentEntity aisConsent = new ConsentEntity();
         aisConsent.setConsentStatus(consentStatus);
         return aisConsent;
     }

@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
-@Entity(name = "ais_consent_transaction")
+@Entity
+@Table(name = "ais_consent_transaction")
 public class AisConsentTransaction {
 
     @Id
@@ -31,7 +33,7 @@ public class AisConsentTransaction {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "consent_id", nullable = false)
-    private AisConsent consentId;
+    private ConsentEntity consentId;
 
     @Column(name = "number_of_transactions")
     private int numberOfTransactions;

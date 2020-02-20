@@ -21,16 +21,12 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.authorisation.AuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
-import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.TppService;
-import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
+import de.adorsys.psd2.consent.api.service.*;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
@@ -41,7 +37,6 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -50,7 +45,7 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
-import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,13 +65,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -118,11 +114,13 @@ class ContextPathIT {
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    private ConsentServiceEncrypted consentServiceEncrypted;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private AspspDataService aspspDataService;
+    @MockBean
+    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
 
     @BeforeEach
     void init() {
@@ -166,20 +164,20 @@ class ContextPathIT {
 
     private void createConsent_withCustomContextPath(HttpHeaders headers, String responseJsonPath) throws Exception {
         // Given
-        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(CREATE_CONSENT_REQUEST_JSON_PATH, SCA_APPROACH, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
+        CmsConsent cmsConsent = CmsConsentBuilder.buildCmsConsent(CREATE_CONSENT_REQUEST_JSON_PATH, SCA_APPROACH, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
 
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
         given(authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null))
                             .build());
-        given(aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)))
-            .willReturn(CmsResponse.<CreateAisConsentResponse>builder()
-                            .payload(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent, Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA)))
+        given(consentServiceEncrypted.createConsent(any(CmsConsent.class)))
+            .willReturn(CmsResponse.<CmsCreateConsentResponse>builder()
+                            .payload(new CmsCreateConsentResponse(ENCRYPT_CONSENT_ID, cmsConsent))
                             .build());
-        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(ENCRYPT_CONSENT_ID), any(AisAccountAccessInfo.class)))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(aisAccountConsent)
+        given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(ENCRYPT_CONSENT_ID), any(AisAccountAccessInfo.class)))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(cmsConsent)
                             .build());
         given(authorisationServiceEncrypted.getAuthorisationById(any(String.class)))
             .willReturn(CmsResponse.<Authorisation>builder()

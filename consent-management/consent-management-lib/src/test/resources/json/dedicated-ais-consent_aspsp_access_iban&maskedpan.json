@@ -1,123 +1,113 @@
 {
-  "instanceId": "UNDEFINED",
-  "id": 30,
-  "externalId": "b6f706b2-3340-44a4-a3de-e1fba1fb044c",
+  "consentData": {
+    "combinedServiceIndicator": false
+  },
+  "tppAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      },
+      {
+        "resourceId": "11111-999999999",
+        "maskedPan": "525412******3241",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      },
+      {
+        "resourceId": "11111-999999999",
+        "maskedPan": "525412******3241",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "aspspAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      },
+      {
+        "resourceId": "11111-999999999",
+        "maskedPan": "525412******3241",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      },
+      {
+        "resourceId": "11111-999999999",
+        "maskedPan": "525412******3241",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "consentTppInformation": {
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppName": "",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppRedirectPreferred": false,
+    "tppNotificationSupportedModes": [],
+    "tppFrequencyPerDay": 15
+  },
   "recurringIndicator": true,
-  "tppRedirectPreferred": false,
-  "combinedServiceIndicator": false,
-  "requestDateTime": "2019-12-06T17:03:13.36",
   "lastActionDate": "2019-12-06",
   "validUntil": "2021-10-10",
-  "psuDataList": [
+  "psuIdDataList": [
     {
-      "instanceId": "UNDEFINED",
-      "id": 30,
-      "psuId": "marion.mueller",
-      "psuIdType": null,
-      "psuCorporateId": null,
-      "psuCorporateIdType": null
+      "psuId": "anton.brueckner"
     }
   ],
-  "tppInfo": {
-    "instanceId": "UNDEFINED",
-    "id": 1,
-    "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
-    "tppName": "",
-    "tppRoles": [
-      "AISP",
-      "PISP",
-      "PIISP"
-    ],
-    "authorityId": "DE-FAKENCA",
-    "authorityName": "Trust Service Provider AG",
-    "country": "Germany",
-    "organisation": "Fictional Corporation AG",
-    "organisationUnit": "Information Technology",
-    "city": "Nuremberg",
-    "state": "Bayern"
-  },
   "authorisationTemplate": {
-    "id": 30,
-    "redirectUri": "TPP-Redirect-URI",
-    "nokRedirectUri": "TPP-Nok-Redirect-URI",
-    "cancelRedirectUri": null,
-    "cancelNokRedirectUri": null
+    "tppRedirectUri": {
+      "uri": "",
+      "nokUri": ""
+    }
   },
-  "tppNotificationUri": null,
-  "tppNotificationContentPreferred": [],
   "consentStatus": "VALID",
-  "consentType": "AIS",
-  "allowedFrequencyPerDay": 4,
-  "tppFrequencyPerDay": 400,
-  "usages": [],
-  "accesses": [
-    {
-      "accountIdentifier": "525412******3241",
-      "currency": "EUR",
-      "typeAccess": "BALANCE",
-      "accountReferenceType": "maskedPan"
-    },
-    {
-      "accountIdentifier": "525412******3241",
-      "currency": "EUR",
-      "typeAccess": "TRANSACTION",
-      "accountReferenceType": "maskedPan"
-    },
-    {
-      "accountIdentifier": "525412******3241",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "maskedPan"
-    },
-    {
-      "accountIdentifier": "DE69760700240340283600",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "iban"
-    }
-  ],
-  "aspspAccountAccesses": [
-    {
-      "accountIdentifier": "525412******3241",
-      "currency": "EUR",
-      "typeAccess": "BALANCE",
-      "accountReferenceType": "maskedPan",
-      "resourceId": "10023-999999999",
-      "aspspAccountId": "DE69760700240340283600"
-    },
-    {
-      "accountIdentifier": "525412******3241",
-      "currency": "EUR",
-      "typeAccess": "TRANSACTION",
-      "accountReferenceType": "maskedPan",
-      "resourceId": "10023-999999999",
-      "aspspAccountId": "DE69760700240340283600"
-    },
-    {
-      "accountIdentifier": "525412******3241",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "maskedPan",
-      "resourceId": "10023-999999999",
-      "aspspAccountId": "DE69760700240340283600"
-    },
-    {
-      "accountIdentifier": "DE69760700240340283600",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "iban",
-      "resourceId": "10023-999999999",
-      "aspspAccountId": "DE69760700240340283600"
-    }
-  ],
-  "aisConsentRequestType": "DEDICATED_ACCOUNTS",
+  "frequencyPerDay": 4,
+  "usages": {},
   "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
-  "availableAccounts": null,
-  "allPsd2": null,
-  "availableAccountsWithBalance": null,
   "multilevelScaRequired": false,
   "statusChangeTimestamp": "2019-12-06T17:03:32.972+02:00",
-  "ownerNameType": "NONE",
-  "internalRequestId": "61ab78e7-956a-47a6-88c0-82557ebea963",
-  "previousConsentStatus": "VALID"
+  "internalRequestId": "bdb36439-0e07-4037-a8a1-171c969fb0d7"
 }

@@ -1,0 +1,37 @@
+{
+  "accounts": [
+    {
+      "resourceId": "11111-999999999",
+      "accountIdentifier": "DE89370400440532013000",
+      "accountType": "iban",
+      "currency": "USD"
+    }
+  ],
+  "balances": [
+    {
+      "resourceId": "22222-999999999",
+      "accountIdentifier": "DE89370400440532014000",
+      "accountType": "iban",
+      "currency": "EUR"
+    }
+  ],
+  "transactions": [
+    {
+      "resourceId": "33333-999999999",
+      "accountIdentifier": "DE89370400440532015000",
+      "accountType": "iban",
+      "currency": "CHF"
+    }
+  ],
+  "accountAdditionalInformationAccess": {
+    "ownerName": [
+      {
+        "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+        "resourceId": "33333-999999999",
+        "accountIdentifier": "DE89370400440532016000",
+        "accountType": "iban",
+        "currency": "UAH"
+      }
+    ]
+  }
+}

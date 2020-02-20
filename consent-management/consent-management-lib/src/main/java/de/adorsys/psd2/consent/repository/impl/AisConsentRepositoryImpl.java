@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,18 @@
 package de.adorsys.psd2.consent.repository.impl;
 
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.AuthorisationEntity;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingFactory;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -37,28 +45,30 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Component
 @RequiredArgsConstructor
 public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
-    private final AisConsentJpaRepository aisConsentRepository;
+    private final ConsentJpaRepository aisConsentRepository;
     private final ChecksumCalculatingFactory calculatingFactory;
+    private final AisConsentMapper aisConsentMapper;
+    private final AuthorisationRepository authorisationRepository;
 
     @Override
     @Transactional(rollbackFor = WrongChecksumException.class)
-    public AisConsent verifyAndSave(AisConsent entity) throws WrongChecksumException {
+    public ConsentEntity verifyAndSave(ConsentEntity entity) throws WrongChecksumException {
         return verifyAndSaveInternal(entity);
     }
 
     @Override
     @Transactional(rollbackFor = WrongChecksumException.class)
-    public AisConsent verifyAndUpdate(AisConsent entity) throws WrongChecksumException {
+    public ConsentEntity verifyAndUpdate(ConsentEntity entity) throws WrongChecksumException {
         return verifyAndUpdateInternal(entity);
     }
 
     @Override
     @Transactional(rollbackFor = WrongChecksumException.class)
-    public List<AisConsent> verifyAndSaveAll(List<AisConsent> consents) throws WrongChecksumException {
-        List<AisConsent> consentList = new ArrayList<>();
+    public List<ConsentEntity> verifyAndSaveAll(List<ConsentEntity> consents) throws WrongChecksumException {
+        List<ConsentEntity> consentList = new ArrayList<>();
 
-        for (AisConsent aisConsent : consents) {
-            AisConsent consent = verifyAndSaveInternal(aisConsent);
+        for (ConsentEntity entity : consents) {
+            ConsentEntity consent = verifyAndSaveInternal(entity);
             consentList.add(consent);
         }
         return consentList;
@@ -66,32 +76,32 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
 
     @Override
     @Transactional
-    public Optional<AisConsent> getActualAisConsent(String consentId) {
+    public Optional<ConsentEntity> getActualAisConsent(String consentId) {
         return aisConsentRepository.findByExternalId(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
-    private AisConsent verifyAndSaveInternal(AisConsent entity) throws WrongChecksumException {
-        Optional<ChecksumCalculatingService> calculatingServiceOptional = calculatingFactory.getServiceByChecksum(entity.getChecksum());
+    private ConsentEntity verifyAndSaveInternal(ConsentEntity consentEntity) throws WrongChecksumException {
+        Optional<ChecksumCalculatingService> calculatingServiceOptional = calculatingFactory.getServiceByChecksum(consentEntity.getChecksum(), ConsentType.AIS);
 
         if (calculatingServiceOptional.isPresent()) {
             ChecksumCalculatingService calculatingService = calculatingServiceOptional.get();
 
-            if (!isAisConsentChecksumCorrect(entity, calculatingService)) {
+            if (!isAisConsentChecksumCorrect(consentEntity, calculatingService)) {
                 throw new WrongChecksumException();
             }
 
-            if (wasStatusSwitchedToValid(entity)) {
-                byte[] newChecksum = calculatingService.calculateChecksumForConsent(entity);
-                entity.setChecksum(newChecksum);
+            if (wasStatusSwitchedToValid(consentEntity)) {
+                byte[] newChecksum = calculatingService.calculateChecksumForConsent(mapToAisConsent(consentEntity));
+                consentEntity.setChecksum(newChecksum);
             }
         }
 
-        return aisConsentRepository.save(entity);
+        return aisConsentRepository.save(consentEntity);
     }
 
-    private AisConsent verifyAndUpdateInternal(AisConsent entity) throws WrongChecksumException {
-        Optional<ChecksumCalculatingService> calculatingServiceOptional = calculatingFactory.getServiceByChecksum(entity.getChecksum());
+    private ConsentEntity verifyAndUpdateInternal(ConsentEntity entity) throws WrongChecksumException {
+        Optional<ChecksumCalculatingService> calculatingServiceOptional = calculatingFactory.getServiceByChecksum(entity.getChecksum(), ConsentType.AIS);
 
         if (calculatingServiceOptional.isPresent()) {
             ChecksumCalculatingService calculatingService = calculatingServiceOptional.get();
@@ -101,7 +111,7 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
             }
 
             if (entity.getConsentStatus() == VALID) {
-                byte[] newChecksum = calculatingService.calculateChecksumForConsent(entity);
+                byte[] newChecksum = calculatingService.calculateChecksumForConsent(mapToAisConsent(entity));
                 entity.setChecksum(newChecksum);
             }
         }
@@ -109,25 +119,46 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
         return aisConsentRepository.save(entity);
     }
 
-    private boolean isAisConsentChecksumCorrect(AisConsent entity, ChecksumCalculatingService calculatingService) {
+    private boolean isAisConsentChecksumCorrect(ConsentEntity entity, ChecksumCalculatingService calculatingService) {
         byte[] checksumFromDb = entity.getChecksum();
 
         if (checksumFromDb != null
                 && wasStatusHoldBefore(entity)
-                && !calculatingService.verifyConsentWithChecksum(entity, checksumFromDb)) {
+                && !calculatingService.verifyConsentWithChecksum(mapToAisConsent(entity), checksumFromDb)) {
             log.warn("AIS consent checksum verification failed! AIS consent ID: [{}]. Contact ASPSP for details.", entity.getExternalId());
             return false;
         }
         return true;
     }
 
-    private boolean wasStatusSwitchedToValid(AisConsent entity) {
+    private boolean wasStatusSwitchedToValid(ConsentEntity entity) {
         return entity.getConsentStatus() == VALID
-                   && EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED).contains(entity.getPreviousConsentStatus());
+                   && EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED).contains(getPreviousConsentStatus(entity));
     }
 
-    private boolean wasStatusHoldBefore(AisConsent entity) {
-        return entity.getPreviousConsentStatus() == VALID
-                   || entity.getPreviousConsentStatus().isFinalisedStatus();
+    private boolean wasStatusHoldBefore(ConsentEntity entity) {
+        return getPreviousConsentStatus(entity) == VALID
+                   || isFinalisedStatus(entity);
+    }
+
+    private AisConsent mapToAisConsent(ConsentEntity entity) {
+        List<AuthorisationEntity> authorisationEntityList =
+            authorisationRepository.findAllByParentExternalIdAndAuthorisationType(entity.getExternalId(), AuthorisationType.AIS);
+
+        return aisConsentMapper.mapToAisConsent(entity, authorisationEntityList);
+    }
+
+    private ConsentStatus getPreviousConsentStatus(ConsentEntity entity) {
+        Optional<ConsentEntity> optionalConsentStatus = aisConsentRepository.findByExternalId(entity.getExternalId());
+
+        return optionalConsentStatus
+                   .map(ConsentEntity::getConsentStatus)
+                   .orElse(null);
+
+    }
+
+    private boolean isFinalisedStatus(ConsentEntity entity) {
+        ConsentStatus previousConsentStatus = getPreviousConsentStatus(entity);
+        return previousConsentStatus !=null && previousConsentStatus.isFinalisedStatus();
     }
 }

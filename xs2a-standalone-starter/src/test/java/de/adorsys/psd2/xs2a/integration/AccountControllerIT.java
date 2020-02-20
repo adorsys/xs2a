@@ -20,10 +20,12 @@ package de.adorsys.psd2.xs2a.integration;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
@@ -32,15 +34,13 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aUsageType;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
@@ -52,6 +52,7 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,8 +77,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.mockito.BDDMockito.given;
@@ -101,12 +100,13 @@ class AccountControllerIT {
     private static final String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
-    private static final String IBAN = "DE62500105179972514662";
     private HttpHeaders httpHeaders = new HttpHeaders();
     private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
     private static final UUID X_REQUEST_ID = UUID.randomUUID();
+
+    private JsonReader jsonReader = new JsonReader();
 
     @Autowired
     private MockMvc mockMvc;
@@ -121,6 +121,8 @@ class AccountControllerIT {
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    @MockBean
+    private ConsentServiceEncrypted consentServiceEncrypted;
     @MockBean
     private Xs2aAisConsentMapper xs2aAisConsentMapper;
     @MockBean
@@ -148,9 +150,9 @@ class AccountControllerIT {
                             .build());
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
-                                                                                              .payload(new AisAccountConsent())
-                                                                                              .build());
+        given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
+                                                                                    .payload(new CmsConsent())
+                                                                                    .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
         given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).willReturn(aspspConsentDataProvider);
@@ -203,8 +205,8 @@ class AccountControllerIT {
     @Test
     void getAccountList_WithoutPsuIpAddressWithNoUsageCounter_ShouldFail() throws Exception {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(xs2aAisConsentMapper.mapToAccountConsent(new AisAccountConsent())).willReturn(accountConsent);
+        AisConsent aisConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
+        given(xs2aAisConsentMapper.mapToAisConsent(new CmsConsent())).willReturn(aisConsent);
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetAccountList());
         requestBuilder.headers(httpHeadersWithoutPsuIpAddress);
@@ -231,17 +233,17 @@ class AccountControllerIT {
         given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyList())).willReturn(Collections.singletonList(accountDetails));
 
-        AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
-                                                                                              .payload(aisAccountConsent)
-                                                                                              .build());
-        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(aisAccountConsent)
+        CmsConsent cmsConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
+        given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
+                                                                                    .payload(cmsConsent)
+                                                                                 .build());
+        given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(CONSENT_ID), any()))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(cmsConsent)
                             .build());
-        AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
-        given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
-        given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
+        AisConsent aisConsent = createConsent();
+        given(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).willReturn(spiAccountConsent);
+        given(xs2aAisConsentMapper.mapToAisConsent(any(CmsConsent.class))).willReturn(aisConsent);
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -264,17 +266,20 @@ class AccountControllerIT {
         given(accountSpi.requestAccountList(notNull(), eq(false), eq(spiAccountConsent), eq(aspspConsentDataProvider))).willReturn(response);
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyList())).willReturn(Collections.singletonList(accountDetails));
 
-        AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
-                                                                                              .payload(aisAccountConsent)
-                                                                                              .build());
-        given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(aisAccountConsent)
+        CmsConsent cmsConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
+        given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
+                                                                                    .payload(cmsConsent)
+                                                                                 .build());
+
+        given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(CONSENT_ID), any()))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(cmsConsent)
                             .build());
-        AccountConsent accountConsent = buildOneOffAccountConsent(aisAccountConsent.getUsageCounterMap());
-        given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
-        given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
+
+        AisConsent aisConsent = buildAccountConsent(Collections.singletonMap("/v1/accounts", 0));
+        aisConsent.setRecurringIndicator(false);
+        given(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).willReturn(spiAccountConsent);
+        given(xs2aAisConsentMapper.mapToAisConsent(any(CmsConsent.class))).willReturn(aisConsent);
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -298,17 +303,18 @@ class AccountControllerIT {
         given(accountDetailsMapper.mapToXs2aAccountDetailsList(anyList())).willReturn(Collections.singletonList(accountDetails));
 
         for (int usage = 2; usage >= 0; usage--) {
-            AisAccountConsent aisAccountConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
-            given(aisConsentServiceEncrypted.getAisAccountConsentById(CONSENT_ID)).willReturn(CmsResponse.<AisAccountConsent>builder()
-                                                                                                  .payload(aisAccountConsent)
-                                                                                                  .build());
-            given(aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(CONSENT_ID), any()))
-                .willReturn(CmsResponse.<AisAccountConsent>builder()
-                                .payload(aisAccountConsent)
+            CmsConsent cmsConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
+            given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
+                                                                                        .payload(cmsConsent)
+                                                                                     .build());
+            given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(CONSENT_ID), any()))
+                .willReturn(CmsResponse.<CmsConsent>builder()
+                                .payload(cmsConsent)
                                 .build());
-            AccountConsent accountConsent = buildAccountConsent(aisAccountConsent.getUsageCounterMap());
-            given(xs2aAisConsentMapper.mapToAccountConsent(aisAccountConsent)).willReturn(accountConsent);
-            given(xs2aAisConsentMapper.mapToSpiAccountConsent(accountConsent)).willReturn(spiAccountConsent);
+
+            AisConsent aisConsent = buildAccountConsent(cmsConsent.getUsages());
+            given(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).willReturn(spiAccountConsent);
+            given(xs2aAisConsentMapper.mapToAisConsent(any(CmsConsent.class))).willReturn(aisConsent);
 
             // When
             ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -338,30 +344,28 @@ class AccountControllerIT {
                    .build();
     }
 
-    private AisAccountConsent buildAisAccountConsent(Map<String, Integer> usageCounter) {
-        AisAccountConsent aisAccountConsent = new AisAccountConsent();
-        aisAccountConsent.setUsageCounterMap(usageCounter);
-        return aisAccountConsent;
+    private CmsConsent buildAisAccountConsent(Map<String, Integer> usageCounter) {
+        CmsConsent cmsConsent = new CmsConsent();
+        cmsConsent.setUsages(usageCounter);
+        return cmsConsent;
     }
 
-    private AccountConsent buildAccountConsent(Map<String, Integer> usageCounter) {
-        AccountReference accountReference = new AccountReference();
-        accountReference.setIban(IBAN);
-
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, true, LocalDate.now().plusDays(1), null, 10,
-                                  null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
+    private AisConsent buildAccountConsent(Map<String, Integer> usageCounter) {
+        AisConsent aisConsent = createConsent();
+        aisConsent.setUsages(usageCounter);
+        return aisConsent;
     }
 
-    private AccountConsent buildOneOffAccountConsent(Map<String, Integer> usageCounter) {
-        AccountReference accountReference = new AccountReference();
-        accountReference.setIban(IBAN);
-
-        Xs2aAccountAccess xs2aAccountAccess = new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
-        return new AccountConsent(null, xs2aAccountAccess, xs2aAccountAccess, false, LocalDate.now().plusDays(1), null, 10,
-                                  null, ConsentStatus.VALID, false, false,
-                                  null, TPP_INFO, null, false, Collections.emptyList(), OffsetDateTime.now(), usageCounter, OffsetDateTime.now());
+    private AisConsent createConsent() {
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/consent/xs2a-account-consent.json", AisConsent.class);
+        aisConsent.setConsentTppInformation(buildConsentTppInformation());
+        aisConsent.setConsentStatus(ConsentStatus.VALID);
+        return aisConsent;
     }
 
+    private static ConsentTppInformation buildConsentTppInformation() {
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(TPP_INFO);
+        return consentTppInformation;
+    }
 }

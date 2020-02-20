@@ -47,11 +47,12 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthorisationServiceInternalEncryptedTest {
-    private static final String ENCRYPTED_PARENT_ID = "encrypted parent id";
-    private static final String MALFORMED_ENCRYPTED_PARENT_ID = "malformed encrypted parent id";
-    private static final String DECRYPTED_PARENT_ID = "decrypted parent id";
+    private static final String ENCRYPTED_PARENT_ID = "Uv0juhXijIas3D1bKucTox9U0XMzd5S4V4YoVF0JQTr8YXQK5v1TT2IFXDJ8ScfQZmgpuZAiXHmZbsJp852YydWFnjze07vwpAgFM45MlQk=_=_psGLvQpt9Q";
+    private static final String MALFORMED_ENCRYPTED_PARENT_ID = "wrong_id";
+    private static final String DECRYPTED_PARENT_ID = "d7cb0df1-72d8-43b3-8dc4-569598802d07";
     private static final AuthorisationType AUTHORISATION_TYPE = AuthorisationType.AIS;
-    private static final String AUTHORISATION_ID = "authorisation id";
+    private static final String AUTHORISATION_ID = "6963bceb-01d8-4961-977e-2424ce60fc7b";
+    public static final String AUTHENTICATION_METHOD_ID = "SMS";
 
     @Mock
     private SecurityDataService securityDataService;
@@ -229,23 +230,22 @@ class AuthorisationServiceInternalEncryptedTest {
     @Test
     void isAuthenticationMethodDecoupled() {
         // Given
-        String authenticationMethodId = "authentication method id";
         CmsResponse<Boolean> innerServiceResponse = CmsResponse.<Boolean>builder().payload(true).build();
-        when(authorisationService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, authenticationMethodId))
+        when(authorisationService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
             .thenReturn(innerServiceResponse);
 
         // When
-        CmsResponse<Boolean> actualResponse = authorisationServiceInternalEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, authenticationMethodId);
+        CmsResponse<Boolean> actualResponse = authorisationServiceInternalEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
 
         // Then
         assertEquals(innerServiceResponse, actualResponse);
-        verify(authorisationService).isAuthenticationMethodDecoupled(AUTHORISATION_ID, authenticationMethodId);
+        verify(authorisationService).isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
     }
 
     @Test
     void saveAuthenticationMethods() {
         // Given
-        List<CmsScaMethod> scaMethods = Collections.singletonList(new CmsScaMethod("authentication method id", true));
+        List<CmsScaMethod> scaMethods = Collections.singletonList(new CmsScaMethod(AUTHENTICATION_METHOD_ID, true));
         CmsResponse<Boolean> innerServiceResponse = CmsResponse.<Boolean>builder().payload(true).build();
         when(authorisationService.saveAuthenticationMethods(AUTHORISATION_ID, scaMethods))
             .thenReturn(innerServiceResponse);

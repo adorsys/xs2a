@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -25,7 +26,6 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
@@ -113,14 +113,14 @@ public class AisAuthorisationConfirmationService {
     private UpdateConsentPsuDataResponse checkAuthorisationConfirmationXs2a(UpdateConsentPsuDataReq request, String confirmationCodeFromDb) {
         String consentId = request.getConsentId();
         String authorisationId = request.getAuthorisationId();
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
         PsuIdData psuData = request.getPsuData();
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             return buildConsentNotFoundErrorResponse(consentId, authorisationId, psuData);
         }
 
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
-        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsentOptional.get());
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisConsentOptional.get());
         SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         boolean codeCorrect = StringUtils.equals(request.getConfirmationCode(), confirmationCodeFromDb);
 
@@ -153,9 +153,9 @@ public class AisAuthorisationConfirmationService {
         String consentId = request.getConsentId();
         String authorisationId = request.getAuthorisationId();
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             return buildConsentNotFoundErrorResponse(consentId, authorisationId, request.getPsuData());
         }
 

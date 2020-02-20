@@ -1,0 +1,33 @@
+{
+  "accounts": [
+    {
+      "resourceId": "11111-999999999",
+      "iban": "DE89370400440532013000",
+      "currency": "USD"
+    },
+    {
+      "resourceId": "22222-999999999",
+      "iban": "DE89370400440532014000",
+      "currency": "EUR"
+    },
+    {
+      "resourceId": "33333-999999999",
+      "iban": "DE89370400440532015000",
+      "currency": "CHF"
+    }
+  ],
+  "balances": [
+    {
+      "resourceId": "22222-999999999",
+      "iban": "DE89370400440532014000",
+      "currency": "EUR"
+    }
+  ],
+  "transactions": [
+    {
+      "resourceId": "33333-999999999",
+      "iban": "DE89370400440532015000",
+      "currency": "CHF"
+    }
+  ]
+}

@@ -20,9 +20,9 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.ais.ConsentTypeSetting;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +49,7 @@ class AisConsentConfirmationExpirationServiceTest {
     private AisConsentConfirmationExpirationServiceImpl expirationService;
 
     @Mock
-    private AisConsentJpaRepository aisConsentJpaRepository;
+    private ConsentJpaRepository consentJpaRepository;
     @Mock
     private AuthorisationRepository authorisationRepository;
     @Mock
@@ -58,45 +58,45 @@ class AisConsentConfirmationExpirationServiceTest {
     @Test
     void expireConsent() {
         // Given
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        ArgumentCaptor<ConsentEntity> aisConsentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
         // When
-        expirationService.expireConsent(new AisConsent());
+        expirationService.expireConsent(new ConsentEntity());
         // Then
-        verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());
+        verify(consentJpaRepository).save(aisConsentCaptor.capture());
 
-        AisConsent aisConsent = aisConsentCaptor.getValue();
-        assertEquals(ConsentStatus.EXPIRED, aisConsent.getConsentStatus());
-        assertEquals(TODAY, aisConsent.getExpireDate());
-        assertEquals(TODAY, aisConsent.getLastActionDate());
+        ConsentEntity consent = aisConsentCaptor.getValue();
+        assertEquals(ConsentStatus.EXPIRED, consent.getConsentStatus());
+        assertEquals(TODAY, consent.getExpireDate());
+        assertEquals(TODAY, consent.getLastActionDate());
     }
 
     @Test
     void updateConsentOnConfirmationExpiration() {
         // Given
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        ArgumentCaptor<ConsentEntity> aisConsentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
 
         // When
-        expirationService.updateOnConfirmationExpiration(buildAisConsent(ConsentStatus.RECEIVED, TOMORROW));
+        expirationService.updateOnConfirmationExpiration(buildConsent());
 
         // Then
-        verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());
+        verify(consentJpaRepository).save(aisConsentCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentCaptor.getValue().getConsentStatus());
     }
 
     @Test
     void checkAndUpdateOnConfirmationExpiration_expired() {
         // Given
-        ArgumentCaptor<AisConsent> aisConsentCaptor = ArgumentCaptor.forClass(AisConsent.class);
+        ArgumentCaptor<ConsentEntity> aisConsentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
         when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(100L));
 
-        AisConsent consent = buildAisConsent(ConsentStatus.RECEIVED, TOMORROW);
+        ConsentEntity consent = buildConsent();
         consent.setCreationTimestamp(OffsetDateTime.now().minusHours(1));
 
         // When
         expirationService.checkAndUpdateOnConfirmationExpiration(consent);
 
         // Then
-        verify(aisConsentJpaRepository).save(aisConsentCaptor.capture());
+        verify(consentJpaRepository).save(aisConsentCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentCaptor.getValue().getConsentStatus());
     }
 
@@ -105,9 +105,9 @@ class AisConsentConfirmationExpirationServiceTest {
         // Given
         when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(86400L));
 
-        AisConsent consent = buildAisConsent(ConsentStatus.RECEIVED, TOMORROW);
+        ConsentEntity consent = buildConsent();
         // When
-        AisConsent actual = expirationService.checkAndUpdateOnConfirmationExpiration(consent);
+        ConsentEntity actual = expirationService.checkAndUpdateOnConfirmationExpiration(consent);
 
         // Then
         assertEquals(consent, actual);
@@ -116,21 +116,21 @@ class AisConsentConfirmationExpirationServiceTest {
     @Test
     void updateConsentListOnConfirmationExpiration() {
         // Given
-        ArgumentCaptor<List<AisConsent>> aisConsentListCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<ConsentEntity>> aisConsentListCaptor = ArgumentCaptor.forClass(List.class);
 
         // When
-        expirationService.updateConsentListOnConfirmationExpiration(Collections.singletonList(buildAisConsent(ConsentStatus.RECEIVED, TOMORROW)));
+        expirationService.updateConsentListOnConfirmationExpiration(Collections.singletonList(buildConsent()));
 
         // Then
-        verify(aisConsentJpaRepository).saveAll(aisConsentListCaptor.capture());
+        verify(consentJpaRepository).saveAll(aisConsentListCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentListCaptor.getValue().get(0).getConsentStatus());
     }
 
-    private AisConsent buildAisConsent(ConsentStatus consentStatus, LocalDate validUntil) {
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setConsentStatus(consentStatus);
-        aisConsent.setValidUntil(validUntil);
-        return aisConsent;
+    private ConsentEntity buildConsent() {
+        ConsentEntity consent = new ConsentEntity();
+        consent.setConsentStatus(ConsentStatus.RECEIVED);
+        consent.setValidUntil(AisConsentConfirmationExpirationServiceTest.TOMORROW);
+        return consent;
     }
 
     private AspspSettings buildAspspSettings(Long notConfirmedConsentExpirationTimeMs) {

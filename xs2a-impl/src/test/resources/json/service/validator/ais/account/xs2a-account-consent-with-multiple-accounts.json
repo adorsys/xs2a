@@ -1,5 +1,6 @@
 {
-  "access": {
+  "consentData": {},
+  "tppAccountAccesses": {
     "accounts": [
       {
         "resourceId": "11111-999999999",
@@ -27,11 +28,13 @@
       }
     ]
   },
-  "aspspAccess": {},
+  "aspspAccountAccesses": {},
   "recurringIndicator": true,
   "validUntil": "2037-08-06",
   "frequencyPerDay": "4",
-  "tppInfo" : {
-    "authorisationNumber" : "fc488759-d8a2-4a51-b797-7d4cf7ac0447"
+  "consentTppInformation": {
+    "tppInfo": {
+      "authorisationNumber": "fc488759-d8a2-4a51-b797-7d4cf7ac0447"
+    }
   }
 }

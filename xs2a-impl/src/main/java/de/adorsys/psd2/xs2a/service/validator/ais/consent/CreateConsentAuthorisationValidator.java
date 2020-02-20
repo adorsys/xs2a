@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
@@ -58,11 +58,11 @@ public class CreateConsentAuthorisationValidator extends AbstractConsentTppValid
     protected ValidationResult executeBusinessValidation(CreateConsentAuthorisationObject createConsentAuthorisationObject) {
 
         PsuIdData psuDataFromRequest = createConsentAuthorisationObject.getPsuIdDataFromRequest();
-        AccountConsent accountConsent = createConsentAuthorisationObject.getAccountConsent();
-        List<PsuIdData> psuDataFromDb = accountConsent.getPsuIdDataList();
+        AisConsent aisConsent = createConsentAuthorisationObject.getAisConsent();
+        List<PsuIdData> psuDataFromDb = aisConsent.getPsuIdDataList();
 
         if (authorisationPsuDataChecker.isPsuDataWrong(
-            accountConsent.isMultilevelScaRequired(),
+            aisConsent.isMultilevelScaRequired(),
             psuDataFromDb,
             psuDataFromRequest)) {
 
@@ -70,7 +70,7 @@ public class CreateConsentAuthorisationValidator extends AbstractConsentTppValid
         }
 
         // If the authorisation for this consent ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
-        List<AccountConsentAuthorization> accountConsentAuthorisations = accountConsent.getAuthorisations();
+        List<AccountConsentAuthorization> accountConsentAuthorisations = aisConsent.getAuthorisations();
         List<Authorisation> authorisations = accountConsentAuthorisations.stream()
                                                  .map(auth -> new Authorisation(auth.getId(),
                                                                                 auth.getPsuIdData(),

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.account;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import lombok.Value;
 
 /**
@@ -26,5 +26,5 @@ import lombok.Value;
 @Value
 public class Xs2aCardAccountDetailsHolder {
     Xs2aCardAccountDetails cardAccountDetails;
-    AccountConsent accountConsent;
+    AisConsent aisConsent;
 }

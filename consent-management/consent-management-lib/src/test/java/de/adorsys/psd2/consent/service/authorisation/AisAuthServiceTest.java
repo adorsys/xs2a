@@ -17,11 +17,12 @@
 package de.adorsys.psd2.consent.service.authorisation;
 
 import de.adorsys.psd2.consent.domain.Authorisable;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,91 +37,117 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AisAuthServiceTest {
-    private static final String PARENT_ID = "consent ID";
+    private static final String PARENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
 
     @InjectMocks
     private AisAuthService service;
 
     @Mock
-    private AisConsentJpaRepository aisConsentJpaRepository;
+    private ConsentJpaRepository consentJpaRepository;
     @Mock
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
 
-    @Test
-    void getInteractableAuthorisationParent_statusIsNotFinalized() {
-        AisConsent consent = new AisConsent();
-        consent.setConsentStatus(ConsentStatus.VALID);
+    private ConsentEntity consentEntity;
 
-        when(aisConsentJpaRepository.findByExternalId(PARENT_ID)).thenReturn(Optional.of(consent));
-
-        assertEquals(Optional.of(consent), service.getNotFinalisedAuthorisationParent(PARENT_ID));
-
-        verify(aisConsentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+    @BeforeEach
+    void init() {
+        consentEntity = new ConsentEntity();
     }
 
     @Test
-    void getInteractableAuthorisationParent_statusIsFinalized() {
-        AisConsent consent = new AisConsent();
-        consent.setConsentStatus(ConsentStatus.EXPIRED);
+    void getInteractableAuthorisationParent_statusIsNotFinalised() {
+        // Given
+        consentEntity.setConsentStatus(ConsentStatus.VALID);
 
-        when(aisConsentJpaRepository.findByExternalId(PARENT_ID)).thenReturn(Optional.of(consent));
+        when(consentJpaRepository.findByExternalId(PARENT_ID))
+            .thenReturn(Optional.of(consentEntity));
 
+        // When
+        assertEquals(Optional.of(consentEntity), service.getNotFinalisedAuthorisationParent(PARENT_ID));
+
+        // Then
+        verify(consentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+    }
+
+    @Test
+    void getInteractableAuthorisationParent_statusIsFinalised() {
+        // Given
+        consentEntity.setConsentStatus(ConsentStatus.EXPIRED);
+
+        when(consentJpaRepository.findByExternalId(PARENT_ID))
+            .thenReturn(Optional.of(consentEntity));
+
+        // When
         assertEquals(Optional.empty(), service.getNotFinalisedAuthorisationParent(PARENT_ID));
 
-        verify(aisConsentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+        // Then
+        verify(consentJpaRepository, times(1)).findByExternalId(PARENT_ID);
     }
 
     @Test
     void getAuthorisationParent() {
-        AisConsent consent = new AisConsent();
-        when(aisConsentJpaRepository.findByExternalId(PARENT_ID)).thenReturn(Optional.of(consent));
+        // Given
+        when(consentJpaRepository.findByExternalId(PARENT_ID))
+            .thenReturn(Optional.of(consentEntity));
 
-        assertEquals(Optional.of(consent), service.getAuthorisationParent(PARENT_ID));
+        // When
+        assertEquals(Optional.of(consentEntity), service.getAuthorisationParent(PARENT_ID));
 
-        verify(aisConsentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+        // Then
+        verify(consentJpaRepository, times(1)).findByExternalId(PARENT_ID);
     }
 
     @Test
     void updateAuthorisable() {
-        AisConsent consent = new AisConsent();
+        // When
+        service.updateAuthorisable(consentEntity);
 
-        service.updateAuthorisable(consent);
-        verify(aisConsentJpaRepository, times(1)).save(consent);
+        // Then
+        verify(consentJpaRepository, times(1)).save(consentEntity);
     }
 
     @Test
     void checkAndUpdateOnConfirmationExpiration() {
-        AisConsent initialConsent = new AisConsent();
-        AisConsent updatedConsent = new AisConsent();
-        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(initialConsent)).thenReturn(updatedConsent);
+        // Given
+        ConsentEntity updatedEntity = new ConsentEntity();
+        when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consentEntity))
+            .thenReturn(updatedEntity);
 
-        Authorisable response = service.checkAndUpdateOnConfirmationExpiration(initialConsent);
+        // When
+        Authorisable response = service.checkAndUpdateOnConfirmationExpiration(consentEntity);
 
-        assertEquals(updatedConsent, response);
-        verify(aisConsentConfirmationExpirationService).checkAndUpdateOnConfirmationExpiration(initialConsent);
+        // Then
+        assertEquals(updatedEntity, response);
+        verify(aisConsentConfirmationExpirationService).checkAndUpdateOnConfirmationExpiration(consentEntity);
     }
 
     @Test
     void isConfirmationExpired() {
-        AisConsent initialConsent = new AisConsent();
-        when(aisConsentConfirmationExpirationService.isConfirmationExpired(initialConsent)).thenReturn(true);
+        // Given
+        when(aisConsentConfirmationExpirationService.isConfirmationExpired(consentEntity))
+            .thenReturn(true);
 
-        boolean response = service.isConfirmationExpired(initialConsent);
+        // When
+        boolean response = service.isConfirmationExpired(consentEntity);
 
+        // Then
         assertTrue(response);
-        verify(aisConsentConfirmationExpirationService).isConfirmationExpired(initialConsent);
+        verify(aisConsentConfirmationExpirationService).isConfirmationExpired(consentEntity);
     }
 
     @Test
     void updateOnConfirmationExpiration() {
-        AisConsent initialConsent = new AisConsent();
-        AisConsent updatedConsent = new AisConsent();
-        when(aisConsentConfirmationExpirationService.updateOnConfirmationExpiration(initialConsent)).thenReturn(updatedConsent);
+        // Given
+        ConsentEntity updatedEntity = new ConsentEntity();
+        when(aisConsentConfirmationExpirationService.updateOnConfirmationExpiration(consentEntity))
+            .thenReturn(updatedEntity);
 
-        Authorisable response = service.updateOnConfirmationExpiration(initialConsent);
+        // When
+        Authorisable response = service.updateOnConfirmationExpiration(consentEntity);
 
-        assertEquals(updatedConsent, response);
-        verify(aisConsentConfirmationExpirationService).updateOnConfirmationExpiration(initialConsent);
+        // Then
+        assertEquals(updatedEntity, response);
+        verify(aisConsentConfirmationExpirationService).updateOnConfirmationExpiration(consentEntity);
     }
 
     @Test

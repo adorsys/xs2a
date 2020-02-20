@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -32,12 +34,13 @@ import java.util.stream.Stream;
 
 @Data
 @AllArgsConstructor
+@Deprecated
 public class AccountConsent {
     @JsonIgnore
     private final String id;
 
-    private final Xs2aAccountAccess access;
-    private final Xs2aAccountAccess aspspAccess;
+    private final AccountAccess access;
+    private final AccountAccess aspspAccess;
 
     private final boolean recurringIndicator;
 

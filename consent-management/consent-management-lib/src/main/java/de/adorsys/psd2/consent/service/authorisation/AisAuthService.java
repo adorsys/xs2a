@@ -18,9 +18,9 @@ package de.adorsys.psd2.consent.service.authorisation;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.Authorisable;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.consent.service.mapper.AuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
@@ -34,35 +34,35 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class AisAuthService extends CmsAuthorisationService<AisConsent> {
-    private AisConsentJpaRepository aisConsentJpaRepository;
+public class AisAuthService extends CmsAuthorisationService<ConsentEntity> {
+    private ConsentJpaRepository consentJpaRepository;
 
     @Autowired
     public AisAuthService(CmsPsuService cmsPsuService, PsuDataMapper psuDataMapper, AspspProfileService aspspProfileService,
                           AuthorisationRepository authorisationRepository,
                           AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService,
-                          AisConsentJpaRepository aisConsentJpaRepository,
+                          ConsentJpaRepository aisConsentJpaRepository,
                           AuthorisationMapper authorisationMapper) {
         super(cmsPsuService, psuDataMapper, aspspProfileService, authorisationMapper, authorisationRepository, aisConsentConfirmationExpirationService);
-        this.aisConsentJpaRepository = aisConsentJpaRepository;
+        this.consentJpaRepository = aisConsentJpaRepository;
     }
 
     @Override
     public Optional<Authorisable> getNotFinalisedAuthorisationParent(String parentId) {
-        return aisConsentJpaRepository.findByExternalId(parentId)
+        return consentJpaRepository.findByExternalId(parentId)
                    .filter(con -> !con.getConsentStatus().isFinalisedStatus())
                    .map(con -> con);
     }
 
     @Override
     public Optional<Authorisable> getAuthorisationParent(String parentId) {
-        return aisConsentJpaRepository.findByExternalId(parentId)
+        return consentJpaRepository.findByExternalId(parentId)
                    .map(con -> con);
     }
 
     @Override
     protected void updateAuthorisable(Object authorisable) {
-        aisConsentJpaRepository.save((AisConsent) authorisable);
+        consentJpaRepository.save((ConsentEntity) authorisable);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class AisAuthService extends CmsAuthorisationService<AisConsent> {
     }
 
     @Override
-    AisConsent castToParent(Authorisable authorisable) {
-        return (AisConsent) authorisable;
+    ConsentEntity castToParent(Authorisable authorisable) {
+        return (ConsentEntity) authorisable;
     }
 }

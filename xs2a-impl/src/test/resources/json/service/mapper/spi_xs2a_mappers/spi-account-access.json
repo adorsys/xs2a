@@ -20,14 +20,14 @@
       "currency": "EUR"
     }
   ],
-  "availableAccounts": "allAccounts",
-  "allPsd2": "allAccounts",
-  "availableAccountsWithBalance": "allAccounts",
   "spiAdditionalInformationAccess": {
     "ownerName": [
       {
         "resourceId": "11111-999999999"
       }
     ]
-  }
+  },
+  "availableAccounts": "allAccounts",
+  "allPsd2": "allAccounts",
+  "availableAccountsWithBalance": "allAccounts"
 }

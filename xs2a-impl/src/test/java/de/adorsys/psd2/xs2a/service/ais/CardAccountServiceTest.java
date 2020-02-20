@@ -19,9 +19,12 @@ package de.adorsys.psd2.xs2a.service.ais;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -35,8 +38,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -86,7 +87,7 @@ import static org.mockito.Mockito.*;
 class CardAccountServiceTest {
 
     private static final JsonReader jsonReader = new JsonReader();
-    private static final String CONSENT_ID = "Test consentId";
+    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String ACCOUNT_ID = "Test accountId";
 
     private static final String REQUEST_URI = "request/uri";
@@ -96,7 +97,7 @@ class CardAccountServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final MessageError VALIDATION_ERROR = buildMessageError();
 
-    private AccountConsent accountConsent;
+    private AisConsent aisConsent;
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     private GetCardAccountListConsentObject getCardAccountListConsentObject;
     private SpiAccountReference spiAccountReference;
@@ -138,14 +139,47 @@ class CardAccountServiceTest {
 
     @BeforeEach
     void setUp() {
-        accountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE));
+        aisConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE));
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
         getCardAccountListConsentObject = buildGetAccountListConsentObject();
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         getCardAccountDetailsRequestObject = buildCommonAccountRequestObject();
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
+    }
+
+    @Test
+    void getAccountDetailsList_Failure_AccountConsentUpdatedHasChecksumError() {
+        // Given
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+
+        List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
+
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        when(cardAccountSpi.requestCardAccountList(SPI_CONTEXT_DATA, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetailsList));
+
+        List<Xs2aCardAccountDetails> xs2aAccountDetailsList = Collections.singletonList(xs2aAccountDetails);
+
+        when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
+            .thenReturn(xs2aAccountDetailsList);
+
+        when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
+            .thenReturn(CmsResponse.<AisConsent>builder()
+                            .error(CmsError.CHECKSUM_ERROR)
+                            .build());
+        // When
+        ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
+
+        // Then
+        assertThatErrorIs(actualResponse, CONSENT_VALIDATION_FAILED);
     }
 
     @Test
@@ -165,7 +199,7 @@ class CardAccountServiceTest {
     void getAccountDetailsList_Failure_AllowedAccountDataHasError() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
 
         when(getCardAccountListValidator.validate(getCardAccountListConsentObject))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
@@ -181,7 +215,7 @@ class CardAccountServiceTest {
     void getAccountDetailsList_Failure_SpiResponseHasError() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
 
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
@@ -209,7 +243,7 @@ class CardAccountServiceTest {
     void getAccountDetailsList_Failure_AccountConsentUpdatedIsEmpty() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
@@ -228,7 +262,7 @@ class CardAccountServiceTest {
             .thenReturn(xs2aAccountDetailsList);
 
         when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(CmsResponse.<AccountConsent>builder()
+            .thenReturn(CmsResponse.<AisConsent>builder()
                             .error(CmsError.LOGICAL_ERROR)
                             .build());
         // When
@@ -242,7 +276,7 @@ class CardAccountServiceTest {
     void getAccountDetailsList_Success() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(accountHelperService.getSpiContextData())
@@ -264,8 +298,8 @@ class CardAccountServiceTest {
             .thenReturn(xs2aAccountDetailsList);
 
         when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(CmsResponse.<AccountConsent>builder()
-                            .payload(accountConsent)
+            .thenReturn(CmsResponse.<AisConsent>builder()
+                            .payload(aisConsent)
                             .build());
 
         // When
@@ -294,7 +328,7 @@ class CardAccountServiceTest {
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
 
-        AccountConsent accountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS));
+        AisConsent accountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE_WITHOUT_ASPSP_IDS));
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(accountConsent));
@@ -312,9 +346,9 @@ class CardAccountServiceTest {
         when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aAccountDetailsList);
 
-        AccountConsent updatedAccountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE));
-        when(accountReferenceUpdater.updateCardAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList))
-            .thenReturn(CmsResponse.<AccountConsent>builder()
+        AisConsent updatedAccountConsent = createConsent(createAccountAccess(ACCOUNT_REFERENCE));
+        when(accountReferenceUpdater.updateCardAccountReferences(CONSENT_ID, accountConsent, xs2aAccountDetailsList))
+            .thenReturn(CmsResponse.<AisConsent>builder()
                             .payload(updatedAccountConsent)
                             .build());
         // When
@@ -325,8 +359,8 @@ class CardAccountServiceTest {
         Xs2aCardAccountListHolder responseBody = actualResponse.getBody();
         assertThat(responseBody.getCardAccountDetails()).isEqualTo(xs2aAccountDetailsList);
 
-        verify(accountReferenceUpdater).updateCardAccountReferences(CONSENT_ID, accountConsent.getAccess(), xs2aAccountDetailsList);
-        assertThat(responseBody.getAccountConsent()).isEqualTo(updatedAccountConsent);
+        verify(accountReferenceUpdater).updateCardAccountReferences(CONSENT_ID, accountConsent, xs2aAccountDetailsList);
+        assertThat(responseBody.getAisConsent()).isEqualTo(updatedAccountConsent);
     }
 
     @Test
@@ -335,7 +369,7 @@ class CardAccountServiceTest {
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
 
         // When
         ResponseObject<Xs2aCardAccountListHolder> actualResponse = cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
@@ -352,7 +386,7 @@ class CardAccountServiceTest {
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(accountHelperService.getSpiContextData())
             .thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
@@ -365,8 +399,8 @@ class CardAccountServiceTest {
         when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
             .thenReturn(Collections.singletonList(xs2aAccountDetails));
         when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(CmsResponse.<AccountConsent>builder()
-                            .payload(accountConsent)
+            .thenReturn(CmsResponse.<AisConsent>builder()
+                            .payload(aisConsent)
                             .build());
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
@@ -384,13 +418,13 @@ class CardAccountServiceTest {
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(accountHelperService.getSpiContextData())
             .thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
 
-        AccountConsent accountConsent = createConsent(true);
+        AisConsent accountConsent = createConsent(true);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent))
             .thenReturn(false);
@@ -408,13 +442,13 @@ class CardAccountServiceTest {
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(accountHelperService.getSpiContextData())
             .thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
 
-        AccountConsent accountConsent = createConsent(true);
+        AisConsent accountConsent = createConsent(true);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent))
             .thenReturn(true);
@@ -432,13 +466,13 @@ class CardAccountServiceTest {
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(accountHelperService.getSpiContextData())
             .thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
 
-        AccountConsent accountConsent = createConsent(false);
+        AisConsent accountConsent = createConsent(false);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent))
             .thenReturn(true);
@@ -456,13 +490,13 @@ class CardAccountServiceTest {
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(accountHelperService.getSpiContextData())
             .thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
 
-        AccountConsent accountConsent = createConsent(false);
+        AisConsent accountConsent = createConsent(false);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent))
             .thenReturn(true);
@@ -580,7 +614,7 @@ class CardAccountServiceTest {
         assertThat(tppMessage.getMessageErrorCode()).isEqualTo(messageErrorCode);
     }
 
-    private void prepationForGetAccountListRequest(AccountConsent accountConsent) {
+    private void prepationForGetAccountListRequest(AisConsent accountConsent) {
         List<SpiCardAccountDetails> spiAccountDetailsList = Collections.singletonList(spiCardAccountDetails);
         when(consentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
@@ -591,7 +625,7 @@ class CardAccountServiceTest {
         when(accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiAccountDetailsList))
             .thenReturn(xs2aCardAccountDetailsList);
         when(accountReferenceUpdater.updateCardAccountReferences(eq(CONSENT_ID), any(), anyList()))
-            .thenReturn(CmsResponse.<AccountConsent>builder()
+            .thenReturn(CmsResponse.<AisConsent>builder()
                             .payload(accountConsent)
                             .build());
     }
@@ -617,15 +651,38 @@ class CardAccountServiceTest {
                    .build();
     }
 
-    private static AccountConsent createConsent(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private static AisConsent createConsent(AccountAccess access) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setConsentData(buildAisConsentData());
+        aisConsent.setId(CONSENT_ID);
+        aisConsent.setValidUntil(LocalDate.now());
+        aisConsent.setFrequencyPerDay(4);
+        aisConsent.setConsentStatus(ConsentStatus.VALID);
+        aisConsent.setAuthorisations(Collections.emptyList());
+        aisConsent.setConsentTppInformation(buildConsentTppInformation());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
+        aisConsent.setUsages(Collections.emptyMap());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
+        aisConsent.setTppAccountAccesses(createAccountAccess(ACCOUNT_REFERENCE));
+        aisConsent.setAspspAccountAccesses(createAccountAccess(ACCOUNT_REFERENCE));
+        return aisConsent;
     }
 
-    private static AccountConsent createConsent(boolean recurringIndicator) {
+    private static AisConsentData buildAisConsentData() {
+        return new AisConsentData(null, null, null, false);
+    }
+
+    private static ConsentTppInformation buildConsentTppInformation() {
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(createTppInfo());
+        return consentTppInformation;
+    }
+
+    private static AisConsent createConsent(boolean recurringIndicator) {
         String fileName = recurringIndicator
                               ? "json/AccountConsentRecurringIndicatorTrue.json"
                               : "json/AccountConsentRecurringIndicatorFalse.json";
-        return jsonReader.getObjectFromFile(fileName, AccountConsent.class);
+        return jsonReader.getObjectFromFile(fileName, AisConsent.class);
     }
 
     private static TppInfo createTppInfo() {
@@ -634,8 +691,8 @@ class CardAccountServiceTest {
         return tppInfo;
     }
 
-    private static Xs2aAccountAccess createAccountAccess(AccountReference accountReference) {
-        return new Xs2aAccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null, null, null, null);
+    private static AccountAccess createAccountAccess(AccountReference accountReference) {
+        return new AccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null);
     }
 
     @NotNull
@@ -645,12 +702,12 @@ class CardAccountServiceTest {
 
     @NotNull
     private GetCardAccountListConsentObject buildGetAccountListConsentObject() {
-        return new GetCardAccountListConsentObject(accountConsent, REQUEST_URI);
+        return new GetCardAccountListConsentObject(aisConsent, REQUEST_URI);
     }
 
     @NotNull
     private GetCardAccountDetailsRequestObject buildCommonAccountRequestObject() {
-        return new GetCardAccountDetailsRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI);
+        return new GetCardAccountDetailsRequestObject(aisConsent, ACCOUNT_ID, REQUEST_URI);
     }
 
 }

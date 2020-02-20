@@ -13,9 +13,9 @@
       }
     ],
     "balances": [],
-    "transactions": [],
-    "availableAccountsWithBalance": "allAccounts"
+    "transactions": []
   },
+  "availableAccountsWithBalance": "allAccounts",
   "frequencyPerDay": "1",
   "recurringIndicator": "false",
   "validUntil": "2017-08-06",

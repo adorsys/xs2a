@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
@@ -32,9 +32,9 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 @Component
 public class AccountAccessMultipleAccountsValidator {
 
-    public ValidationResult validate(AccountConsent accountConsent, boolean withBalance) {
-        if (withBalance && accountConsent.isConsentForDedicatedAccounts()) {
-            Xs2aAccountAccess access = accountConsent.getAccess();
+    public ValidationResult validate(AisConsent aisConsent, boolean withBalance) {
+        if (withBalance && aisConsent.isConsentForDedicatedAccounts()) {
+            AccountAccess access = aisConsent.getAccess();
             return validateAccountReferenceSize(access.getAccounts(), access.getBalances())
                        ? ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID)
                        : ValidationResult.valid();

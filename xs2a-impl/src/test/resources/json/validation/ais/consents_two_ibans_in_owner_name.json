@@ -1,0 +1,42 @@
+{
+  "access": {
+    "accounts": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      },
+      {
+        "currency": "EUR",
+        "iban": "DE69760700240340283600"
+      }
+    ],
+    "balances": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      }
+    ],
+    "transactions": [
+      {
+        "currency": "EUR",
+        "iban": "DE80760700240271232400"
+      }
+    ],
+    "additionalInformation": {
+      "ownerName": [
+        {
+          "currency": "EUR",
+          "iban": "DE69760700240340283600"
+        },
+        {
+          "currency": "EUR",
+          "iban": "DE38760700240320465700"
+        }
+      ]
+    }
+  },
+  "combinedServiceIndicator": false,
+  "frequencyPerDay": 15,
+  "recurringIndicator": true,
+  "validUntil": "2021-10-10"
+}

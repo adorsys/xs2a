@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@
 
 package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface AisConsentVerifyingRepository {
-    AisConsent verifyAndSave(AisConsent entity) throws WrongChecksumException;
+    ConsentEntity verifyAndSave(ConsentEntity entity) throws WrongChecksumException;
 
-    AisConsent verifyAndUpdate(AisConsent entity) throws WrongChecksumException;
+    ConsentEntity verifyAndUpdate(ConsentEntity entity) throws WrongChecksumException;
 
-    List<AisConsent> verifyAndSaveAll(List<AisConsent> entity) throws WrongChecksumException;
+    List<ConsentEntity> verifyAndSaveAll(List<ConsentEntity> entities) throws WrongChecksumException;
 
-    Optional<AisConsent> getActualAisConsent(String consentId);
+    Optional<ConsentEntity> getActualAisConsent(String consentId);
 }

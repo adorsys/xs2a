@@ -1,0 +1,9 @@
+{
+  "consentData": {
+    "availableAccounts": "allAccountsWithOwnerName"
+  },
+  "tppAccountAccesses": {
+  },
+  "aspspAccountAccesses": {
+  }
+}

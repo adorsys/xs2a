@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ public class EntityAttribute {
     public static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
     public static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";
     public static final String CREATION_TIMESTAMP_ATTRIBUTE = "creationTimestamp";
+
+    public static final String CONSENT_TYPE_ATTRIBUTE = "consentType";
+    public static final String CONSENT_TPP_INFORMATION_ATTRIBUTE = "tppInformation";
 
     public static final String PSU_ID_ATTRIBUTE = "psuId";
     public static final String PSU_ID_TYPE_ATTRIBUTE = "psuIdType";

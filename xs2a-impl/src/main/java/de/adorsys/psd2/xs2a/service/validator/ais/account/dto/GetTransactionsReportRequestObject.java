@@ -16,16 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.dto;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import lombok.Data;
 
 @Data
 public class GetTransactionsReportRequestObject extends CommonAccountRequestObject {
     private String acceptHeader;
 
-    public GetTransactionsReportRequestObject(AccountConsent accountConsent, String accountId, boolean withBalance,
+    public GetTransactionsReportRequestObject(AisConsent aisConsent, String accountId, boolean withBalance,
                                               String requestUri, String acceptHeader) {
-        super(accountConsent, accountId, withBalance, requestUri);
+        super(aisConsent, accountId, withBalance, requestUri);
         this.acceptHeader = acceptHeader;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,38 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
-import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
 import de.adorsys.psd2.consent.repository.AisConsentUsageRepository;
+import de.adorsys.psd2.consent.service.mapper.CmsAisConsentMapper;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.xs2a.reader.JsonReader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OneOffConsentExpirationServiceTest {
-    private static final String ACCOUNT_RESOURCE_ID_1 = "account 1";
-    private static final String ACCOUNT_RESOURCE_ID_2 = "account 2";
-    private static final String ACCOUNT_RESOURCE_ID_3 = "account 3";
+    private static final Long CONSENT_ID = 123358L;
+    private static final String RESOURCE_ID = "LGCGDC4KTx0tgnpZGYTTr8";
 
     @InjectMocks
     private OneOffConsentExpirationService oneOffConsentExpirationService;
@@ -53,33 +56,43 @@ class OneOffConsentExpirationServiceTest {
     private AisConsentUsageRepository aisConsentUsageRepository;
     @Mock
     private AisConsentTransactionRepository aisConsentTransactionRepository;
+    @Mock
+    private CmsAisConsentMapper cmsAisConsentMapper;
+
+    @Spy
+    private ConsentDataMapper consentDataMapper = new ConsentDataMapper();
+
+    private JsonReader jsonReader = new JsonReader();
+    private AisConsentTransaction aisConsentTransaction;
+    private CmsConsent cmsConsent;
+    private AccountReference accountReference;
+
+    @BeforeEach
+    void setUp() {
+        accountReference = jsonReader.getObjectFromFile("json/service/account-reference.json", AccountReference.class);
+        aisConsentTransaction = new AisConsentTransaction();
+        cmsConsent = new CmsConsent();
+        cmsConsent.setTppAccountAccesses(AccountAccess.EMPTY_ACCESS);
+    }
 
     @Test
     void isConsentExpired_multipleAccounts_partiallyUsed_shouldReturnFalse() {
         // Given
-        AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
+        cmsConsent.setConsentData(consentDataMapper.getBytesFromAisConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(Optional.empty());
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_2)))
-            .thenReturn(Optional.empty());
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(Optional.of(aisConsentTransaction));
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(0);
 
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(1);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_2)))
-            .thenReturn(2);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(2);
-
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(1L);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccesses());
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, null, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertFalse(isExpired);
@@ -88,29 +101,21 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_multipleAccounts_fullyUsed_shouldReturnTrue() {
         // Given
-        AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
+        cmsConsent.setConsentData(consentDataMapper.getBytesFromAisConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(Optional.empty());
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_2)))
-            .thenReturn(Optional.empty());
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(Optional.of(aisConsentTransaction));
-
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(1);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_2)))
-            .thenReturn(2);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(3);
 
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(1L);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccesses());
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, null, null);
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertTrue(isExpired);
@@ -119,11 +124,13 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_allAvailableAccounts_shouldReturnTrue() {
         // Given
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, AccountAccessType.ALL_ACCOUNTS, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertTrue(isExpired);
@@ -132,11 +139,13 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_bankOffered_shouldReturnFalse() {
         // Given
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
+        AisConsent aisConsent = buildAisConsent(null, null, null, null, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertFalse(isExpired);
@@ -145,12 +154,20 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_globalFullAccesses_notUsed_shouldReturnFalse() {
         // Given
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.GLOBAL);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccesses());
+        aisConsentTransaction.setNumberOfTransactions(1);
+
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(0);
+
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, null, AccountAccessType.ALL_ACCOUNTS);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertFalse(isExpired);
@@ -159,172 +176,135 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_globalFullAccesses_fullyUsed_shouldReturnTrue() {
         // Given
-        AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
-        aisConsentTransaction.setNumberOfTransactions(2);
+        aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(Optional.of(aisConsentTransaction));
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(5);
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(1);
 
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(1L);
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.GLOBAL);
-        aisConsent.setAllPsd2(AccountAccessType.ALL_ACCOUNTS);
-
-        aisConsent.setAspspAccountAccesses(Arrays.asList(getAspspAccountAccess(TypeAccess.ACCOUNT, ACCOUNT_RESOURCE_ID_1),
-                                                         getAspspAccountAccess(TypeAccess.BALANCE, ACCOUNT_RESOURCE_ID_1),
-                                                         getAspspAccountAccess(TypeAccess.TRANSACTION, ACCOUNT_RESOURCE_ID_1)));
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, null, AccountAccessType.ALL_ACCOUNTS);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertTrue(isExpired);
     }
 
     @Test
-    void isConsentExpired_dedicatedFullAccesses_notUsed_shouldReturnFalse() {
+    void isConsentExpired_dedicatedWithBalances_partiallyUsed_shouldReturnFalse() {
         // Given
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccesses());
+        aisConsentTransaction.setNumberOfTransactions(2);
+
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(1);
+
+        AisConsent aisConsent = buildAisConsent(null, accountReference, null, null, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertFalse(isExpired);
     }
 
     @Test
-    void isConsentExpired_dedicatedWithoutBalances_partiallyUsed_shouldReturnFalse() {
+    void isConsentExpired_dedicatedWithBalances_fullyUsed_shouldReturnTrue() {
         // Given
-        AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
         aisConsentTransaction.setNumberOfTransactions(2);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(Optional.empty());
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(Optional.of(aisConsentTransaction));
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(1);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(3);
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(2);
 
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(1L);
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccessesWithTransactions());
+        AisConsent aisConsent = buildAisConsent(null, accountReference, null, null, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
+
+        // Then
+        assertTrue(isExpired);
+    }
+
+    @Test
+    void isConsentExpired_dedicatedWithTransactions_partiallyUsed_shouldReturnFalse() {
+        // Given
+        aisConsentTransaction.setNumberOfTransactions(2);
+
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(1);
+
+        AisConsent aisConsent = buildAisConsent(null, null, accountReference, null, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent)).thenReturn(aisConsent);
+
+        // When
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertFalse(isExpired);
     }
 
     @Test
-    void isConsentExpired_dedicatedWithoutBalances_fullyUsed_shouldReturnTrue() {
+    void isConsentExpired_dedicatedWithTransactions_fullyUsed_shouldReturnTrue() {
         // Given
-        AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
         aisConsentTransaction.setNumberOfTransactions(2);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(Optional.empty());
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(any(AisConsent.class), eq(ACCOUNT_RESOURCE_ID_3)))
-            .thenReturn(Optional.of(aisConsentTransaction));
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(1);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_3)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(4);
 
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(1L);
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccessesWithTransactions());
+        AisConsent aisConsent = buildAisConsent(null, null, accountReference, null, null);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent)).thenReturn(aisConsent);
 
         // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
 
         // Then
         assertTrue(isExpired);
     }
 
-    @Test
-    void isConsentExpired_dedicatedWithoutTransactions_partiallyUsed_shouldReturnFalse() {
-        // Given
+    private AisConsent buildAisConsent(AccountReference account,
+                                       AccountReference balance,
+                                       AccountReference transaction,
+                                       AccountAccessType availableAccounts,
+                                       AccountAccessType allPsd2){
         AisConsent aisConsent = new AisConsent();
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccessesWithBalances());
 
-        // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
+        AccountAccess accountAccess = new AccountAccess(
+            Optional.ofNullable(account).map(Collections::singletonList).orElseGet(Collections::emptyList),
+            Optional.ofNullable(balance).map(Collections::singletonList).orElseGet(Collections::emptyList),
+            Optional.ofNullable(transaction).map(Collections::singletonList).orElseGet(Collections::emptyList),
+            null);
 
-        assertFalse(isExpired);
+        aisConsent.setAspspAccountAccesses(accountAccess);
+        aisConsent.setTppAccountAccesses(AccountAccess.EMPTY_ACCESS);
+
+        AisConsentData consentData = new AisConsentData(
+            Optional.ofNullable(availableAccounts).orElse(null),
+            Optional.ofNullable(allPsd2).orElse(null),
+            null,
+            false);
+
+        aisConsent.setConsentData(consentData);
+        return aisConsent;
     }
 
-    @Test
-    void isConsentExpired_dedicatedWithoutTransactions_fullyUsed_shouldReturnTrue() {
-        // Given
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_2)))
-            .thenReturn(2);
-        when(aisConsentUsageRepository.countByConsentIdAndResourceId(anyLong(), eq(ACCOUNT_RESOURCE_ID_1)))
-            .thenReturn(1);
-
-        AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(1L);
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.DEDICATED_ACCOUNTS);
-        aisConsent.setAspspAccountAccesses(createListOfAccountAccessesWithBalances());
-
-        // When
-        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(aisConsent);
-
-        // Then
-        assertTrue(isExpired);
-    }
-
-    private List<AspspAccountAccess> createListOfAccountAccesses() {
-        List<AspspAccountAccess> result = new ArrayList<>();
-
-        AspspAccountAccess accounts = getAspspAccountAccess(TypeAccess.ACCOUNT, ACCOUNT_RESOURCE_ID_1);
-        AspspAccountAccess balances = getAspspAccountAccess(TypeAccess.BALANCE, ACCOUNT_RESOURCE_ID_2);
-        AspspAccountAccess transactions = getAspspAccountAccess(TypeAccess.TRANSACTION, ACCOUNT_RESOURCE_ID_3);
-
-        result.add(accounts);
-        result.add(balances);
-        result.add(transactions);
-
-        return result;
-    }
-
-    private List<AspspAccountAccess> createListOfAccountAccessesWithTransactions() {
-        List<AspspAccountAccess> result = new ArrayList<>();
-
-        AspspAccountAccess accounts = getAspspAccountAccess(TypeAccess.ACCOUNT, ACCOUNT_RESOURCE_ID_1);
-        AspspAccountAccess transactions = getAspspAccountAccess(TypeAccess.TRANSACTION, ACCOUNT_RESOURCE_ID_3);
-
-        result.add(accounts);
-        result.add(transactions);
-
-        return result;
-    }
-
-    private List<AspspAccountAccess> createListOfAccountAccessesWithBalances() {
-        List<AspspAccountAccess> result = new ArrayList<>();
-
-        AspspAccountAccess accounts = getAspspAccountAccess(TypeAccess.ACCOUNT, ACCOUNT_RESOURCE_ID_1);
-        AspspAccountAccess balances = getAspspAccountAccess(TypeAccess.BALANCE, ACCOUNT_RESOURCE_ID_2);
-
-        result.add(accounts);
-        result.add(balances);
-        return result;
-    }
-
-    private AspspAccountAccess getAspspAccountAccess(TypeAccess account, String accountResourceId) {
-        AspspAccountAccess accounts = new AspspAccountAccess();
-        accounts.setTypeAccess(account);
-        accounts.setResourceId(accountResourceId);
-        return accounts;
-    }
 }

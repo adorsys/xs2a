@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -25,21 +27,23 @@ import java.util.List;
 
 public class CardAccountDetailsLinks extends AbstractLinks {
 
-    public CardAccountDetailsLinks(String httpUrl, String accountId, Xs2aAccountAccess xs2aAccountAccess) {
+    public CardAccountDetailsLinks(String httpUrl, String accountId, AisConsent aisConsent) {
         super(httpUrl);
 
-        boolean isConsentGlobal = xs2aAccountAccess.getAllPsd2() != null;
-        List<AccountReference> balances = xs2aAccountAccess.getBalances();
+        AccountAccess accountAccess = aisConsent.getAccess();
+        AisConsentData consentData = aisConsent.getConsentData();
+        boolean isConsentGlobal = consentData.getAllPsd2() != null;
+        List<AccountReference> balances = accountAccess.getBalances();
         if (hasAccessToCardSource(balances) &&
                 isValidAccountByAccess(accountId, balances, isConsentGlobal)) {
 
             setBalances(buildPath(UrlHolder.CARD_BALANCES_URL, accountId));
         }
 
-        List<AccountReference> transactions = xs2aAccountAccess.getTransactions();
+        List<AccountReference> transactions = accountAccess.getTransactions();
 
         if (hasAccessToCardSource(transactions) &&
-                isValidAccountByAccess(accountId, xs2aAccountAccess.getTransactions(), isConsentGlobal)) {
+                isValidAccountByAccess(accountId, accountAccess.getTransactions(), isConsentGlobal)) {
             setTransactions(buildPath(UrlHolder.CARD_TRANSACTIONS_URL, accountId));
         }
     }

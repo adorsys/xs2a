@@ -16,14 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.authorization;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,6 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
-import java.util.Currency;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,16 +42,21 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AisScaAuthorisationServiceTest {
+
+    private static final String CONSENT_ID = "03f0fccb-8462-43e8-9f7e-fce2887bcf38";
+
     @InjectMocks
     private AisScaAuthorisationService aisScaAuthorisationService;
+
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Test
     void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
-        when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()).thenReturn(false);
-        AccountConsent consent = buildAvailableAccountConsent(true);
+        when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired())
+            .thenReturn(false);
+        AisConsent consent = buildAvailableAccountConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -65,8 +68,9 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
-        when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired()).thenReturn(true);
-        AccountConsent consent = buildAvailableAccountConsent(true);
+        when(aspspProfileServiceWrapper.isScaByOneTimeAvailableAccountsConsentRequired())
+            .thenReturn(true);
+        AisConsent consent = buildAvailableAccountConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -78,7 +82,7 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_AllAvailableConsent_OneAccessTypeFalse() {
         //Given
-        AccountConsent consent = buildAvailableAccountConsent(false);
+        AisConsent consent = buildAvailableAccountConsent(false);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -90,8 +94,9 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
-        when(aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired()).thenReturn(false);
-        AccountConsent consent = buildGlobalConsent(true);
+        when(aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired())
+            .thenReturn(false);
+        AisConsent consent = buildGlobalConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -103,8 +108,9 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
-        when(aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired()).thenReturn(true);
-        AccountConsent consent = buildGlobalConsent(true);
+        when(aspspProfileServiceWrapper.isScaByOneTimeGlobalConsentRequired())
+            .thenReturn(true);
+        AisConsent consent = buildGlobalConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -116,7 +122,7 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_GlobalConsent_OneAccessTypeFalse() {
         //Given
-        AccountConsent consent = buildGlobalConsent(false);
+        AisConsent consent = buildGlobalConsent(false);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -128,7 +134,7 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_BankOfferedConsent_OneAccessTypeTrue() {
         //Given
-        AccountConsent consent = buildBankOfferedConsent(true);
+        AisConsent consent = buildBankOfferedConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -140,7 +146,7 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_BankOfferedConsent_OneAccessTypeFalse() {
         //Given
-        AccountConsent consent = buildBankOfferedConsent(false);
+        AisConsent consent = buildBankOfferedConsent(false);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -149,11 +155,10 @@ class AisScaAuthorisationServiceTest {
         assertFalse(oneFactorAuthorisation);
     }
 
-
     @Test
     void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredTrue() {
         //Given
-        AccountConsent consent = buildDedicatedConsent(true);
+        AisConsent consent = buildDedicatedConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -164,7 +169,7 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeFalse_ScaRequiredTrue() {
         //Given
-        AccountConsent consent = buildDedicatedConsent(false);
+        AisConsent consent = buildDedicatedConsent(false);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -175,7 +180,7 @@ class AisScaAuthorisationServiceTest {
     @Test
     void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredFalse() {
         //Given
-        AccountConsent consent = buildDedicatedConsent(true);
+        AisConsent consent = buildDedicatedConsent(true);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
@@ -183,31 +188,66 @@ class AisScaAuthorisationServiceTest {
         assertFalse(oneFactorAuthorisation);
     }
 
-    private AccountConsent buildAvailableAccountConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), AccountAccessType.ALL_ACCOUNTS, null, null, null);
-        return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
+    private AisConsent buildAvailableAccountConsent(boolean oneAccessType) {
+        return buildConsent(oneAccessType, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
     }
 
-    private AccountConsent buildGlobalConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, AccountAccessType.ALL_ACCOUNTS, null, null);
-        return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.GLOBAL);
+    private AisConsent buildGlobalConsent(boolean oneAccessType) {
+        return buildConsent(oneAccessType, AisConsentRequestType.GLOBAL);
     }
 
-    private AccountConsent buildBankOfferedConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
-        return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.BANK_OFFERED);
+    private AisConsent buildBankOfferedConsent(boolean oneAccessType) {
+        return buildConsent(oneAccessType, AisConsentRequestType.BANK_OFFERED);
     }
 
-    private AccountConsent buildDedicatedConsent(boolean oneAccessType) {
-        Xs2aAccountAccess accountAccess = new Xs2aAccountAccess(Collections.singletonList(new AccountReference(AccountReferenceType.IBAN, "DE86500105176716126648", Currency.getInstance("EUR"))), Collections.emptyList(), Collections.emptyList(), null, null, null, null);
-        return buildConsent(accountAccess, oneAccessType, AisConsentRequestType.DEDICATED_ACCOUNTS);
+    private AisConsent buildDedicatedConsent(boolean oneAccessType) {
+        return buildConsent(oneAccessType, AisConsentRequestType.DEDICATED_ACCOUNTS);
     }
 
-    private AccountConsent buildConsent(Xs2aAccountAccess accountAccess, boolean oneAccessType, AisConsentRequestType consentRequestType) {
-        LocalDate date = LocalDate.of(2019, 9, 19);
-        int frequencyPerDay = oneAccessType ? 1 : 2;
-        OffsetDateTime offsetDateTime = OffsetDateTime.of(2019, 9, 19, 12, 0, 0, 0, ZoneOffset.UTC);
+    private AisConsent buildConsent(boolean oneAccessType, AisConsentRequestType consentRequestType) {
+        return createConsent(LocalDate.of(2019, 9, 19), OffsetDateTime.of(2019, 9, 19, 12, 0, 0, 0, ZoneOffset.UTC), oneAccessType, consentRequestType);
+    }
 
-        return new AccountConsent("some id", accountAccess, accountAccess, !oneAccessType, date, null, frequencyPerDay, date, ConsentStatus.RECEIVED, false, false, Collections.emptyList(), new TppInfo(), consentRequestType, false, Collections.emptyList(), offsetDateTime, Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent createConsent(LocalDate validUntil, OffsetDateTime statusChangeTimeStamp, boolean oneAccessType, AisConsentRequestType consentRequestType) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setConsentData(buildAisConsentData(consentRequestType));
+        aisConsent.setId(CONSENT_ID);
+        aisConsent.setValidUntil(validUntil);
+        aisConsent.setFrequencyPerDay(oneAccessType ? 1 : 2);
+        aisConsent.setConsentStatus(ConsentStatus.VALID);
+        aisConsent.setAuthorisations(Collections.emptyList());
+        aisConsent.setConsentTppInformation(buildConsentTppInformation());
+        aisConsent.setStatusChangeTimestamp(statusChangeTimeStamp);
+        aisConsent.setUsages(Collections.emptyMap());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
+        aisConsent.setRecurringIndicator(!oneAccessType);
+
+        return aisConsent;
+    }
+
+    private AisConsentData buildAisConsentData(AisConsentRequestType requestType) {
+        if (AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS == requestType) {
+            return new AisConsentData(AccountAccessType.ALL_ACCOUNTS, null, null, false);
+        }
+
+        if (AisConsentRequestType.GLOBAL == requestType) {
+            return new AisConsentData(null, AccountAccessType.ALL_ACCOUNTS, null, false);
+        }
+
+        if (AisConsentRequestType.DEDICATED_ACCOUNTS == requestType) {
+            return AisConsentData.buildDefaultAisConsentData();
+        }
+
+        if (AisConsentRequestType.BANK_OFFERED == requestType) {
+            return AisConsentData.buildDefaultAisConsentData();
+        }
+
+        return null;
+    }
+
+    private ConsentTppInformation buildConsentTppInformation() {
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(new TppInfo());
+        return consentTppInformation;
     }
 }

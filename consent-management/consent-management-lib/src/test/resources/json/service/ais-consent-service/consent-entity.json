@@ -1,0 +1,42 @@
+{
+  "id": 1,
+  "externalId": "4b112130-6a96-4941-a220-2da8a4af2c65",
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "frequencyPerDay": 4,
+  "recurringIndicator": true,
+  "multilevelScaRequired": false,
+  "psuDataList": [
+  ],
+  "tppInformation": {
+  },
+  "authorisationTemplate": {
+    "redirectUri": "Mock tppOkRedirectUri",
+    "nokRedirectUri": "Mock tppNokRedirectUri"
+  },
+  "validUntil": "2030-01-01",
+  "tppAccountAccesses": [],
+  "aspspAccountAccesses": [
+    {
+      "accountReferenceType": "iban",
+      "accountIdentifier": "DE89370400440532013000",
+      "typeAccess": "ACCOUNT"
+    },
+    {
+      "accountReferenceType": "iban",
+      "accountIdentifier": "DE80760700240271232400",
+      "typeAccess": "BALANCE"
+    },
+    {
+      "accountReferenceType": "iban",
+      "accountIdentifier": "DE89370400440532015000",
+      "typeAccess": "TRANSACTION"
+    },
+    {
+      "accountReferenceType": "iban",
+      "accountIdentifier": "DE89370400440532013000",
+      "typeAccess": "OWNER_NAME"
+    }
+  ],
+  "ownerNameType": "DEDICATED_ACCOUNTS"
+}

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum AuthorisationType {
+    // ToDo: consider replacing AIS with general consent value https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1210
     AIS,
     PIS_CREATION,
     PIS_CANCELLATION;

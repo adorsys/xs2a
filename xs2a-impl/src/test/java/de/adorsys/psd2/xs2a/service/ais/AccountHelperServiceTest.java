@@ -18,16 +18,12 @@ package de.adorsys.psd2.xs2a.service.ais;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.ErrorToActionStatusMapper;
@@ -35,18 +31,16 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountRefe
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
-import java.util.UUID;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
@@ -55,15 +49,14 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccountHelperServiceTest {
-    private static final String ACCOUNT_ID = "accountId";
+    private static final String ACCOUNT_ID = "0008921mxl-n2131-13nw";
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
-    private static final String IBAN = "Test IBAN";
-    private static final String BBAN = "Test BBAN";
-    private static final String PAN = "Test PAN";
-    private static final String MASKED_PAN = "Test MASKED_PAN";
-    private static final String MSISDN = "Test MSISDN";
+    private static final String IBAN = "DE80760700240271232400";
+    private static final String BBAN = "89370400440532010000";
+    private static final String PAN = "2356574632171234";
+    private static final String MASKED_PAN = "235657******1234";
+    private static final String MSISDN = "+49(0)911 360698-0";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
-    private static final String CONSENT_ID = "Test consentId";
     private static final boolean WITH_BALANCE = true;
 
     private static final SpiAccountReference SPI_ACCOUNT_REFERENCE = buildSpiAccountReference();
@@ -71,9 +64,6 @@ class AccountHelperServiceTest {
     private static final List<AccountReference> REFERENCES = Collections.singletonList(XS2A_ACCOUNT_REFERENCE);
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final PsuIdData PSU_ID_DATA = buildPsuIdData();
-    private static final Xs2aAccountAccess ACCOUNT_ACCESS = createAccountAccess();
-    private static final AccountConsent ACCOUNT_CONSENT = createConsent();
-    private static final AccountConsent ACCOUNT_CONSENT_FALSE_ONE_ACCESS_TYPE = createConsentWithFalceOneAccessType();
 
     private static final ActionStatus ACTION_STATUS_SUCCESS = ActionStatus.SUCCESS;
     private static final ActionStatus ACTION_STATUS_CONSENT_INVALID_STATUS = ActionStatus.CONSENT_INVALID_STATUS;
@@ -95,29 +85,26 @@ class AccountHelperServiceTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    private static SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null);
-    }
+    private JsonReader jsonReader = new JsonReader();
 
     @Test
     void findAccountReference_WithNullAccountAccessType() {
         // Given
-        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE)).thenReturn(SPI_ACCOUNT_REFERENCE);
+        when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(XS2A_ACCOUNT_REFERENCE))
+            .thenReturn(SPI_ACCOUNT_REFERENCE);
         // When
         SpiAccountReference actual = accountHelperService.findAccountReference(REFERENCES, ACCOUNT_ID);
         // Then
         assertEquals(SPI_ACCOUNT_REFERENCE, actual);
     }
 
-    private static AccountReference buildXs2aAccountReference() {
-        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
-    }
-
     @Test
     void getSpiContextData() {
         // Given
-        when(requestProviderService.getPsuIdData()).thenReturn(PSU_ID_DATA);
-        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
+        when(requestProviderService.getPsuIdData())
+            .thenReturn(PSU_ID_DATA);
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA))
+            .thenReturn(SPI_CONTEXT_DATA);
         // When
         SpiContextData actual = accountHelperService.getSpiContextData();
         // Then
@@ -139,7 +126,8 @@ class AccountHelperServiceTest {
     @Test
     void createActionStatus_WithThreeArgumentsAndError() {
         // Given
-        when(errorToActionStatusMapper.mapActionStatusError(CONSENT_INVALID, WITH_BALANCE, TYPE_ACCESS_ACCOUNT)).thenReturn(ACTION_STATUS_CONSENT_INVALID_STATUS);
+        when(errorToActionStatusMapper.mapActionStatusError(CONSENT_INVALID, WITH_BALANCE, TYPE_ACCESS_ACCOUNT))
+            .thenReturn(ACTION_STATUS_CONSENT_INVALID_STATUS);
         // When
         ActionStatus actual = accountHelperService.createActionStatus(WITH_BALANCE, TYPE_ACCESS_ACCOUNT, RESPONSE_OBJECT_WITH_ERROR);
         // Then
@@ -149,7 +137,7 @@ class AccountHelperServiceTest {
     @Test
     void needsToUpdateUsage_returnTrue() {
         // When
-        boolean actual = accountHelperService.needsToUpdateUsage(ACCOUNT_CONSENT);
+        boolean actual = accountHelperService.needsToUpdateUsage(createConsent());
         // Then
         assertTrue(actual);
     }
@@ -157,28 +145,30 @@ class AccountHelperServiceTest {
     @Test
     void needsToUpdateUsage_returnFalse() {
         // Given
-        when(requestProviderService.isRequestFromTPP()).thenReturn(false);
+        when(requestProviderService.isRequestFromTPP())
+            .thenReturn(false);
         // When
-        boolean actual = accountHelperService.needsToUpdateUsage(ACCOUNT_CONSENT_FALSE_ONE_ACCESS_TYPE);
+        boolean actual = accountHelperService.needsToUpdateUsage(createConsentWithFalceOneAccessType());
         // Then
         assertFalse(actual);
     }
 
-    private static AccountConsent createConsent() {
-        return new AccountConsent(CONSENT_ID, ACCOUNT_ACCESS, ACCOUNT_ACCESS, false, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent createConsent() {
+        return jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
     }
 
-    private static AccountConsent createConsentWithFalceOneAccessType() {
-        return new AccountConsent(CONSENT_ID, ACCOUNT_ACCESS, ACCOUNT_ACCESS, true, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent createConsentWithFalceOneAccessType() {
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
+        aisConsent.setRecurringIndicator(true);
+
+        return aisConsent;
     }
 
-    private static Xs2aAccountAccess createAccountAccess() {
-        return new Xs2aAccountAccess(Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), null, null, null, null);
+    private static AccountReference buildXs2aAccountReference() {
+        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
     }
 
-    private static TppInfo createTppInfo() {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(UUID.randomUUID().toString());
-        return tppInfo;
+    private static SpiAccountReference buildSpiAccountReference() {
+        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null);
     }
 }

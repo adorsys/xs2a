@@ -1,0 +1,49 @@
+{
+  "id": 1,
+  "externalId": "c966f143-f6a2-41db-9036-8abaeeef3af7",
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "frequencyPerDay": 4,
+  "recurringIndicator": false,
+  "multilevelScaRequired": true,
+  "psuDataList": [
+    {
+      "psuId": "marion.mueller"
+    }
+  ],
+  "tppInformation": {
+    "tppRedirectPreferred": true,
+    "tppFrequencyPerDay": 10,
+    "tppNotificationUri": "http://super-redirect.info",
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppName": "",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppNotificationContentPreferred": [
+      "SCA",
+      "PROCESS"
+    ]
+  },
+  "authorisationTemplate": {
+    "redirectUri": "http://test.com",
+    "nokRedirectUri": "http://test.nok.com"
+  },
+  "expireDate": "2025-12-31",
+  "validUntil": "2030-12-31",
+  "checksum": "Y2hlY2tTdW0=",
+  "data": "ZGF0YQ==",
+  "internalRequestId": "05319ae6-053b-45a1-a564-5e52948f034a",
+  "lastActionDate": "2019-12-31"
+}

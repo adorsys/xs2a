@@ -24,7 +24,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -84,6 +86,12 @@ public class AccountReference {
         this.currency = currency;
         this.resourceId = resourceId;
         this.aspspAccountId = aspspAccountId;
+    }
+
+
+    @JsonIgnore
+    public AccountReferenceType getAccountReferenceType() {
+        return getUsedAccountReferenceSelector().getAccountReferenceType();
     }
 
     @JsonIgnore

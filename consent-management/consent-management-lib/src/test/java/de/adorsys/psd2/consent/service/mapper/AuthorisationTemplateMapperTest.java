@@ -65,4 +65,32 @@ class AuthorisationTemplateMapperTest {
         AuthorisationTemplate authorisationTemplate = mapper.mapToAuthorisationTemplate(null);
         assertNull(authorisationTemplate);
     }
+
+    @Test
+    void mapToAuthorisationTemplateEntity() {
+        //Given
+        AuthorisationTemplate authorisationTemplate = jsonReader.getObjectFromFile("json/service/mapper/authorisation-template.json", AuthorisationTemplate.class);
+        AuthorisationTemplateEntity expectedAuthorisationTemplateEntity = jsonReader.getObjectFromFile("json/service/mapper/authorisation-template-entity.json", AuthorisationTemplateEntity.class);
+        //When
+        AuthorisationTemplateEntity authorisationTemplateEntity = mapper.mapToAuthorisationTemplateEntity(authorisationTemplate);
+        //Then
+        assertEquals(expectedAuthorisationTemplateEntity, authorisationTemplateEntity);
+    }
+
+    @Test
+    void mapToAuthorisationTemplateEntity_tppRedirectUriAreNull() {
+        //Given
+        AuthorisationTemplate authorisationTemplate = new AuthorisationTemplate();
+        AuthorisationTemplateEntity expectedAuthorisationTemplateEntity = new AuthorisationTemplateEntity();
+        //When
+        AuthorisationTemplateEntity authorisationTemplateEntity = mapper.mapToAuthorisationTemplateEntity(authorisationTemplate);
+        //Then
+        assertEquals(expectedAuthorisationTemplateEntity, authorisationTemplateEntity);
+    }
+
+    @Test
+    void mapToAuthorisationTemplateEntity_nullValue() {
+        AuthorisationTemplateEntity authorisationTemplateEntity = mapper.mapToAuthorisationTemplateEntity(null);
+        assertNull(authorisationTemplateEntity);
+    }
 }

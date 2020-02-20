@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.repository;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.repository.CrudRepository;
 
@@ -28,10 +28,10 @@ import java.util.Optional;
 
 public interface AisConsentUsageRepository extends CrudRepository<AisConsentUsage, Long> {
     @Lock(value = LockModeType.OPTIMISTIC_FORCE_INCREMENT)
-    Optional<AisConsentUsage> findWriteByConsentAndUsageDateAndRequestUri(AisConsent aisConsent, LocalDate usageDate, String requestUri);
+    Optional<AisConsentUsage> findWriteByConsentAndUsageDateAndRequestUri(ConsentEntity aisConsent, LocalDate usageDate, String requestUri);
 
     @Lock(value = LockModeType.OPTIMISTIC)
-    List<AisConsentUsage> findReadByConsentAndUsageDate(AisConsent aisConsent, LocalDate usageDate);
+    List<AisConsentUsage> findReadByConsentAndUsageDate(ConsentEntity aisConsent, LocalDate usageDate);
 
     int countByConsentIdAndResourceId(Long consentId, String resourceId);
 }

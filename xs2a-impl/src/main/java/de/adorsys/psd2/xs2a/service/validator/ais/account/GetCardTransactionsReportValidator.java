@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -61,9 +61,9 @@ public class GetCardTransactionsReportValidator extends AbstractAccountTppValida
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(CardTransactionsReportByPeriodObject requestObject) {
-        AccountConsent accountConsent = requestObject.getAccountConsent();
+        AisConsent aisConsent = requestObject.getAisConsent();
 
-        if (accountConsent.isConsentWithNotCardAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (aisConsent.isConsentWithNotCardAccount() && !aisConsent.isConsentForAllAvailableAccounts() && !aisConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
@@ -77,8 +77,8 @@ public class GetCardTransactionsReportValidator extends AbstractAccountTppValida
             return validationResult;
         }
 
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountConsent.getAspspAccess(),
-                                                                                                     requestObject.getTransactions(), requestObject.getAccountId(), accountConsent.getAisConsentRequestType());
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(aisConsent,
+                                                                                                     requestObject.getTransactions(), requestObject.getAccountId(), aisConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
@@ -89,12 +89,12 @@ public class GetCardTransactionsReportValidator extends AbstractAccountTppValida
             return ValidationResult.invalid(AIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_BOOKING_STATUS, bookingStatus.getValue()));
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(aisConsent);
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }
 
-        return accountConsentValidator.validate(accountConsent, requestObject.getRequestUri());
+        return accountConsentValidator.validate(aisConsent, requestObject.getRequestUri());
     }
 
     private ValidationResult validateCardTransactionReportParameters(Boolean deltaList, LocalDate dateFrom) {

@@ -1,0 +1,28 @@
+{
+  "consentType": "AIS",
+  "tppInformation": {
+    "tppRedirectPreferred": true,
+    "tppFrequencyPerDay": 5,
+    "tppNotificationUri": "http://super-redirect.info",
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "authorityId": "DE-FAKENCA"
+    },
+    "tppNotificationSupportedModes": [
+      "SCA",
+      "PROCESS"
+    ]
+  },
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "http://test.com",
+      "nokUri": "http://test.nok.com"
+    }
+  },
+  "internalRequestId": "1234-5678-9012-3456",
+  "frequencyPerDay": 5,
+  "validUntil": "2030-12-31",
+  "psuIdDataList": [
+  ],
+  "recurringIndicator": false
+}

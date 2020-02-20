@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
@@ -77,13 +77,13 @@ class ConsentValidationServiceTest {
     private TppNotificationDataValidator tppNotificationDataValidator;
 
     private JsonReader jsonReader = new JsonReader();
-    private AccountConsent accountConsent;
+    private AisConsent aisConsent;
     private ArgumentCaptor<CommonConsentObject> commonConsentObjectCaptor;
     private ArgumentCaptor<CreateConsentAuthorisationObject> consentAuthorisationPOArgumentCaptor;
 
     @BeforeEach
     void setUp() {
-        accountConsent = jsonReader.getObjectFromFile("json/service/account-consent.json", AccountConsent.class);
+        aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
         commonConsentObjectCaptor = ArgumentCaptor.forClass(CommonConsentObject.class);
         consentAuthorisationPOArgumentCaptor = ArgumentCaptor.forClass(CreateConsentAuthorisationObject.class);
     }
@@ -105,40 +105,40 @@ class ConsentValidationServiceTest {
     void validateConsentOnGettingStatusById() {
         when(getAccountConsentsStatusByIdValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentOnGettingStatusById(accountConsent);
+        service.validateConsentOnGettingStatusById(aisConsent);
 
         verify(getAccountConsentsStatusByIdValidator).validate(any(CommonConsentObject.class));
-        assertEquals(accountConsent, commonConsentObjectCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, commonConsentObjectCaptor.getValue().getAisConsent());
     }
 
     @Test
     void validateConsentOnDelete() {
         when(deleteAccountConsentsByIdValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentOnDelete(accountConsent);
+        service.validateConsentOnDelete(aisConsent);
 
         verify(deleteAccountConsentsByIdValidator).validate(any(CommonConsentObject.class));
-        assertEquals(accountConsent, commonConsentObjectCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, commonConsentObjectCaptor.getValue().getAisConsent());
     }
 
     @Test
     void validateConsentOnGettingById() {
         when(getAccountConsentByIdValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentOnGettingById(accountConsent);
+        service.validateConsentOnGettingById(aisConsent);
 
         verify(getAccountConsentByIdValidator).validate(any(CommonConsentObject.class));
-        assertEquals(accountConsent, commonConsentObjectCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, commonConsentObjectCaptor.getValue().getAisConsent());
     }
 
     @Test
     void validateConsentAuthorisationOnCreate() {
         when(createConsentAuthorisationValidator.validate(consentAuthorisationPOArgumentCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(accountConsent, new PsuIdData(null, null, null, null, null)));
+        service.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(aisConsent, new PsuIdData(null, null, null, null, null)));
 
         verify(createConsentAuthorisationValidator).validate(any(CreateConsentAuthorisationObject.class));
-        assertEquals(accountConsent, consentAuthorisationPOArgumentCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, consentAuthorisationPOArgumentCaptor.getValue().getAisConsent());
     }
 
     @Test
@@ -148,10 +148,10 @@ class ConsentValidationServiceTest {
 
         when(updateConsentPsuDataValidator.validate(updateConsentPsuDataRequestObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentPsuDataOnUpdate(accountConsent, request);
+        service.validateConsentPsuDataOnUpdate(aisConsent, request);
 
         verify(updateConsentPsuDataValidator).validate(any(UpdateConsentPsuDataRequestObject.class));
-        assertEquals(accountConsent, updateConsentPsuDataRequestObjectCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, updateConsentPsuDataRequestObjectCaptor.getValue().getAisConsent());
         assertEquals(request, updateConsentPsuDataRequestObjectCaptor.getValue().getUpdateRequest());
     }
 
@@ -159,10 +159,10 @@ class ConsentValidationServiceTest {
     void validateConsentAuthorisationOnGettingById() {
         when(getConsentAuthorisationsValidator.validate(commonConsentObjectCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentAuthorisationOnGettingById(accountConsent);
+        service.validateConsentAuthorisationOnGettingById(aisConsent);
 
         verify(getConsentAuthorisationsValidator).validate(any(CommonConsentObject.class));
-        assertEquals(accountConsent, commonConsentObjectCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, commonConsentObjectCaptor.getValue().getAisConsent());
     }
 
     @Test
@@ -171,10 +171,10 @@ class ConsentValidationServiceTest {
 
         when(getConsentAuthorisationScaStatusValidator.validate(getConsentAuthorisationScaStatusPOCaptor.capture())).thenReturn(ValidationResult.valid());
 
-        service.validateConsentAuthorisationScaStatus(accountConsent, AUTHORISATION_ID);
+        service.validateConsentAuthorisationScaStatus(aisConsent, AUTHORISATION_ID);
 
         verify(getConsentAuthorisationScaStatusValidator).validate(any(GetConsentAuthorisationScaStatusPO.class));
-        assertEquals(accountConsent, getConsentAuthorisationScaStatusPOCaptor.getValue().getAccountConsent());
+        assertEquals(aisConsent, getConsentAuthorisationScaStatusPOCaptor.getValue().getAisConsent());
         assertEquals(AUTHORISATION_ID, getConsentAuthorisationScaStatusPOCaptor.getValue().getAuthorisationId());
     }
 

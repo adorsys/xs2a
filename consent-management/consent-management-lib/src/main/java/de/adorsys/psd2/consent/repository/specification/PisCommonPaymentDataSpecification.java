@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.ASPSP_ACCOUNT_ID_ATTRIBUTE;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
@@ -80,10 +81,10 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
     /**
      * Returns specification for PisCommonPaymentData entity for filtering payments by aspsp account id, creation date and instance ID.
      *
-     * @param aspspAccountId         Bank specific account identifier
-     * @param createDateFrom         optional creation date that limits resulting data to payments created after this date(inclusive)
-     * @param createDateTo           optional creation date that limits resulting data to payments created before this date(inclusive)
-     * @param instanceId             optional instance ID
+     * @param aspspAccountId Bank specific account identifier
+     * @param createDateFrom optional creation date that limits resulting data to payments created after this date(inclusive)
+     * @param createDateTo   optional creation date that limits resulting data to payments created before this date(inclusive)
+     * @param instanceId     optional instance ID
      * @return resulting specification for PisCommonPaymentData entity
      */
     public Specification<PisCommonPaymentData> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
@@ -91,7 +92,11 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                               @Nullable LocalDate createDateTo,
                                                                                               @Nullable String instanceId) {
         return Specification.<PisCommonPaymentData>where(byAspspAccountId(aspspAccountId))
-                                                 .and(byCreationTimestamp(createDateFrom, createDateTo))
-                                                 .and(byInstanceId(instanceId));
+                   .and(byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(byInstanceId(instanceId));
+    }
+
+    private <T> Specification<T> byAspspAccountId(@Nullable String aspspAccountId) {
+        return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
     }
 }

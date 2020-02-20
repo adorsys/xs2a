@@ -28,6 +28,7 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -138,8 +139,8 @@ public class PisCommonPaymentData extends InstanceDependableEntity implements Au
         return false;
     }
 
-    public boolean isNotConfirmed() {
-        return transactionStatus == TransactionStatus.RCVD;
+    private boolean isNotConfirmed() {
+        return EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC).contains(transactionStatus);
     }
 
     public boolean isFinalised() {

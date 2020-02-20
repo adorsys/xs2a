@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
     public Specification<PiisConsentEntity> byAspspAccountIdAndPsuIdDataAndInstanceId(@Nullable String aspspAccountId,
                                                                                       @NotNull PsuIdData psuIdData,
                                                                                       @Nullable String instanceId) {
-        return Specification.<PiisConsentEntity>where(byAspspAccountIdInAccount(aspspAccountId))
+        return Specification.where(byAspspAccountIdInAccount(aspspAccountId))
                    .and(byPsuIdData(psuIdData))
                    .and(byInstanceId(instanceId));
     }
@@ -197,8 +197,8 @@ public class PiisConsentEntitySpecification extends GenericSpecification {
         return (root, query, cb) -> {
             AccountReferenceSelector selector = accountReference.getUsedAccountReferenceSelector();
             Join<PiisConsentEntity, AccountReferenceEntity> accountJoin = root.join(ACCOUNT_ATTRIBUTE);
-            Specification specifications = Specification
-                                               .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()));
+            Specification<PiisConsentEntity> specifications = Specification
+                                                                  .where(provideSpecificationForJoinedEntityAttribute(accountJoin, selector.getAccountReferenceType().getValue(), selector.getAccountValue()));
 
             if (accountReference.getCurrency() != null) {
                 specifications.and(provideSpecificationForJoinedEntityAttribute(accountJoin, CURRENCY_ATTRIBUTE, accountReference.getCurrency()));

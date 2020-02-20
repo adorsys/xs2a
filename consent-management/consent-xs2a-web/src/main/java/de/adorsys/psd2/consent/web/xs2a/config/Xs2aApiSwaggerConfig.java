@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public class Xs2aApiSwaggerConfig {
                        InternalCmsXs2aApiTagHolder.AIS_CONSENTS,
                        InternalCmsXs2aApiTagHolder.AIS_PSU_DATA,
                        InternalCmsXs2aApiTagHolder.ASPSP_CONSENT_DATA,
+                       InternalCmsXs2aApiTagHolder.CONSENTS,
                        InternalCmsXs2aApiTagHolder.EVENTS,
                        InternalCmsXs2aApiTagHolder.PIIS_CONSENTS,
                        InternalCmsXs2aApiTagHolder.PIS_COMMON_PAYMENT,

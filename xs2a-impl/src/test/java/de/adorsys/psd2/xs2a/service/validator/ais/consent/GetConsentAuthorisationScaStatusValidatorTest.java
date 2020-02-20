@@ -16,11 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
@@ -30,9 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.OffsetDateTime;
-import java.util.Collections;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,18 +67,18 @@ class GetConsentAuthorisationScaStatusValidatorTest {
     @Test
     void validate_withValidConsentObject_shouldReturnValid() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        AisConsent aisConsent = buildAccountConsent(TPP_INFO);
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when(aisAuthorisationValidator.validate(AUTHORISATION_ID, accountConsent)).thenReturn(ValidationResult.valid());
-        when(oauthConsentValidator.validate(accountConsent))
+        when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent)).thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent))
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent, AUTHORISATION_ID));
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(aisConsent, AUTHORISATION_ID));
 
         // Then
-        verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisConsentTppInfoValidator).validateTpp(aisConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
@@ -90,15 +88,15 @@ class GetConsentAuthorisationScaStatusValidatorTest {
     @Test
     void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        AisConsent aisConsent = buildAccountConsent(INVALID_TPP_INFO);
         when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO))
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(accountConsent, AUTHORISATION_ID));
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(aisConsent, AUTHORISATION_ID));
 
         // Then
-        verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+        verify(aisConsentTppInfoValidator).validateTpp(aisConsent.getTppInfo());
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -111,10 +109,11 @@ class GetConsentAuthorisationScaStatusValidatorTest {
         return tppInfo;
     }
 
-    private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", null, null, false, null, null, 0,
-                                  null, null, false, false,
-                                  Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent buildAccountConsent(TppInfo tppInfo) {
+        AisConsent aisConsent = new AisConsent();
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(tppInfo);
+        aisConsent.setConsentTppInformation(consentTppInformation);
+        return aisConsent;
     }
 }

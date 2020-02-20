@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f275cd25-215c-423f-ad54-f67cfb4e6356",
+		"_postman_id": "0de3e2bf-ab6e-4149-86d9-7f9167d1b9ee",
 		"name": "Additional information",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"accountOwnerInformationSupported\": false\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+							"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"accountOwnerInformationSupported\": false\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -581,7 +581,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"accountOwnerInformationSupported\": true\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+							"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"accountOwnerInformationSupported\": true\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -949,7 +949,7 @@
 									"script": {
 										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
 										"exec": [
-											"pm.globals.set(\"with_balance\", false);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -972,7 +972,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
@@ -984,7 +984,7 @@
 									"query": [
 										{
 											"key": "withBalance",
-											"value": "{{with_balance}}"
+											"value": "false"
 										}
 									]
 								},
@@ -1334,7 +1334,7 @@
 									"script": {
 										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
 										"exec": [
-											"pm.globals.set(\"with_balance\", false);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -1357,7 +1357,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
@@ -1369,7 +1369,7 @@
 									"query": [
 										{
 											"key": "withBalance",
-											"value": "{{with_balance}}"
+											"value": "false"
 										}
 									]
 								},
@@ -1719,7 +1719,7 @@
 									"script": {
 										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
 										"exec": [
-											"pm.globals.set(\"with_balance\", false);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -1742,7 +1742,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
@@ -1754,7 +1754,7 @@
 									"query": [
 										{
 											"key": "withBalance",
-											"value": "{{with_balance}}"
+											"value": "false"
 										}
 									]
 								},
@@ -2105,7 +2105,7 @@
 									"script": {
 										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
 										"exec": [
-											"pm.globals.set(\"with_balance\", false);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -2128,7 +2128,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
@@ -2140,7 +2140,7 @@
 									"query": [
 										{
 											"key": "withBalance",
-											"value": "{{with_balance}}"
+											"value": "false"
 										}
 									]
 								},
@@ -2491,7 +2491,7 @@
 									"script": {
 										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
 										"exec": [
-											"pm.globals.set(\"with_balance\", false);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -2514,7 +2514,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
@@ -2526,7 +2526,7 @@
 									"query": [
 										{
 											"key": "withBalance",
-											"value": "{{with_balance}}"
+											"value": "false"
 										}
 									]
 								},

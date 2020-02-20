@@ -21,9 +21,6 @@
         "currency": "EUR"
       }
     ],
-    "availableAccounts": "allAccounts",
-    "allPsd2": "allAccounts",
-    "availableAccountsWithBalance": "allAccounts",
     "additionalInformationAccess": {
       "ownerName": [
         {
@@ -31,5 +28,8 @@
         }
       ]
     }
-  }
+  },
+  "availableAccounts": "allAccounts",
+  "allPsd2": "allAccounts",
+  "availableAccountsWithBalance": "allAccounts"
 }

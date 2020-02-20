@@ -39,6 +39,7 @@
         <module>xs2a-core-payments</module>
         <module>xs2a-payment-support</module>
         <module>xs2a-logger</module>
+        <module>xs2a-core-consents</module>
     </modules>
     <packaging>pom</packaging>
 

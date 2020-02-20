@@ -1,0 +1,16 @@
+{
+  "accounts": [
+    {
+      "resourceId": "11111-999999999",
+      "iban": "DE89370400440532013000",
+      "currency": "EUR"
+    }
+  ],
+  "transactions": [
+    {
+      "resourceId": "11111-999999999",
+      "iban": "DE89370400440532013000",
+      "currency": "EUR"
+    }
+  ]
+}

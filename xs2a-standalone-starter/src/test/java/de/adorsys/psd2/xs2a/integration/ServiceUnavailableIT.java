@@ -22,15 +22,13 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.CreateAisConsentResponse;
 import de.adorsys.psd2.consent.api.authorisation.AuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
-import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
@@ -52,7 +50,7 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
-import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentBuilder;
+import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -113,7 +111,6 @@ import java.util.function.Supplier;
 
 import static org.apache.commons.io.IOUtils.resourceToString;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -162,7 +159,7 @@ class ServiceUnavailableIT {
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    private ConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
@@ -352,18 +349,14 @@ class ServiceUnavailableIT {
             authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)),
             buildCmsResponse(buildCmsResponse(buildCreateAuthorisationResponse())),
             throwException);
-        AisAccountConsent aisAccountConsent = AisConsentBuilder.buildAisAccountConsent(DEDICATED_CONSENT_REQUEST_JSON_PATH, ScaApproach.EMBEDDED, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
+        CmsConsent cmsConsent = CmsConsentBuilder.buildCmsConsent(DEDICATED_CONSENT_REQUEST_JSON_PATH, ScaApproach.EMBEDDED, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
         givenReturnOrThrowException(
-            aisConsentServiceEncrypted.createConsent(any(CreateAisConsentRequest.class)),
-            buildCmsResponse(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent, Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA))),
+            aisConsentServiceEncrypted.createConsent(any(CmsConsent.class)),
+            buildCmsResponse(new CreateAisConsentResponse(ENCRYPT_CONSENT_ID, cmsConsent, Arrays.asList(NotificationSupportedMode.LAST, NotificationSupportedMode.SCA))),
             throwException);
         givenReturnOrThrowException(
-            aisConsentServiceEncrypted.updateAspspAccountAccessWithResponse(eq(ENCRYPT_CONSENT_ID), any(AisAccountAccessInfo.class)),
-            buildCmsResponse(aisAccountConsent),
-            throwException);
-        givenReturnOrThrowException(
-            aisConsentServiceEncrypted.getAisAccountConsentById(any(String.class)),
-            buildCmsResponse(aisAccountConsent),
+            aisConsentServiceEncrypted.getConsentById(any(String.class)),
+            buildCmsResponse(cmsConsent),
             throwException);
         givenReturnOrThrowException(
             authorisationServiceEncrypted.getAuthorisationById(anyString()),

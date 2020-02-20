@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
@@ -46,19 +46,19 @@ public class GetCardAccountListValidator extends AbstractAccountTppValidator<Get
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(GetCardAccountListConsentObject consentObject) {
-        AccountConsent accountConsent = consentObject.getAccountConsent();
+        AisConsent aisConsent = consentObject.getAisConsent();
 
-        if (accountConsent.isConsentWithNotCardAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (aisConsent.isConsentWithNotCardAccount() && !aisConsent.isConsentForAllAvailableAccounts() && !aisConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
-        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(accountConsent, consentObject.getRequestUri());
+        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(aisConsent, consentObject.getRequestUri());
 
         if (accountConsentValidationResult.isNotValid()) {
             return accountConsentValidationResult;
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(aisConsent);
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }

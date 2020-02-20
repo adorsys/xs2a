@@ -1,94 +1,78 @@
 {
-  "instanceId": "UNDEFINED",
-  "id": 28,
-  "externalId": "36bcf324-6d13-49ed-8970-825d8c2142ea",
+  "consentData": {
+    "combinedServiceIndicator": false
+  },
+  "tppAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "aspspAccountAccesses": {
+    "accounts": [
+    ],
+    "balances": [
+    ],
+    "transactions": [
+    ]
+  },
+  "consentTppInformation": {
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppName": "",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppRedirectPreferred": false,
+    "tppNotificationSupportedModes": [],
+    "tppFrequencyPerDay": 15
+  },
   "recurringIndicator": true,
-  "tppRedirectPreferred": false,
-  "combinedServiceIndicator": false,
-  "requestDateTime": "2019-12-06T17:03:13.36",
   "lastActionDate": "2019-12-06",
   "validUntil": "2021-10-10",
-  "psuDataList": [
+  "psuIdDataList": [
     {
-      "instanceId": "UNDEFINED",
-      "id": 28,
       "psuId": "anton.brueckner"
     }
   ],
-  "tppInfo": {
-    "instanceId": "UNDEFINED",
-    "id": 1,
-    "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
-    "tppName": "",
-    "tppRoles": [
-      "AISP",
-      "PISP",
-      "PIISP"
-    ],
-    "authorityId": "DE-FAKENCA",
-    "authorityName": "Trust Service Provider AG",
-    "country": "Germany",
-    "organisation": "Fictional Corporation AG",
-    "organisationUnit": "Information Technology",
-    "city": "Nuremberg",
-    "state": "Bayern"
-  },
   "authorisationTemplate": {
-    "id": 28,
-    "redirectUri": "",
-    "nokRedirectUri": ""
+    "tppRedirectUri": {
+      "uri": "",
+      "nokUri": ""
+    }
   },
-  "tppNotificationContentPreferred": [],
   "consentStatus": "VALID",
-  "consentType": "AIS",
-  "allowedFrequencyPerDay": 4,
-  "tppFrequencyPerDay": 15,
-  "usages": [],
-  "accesses": [
-    {
-      "accountIdentifier": "DE80760700240271232400",
-      "currency": "EUR",
-      "typeAccess": "BALANCE",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE80760700240271232400",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE80760700240271232400",
-      "currency": "EUR",
-      "typeAccess": "TRANSACTION",
-      "accountReferenceType": "iban"
-    }
-  ],
-  "aspspAccountAccesses": [
-    {
-      "accountIdentifier": "DE80760700240271232400",
-      "currency": "EUR",
-      "typeAccess": "BALANCE",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE80760700240271232400",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE80760700240271232400",
-      "currency": "EUR",
-      "typeAccess": "TRANSACTION",
-      "accountReferenceType": "iban"
-    }
-  ],
-  "aisConsentRequestType": "DEDICATED_ACCOUNTS",
+  "frequencyPerDay": 4,
+  "usages": {},
   "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
   "multilevelScaRequired": false,
   "statusChangeTimestamp": "2019-12-06T17:03:32.972+02:00",
-  "ownerNameType": "NONE",
-  "internalRequestId": "bdb36439-0e07-4037-a8a1-171c969fb0d7",
-  "previousConsentStatus": "VALID"
+  "internalRequestId": "bdb36439-0e07-4037-a8a1-171c969fb0d7"
 }
