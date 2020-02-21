@@ -45,7 +45,7 @@ before_deploy:
 deploy:
   - skip_cleanup: true
     provider: script
-    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -q -B
+    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B
       -U deploy | egrep -v DEBUG || travis_terminate 1
     on:
       repo: adorsys/xs2a
