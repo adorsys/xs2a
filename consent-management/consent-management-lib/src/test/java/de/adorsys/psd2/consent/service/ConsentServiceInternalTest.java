@@ -49,6 +49,7 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -63,7 +64,7 @@ import static org.mockito.Mockito.*;
 class ConsentServiceInternalTest {
     private static final long CONSENT_ID = 1;
     private static final String EXTERNAL_CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
-    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
+    private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b11213-6a96-4941-a220-2da8a4af2c63";
     private static final String PSU_ID = "psu-id-1";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final PsuData PSU_DATA = new PsuData(PSU_ID, null, null, null, null);
@@ -73,6 +74,7 @@ class ConsentServiceInternalTest {
     private static final String INSTANCE_ID = "UNDEFINED";
     private static final String REDIRECT_URI = "http://bank.com/redirect-ok";
     private static final String NOK_REDIRECT_URI = "http://bank.com/redirect-not-ok";
+    private static final LocalDate VALID_UNTIL = LocalDate.of(2030, 12, 31);
 
     private ConsentEntity consentEntity;
     private List<AuthorisationEntity> authorisationEntities = new ArrayList<>();
@@ -298,6 +300,34 @@ class ConsentServiceInternalTest {
         // Then
         assertFalse(actual.isSuccessful());
         assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
+    }
+
+    @Test
+    void createConsent_shouldAdjustValidUntilDate() throws WrongChecksumException {
+        // Given
+        when(cmsConsentMapper.mapToNewConsentEntity(any()))
+            .thenReturn(buildConsentEntity(EXTERNAL_CONSENT_ID));
+        int maxConsentValidity = 2;
+        when(aspspProfileService.getAspspSettings()).thenReturn(buildMockAspspSettings(maxConsentValidity));
+        LocalDate adjustedValidUntil = LocalDate.now().plusDays(maxConsentValidity - 1);
+        ConsentEntity adjustedConsentEntity = buildAdjustedConsentEntity(EXTERNAL_CONSENT_ID, adjustedValidUntil);
+        when(aisConsentVerifyingRepository.verifyAndSave(any(ConsentEntity.class)))
+            .thenReturn(adjustedConsentEntity);
+        CmsConsent adjustedConsent = buildAdjustedCmsConsent(adjustedValidUntil);
+        when(cmsConsentMapper.mapToCmsConsent(adjustedConsentEntity, Collections.emptyList(), Collections.emptyMap()))
+            .thenReturn(adjustedConsent);
+        CmsCreateConsentResponse expected = new CmsCreateConsentResponse(EXTERNAL_CONSENT_ID, adjustedConsent);
+        ArgumentCaptor<ConsentEntity> consentEntityCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
+
+        // When
+        CmsResponse<CmsCreateConsentResponse> actual = consentServiceInternal.createConsent(buildCmsConsent());
+
+        // Then
+        assertTrue(actual.isSuccessful());
+        assertEquals(expected, actual.getPayload());
+        verify(aisConsentVerifyingRepository).verifyAndSave(consentEntityCaptor.capture());
+        ConsentEntity capturedConsentEntity = consentEntityCaptor.getValue();
+        assertEquals(adjustedValidUntil, capturedConsentEntity.getValidUntil());
     }
 
     @Test
@@ -623,11 +653,18 @@ class ConsentServiceInternalTest {
         return authorisationEntity;
     }
 
+    private ConsentEntity buildAdjustedConsentEntity(String externalId, LocalDate adjustedValidUntil) {
+        ConsentEntity consentEntity = buildConsentEntity(externalId);
+        consentEntity.setValidUntil(adjustedValidUntil);
+        return consentEntity;
+    }
+
+
     private ConsentEntity buildConsentEntity(String externalId) {
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setId(CONSENT_ID);
         consentEntity.setExternalId(externalId);
-        consentEntity.setValidUntil(LocalDate.now());
+        consentEntity.setValidUntil(VALID_UNTIL);
         consentEntity.setConsentStatus(ConsentStatus.VALID);
         consentEntity.setPsuDataList(Collections.singletonList(psuDataMocked));
         AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
@@ -635,6 +672,12 @@ class ConsentServiceInternalTest {
         authorisationTemplate.setNokRedirectUri(NOK_REDIRECT_URI);
         consentEntity.setAuthorisationTemplate(authorisationTemplate);
         return consentEntity;
+    }
+
+    private CmsConsent buildAdjustedCmsConsent(LocalDate adjustedValidUntil) {
+        CmsConsent cmsConsent = buildCmsConsent();
+        cmsConsent.setValidUntil(adjustedValidUntil);
+        return cmsConsent;
     }
 
     private CmsConsent buildCmsConsent() {
@@ -651,7 +694,11 @@ class ConsentServiceInternalTest {
     }
 
     private AspspSettings buildMockAspspSettings() {
-        ConsentTypeSetting consentTypeSettings = new ConsentTypeSetting(false, false, false, 0, 1L, 0, false);
+        return buildMockAspspSettings(0);
+    }
+
+    private AspspSettings buildMockAspspSettings(int maxValidity) {
+        ConsentTypeSetting consentTypeSettings = new ConsentTypeSetting(false, false, false, 0, 1L, maxValidity, false);
         AisAspspProfileSetting aisAspspProfileSettings = new AisAspspProfileSetting(consentTypeSettings, null, null, null, null);
         return new AspspSettings(aisAspspProfileSettings, null, null, null);
     }
