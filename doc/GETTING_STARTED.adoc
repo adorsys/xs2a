@@ -4,8 +4,8 @@
 
 == Prerequisites
 
-- Java JDK version 1.8.x, Maven 3.x;
-- Relational database for consent-management-system. We recommend to use PostgreSQL 9.5;
+- Java JDK version 1.8.x or later, Maven 3.x;
+- Relational database for consent-management-system. PostgreSQL, Oracle and MariaDB are supported out of the box, the list can be extended. We recommend to use PostgreSQL 9.5 or later.
 - Docker (Optional).
 
 
@@ -116,3 +116,11 @@ image::cpu_load.png[Cpu and memory load,100%, aligh="center"]
 image::memory_usage.png[Cpu and memory load,100%, aligh="center"]
 
 
+
+=== Deployment
+
+Dockerfiles provided in the project allow to put the build artifacts into a docker images. Those images are to be
+configured through your environment (documentation follows) to interact properly. We provide you also with public images on Docker hub.
+
+Since most of our services are written in pure Java, you can also choose another ways to deploy the applications in your environment.
+Please refer to the documentation pages of each service to perform its configuration.
