@@ -86,7 +86,7 @@ class Xs2aAisConsentServiceTest {
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final CmsConsent CMS_CONSENT = new CmsConsent();
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.VALID;
-    private static final CreateAuthorisationRequest AIS_CONSENT_AUTHORIZATION_REQUEST = buildAisConsentAuthorizationRequest();
+    private static final CreateAuthorisationRequest AIS_CONSENT_AUTHORISATION_REQUEST = buildAisConsentAuthorisationRequest();
     private static final List<String> STRING_LIST = Collections.singletonList(AUTHORISATION_ID);
     private static final List<AuthenticationObject> AUTHENTICATION_OBJECT_LIST = Collections.singletonList(new AuthenticationObject());
     private static final List<CmsScaMethod> CMS_SCA_METHOD_LIST = Collections.singletonList(new CmsScaMethod(AUTHORISATION_ID, true));
@@ -226,8 +226,8 @@ class Xs2aAisConsentServiceTest {
         when(scaApproachResolver.resolveScaApproach())
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
-            .thenReturn(AIS_CONSENT_AUTHORIZATION_REQUEST);
-        when(authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(CONSENT_ID), AIS_CONSENT_AUTHORIZATION_REQUEST))
+            .thenReturn(AIS_CONSENT_AUTHORISATION_REQUEST);
+        when(authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(CONSENT_ID), AIS_CONSENT_AUTHORISATION_REQUEST))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(buildCreateAisConsentAuthorizationResponse()).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(REDIRECT_URI);
@@ -438,6 +438,8 @@ class Xs2aAisConsentServiceTest {
         createAisConsentRequesWithInternalRequestId.setInternalRequestId(INTERNAL_REQUEST_ID);
         when(consentServiceEncrypted.createConsent(any()))
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
+            .thenReturn(CMS_CONSENT);
 
         // When
         xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
@@ -545,7 +547,7 @@ class Xs2aAisConsentServiceTest {
         return createConsentReq;
     }
 
-    private static CreateAuthorisationRequest buildAisConsentAuthorizationRequest() {
+    private static CreateAuthorisationRequest buildAisConsentAuthorisationRequest() {
         CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
         consentAuthorization.setPsuData(PSU_DATA);
         consentAuthorization.setScaApproach(SCA_APPROACH);

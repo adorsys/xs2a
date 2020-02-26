@@ -25,7 +25,7 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.I
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
-public class AuthorisationSpecification extends GenericSpecification {
+public class AuthorisationSpecification {
     public Specification<AuthorisationEntity> byExternalIdAndInstanceId(String externalId, String instanceId) {
         return Specification.<AuthorisationEntity>where(provideSpecificationForEntityAttribute(AUTHORISATION_EXTERNAL_ID_ATTRIBUTE, externalId))
                    .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));

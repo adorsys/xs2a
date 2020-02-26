@@ -116,6 +116,8 @@ class AisConsentMapperTest {
         when(psuDataMapper.mapToPsuIdDataList(PSU_DATA_LIST)).thenReturn(PSU_ID_DATA_LIST);
         when(tppInfoMapper.mapToTppInfo(TPP_INFO_ENTITY)).thenReturn(TPP_INFO);
         when(consentDataMapper.mapToAisConsentData(any())).thenReturn(AIS_CONSENT_DATA);
+        when(consentTppInformationMapper.mapToConsentTppInformation(any())).thenReturn(buildConsentTppInformation());
+        when(authorisationTemplateMapper.mapToAuthorisationTemplate(any())).thenReturn(buildAuthorisationTemplate());
 
         // Given
         ConsentEntity consent = buildConsent();
@@ -138,6 +140,8 @@ class AisConsentMapperTest {
         when(psuDataMapper.mapToPsuIdDataList(PSU_DATA_LIST)).thenReturn(PSU_ID_DATA_LIST);
         when(psuDataMapper.mapToPsuIdData(PSU_DATA)).thenReturn(PSU_ID_DATA);
         when(tppInfoMapper.mapToTppInfo(TPP_INFO_ENTITY)).thenReturn(TPP_INFO);
+        when(consentTppInformationMapper.mapToConsentTppInformation(any())).thenReturn(buildConsentTppInformation());
+        when(authorisationTemplateMapper.mapToAuthorisationTemplate(any())).thenReturn(buildAuthorisationTemplate());
         AisConsentData aisConsentData = buildAisConsentData(null, AccountAccessType.ALL_ACCOUNTS, null);
         AisConsent aisConsent = buildAisConsent(aisConsentData,
                                                 Collections.emptyList(),
@@ -167,6 +171,8 @@ class AisConsentMapperTest {
         when(psuDataMapper.mapToPsuIdData(PSU_DATA)).thenReturn(PSU_ID_DATA);
         when(tppInfoMapper.mapToTppInfo(TPP_INFO_ENTITY)).thenReturn(TPP_INFO);
         when(consentDataMapper.mapToAisConsentData(any())).thenReturn(AIS_CONSENT_DATA);
+        when(consentTppInformationMapper.mapToConsentTppInformation(any())).thenReturn(buildConsentTppInformation());
+        when(authorisationTemplateMapper.mapToAuthorisationTemplate(any())).thenReturn(buildAuthorisationTemplate());
 
         // Given
         ConsentEntity consent = buildConsent();

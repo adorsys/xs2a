@@ -22,6 +22,7 @@ public class InternalCmsXs2aApiTagHolder {
     public static final Tag AIS_CONSENTS = new Tag(InternalCmsXs2aApiTagName.AIS_CONSENTS, "Provides access to consent management system for AIS");
     public static final Tag AIS_PSU_DATA = new Tag(InternalCmsXs2aApiTagName.AIS_PSU_DATA, "Provides access to consent management system for PSU Data");
     public static final Tag ASPSP_CONSENT_DATA = new Tag(InternalCmsXs2aApiTagName.ASPSP_CONSENT_DATA, "Provides access to consent management system for AspspDataConsent");
+    public static final Tag AUTHORISATIONS = new Tag(InternalCmsXs2aApiTagName.AUTHORISATIONS, "Provides access to consent management system for authorisation endpoints");
     public static final Tag CONSENTS = new Tag(InternalCmsXs2aApiTagName.CONSENTS, "Provides access to consent management system for common consent endpoints");
     public static final Tag EVENTS = new Tag(InternalCmsXs2aApiTagName.EVENTS, "Provides access to the consent management system for Events");
     public static final Tag PIIS_CONSENTS = new Tag(InternalCmsXs2aApiTagName.PIIS_CONSENTS, "Provides access to consent management system for PIIS");

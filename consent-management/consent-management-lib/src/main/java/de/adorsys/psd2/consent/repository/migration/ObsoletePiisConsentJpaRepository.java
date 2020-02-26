@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.piis;
+package de.adorsys.psd2.consent.repository.migration;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
-import lombok.Data;
+import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
+import org.springframework.data.repository.Repository;
 
-import java.time.LocalDate;
+import java.util.Optional;
 
-@Data
-public class CmsPiisValidationInfo {
-    private String consentId;
-    private int frequencyPerDay;
-    private String tppInfoId;
-    private LocalDate expireDate;
-    private ConsentStatus consentStatus;
-    private PiisConsentTppAccessType piisConsentTppAccessType;
+public interface ObsoletePiisConsentJpaRepository extends Repository<PiisConsentEntity, Long> {
+
+    Optional<PiisConsentEntity> findByExternalId(String externalId);
 }

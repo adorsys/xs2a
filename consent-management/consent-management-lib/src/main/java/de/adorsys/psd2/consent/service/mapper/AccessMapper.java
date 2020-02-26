@@ -132,6 +132,23 @@ public class AccessMapper {
                                  mapToAdditionalInformationAccess(aisAccountAccessInfo.getAccountAdditionalInformationAccess()));
     }
 
+    public AspspAccountAccess mapToAspspAccountAccess(AccountReference accountReference) {
+        return new AspspAccountAccess(accountReference.getUsedAccountReferenceSelector().getAccountValue(),
+                                      TypeAccess.ACCOUNT,
+                                      accountReference.getUsedAccountReferenceSelector().getAccountReferenceType(),
+                                      accountReference.getCurrency(),
+                                      accountReference.getResourceId(),
+                                      accountReference.getAspspAccountId());
+    }
+
+    public AccountReference mapToAccountReference(AspspAccountAccess aspspAccountAccess) {
+        return new AccountReference(aspspAccountAccess.getAccountReferenceType(),
+                                    aspspAccountAccess.getAccountIdentifier(),
+                                    aspspAccountAccess.getCurrency(),
+                                    aspspAccountAccess.getResourceId(),
+                                    aspspAccountAccess.getAspspAccountId());
+    }
+
     private AdditionalInformationAccess mapToAdditionalInformationAccess(AccountAdditionalInformationAccess accountAdditionalInformationAccess) {
         if (accountAdditionalInformationAccess == null) {
             return null;

@@ -20,11 +20,8 @@ public class EntityAttribute {
     public static final String INSTANCE_ID_ATTRIBUTE = "instanceId";
     public static final String AUTHORISATION_EXTERNAL_ID_ATTRIBUTE = "externalId";
     public static final String CONSENT_EXTERNAL_ID_ATTRIBUTE = "externalId";
-    public static final String PSU_DATA_ATTRIBUTE = "psuData";
     public static final String PSU_DATA_LIST_ATTRIBUTE = "psuDataList";
-    public static final String CONSENT_ID_ATTRIBUTE = "consentId";
     public static final String PAYMENT_ID_ATTRIBUTE = "paymentId";
-    public static final String TIMESTAMP_ID_ATTRIBUTE = "timestamp";
     public static final String CREATION_TIMESTAMP_ATTRIBUTE = "creationTimestamp";
 
     public static final String CONSENT_TYPE_ATTRIBUTE = "consentType";
@@ -37,11 +34,9 @@ public class EntityAttribute {
 
     public static final String TPP_INFO_ATTRIBUTE = "tppInfo";
     public static final String TPP_INFO_AUTHORISATION_NUMBER_ATTRIBUTE = "authorisationNumber";
-    public static final String TPP_AUTHORISATION_NUMBER_ATTRIBUTE = "tppAuthorisationNumber";
 
     public static final String ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE = "aspspAccountAccesses";
-    public static final String ACCOUNTS_ATTRIBUTE = "accounts";
-    public static final String ACCOUNT_ATTRIBUTE = "account";
+    public static final String ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER = "accountIdentifier";
     public static final String CURRENCY_ATTRIBUTE = "currency";
     public static final String ASPSP_ACCOUNT_ID_ATTRIBUTE = "aspspAccountId";
 

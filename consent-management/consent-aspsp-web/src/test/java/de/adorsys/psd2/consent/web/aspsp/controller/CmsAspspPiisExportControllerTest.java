@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +60,7 @@ class CmsAspspPiisExportControllerTest {
     private JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders = new HttpHeaders();
     private PsuIdData psuIdData;
-    private Collection<PiisConsent> piisConsents;
+    private Collection<CmsPiisConsent> cmsPiisConsents;
 
     @InjectMocks
     private CmsAspspPiisExportController cmsAspspPiisExportController;
@@ -73,8 +73,8 @@ class CmsAspspPiisExportControllerTest {
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
 
         psuIdData = jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
-        PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
-        piisConsents = Collections.singletonList(piisConsent);
+        CmsPiisConsent cmsPiisConsent = jsonReader.getObjectFromFile("json/piis/cms-piis-consent.json", CmsPiisConsent.class);
+        cmsPiisConsents = Collections.singletonList(cmsPiisConsent);
 
         httpHeaders.add("psu-id", PSU_ID);
         httpHeaders.add("Content-Type", "application/json");
@@ -91,7 +91,7 @@ class CmsAspspPiisExportControllerTest {
     @Test
     void getConsentsByTpp_Success() throws Exception {
         when(cmsAspspPiisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
-            .thenReturn(piisConsents);
+            .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_TPP)
                             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -105,7 +105,7 @@ class CmsAspspPiisExportControllerTest {
     @Test
     void getConsentsByPsu_Success() throws Exception {
         when(cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
-            .thenReturn(piisConsents);
+            .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_PSU)
                             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -119,7 +119,7 @@ class CmsAspspPiisExportControllerTest {
     @Test
     void getConsentsByAccount_Success() throws Exception {
         when(cmsAspspPiisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
-            .thenReturn(piisConsents);
+            .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_ACCOUNT)
                             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)

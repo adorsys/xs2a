@@ -78,7 +78,7 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_multipleAccounts_partiallyUsed_shouldReturnFalse() {
         // Given
-        cmsConsent.setConsentData(consentDataMapper.getBytesFromAisConsentData(AisConsentData.buildDefaultAisConsentData()));
+        cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
 
         when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
@@ -101,7 +101,7 @@ class OneOffConsentExpirationServiceTest {
     @Test
     void isConsentExpired_multipleAccounts_fullyUsed_shouldReturnTrue() {
         // Given
-        cmsConsent.setConsentData(consentDataMapper.getBytesFromAisConsentData(AisConsentData.buildDefaultAisConsentData()));
+        cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
 
         when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))

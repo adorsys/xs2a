@@ -32,7 +32,7 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentMigrationService;
+import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -65,7 +65,7 @@ public class ConsentServiceInternal implements ConsentService {
     private final CmsPsuService cmsPsuService;
     private final AisConsentUsageService aisConsentUsageService;
     private final CmsConsentMapper cmsConsentMapper;
-    private final AisConsentMigrationService aisConsentMigrationService;
+    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final AspspProfileService aspspProfileService;
 
     /**
@@ -180,7 +180,7 @@ public class ConsentServiceInternal implements ConsentService {
         }
 
         ConsentEntity consentEntity = consentEntityOptional.get();
-        consentEntity = aisConsentMigrationService.migrateIfNeeded(consentEntity);
+        consentEntity = aisConsentLazyMigrationService.migrateIfNeeded(consentEntity);
 
         List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consentEntity.getExternalId(), AuthorisationType.AIS);
         CmsConsent cmsConsent = cmsConsentMapper.mapToCmsConsent(consentEntity, authorisations, aisConsentUsageService.getUsageCounterMap(consentEntity));

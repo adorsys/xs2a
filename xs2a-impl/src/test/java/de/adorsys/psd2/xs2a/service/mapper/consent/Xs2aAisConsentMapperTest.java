@@ -18,13 +18,13 @@ package de.adorsys.psd2.xs2a.service.mapper.consent;
 
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -45,7 +45,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -123,35 +122,6 @@ class Xs2aAisConsentMapperTest {
     }
 
     @Test
-    void mapToCreateAisConsentRequest() {
-        CreateConsentReq request = jsonReader.getObjectFromFile("json/service/mapper/consent/create-consent-req.json", CreateConsentReq.class);
-        request.setValidUntil(LocalDate.now());
-
-        AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info.json", AisAccountAccessInfo.class);
-        CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(request, PSU_ID_DATA, TPP_INFO, ALLOWED_FREQUENCY_PER_DAY, INTERNAL_REQUEST_ID);
-
-        assertEquals(PSU_ID_DATA, createAisConsentRequest.getPsuData());
-        assertEquals(TPP_INFO, createAisConsentRequest.getTppInfo());
-        assertEquals(11, createAisConsentRequest.getRequestedFrequencyPerDay());
-        assertEquals(ALLOWED_FREQUENCY_PER_DAY, createAisConsentRequest.getAllowedFrequencyPerDay());
-        assertEquals(request.getValidUntil(), createAisConsentRequest.getValidUntil());
-        assertTrue(createAisConsentRequest.isRecurringIndicator());
-        assertTrue(createAisConsentRequest.isCombinedServiceIndicator());
-        assertEquals(request.getTppRedirectUri(), createAisConsentRequest.getTppRedirectUri());
-        assertEquals(expectedAisAccountAccessInfo, createAisConsentRequest.getAccess());
-    }
-
-    @Test
-    void mapToCreateAisConsentRequest_nullValue() {
-        PsuIdData psuData = new PsuIdData("1", "2", "3", "4", "5");
-        TppInfo tppInfo = new TppInfo();
-
-        CreateAisConsentRequest createAisConsentRequest = mapper.mapToCreateAisConsentRequest(null, psuData, tppInfo, 34, INTERNAL_REQUEST_ID);
-
-        assertNull(createAisConsentRequest);
-    }
-
-    @Test
     void mapToSpiAccountConsent() {
         //Given
         AisConsent ais = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-consent.json", AisConsent.class);
@@ -183,7 +153,7 @@ class Xs2aAisConsentMapperTest {
         //Given
         CreateConsentReq createConsentReq = jsonReader.getObjectFromFile("json/service/mapper/consent/create-consent-req.json", CreateConsentReq.class);
         AisConsentData aisConsentData = new AisConsentData(createConsentReq.getAvailableAccounts(), createConsentReq.getAllPsd2(), createConsentReq.getAvailableAccountsWithBalance(), createConsentReq.isCombinedServiceIndicator());
-        when(consentDataMapper.getBytesFromAisConsentData(aisConsentData)).thenReturn(AIS_CONSENT_DATA_BYTES);
+        when(consentDataMapper.getBytesFromConsentData(aisConsentData)).thenReturn(AIS_CONSENT_DATA_BYTES);
         when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(true));
         when(requestProviderService.getInternalRequestIdString()).thenReturn(INTERNAL_REQUEST_ID);
 
@@ -191,19 +161,20 @@ class Xs2aAisConsentMapperTest {
         CmsConsent cmsConsent = mapper.mapToCmsConsent(createConsentReq, PSU_ID_DATA, TPP_INFO, ALLOWED_FREQUENCY_PER_DAY);
 
         //Then
-        assertEquals(cmsConsent.getConsentData(), AIS_CONSENT_DATA_BYTES);
-        assertEquals(cmsConsent.getTppInformation().getTppInfo(), TPP_INFO);
-        assertEquals(cmsConsent.getTppInformation().isTppRedirectPreferred(), true);
-        assertEquals(cmsConsent.getTppInformation().getTppFrequencyPerDay(), createConsentReq.getFrequencyPerDay());
-        assertEquals(cmsConsent.getTppInformation().getTppNotificationUri(), createConsentReq.getTppNotificationData().getTppNotificationUri());
-        assertEquals(cmsConsent.getTppInformation().getTppNotificationSupportedModes(), createConsentReq.getTppNotificationData().getNotificationModes());
-        assertEquals(cmsConsent.getAuthorisationTemplate().getTppRedirectUri(), createConsentReq.getTppRedirectUri());
-        assertEquals(cmsConsent.getInternalRequestId(), INTERNAL_REQUEST_ID);
-        assertEquals(cmsConsent.getFrequencyPerDay(), ALLOWED_FREQUENCY_PER_DAY);
-        assertEquals(cmsConsent.getValidUntil(), createConsentReq.getValidUntil());
-        assertEquals(cmsConsent.isRecurringIndicator(), createConsentReq.isRecurringIndicator());
-        assertEquals(cmsConsent.getPsuIdDataList(), Collections.singletonList(PSU_ID_DATA));
-        assertEquals(cmsConsent.getConsentType(), ConsentType.AIS);
+        assertEquals(AIS_CONSENT_DATA_BYTES, cmsConsent.getConsentData());
+        assertEquals(TPP_INFO, cmsConsent.getTppInformation().getTppInfo());
+        assertTrue(cmsConsent.getTppInformation().isTppRedirectPreferred());
+        assertEquals(createConsentReq.getFrequencyPerDay(), cmsConsent.getTppInformation().getTppFrequencyPerDay());
+        assertEquals(createConsentReq.getTppNotificationData().getTppNotificationUri(), cmsConsent.getTppInformation().getTppNotificationUri());
+        assertEquals(createConsentReq.getTppNotificationData().getNotificationModes(), cmsConsent.getTppInformation().getTppNotificationSupportedModes());
+        assertEquals(createConsentReq.getTppRedirectUri(), cmsConsent.getAuthorisationTemplate().getTppRedirectUri());
+        assertEquals(INTERNAL_REQUEST_ID, cmsConsent.getInternalRequestId());
+        assertEquals(ALLOWED_FREQUENCY_PER_DAY, cmsConsent.getFrequencyPerDay());
+        assertEquals(createConsentReq.getValidUntil(), cmsConsent.getValidUntil());
+        assertEquals(createConsentReq.isRecurringIndicator(), cmsConsent.isRecurringIndicator());
+        assertEquals(Collections.singletonList(PSU_ID_DATA), cmsConsent.getPsuIdDataList());
+        assertEquals(ConsentType.AIS, cmsConsent.getConsentType());
+        assertEquals(ConsentStatus.RECEIVED, cmsConsent.getConsentStatus());
     }
 
     @Test

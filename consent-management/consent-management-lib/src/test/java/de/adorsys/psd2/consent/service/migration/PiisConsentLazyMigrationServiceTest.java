@@ -16,13 +16,12 @@
 
 package de.adorsys.psd2.consent.service.migration;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
-import de.adorsys.psd2.consent.repository.ObsoleteAisConsentJpaRepository;
-import de.adorsys.psd2.core.data.ais.AisConsentData;
+import de.adorsys.psd2.consent.repository.migration.ObsoletePiisConsentJpaRepository;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,20 +32,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AisConsentMigrationServiceTest {
-
+class PiisConsentLazyMigrationServiceTest {
     private static final String EXTERNAL_ID = "4c4e9624-9eb6-4d3f-86cd-7f70a11c3b5e";
 
     @InjectMocks
-    private AisConsentMigrationService aisConsentMigrationService;
+    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
 
     @Mock
-    private ObsoleteAisConsentJpaRepository obsoleteAisConsentJpaRepository;
+    private ObsoletePiisConsentJpaRepository obsoletePiisConsentJpaRepository;
     @Mock
     private ConsentJpaRepository consentJpaRepository;
 
@@ -61,24 +60,22 @@ class AisConsentMigrationServiceTest {
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(EXTERNAL_ID);
 
-        AisConsent obsoleteAisConsent = jsonReader.getObjectFromFile("json/service/migration/ais-consent.json", AisConsent.class);
-        when(obsoleteAisConsentJpaRepository.findByExternalId(EXTERNAL_ID))
-            .thenReturn(Optional.of(obsoleteAisConsent));
+        PiisConsentEntity obsoletePiisConsent = jsonReader.getObjectFromFile("json/service/migration/piis-consent-entity.json", PiisConsentEntity.class);
+        when(obsoletePiisConsentJpaRepository.findByExternalId(EXTERNAL_ID))
+            .thenReturn(Optional.of(obsoletePiisConsent));
 
         // When
-        aisConsentMigrationService.migrateIfNeeded(consentEntity);
+        piisConsentLazyMigrationService.migrateIfNeeded(consentEntity);
 
         // Then
-        verify(obsoleteAisConsentJpaRepository, times(1)).findByExternalId(EXTERNAL_ID);
+        verify(obsoletePiisConsentJpaRepository, times(1)).findByExternalId(EXTERNAL_ID);
         verify(consentJpaRepository, times(1)).save(consentEntity);
 
         assertNotNull(consentEntity.getData());
-        AisConsentData actual = consentDataMapper.mapToAisConsentData(consentEntity.getData());
+        PiisConsentData actual = consentDataMapper.mapToPiisConsentData(consentEntity.getData());
 
-        assertEquals(AccountAccessType.ALL_ACCOUNTS, actual.getAllPsd2());
-        assertEquals(AccountAccessType.ALL_ACCOUNTS, actual.getAvailableAccounts());
-        assertEquals(AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, actual.getAvailableAccountsWithBalance());
-        assertFalse(actual.isCombinedServiceIndicator());
+        PiisConsentData expected = jsonReader.getObjectFromFile("json/service/migration/piis-consent.json", PiisConsentData.class);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -88,10 +85,10 @@ class AisConsentMigrationServiceTest {
         consentEntity.setData("data".getBytes());
 
         // When
-        aisConsentMigrationService.migrateIfNeeded(consentEntity);
+        piisConsentLazyMigrationService.migrateIfNeeded(consentEntity);
 
         // Then
-        verify(obsoleteAisConsentJpaRepository, never()).findByExternalId(any());
+        verify(obsoletePiisConsentJpaRepository, never()).findByExternalId(any());
         verify(consentJpaRepository, never()).save(any());
     }
 }

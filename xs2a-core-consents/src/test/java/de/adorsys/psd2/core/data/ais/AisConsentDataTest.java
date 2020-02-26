@@ -18,6 +18,7 @@ package de.adorsys.psd2.core.data.ais;
 
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -30,6 +31,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AisConsentDataTest {
     private JsonReader jsonReader = new JsonReader();
+
+    @Test
+    void getConsentType() {
+        assertEquals(ConsentType.AIS, new AisConsent().getConsentType());
+    }
 
     @Test
     void getConsentRequestType_bankOffered() {

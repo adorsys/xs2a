@@ -152,7 +152,7 @@ public class ConsentService {
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
 
-        ConsentStatus consentStatus = ConsentStatus.RECEIVED;
+        ConsentStatus consentStatus = aisConsent.getConsentStatus();
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId,
                                                                                 null, null, null,
                                                                                 spiResponsePayload.getPsuMessage(), multilevelScaRequired,

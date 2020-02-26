@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
@@ -236,7 +237,7 @@ class UpdatePsuDataForConsentIT {
     @NotNull
     private CmsConsent buildCmsConsent() {
         AisConsentData aisConsentData = AisConsentData.buildDefaultAisConsentData();
-        byte[] bytes = consentDataMapper.getBytesFromAisConsentData(aisConsentData);
+        byte[] bytes = consentDataMapper.getBytesFromConsentData(aisConsentData);
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
         Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdData, ENCRYPTED_CONSENT_ID, AuthorisationType.AIS, ScaStatus.PSUIDENTIFIED);
         ConsentTppInformation consentTppInformation = new ConsentTppInformation();
@@ -250,7 +251,9 @@ class UpdatePsuDataForConsentIT {
         cmsConsent.setFrequencyPerDay(0);
         cmsConsent.setTppAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
-
+        cmsConsent.setAuthorisationTemplate(new AuthorisationTemplate());
+        cmsConsent.setPsuIdDataList(Collections.singletonList(psuIdData));
+        cmsConsent.setUsages(Collections.emptyMap());
         return cmsConsent;
     }
 }

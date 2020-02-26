@@ -17,10 +17,11 @@
 package de.adorsys.psd2.consent.repository.specification;
 
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
@@ -36,29 +37,24 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
 
-public abstract class GenericSpecification {
+@Service
+public class CommonSpecification<T> {
     /**
-     * Returns specification for some entity for filtering data by PSU data from list and instance id.
+     * Returns specification for some entity for filtering data by PSU ID Data, creation date and instance ID.
      *
-     * @param psuIdData  PSU data
-     * @param instanceId ID of particular service instance
-     * @param <T>        type of the entity, for which this specification will be created
+     * @param psuIdData      mandatory PSU ID data
+     * @param createDateFrom optional creation date that limits resulting data to entities created after this date(inclusive)
+     * @param createDateTo   optional creation date that limits resulting data to entities created before this date(inclusive)
+     * @param instanceId     optional instance ID
      * @return resulting specification
      */
-    public <T> Specification<T> byPsuDataInListAndInstanceId(PsuIdData psuIdData, String instanceId) {
-        return byPsuDataAndInstanceId(psuIdData, instanceId, PSU_DATA_LIST_ATTRIBUTE);
-    }
-
-    /**
-     * Returns specification for some entity for filtering data by PSU data and instance id.
-     *
-     * @param psuIdData  PSU data
-     * @param instanceId ID of particular service instance
-     * @param <T>        type of the entity, for which this specification will be created
-     * @return resulting specification
-     */
-    public <T> Specification<T> byPsuDataAndInstanceId(PsuIdData psuIdData, String instanceId) {
-        return byPsuDataAndInstanceId(psuIdData, instanceId, PSU_DATA_ATTRIBUTE);
+    public Specification<T> byPsuIdDataAndCreationPeriodAndInstanceId(@NotNull PsuIdData psuIdData,
+                                                                      @Nullable LocalDate createDateFrom,
+                                                                      @Nullable LocalDate createDateTo,
+                                                                      @Nullable String instanceId) {
+        return Specification.where(byPsuIdDataInList(psuIdData))
+                   .and(byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(byInstanceId(instanceId));
     }
 
     /**
@@ -67,33 +63,13 @@ public abstract class GenericSpecification {
      * If all fields in the given PsuIdData are null, this specification will not affect resulting data.
      *
      * @param psuIdData optional PSU ID data
-     * @param <T>       type of the entity, for which this specification will be created
      * @return resulting specification, or <code>null</code> if PSU ID data was omitted
      */
-    protected <T> Specification<T> byPsuIdDataInList(@Nullable PsuIdData psuIdData) {
+    protected Specification<T> byPsuIdDataInList(@Nullable PsuIdData psuIdData) {
         return byPsuIdData(psuIdData, PSU_DATA_LIST_ATTRIBUTE);
     }
 
-    /**
-     * Returns specification for some entity for filtering data by PSU ID data.
-     * <p>
-     * If all fields in the given PsuIdData are null, this specification will not affect resulting data.
-     *
-     * @param psuIdData optional PSU ID data
-     * @param <T>       type of the entity, for which this specification will be created
-     * @return resulting specification, or <code>null</code> if PSU ID data was omitted
-     */
-    protected <T> Specification<T> byPsuIdData(@Nullable PsuIdData psuIdData) {
-        return byPsuIdData(psuIdData, PSU_DATA_ATTRIBUTE);
-    }
-
-    private <T> Specification<T> byPsuDataAndInstanceId(PsuIdData psuIdData, String instanceId, String psuAttribute) {
-        Specification<T> psuSpecification = byPsuIdData(psuIdData, psuAttribute);
-        return Specification.where(psuSpecification)
-                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
-    }
-
-    private <T> Specification<T> byPsuIdData(@Nullable PsuIdData psuIdData, String psuAttribute) {
+    private Specification<T> byPsuIdData(@Nullable PsuIdData psuIdData, String psuAttribute) {
         if (psuIdData == null) {
             return null;
         }
@@ -109,45 +85,12 @@ public abstract class GenericSpecification {
     }
 
     /**
-     * Returns specification for some entity for filtering data by TPP authorisation number.
-     *
-     * <p>
-     * If optional parameter is not provided, this specification will not affect resulting data.
-     *
-     * @param tppAuthorisationNumber optional TPP authorisation number
-     * @param <T>                    type of the entity, for which this specification will be created
-     * @return resulting specification
-     */
-    protected <T> Specification<T> byTppAuthorisationNumber(@Nullable String tppAuthorisationNumber) {
-        return (root, query, cb) -> {
-            Join<T, TppInfoEntity> tppInfoJoin = root.join(TPP_INFO_ATTRIBUTE);
-            return provideSpecificationForJoinedEntityAttribute(tppInfoJoin, TPP_INFO_AUTHORISATION_NUMBER_ATTRIBUTE, tppAuthorisationNumber)
-                       .toPredicate(root, query, cb);
-        };
-    }
-
-    /**
-     * Returns specification for some entity for filtering data by TPP authorisation number stored in the same entity.
-     *
-     * <p>
-     * If optional parameter is not provided, this specification will not affect resulting data.
-     *
-     * @param tppAuthorisationNumber optional TPP authorisation number
-     * @param <T>                    type of the entity, for which this specification will be created
-     * @return resulting specification
-     */
-    protected <T> Specification<T> byTppAuthorisationNumberWithoutJoin(@Nullable String tppAuthorisationNumber) {
-        return provideSpecificationForEntityAttribute(TPP_AUTHORISATION_NUMBER_ATTRIBUTE, tppAuthorisationNumber);
-    }
-
-    /**
      * Returns specification for some entity for filtering data by instance id.
      *
      * @param instanceId optional ID of particular service instance
-     * @param <T>        type of the entity, for which this specification will be created
      * @return resulting specification, or <code>null</code> if instance id was omitted
      */
-    protected <T> Specification<T> byInstanceId(@Nullable String instanceId) {
+    protected Specification<T> byInstanceId(@Nullable String instanceId) {
         return provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId);
     }
 
@@ -159,10 +102,9 @@ public abstract class GenericSpecification {
      *
      * @param start optional creation date that limits resulting data to objects created after this date(inclusive)
      * @param end   optional creation date that limits resulting data to objects created before this date(inclusive)
-     * @param <T>   type of the entity, for which this specification will be created
      * @return resulting specification
      */
-    protected <T> Specification<T> byCreationTimestamp(@Nullable LocalDate start, @Nullable LocalDate end) {
+    protected Specification<T> byCreationTimestamp(@Nullable LocalDate start, @Nullable LocalDate end) {
         ZoneOffset currentOffset = OffsetDateTime.now().getOffset();
         OffsetDateTime startOffsetDateTime = Optional.ofNullable(start)
                                                  .map(odt -> OffsetDateTime.of(odt, LocalTime.MIN, currentOffset))
@@ -182,10 +124,9 @@ public abstract class GenericSpecification {
      *
      * @param start optional creation date-time that limits resulting data to objects created after this date-time(inclusive)
      * @param end   optional creation date-time that limits resulting data to objects created before this date-time(inclusive)
-     * @param <T>   type of the entity, for which this specification will be created
      * @return resulting specification
      */
-    protected <T> Specification<T> byCreationTimestamp(@Nullable OffsetDateTime start, @Nullable OffsetDateTime end) {
+    private Specification<T> byCreationTimestamp(@Nullable OffsetDateTime start, @Nullable OffsetDateTime end) {
         return (root, criteriaQuery, criteriaBuilder) -> {
             criteriaQuery.orderBy(criteriaBuilder.asc(root.get(CREATION_TIMESTAMP_ATTRIBUTE)));
 

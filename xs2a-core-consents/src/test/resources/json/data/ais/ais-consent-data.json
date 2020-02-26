@@ -1,0 +1,6 @@
+{
+  "combinedServiceIndicator": true,
+  "availableAccountsWithBalance": "allAccounts",
+  "availableAccounts": "allAccounts",
+  "allPsd2": "allAccountsWithOwnerName"
+}

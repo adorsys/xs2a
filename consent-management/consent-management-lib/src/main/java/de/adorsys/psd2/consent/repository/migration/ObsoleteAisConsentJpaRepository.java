@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.repository;
+package de.adorsys.psd2.consent.repository.migration;
 
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.repository.CrudRepository;
+import de.adorsys.psd2.consent.domain.account.AisConsent;
+import org.springframework.data.repository.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface PiisConsentRepository extends CrudRepository<PiisConsentEntity, Long>, JpaSpecificationExecutor<PiisConsentEntity> {
-    Optional<PiisConsentEntity> findByExternalId(String externalId);
+public interface ObsoleteAisConsentJpaRepository extends Repository<AisConsent, Long> {
 
-    List<PiisConsentEntity> findByPsuDataPsuId(String psuId);
+    Optional<AisConsent> findByExternalId(String externalId);
 }

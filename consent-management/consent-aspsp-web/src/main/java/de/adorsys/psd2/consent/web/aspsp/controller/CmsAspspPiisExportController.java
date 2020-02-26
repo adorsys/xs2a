@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class CmsAspspPiisExportController {
     @ApiOperation(value = "Returns a list of consents by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<Collection<PiisConsent>> getConsentsByTpp(
+    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByTpp(
         @ApiParam(value = "TPP ID", required = true, example = "12345987")
         @PathVariable("tpp-id") String tppId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -62,7 +62,7 @@ public class CmsAspspPiisExportController {
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
+        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 
@@ -70,7 +70,7 @@ public class CmsAspspPiisExportController {
     @ApiOperation(value = "Returns a list of consents by given mandatory PSU ID Data, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<Collection<PiisConsent>> getConsentsByPsu(
+    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByPsu(
         @ApiParam(value = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -87,8 +87,8 @@ public class CmsAspspPiisExportController {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId) {
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType,null);
-        Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
+        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 
@@ -96,7 +96,7 @@ public class CmsAspspPiisExportController {
     @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<Collection<PiisConsent>> getConsentsByAccountId(
+    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByAccountId(
         @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
         @PathVariable("account-id") String aspspAccountId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -107,7 +107,7 @@ public class CmsAspspPiisExportController {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId) {
-        Collection<PiisConsent> consents = cmsAspspPiisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId);
+        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 }

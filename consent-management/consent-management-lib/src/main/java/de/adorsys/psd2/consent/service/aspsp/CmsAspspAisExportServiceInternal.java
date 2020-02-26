@@ -24,7 +24,7 @@ import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentMigrationService;
+import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +51,10 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     private final ConsentJpaRepository consentJpaRepository;
     private final AisConsentMapper aisConsentMapper;
     private final AuthorisationRepository authorisationRepository;
-    private final AisConsentMigrationService aisConsentMigrationService;
+    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
 
     @Override
+    @Transactional
     public Collection<CmsAisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
                                                                 @Nullable LocalDate createDateFrom,
                                                                 @Nullable LocalDate createDateTo,
@@ -71,12 +72,13 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             instanceId
         ))
                    .stream()
-                   .map(aisConsentMigrationService::migrateIfNeeded)
+                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public Collection<CmsAisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
                                                                 @Nullable LocalDate createDateTo,
                                                                 @NotNull String instanceId) {
@@ -92,12 +94,13 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                               instanceId
         ))
                    .stream()
-                   .map(aisConsentMigrationService::migrateIfNeeded)
+                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public Collection<CmsAisAccountConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
                                                                       @Nullable LocalDate createDateFrom,
                                                                       @Nullable LocalDate createDateTo,
@@ -115,7 +118,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                                             instanceId);
         List<ConsentEntity> consents = consentJpaRepository.findAll(specification)
                                            .stream()
-                                           .map(aisConsentMigrationService::migrateIfNeeded)
+                                           .map(aisConsentLazyMigrationService::migrateIfNeeded)
                                            .collect(Collectors.toList());
 
         return consents

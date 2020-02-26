@@ -1,4 +1,5 @@
 {
+  "consentStatus": "RECEIVED",
   "consentType": "AIS",
   "tppInformation": {
     "tppRedirectPreferred": true,

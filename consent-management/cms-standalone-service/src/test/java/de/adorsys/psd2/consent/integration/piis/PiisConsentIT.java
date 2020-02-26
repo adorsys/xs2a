@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,16 @@
 package de.adorsys.psd2.consent.integration.piis;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
-import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
@@ -72,7 +74,7 @@ public class PiisConsentIT {
     @Autowired
     private EntityManager entityManager;
     @Autowired
-    private PiisConsentRepository piisConsentRepository;
+    private ConsentJpaRepository consentJpaRepository;
     @Autowired
     private PiisConsentService piisConsentService;
 
@@ -81,8 +83,8 @@ public class PiisConsentIT {
         // When
         cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest());
         flushAndClearPersistenceContext();
-        Iterable<PiisConsentEntity> entities = piisConsentRepository.findAll();
-        PiisConsentEntity savedEntity = entities.iterator().next();
+        Iterable<ConsentEntity> entities = consentJpaRepository.findAll();
+        ConsentEntity savedEntity = entities.iterator().next();
 
         // Then
         // First, we check that creation timestamp is equals to status change timestamp
@@ -94,8 +96,8 @@ public class PiisConsentIT {
 
         // Then
         // Second, we update the status and check it and the updated timestamp
-        entities = piisConsentRepository.findAll();
-        PiisConsentEntity updatedEntity = entities.iterator().next();
+        entities = consentJpaRepository.findAll();
+        ConsentEntity updatedEntity = entities.iterator().next();
         assertEquals(ConsentStatus.TERMINATED_BY_ASPSP, updatedEntity.getConsentStatus());
         assertTrue(updatedEntity.getStatusChangeTimestamp().isAfter(updatedEntity.getCreationTimestamp()));
     }
@@ -116,15 +118,15 @@ public class PiisConsentIT {
         flushAndClearPersistenceContext();
 
         //Then
-        List<PiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(2, consentsAspsp.size());
         assertEquals(aspsp, consentsAspsp.get(0).getPsuData());
 
-        List<PiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(1, consentsAspsp1.size());
         assertEquals(aspsp1, consentsAspsp1.get(0).getPsuData());
 
-        List<PiisConsent> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(2, consentsAspsp1NoCorporateId.size());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuData().getPsuId());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuData().getPsuId());
@@ -142,11 +144,12 @@ public class PiisConsentIT {
 
         selectors.forEach(selector -> {
             // When
-            CmsResponse<List<PiisConsent>> cmsResponse = piisConsentService.getPiisConsentListByAccountIdentifier(EUR_CURRENCY, selector);
+            CmsResponse<List<CmsConsent>> cmsResponse = piisConsentService.getPiisConsentListByAccountIdentifier(EUR_CURRENCY, selector);
             // Then
-            List<PiisConsent> payload = cmsResponse.getPayload();
+            List<CmsConsent> payload = cmsResponse.getPayload();
             assertEquals(1, payload.size());
-            AccountReference account = payload.get(0).getAccount();
+            AccountAccess aspspAccountAccesses = payload.get(0).getAspspAccountAccesses();
+            AccountReference account = aspspAccountAccesses.getAccounts().get(0);
             assertNotNull(account);
             assertEquals(selector, account.getUsedAccountReferenceSelector());
         });

@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.psu.api.CmsPsuPiisService;
 import de.adorsys.psd2.consent.web.psu.config.CmsPsuApiTagName;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,9 @@ public class CmsPsuPiisController {
     @GetMapping(path = "/{consent-id}")
     @ApiOperation(value = "Returns PIIS Consent object by its ID.")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = PiisConsent.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsPiisConsent.class),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<PiisConsent> getConsent(
+    public ResponseEntity<CmsPiisConsent> getConsent(
         @ApiParam(name = "consent-id",
             value = "PIIS consent identification assigned to the created PIIS consent.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
@@ -67,7 +67,7 @@ public class CmsPsuPiisController {
     @ApiOperation(value = "Returns a list of PIIS Consent objects by PSU ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<PiisConsent>> getConsentsForPsu(
+    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding PIIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")

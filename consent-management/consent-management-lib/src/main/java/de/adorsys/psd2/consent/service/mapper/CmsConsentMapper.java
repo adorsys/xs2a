@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.core.data.AccountAccess;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +71,7 @@ public class CmsConsentMapper {
         entity.setData(cmsConsent.getConsentData());
         entity.setChecksum(cmsConsent.getChecksum());
         entity.setExternalId(UUID.randomUUID().toString());
-        entity.setConsentStatus(ConsentStatus.RECEIVED);
+        entity.setConsentStatus(cmsConsent.getConsentStatus());
         entity.setConsentType(cmsConsent.getConsentType().getName());
         entity.setFrequencyPerDay(cmsConsent.getFrequencyPerDay());
         entity.setMultilevelScaRequired(cmsConsent.isMultilevelScaRequired());

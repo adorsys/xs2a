@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.aspsp.api.piis;
 
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +27,8 @@ public interface CmsAspspPiisService {
     /**
      * Creates new PIIS consent. Consent gets status "Valid".
      *
-     * @param psuIdData              PSU credentials data
-     * @param request                Request with all information for creating PIIS consent.
+     * @param psuIdData PSU credentials data
+     * @param request   Request with all information for creating PIIS consent.
      * @return Consent ID if the consent was created
      */
     Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request);
@@ -51,5 +51,5 @@ public interface CmsAspspPiisService {
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
 }

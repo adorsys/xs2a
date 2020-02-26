@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service.migration;
 import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
-import de.adorsys.psd2.consent.repository.ObsoleteAisConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.migration.ObsoleteAisConsentJpaRepository;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AisConsentMigrationService {
+public class AisConsentLazyMigrationService {
 
     private final ObsoleteAisConsentJpaRepository obsoleteAisConsentJpaRepository;
     private final ConsentJpaRepository consentJpaRepository;
@@ -55,6 +55,6 @@ public class AisConsentMigrationService {
                                                            aisConsent.isCombinedServiceIndicator());
 
 
-        return consentDataMapper.getBytesFromAisConsentData(aisConsentData);
+        return consentDataMapper.getBytesFromConsentData(aisConsentData);
     }
 }

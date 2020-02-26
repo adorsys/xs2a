@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
-import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
+import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
+import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -55,56 +56,85 @@ class PiisConsentServiceInternalTest {
     private static final String PSU_IP_ADDRESS = "Some ip address";
     private static final OffsetDateTime CREATION_TIMESTAMP = OffsetDateTime.of(2019, 2, 4, 12, 0, 0, 0, ZoneOffset.UTC);
     private static final AccountReferenceSelector SELECTOR_IBAN = new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN);
-    private static final Specification<PiisConsentEntity> SPECIFICATION_IBAN = (root, cq, cb) -> null;
+    private static final Specification<ConsentEntity> SPECIFICATION_IBAN = (root, cq, cb) -> null;
 
     @InjectMocks
     private PiisConsentServiceInternal piisConsentServiceInternal;
 
     @Mock
-    private PiisConsentRepository piisConsentRepository;
+    private ConsentJpaRepository consentJpaRepository;
     @Mock
-    private PiisConsentMapper piisConsentMapper;
+    private CmsConsentMapper cmsConsentMapper;
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
+    @Mock
+    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
 
     @Test
-    void getPiisConsentListByAccountIdentifier_Success() {
+    void getPiisConsentListByAccountIdentifier() {
         // Given
-        List<PiisConsentEntity> validConsentEntities = Collections.singletonList(buildPiisConsentEntity());
-        List<PiisConsent> validConsents = Collections.singletonList(buildPiisConsent());
-
         when(piisConsentEntitySpecification.byCurrencyAndAccountReferenceSelector(CURRENCY, SELECTOR_IBAN))
             .thenReturn(SPECIFICATION_IBAN);
-        when(piisConsentRepository.findAll(SPECIFICATION_IBAN)).thenReturn(validConsentEntities);
-
-        when(piisConsentMapper.mapToPiisConsentList(validConsentEntities)).thenReturn(validConsents);
-        PiisConsent expected = buildPiisConsent();
+        ConsentEntity validConsentEntity = buildConsentEntity();
+        when(consentJpaRepository.findAll(SPECIFICATION_IBAN))
+            .thenReturn(Collections.singletonList(validConsentEntity));
+        CmsConsent validConsent = buildCmsConsent();
+        when(cmsConsentMapper.mapToCmsConsent(validConsentEntity, Collections.emptyList(), Collections.emptyMap()))
+            .thenReturn(validConsent);
+        when(piisConsentLazyMigrationService.migrateIfNeeded(validConsentEntity))
+            .thenReturn(validConsentEntity);
+        CmsConsent expected = buildCmsConsent();
 
         // When
-        CmsResponse<List<PiisConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY,
-                                                                                                                               new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN));
+        CmsResponse<List<CmsConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY,
+                                                                                                                              new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN));
 
         // Then
         assertTrue(piisConsentsResponse.isSuccessful());
-
-        List<PiisConsent> piisConsents = piisConsentsResponse.getPayload();
+        List<CmsConsent> piisConsents = piisConsentsResponse.getPayload();
         assertFalse(piisConsents.isEmpty());
         assertEquals(expected, piisConsents.get(0));
     }
 
     @Test
-    void getPiisConsentListByAccountIdentifier_Failure_WrongIban() {
+    void getPiisConsentListByAccountIdentifier_noCurrency() {
+        // Given
+        when(piisConsentEntitySpecification.byAccountReferenceSelector(SELECTOR_IBAN))
+            .thenReturn(SPECIFICATION_IBAN);
+        ConsentEntity validConsentEntity = buildConsentEntity();
+        when(consentJpaRepository.findAll(SPECIFICATION_IBAN))
+            .thenReturn(Collections.singletonList(validConsentEntity));
+        CmsConsent validConsent = buildCmsConsent();
+        when(cmsConsentMapper.mapToCmsConsent(validConsentEntity, Collections.emptyList(), Collections.emptyMap()))
+            .thenReturn(validConsent);
+        when(piisConsentLazyMigrationService.migrateIfNeeded(validConsentEntity))
+            .thenReturn(validConsentEntity);
+        CmsConsent expected = buildCmsConsent();
+
         // When
-        CmsResponse<List<PiisConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY,
-                                                                                                                               new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN));
+        CmsResponse<List<CmsConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(null,
+                                                                                                                              new AccountReferenceSelector(AccountReferenceType.IBAN, IBAN));
+
+        // Then
+        assertTrue(piisConsentsResponse.isSuccessful());
+        List<CmsConsent> piisConsents = piisConsentsResponse.getPayload();
+        assertFalse(piisConsents.isEmpty());
+        assertEquals(expected, piisConsents.get(0));
+    }
+
+    @Test
+    void getPiisConsentListByAccountIdentifier_wrongIban() {
+        // When
+        CmsResponse<List<CmsConsent>> piisConsentsResponse = piisConsentServiceInternal.getPiisConsentListByAccountIdentifier(CURRENCY,
+                                                                                                                              new AccountReferenceSelector(AccountReferenceType.IBAN, WRONG_IBAN));
         // Then
         assertTrue(piisConsentsResponse.getPayload().isEmpty());
     }
 
-    private PiisConsentEntity buildPiisConsentEntity() {
-        PiisConsentEntity piisConsentEntity = new PiisConsentEntity();
+    private ConsentEntity buildConsentEntity() {
+        ConsentEntity piisConsentEntity = new ConsentEntity();
         piisConsentEntity.setConsentStatus(ConsentStatus.VALID);
-        piisConsentEntity.setPsuData(buildPsuData());
+        piisConsentEntity.setPsuDataList(Collections.singletonList(buildPsuData()));
         piisConsentEntity.setCreationTimestamp(CREATION_TIMESTAMP);
         return piisConsentEntity;
     }
@@ -117,9 +147,9 @@ class PiisConsentServiceInternalTest {
         return new PsuIdData(PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, PSU_IP_ADDRESS);
     }
 
-    private PiisConsent buildPiisConsent() {
-        PiisConsent piisConsent = new PiisConsent();
-        piisConsent.setPsuData(buildPsuIdData());
+    private CmsConsent buildCmsConsent() {
+        CmsConsent piisConsent = new CmsConsent();
+        piisConsent.setPsuIdDataList(Collections.singletonList(buildPsuIdData()));
         piisConsent.setConsentStatus(ConsentStatus.VALID);
         piisConsent.setCreationTimestamp(CREATION_TIMESTAMP);
         return piisConsent;
