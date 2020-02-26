@@ -13,7 +13,7 @@ architectural decisions which have been made on the system.
 
 == XS2A. Details of realisation
 xref:XS2A. Details of realisation/xs2a features description.adoc[This document] describes implementation details of XS2A Interface
-for Account Information Service, Payment Initiation Service, Payment Instrument Issuing Service, SCA Methods.
+for Account Information Service, Payment Initiation Service, Payment Instrument Issuing Service, SCA Methods. Include Use-cases diagrams.
 
 == SPI Developer Guide
 xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide] provides instructions for implementing the Interfaces on the SPI level,
@@ -36,3 +36,87 @@ Might contain also important migration information for the developers, how to mi
 
 == Filing a bug
 xref:Filing_a_bug.adoc[This document] contains a summary of how to report an issue to XS2A Team.
+
+== New features since XS2A v.5.0
+xref:XS2A. Details of realisation/Read Account data Request.adoc[Download Link]
+
+During request of Transaction List, in case when transaction report has a huge size, ASPSP can provide Download Link in Read Transaction List Response, it enables to download transaction report.
+
+xref:XS2A. Details of realisation/Payment Initiation Service.adoc[Country validation]
+
+According to BG Specification every country can have their local requirements for information included in the Payment Request.
+Payment validation on XS2A side can support different countries.  It is up to ASPSP to decide for which countries payment validation will be performed.
+
+xref:XS2A. Details of realisation/Account Information Service.adoc[Account Owner Name Service]
+
+Service enables TPP to ask for additional account information during the consent creation process. ASPSP can provide service with explicit consent from the client and
+can deliver the account owner name with related account information.
+
+xref:XS2A. Details of realisation/Strong customer authentication.adoc[OAuth Redirect SCA Approach]
+The XS2A supports OAuth2 mode in two ways: as a Pre-step for PSU authentication and as Integrated OAuth SCA approach for the authorisation of payment/ consent/ payment cancellation.
+
+xref:XS2A. Details of realisation/Common features[TPP’s role validation]
+
+It is up to ASPSP to decide the way of TPP's role validation.
+Since the pasportisation process in place acts without changing the TPP’s certificate, XS2A can't rely entirely on the roles from TPP’s certificate.
+TPP access to XS2A resources may be verified based on incoming Header, which can be set between ASPSP’s gateway by standalone service or be validated according to certificate data on XS2A side.
+
+xref:XS2A. Details of realisation/Multicurrency Accounts.adoc[Multicurrency Accounts]
+
+XS2A supports flows for multicurrency accounts. A multicurrency account is an account that is a collection of different sub-accounts which are all addressed by the same account identifier like an
+IBAN by e.g. payment initiating parties. The sub-accounts are legally different accounts and they all differ in their currency, balances, and transactions. An account identifier like an IBAN together
+with the currency always addresses a sub-account of a multicurrency account uniquely.
+
+xref:XS2A. Details of realisation/Read Account data Request.adoc[Standing order report]
+
+This service is offering a list of all standing orders related to a dedicated payment account. It can be provided during Read Transaction List Request/Response.
+
+xref:XS2A. Details of realisation/Account Information Service.adoc[Consent Revocation]
+
+In case PSU decides to close an account in the bank - ASPSP enables to revoke all AIS and PIIS consents of account in one step.
+
+xref:XS2A. Details of realisation/Read Account data Request.adoc[Delta access for transaction list request]
+
+A new feature enables to present Transaction List for the period dateFrom and dateTo, or all transactions after the transaction with identification "entryReference" and get all transactions after the last
+report access for this PSU (“deltalist”).
+
+xref:XS2A. Details of realisation/Resource Status Notification Service.adoc[Implicit subscription for resource status notifications]
+
+The new feature enables TPP to implicitly subscribe (registering implicitly an URI) for Resource Status Notification Service for the Payment Initiation Request, the Establish Account Information Request or the
+Signing Basket Request though XS2A interface.
+
+Resource Notification Push Service will be implemented in the future and will allow TPP to receive push notifications about every change of Transaction/Consent/SCA statuses.
+
+xref:XS2A. Details of realisation/Common features.adoc[Signature and digest verifier]
+
+ASPSP can require the TPP to send a digital signature during initiation PIS or AIS requests.
+Digital signature can be validated in XS2A validator module, which contains validators for signature and digest Headers. A keyID check is also added.
+
+xref:XS2A. Details of realisation/Strong customer authentication.adoc[Confirmation of authorisation]
+
+For counteraction of the fraud attacks in the Redirect Approach, there is additional step for confirmation of Authorisation (Payment Initiation, Establish AIS Consent, Payment Cancellation process).
+TPP should provide confirmation Code during Confirmation of Authorisation Call. The verification of the Confirmation Code can be performed by XS2A or by ASPSP.
+
+xref:XS2A. Details of realisation/Common features.adoc[Validation of TPPs URIs]
+
+In accordance with new requirements of BG, usage of redirection URI in domains that are secured by the TPP QWAC is Optional (strong recommendation).
+Resulting from this the note was removed that ASPSPs may reject transactions if this requirement is not fulfilled.
+It is up to ASPSP to decide whether to validate TPP's URIs for compliance or not.
+
+xref:XS2A. Details of realisation/Read Card Account Data Request.adoc[Read Card Account Data]
+
+Functionality allows ASPSP to deliver Card accounts related information through XS2A interface (details, transactions, balances, etc.).
+This endpoint is not directly related to credit cards as such, but the financial account behind the related cards.
+
+xref:XS2A. Details of realisation/Funds Confirmation Service.adoc[PIIS Consent]
+
+Functionality allows PSU to Establish Funds Confirmation Consent to TPP throuhg XS2A interface.
+
+== For future
+=== Create Resource Notification Push Service
+Service will allow TPP to be informed e.g. about status changes of the resources either by directly communicating the new status or request a callback for a dedicated resource. TPP can receive push
+notifications about every change of Transaction/Consent status, SCA statuses for all related authorisation processes
+
+=== Signing Basket
+This optional function (grouping several transactions for authorising it with one SCA method) might be offered by the ASPSP. PIS or AIS transactions can be added to the Signing Basket.
+
