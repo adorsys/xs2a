@@ -197,7 +197,7 @@ class DeleteConsentTest {
         ConsentTppInformation tppInformation = new ConsentTppInformation();
         tppInformation.setTppInfo(tppInfo);
         consent.setTppInformation(tppInformation);
-        consent.setConsentData(consentDataMapper.getBytesFromAisConsentData(aisConsentData));
+        consent.setConsentData(consentDataMapper.getBytesFromConsentData(aisConsentData));
         return consent;
     }
 }

@@ -85,13 +85,13 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @Column(name = "expire_date")
     private LocalDate expireDate;
 
-    @Column(name = "valid_until", nullable = false)
-    //TODO  Create migration file with not null constraint for "valid_until" https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1160
+    @Column(name = "valid_until")
     private LocalDate validUntil;
 
     @Column(name = "last_action_date")
     private LocalDate lastActionDate;
 
+    // TODO: change type to OffsetDateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1220
     @Column(name = "request_date_time", nullable = false)
     private LocalDateTime requestDateTime;
 
@@ -103,11 +103,11 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "authorisation_template_id", nullable = false)
-    private AuthorisationTemplateEntity authorisationTemplate;
+    private AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "consent_tpp_information_id", nullable = false)
-    private ConsentTppInformationEntity tppInformation;
+    private ConsentTppInformationEntity tppInformation = new ConsentTppInformationEntity();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ais_consent_psu_data",

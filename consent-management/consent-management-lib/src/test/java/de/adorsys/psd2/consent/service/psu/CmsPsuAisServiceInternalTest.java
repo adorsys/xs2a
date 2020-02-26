@@ -42,7 +42,7 @@ import de.adorsys.psd2.consent.service.mapper.AccessMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentMigrationService;
+import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
@@ -120,7 +120,7 @@ class CmsPsuAisServiceInternalTest {
     @Mock
     private ConsentDataMapper consentDataMapper;
     @Mock
-    private AisConsentMigrationService aisConsentMigrationService;
+    private AisConsentLazyMigrationService aisConsentLazyMigrationService;
     @Mock
     private CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
     @Mock
@@ -164,7 +164,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(psuData));
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -204,7 +204,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(consentEntity));
         when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -251,7 +251,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsentTerminatedByTpp, authorisations))
             .thenReturn(mockCmsAisAccountConsent);
-        when(aisConsentMigrationService.migrateIfNeeded(aisConsentTerminatedByTpp))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(aisConsentTerminatedByTpp))
             .thenReturn(aisConsentTerminatedByTpp);
 
         ArgumentCaptor<ConsentEntity> argument = ArgumentCaptor.forClass(ConsentEntity.class);
@@ -314,7 +314,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(authorisationEntity));
         when(authorisationRepository.save(authorisationEntity))
             .thenReturn(authorisationEntity);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // Then
@@ -336,7 +336,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(consentEntity));
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -379,7 +379,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(aisAccountConsent);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -427,7 +427,7 @@ class CmsPsuAisServiceInternalTest {
         ConsentEntity aisConsentValid = buildConsentWithStatus(ConsentStatus.VALID);
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsentValid))
             .thenReturn(aisConsentValid);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -461,7 +461,7 @@ class CmsPsuAisServiceInternalTest {
         ConsentEntity aisConsentRejected = buildConsentWithStatus(ConsentStatus.REJECTED);
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsentRejected))
             .thenReturn(aisConsentRejected);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -493,7 +493,7 @@ class CmsPsuAisServiceInternalTest {
 
         when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         ConsentEntity aisConsentRevoked = buildConsentWithStatus(ConsentStatus.REVOKED_BY_PSU);
@@ -535,7 +535,7 @@ class CmsPsuAisServiceInternalTest {
         when(aisConsentRepositoryImpl.verifyAndSave(aisConsent))
             .thenReturn(aisConsent);
         ArgumentCaptor<ConsentEntity> argumentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -591,7 +591,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(consentEntity), Optional.empty());
         when(authorisationSpecification.byExternalIdAndInstanceId(eq(FINALISED_AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -687,7 +687,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(TPP_NOK_REDIRECT_URI);
         when(mockAisConsentAuthorization.getParentExternalId())
             .thenReturn(EXTERNAL_CONSENT_ID);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -720,7 +720,7 @@ class CmsPsuAisServiceInternalTest {
         });
         when(accessMapper.mapToAspspAccountAccess(mappedAccountAccess))
             .thenReturn(aspspAccountAccesses);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -756,7 +756,7 @@ class CmsPsuAisServiceInternalTest {
         });
         when(accessMapper.mapToAspspAccountAccess(mappedAccountAccess))
             .thenReturn(aspspAccountAccesses);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -783,7 +783,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(aisConsentMapper.mapToAccountAccess(aisAccountAccess))
             .thenReturn(jsonReader.getObjectFromFile("json/account-access-mapped.json", AccountAccess.class));
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -805,7 +805,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(consent));
         when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
             .thenReturn(Collections.singletonList(buildFinalisedAuthorisation()));
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -841,7 +841,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consent));
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -861,7 +861,7 @@ class CmsPsuAisServiceInternalTest {
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(consentEntity));
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -895,7 +895,7 @@ class CmsPsuAisServiceInternalTest {
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consentEntity));
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, null, 1, null, null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -914,7 +914,7 @@ class CmsPsuAisServiceInternalTest {
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consentEntity));
         CmsAisConsentAccessRequest accountAccessRequest = new CmsAisConsentAccessRequest(null, LocalDate.now().minusDays(1), 1, null, null);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -980,7 +980,7 @@ class CmsPsuAisServiceInternalTest {
 
         AisConsentData data = new AisConsentData(null, null, null, false);
         ConsentDataMapper mapper = new ConsentDataMapper();
-        byte[] bytes = mapper.getBytesFromAisConsentData(data);
+        byte[] bytes = mapper.getBytesFromConsentData(data);
 
         aisConsent.setData(bytes);
 

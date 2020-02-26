@@ -37,35 +37,4 @@ public class AccountReferenceMapper {
                                                        ref.getCurrency())
                    ).orElse(null);
     }
-
-    AccountReference mapToAccountReferenceEntity(AccountReferenceEntity accountReferenceEntity) {
-        return Optional.ofNullable(accountReferenceEntity)
-                   .map(ref -> {
-                       AccountReference accountReference = new AccountReference();
-                       accountReference.setIban(ref.getIban());
-                       accountReference.setBban(ref.getBban());
-                       accountReference.setPan(ref.getPan());
-                       accountReference.setMaskedPan(ref.getMaskedPan());
-                       accountReference.setMsisdn(ref.getMsisdn());
-                       accountReference.setCurrency(ref.getCurrency());
-
-                       return accountReference;
-                   }).orElse(null);
-    }
-
-    public AccountReferenceEntity mapToAccountReferenceEntity(AccountReference accountReference) {
-        return Optional.ofNullable(accountReference)
-                   .map(ref -> {
-                       AccountReferenceEntity accountReferenceEntity = new AccountReferenceEntity();
-                       accountReferenceEntity.setIban(ref.getIban());
-                       accountReferenceEntity.setBban(ref.getBban());
-                       accountReferenceEntity.setPan(ref.getPan());
-                       accountReferenceEntity.setMaskedPan(ref.getMaskedPan());
-                       accountReferenceEntity.setMsisdn(ref.getMsisdn());
-                       accountReferenceEntity.setCurrency(ref.getCurrency());
-                       accountReferenceEntity.setAspspAccountId(ref.getAspspAccountId());
-
-                       return accountReferenceEntity;
-                   }).orElse(null);
-    }
 }

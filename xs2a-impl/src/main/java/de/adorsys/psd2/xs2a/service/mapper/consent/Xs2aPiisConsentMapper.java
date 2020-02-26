@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.repository;
+package de.adorsys.psd2.xs2a.service.mapper.consent;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import org.springframework.data.repository.Repository;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
-import java.util.Optional;
-
-public interface ObsoleteAisConsentJpaRepository extends Repository<AisConsent, Long> {
-
-    Optional<AisConsent> findByExternalId(String externalId);
+@Mapper(componentModel = "spring", uses = ConsentDataMapper.class)
+public interface Xs2aPiisConsentMapper {
+    @Mapping(target = "consentTppInformation", source = "tppInformation")
+    PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
 }

@@ -23,7 +23,7 @@ import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentMigrationService;
+import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -75,7 +75,7 @@ class CmsAspspAisExportServiceInternalTest {
     @Mock
     private AuthorisationRepository authorisationRepository;
     @Mock
-    private AisConsentMigrationService aisConsentMigrationService;
+    private AisConsentLazyMigrationService aisConsentLazyMigrationService;
 
     @BeforeEach
     void setUp() {
@@ -103,7 +103,7 @@ class CmsAspspAisExportServiceInternalTest {
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
         when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
             .thenReturn(authorisations);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(buildAisAccountConsent());
@@ -167,7 +167,7 @@ class CmsAspspAisExportServiceInternalTest {
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(buildAisAccountConsent());
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         // When
@@ -237,7 +237,7 @@ class CmsAspspAisExportServiceInternalTest {
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
         when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
             .thenReturn(authorisations);
-        when(aisConsentMigrationService.migrateIfNeeded(consentEntity))
+        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))

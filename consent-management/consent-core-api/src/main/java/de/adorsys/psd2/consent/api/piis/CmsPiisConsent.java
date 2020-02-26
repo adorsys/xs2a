@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.core.piis;
+package de.adorsys.psd2.consent.api.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.AllArgsConstructor;
@@ -29,7 +30,7 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PiisConsent {
+public class CmsPiisConsent {
     private String id;
     private boolean recurringIndicator;
     private OffsetDateTime requestDateTime;
@@ -38,6 +39,10 @@ public class PiisConsent {
     private PsuIdData psuData;
     private ConsentStatus consentStatus;
     private AccountReference account;
+    /**
+     * @deprecated since 5.11 and will be removed, all PIIS consent have SINGLE_TPP access type
+     */
+    @Deprecated
     private PiisConsentTppAccessType tppAccessType;
     private OffsetDateTime creationTimestamp;
     private String instanceId;

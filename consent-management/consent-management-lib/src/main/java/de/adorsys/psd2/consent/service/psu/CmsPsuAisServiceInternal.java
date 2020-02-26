@@ -41,7 +41,7 @@ import de.adorsys.psd2.consent.service.mapper.AccessMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.migration.AisConsentMigrationService;
+import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
@@ -89,7 +89,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final ConsentDataMapper consentDataMapper;
-    private final AisConsentMigrationService aisConsentMigrationService;
+    private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final AccessMapper accessMapper;
 
     @Override
@@ -134,7 +134,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Transactional
     public @NotNull Optional<CmsAisAccountConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
         return consentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
-                   .map(aisConsentMigrationService::migrateIfNeeded)
+                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::checkAndUpdateOnExpiration)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations);
     }
@@ -203,7 +203,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
         return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId))
                    .stream()
-                   .map(aisConsentMigrationService::migrateIfNeeded)
+                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
@@ -286,7 +286,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                                                                   .orElse(null),
                                                               BooleanUtils.isTrue(request.getCombinedServiceIndicator()));
 
-        byte[] data = consentDataMapper.getBytesFromAisConsentData(aisConsentDataNew);
+        byte[] data = consentDataMapper.getBytesFromConsentData(aisConsentDataNew);
 
         AccountAccess requestedAccountAccess = consentMapper.mapToAccountAccess(requestedAisAccountAccess);
         List<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(requestedAccountAccess);
@@ -314,7 +314,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
         if (aisConsentOptional.isPresent()) {
-            ConsentEntity entity = aisConsentMigrationService.migrateIfNeeded(aisConsentOptional.get());
+            ConsentEntity entity = aisConsentLazyMigrationService.migrateIfNeeded(aisConsentOptional.get());
             return updateConsentStatus(entity, status);
         }
 
@@ -333,7 +333,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private Optional<ConsentEntity> getActualAisConsent(String consentId, String instanceId) {
         return consentJpaRepository.findOne(aisConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
-                   .map(aisConsentMigrationService::migrateIfNeeded)
+                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
@@ -375,7 +375,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             }
 
             ConsentEntity aisConsent = consentOptional.get();
-            aisConsent = aisConsentMigrationService.migrateIfNeeded(aisConsent);
+            aisConsent = aisConsentLazyMigrationService.migrateIfNeeded(aisConsent);
 
             List<PsuData> psuDataList = aisConsent.getPsuDataList();
             Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(newPsuData, psuDataList);
@@ -429,7 +429,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         ConsentEntity aisConsent = aisConsentOptional.get();
-        aisConsent = aisConsentMigrationService.migrateIfNeeded(aisConsent);
+        aisConsent = aisConsentLazyMigrationService.migrateIfNeeded(aisConsent);
 
         CmsAisAccountConsent aisAccountConsent = mapToCmsAisAccountConsentWithAuthorisations(aisConsent);
         return Optional.of(new CmsAisConsentResponse(aisAccountConsent, redirectId, authorisation.getTppOkRedirectUri(),

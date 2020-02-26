@@ -124,4 +124,5 @@
     <include relativeToChangelogFile="true" file="migration/0096-add-authorisation-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0097-add-column-content-type-to-pis-common-payment-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0098-create-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0099-migrate-piis-consents-to-consent-table.xml"/>
 </databaseChangeLog>

@@ -1,0 +1,27 @@
+{
+  "id": "69f1a603-1da2-4b46-82da-3bb0bd0b47cb",
+  "recurringIndicator": true,
+  "lastActionDate": "2018-05-04",
+  "expireDate": "2018-07-13",
+  "psuData": {
+    "psuId": "PSU ID",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+    "psuIpAddress": "PSU IP ADDRESS"
+  },
+  "consentStatus": "VALID",
+  "account": {
+    "currency": "EUR",
+    "iban": "DE15500105172295759744"
+  },
+  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
+  "cardNumber": "1234567891234",
+  "cardExpiryDate": "2020-12-31",
+  "cardInformation": "MyMerchant Loyalty Card",
+  "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
+  "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
+  "instanceId": "UNDEFINED",
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "tppAccessType": "SINGLE_TPP"
+}

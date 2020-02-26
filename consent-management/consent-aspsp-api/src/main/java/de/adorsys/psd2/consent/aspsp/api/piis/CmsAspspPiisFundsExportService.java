@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.aspsp.api.piis;
 
 
 import de.adorsys.psd2.consent.aspsp.api.TooManyResultsException;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,10 +43,10 @@ public interface CmsAspspPiisFundsExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<PiisConsent> exportConsentsByTpp(String tppAuthorisationNumber,
-                                                @Nullable LocalDate createDateFrom,
-                                                @Nullable LocalDate createDateTo,
-                                                @Nullable PsuIdData psuIdData, @Nullable String instanceId
+    Collection<CmsPiisConsent> exportConsentsByTpp(String tppAuthorisationNumber,
+                                                   @Nullable LocalDate createDateFrom,
+                                                   @Nullable LocalDate createDateTo,
+                                                   @Nullable PsuIdData psuIdData, @Nullable String instanceId
     );
 
     /**
@@ -62,10 +62,10 @@ public interface CmsAspspPiisFundsExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<PiisConsent> exportConsentsByPsu(PsuIdData psuIdData,
-                                                @Nullable LocalDate createDateFrom,
-                                                @Nullable LocalDate createDateTo,
-                                                @Nullable String instanceId
+    Collection<CmsPiisConsent> exportConsentsByPsu(PsuIdData psuIdData,
+                                                   @Nullable LocalDate createDateFrom,
+                                                   @Nullable LocalDate createDateTo,
+                                                   @Nullable String instanceId
     );
 
     /**
@@ -81,8 +81,8 @@ public interface CmsAspspPiisFundsExportService {
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<PiisConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
-                                                      @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                      @Nullable String instanceId);
+    Collection<CmsPiisConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
+                                                         @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                         @Nullable String instanceId);
 
 }

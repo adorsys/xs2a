@@ -17,9 +17,11 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -36,51 +38,63 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {PiisConsentMapper.class, PsuDataMapper.class, TppInfoMapperImpl.class,
-    AccountReferenceMapper.class})
+@ContextConfiguration(classes = {PiisConsentMapper.class, PsuDataMapper.class, ConsentDataMapper.class, AccessMapper.class})
 class PiisConsentMapperTest {
     @Autowired
     private PiisConsentMapper piisConsentMapper;
+
+    @Autowired
+    private ConsentDataMapper consentDataMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToPiisConsent() {
-        PiisConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
-        PiisConsent actualPiisConsent = piisConsentMapper.mapToPiisConsent(piisConsentEntity);
+        ConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
+        PiisConsentData piisConsentData = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-data.json", PiisConsentData.class);
+        piisConsentEntity.setData(consentDataMapper.getBytesFromConsentData(piisConsentData));
 
-        PiisConsent expectedPiisConsent = jsonReader.getObjectFromFile("json/service/mapper/piis-consent.json", PiisConsent.class);
-        assertEquals(expectedPiisConsent, actualPiisConsent);
+        CmsPiisConsent actualCmsPiisConsent = piisConsentMapper.mapToCmsPiisConsent(piisConsentEntity);
+
+        CmsPiisConsent expectedPiisConsent = jsonReader.getObjectFromFile("json/service/mapper/cms-piis-consent.json", CmsPiisConsent.class);
+        assertEquals(expectedPiisConsent, actualCmsPiisConsent);
     }
 
     @Test
     void mapToPiisConsentList() {
-        PiisConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
-        List<PiisConsent> actualPiisConsentList = piisConsentMapper.mapToPiisConsentList(Collections.singletonList(piisConsentEntity));
+        ConsentEntity piisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
+        PiisConsentData piisConsentData = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-data.json", PiisConsentData.class);
+        piisConsentEntity.setData(consentDataMapper.getBytesFromConsentData(piisConsentData));
 
-        PiisConsent expectedPiisConsent = jsonReader.getObjectFromFile("json/service/mapper/piis-consent.json", PiisConsent.class);
-        assertNotNull(actualPiisConsentList);
-        assertEquals(1, actualPiisConsentList.size());
-        assertEquals(expectedPiisConsent, actualPiisConsentList.get(0));
+        List<CmsPiisConsent> actualCmsPiisConsentList = piisConsentMapper.mapToCmsPiisConsentList(Collections.singletonList(piisConsentEntity));
+
+        CmsPiisConsent expectedPiisConsent = jsonReader.getObjectFromFile("json/service/mapper/cms-piis-consent.json", CmsPiisConsent.class);
+        assertNotNull(actualCmsPiisConsentList);
+        assertEquals(1, actualCmsPiisConsentList.size());
+        assertEquals(expectedPiisConsent, actualCmsPiisConsentList.get(0));
     }
 
     @Test
     void mapToPiisConsentEntity() {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
         CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
+        TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-consent.json", TppInfoEntity.class);
+        ;
 
-        PiisConsentEntity actualPiisConsentEntity = piisConsentMapper.mapToPiisConsentEntity(psuIdData, createPiisConsentRequest);
+        ConsentEntity actual = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, createPiisConsentRequest);
 
-        PiisConsentEntity expectedPiisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
-        expectedPiisConsentEntity.setId(null);
-        expectedPiisConsentEntity.setRecurringIndicator(false);
-        expectedPiisConsentEntity.setLastActionDate(LocalDate.now());
-        expectedPiisConsentEntity.setStatusChangeTimestamp(null);
-        expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
-        expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
-        expectedPiisConsentEntity.setCreationTimestamp(actualPiisConsentEntity.getCreationTimestamp());
+        ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
+        expected.setId(null);
+        expected.setRecurringIndicator(false);
+        expected.setLastActionDate(LocalDate.now());
+        expected.setStatusChangeTimestamp(null);
+        expected.setExternalId(actual.getExternalId());
+        expected.setRequestDateTime(actual.getRequestDateTime());
+        expected.setCreationTimestamp(actual.getCreationTimestamp());
+        PiisConsentData piisConsentData = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-data.json", PiisConsentData.class);
+        expected.setData(consentDataMapper.getBytesFromConsentData(piisConsentData));
 
-        assertEquals(expectedPiisConsentEntity, actualPiisConsentEntity);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -88,20 +102,22 @@ class PiisConsentMapperTest {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
         CreatePiisConsentRequest createPiisConsentRequest = jsonReader.getObjectFromFile("json/service/mapper/create-piis-consent-request.json", CreatePiisConsentRequest.class);
         createPiisConsentRequest.setTppAuthorisationNumber(null);
+        TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-consent.json", TppInfoEntity.class);
+        ;
 
-        PiisConsentEntity actualPiisConsentEntity = piisConsentMapper.mapToPiisConsentEntity(psuIdData, createPiisConsentRequest);
+        ConsentEntity actual = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, createPiisConsentRequest);
 
-        PiisConsentEntity expectedPiisConsentEntity = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", PiisConsentEntity.class);
-        expectedPiisConsentEntity.setId(null);
-        expectedPiisConsentEntity.setRecurringIndicator(false);
-        expectedPiisConsentEntity.setLastActionDate(LocalDate.now());
-        expectedPiisConsentEntity.setStatusChangeTimestamp(null);
-        expectedPiisConsentEntity.setExternalId(actualPiisConsentEntity.getExternalId());
-        expectedPiisConsentEntity.setRequestDateTime(actualPiisConsentEntity.getRequestDateTime());
-        expectedPiisConsentEntity.setCreationTimestamp(actualPiisConsentEntity.getCreationTimestamp());
-        expectedPiisConsentEntity.setTppAuthorisationNumber(null);
-        expectedPiisConsentEntity.setTppAccessType(PiisConsentTppAccessType.ALL_TPP);
+        ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
+        expected.setId(null);
+        expected.setRecurringIndicator(false);
+        expected.setLastActionDate(LocalDate.now());
+        expected.setStatusChangeTimestamp(null);
+        expected.setExternalId(actual.getExternalId());
+        expected.setRequestDateTime(actual.getRequestDateTime());
+        expected.setCreationTimestamp(actual.getCreationTimestamp());
+        PiisConsentData piisConsentData = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-data.json", PiisConsentData.class);
+        expected.setData(consentDataMapper.getBytesFromConsentData(piisConsentData));
 
-        assertEquals(expectedPiisConsentEntity, actualPiisConsentEntity);
+        assertEquals(expected, actual);
     }
 }

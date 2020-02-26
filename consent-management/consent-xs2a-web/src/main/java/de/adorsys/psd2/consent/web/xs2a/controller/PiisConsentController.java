@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import io.swagger.annotations.*;
@@ -44,9 +44,9 @@ public class PiisConsentController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<PiisConsent>> getPiisConsentListByAccountReference(
-        @ApiParam(name = "currency", value = "3 capital letters of currency name.", example = "EUR")
-        @RequestHeader(value = "currency") String currency,
+    public ResponseEntity<List<CmsConsent>> getPiisConsentListByAccountReference(
+        @ApiParam(name = "currency", value = "Valid currency code", example = "EUR")
+        @RequestHeader(value = "currency", required = false) String currency,
         @ApiParam(name = "account-reference-type",
             value = "Account reference type, can be either IBAN, BBAN, PAN, MSISDN or MASKED_PAN.",
             example = "IBAN",
@@ -58,7 +58,7 @@ public class PiisConsentController {
             required = true)
         @PathVariable("account-identifier") String accountIdentifier) {
         Currency nullableCurrency = StringUtils.isBlank(currency) ? null : Currency.getInstance(currency);
-        CmsResponse<List<PiisConsent>> response = piisConsentService.getPiisConsentListByAccountIdentifier(nullableCurrency, new AccountReferenceSelector(accountReferenceType, accountIdentifier));
+        CmsResponse<List<CmsConsent>> response = piisConsentService.getPiisConsentListByAccountIdentifier(nullableCurrency, new AccountReferenceSelector(accountReferenceType, accountIdentifier));
 
         return response.isSuccessful() && CollectionUtils.isNotEmpty(response.getPayload())
                    ? ResponseEntity.ok(response.getPayload())

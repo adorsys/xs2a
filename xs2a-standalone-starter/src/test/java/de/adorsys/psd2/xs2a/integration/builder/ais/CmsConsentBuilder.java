@@ -74,7 +74,7 @@ public class CmsConsentBuilder {
                    .map(cr -> {
                             AisConsentData aisConsentData = mapToAisConsentData(consentReq);
 
-                            byte[] bytes = consentDataMapper.getBytesFromAisConsentData(aisConsentData);
+                            byte[] bytes = consentDataMapper.getBytesFromConsentData(aisConsentData);
                             OffsetDateTime now = OffsetDateTime.now();
                             ConsentTppInformation tppInformation = new ConsentTppInformation();
                             tppInformation.setTppRedirectPreferred(ScaApproach.REDIRECT.equals(scaApproach));

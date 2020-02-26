@@ -16,17 +16,25 @@
 
 package de.adorsys.psd2.consent.service.aspsp;
 
+import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
+import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +47,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -64,9 +73,16 @@ class CmsAspspPiisServiceInternalTest {
     private static final String CARD_INFORMATION = "MyMerchant Loyalty Card";
     private static final String REGISTRATION_INFORMATION = "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.";
     private static final LocalDate VALID_UNTIL_DATE = LocalDate.now().plusDays(1);
+    private static final byte[] DATA = ArrayUtils.addAll(ArrayUtils.addAll(ArrayUtils.addAll(CARD_NUMBER.getBytes(), CARD_EXPIRY_DATE.toString().getBytes()), CARD_INFORMATION.getBytes()), REGISTRATION_INFORMATION.getBytes());
 
     @Mock
-    private PiisConsentRepository piisConsentRepository;
+    private ConsentDataMapper consentDataMapper;
+    @Mock
+    private TppInfoRepository tppInfoRepository;
+    @Mock
+    private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
+    @Mock
+    private ConsentJpaRepository consentJpaRepository;
     @Mock
     private PiisConsentMapper piisConsentMapper;
     @Mock
@@ -82,14 +98,15 @@ class CmsAspspPiisServiceInternalTest {
 
     @Test
     void createConsent_success() {
-        PiisConsentEntity piisConsentEntity = buildConsent();
+        ConsentEntity piisConsentEntity = buildConsent();
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(buildAccountReference(), VALID_UNTIL_DATE);
-        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, request)).thenReturn(piisConsentEntity);
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, buildTppInfoEntity(), request)).thenReturn(piisConsentEntity);
+        when(consentJpaRepository.save(any(ConsentEntity.class)))
             .thenReturn(piisConsentEntity);
+        when(tppInfoRepository.findByAuthorisationNumber(TPP_AUTHORISATION_NUMBER)).thenReturn(Optional.of(buildTppInfoEntity()));
 
         // Given
-        ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
+        ArgumentCaptor<ConsentEntity> argumentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
 
         // When
         Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, request);
@@ -97,52 +114,51 @@ class CmsAspspPiisServiceInternalTest {
         // Then
         assertTrue(actual.isPresent());
         assertTrue(StringUtils.isNotBlank(actual.get()));
-        verify(piisConsentRepository).save(argumentCaptor.capture());
+        verify(consentJpaRepository).save(argumentCaptor.capture());
 
-        PiisConsentEntity piisConsent = argumentCaptor.getValue();
+        ConsentEntity piisConsent = argumentCaptor.getValue();
         assertTrue(StringUtils.isNotBlank(piisConsent.getExternalId()));
-        assertEquals(buildAccountReferenceEntity(), piisConsent.getAccount());
-        assertEquals(VALID_UNTIL_DATE, piisConsent.getExpireDate());
-        assertEquals(request.getCardNumber(), piisConsent.getCardNumber());
-        assertEquals(request.getCardExpiryDate(), piisConsent.getCardExpiryDate());
-        assertEquals(request.getCardInformation(), piisConsent.getCardInformation());
-        assertEquals(request.getRegistrationInformation(), piisConsent.getRegistrationInformation());
+        assertEquals(Collections.singletonList(buildAspspAccountAccess(buildAccountReference())), piisConsent.getAspspAccountAccesses());
+        assertEquals(VALID_UNTIL_DATE, piisConsent.getValidUntil());
+        assertEquals(DATA, piisConsent.getData());
     }
 
     @Test
     void createConsentClosePreviousPiisConsents_success() {
-        PiisConsentEntity piisConsentEntity = buildConsent();
+        ConsentEntity piisConsentEntity = buildConsent();
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(buildAccountReference(), VALID_UNTIL_DATE);
-        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, request)).thenReturn(piisConsentEntity);
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, buildTppInfoEntity(), request)).thenReturn(piisConsentEntity);
+        when(consentJpaRepository.save(any(ConsentEntity.class)))
             .thenReturn(piisConsentEntity);
+        when(tppInfoRepository.findByAuthorisationNumber(TPP_AUTHORISATION_NUMBER)).thenReturn(Optional.of(buildTppInfoEntity()));
 
         // Given
         AccountReference accountReference = buildAccountReference();
 
         when(piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, TPP_AUTHORISATION_NUMBER, accountReference))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        List<PiisConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(), buildPiisConsentEntity());
+        List<ConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(), buildPiisConsentEntity());
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class))).thenReturn(piisConsentEntities);
+        when(consentJpaRepository.findAll(any(Specification.class))).thenReturn(piisConsentEntities);
+        when(piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities)).thenReturn(piisConsentEntities);
 
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<PiisConsentEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<ConsentEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         // When
         cmsAspspPiisServiceInternal.createConsent(psuIdData, request);
 
         // Then
-        verify(piisConsentRepository).saveAll(argumentCaptor.capture());
+        verify(consentJpaRepository).saveAll(argumentCaptor.capture());
 
-        List<PiisConsentEntity> previousPiisConsent = argumentCaptor.getValue();
+        List<ConsentEntity> previousPiisConsent = argumentCaptor.getValue();
         assertEquals(piisConsentEntities.size(), previousPiisConsent.size());
 
         verify(piisConsentEntitySpecification, times(1))
             .byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, TPP_AUTHORISATION_NUMBER, accountReference);
 
         Set<ConsentStatus> consentStatuses = previousPiisConsent.stream()
-                                                 .map(PiisConsentEntity::getConsentStatus)
+                                                 .map(ConsentEntity::getConsentStatus)
                                                  .collect(Collectors.toSet());
 
         assertEquals(1, consentStatuses.size());
@@ -151,32 +167,34 @@ class CmsAspspPiisServiceInternalTest {
 
     @Test
     void createConsent_shouldNotCloseFinalisedConsents() {
-        PiisConsentEntity piisConsentEntity = buildConsent();
+        ConsentEntity piisConsentEntity = buildConsent();
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(buildAccountReference(), VALID_UNTIL_DATE);
-        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, request)).thenReturn(piisConsentEntity);
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, buildTppInfoEntity(), request)).thenReturn(piisConsentEntity);
+        when(consentJpaRepository.save(any(ConsentEntity.class)))
             .thenReturn(piisConsentEntity);
+        when(tppInfoRepository.findByAuthorisationNumber(TPP_AUTHORISATION_NUMBER)).thenReturn(Optional.of(buildTppInfoEntity()));
 
         // Given
         AccountReference accountReference = buildAccountReference();
 
         @SuppressWarnings("unchecked")
-        Specification<PiisConsentEntity> mockSpecification = Mockito.mock(Specification.class);
+        Specification<ConsentEntity> mockSpecification = Mockito.mock(Specification.class);
         when(piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, TPP_AUTHORISATION_NUMBER, accountReference))
             .thenReturn(mockSpecification);
-        List<PiisConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(ConsentStatus.TERMINATED_BY_ASPSP), buildPiisConsentEntity());
-        when(piisConsentRepository.findAll(mockSpecification)).thenReturn(piisConsentEntities);
+        List<ConsentEntity> piisConsentEntities = Arrays.asList(buildPiisConsentEntity(ConsentStatus.TERMINATED_BY_ASPSP), buildPiisConsentEntity());
+        when(consentJpaRepository.findAll(mockSpecification)).thenReturn(piisConsentEntities);
+        when(piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities)).thenReturn(piisConsentEntities);
 
         @SuppressWarnings("unchecked")
-        ArgumentCaptor<List<PiisConsentEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
+        ArgumentCaptor<List<ConsentEntity>> argumentCaptor = ArgumentCaptor.forClass(List.class);
 
         // When
         cmsAspspPiisServiceInternal.createConsent(psuIdData, request);
 
         // Then
-        verify(piisConsentRepository).saveAll(argumentCaptor.capture());
+        verify(consentJpaRepository).saveAll(argumentCaptor.capture());
 
-        List<PiisConsentEntity> closedPiisConsents = argumentCaptor.getValue();
+        List<ConsentEntity> closedPiisConsents = argumentCaptor.getValue();
         assertEquals(1, closedPiisConsents.size());
         assertEquals(ConsentStatus.REVOKED_BY_PSU, closedPiisConsents.get(0).getConsentStatus());
     }
@@ -184,11 +202,12 @@ class CmsAspspPiisServiceInternalTest {
     @Test
     void createConsent_withExpireDateToday_success() {
         // Given
-        PiisConsentEntity piisConsentEntity = buildConsent();
+        ConsentEntity piisConsentEntity = buildConsent();
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(buildAccountReference(), VALID_UNTIL_DATE);
-        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, request)).thenReturn(piisConsentEntity);
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, buildTppInfoEntity(), request)).thenReturn(piisConsentEntity);
+        when(consentJpaRepository.save(any(ConsentEntity.class)))
             .thenReturn(piisConsentEntity);
+        when(tppInfoRepository.findByAuthorisationNumber(TPP_AUTHORISATION_NUMBER)).thenReturn(Optional.of(buildTppInfoEntity()));
 
         // When
         Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, request);
@@ -201,11 +220,12 @@ class CmsAspspPiisServiceInternalTest {
     @Test
     void createConsent_savingFailed_shouldFail() {
         // Given
-        PiisConsentEntity piisConsentEntity = buildConsent(null);
+        ConsentEntity piisConsentEntity = buildConsent(null);
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(buildAccountReference(), EXPIRE_DATE);
-        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, request)).thenReturn(piisConsentEntity);
-        when(piisConsentRepository.save(any(PiisConsentEntity.class)))
+        when(piisConsentMapper.mapToPiisConsentEntity(psuIdData, buildTppInfoEntity(), request)).thenReturn(piisConsentEntity);
+        when(consentJpaRepository.save(any(ConsentEntity.class)))
             .thenReturn(piisConsentEntity);
+        when(tppInfoRepository.findByAuthorisationNumber(TPP_AUTHORISATION_NUMBER)).thenReturn(Optional.of(buildTppInfoEntity()));
 
         // When
         Optional<String> actual = cmsAspspPiisServiceInternal.createConsent(psuIdData, request);
@@ -225,7 +245,7 @@ class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertFalse(actual.isPresent());
-        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(consentJpaRepository, never()).save(any(ConsentEntity.class));
     }
 
     @Test
@@ -239,7 +259,7 @@ class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertFalse(actual.isPresent());
-        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(consentJpaRepository, never()).save(any(ConsentEntity.class));
     }
 
     @Test
@@ -254,7 +274,7 @@ class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertFalse(actual.isPresent());
-        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(consentJpaRepository, never()).save(any(ConsentEntity.class));
     }
 
     @Test
@@ -268,7 +288,7 @@ class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertFalse(actual.isPresent());
-        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(consentJpaRepository, never()).save(any(ConsentEntity.class));
     }
 
     @Test
@@ -284,7 +304,7 @@ class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertFalse(actual.isPresent());
-        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(consentJpaRepository, never()).save(any(ConsentEntity.class));
     }
 
     @Test
@@ -293,13 +313,15 @@ class CmsAspspPiisServiceInternalTest {
         PsuIdData psuIdData = buildPsuIdData(PSU_ID);
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(piisConsentRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPiisConsentEntity()));
-        PiisConsent expected = buildPiisConsent();
-        when(piisConsentMapper.mapToPiisConsent(buildPiisConsentEntity())).thenReturn(buildPiisConsent());
+        List<ConsentEntity> piisConsentEntities = Collections.singletonList(buildPiisConsentEntity());
+        when(consentJpaRepository.findAll(any(Specification.class)))
+            .thenReturn(piisConsentEntities);
+        when(piisConsentLazyMigrationService.migrateIfNeeded(buildPiisConsentEntity())).thenReturn(buildPiisConsentEntity());
+        when(piisConsentMapper.mapToCmsPiisConsent(buildPiisConsentEntity())).thenReturn(buildCmsPiisConsent());
+        CmsPiisConsent expected = buildCmsPiisConsent();
 
         // When
-        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actual.isEmpty());
@@ -314,7 +336,7 @@ class CmsAspspPiisServiceInternalTest {
         PsuIdData psuIdData = buildPsuIdData(PSU_ID_WRONG);
 
         // When
-        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actual.isEmpty());
@@ -328,11 +350,11 @@ class CmsAspspPiisServiceInternalTest {
         PsuIdData emptyPsuIdData = buildPsuIdData(null);
 
         // When
-        List<PiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actual.isEmpty());
-        verify(piisConsentRepository, never()).findAll(any());
+        verify(consentJpaRepository, never()).findAll(any());
     }
 
     @Test
@@ -341,15 +363,20 @@ class CmsAspspPiisServiceInternalTest {
         when(piisConsentEntitySpecification.byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(piisConsentRepository.findOne(any(Specification.class))).thenReturn(Optional.of(buildPiisConsentEntity()));
-        ArgumentCaptor<PiisConsentEntity> argumentCaptor = ArgumentCaptor.forClass(PiisConsentEntity.class);
+        when(consentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(buildPiisConsentEntity()));
+        ArgumentCaptor<ConsentEntity> argumentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
+        ConsentEntity modified = buildPiisConsentEntity();
+        modified.setLastActionDate(LocalDate.now());
+        modified.setConsentStatus(ConsentStatus.TERMINATED_BY_ASPSP);
+        when(piisConsentLazyMigrationService.migrateIfNeeded(any(ConsentEntity.class))).thenReturn(modified);
 
         // When
         boolean actual = cmsAspspPiisServiceInternal.terminateConsent(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actual);
-        verify(piisConsentRepository).save(argumentCaptor.capture());
+        verify(piisConsentLazyMigrationService).migrateIfNeeded(argumentCaptor.capture());
+        verify(consentJpaRepository).save(argumentCaptor.capture());
         assertEquals(ConsentStatus.TERMINATED_BY_ASPSP, argumentCaptor.getValue().getConsentStatus());
         verify(piisConsentEntitySpecification, times(1))
             .byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);
@@ -364,29 +391,36 @@ class CmsAspspPiisServiceInternalTest {
 
         // Then
         assertFalse(actual);
-        verify(piisConsentRepository, never()).save(any(PiisConsentEntity.class));
+        verify(consentJpaRepository, never()).save(any(ConsentEntity.class));
         verify(piisConsentEntitySpecification, times(1))
             .byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID_WRONG, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
-    private PiisConsentEntity buildConsent() {
+    private TppInfoEntity buildTppInfoEntity() {
+        TppInfoEntity tppInfoEntity = new TppInfoEntity();
+        tppInfoEntity.setAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
+        return tppInfoEntity;
+    }
+
+    private ConsentEntity buildConsent() {
         return buildConsent(CONSENT_INTERNAL_ID);
     }
 
-    private PiisConsentEntity buildConsent(Long id) {
-        PiisConsentEntity piisConsent = new PiisConsentEntity();
+    private ConsentEntity buildConsent(Long id) {
+        ConsentEntity piisConsent = new ConsentEntity();
         piisConsent.setId(id);
-        piisConsent.setAccount(buildAccountReferenceEntity());
+        piisConsent.setAspspAccountAccesses(Collections.singletonList(buildAspspAccountAccess(buildAccountReference())));
         piisConsent.setExternalId(CONSENT_EXTERNAL_ID);
-        piisConsent.setRequestDateTime(OffsetDateTime.now());
-        piisConsent.setPsuData(buildPsuData());
+        piisConsent.setRequestDateTime(LocalDateTime.now());
+        piisConsent.setPsuDataList(Collections.singletonList(buildPsuData()));
         piisConsent.setConsentStatus(ConsentStatus.RECEIVED);
-        piisConsent.setExpireDate(VALID_UNTIL_DATE);
-        piisConsent.setCardNumber(CARD_NUMBER);
-        piisConsent.setCardExpiryDate(CARD_EXPIRY_DATE);
-        piisConsent.setCardInformation(CARD_INFORMATION);
-        piisConsent.setRegistrationInformation(REGISTRATION_INFORMATION);
+        piisConsent.setValidUntil(VALID_UNTIL_DATE);
+        piisConsent.setData(DATA);
         return piisConsent;
+    }
+
+    private PiisConsentData buildPiisConsentData() {
+        return new PiisConsentData(CARD_NUMBER, CARD_EXPIRY_DATE, CARD_INFORMATION, REGISTRATION_INFORMATION);
     }
 
     private PsuData buildPsuData() {
@@ -419,20 +453,20 @@ class CmsAspspPiisServiceInternalTest {
         return accountReferenceEntity;
     }
 
-    private PiisConsentEntity buildPiisConsentEntity() {
+    private ConsentEntity buildPiisConsentEntity() {
         return buildPiisConsentEntity(ConsentStatus.RECEIVED);
     }
 
-    private PiisConsentEntity buildPiisConsentEntity(ConsentStatus consentStatus) {
-        PiisConsentEntity consentEntity = new PiisConsentEntity();
+    private ConsentEntity buildPiisConsentEntity(ConsentStatus consentStatus) {
+        ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(CONSENT_EXTERNAL_ID);
         consentEntity.setCreationTimestamp(CREATION_TIMESTAMP);
         consentEntity.setConsentStatus(consentStatus);
         return consentEntity;
     }
 
-    private PiisConsent buildPiisConsent() {
-        PiisConsent consent = new PiisConsent();
+    private CmsPiisConsent buildCmsPiisConsent() {
+        CmsPiisConsent consent = new CmsPiisConsent();
         consent.setId(CONSENT_EXTERNAL_ID);
         consent.setCreationTimestamp(CREATION_TIMESTAMP);
         consent.setConsentStatus(ConsentStatus.RECEIVED);
@@ -449,5 +483,14 @@ class CmsAspspPiisServiceInternalTest {
         request.setRegistrationInformation(REGISTRATION_INFORMATION);
         request.setTppAuthorisationNumber(TPP_AUTHORISATION_NUMBER);
         return request;
+    }
+
+    public AspspAccountAccess buildAspspAccountAccess(AccountReference accountReference) {
+        return new AspspAccountAccess(accountReference.getUsedAccountReferenceSelector().getAccountValue(),
+                                      TypeAccess.ACCOUNT,
+                                      accountReference.getUsedAccountReferenceSelector().getAccountReferenceType(),
+                                      accountReference.getCurrency(),
+                                      accountReference.getResourceId(),
+                                      accountReference.getAspspAccountId());
     }
 }

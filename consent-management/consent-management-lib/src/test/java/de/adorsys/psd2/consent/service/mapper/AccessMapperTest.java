@@ -31,7 +31,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AccessMapperTest {
-
     AccessMapper accessMapper = new AccessMapper();
     JsonReader jsonReader = new JsonReader();
 
@@ -104,6 +103,26 @@ class AccessMapperTest {
 
         actual.getAccounts().sort(Comparator.comparing(AccountReference::getResourceId));
         expected.getAccounts().sort(Comparator.comparing(AccountReference::getResourceId));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToAspspAccountAccess_accountReference() {
+        AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-reference.json", AccountReference.class);
+        AspspAccountAccess expected = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-account.json", AspspAccountAccess.class);
+
+        AspspAccountAccess actual = accessMapper.mapToAspspAccountAccess(accountReference);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToAccountReference() {
+        AspspAccountAccess aspspAccountAccess = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-account.json", AspspAccountAccess.class);
+        AccountReference expected = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-reference.json", AccountReference.class);
+
+        AccountReference actual = accessMapper.mapToAccountReference(aspspAccountAccess);
 
         assertEquals(expected, actual);
     }

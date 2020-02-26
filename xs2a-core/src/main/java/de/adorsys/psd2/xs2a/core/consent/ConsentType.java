@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ConsentType {
-    AIS("AIS");
+    AIS,
+    PIIS_ASPSP,
+    PIIS_TPP;
 
     private static Map<String, ConsentType> container = new HashMap<>();
 
@@ -30,14 +32,8 @@ public enum ConsentType {
             .forEach(type -> container.put(type.getName(), type));
     }
 
-    private String consentType;
-
-    ConsentType(String name) {
-        this.consentType = name;
-    }
-
     public String getName() {
-        return consentType;
+        return this.name();
     }
 
     public static ConsentType getByValue(String consentType) {

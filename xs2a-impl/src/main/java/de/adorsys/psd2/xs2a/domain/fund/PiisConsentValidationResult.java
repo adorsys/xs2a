@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.domain.fund;
 
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import lombok.Data;
 
 @Data

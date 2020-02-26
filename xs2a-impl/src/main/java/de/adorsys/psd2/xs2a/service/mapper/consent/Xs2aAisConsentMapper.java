@@ -20,12 +20,12 @@ import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.ais.AccountAdditionalInformationAccess;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.authorisation.*;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -63,27 +63,6 @@ public class Xs2aAisConsentMapper {
     private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
     private final ConsentDataMapper consentDataMapper;
     private final RequestProviderService requestProviderService;
-
-    public CreateAisConsentRequest mapToCreateAisConsentRequest(CreateConsentReq req, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay, String internalRequestId) {
-        return Optional.ofNullable(req)
-                   .map(r -> {
-                       CreateAisConsentRequest aisRequest = new CreateAisConsentRequest();
-                       aisRequest.setPsuData(psuData);
-                       aisRequest.setTppInfo(tppInfo);
-                       aisRequest.setRequestedFrequencyPerDay(r.getFrequencyPerDay());
-                       aisRequest.setAllowedFrequencyPerDay(allowedFrequencyPerDay);
-                       aisRequest.setAccess(mapToAisAccountAccessInfo(req.getAccess()));
-                       aisRequest.setValidUntil(r.getValidUntil());
-                       aisRequest.setRecurringIndicator(r.isRecurringIndicator());
-                       aisRequest.setCombinedServiceIndicator(r.isCombinedServiceIndicator());
-                       aisRequest.setTppRedirectUri(r.getTppRedirectUri());
-                       aisRequest.setInternalRequestId(internalRequestId);
-                       aisRequest.setTppNotificationUri(Optional.ofNullable(req.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
-                       aisRequest.setNotificationSupportedModes(Optional.ofNullable(req.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
-                       return aisRequest;
-                   })
-                   .orElse(null);
-    }
 
     public SpiAccountConsent mapToSpiAccountConsent(AisConsent aisConsent) {
         return Optional.ofNullable(aisConsent)
@@ -150,7 +129,7 @@ public class Xs2aAisConsentMapper {
         CmsConsent cmsConsent = new CmsConsent();
 
         AisConsentData aisConsentData = new AisConsentData(request.getAvailableAccounts(), request.getAllPsd2(), request.getAvailableAccountsWithBalance(), request.isCombinedServiceIndicator());
-        byte[] aisConsentDataBytes = consentDataMapper.getBytesFromAisConsentData(aisConsentData);
+        byte[] aisConsentDataBytes = consentDataMapper.getBytesFromConsentData(aisConsentData);
         cmsConsent.setConsentData(aisConsentDataBytes);
 
         ConsentTppInformation tppInformation = new ConsentTppInformation();
@@ -173,7 +152,7 @@ public class Xs2aAisConsentMapper {
         cmsConsent.setConsentType(ConsentType.AIS);
         cmsConsent.setTppAccountAccesses(request.getAccess());
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
-
+        cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);
         return cmsConsent;
     }
 

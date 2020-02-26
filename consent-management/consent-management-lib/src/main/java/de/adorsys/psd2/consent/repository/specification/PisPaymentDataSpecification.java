@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
-public class PisPaymentDataSpecification extends GenericSpecification {
+public class PisPaymentDataSpecification {
     public Specification<PisPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
         return Specification.<PisPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
                    .and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId));

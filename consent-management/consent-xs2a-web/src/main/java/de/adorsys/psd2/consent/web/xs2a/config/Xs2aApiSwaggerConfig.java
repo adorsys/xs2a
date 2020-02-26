@@ -48,6 +48,7 @@ public class Xs2aApiSwaggerConfig {
                        InternalCmsXs2aApiTagHolder.AIS_CONSENTS,
                        InternalCmsXs2aApiTagHolder.AIS_PSU_DATA,
                        InternalCmsXs2aApiTagHolder.ASPSP_CONSENT_DATA,
+                       InternalCmsXs2aApiTagHolder.AUTHORISATIONS,
                        InternalCmsXs2aApiTagHolder.CONSENTS,
                        InternalCmsXs2aApiTagHolder.EVENTS,
                        InternalCmsXs2aApiTagHolder.PIIS_CONSENTS,
