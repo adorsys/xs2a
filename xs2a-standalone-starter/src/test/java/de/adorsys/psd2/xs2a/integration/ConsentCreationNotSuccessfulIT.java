@@ -186,7 +186,7 @@ class ConsentCreationNotSuccessfulIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
         //Then
         resultActions.andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(TPP_ERROR_MESSAGE_JSON_PATH, UTF_8)));
     }
 

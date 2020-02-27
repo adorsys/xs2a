@@ -185,7 +185,7 @@ class AccountControllerIT {
 
         // Then
         resultActions.andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
@@ -199,7 +199,7 @@ class AccountControllerIT {
 
         // Then
         resultActions.andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
@@ -216,7 +216,7 @@ class AccountControllerIT {
 
         // Then
         resultActions.andExpect(status().isTooManyRequests())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(ACCESS_EXCEEDED_JSON_PATH, UTF_8)));
     }
 
@@ -250,7 +250,7 @@ class AccountControllerIT {
 
         // Then
         resultActions.andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
@@ -286,7 +286,7 @@ class AccountControllerIT {
 
         // Then
         resultActions.andExpect(status().isTooManyRequests())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
@@ -322,10 +322,10 @@ class AccountControllerIT {
             // Then
             if (usage > 0) {
                 resultActions.andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
             } else {
                 resultActions.andExpect(status().isTooManyRequests())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                     .andExpect(content().json(IOUtils.resourceToString(ACCESS_EXCEEDED_JSON_PATH, UTF_8)));
             }
         }

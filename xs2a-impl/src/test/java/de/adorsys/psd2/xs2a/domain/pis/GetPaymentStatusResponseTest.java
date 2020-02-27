@@ -33,7 +33,7 @@ public class GetPaymentStatusResponseTest {
 
     @Test
     void isResponseContentTypeJson_withUtf8Json() {
-        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TransactionStatus.ACSP, null, MediaType.APPLICATION_JSON_UTF8, null);
+        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TransactionStatus.ACSP, null, MediaType.APPLICATION_JSON, null);
 
         assertTrue(getPaymentStatusResponse.isResponseContentTypeJson());
     }

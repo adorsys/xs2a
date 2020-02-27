@@ -78,7 +78,7 @@ class AisConsentLazyMigrationServiceTest {
         assertEquals(AccountAccessType.ALL_ACCOUNTS, actual.getAllPsd2());
         assertEquals(AccountAccessType.ALL_ACCOUNTS, actual.getAvailableAccounts());
         assertEquals(AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, actual.getAvailableAccountsWithBalance());
-        assertFalse(actual.isCombinedServiceIndicator());
+        assertTrue(actual.isCombinedServiceIndicator());
     }
 
     @Test

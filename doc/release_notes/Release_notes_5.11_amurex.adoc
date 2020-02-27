@@ -2,6 +2,7 @@
 
 == Table of Contents
 * Consent refactoring
+* Update version of spring-data-jpa to 2.2.4.RELEASE
 
 == Consent refactoring
 
@@ -20,3 +21,9 @@ To support all operation with consent added `CmsConsentController`:
 * `DELETE /v1/consent/{encrypted-consent-id}/old-consents` - finds and terminates old consents for TPP and PSU by new consent ID
 * `PUT /v1/consent/{encrypted-consent-id}/multilevel-sca` - updates requirement for multilevel SCA for consent
 
+== Update version of spring-data-jpa to 2.2.4.RELEASE
+
+Updated version of spring-data-jpa to 2.2.4.RELEASE. It led to updating following dependencies:
+
+* spring 5.1.6 -> 5.2.3
+* spring-boot 2.1.11 -> 2.2.4

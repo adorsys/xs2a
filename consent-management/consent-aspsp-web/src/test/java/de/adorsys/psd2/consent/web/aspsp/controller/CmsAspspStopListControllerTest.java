@@ -84,7 +84,7 @@ class CmsAspspStopListControllerTest {
             .thenReturn(Optional.of(tppStopListRecord));
 
         mockMvc.perform(get(GET_STOP_LIST_BY_TPP)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(TPP_STOP_LIST_PATH)));
@@ -98,7 +98,7 @@ class CmsAspspStopListControllerTest {
             .thenReturn(Optional.empty());
 
         mockMvc.perform(get(GET_STOP_LIST_BY_TPP)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
 
@@ -112,7 +112,7 @@ class CmsAspspStopListControllerTest {
             .thenReturn(true);
 
         mockMvc.perform(put(BLOCK_TPP_AUTH_NUMBER)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().string(TRUE));
@@ -126,7 +126,7 @@ class CmsAspspStopListControllerTest {
             .thenReturn(true);
 
         mockMvc.perform(delete(UNBLOCK_TPP_AUTH_NUMBER)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().string(TRUE));

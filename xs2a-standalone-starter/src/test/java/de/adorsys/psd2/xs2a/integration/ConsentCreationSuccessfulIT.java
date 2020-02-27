@@ -335,7 +335,7 @@ public class ConsentCreationSuccessfulIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(responseJsonPath, UTF_8)));
     }
 

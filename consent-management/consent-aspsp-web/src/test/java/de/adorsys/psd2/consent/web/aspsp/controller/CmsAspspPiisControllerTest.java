@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +93,7 @@ class CmsAspspPiisControllerTest {
             .thenReturn(Optional.of(CONSENT_ID));
 
         mockMvc.perform(post(CREATE_PIIS_CONSENT_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders)
                             .content(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_REQUEST_PATH)))
             .andExpect(status().is(HttpStatus.CREATED.value()))
@@ -108,7 +108,7 @@ class CmsAspspPiisControllerTest {
             .thenReturn(Optional.empty());
 
         mockMvc.perform(post(CREATE_PIIS_CONSENT_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders)
                             .content(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_REQUEST_PATH)))
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
@@ -123,7 +123,7 @@ class CmsAspspPiisControllerTest {
             .thenReturn(consents);
 
         mockMvc.perform(get(CREATE_PIIS_CONSENT_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
@@ -137,7 +137,7 @@ class CmsAspspPiisControllerTest {
             .thenReturn(true);
 
         mockMvc.perform(delete(DELETE_PIIS_CONSENT_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().string(TRUE));

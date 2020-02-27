@@ -508,7 +508,7 @@ class InitiatePaymentsSuccessfulIT {
         System.out.println(content());
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(filePath, UTF_8)));
     }
 
@@ -535,7 +535,7 @@ class InitiatePaymentsSuccessfulIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString((String) responseMapOauth.get(headers, PaymentType.SINGLE, scaApproach), UTF_8)));
     }
 
@@ -561,7 +561,7 @@ class InitiatePaymentsSuccessfulIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(isExplicitMethod(headers, false), PaymentType.PERIODIC, scaApproach), UTF_8)));
     }
 
@@ -591,7 +591,7 @@ class InitiatePaymentsSuccessfulIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString((String) responseMap.get(isExplicitMethod(headers, false), PaymentType.BULK, scaApproach), UTF_8)));
     }
 
