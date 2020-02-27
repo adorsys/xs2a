@@ -30,6 +30,10 @@ import java.util.Map;
 
 public class JsonReader {
 
+    private static final String PARSING_EXCEPTION_MSG = "Exception during class '%s' parsing: %s";
+    private static final String PARSING_LIST_EXCEPTION_MSG = "Exception during list of class '%s' parsing: %s";
+    private static final String READING_FILE_EXCEPTION_MSG = "Exception during reading '%s' file.";
+
     private Xs2aObjectMapper xs2aObjectMapper;
 
     public JsonReader() {
@@ -52,7 +56,7 @@ public class JsonReader {
         try {
             return xs2aObjectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. " + e.getMessage());
+            throw new ParseContentJsonReaderException(String.format(PARSING_EXCEPTION_MSG, name, e.getMessage()));
         }
     }
 
@@ -64,7 +68,7 @@ public class JsonReader {
         try {
             return xs2aObjectMapper.readValue(resourcePath, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. " + e.getMessage());
+            throw new ParseContentJsonReaderException(String.format(PARSING_EXCEPTION_MSG, name, e.getMessage()));
         }
     }
 
@@ -75,7 +79,7 @@ public class JsonReader {
         try {
             return IOUtils.toString(getResourceAsStream(fileName), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new ParseContentJsonReaderException("Exception during reading \'" + fileName + "\' file.");
+            throw new ParseContentJsonReaderException(String.format(READING_FILE_EXCEPTION_MSG, fileName));
         }
     }
 
@@ -86,7 +90,7 @@ public class JsonReader {
         try {
             return IOUtils.toByteArray(getResourceAsStream(fileName));
         } catch (Exception e) {
-            throw new ParseContentJsonReaderException("Exception during reading \'" + fileName + "\' file.");
+            throw new ParseContentJsonReaderException(String.format(READING_FILE_EXCEPTION_MSG, fileName));
         }
     }
 
@@ -97,7 +101,7 @@ public class JsonReader {
         try {
             return xs2aObjectMapper.readValue(json, name);
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during class \'" + name + "\' parsing. " + e.getMessage());
+            throw new ParseContentJsonReaderException(String.format(PARSING_EXCEPTION_MSG, name, e.getMessage()));
         }
     }
 
@@ -109,7 +113,7 @@ public class JsonReader {
             return xs2aObjectMapper.readValue(json,
                                               xs2aObjectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. " + e.getMessage());
+            throw new ParseContentJsonReaderException(String.format(PARSING_LIST_EXCEPTION_MSG, name, e.getMessage()));
         }
     }
 
@@ -119,7 +123,7 @@ public class JsonReader {
             return xs2aObjectMapper.readValue(resourcePath,
                                               xs2aObjectMapper.getTypeFactory().constructCollectionType(List.class, name));
         } catch (IOException e) {
-            throw new ParseContentJsonReaderException("Exception during list of class \'" + name + "\' parsing. " + e.getMessage());
+            throw new ParseContentJsonReaderException(String.format(PARSING_LIST_EXCEPTION_MSG, name, e.getMessage()));
         }
     }
 
@@ -140,9 +144,9 @@ public class JsonReader {
     }
 
     private Xs2aObjectMapper getObjectMapper() {
-        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
-        xs2aObjectMapper.findAndRegisterModules();
-        xs2aObjectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        return xs2aObjectMapper;
+        Xs2aObjectMapper objectMapper = new Xs2aObjectMapper();
+        objectMapper.findAndRegisterModules();
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return objectMapper;
     }
 }

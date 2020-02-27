@@ -37,6 +37,7 @@ public class HibernateListenerConfig {
 
     @PostConstruct
     public void registerListeners() {
+        // TODO: Replace deprecated classes https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1227
         if (entityManagerFactory instanceof HibernateEntityManagerFactory) {
             final HibernateEntityManagerFactory hibernateEntityManagerFactory = (HibernateEntityManagerFactory) entityManagerFactory;
             final SessionFactoryImpl sessionFactory = (SessionFactoryImpl) hibernateEntityManagerFactory.getSessionFactory();

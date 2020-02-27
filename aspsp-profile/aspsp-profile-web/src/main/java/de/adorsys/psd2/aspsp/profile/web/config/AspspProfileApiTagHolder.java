@@ -21,4 +21,7 @@ import springfox.documentation.service.Tag;
 public class AspspProfileApiTagHolder {
     public static final Tag ASPSP_PROFILE = new Tag(AspspProfileApiTagName.ASPSP_PROFILE, "Provides access to aspsp profile");
     public static final Tag UPDATE_ASPSP_PROFILE = new Tag(AspspProfileApiTagName.UPDATE_ASPSP_PROFILE, "Provides access to update aspsp profile");
+
+    private AspspProfileApiTagHolder() {
+    }
 }

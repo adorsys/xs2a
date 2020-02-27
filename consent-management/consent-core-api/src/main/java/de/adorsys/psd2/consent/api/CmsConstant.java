@@ -18,6 +18,9 @@ package de.adorsys.psd2.consent.api;
 
 public class CmsConstant {
 
+    private CmsConstant() {
+    }
+
     public static final class PATH {
         public static final String CONSENT_ID = "consent-id";
         public static final String STATUS = "status";

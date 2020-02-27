@@ -16,20 +16,18 @@
 
 package de.adorsys.psd2.event.service.mapper;
 
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
+import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.psd2.event.service.model.AspspPsuIdData;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Mapper(componentModel = "spring")
@@ -54,16 +52,6 @@ public abstract class AspspEventMapper {
             log.info("Can't convert json to object: {}", e.getMessage());
             return null;
         }
-    }
-
-    protected Set<AspspPsuIdData> mapToPduIdDataSet(Set<PsuIdDataPO> psuIdData) {
-        if (psuIdData == null) {
-            return null;
-        }
-
-        return psuIdData.stream()
-                   .map(this::mapToPduIdData)
-                   .collect(Collectors.toSet());
     }
 
     @Named("mapToXRequestId")
