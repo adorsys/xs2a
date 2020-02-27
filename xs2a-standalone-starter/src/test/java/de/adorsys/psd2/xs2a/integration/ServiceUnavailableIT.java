@@ -320,7 +320,7 @@ class ServiceUnavailableIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
         //Then
         resultActions.andExpect(status().isServiceUnavailable())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(SERVICE_UNAVAILABLE_ERROR_MESSAGE_JSON_PATH, UTF_8)));
     }
 

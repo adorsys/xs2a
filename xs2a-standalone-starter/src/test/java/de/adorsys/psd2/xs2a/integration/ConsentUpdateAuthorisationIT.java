@@ -131,7 +131,7 @@ class ConsentUpdateAuthorisationIT {
 
         //Then
         resultActions
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(PSU_CREDENTIALS_INVALID_RESP, UTF_8)));
     }
 
@@ -142,7 +142,7 @@ class ConsentUpdateAuthorisationIT {
 
         //Then
         resultActions
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(FORMAT_ERROR_RESP, UTF_8)));
     }
 

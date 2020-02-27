@@ -76,7 +76,7 @@ class AisConsentControllerTest {
             .thenReturn(CmsResponse.<CmsResponse.VoidResponse>builder().build());
         //When
         mockMvc.perform(MockMvcRequestBuilders.post(ACTION_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(AIS_CONSENT_ACTION_REQUEST)))
             //Then
             .andExpect(status().isOk());
@@ -89,11 +89,11 @@ class AisConsentControllerTest {
             .thenThrow(WrongChecksumException.class);
         //When
         mockMvc.perform(MockMvcRequestBuilders.post(ACTION_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(AIS_CONSENT_ACTION_REQUEST)))
             //Then
             .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(JSON_READER.writeValueAsString(CmsError.CHECKSUM_ERROR)));
     }
 
@@ -106,11 +106,11 @@ class AisConsentControllerTest {
             .thenReturn(CmsResponse.<CmsConsent>builder().payload(cmsConsent).build());
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_ACCOUNT_ACCESS_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(AIS_ACCOUNT_ACCESS_INFO)))
             //Then
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(JSON_READER.writeValueAsString(updateAisConsentResponse)));
     }
 
@@ -120,11 +120,11 @@ class AisConsentControllerTest {
         when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO)).thenThrow(WrongChecksumException.class);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_ACCOUNT_ACCESS_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(AIS_ACCOUNT_ACCESS_INFO)))
             //Then
             .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(JSON_READER.writeValueAsString(CmsError.CHECKSUM_ERROR)));
     }
 
@@ -135,11 +135,11 @@ class AisConsentControllerTest {
         when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO)).thenReturn(cmsResponse);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_ACCOUNT_ACCESS_ENDPOINT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(AIS_ACCOUNT_ACCESS_INFO)))
             //Then
             .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(JSON_READER.writeValueAsString(cmsResponse.getError())));
     }
 

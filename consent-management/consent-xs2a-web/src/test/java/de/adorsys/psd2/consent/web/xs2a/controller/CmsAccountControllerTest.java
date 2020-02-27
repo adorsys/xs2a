@@ -66,7 +66,7 @@ class CmsAccountControllerTest {
             .thenReturn(true);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(SAVE_NUMBER_OF_TRANSACTIONS)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(NUMBER_OF_TRANSACTIONS)))
             //Then
             .andExpect(status().isOk());
@@ -79,7 +79,7 @@ class CmsAccountControllerTest {
             .thenReturn(false);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(SAVE_NUMBER_OF_TRANSACTIONS)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(JSON_READER.writeValueAsString(NUMBER_OF_TRANSACTIONS)))
             //Then
             .andExpect(status().isNotFound());

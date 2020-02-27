@@ -1,65 +1,6 @@
 {
+  "combinedServiceIndicator": true,
   "allPsd2": "allAccounts",
   "availableAccounts": "allAccounts",
-  "availableAccountsWithBalance": "allAccountsWithOwnerName",
-  "accesses": [
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "BALANCE",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "TRANSACTION",
-      "accountReferenceType": "iban"
-    },
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "OWNER_NAME",
-      "accountReferenceType": "iban"
-    }
-  ],
-  "aspspAccountAccesses": [
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "ACCOUNT",
-      "accountReferenceType": "iban",
-      "resourceId": "resource id",
-      "aspspAccountId": "aspsp account id"
-    },
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "BALANCE",
-      "accountReferenceType": "iban",
-      "resourceId": "resource id",
-      "aspspAccountId": "aspsp account id"
-    },
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "TRANSACTION",
-      "accountReferenceType": "iban",
-      "resourceId": "resource id",
-      "aspspAccountId": "aspsp account id"
-    },
-    {
-      "accountIdentifier": "DE89876442804656108109",
-      "currency": "EUR",
-      "typeAccess": "OWNER_NAME",
-      "accountReferenceType": "iban",
-      "resourceId": "resource id",
-      "aspspAccountId": "aspsp account id"
-    }
-  ]
+  "availableAccountsWithBalance": "allAccountsWithOwnerName"
 }

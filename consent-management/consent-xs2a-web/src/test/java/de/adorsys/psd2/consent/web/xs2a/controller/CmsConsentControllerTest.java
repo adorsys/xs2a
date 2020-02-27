@@ -60,7 +60,7 @@ public class CmsConsentControllerTest {
                                                                           .build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/consent").build().toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile(CMS_CONSENT_PATH)))
             .andExpect(status().is(HttpStatus.CREATED.value()));
 
@@ -71,7 +71,7 @@ public class CmsConsentControllerTest {
         when(consentServiceEncrypted.createConsent(any())).thenThrow(WrongChecksumException.class);
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/consent").build().toUriString())
-                                                          .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                           .content(jsonReader.getStringFromFile(CMS_CONSENT_PATH)));
 
         resultActions
@@ -84,7 +84,7 @@ public class CmsConsentControllerTest {
         when(consentServiceEncrypted.createConsent(any())).thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.LOGICAL_ERROR).build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/consent").build().toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile(CMS_CONSENT_PATH)))
             .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
@@ -97,7 +97,7 @@ public class CmsConsentControllerTest {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}")
                                                                                      .buildAndExpand(EXTERNAL_ID)
                                                                                      .toUriString())
-                                                          .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                           .content(EXTERNAL_ID));
 
         resultActions.andExpect(status().is(HttpStatus.OK.value()))
@@ -111,7 +111,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}")
                                                        .buildAndExpand(EXTERNAL_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(EXTERNAL_ID))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -124,7 +124,7 @@ public class CmsConsentControllerTest {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/status")
                                                                                      .buildAndExpand(EXTERNAL_ID)
                                                                                      .toUriString())
-                                                          .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                           .content(EXTERNAL_ID));
 
         resultActions.andExpect(status().is(HttpStatus.OK.value()))
@@ -140,7 +140,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/status")
                                                        .buildAndExpand(EXTERNAL_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(EXTERNAL_ID)).andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -151,7 +151,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/status/{status}")
                                                        .buildAndExpand(EXTERNAL_ID, ConsentStatus.VALID.toString())
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -162,7 +162,7 @@ public class CmsConsentControllerTest {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/status/{status}")
                                                                                      .buildAndExpand(EXTERNAL_ID, ConsentStatus.VALID.toString())
                                                                                      .toUriString())
-                                                          .contentType(MediaType.APPLICATION_JSON_UTF8));
+                                                          .contentType(MediaType.APPLICATION_JSON_VALUE));
 
         resultActions
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
@@ -176,7 +176,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/status/{status}")
                                                        .buildAndExpand(EXTERNAL_ID, ConsentStatus.VALID.toString())
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -187,7 +187,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/status/{status}")
                                                        .buildAndExpand(EXTERNAL_ID, ConsentStatus.VALID.toString())
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -198,7 +198,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/old-consents")
                                                           .buildAndExpand(EXTERNAL_ID)
                                                           .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
 
@@ -209,7 +209,7 @@ public class CmsConsentControllerTest {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/multilevel-sca")
                                                                                      .buildAndExpand(EXTERNAL_ID)
                                                                                      .toUriString())
-                                                          .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                           .param("multilevel-sca", "true"));
 
         resultActions.andExpect(status().is(HttpStatus.OK.value()))
@@ -223,7 +223,7 @@ public class CmsConsentControllerTest {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/multilevel-sca")
                                                                                      .buildAndExpand(EXTERNAL_ID)
                                                                                      .toUriString())
-                                                          .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                           .param("multilevel-sca", "true"));
 
         resultActions
@@ -238,7 +238,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/multilevel-sca")
                                                        .buildAndExpand(EXTERNAL_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .param("multilevel-sca", "true"))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -250,7 +250,7 @@ public class CmsConsentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/multilevel-sca")
                                                        .buildAndExpand(EXTERNAL_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .param("multilevel-sca", "true"))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }

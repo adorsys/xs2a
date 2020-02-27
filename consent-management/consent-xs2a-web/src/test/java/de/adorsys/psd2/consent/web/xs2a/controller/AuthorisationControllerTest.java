@@ -82,7 +82,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/AIS/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
                                                         .buildAndExpand(AuthorisationType.AIS.name().toLowerCase(), AUTHORISATION_ID)
                                                         .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/create-authorisation-request.json")))
             .andExpect(status().is(HttpStatus.CREATED.value()));
     }
@@ -97,7 +97,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/AIS/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
                                                         .buildAndExpand(AuthorisationType.AIS, AUTHORISATION_ID)
                                                         .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/create-authorisation-request.json")))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -111,7 +111,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}")
                                                        .buildAndExpand(AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -124,7 +124,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}")
                                                        .buildAndExpand(AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -141,7 +141,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}")
                                                        .buildAndExpand(AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/update-authorisation-request.json")))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
@@ -158,7 +158,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}")
                                                        .buildAndExpand(AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/update-authorisation-request.json")))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -172,7 +172,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/status/{status}")
                                                        .buildAndExpand(AUTHORISATION_ID, ScaStatus.RECEIVED)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -185,7 +185,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/status/{status}")
                                                        .buildAndExpand(AUTHORISATION_ID, ScaStatus.RECEIVED)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -198,7 +198,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/{authorisation-type}/{parent-id}/authorisations/{authorisation-id}/status")
                                                        .buildAndExpand(AuthorisationType.PIS_CREATION, PARENT_ID, AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -211,7 +211,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/{authorisation-type}/{parent-id}/authorisations/{authorisation-id}/status")
                                                        .buildAndExpand(AuthorisationType.PIS_CREATION, PARENT_ID, AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -224,7 +224,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/{authorisation-type}/{parent-id}/authorisations")
                                                        .buildAndExpand(AuthorisationType.PIS_CREATION, PARENT_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -237,7 +237,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/{authorisation-type}/{parent-id}/authorisations")
                                                        .buildAndExpand(AuthorisationType.PIS_CREATION, PARENT_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -250,7 +250,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}")
                                                        .buildAndExpand(AUTHORISATION_ID, AUTHORISATION_METHOD_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -265,7 +265,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1//authorisations/{authorisation-id}/authentication-methods")
                                                         .buildAndExpand(AUTHORISATION_ID, PARENT_ID)
                                                         .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/cms-sca-methods.json")))
             .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
@@ -281,7 +281,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1//authorisations/{authorisation-id}/authentication-methods")
                                                         .buildAndExpand(AUTHORISATION_ID, PARENT_ID)
                                                         .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/cms-sca-methods.json")))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
@@ -295,7 +295,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/sca-approach/{sca-approach}")
                                                        .buildAndExpand(AUTHORISATION_ID, ScaApproach.EMBEDDED)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -308,7 +308,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/sca-approach/{sca-approach}")
                                                        .buildAndExpand(AUTHORISATION_ID, ScaApproach.EMBEDDED)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 
@@ -321,7 +321,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/sca-approach")
                                                        .buildAndExpand(AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.OK.value()));
     }
 
@@ -334,7 +334,7 @@ class AuthorisationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(UriComponentsBuilder.fromPath("/api/v1/authorisations/{authorisation-id}/sca-approach")
                                                        .buildAndExpand(AUTHORISATION_ID)
                                                        .toUriString())
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
     }
 }

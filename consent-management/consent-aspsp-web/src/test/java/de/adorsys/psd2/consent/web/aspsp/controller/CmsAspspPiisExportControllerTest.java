@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +94,7 @@ class CmsAspspPiisExportControllerTest {
             .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_TPP)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
@@ -108,7 +108,7 @@ class CmsAspspPiisExportControllerTest {
             .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_PSU)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
@@ -122,7 +122,7 @@ class CmsAspspPiisExportControllerTest {
             .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_ACCOUNT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));

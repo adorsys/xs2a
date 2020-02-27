@@ -206,7 +206,7 @@ class UpdatePsuDataForConsentIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
 
         resultActions.andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/res/update_psu_data_consent_resp.json")));
     }
 
@@ -230,7 +230,7 @@ class UpdatePsuDataForConsentIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
 
         resultActions.andExpect(status().isForbidden())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/auth/res/403_resource_unknown.json")));
     }
 

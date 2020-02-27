@@ -70,7 +70,7 @@ class CmsAspspPisTransactionControllerTest {
         when(aspspPaymentService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID)).thenReturn(true);
 
         mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()));
 
@@ -82,7 +82,7 @@ class CmsAspspPisTransactionControllerTest {
         when(aspspPaymentService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID)).thenReturn(false);
 
         mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 

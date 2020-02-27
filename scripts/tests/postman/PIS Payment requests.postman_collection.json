@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "81f41159-fe8b-42ec-9b62-d6d6c412f6af",
+		"_postman_id": "0d8655df-ced2-4781-90cc-2d1ccfa26a84",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -19814,21 +19814,25 @@
 											"script": {
 												"id": "d693df74-3b1a-40b9-a82f-f65b91a356d5",
 												"exec": [
-													"pm.test('Status code is 200', () => {",
-													"   pm.response.to.have.status(200);",
-													"});",
+													"// This test checks the case of confirmation code comparison at the ASPSP side. Ledgers should provide the proper token to implement this flow,\",",
+													"// otherwise 401 will be returned.",
 													"",
-													"const jsonData = pm.response.json();",
 													"",
-													"pm.test('Sca status is finalised', () => {",
-													"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
-													"});",
+													"//pm.test('Status code is 200', () => {",
+													"//   pm.response.to.have.status(200);",
+													"//});",
 													"",
-													"pm.test(\"Select scaStatus link exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('_links');",
-													"    const _links = jsonData._links;",
-													"    pm.expect(_links).to.have.property('scaStatus');",
-													"});"
+													"//const jsonData = pm.response.json();",
+													"",
+													"//pm.test('Sca status is finalised', () => {",
+													"//   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+													"//});",
+													"",
+													"//pm.test(\"Select scaStatus link exists\", () => {",
+													"//    pm.expect(jsonData).to.have.property('_links');",
+													"//    const _links = jsonData._links;",
+													"//    pm.expect(_links).to.have.property('scaStatus');",
+													"//});"
 												],
 												"type": "text/javascript"
 											}
@@ -20205,21 +20209,25 @@
 											"script": {
 												"id": "d693df74-3b1a-40b9-a82f-f65b91a356d5",
 												"exec": [
-													"pm.test('Status code is 200', () => {",
-													"   pm.response.to.have.status(200);",
-													"});",
+													"// This test checks the case of confirmation code comparison at the ASPSP side. Ledgers should provide the proper token to implement this flow,\",",
+													"// otherwise 401 will be returned.",
 													"",
-													"const jsonData = pm.response.json();",
 													"",
-													"pm.test('Sca status is finalised', () => {",
-													"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
-													"});",
+													"//pm.test('Status code is 200', () => {",
+													"//   pm.response.to.have.status(200);",
+													"//});",
 													"",
-													"pm.test(\"Select scaStatus link exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('_links');",
-													"    const _links = jsonData._links;",
-													"    pm.expect(_links).to.have.property('scaStatus');",
-													"});"
+													"//const jsonData = pm.response.json();",
+													"",
+													"//pm.test('Sca status is finalised', () => {",
+													"//   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+													"//});",
+													"",
+													"//pm.test(\"Select scaStatus link exists\", () => {",
+													"//    pm.expect(jsonData).to.have.property('_links');",
+													"//    const _links = jsonData._links;",
+													"//    pm.expect(_links).to.have.property('scaStatus');",
+													"//});"
 												],
 												"type": "text/javascript"
 											}
@@ -20501,21 +20509,25 @@
 											"script": {
 												"id": "d693df74-3b1a-40b9-a82f-f65b91a356d5",
 												"exec": [
-													"pm.test('Status code is 200', () => {",
-													"   pm.response.to.have.status(200);",
-													"});",
+													"// This test checks the case of confirmation code comparison at the ASPSP side. Ledgers should provide the proper token to implement this flow,\",",
+													"// otherwise 401 will be returned.",
 													"",
-													"const jsonData = pm.response.json();",
 													"",
-													"pm.test('Sca status is finalised', () => {",
-													"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
-													"});",
+													"//pm.test('Status code is 200', () => {",
+													"//   pm.response.to.have.status(200);",
+													"//});",
 													"",
-													"pm.test(\"Select scaStatus link exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('_links');",
-													"    const _links = jsonData._links;",
-													"    pm.expect(_links).to.have.property('scaStatus');",
-													"});"
+													"//const jsonData = pm.response.json();",
+													"",
+													"//pm.test('Sca status is finalised', () => {",
+													"//   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+													"//});",
+													"",
+													"//pm.test(\"Select scaStatus link exists\", () => {",
+													"//    pm.expect(jsonData).to.have.property('_links');",
+													"//    const _links = jsonData._links;",
+													"//    pm.expect(_links).to.have.property('scaStatus');",
+													"//});"
 												],
 												"type": "text/javascript"
 											}

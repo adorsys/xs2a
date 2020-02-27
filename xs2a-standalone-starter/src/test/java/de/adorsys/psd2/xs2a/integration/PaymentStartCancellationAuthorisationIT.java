@@ -181,7 +181,7 @@ class PaymentStartCancellationAuthorisationIT {
 
         //Then
         resultActions
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(AUTHORISATION_RESPONSE, UTF_8)));
 
         assertEquals(expectedCreatePisAuthorisationRequest, createAuthorisationRequestCaptor.getValue());

@@ -236,7 +236,7 @@ class PaymentStartAuthorisationIT {
 
         //Then
         resultActions
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(AUTH_RESP, UTF_8)));
 
         assertEquals(PSU_ID, createAuthorisationRequest.getValue().getPsuData().getPsuId());

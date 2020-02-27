@@ -78,7 +78,7 @@ class CmsAspspTppInfoControllerTest {
             .thenReturn(Optional.of(tppInfo));
 
         mockMvc.perform(get(GET_TPP_INFO_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(TPP_INFO_PATH)));
@@ -92,7 +92,7 @@ class CmsAspspTppInfoControllerTest {
             .thenReturn(Optional.empty());
 
         mockMvc.perform(get(GET_TPP_INFO_URL)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.NOT_FOUND.value()));
         verify(cmsAspspTppService, times(1)).getTppInfo(tppAuthorisationNumber, INSTANCE_ID);
