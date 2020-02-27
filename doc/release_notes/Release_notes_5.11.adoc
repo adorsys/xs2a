@@ -9,6 +9,7 @@
 * Funds confirmation consents migration
 * Change PIIS consent Java classes in SPI and CMS APIs
 * Deprecate TPP access type in PIIS consents
+* Bugfix: Possible NPE on AccountSpi#requestTransactionsForAccount
 
 == Consent refactoring
 
@@ -68,3 +69,7 @@ All services related to PIIS consents in `consent-aspsp-api` and `consent-psu-ap
 
 From now on, `tppAccessType` property in PIIS consent models is deprecated and will be removed in the future.
 All PIIS consents are considered to be created for single TPP only.
+
+== Bugfix: Possible NPE on executing AccountSpi#requestTransactionsForAccount
+
+From now on, XS2A will properly handle null value for transaction list in `SpiTransactionReport` returned from `AccountSpi#requestTransactionsForAccount` and won't throw NPE.
