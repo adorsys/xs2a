@@ -53,10 +53,12 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AccountSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
@@ -135,9 +137,14 @@ public class TransactionService {
 
         loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
-        xs2aAccountService.saveNumberOfTransaction(request.getConsentId(), request.getAccountId(), spiResponse.getPayload().getTransactions().size());
+        SpiTransactionReport spiTransactionReport = spiResponse.getPayload();
+        List<SpiTransaction> spiTransactions = spiTransactionReport.getTransactions();
 
-        return getXs2aTransactionsReportResponseObject(request, aisConsent, spiResponse.getPayload());
+        if (CollectionUtils.isNotEmpty(spiTransactions)) {
+            xs2aAccountService.saveNumberOfTransaction(request.getConsentId(), request.getAccountId(), spiTransactions.size());
+        }
+
+        return getXs2aTransactionsReportResponseObject(request, aisConsent, spiTransactionReport);
     }
 
     /**
