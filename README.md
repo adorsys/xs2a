@@ -18,13 +18,14 @@ Based on the PSD2 and EBA RTS requirements, Berlin Group NextGenPSD2 has worked 
 ['Access to Account  (XS2A) Framework'](https://www.berlin-group.org/psd2-access-to-bank-accounts) with data model
 (at conceptual, logical and physical data levels) and associated messaging.
 
-[adorsys](https://adorsys-platform.de/solutions/xs2a-core/) is a company who works ever since the very beginning of PSD2 with its requirements and implicit tasks.
+[adorsys](https://adorsys-platform.de/solutions/xs2a-core/) is a company that works ever since the very beginning of PSD2 with its requirements and implicit tasks.
 
 This XS2A Service provides an Open Source implementation of Berlin Group NextGenPSD2 Framework, that can be connected to ASPSPs middleware or core banking system.
 
 ### Quick facts about this XS2A Service
 
-* **Currently supported version of NextGenPSD2 XS2A API is 1.3.5**.<br>
+* Currently supported version of NextGenPSD2 XS2A API Specification is **1.3.6**.<br>
+Currently supported version of NextGenPSD2 XS2A OpenAPI is 1.3.5.<br>
 You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/static/psd2-api_1.3.5_20191216v1.yaml).
 * All mandatory API endpoints defined in Berlin Group specification are implemented.
 * Comes with pluggable **Consent Management System** to store and manage consents given by PSU to corresponding TPPs.
