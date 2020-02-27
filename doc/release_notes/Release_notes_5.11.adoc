@@ -1,3 +1,70 @@
 = Release notes v.5.11
 
 == Table of Contents
+* Consent refactoring
+* Update version of spring-data-jpa to 2.2.4.RELEASE
+* Bugfix: Update expiration rule for not authorised payments and consents
+* Bugfix: Wrong response for consent creation with additionalInformation ownerName
+* Bugfix: Read Account List with balances request returns error for Consent on Account List of Available Accounts with ownerName
+* Funds confirmation consents migration
+* Change PIIS consent Java classes in SPI and CMS APIs
+* Deprecate TPP access type in PIIS consents
+
+== Consent refactoring
+
+From now on, consents are moved to `consent` table from `ais_consent` and do not have specific AIS consent data.
+All specific information is stored as byte array in consent. There is a new column `consent_type` that describes its type.
+Another table `consent_tpp_information` is created for storing tpp specific information.
+
+New module `xs2a-core-consents` is responsible for models and mapper belonging to AIS specific consent data.
+
+To support all operation with consent added `CmsConsentController`:
+
+* `POST /v1/consent` - creates new consent
+* `GET /v1/consent/{encrypted-consent-id}` - reads consent by ID
+* `GET /v1/consent/{encrypted-consent-id}/status` - gets consent status by ID
+* `PUT /v1/consent/{encrypted-consent-id}/status/{status}` - updates consent status by ID
+* `DELETE /v1/consent/{encrypted-consent-id}/old-consents` - finds and terminates old consents for TPP and PSU by new consent ID
+* `PUT /v1/consent/{encrypted-consent-id}/multilevel-sca` - updates requirement for multilevel SCA for consent
+
+== Update version of spring-data-jpa to 2.2.4.RELEASE
+
+Updated version of spring-data-jpa to 2.2.4.RELEASE. It led to updating following dependencies:
+
+* spring 5.1.6 -> 5.2.3
+* spring-boot 2.1.11 -> 2.2.4
+
+== Bugfix: Update expiration rule for not authorised payments and consents
+
+The rule for payments and consents expiration was changed. From now on, not authorised payments (consents) with statuses `RCVD`
+or `PATC` (`RECEIVED` or `PARTIALLY_AUTHORISED` in case of consents) become expired after period of time set in
+ASPSP-Profile in `notConfirmedPaymentExpirationTimeMs` (`notConfirmedConsentExpirationTimeMs` for consents).
+
+== Bugfix: Wrong response for consent creation with additionalInformation ownerName
+
+From now on, request Create accounts consent (`POST /v1/consents`) will return Response code `400 SERVICE_INVALID` if none account addressed within the additionalInformation attribute is also addressed by at least one of the attributes "accounts", "transactions" or "balances".
+
+== Bugfix: Read Account List with balances request returns error for Consent on Account List of Available Accounts with ownerName
+
+From now on, request Read Account List with parameter `withBalance=true` works correct (`GET /v1/accounts?withBalance=true`)) for accounts which were created with field
+`availableAccountsWithBalance` as `allAccountsWithOwnerName`.
+
+== Funds confirmation consents migration
+
+All existing PIIS consents were moved from `piis_consent` database table to `consent` one.
+During the migration process the following consents were ignored and won't be usable anymore:
+
+- consents with TPP access type set to `ALL_TPP`
+- consents created for TPP that's unknown to XS2A (i. e. with TPP authorisation number that's not present in `tpp_info` table)
+
+== Change PIIS consent Java classes in SPI and CMS APIs
+
+Previously used PIIS consent model `de.adorsys.psd2.xs2a.core.piis.PiisConsent` was replaced with separate models for CMS and SPI with identical content.
+
+All services related to PIIS consents in `consent-aspsp-api` and `consent-psu-api` are now using `de.adorsys.psd2.consent.api.piis.CmsPiisConsent`.
+`FundsConfirmationSpi` is now operating with `de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent`.
+
+== Deprecate TPP access type in PIIS consents
+
+From now on, `tppAccessType` property in PIIS consent models is deprecated and will be removed in the future.
+All PIIS consents are considered to be created for single TPP only.
