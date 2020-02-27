@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +33,7 @@ import java.util.Currency;
 @Setter
 @Embeddable
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(description = "Aspsp Account access", value = "AspspAccountAccess")
 public class AspspAccountAccess extends AccountAccess {
 

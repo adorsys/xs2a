@@ -38,7 +38,7 @@ public enum AdditionalAccountInformationType {
     NONE {
         @Override
         public List<AccountReference> getReferencesByType(List<AccountReference> accountReferences) {
-            return null;
+            return null; //NOSONAR
         }
     };
 

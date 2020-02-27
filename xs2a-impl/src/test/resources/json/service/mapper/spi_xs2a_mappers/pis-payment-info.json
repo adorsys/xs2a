@@ -27,5 +27,6 @@
   },
   "statusChangeTimestamp": "2019-09-03T09:10:47.421Z",
   "creationTimestamp": "2019-09-03T09:10:47.421Z",
-  "contentType": "application/json"
+  "contentType": "application/json",
+  "notificationSupportedModes": []
 }

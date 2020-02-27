@@ -135,8 +135,12 @@ public class Xs2aAisConsentMapper {
         ConsentTppInformation tppInformation = new ConsentTppInformation();
         tppInformation.setTppInfo(tppInfo);
         tppInformation.setTppFrequencyPerDay(request.getFrequencyPerDay());
-        tppInformation.setTppNotificationUri(Optional.ofNullable(request.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
-        tppInformation.setTppNotificationSupportedModes(Optional.ofNullable(request.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
+        tppInformation.setTppNotificationUri(Optional.ofNullable(request.getTppNotificationData())
+                                                 .map(TppNotificationData::getTppNotificationUri)
+                                                 .orElse(null));
+        tppInformation.setTppNotificationSupportedModes(Optional.ofNullable(request.getTppNotificationData())
+                                                            .map(TppNotificationData::getNotificationModes)
+                                                            .orElse(Collections.emptyList()));
         tppInformation.setTppRedirectPreferred(requestProviderService.resolveTppRedirectPreferred().orElse(false));
         cmsConsent.setTppInformation(tppInformation);
 

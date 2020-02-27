@@ -20,4 +20,7 @@ public class AspspProfileApiTagName {
     public static final String ASPSP_PROFILE = "Aspsp profile";
     public static final String CONVERT_OLD_ASPSP_PROFILE = "Convert old aspsp profile to the new";
     public static final String UPDATE_ASPSP_PROFILE = "Update aspsp profile. Only for DEBUG!";
+
+    private AspspProfileApiTagName() {
+    }
 }

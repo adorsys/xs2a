@@ -38,7 +38,7 @@ class CertificateExtractorUtilTest {
 
         TppCertificateData extract = CertificateExtractorUtil.extract(encodedCert);
 
-        assertEquals(extract.getPspRoles().size(), 4);
+        assertEquals(4, extract.getPspRoles().size());
     }
 
     @Test
@@ -48,7 +48,7 @@ class CertificateExtractorUtilTest {
 
         TppCertificateData extract = CertificateExtractorUtil.extract(encodedCert);
 
-        assertEquals(extract.getPspRoles().size(), 3);
+        assertEquals(3, extract.getPspRoles().size());
     }
 
     @Test
@@ -87,6 +87,6 @@ class CertificateExtractorUtilTest {
 
         List<String> dnsList = extract.getDnsList();
         assertNotNull(dnsList);
-        assertEquals(dnsList.size(), 2);
+        assertEquals(2, dnsList.size());
     }
 }

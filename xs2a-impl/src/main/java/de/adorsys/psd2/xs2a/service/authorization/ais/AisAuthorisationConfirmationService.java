@@ -127,7 +127,7 @@ public class AisAuthorisationConfirmationService {
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = aisConsentSpi.notifyConfirmationCodeValidation(contextData, codeCorrect, spiAccountConsent, aspspDataProvider);
 
         if (spiResponse.hasError()) {
-            return buildConfirmationCodeValidationResultSpiErrorResponse(spiResponse, consentId, authorisationId, psuData);
+            return buildConfirmationCodeSpiErrorResponse(spiResponse, consentId, authorisationId, psuData);
         }
 
         SpiConsentConfirmationCodeValidationResponse confirmationCodeValidationResponse = spiResponse.getPayload();
@@ -212,16 +212,6 @@ public class AisAuthorisationConfirmationService {
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuIdData);
     }
-
-    private UpdateConsentPsuDataResponse buildConfirmationCodeValidationResultSpiErrorResponse(SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse,
-                                                                                               String consentId, String authorisationId, PsuIdData psuIdData) {
-        ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-
-        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: error occurred at SPI.", authorisationId);
-
-        return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuIdData);
-    }
-
 
     private UpdateConsentPsuDataResponse buildConsentNotFoundErrorResponse(String consentId, String authorisationId, PsuIdData psuIdData) {
         ErrorHolder errorHolder = ErrorHolder.builder(AIS_403)

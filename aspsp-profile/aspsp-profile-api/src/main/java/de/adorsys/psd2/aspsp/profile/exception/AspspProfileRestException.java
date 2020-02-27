@@ -22,6 +22,6 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode(callSuper = true)
 public class AspspProfileRestException extends RuntimeException {
-    private int httpStatusCode;
-    private String message;
+    private final int httpStatusCode;
+    private final String message;
 }
