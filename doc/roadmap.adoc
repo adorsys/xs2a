@@ -1,51 +1,21 @@
 = Roadmap
 
-Starting 1st of September 2019 XS2A Team is providing development within two branches:
+Starting 1st of March 2020 XS2A-core Team is providing development within two branches:
 
-*Stable branch 4.x*
+*Stable branch 6.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.5. Will be supported till 01.03.2020
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.6. Will be supported till 28.08.2020
 
-*Development branch 5.x*
+*Development branch 7.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 4.x is guaranteed. Will be released as Stable version 6.x on 13.03.2020
+No backward compatibility with 6.x is guaranteed. Will be released as Stable version 8.x on 11.09.2020
 
-[cols="5*.<"]
+[cols="3*.<"]
 |===
-|release date|version 4.x|version 5.x|version 6.x|version 7.x
+|release date|version 6.x|version 7.x
 
-|28.02.2020|4.11|5.11| |
-
-a|
-
-a|* Update expiration rule for not authorised payment\consent
-
-* Rename expireDate property in AisConsentSha to validUntil and migrate existings AIS checksums
-
-* Delete specific constructor in SpiAccountConsent
-
-a|* All fixes and updates from v.4.11
-
-* Adjust consent model in CMS
-
-* Create new SPI method for handling consent wrapper
-
-* Migrate data of Funds Confirmation consent v1
-
-* Add not null constraint for "valid_until" field in "ais_consent" table
-
-* Bugfix: Wrong response for consent creation with additionalInformation ownerName
-
-a|
-
-a|
-
-|13.03.2020| | |6.0|7.0
-
-a|
-
-a|
+|13.03.2020|6.0|7.0
 
 a|
 
@@ -59,21 +29,21 @@ a|* New feature: Support header TPP-Brand-Logging-Information
 
 * New feature: Add new message code 400 SCA_INVALID
 
+* Bugfix: Validation for PIIS field cardNumber is missing
+
+* Adjust Xs2a and SPI BalanceType objects with BG specification 1.3.6
+
 a|* All fixes and updates from v.6.0
 
 * Update to Java 11
 
-* Complete common payment migration in CMS database
-
-|27.03.2020| | |6.1|7.1
-
-a|
-
-a|
+|27.03.2020|6.1|7.1
 
 a|
 
 a|* Remove "owner_address_type" column from "ais_consent" table
+
+* Bugfix: Validation for PIIS field cardNumber is missing
 
 a|* All fixes and updates from v.6.1
 
@@ -89,15 +59,13 @@ a|* All fixes and updates from v.6.1
 
 * New feature: Revoke FundsConfirmationConsent
 
-|10.04.2020| | |6.2|7.2
-
-a|
-
-a|
+|10.04.2020|6.2|7.2
 
 a|
 
 a|* Remove deprecated PaymentAuthorisationType
+
+* Remove deprecated PiisConsentTppAccessType 
 
 * Drop deprecated tables for AIS and PIS authorisations
 
@@ -111,11 +79,7 @@ a|* All fixes and updates from v.6.2
 
 * New feature: Get SCA Status request for FundsConfirmationConsent 
 
-|24.04.2020| | |6.3|7.3
-
-a|
-
-a|
+|24.04.2020|6.3|7.3
 
 a|
 
@@ -127,11 +91,7 @@ a|* All fixes and updates from v.6.3
 
 * New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
 
-|08.05.2020| | |6.4|7.4
-
-a|
-
-a|
+|08.05.2020|6.4|7.4
 
 a|
 
@@ -149,11 +109,7 @@ a|* All fixes and updates from v.6.4
 
 * Move authorisation-related methods out of Xs2aAisConsentService and Xs2aPisCommonPaymentService
 
-|Further development| | | |
-
-a|
-
-a|
+|Further development| |
 
 a|
 
