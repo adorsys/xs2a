@@ -82,7 +82,7 @@ class CmsAspspEventControllerTest {
                             .headers(httpHeaders)
                             .header("instance-id", INSTANCE_ID))
             .andExpect(status().is(HttpStatus.OK.value()))
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
@@ -97,7 +97,7 @@ class CmsAspspEventControllerTest {
         mockMvc.perform(get(GET_ASPSP_EVENT_LIST_URL)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 

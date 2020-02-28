@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,23 +35,23 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Component
 @RequiredArgsConstructor
 public class NonRecurringConsentExpirationScheduleTask {
-    private final AisConsentJpaRepository aisConsentJpaRepository;
+    private final ConsentJpaRepository consentJpaRepository;
 
     @Scheduled(cron = "${used-non-recurring-consent-expiration.cron.expression}")
     @Transactional
     public void expireUsedNonRecurringConsent() {
         log.info("Non-recurring consent expiration task has started!");
-        List<AisConsent> consents = aisConsentJpaRepository.findUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID),
-                                                                                         LocalDate.now())
+        List<ConsentEntity> consents = consentJpaRepository.findUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID),
+                                                                                      LocalDate.now())
                                         .stream()
                                         .distinct()
                                         .map(this::expireConsent)
                                         .collect(Collectors.toList());
 
-        aisConsentJpaRepository.saveAll(consents);
+        consentJpaRepository.saveAll(consents);
     }
 
-    private AisConsent expireConsent(AisConsent consent) {
+    private ConsentEntity expireConsent(ConsentEntity consent) {
         consent.setConsentStatus(EXPIRED);
         return consent;
     }

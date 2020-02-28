@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ConsentAspectTest {
-    private static final String CONSENT_ID = "some consent id";
+    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
 
     @InjectMocks
     private ConsentAspect aspect;
@@ -61,18 +61,24 @@ class ConsentAspectTest {
 
     @Test
     void invokeCreateAccountConsentAspect_success() {
+        // Given
         AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        when(createConsentResponse.isMultilevelScaRequired()).thenReturn(true);
-        when(authorisationMethodDecider.isExplicitMethod(true, true)).thenReturn(true);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+        when(createConsentResponse.isMultilevelScaRequired())
+            .thenReturn(true);
+        when(authorisationMethodDecider.isExplicitMethod(true, true))
+            .thenReturn(true);
 
         ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
                                                                    .body(createConsentResponse)
                                                                    .build();
+        // When
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true);
 
+        // Then
         verify(createConsentResponse, times(1)).setLinks(any(CreateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -80,28 +86,36 @@ class ConsentAspectTest {
 
     @Test
     void invokeCreateAccountConsentAspect_withError_shouldAddTextErrorMessage() {
+        // Given
         ResponseObject<CreateConsentResponse> responseObject = ResponseObject.<CreateConsentResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
+        // When
         ResponseObject actualResponse = aspect.invokeCreateAccountConsentAspect(responseObject, new CreateConsentReq(), null, true);
 
+        // Then
         assertTrue(actualResponse.hasError());
         assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
     }
 
     @Test
     void invokeCreateConsentPsuDataAspect_success() {
+        // Given
         AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
 
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
 
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(updateConsentPsuDataResponse)
                                                                    .build();
+        // When
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
+        // Then
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -109,11 +123,14 @@ class ConsentAspectTest {
 
     @Test
     void invokeCreateConsentPsuDataAspect_scaStatusIsNull_success() {
+        // Given
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(updateConsentPsuDataResponse)
                                                                    .build();
+        // When
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
+        // Then
         verify(updateConsentPsuDataResponse, times(1)).setLinks(null);
 
         assertFalse(actualResponse.hasError());
@@ -121,43 +138,56 @@ class ConsentAspectTest {
 
     @Test
     void invokeCreateConsentPsuDataAspect_wrongResponseType() {
+        // Given
         AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
 
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .body(createConsentAuthorisationResponse)
                                                                    .build();
+        // When
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
+        // Then
         assertFalse(actualResponse.hasError());
         assertEquals(responseObject, actualResponse);
     }
 
     @Test
     void invokeCreateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
+        // Given
         ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
                                                                    .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                    .build();
+        // When
         ResponseObject actualResponse = aspect.invokeCreateConsentPsuDataAspect(responseObject, null, CONSENT_ID, "");
 
+        // Then
         assertTrue(actualResponse.hasError());
         assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
     }
 
     @Test
     void invokeUpdateConsentPsuDataAspect_success() {
+        // Given
         AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
 
         when(updateConsentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.RECEIVED);
 
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .body(updateConsentPsuDataResponse)
                                                                           .build();
+        // When
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
+        // Then
         verify(updateConsentPsuDataResponse, times(1)).setLinks(any(UpdateConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
@@ -177,13 +207,15 @@ class ConsentAspectTest {
 
     @Test
     void invokeUpdateConsentPsuDataAspect_withError_shouldAddTextErrorMessage() {
+        // Given
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .fail(AIS_400, of(CONSENT_UNKNOWN_400))
                                                                           .build();
+        // When
         ResponseObject actualResponse = aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
 
+        // Then
         assertTrue(actualResponse.hasError());
         assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
     }
-
 }

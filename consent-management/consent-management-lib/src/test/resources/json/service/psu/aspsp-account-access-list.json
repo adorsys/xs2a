@@ -1,0 +1,23 @@
+[
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE89370400440532013000",
+    "currency": "EUR",
+    "typeAccess": "ACCOUNT",
+    "resourceId": "11111-999999999"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE80760700240271232400",
+    "currency": "EUR",
+    "typeAccess": "BALANCE",
+    "resourceId": "11111-999999999"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE89370400440532015000",
+    "currency": "EUR",
+    "typeAccess": "TRANSACTION",
+    "resourceId": "11111-999999999"
+  }
+]

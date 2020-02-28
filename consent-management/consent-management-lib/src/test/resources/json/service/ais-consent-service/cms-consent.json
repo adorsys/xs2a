@@ -1,0 +1,23 @@
+{
+  "id": "4b112130-6a96-4941-a220-2da8a4af2c65",
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "tppInformation": {
+  },
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "Mock tppOkRedirectUri",
+      "nokUri": "Mock tppNokRedirectUri"
+    }
+  },
+  "internalRequestId": "1234-5678-9012-3456",
+  "frequencyPerDay": 1,
+  "validUntil": "2030-01-01",
+  "psuIdDataList": [
+  ],
+  "recurringIndicator": false,
+  "multilevelScaRequired": false,
+  "lastActionDate": "2019-12-31",
+  "authorisations": [
+  ]
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,127 +16,18 @@
 
 package de.adorsys.psd2.consent.repository.specification;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.data.jpa.domain.Specification;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.Join;
-import java.time.LocalDate;
-import java.util.List;
-
-import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
-import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
-import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
-
 @Service
-public class AisConsentSpecification extends GenericSpecification {
-
-    /**
-     * Returns specification for AisConsent entity for filtering data by consent ID and instance ID.
-     *
-     * @param consentId  consent external ID
-     * @param instanceId instance ID
-     * @return specification for AisConsent entity
-     */
-    public Specification<AisConsent> byConsentIdAndInstanceId(String consentId, String instanceId) {
-        return Specification.<AisConsent>where(byInstanceId(instanceId))
-                   .and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, consentId));
+public class AisConsentSpecification extends ConsentFilterableSpecification {
+    public AisConsentSpecification(CommonSpecification<ConsentEntity> commonSpecification, ConsentSpecification consentSpecification) {
+        super(commonSpecification, consentSpecification);
     }
 
-    /**
-     * Returns specification for AisConsent entity for filtering data by TPP authorisation number, creation date, PSU ID data and instance ID.
-     *
-     * @param tppAuthorisationNumber mandatory TPP authorisation number
-     * @param createDateFrom         optional creation date that limits results to AIS consents created after this date(inclusive)
-     * @param createDateTo           optional creation date that limits results to AIS consents created before this date(inclusive)
-     * @param psuIdData              optional PSU ID data
-     * @param instanceId             optional instance ID
-     * @return specification for AisConsent entity
-     */
-    public Specification<AisConsent> byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(@NotNull String tppAuthorisationNumber,
-                                                                                       @Nullable LocalDate createDateFrom,
-                                                                                       @Nullable LocalDate createDateTo,
-                                                                                       @Nullable PsuIdData psuIdData,
-                                                                                       @Nullable String instanceId) {
-        return Specification.<AisConsent>where(byTppAuthorisationNumber(tppAuthorisationNumber))
-                   .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byPsuIdDataInList(psuIdData))
-                   .and(byInstanceId(instanceId));
-    }
-
-    /**
-     * Returns specification for AisConsent entity for filtering data by PSU ID Data, creation date and instance ID.
-     *
-     * @param psuIdData      mandatory PSU ID data
-     * @param createDateFrom optional creation date that limits resulting data to AIS consents created after this date(inclusive)
-     * @param createDateTo   optional creation date that limits resulting data to AIS consents created before this date(inclusive)
-     * @param instanceId     optional instance ID
-     * @return specification for AisConsent entity
-     */
-    public Specification<AisConsent> byPsuIdDataAndCreationPeriodAndInstanceId(@NotNull PsuIdData psuIdData,
-                                                                               @Nullable LocalDate createDateFrom,
-                                                                               @Nullable LocalDate createDateTo,
-                                                                               @Nullable String instanceId) {
-        return Specification.<AisConsent>where(byPsuIdDataInList(psuIdData))
-                   .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byInstanceId(instanceId));
-    }
-
-    /**
-     * Returns specification for AisConsent entity for filtering data by ASPSP account ID, creation date and instance ID.
-     *
-     * @param aspspAccountId Bank specific account identifier
-     * @param createDateFrom optional creation date that limits resulting data to AIS consents created after this date(inclusive)
-     * @param createDateTo   optional creation date that limits resulting data to AIS consents created before this date(inclusive)
-     * @param instanceId     optional instance ID
-     * @return specification for AisConsent entity
-     */
-    public Specification<AisConsent> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
-                                                                                    @Nullable LocalDate createDateFrom,
-                                                                                    @Nullable LocalDate createDateTo,
-                                                                                    @Nullable String instanceId) {
-        return Specification.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
-                   .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byInstanceId(instanceId));
-    }
-
-    /**
-     * Returns specification for AisConsent entity for filtering data by ASPSP account ID and PSU ID Data and instance ID.
-     *
-     * @param aspspAccountId Bank specific account identifier
-     * @param psuIdData      mandatory PSU ID data
-     * @param instanceId     optional instance ID
-     * @return specification for AisConsent entity
-     */
-    public Specification<AisConsent> byAspspAccountIdAndPsuIdDataAndInstanceId(@Nullable String aspspAccountId,
-                                                                               @NotNull PsuIdData psuIdData,
-                                                                               @Nullable String instanceId) {
-
-        return Specification.<AisConsent>where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
-                   .and(byPsuIdDataInList(psuIdData))
-                   .and(byInstanceId(instanceId));
-    }
-
-    /**
-     * Returns specification for some entity for filtering data by aspsp account id in aspsp account access list
-     *
-     * <p>
-     * If optional parameter is not provided, this specification will not affect resulting data.
-     *
-     * @param aspspAccountId Bank specific account identifier
-     * @param <T>            type of the entity, for which this specification will be created
-     * @return resulting specification
-     */
-    private <T> Specification<T> byAspspAccountIdInAspspAccountAccess(@Nullable String aspspAccountId) {
-        return (root, query, cb) -> {
-            Join<T, List<AspspAccountAccess>> aspspAccountAccessJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
-            query.distinct(true);
-            return provideSpecificationForJoinedEntityAttribute(aspspAccountAccessJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
-                       .toPredicate(root, query, cb);
-        };
+    @Override
+    public ConsentType getType() {
+        return ConsentType.AIS;
     }
 }

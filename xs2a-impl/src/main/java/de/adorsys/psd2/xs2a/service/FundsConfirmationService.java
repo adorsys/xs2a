@@ -17,13 +17,14 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -33,9 +34,11 @@ import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfirmationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.service.validator.piis.PiisConsentValidation;
@@ -53,6 +56,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
@@ -72,6 +76,8 @@ public class FundsConfirmationService {
     private final SpiErrorMapper spiErrorMapper;
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final Xs2aPiisConsentMapper xs2aPiisConsentMapper;
+    private final Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -131,13 +137,17 @@ public class FundsConfirmationService {
                                                        .build());
         }
 
-        CmsResponse<List<PiisConsent>> cmsResponse = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
-                                                                                                              selector);
-        List<PiisConsent> response = cmsResponse.isSuccessful()
-                                         ? cmsResponse.getPayload()
-                                         : Collections.emptyList();
+        CmsResponse<List<CmsConsent>> cmsResponse = piisConsentService.getPiisConsentListByAccountIdentifier(accountReference.getCurrency(),
+                                                                                                             selector);
+        List<CmsConsent> response = cmsResponse.isSuccessful()
+                                        ? cmsResponse.getPayload()
+                                        : Collections.emptyList();
 
-        return piisConsentValidation.validatePiisConsentData(response);
+        List<PiisConsent> piisConsents = response.stream()
+                                             .map(xs2aPiisConsentMapper::mapToPiisConsent)
+                                             .collect(Collectors.toList());
+
+        return piisConsentValidation.validatePiisConsentData(piisConsents);
     }
 
     private FundsConfirmationResponse executeRequest(@NotNull PsuIdData psuIdData,
@@ -149,7 +159,7 @@ public class FundsConfirmationService {
 
         SpiResponse<SpiFundsConfirmationResponse> fundsSufficientCheck = fundsConfirmationSpi.performFundsSufficientCheck(
             spiContextData,
-            consent,
+            xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(consent),
             spiRequest,
             aspspConsentDataProvider
         );
@@ -163,5 +173,4 @@ public class FundsConfirmationService {
 
         return spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(fundsSufficientCheck.getPayload());
     }
-
 }

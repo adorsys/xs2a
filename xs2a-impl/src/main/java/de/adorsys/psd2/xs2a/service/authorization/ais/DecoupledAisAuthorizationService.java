@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -49,8 +49,8 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
      */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!accountConsentOptional.isPresent()) {
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        if (!aisConsentOptional.isPresent()) {
             log.info("Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.", consentId);
             return Optional.empty();
         }

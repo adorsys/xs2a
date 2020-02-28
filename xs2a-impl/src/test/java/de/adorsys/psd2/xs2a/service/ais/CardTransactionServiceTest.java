@@ -16,11 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.ais;
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -34,8 +37,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.CardAccountHandler;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
@@ -113,7 +114,7 @@ class CardTransactionServiceTest {
     private static final String BASE64_STRING_EXAMPLE = "dGVzdA==";
 
     private SpiAccountReference spiAccountReference;
-    private AccountConsent accountConsent;
+    private AisConsent accountConsent;
     private CardTransactionsReportByPeriodObject cardTransactionsReportByPeriodObject;
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
     private JsonReader jsonReader = new JsonReader();
@@ -307,10 +308,10 @@ class CardTransactionServiceTest {
         when(accountHelperService.findAccountReference(any(), any()))
             .thenReturn(SPI_ACCOUNT_REFERENCE_GLOBAL);
 
-        AccountConsent accountConsent = createConsentWithReferences();
+        AisConsent aisConsent = createConsent(createAccountAccess());
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(accountConsent));
+            .thenReturn(Optional.of(aisConsent));
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
         when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
@@ -336,6 +337,50 @@ class CardTransactionServiceTest {
         assertThat(body).isNotNull();
         assertThat(body.getCardAccountReport()).isEqualTo(xs2aAccountReport);
         assertThat(body.getAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
+        assertTrue(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList()));
+    }
+
+    @Test
+    void getCardTransactionsReportByPeriod_WhenConsentHasNoTransactions_Success() {
+        // Given
+        when(getCardTransactionsReportValidator.validate(any(CardTransactionsReportByPeriodObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(accountHelperService.findAccountReference(any(), any()))
+            .thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.findAccountReference(any(), any()))
+            .thenReturn(SPI_ACCOUNT_REFERENCE_GLOBAL);
+
+        AisConsent aisConsent = createConsent(createAccountAccessWithoutTransactions());
+
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
+            .thenReturn(true);
+        when(cardAccountSpi.requestCardTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), SPI_ACCOUNT_REFERENCE_GLOBAL, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(SPI_CARD_TRANSACTION_REPORT));
+
+        Xs2aCardAccountReport xs2aAccountReport = new Xs2aCardAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
+
+        when(spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(BookingStatus.BOTH, Collections.emptyList(), null))
+            .thenReturn(Optional.of(xs2aAccountReport));
+        when(balanceMapper.mapToXs2aBalanceList(Collections.emptyList()))
+            .thenReturn(Collections.emptyList());
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        // When
+        ResponseObject<Xs2aCardTransactionsReport> actualResponse = cardTransactionService.getCardTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+
+        Xs2aCardTransactionsReport body = actualResponse.getBody();
+
+        assertThat(body).isNotNull();
+        assertThat(body.getCardAccountReport()).isEqualTo(xs2aAccountReport);
+        assertThat(body.getAccountReference()).isEqualTo(null);
         assertTrue(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList()));
     }
 
@@ -458,12 +503,31 @@ class CardTransactionServiceTest {
         assertThat(actualResponse.hasError()).isFalse();
     }
 
-    private static AccountConsent createConsent(Xs2aAccountAccess access) {
-        return new AccountConsent(CONSENT_ID, access, access, false, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private static AisConsent createConsent(AccountAccess accountAccess) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setConsentData(buildAisConsentData());
+        aisConsent.setId(CONSENT_ID);
+        aisConsent.setValidUntil(LocalDate.now());
+        aisConsent.setFrequencyPerDay(4);
+        aisConsent.setConsentStatus(ConsentStatus.VALID);
+        aisConsent.setAuthorisations(Collections.emptyList());
+        aisConsent.setConsentTppInformation(buildConsentTppInformation());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
+        aisConsent.setUsages(Collections.emptyMap());
+        aisConsent.setStatusChangeTimestamp(OffsetDateTime.now());
+        aisConsent.setTppAccountAccesses(accountAccess);
+        aisConsent.setAspspAccountAccesses(accountAccess);
+        return aisConsent;
     }
 
-    private static AccountConsent createConsentWithReferences() {
-        return new AccountConsent(CONSENT_ID, createAccountAccess(), createAccountAccess(), false, LocalDate.now(), null, 4, null, ConsentStatus.VALID, false, false, null, createTppInfo(), AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private static AisConsentData buildAisConsentData() {
+        return new AisConsentData(null, null, null, false);
+    }
+
+    private static ConsentTppInformation buildConsentTppInformation() {
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(createTppInfo());
+        return consentTppInformation;
     }
 
     private static TppInfo createTppInfo() {
@@ -472,8 +536,12 @@ class CardTransactionServiceTest {
         return tppInfo;
     }
 
-    private static Xs2aAccountAccess createAccountAccess() {
-        return new Xs2aAccountAccess(Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), null, null, null, null);
+    private static AccountAccess createAccountAccess() {
+        return new AccountAccess(Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), null);
+    }
+
+    private static AccountAccess createAccountAccessWithoutTransactions() {
+        return new AccountAccess(Collections.singletonList(XS2A_ACCOUNT_REFERENCE), Collections.singletonList(XS2A_ACCOUNT_REFERENCE), null, null);
     }
 
     private static SpiAccountReference buildSpiAccountReferenceGlobal() {

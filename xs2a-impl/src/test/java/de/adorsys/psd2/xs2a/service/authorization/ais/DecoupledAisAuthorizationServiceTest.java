@@ -17,16 +17,17 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.jupiter.api.Test;
@@ -35,13 +36,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +53,6 @@ class DecoupledAisAuthorizationServiceTest {
     private static final Authorisation ACCOUNT_CONSENT_AUTHORIZATION = buildAccountConsentAuthorization();
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
-    private static final AccountConsent ACCOUNT_CONSENT = buildConsent(CONSENT_ID);
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthorizationResponse();
 
     @InjectMocks
@@ -71,7 +69,7 @@ class DecoupledAisAuthorizationServiceTest {
     void createConsentAuthorization_success() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(ACCOUNT_CONSENT));
+            .thenReturn(Optional.of(buildConsent(CONSENT_ID)));
         when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
 
@@ -94,6 +92,32 @@ class DecoupledAisAuthorizationServiceTest {
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
+    }
+
+    @Test
+    void updateConsentPsuData() {
+        UpdateConsentPsuDataReq authorisationRequest = buildUpdateConsentPsuDataReq();
+        AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
+
+        UpdateConsentPsuDataReq mappedUpdatePsuDataRequest = new UpdateConsentPsuDataReq();
+        when(aisConsentMapper.mapToUpdateConsentPsuDataReq(authorisationRequest, processorResponse))
+            .thenReturn(mappedUpdatePsuDataRequest);
+
+        AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
+
+        assertEquals(processorResponse, actualResponse);
+        verify(aisConsentService).updateConsentAuthorization(mappedUpdatePsuDataRequest);
+    }
+
+    @Test
+    void updateConsentPsuData_errorResponse() {
+        UpdateConsentPsuDataReq authorisationRequest = buildUpdateConsentPsuDataReq();
+        AuthorisationProcessorResponse processorResponse = buildAuthorisationProcessorResponseWithError();
+
+        AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
+
+        assertEquals(processorResponse, actualResponse);
+        verify(aisConsentService, never()).updateConsentAuthorization(any());
     }
 
     @Test
@@ -174,11 +198,25 @@ class DecoupledAisAuthorizationServiceTest {
         return authorisation;
     }
 
-    private static AccountConsent buildConsent(String id) {
-        return new AccountConsent(id, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), null, 4, LocalDate.now(), ConsentStatus.VALID, false, false, Collections.singletonList(PSU_DATA), null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
+    private static AisConsent buildConsent(String id) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setId(id);
+        return aisConsent;
+    }
+
+    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {
+        UpdateConsentPsuDataReq authorisationRequest = new UpdateConsentPsuDataReq();
+        authorisationRequest.setPsuData(PSU_DATA);
+        return authorisationRequest;
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
         return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", PSU_DATA);
+    }
+
+    private AuthorisationProcessorResponse buildAuthorisationProcessorResponseWithError() {
+        AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
+        processorResponse.setErrorHolder(ErrorHolder.builder(ErrorType.AIS_400).build());
+        return processorResponse;
     }
 }

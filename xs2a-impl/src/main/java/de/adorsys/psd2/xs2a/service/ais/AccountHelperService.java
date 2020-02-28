@@ -18,10 +18,10 @@ package de.adorsys.psd2.xs2a.service.ais;
 
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.ErrorToActionStatusMapper;
@@ -66,7 +66,7 @@ public class AccountHelperService {
                    : ActionStatus.SUCCESS;
     }
 
-    boolean needsToUpdateUsage(AccountConsent accountConsent) {
-        return accountConsent.isOneAccessType() || requestProviderService.isRequestFromTPP();
+    boolean needsToUpdateUsage(AisConsent aisConsent) {
+        return aisConsent.isOneAccessType() || requestProviderService.isRequestFromTPP();
     }
 }

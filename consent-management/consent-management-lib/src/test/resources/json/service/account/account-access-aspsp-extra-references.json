@@ -1,0 +1,40 @@
+{
+  "accounts": [
+    {
+      "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+      "resourceId": "11111-999999999",
+      "currency": "USD",
+      "iban": "DE89370400440532013000"
+    },
+    {
+      "aspspAccountId": "123-DE80760700240271232400-EUR",
+      "resourceId": "22222-999999999",
+      "currency": "EUR",
+      "iban": "DE80760700240271232400"
+    },
+    {
+      "aspspAccountId": "123-DE89370400440532015000-EUR",
+      "resourceId": "33333-999999999",
+      "iban": "DE89370400440532015000"
+    },
+    {
+      "aspspAccountId": "123-DE74500105174563769711-EUR",
+      "resourceId": "44444-999999999",
+      "iban": "DE74500105174563769711"
+    }
+  ],
+  "balances": [
+    {
+      "aspspAccountId": "123-DE74500105174563769711-EUR",
+      "resourceId": "44444-999999999",
+      "iban": "DE74500105174563769711"
+    }
+  ],
+  "transactions": [
+    {
+      "aspspAccountId": "123-DE74500105174563769711-EUR",
+      "resourceId": "44444-999999999",
+      "iban": "DE74500105174563769711"
+    }
+  ]
+}

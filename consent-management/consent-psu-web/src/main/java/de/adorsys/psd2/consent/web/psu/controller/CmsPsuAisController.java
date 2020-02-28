@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAisService;
@@ -247,7 +246,7 @@ public class CmsPsuAisController {
     @GetMapping(path = "/{consent-id}")
     @ApiOperation(value = "Returns AIS Consent object by its ID.")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = AisAccountConsent.class),
+        @ApiResponse(code = 200, message = "OK", response = CmsAisAccountConsent.class),
         @ApiResponse(code = 404, message = "Not Found")})
     @PsuHeadersDescription
     public ResponseEntity<CmsAisAccountConsent> getConsentByConsentId(

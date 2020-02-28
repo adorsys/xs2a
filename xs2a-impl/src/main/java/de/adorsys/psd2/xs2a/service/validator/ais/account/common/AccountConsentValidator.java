@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
@@ -35,17 +35,17 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class AccountConsentValidator {
     private final RequestProviderService requestProviderService;
 
-    public ValidationResult validate(AccountConsent accountConsent, String requestUri) {
-        if (LocalDate.now().compareTo(accountConsent.getValidUntil()) > 0) {
+    public ValidationResult validate(AisConsent aisConsent, String requestUri) {
+        if (LocalDate.now().compareTo(aisConsent.getValidUntil()) > 0) {
             return ValidationResult.invalid(AIS_401, CONSENT_EXPIRED);
         }
 
-        ConsentStatus consentStatus = accountConsent.getConsentStatus();
+        ConsentStatus consentStatus = aisConsent.getConsentStatus();
         if (consentStatus != ConsentStatus.VALID) {
             return processConsentInvalidStatus(consentStatus);
         }
 
-        if (isAccessExceeded(accountConsent, requestUri)) {
+        if (isAccessExceeded(aisConsent, requestUri)) {
             return ValidationResult.invalid(AIS_429, ACCESS_EXCEEDED);
         }
 
@@ -60,14 +60,14 @@ public class AccountConsentValidator {
         return ValidationResult.invalid(AIS_401, messageErrorCode);
     }
 
-    private boolean isAccessExceeded(AccountConsent accountConsent, String requestUri) {
-        if (requestProviderService.isRequestFromPsu() && !accountConsent.isOneAccessType()) {
+    private boolean isAccessExceeded(AisConsent aisConsent, String requestUri) {
+        if (requestProviderService.isRequestFromPsu() && !aisConsent.isOneAccessType()) {
             return false;
         }
 
-        if (!accountConsent.getUsageCounterMap().containsKey(requestUri)) {
+        if (!aisConsent.getUsageCounterMap().containsKey(requestUri)) {
             return false;
         }
-        return accountConsent.getUsageCounterMap().get(requestUri) <= 0;
+        return aisConsent.getUsageCounterMap().get(requestUri) <= 0;
     }
 }

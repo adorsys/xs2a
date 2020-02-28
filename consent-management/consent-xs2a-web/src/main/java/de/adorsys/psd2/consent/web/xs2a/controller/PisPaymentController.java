@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,7 +74,7 @@ public class PisPaymentController {
         @PathVariable("status") String status) {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
 
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
@@ -95,7 +96,7 @@ public class PisPaymentController {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId,
                                                                                                                    new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, ""),
                                                                                                                                       StringUtils.defaultIfBlank(tpPNokRedirectURI, "")));
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
@@ -118,7 +119,7 @@ public class PisPaymentController {
         @PathVariable("internal-request-id") String internalRequestId) {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId);
 
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 

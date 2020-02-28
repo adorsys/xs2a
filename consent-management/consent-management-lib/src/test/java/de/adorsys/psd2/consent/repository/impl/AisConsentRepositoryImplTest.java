@@ -17,12 +17,15 @@
 package de.adorsys.psd2.consent.repository.impl;
 
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.AuthorisationRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
+import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingFactory;
 import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,9 +34,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,137 +45,219 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AisConsentRepositoryImplTest {
-    private static final String CORRECT_PSU_ID = "987654321";
     private static final byte[] CHECKSUM = "checksum in consent".getBytes();
 
-    private JsonReader jsonReader;
-    private PsuData psuData;
+    private AisConsent aisConsent;
+    private ConsentEntity consentEntity;
+    private JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private AisConsentRepositoryImpl aisConsentVerifyingRepository;
+
     @Mock
-    private AisConsentJpaRepository aisConsentRepository;
+    private ConsentJpaRepository aisConsentRepository;
     @Mock
     private ChecksumCalculatingFactory calculatingFactory;
-
+    @Mock
+    private AisConsentMapper aisConsentMapper;
+    @Mock
+    private AuthorisationRepository authorisationRepository;
     @Mock
     private ChecksumCalculatingService checksumCalculatingService;
 
     @BeforeEach
     void setUp() {
-        when(calculatingFactory.getServiceByChecksum(any())).thenReturn(Optional.of(checksumCalculatingService));
-
-        psuData = buildPsuData(CORRECT_PSU_ID);
-        jsonReader = new JsonReader();
+        consentEntity = buildConsentEntity(ConsentStatus.VALID);
+        aisConsent = jsonReader.getObjectFromFile("json/ais-consent.json", AisConsent.class);
     }
 
     @Test
     void verifyAndSave_ReceivedToValidStatus_success() throws WrongChecksumException {
-        // given
-        AisConsent aisConsent = buildConsent(ConsentStatus.RECEIVED, ConsentStatus.VALID);
-        when(aisConsentRepository.save(aisConsent)).thenReturn(aisConsent);
+        // Given
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        ConsentEntity previousConsentEntity = buildConsentEntity(ConsentStatus.RECEIVED);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(previousConsentEntity));
+        when(aisConsentRepository.save(consentEntity))
+            .thenReturn(consentEntity);
 
-        // when
-        AisConsent actualResult = aisConsentVerifyingRepository.verifyAndSave(aisConsent);
+        // When
+        ConsentEntity actualResult = aisConsentVerifyingRepository.verifyAndSave(consentEntity);
 
-        // then
-        assertEquals(aisConsent, actualResult);
-        verify(aisConsentRepository, times(1)).save(aisConsent);
+        // Then
+        assertEquals(consentEntity, actualResult);
+        verify(aisConsentRepository, times(1)).save(consentEntity);
+    }
+
+    @Test
+    void verifyAndSave_finalisedStatus_failedSha() {
+        // Given
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
+            .thenReturn(aisConsent);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
+            .thenReturn(false);
+
+        consentEntity.setConsentStatus(ConsentStatus.REJECTED);
+        consentEntity.setChecksum(CHECKSUM);
+
+        // When
+        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndSave(consentEntity));
+
+        // Then
+        verify(aisConsentRepository, times(0)).save(consentEntity);
     }
 
     @Test
     void verifyAndSave_failedSha() {
         // Given
-        AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
-        aisConsent.setChecksum(CHECKSUM);
-        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(false);
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
+            .thenReturn(aisConsent);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
+            .thenReturn(false);
+
+        consentEntity.setChecksum(CHECKSUM);
 
         // When
-        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndSave(aisConsent));
+        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndSave(consentEntity));
 
         // Then
-        verify(aisConsentRepository, times(0)).save(aisConsent);
+        verify(aisConsentRepository, times(0)).save(consentEntity);
     }
 
     @Test
     void verifyAndSave_correctSha() throws WrongChecksumException {
-        // given
-        AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
-        aisConsent.setChecksum(CHECKSUM);
-        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(true);
-        when(aisConsentRepository.save(aisConsent)).thenReturn(aisConsent);
+        // Given
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
+            .thenReturn(aisConsent);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
+            .thenReturn(true);
+        when(aisConsentRepository.save(consentEntity))
+            .thenReturn(consentEntity);
 
-        // when
-        AisConsent actualResult = aisConsentVerifyingRepository.verifyAndSave(aisConsent);
+        consentEntity.setChecksum(CHECKSUM);
 
-        // then
-        assertEquals(aisConsent, actualResult);
-        verify(aisConsentRepository, times(1)).save(aisConsent);
+        // When
+        ConsentEntity actualResult = aisConsentVerifyingRepository.verifyAndSave(consentEntity);
+
+        // Then
+        assertEquals(consentEntity, actualResult);
+        verify(aisConsentRepository, times(1)).save(consentEntity);
     }
 
     @Test
     void verifyAndUpdate_success() throws WrongChecksumException {
-        // given
-        AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
-        aisConsent.setChecksum(CHECKSUM);
-        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(true);
-        when(aisConsentRepository.save(aisConsent)).thenReturn(aisConsent);
+        // Given
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
+            .thenReturn(aisConsent);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
+            .thenReturn(true);
+        when(aisConsentRepository.save(consentEntity))
+            .thenReturn(consentEntity);
 
-        // when
-        AisConsent actualResult = aisConsentVerifyingRepository.verifyAndUpdate(aisConsent);
+        consentEntity.setChecksum(CHECKSUM);
 
-        // then
-        assertEquals(aisConsent, actualResult);
-        verify(aisConsentRepository, times(1)).save(aisConsent);
+        // When
+        ConsentEntity actualResult = aisConsentVerifyingRepository.verifyAndUpdate(consentEntity);
+
+        // Then
+        assertEquals(consentEntity, actualResult);
+        verify(aisConsentRepository, times(1)).save(consentEntity);
     }
 
     @Test
     void verifyAndUpdate_failedSha() {
         // Given
-        AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
-        aisConsent.setChecksum(CHECKSUM);
-        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(false);
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
+            .thenReturn(aisConsent);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
+            .thenReturn(false);
+
+        consentEntity.setChecksum(CHECKSUM);
 
         // When
-        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndUpdate(aisConsent));
+        assertThrows(WrongChecksumException.class, () -> aisConsentVerifyingRepository.verifyAndUpdate(consentEntity));
 
         // Then
-        verify(aisConsentRepository, times(0)).save(aisConsent);
+        verify(aisConsentRepository, times(0)).save(consentEntity);
     }
 
     @Test
     void verifyAndSaveAll_success() throws WrongChecksumException {
-        // given
-        AisConsent aisConsent = buildConsent(ConsentStatus.VALID, ConsentStatus.VALID);
-        aisConsent.setChecksum(CHECKSUM);
-        List<AisConsent> asList = Collections.singletonList(aisConsent);
-        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM)).thenReturn(true);
-        when(aisConsentRepository.save(aisConsent)).thenReturn(aisConsent);
+        // Given
+        when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
+            .thenReturn(Optional.of(checksumCalculatingService));
+        when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
+            .thenReturn(true);
+        when(aisConsentRepository.save(consentEntity))
+            .thenReturn(consentEntity);
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
+            .thenReturn(aisConsent);
 
-        // when
-        List<AisConsent> actualResult = aisConsentVerifyingRepository.verifyAndSaveAll(asList);
+        consentEntity.setChecksum(CHECKSUM);
+        List<ConsentEntity> asList = Collections.singletonList(consentEntity);
 
-        // then
+        // When
+        List<ConsentEntity> actualResult = aisConsentVerifyingRepository.verifyAndSaveAll(asList);
+
+        // Then
         assertEquals(asList, actualResult);
-        verify(aisConsentRepository, times(1)).save(aisConsent);
+        verify(aisConsentRepository, times(1)).save(consentEntity);
     }
 
-    private AisConsent buildConsent(ConsentStatus previousStatus, ConsentStatus currentStatus) {
-        AisConsent aisConsent = jsonReader.getObjectFromFile("json/AisConsent.json", AisConsent.class);
+    @Test
+    void getActualAisConsent_success() {
+        // Given
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
 
-        aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
-        aisConsent.setValidUntil(LocalDate.now().plusDays(1));
-        aisConsent.setLastActionDate(LocalDate.now());
-        aisConsent.setPsuDataList(Collections.singletonList(psuData));
-        aisConsent.setConsentStatus(currentStatus);
-        aisConsent.setCreationTimestamp(OffsetDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneOffset.UTC));
-        aisConsent.setAisConsentRequestType(AisConsentRequestType.BANK_OFFERED);
-        aisConsent.setPreviousConsentStatus(previousStatus);
+        // When
+        Optional<ConsentEntity> optionalConsentEntity = aisConsentVerifyingRepository.getActualAisConsent(consentEntity.getExternalId());
 
-        return aisConsent;
+        // Then
+        assertEquals(Optional.of(consentEntity), optionalConsentEntity);
     }
 
-    private PsuData buildPsuData(String psuId) {
-        return new PsuData(psuId, "", "", "", "");
+    @Test
+    void getActualAisConsent_empty() {
+        consentEntity.setConsentStatus(ConsentStatus.REJECTED);
+        // Given
+        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity));
+
+        // When
+        Optional<ConsentEntity> optionalConsentEntity = aisConsentVerifyingRepository.getActualAisConsent(consentEntity.getExternalId());
+
+        // Then
+        assertEquals(Optional.empty(), optionalConsentEntity);
+    }
+
+    private ConsentEntity buildConsentEntity(ConsentStatus currentStatus) {
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/consent-entity.json", ConsentEntity.class);
+        consentEntity.setConsentStatus(currentStatus);
+
+        return consentEntity;
     }
 }

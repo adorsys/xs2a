@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="boolean.false" value="0" dbms="oracle"/>
+    <property name="boolean.false" value="false" dbms="!oracle"/>
+
+    <changeSet id="2020-02-21-1" author="ssh@adorsys.com.ua">
+        <comment>Drop not null constraint for valid_until column in consent</comment>
+
+        <dropNotNullConstraint tableName="consent" columnName="valid_until" columnDataType="DATE"/>
+    </changeSet>
+
+    <changeSet id="2020-02-21-2" author="ssh@adorsys.com.ua">
+        <comment>Drop redundant consent_id column in consent_tpp_information</comment>
+
+        <dropColumn tableName="consent_tpp_information" columnName="consent_id"/>
+    </changeSet>
+
+    <changeSet id="2020-02-21-3" author="ssh@adorsys.com.ua">
+        <comment>Increase the size of consent_type column in consent</comment>
+
+        <modifyDataType tableName="consent" columnName="consent_type" newDataType="VARCHAR(15)"/>
+    </changeSet>
+
+    <changeSet id="2020-02-21-4" author="ssh@adorsys.com.ua">
+        <comment>Create temporary table for PIIS consents migration</comment>
+
+        <createTable tableName="piis_consent_temp">
+            <column name="consent_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="external_id" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_status" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_date" type="DATE"/>
+            <column name="instance_id" type="VARCHAR(100)"/>
+            <column name="creation_timestamp" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_action_date" type="DATE"/>
+            <column name="request_date_time" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_change_timestamp" type="DATE"/>
+            <column name="authorisation_template_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_tpp_information_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="tpp_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurring_indicator" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2020-02-21-5" author="ssh@adorsys.com.ua">
+        <comment>Insert PIIS consents into temporary table</comment>
+
+        <sql dbms="h2,mariadb">
+            INSERT INTO piis_consent_temp (consent_id, external_id, consent_status, expire_date,
+            instance_id, creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
+            authorisation_template_id, consent_tpp_information_id, tpp_id,
+            recurring_indicator)
+            SELECT NEXTVAL(consent_id_seq), piis.external_id, piis.consent_status, piis.expire_date, piis.instance_id,
+            piis.creation_timestamp, piis.last_action_date, piis.request_date_time, piis.status_change_timestamp,
+            NEXTVAL(authorisation_template_id_seq), NEXTVAL(consent_tpp_info_id_seq), tpp.tpp_info_id,
+            piis.recurring_indicator
+            FROM piis_consent piis
+            INNER JOIN tpp_info tpp ON piis.tpp_authorisation_number = tpp.authorisation_number
+            WHERE piis.tpp_authorisation_number IS NOT NULL;
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO piis_consent_temp (consent_id, external_id, consent_status, expire_date,
+            instance_id, creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
+            authorisation_template_id, consent_tpp_information_id, tpp_id,
+            recurring_indicator)
+            SELECT NEXTVAL('consent_id_seq'), piis.external_id, piis.consent_status, piis.expire_date, piis.instance_id,
+            piis.creation_timestamp, piis.last_action_date, piis.request_date_time, piis.status_change_timestamp,
+            NEXTVAL('authorisation_template_id_seq'), NEXTVAL('consent_tpp_info_id_seq'), tpp.tpp_info_id,
+            piis.recurring_indicator
+            FROM piis_consent piis
+            INNER JOIN tpp_info tpp ON piis.tpp_authorisation_number = tpp.authorisation_number
+            WHERE piis.tpp_authorisation_number IS NOT NULL;
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO piis_consent_temp (consent_id, external_id, consent_status, expire_date,
+            instance_id, creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
+            authorisation_template_id, consent_tpp_information_id, tpp_id,
+            recurring_indicator)
+            SELECT consent_id_seq.NEXTVAL, piis.external_id, piis.consent_status, piis.expire_date, piis.instance_id,
+            piis.creation_timestamp, piis.last_action_date, piis.request_date_time, piis.status_change_timestamp,
+            authorisation_template_id_seq.NEXTVAL, consent_tpp_info_id_seq.NEXTVAL, tpp.tpp_info_id,
+            piis.recurring_indicator
+            FROM piis_consent piis
+            INNER JOIN tpp_info tpp ON piis.tpp_authorisation_number = tpp.authorisation_number
+            WHERE piis.tpp_authorisation_number IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-21-6" author="ssh@adorsys.com.ua">
+        <comment>Populate consent_tpp_information from temporary table</comment>
+
+        <sql>
+            INSERT INTO consent_tpp_information (consent_tpp_information_id, tpp_frequency_per_day, tpp_info_id,
+            tpp_redirect_preferred)
+            SELECT consent_tpp_information_id, 0, tpp_id, ${boolean.false}
+            FROM piis_consent_temp;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-21-7" author="ssh@adorsys.com.ua">
+        <comment>Populate authorisation_template from temporary table</comment>
+
+        <sql>
+            INSERT INTO authorisation_template (authorisation_template_id)
+            SELECT authorisation_template_id
+            FROM piis_consent_temp;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-21-8" author="ssh@adorsys.com.ua">
+        <comment>Populate consent from temporary table</comment>
+
+        <sql>
+            INSERT INTO consent (consent_id, external_id, consent_type, consent_status, expire_date, valid_until,
+            frequency_per_day, instance_id, multilevel_sca_required, data, checksum, internal_request_id,
+            creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
+            authorisation_template_id, consent_tpp_information_id, recurring_indicator,
+            owner_name_type)
+            SELECT consent_id, external_id, 'PIIS_ASPSP', consent_status, expire_date, NULL,
+            0, instance_id, ${boolean.false}, NULL, NULL, NULL,
+            creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
+            authorisation_template_id, consent_tpp_information_id, recurring_indicator, 'NONE'
+            FROM piis_consent_temp;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-21-9" author="ssh@adorsys.com.ua">
+        <comment>Drop temporary table</comment>
+
+        <dropTable tableName="piis_consent_temp"/>
+    </changeSet>
+
+    <changeSet id="2020-02-21-10" author="ssh@adorsys.com.ua">
+        <comment>Migrate PSU from piis_consent table to ais_consent_psu_data</comment>
+
+        <sql>
+            INSERT INTO ais_consent_psu_data (psu_data_id, ais_consent_id)
+            SELECT piis.psu_id, con.consent_id
+            FROM piis_consent piis
+            INNER JOIN consent con ON piis.external_id = con.external_id;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-21-11" author="ssh@adorsys.com.ua">
+        <comment>Migrate account references from piis consent into ais_aspsp_account_access</comment>
+
+        <sql>
+            INSERT INTO ais_aspsp_account_access (consent_id, resource_id, aspsp_account_id, account_identifier,
+            currency, type_access, account_reference_type)
+            SELECT con.consent_id, NULL, acc_ref.aspsp_account_id, acc_ref.iban, acc_ref.currency, 'ACCOUNT', 'IBAN'
+            FROM piis_consent piis
+            INNER JOIN account_reference acc_ref ON piis.acc_reference_id = acc_ref.account_reference_id AND
+            acc_ref.iban IS NOT NULL
+            INNER JOIN consent con ON piis.external_id = con.external_id;
+        </sql>
+
+        <sql>
+            INSERT INTO ais_aspsp_account_access (consent_id, resource_id, aspsp_account_id, account_identifier,
+            currency, type_access, account_reference_type)
+            SELECT con.consent_id, NULL, acc_ref.aspsp_account_id, acc_ref.bban, acc_ref.currency, 'ACCOUNT', 'BBAN'
+            FROM piis_consent piis
+            INNER JOIN account_reference acc_ref ON piis.acc_reference_id = acc_ref.account_reference_id AND
+            acc_ref.bban IS NOT NULL
+            INNER JOIN consent con ON piis.external_id = con.external_id;
+        </sql>
+
+        <sql>
+            INSERT INTO ais_aspsp_account_access (consent_id, resource_id, aspsp_account_id, account_identifier,
+            currency, type_access, account_reference_type)
+            SELECT con.consent_id, NULL, acc_ref.aspsp_account_id, acc_ref.pan, acc_ref.currency, 'ACCOUNT', 'PAN'
+            FROM piis_consent piis
+            INNER JOIN account_reference acc_ref ON piis.acc_reference_id = acc_ref.account_reference_id AND acc_ref.pan
+            IS NOT NULL
+            INNER JOIN consent con ON piis.external_id = con.external_id;
+        </sql>
+
+        <sql>
+            INSERT INTO ais_aspsp_account_access (consent_id, resource_id, aspsp_account_id, account_identifier,
+            currency, type_access, account_reference_type)
+            SELECT con.consent_id, NULL, acc_ref.aspsp_account_id, acc_ref.masked_pan, acc_ref.currency, 'ACCOUNT',
+            'MASKED_PAN'
+            FROM piis_consent piis
+            INNER JOIN account_reference acc_ref ON piis.acc_reference_id = acc_ref.account_reference_id AND
+            acc_ref.masked_pan IS NOT NULL
+            INNER JOIN consent con ON piis.external_id = con.external_id;
+        </sql>
+
+        <sql>
+            INSERT INTO ais_aspsp_account_access (consent_id, resource_id, aspsp_account_id, account_identifier,
+            currency, type_access, account_reference_type)
+            SELECT con.consent_id, NULL, acc_ref.aspsp_account_id, acc_ref.msisdn, acc_ref.currency, 'ACCOUNT', 'MSISDN'
+            FROM piis_consent piis
+            INNER JOIN account_reference acc_ref ON piis.acc_reference_id = acc_ref.account_reference_id AND
+            acc_ref.msisdn IS NOT NULL
+            INNER JOIN consent con ON piis.external_id = con.external_id;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

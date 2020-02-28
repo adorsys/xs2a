@@ -27,7 +27,10 @@ import java.util.Arrays;
 @Slf4j
 public class CertificateUtils {
 
-	public static X509Certificate[] getCertificates(String folderName, String... fileNames) {
+    private CertificateUtils() {
+    }
+
+    public static X509Certificate[] getCertificates(String folderName, String... fileNames) {
 		return Arrays.stream(fileNames)
                 .map(fileName -> getCertificate(folderName + "/" + fileName))
                 .toArray(X509Certificate[]::new);

@@ -6,6 +6,37 @@
 
 toc::[]
 
+== Architecture
+xref:architecture/index.adoc[Architecture documentation] provides a comprehensive architectural overview of the system,
+using a number of different architectural views to depict different aspects of the system. It is intended to capture and convey the significant
+architectural decisions which have been made on the system.
+
+== XS2A. Details of realisation
+xref:XS2A. Details of realisation/xs2a features description.adoc[This document] describes implementation details of XS2A Interface
+for Account Information Service, Payment Initiation Service, Payment Instrument Issuing Service, SCA Methods. Include Use-cases diagrams.
+
+== SPI Developer Guide
+xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide] provides instructions for implementing the Interfaces on the SPI level,
+describes special modes e.g. configuring Event-Service, Logging etc.
+
+
+== Version policy
+xref:version_policy.adoc[Version Policy] describes the main rules of Versioning, Release numbering, and Support policy.
+
+== Upcoming and existing Versions
+
+xref:roadmap.adoc[Roadmap] contains brief information about upcoming features and bugfixes.
+May be changed without a note.
+
+For the versions available, see the https://github.com/adorsys/xs2a/tags[tags on this repository]
+and xref:releasenotes.adoc[Release notes for each version].
+
+xref:releasenotes.adoc[Release notes] contain information about changes included into releases.
+Might contain also important migration information for the developers, how to migrate to a new version and how to use it.
+
+== Filing a bug
+xref:Filing_a_bug.adoc[This document] contains a summary of how to report an issue to XS2A Team.
+
 == New features since XS2A v.5.0
 xref:XS2A. Details of realisation/Read Account data Request.adoc[Download Link]
 
@@ -89,33 +120,3 @@ notifications about every change of Transaction/Consent status, SCA statuses for
 === Signing Basket
 This optional function (grouping several transactions for authorising it with one SCA method) might be offered by the ASPSP. PIS or AIS transactions can be added to the Signing Basket.
 
-== Architecture
-xref:architecture/index.adoc[Architecture documentation] provides a comprehensive architectural overview of the system,
-using a number of different architectural views to depict different aspects of the system. It is intended to capture and convey the significant
-architectural decisions which have been made on the system.
-
-== XS2A. Details of realisation
-xref:XS2A. Details of realisation/xs2a features description.adoc[This document] describes implementation details of XS2A Interface
-for Account Information Service, Payment Initiation Service, Payment Instrument Issuing Service, SCA Methods. Include Use-cases diagrams.
-
-== SPI Developer Guide
-xref:SPI Developer Guide/SPI_Developer_Guide.adoc[SPI Developer Guide] provides instructions for implementing the Interfaces on the SPI level,
-describes special modes e.g. configuring Event-Service, Logging etc.
-
-
-== Version policy
-xref:version_policy.adoc[Version Policy] describes the main rules of Versioning, Release numbering, and Support policy.
-
-== Upcoming and existing Versions
-
-xref:roadmap.adoc[Roadmap] contains brief information about upcoming features and bugfixes.
-May be changed without a note.
-
-For the versions available, see the https://github.com/adorsys/xs2a/tags[tags on this repository]
-and xref:releasenotes.adoc[Release notes for each version].
-
-xref:releasenotes.adoc[Release notes] contain information about changes included into releases.
-Might contain also important migration information for the developers, how to migrate to a new version and how to use it.
-
-== Filing a bug
-xref:Filing_a_bug.adoc[This document] contains a summary of how to report an issue to XS2A Team.

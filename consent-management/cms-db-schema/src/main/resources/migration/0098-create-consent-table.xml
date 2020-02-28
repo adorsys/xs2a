@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <include relativeToChangelogFile="true" file="_typedef.xml"/>
+
+    <changeSet author="ske@adorsys.de" id="2020-02-06-1">
+        <comment>Create sequence for consent id</comment>
+        <createSequence sequenceName="consent_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE consent_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="ske@adorsys.de" id="2020-02-06-2">
+        <comment>Create sequence for consent_tpp_information</comment>
+        <createSequence sequenceName="consent_tpp_info_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE consent_tpp_info_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="ske@adorsys.de" id="2020-02-06-3">
+        <comment>Create consent_tpp_information table</comment>
+
+        <createTable tableName="consent_tpp_information">
+            <column name="consent_tpp_information_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tpp_redirect_preferred" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tpp_info_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tpp_ntfc_uri" type="VARCHAR(100)"/>
+            <column name="tpp_frequency_per_day" type="INTEGER"/>
+            <column name="consent_id" type="BIGINT"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet author="ske@adorsys.de" id="2020-02-06-4">
+        <comment>Create consent table</comment>
+
+        <createTable tableName="consent">
+            <column name="consent_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="external_id" type="VARCHAR(40)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_type" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_status" type="VARCHAR(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expire_date" type="DATE"/>
+            <column name="valid_until" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="frequency_per_day" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="instance_id" type="VARCHAR(100)"/>
+            <column name="multilevel_sca_required" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="${blob.type}"/>
+            <column name="checksum" type="${blob.type}"/>
+            <column name="internal_request_id" type="VARCHAR(40)"/>
+            <column name="creation_timestamp" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_action_date" type="DATE"/>
+            <column name="request_date_time" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_change_timestamp" type="DATE"/>
+            <column name="authorisation_template_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="consent_tpp_information_id" type="BIGINT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="recurring_indicator" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_name_type" type="VARCHAR(40)" defaultValue="NONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="2020-02-12-5" author="amu@adorsys.com.ua">
+        <comment>Drop foreign keys to ais_consent table</comment>
+
+        <dropForeignKeyConstraint baseTableName="ais_consent_transaction" constraintName="fk_transaction_ais_consent"/>
+        <dropForeignKeyConstraint baseTableName="ais_consent_psu_data" constraintName="fk_psu_data_ais_consent"/>
+        <dropForeignKeyConstraint baseTableName="ais_consent_authorization" constraintName="fk_ais_auth_ais_consent"/>
+        <dropForeignKeyConstraint baseTableName="ais_consent_usage" constraintName="fk_ais_consent"/>
+        <dropForeignKeyConstraint baseTableName="ais_account_access" constraintName="fk_ais_access_ais_consent"/>
+        <dropForeignKeyConstraint baseTableName="ais_aspsp_account_access"
+                                  constraintName="fk_aspsp_access_ais_consent"/>
+    </changeSet>
+
+    <changeSet id="2020-02-12-6" author="amu@adorsys.com.ua">
+        <comment>
+            Migrate existing consent tpp information data into consent_tpp_information
+        </comment>
+
+        <sql dbms="mariadb,h2">
+            INSERT INTO consent_tpp_information (consent_tpp_information_id, consent_id, tpp_redirect_preferred,
+            tpp_info_id, tpp_ntfc_uri, tpp_frequency_per_day)
+            SELECT NEXT VALUE FOR consent_tpp_info_id_seq, consent.id, consent.tpp_redirect_preferred,
+            consent.tpp_info_id,
+            consent.tpp_ntfc_uri, consent.tpp_frequency_per_day FROM ais_consent consent
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO consent_tpp_information (consent_tpp_information_id, consent_id, tpp_redirect_preferred,
+            tpp_info_id, tpp_ntfc_uri, tpp_frequency_per_day)
+            SELECT nextval('consent_tpp_info_id_seq'), consent.id, consent.tpp_redirect_preferred, consent.tpp_info_id,
+            consent.tpp_ntfc_uri, consent.tpp_frequency_per_day FROM ais_consent consent
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO consent_tpp_information (consent_tpp_information_id, consent_id, tpp_redirect_preferred,
+            tpp_info_id, tpp_ntfc_uri, tpp_frequency_per_day)
+            SELECT consent_tpp_info_id_seq.NEXTVAL, consent.id, consent.tpp_redirect_preferred, consent.tpp_info_id,
+            consent.tpp_ntfc_uri, consent.tpp_frequency_per_day FROM ais_consent consent
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="2020-02-12-7" author="amu@adorsys.com.ua">
+        <comment>
+            Migrate existing ais_consent into consent
+        </comment>
+
+        <sql dbms="mariadb,h2">
+            INSERT INTO consent (consent_id, external_id, consent_type, consent_status, expire_date, valid_until,
+            frequency_per_day, multilevel_sca_required, recurring_indicator, internal_request_id, creation_timestamp,
+            last_action_date, request_date_time,
+            status_change_timestamp, authorisation_template_id, consent_tpp_information_id, checksum, instance_id,
+            owner_name_type)
+            SELECT consent.id, consent.external_id, consent.consent_type, consent.consent_status, consent.expire_date,
+            consent.valid_until,
+            consent.expected_frequency_per_day as frequency_per_day, consent.multilevel_sca_required,
+            consent.recurring_indicator, consent.int_req_id as internal_request_id,
+            consent.creation_timestamp, consent.last_action_date, consent.request_date_time,
+            consent.status_change_timestamp, consent.authorisation_template_id,
+            info.consent_tpp_information_id, consent.checksum, consent.instance_id, consent.owner_name_type
+            from ais_consent consent
+            INNER JOIN consent_tpp_information info
+            ON consent.id = info.consent_id
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO consent (consent_id, external_id, consent_type, consent_status, expire_date, valid_until,
+            frequency_per_day, multilevel_sca_required, recurring_indicator, internal_request_id, creation_timestamp,
+            last_action_date, request_date_time,
+            status_change_timestamp, authorisation_template_id, consent_tpp_information_id, checksum, instance_id,
+            owner_name_type)
+            SELECT consent.id, consent.external_id, consent.consent_type, consent.consent_status, consent.expire_date,
+            consent.valid_until,
+            consent.expected_frequency_per_day as frequency_per_day, consent.multilevel_sca_required,
+            consent.recurring_indicator, consent.int_req_id as internal_request_id,
+            consent.creation_timestamp, consent.last_action_date, consent.request_date_time,
+            consent.status_change_timestamp, consent.authorisation_template_id,
+            info.consent_tpp_information_id, consent.checksum, consent.instance_id, consent.owner_name_type
+            from ais_consent consent
+            INNER JOIN consent_tpp_information info
+            ON consent.id = info.consent_id
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO consent (consent_id, external_id, consent_type, consent_status, expire_date, valid_until,
+            frequency_per_day, multilevel_sca_required, recurring_indicator, internal_request_id, creation_timestamp,
+            last_action_date, request_date_time,
+            status_change_timestamp, authorisation_template_id, consent_tpp_information_id, checksum, instance_id,
+            owner_name_type)
+            SELECT consent.id, consent.external_id, consent.consent_type, consent.consent_status, consent.expire_date,
+            consent.valid_until,
+            consent.expected_frequency_per_day as frequency_per_day, consent.multilevel_sca_required,
+            consent.recurring_indicator, consent.int_req_id as internal_request_id,
+            consent.creation_timestamp, consent.last_action_date, consent.request_date_time,
+            consent.status_change_timestamp, consent.authorisation_template_id,
+            info.consent_tpp_information_id, consent.checksum, consent.instance_id, consent.owner_name_type
+            from ais_consent consent
+            INNER JOIN consent_tpp_information info
+            ON consent.id = info.consent_id
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-12-8" author="amu@adorsys.com.ua">
+        <comment>
+            Set max value for sequence consent_id_seq
+        </comment>
+
+        <sql dbms="mariadb,h2">
+            SELECT COALESCE(MAX(consent_id),0) + 1 INTO @max_value FROM consent;
+            EXECUTE IMMEDIATE CONCAT('ALTER SEQUENCE consent_id_seq RESTART WITH ', @max_value)
+        </sql>
+
+        <sql dbms="postgresql">
+            SELECT SETVAL('consent_id_seq', MAX(consent_id)+1) FROM consent
+        </sql>
+
+        <sql dbms="oracle" endDelimiter="/">
+            DECLARE
+            l_new_seq INTEGER;
+            BEGIN
+            EXECUTE IMMEDIATE 'DROP SEQUENCE CONSENT_ID_SEQ';
+
+            SELECT COALESCE(MAX(consent_id),0) + 1
+            INTO l_new_seq
+            FROM consent;
+
+            EXECUTE IMMEDIATE 'Create sequence CONSENT_ID_SEQ start with ' || l_new_seq;
+            END;
+        </sql>
+    </changeSet>
+
+    <changeSet id="2020-02-12-9" author="amu@adorsys.com.ua">
+        <comment>
+            Add foreign keys on consent table
+        </comment>
+
+        <addForeignKeyConstraint baseTableName="consent" baseColumnNames="authorisation_template_id"
+                                 constraintName="fk_auth_template_id"
+                                 referencedTableName="authorisation_template"
+                                 referencedColumnNames="authorisation_template_id"/>
+
+        <addForeignKeyConstraint baseTableName="consent" baseColumnNames="consent_tpp_information_id"
+                                 constraintName="fk_consent_tpp_information_id"
+                                 referencedTableName="consent_tpp_information"
+                                 referencedColumnNames="consent_tpp_information_id"/>
+
+        <addForeignKeyConstraint baseTableName="ais_consent_transaction" baseColumnNames="consent_id"
+                                 constraintName="fk_transaction_ais_consent" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedTableName="consent"
+                                 referencedColumnNames="consent_id"/>
+
+        <addForeignKeyConstraint baseTableName="ais_consent_psu_data" baseColumnNames="ais_consent_id"
+                                 constraintName="fk_psu_data_consent" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedTableName="consent"
+                                 referencedColumnNames="consent_id"/>
+
+        <addForeignKeyConstraint baseTableName="ais_consent_usage" baseColumnNames="consent_id"
+                                 constraintName="fk_ais_consent_usage" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedTableName="consent"
+                                 referencedColumnNames="consent_id"/>
+
+        <addForeignKeyConstraint baseTableName="consent_tpp_information" baseColumnNames="tpp_info_id"
+                                 constraintName="fk_tpp_info_id" deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedTableName="tpp_info"
+                                 referencedColumnNames="tpp_info_id"/>
+
+        <addForeignKeyConstraint baseTableName="ais_account_access" baseColumnNames="consent_id"
+                                 constraintName="fk_tpp_access_consent"
+                                 referencedTableName="consent"
+                                 referencedColumnNames="consent_id"/>
+
+        <addForeignKeyConstraint baseTableName="ais_aspsp_account_access" baseColumnNames="consent_id"
+                                 constraintName="fk_aspsp_access_consent"
+                                 referencedTableName="consent"
+                                 referencedColumnNames="consent_id"/>
+
+    </changeSet>
+
+</databaseChangeLog>

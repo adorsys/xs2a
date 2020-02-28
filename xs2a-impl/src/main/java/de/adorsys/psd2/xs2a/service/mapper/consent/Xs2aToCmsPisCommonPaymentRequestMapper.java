@@ -59,8 +59,12 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         paymentInfo.setInternalRequestId(creationObject.getInternalRequestId());
         paymentInfo.setPaymentData(creationObject.getPaymentData());
         paymentInfo.setCreationTimestamp(creationObject.getCreationTimestamp());
-        paymentInfo.setTppNotificationUri(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getTppNotificationUri).orElse(null));
-        paymentInfo.setNotificationSupportedModes(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData()).map(TppNotificationData::getNotificationModes).orElse(null));
+        paymentInfo.setTppNotificationUri(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData())
+                                              .map(TppNotificationData::getTppNotificationUri)
+                                              .orElse(null));
+        paymentInfo.setNotificationSupportedModes(Optional.ofNullable(paymentInitiationParameters.getTppNotificationData())
+                                                      .map(TppNotificationData::getNotificationModes)
+                                                      .orElse(Collections.emptyList()));
         paymentInfo.setContentType(creationObject.getContentType());
 
         return paymentInfo;

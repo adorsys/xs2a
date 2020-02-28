@@ -31,7 +31,7 @@ public enum RoleOfPSP {
 	private DERSequence sequence;
 	private String normalizedRoleName;
 
-	private RoleOfPSP(ASN1ObjectIdentifier roleOfPspOid, DERUTF8String roleOfPspName, String normalizedRoleName) {
+	RoleOfPSP(ASN1ObjectIdentifier roleOfPspOid, DERUTF8String roleOfPspName, String normalizedRoleName) {
 		this.roleOfPspOid = roleOfPspOid;
 		this.roleOfPspName = roleOfPspName;
 		this.normalizedRoleName = normalizedRoleName;

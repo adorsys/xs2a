@@ -15,45 +15,19 @@ No backward compatibility with 4.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 4.x|version 5.x|version 6.x|version 7.x
 
-|14.02.2020|4.10|5.10| |
-
-a|
-
-a|* Bugfix: Fix validation of Profile settings for supported payment types and products
-
-* Bugfix: In case of XML format payments the response type is still "applications/json"
-
-* Bugfix: Read Account Details request return error for global consent
-
-* Bugfix: Expiration of one-off consent is not working correctly for consent with access to multiple accounts
-
-a|* All fixes and updates from v.4.10
-
-* Refactor authorisation
-
-* Remove "owner_address_type" column from "ais_consent" table
-
-* Adjust consent model in CMS
-
-* Adjust AIS consent validators in xs2a
-
-* Adjust checksum service after consent model refactoring
-
-a|
-
-a|
-
 |28.02.2020|4.11|5.11| |
 
 a|
 
-a|* Fix javadoc warnings
+a|* Update expiration rule for not authorised payment\consent
 
-* Fix disabled test in EventReportRepositoryImplIT
+* Rename expireDate property in AisConsentSha to validUntil and migrate existings AIS checksums
 
-* Remove unused AisConsentServiceBase#updateAspspAccountAccess
+* Delete specific constructor in SpiAccountConsent
 
 a|* All fixes and updates from v.4.11
+
+* Adjust consent model in CMS
 
 * Create new SPI method for handling consent wrapper
 
@@ -61,9 +35,7 @@ a|* All fixes and updates from v.4.11
 
 * Add not null constraint for "valid_until" field in "ais_consent" table
 
-* Delete specific constructor in SpiAccountConsent
-
-* Rename expireDate property in AisConsentSha to validUntil and migrate existings AIS checksums
+* Bugfix: Wrong response for consent creation with additionalInformation ownerName
 
 a|
 
@@ -77,19 +49,21 @@ a|
 
 a|
 
-a|
+a|* New feature: Support header TPP-Brand-Logging-Information
+
+* New feature: Retrieve psuMessage from SPI for Get Status Response
+
+* New feature: In Get Payment Response the payment resource may contain the debtorName field
+
+* New feature: Add new attributes to data types according to Specification v.1.3.6
+
+* New feature: Add new message code 400 SCA_INVALID
 
 a|* All fixes and updates from v.6.0
 
 * Update to Java 11
 
 * Complete common payment migration in CMS database
-
-* New feature: Funds Confirmation consent support in Profile
-
-* New feature: Support yaml for Funds Confirmation consent
-
-* New feature: Establish FundsConfirmationConsent
 
 |27.03.2020| | |6.1|7.1
 
@@ -99,19 +73,21 @@ a|
 
 a|
 
-a|
+a|* Remove "owner_address_type" column from "ais_consent" table
 
 a|* All fixes and updates from v.6.1
+
+* New feature: Funds Confirmation consent support in Profile
+
+* New feature: Support yaml for Funds Confirmation consent
+
+* New feature: Establish FundsConfirmationConsent
 
 * New feature: Create Funds Confirmation consent validator
 
 * New feature: Get FundsConfirmationConsent Status + object
 
 * New feature: Revoke FundsConfirmationConsent
-
-* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
-
-* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
 |10.04.2020| | |6.2|7.2
 
@@ -121,15 +97,19 @@ a|
 
 a|
 
-a|
+a|* Remove deprecated PaymentAuthorisationType
+
+* Drop deprecated tables for AIS and PIS authorisations
 
 a|* All fixes and updates from v.6.2
+
+* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
+
+* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
 * New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
 
 * New feature: Get SCA Status request for FundsConfirmationConsent 
-
-* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
 
 |24.04.2020| | |6.3|7.3
 
@@ -139,13 +119,35 @@ a|
 
 a|
 
-a|
+a|* Provide interfaces for CMS controllers
 
 a|* All fixes and updates from v.6.3
 
+* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
+
 * New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
 
+|08.05.2020| | |6.4|7.4
+
+a|
+
+a|
+
+a|
+
+a|* Fix javadoc warnings
+
+* Fix disabled test in EventReportRepositoryImplIT
+
+* Remove unused AisConsentServiceBase#updateAspspAccountAccess
+
+* Refactor method isConsentExpired in OneOffConsentExpirationService
+
+a|* All fixes and updates from v.6.4
+
 * New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
+
+* Move authorisation-related methods out of Xs2aAisConsentService and Xs2aPisCommonPaymentService
 
 |Further development| | | |
 

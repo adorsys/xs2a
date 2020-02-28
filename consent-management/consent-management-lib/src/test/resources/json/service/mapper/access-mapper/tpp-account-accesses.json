@@ -1,0 +1,20 @@
+[
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE80760700240271232400",
+    "currency": "EUR",
+    "typeAccess": "ACCOUNT"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE80760700240271232500",
+    "currency": "USD",
+    "typeAccess": "BALANCE"
+  },
+  {
+    "accountReferenceType": "iban",
+    "accountIdentifier": "DE80760700240271232600",
+    "currency": "CHF",
+    "typeAccess": "TRANSACTION"
+  }
+]

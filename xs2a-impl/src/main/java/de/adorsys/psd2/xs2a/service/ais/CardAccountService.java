@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.service.ais;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
@@ -29,8 +31,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -65,7 +65,6 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_VALIDATIO
 @Service
 @AllArgsConstructor
 public class CardAccountService {
-
     private final CardAccountSpi cardAccountSpi;
 
     private final SpiToXs2aAccountDetailsMapper accountDetailsMapper;
@@ -94,18 +93,18 @@ public class CardAccountService {
     public ResponseObject<Xs2aCardAccountListHolder> getCardAccountList(String consentId, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_CARD_ACCOUNT_LIST_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             log.info("Consent-ID [{}]. Get card account list failed. Account consent not found by ID", consentId);
             return ResponseObject.<Xs2aCardAccountListHolder>builder()
                        .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
                        .build();
         }
 
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        ValidationResult validationResult = getCardAccountListValidator.validate(new GetCardAccountListConsentObject(accountConsent, requestUri));
+        ValidationResult validationResult = getCardAccountListValidator.validate(new GetCardAccountListConsentObject(aisConsent, requestUri));
         if (validationResult.isNotValid()) {
             log.info("Consent-ID [{}], RequestUri [{}]. Get card account list - validation failed: {}",
                      consentId, requestUri, validationResult.getMessageError());
@@ -114,7 +113,7 @@ public class CardAccountService {
                        .build();
         }
 
-        SpiResponse<List<SpiCardAccountDetails>> spiResponse = getAccountListSpiResponse(accountConsent, consentId);
+        SpiResponse<List<SpiCardAccountDetails>> spiResponse = getAccountListSpiResponse(aisConsent, consentId);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
@@ -127,14 +126,14 @@ public class CardAccountService {
 
         List<Xs2aCardAccountDetails> accountDetails = accountDetailsMapper.mapToXs2aCardAccountDetailsList(spiResponse.getPayload());
 
-        CmsResponse<AccountConsent> accountConsentUpdated =
-            accountReferenceUpdater.updateCardAccountReferences(consentId, accountConsent.getAccess(), accountDetails);
+        CmsResponse<AisConsent> aisConsentUpdated =
+            accountReferenceUpdater.updateCardAccountReferences(consentId, aisConsent, accountDetails);
 
-        if (accountConsentUpdated.hasError()) {
+        if (aisConsentUpdated.hasError()) {
             log.info("Consent-ID: [{}]. Get card account list failed: couldn't update account consent access.",
                      consentId);
 
-            if (CmsError.CHECKSUM_ERROR == accountConsentUpdated.getError()) {
+            if (CmsError.CHECKSUM_ERROR == aisConsentUpdated.getError()) {
                 return ResponseObject.<Xs2aCardAccountListHolder>builder()
                            .fail(AIS_500, TppMessageInformation.of(CONSENT_VALIDATION_FAILED))
                            .build();
@@ -145,9 +144,9 @@ public class CardAccountService {
                        .build();
         }
 
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
+        loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
-        return getXs2aAccountListHolderResponseObject(consentId, requestUri, accountConsentUpdated.getPayload(), accountDetails);
+        return getXs2aAccountListHolderResponseObject(consentId, requestUri, aisConsentUpdated.getPayload(), accountDetails);
     }
 
     /**
@@ -162,9 +161,9 @@ public class CardAccountService {
     public ResponseObject<Xs2aCardAccountDetailsHolder> getCardAccountDetails(String consentId, String accountId, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_CARD_ACCOUNT_DETAILS_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get card account details failed. Account consent not found by ID",
                      accountId, consentId);
             return ResponseObject.<Xs2aCardAccountDetailsHolder>builder()
@@ -172,9 +171,9 @@ public class CardAccountService {
                        .build();
         }
 
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        ValidationResult validationResult = getCardAccountDetailsValidator.validate(new GetCardAccountDetailsRequestObject(accountConsent, accountId, requestUri));
+        ValidationResult validationResult = getCardAccountDetailsValidator.validate(new GetCardAccountDetailsRequestObject(aisConsent, accountId, requestUri));
         if (validationResult.isNotValid()) {
             log.info("Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get card account details - validation failed: {}",
                      accountId, consentId, requestUri, validationResult.getMessageError());
@@ -184,7 +183,7 @@ public class CardAccountService {
                        .build();
         }
 
-        SpiResponse<SpiCardAccountDetails> spiResponse = getAccountDetailsSpiResponse(accountConsent, consentId, accountId);
+        SpiResponse<SpiCardAccountDetails> spiResponse = getAccountDetailsSpiResponse(aisConsent, consentId, accountId);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
@@ -195,30 +194,30 @@ public class CardAccountService {
                        .build();
         }
 
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
+        loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
-        return getXs2aAccountDetailsHolderResponseObject(consentId, requestUri, accountConsent, spiResponse.getPayload());
+        return getXs2aAccountDetailsHolderResponseObject(consentId, requestUri, aisConsent, spiResponse.getPayload());
     }
 
-    private SpiResponse<SpiCardAccountDetails> getAccountDetailsSpiResponse(AccountConsent accountConsent,
+    private SpiResponse<SpiCardAccountDetails> getAccountDetailsSpiResponse(AisConsent aisConsent,
                                                                             String consentId, String accountId) {
-        Xs2aAccountAccess access = accountConsent.getAccess();
+        AccountAccess access = aisConsent.getAccess();
         SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getAccounts(), accountId);
 
         return cardAccountSpi.requestCardAccountDetailsForAccount(accountHelperService.getSpiContextData(),
                                                                   requestedAccountReference,
-                                                                  consentMapper.mapToSpiAccountConsent(accountConsent),
+                                                                  consentMapper.mapToSpiAccountConsent(aisConsent),
                                                                   aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
     }
 
     @NotNull
     private ResponseObject<Xs2aCardAccountDetailsHolder> getXs2aAccountDetailsHolderResponseObject(String consentId,
                                                                                                    String requestUri,
-                                                                                                   AccountConsent accountConsent,
+                                                                                                   AisConsent aisConsent,
                                                                                                    SpiCardAccountDetails spiAccountDetails) {
         Xs2aCardAccountDetails cardAccountDetails = accountDetailsMapper.mapToXs2aCardAccountDetails(spiAccountDetails);
 
-        Xs2aCardAccountDetailsHolder xs2aCardAccountDetailsHolder = new Xs2aCardAccountDetailsHolder(cardAccountDetails, accountConsent);
+        Xs2aCardAccountDetailsHolder xs2aCardAccountDetailsHolder = new Xs2aCardAccountDetailsHolder(cardAccountDetails, aisConsent);
 
         ResponseObject<Xs2aCardAccountDetailsHolder> response = ResponseObject.<Xs2aCardAccountDetailsHolder>builder()
                                                                     .body(xs2aCardAccountDetailsHolder)
@@ -226,25 +225,25 @@ public class CardAccountService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId,
                                            accountHelperService.createActionStatus(false, TypeAccess.ACCOUNT, response),
-                                           requestUri, accountHelperService.needsToUpdateUsage(accountConsent),
+                                           requestUri, accountHelperService.needsToUpdateUsage(aisConsent),
                                            spiAccountDetails.getResourceId(), null);
 
         return response;
     }
 
 
-    private SpiResponse<List<SpiCardAccountDetails>> getAccountListSpiResponse(AccountConsent accountConsent, String consentId) {
+    private SpiResponse<List<SpiCardAccountDetails>> getAccountListSpiResponse(AisConsent aisConsent, String consentId) {
         return cardAccountSpi.requestCardAccountList(accountHelperService.getSpiContextData(),
-                                                     consentMapper.mapToSpiAccountConsent(accountConsent),
+                                                     consentMapper.mapToSpiAccountConsent(aisConsent),
                                                      aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
     }
 
     @NotNull
     private ResponseObject<Xs2aCardAccountListHolder> getXs2aAccountListHolderResponseObject(String consentId,
                                                                                              String requestUri,
-                                                                                             AccountConsent accountConsent,
+                                                                                             AisConsent aisConsent,
                                                                                              List<Xs2aCardAccountDetails> accountDetails) {
-        Xs2aCardAccountListHolder xs2aCardAccountListHolder = new Xs2aCardAccountListHolder(accountDetails, accountConsent);
+        Xs2aCardAccountListHolder xs2aCardAccountListHolder = new Xs2aCardAccountListHolder(accountDetails, aisConsent);
 
         ResponseObject<Xs2aCardAccountListHolder> response = ResponseObject.<Xs2aCardAccountListHolder>builder()
                                                                  .body(xs2aCardAccountListHolder)
@@ -252,7 +251,7 @@ public class CardAccountService {
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId,
                                            accountHelperService.createActionStatus(false, TypeAccess.ACCOUNT, response),
-                                           requestUri, accountHelperService.needsToUpdateUsage(accountConsent), null, null);
+                                           requestUri, accountHelperService.needsToUpdateUsage(aisConsent), null, null);
 
         return response;
     }

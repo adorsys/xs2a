@@ -16,11 +16,12 @@
 
 package de.adorsys.psd2.consent.service;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 
 import java.util.List;
 
-public interface AisConsentConfirmationExpirationService extends ConfirmationExpirationService<AisConsent> {
-    AisConsent expireConsent(AisConsent consent);
-    List<AisConsent> updateConsentListOnConfirmationExpiration(List<AisConsent> consents);
+public interface AisConsentConfirmationExpirationService extends ConfirmationExpirationService<ConsentEntity> {
+    ConsentEntity expireConsent(ConsentEntity consent);
+
+    List<ConsentEntity> updateConsentListOnConfirmationExpiration(List<ConsentEntity> consents);
 }

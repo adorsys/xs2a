@@ -16,15 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
@@ -83,7 +84,7 @@ class CreateConsentAuthorisationValidatorTest {
     @Test
     void validate_withValidConsentObject_shouldReturnValid() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(TPP_INFO);
+        AisConsent accountConsent = buildAccountConsent(TPP_INFO);
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
         // When
@@ -100,7 +101,7 @@ class CreateConsentAuthorisationValidatorTest {
     @Test
     void validate_withDifferentPsuIdInConsent_shouldReturnPsuCredentialsInvalidError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsentWithPsuIdData(false);
+        AisConsent accountConsent = buildAccountConsentWithPsuIdData(false);
         when(authorisationPsuDataChecker.isPsuDataWrong(anyBoolean(), any(), any())).thenReturn(true);
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
@@ -118,7 +119,7 @@ class CreateConsentAuthorisationValidatorTest {
     @Test
     void validate_withDifferentPsuIdInConsent_multilevelSca_shouldReturnValid() {
         // Given
-        AccountConsent accountConsent = buildAccountConsentWithPsuIdData(true);
+        AisConsent accountConsent = buildAccountConsentWithPsuIdData(true);
         when(authorisationPsuDataChecker.isPsuDataWrong(anyBoolean(), any(), any())).thenReturn(false);
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
@@ -136,7 +137,7 @@ class CreateConsentAuthorisationValidatorTest {
     @Test
     void validate_withFinalisedAuthorisation_shouldReturnStatusInvalidError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsentWithPsuIdDataAndAuthorisation();
+        AisConsent accountConsent = buildAccountConsentWithPsuIdDataAndAuthorisation();
         CreateConsentAuthorisationObject createPisAuthorisationPO = new CreateConsentAuthorisationObject(accountConsent, PSU_DATA);
         when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.AIS))).thenReturn(true);
 
@@ -156,7 +157,7 @@ class CreateConsentAuthorisationValidatorTest {
     @Test
     void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
-        AccountConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        AisConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
         when(aisConsentTppInfoValidator.validateTpp(INVALID_TPP_INFO)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
@@ -176,29 +177,45 @@ class CreateConsentAuthorisationValidatorTest {
         return tppInfo;
     }
 
-    private AccountConsent buildAccountConsent(TppInfo tppInfo) {
-        return new AccountConsent("id", null, null, false, null, null, 0,
-                                  null, null, false, false,
-                                  Collections.emptyList(), tppInfo, null, false,
-                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent buildAccountConsent(TppInfo tppInfo) {
+        AisConsent aisConsent = new AisConsent();
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(tppInfo);
+        aisConsent.setConsentTppInformation(consentTppInformation);
+        aisConsent.setAuthorisations(Collections.emptyList());
+        return aisConsent;
     }
 
-    private AccountConsent buildAccountConsentWithPsuIdData(boolean isMultilevelSca) {
-        return new AccountConsent("id", null, null, false, null, null, 0,
-                                  null, null, false, false,
-                                  Collections.singletonList(EMPTY_PSU_DATA), CreateConsentAuthorisationValidatorTest.TPP_INFO, null, isMultilevelSca,
-                                  Collections.emptyList(), null, Collections.emptyMap(), OffsetDateTime.now());
+    private AisConsent buildAccountConsentWithPsuIdData(boolean isMultilevelSca) {
+        AisConsent aisConsent = new AisConsent();
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(CreateConsentAuthorisationValidatorTest.TPP_INFO);
+        aisConsent.setConsentTppInformation(consentTppInformation);
+        aisConsent.setMultilevelScaRequired(isMultilevelSca);
+        aisConsent.setPsuIdDataList(Collections.singletonList(EMPTY_PSU_DATA));
+        aisConsent.setFrequencyPerDay(0);
+        aisConsent.setUsages(Collections.emptyMap());
+        aisConsent.setCreationTimestamp(OffsetDateTime.now());
+        aisConsent.setAuthorisations(Collections.emptyList());
+        return aisConsent;
     }
 
-    private AccountConsent buildAccountConsentWithPsuIdDataAndAuthorisation() {
+    private AisConsent buildAccountConsentWithPsuIdDataAndAuthorisation() {
         AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
         authorisation.setScaStatus(ScaStatus.FINALISED);
         authorisation.setPsuIdData(PSU_DATA);
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setAuthorisations(Collections.singletonList(authorisation));
+        aisConsent.setPsuIdDataList(Collections.singletonList(PSU_DATA));
 
-        return new AccountConsent("id", null, null, false, null, null, 0,
-                                  null, null, false, false,
-                                  Collections.singletonList(PSU_DATA), CreateConsentAuthorisationValidatorTest.TPP_INFO, null, false,
-                                  Collections.singletonList(authorisation), null, Collections.emptyMap(), OffsetDateTime.now());
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(TPP_INFO);
+        aisConsent.setConsentTppInformation(consentTppInformation);
+        aisConsent.setFrequencyPerDay(0);
+        aisConsent.setUsages(Collections.emptyMap());
+        aisConsent.setCreationTimestamp(OffsetDateTime.now());
+
+        return aisConsent;
     }
 
 }

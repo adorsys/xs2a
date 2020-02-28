@@ -26,4 +26,7 @@ public class CmsAspspApiTagName {
     public static final String ASPSP_PSU_CONSENT_MANAGEMENT = "ASPSP PSU consent management";
     public static final String ASPSP_TPP_STOP_LIST = "ASPSP TPP Stop List";
     public static final String ASPSP_TPP_INFO = "ASPSP TPP Info";
+
+    private CmsAspspApiTagName() {
+    }
 }

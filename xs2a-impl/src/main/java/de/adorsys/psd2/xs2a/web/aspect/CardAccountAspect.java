@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.CardAccountController;
 import de.adorsys.psd2.xs2a.web.link.CardAccountDetailsLinks;
@@ -46,11 +45,11 @@ public class CardAccountAspect extends AbstractLinkAspect<CardAccountController>
         if (!result.hasError()) {
             Xs2aCardAccountListHolder body = result.getBody();
             List<Xs2aCardAccountDetails> cardAccountDetails = body.getCardAccountDetails();
-            AccountConsent accountConsent = body.getAccountConsent();
-            if (accountConsent.getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS) {
+            AisConsent aisConsent = body.getAisConsent();
+            if (aisConsent.getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS) {
                 cardAccountDetails.forEach(acc -> acc.setLinks(null));
             } else {
-                cardAccountDetails.forEach(acc -> setLinksForCardAccountDetails(acc, body.getAccountConsent().getAccess()));
+                cardAccountDetails.forEach(acc -> setLinksForCardAccountDetails(acc, body.getAisConsent()));
             }
         }
         return result;
@@ -60,7 +59,7 @@ public class CardAccountAspect extends AbstractLinkAspect<CardAccountController>
     public ResponseObject<Xs2aCardAccountDetailsHolder> getCardAccountDetails(ResponseObject<Xs2aCardAccountDetailsHolder> result) {
         if (!result.hasError()) {
             Xs2aCardAccountDetailsHolder body = result.getBody();
-            setLinksForCardAccountDetails(body.getCardAccountDetails(), body.getAccountConsent().getAccess());
+            setLinksForCardAccountDetails(body.getCardAccountDetails(), body.getAisConsent());
         }
         return result;
     }
@@ -81,8 +80,10 @@ public class CardAccountAspect extends AbstractLinkAspect<CardAccountController>
         return result;
     }
 
-    private void setLinksForCardAccountDetails(Xs2aCardAccountDetails cardAccountDetails, Xs2aAccountAccess xs2aAccountAccess) {
-        CardAccountDetailsLinks cardAccountDetailsLinks = new CardAccountDetailsLinks(getHttpUrl(), cardAccountDetails.getResourceId(), xs2aAccountAccess);
+    private void setLinksForCardAccountDetails(Xs2aCardAccountDetails cardAccountDetails, AisConsent aisConsent) {
+        String url = getHttpUrl();
+        String id = cardAccountDetails.getResourceId();
+        CardAccountDetailsLinks cardAccountDetailsLinks = new CardAccountDetailsLinks(url, id, aisConsent);
         cardAccountDetails.setLinks(cardAccountDetailsLinks);
     }
 }

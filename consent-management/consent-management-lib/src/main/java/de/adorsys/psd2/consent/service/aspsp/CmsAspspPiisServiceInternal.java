@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,15 @@ package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.consent.repository.PiisConsentRepository;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
+import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +51,11 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.TERMINATED_BY_ASPS
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
-    private final PiisConsentRepository piisConsentRepository;
+    private final ConsentJpaRepository consentJpaRepository;
+    private final TppInfoRepository tppInfoRepository;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
+    private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
 
     @Override
     @Transactional
@@ -62,8 +67,9 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
         closePreviousPiisConsents(psuIdData, request);
 
-        PiisConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, request);
-        PiisConsentEntity savedConsent = piisConsentRepository.save(consent);
+        TppInfoEntity tppInfoEntity = getTppInfoEntity(request.getTppAuthorisationNumber());
+        ConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, request);
+        ConsentEntity savedConsent = consentJpaRepository.save(consent);
 
         if (savedConsent.getId() != null) {
             return Optional.ofNullable(savedConsent.getExternalId());
@@ -75,21 +81,23 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     }
 
     @Override
-    public @NotNull List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+    @Transactional
+    public @NotNull List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return piisConsentRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
+        return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
                    .stream()
-                   .map(piisConsentMapper::mapToPiisConsent)
+                   .map(piisConsentLazyMigrationService::migrateIfNeeded)
+                   .map(piisConsentMapper::mapToCmsPiisConsent)
                    .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public boolean terminateConsent(@NotNull String consentId, @NotNull String instanceId) {
-        Optional<PiisConsentEntity> entityOptional = piisConsentRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId));
+        Optional<ConsentEntity> entityOptional = consentJpaRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
         if (!entityOptional.isPresent()) {
             log.info("Consent ID: [{}], Instance ID: [{}]. PIIS consent cannot be terminated, because it was not found by consentId and instanceId",
@@ -97,30 +105,44 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
             return false;
         }
 
-        PiisConsentEntity entity = entityOptional.get();
+
+        ConsentEntity entity = entityOptional.get();
         changeStatusAndLastActionDate(entity, TERMINATED_BY_ASPSP);
 
-        piisConsentRepository.save(entity);
+        entity = piisConsentLazyMigrationService.migrateIfNeeded(entity);
+        consentJpaRepository.save(entity);
 
         return true;
     }
 
     private void closePreviousPiisConsents(PsuIdData psuIdData, CreatePiisConsentRequest request) {
         AccountReference accountReference = request.getAccount();
-        Specification<PiisConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, request.getTppAuthorisationNumber(), accountReference);
+        Specification<ConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, request.getTppAuthorisationNumber(), accountReference);
 
-        List<PiisConsentEntity> piisConsentEntities = piisConsentRepository.findAll(specification);
-        List<PiisConsentEntity> consentsToRevoke = piisConsentEntities.stream()
-                                                       .filter(c -> !c.getConsentStatus().isFinalisedStatus())
-                                                       .collect(Collectors.toList());
+        List<ConsentEntity> piisConsentEntities = consentJpaRepository.findAll(specification);
+        piisConsentEntities = piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities);
+        List<ConsentEntity> consentsToRevoke = piisConsentEntities.stream()
+                                                   .filter(c -> !c.getConsentStatus().isFinalisedStatus())
+                                                   .collect(Collectors.toList());
         consentsToRevoke.forEach(entity -> changeStatusAndLastActionDate(entity, REVOKED_BY_PSU));
 
-        piisConsentRepository.saveAll(consentsToRevoke);
+        consentJpaRepository.saveAll(consentsToRevoke);
     }
 
-    private void changeStatusAndLastActionDate(PiisConsentEntity piisConsentEntity, ConsentStatus consentStatus) {
-        piisConsentEntity.setLastActionDate(LocalDate.now());
-        piisConsentEntity.setConsentStatus(consentStatus);
+    private void changeStatusAndLastActionDate(ConsentEntity consentEntity, ConsentStatus consentStatus) {
+        consentEntity.setLastActionDate(LocalDate.now());
+        consentEntity.setConsentStatus(consentStatus);
+    }
+
+    private TppInfoEntity getTppInfoEntity(String tppAuthorisationNumber) {
+        Optional<TppInfoEntity> tppInfoEntityOptional = tppInfoRepository.findByAuthorisationNumber(tppAuthorisationNumber);
+        if (tppInfoEntityOptional.isPresent()) {
+            return tppInfoEntityOptional.get();
+        }
+        TppInfoEntity tppInfoEntity = new TppInfoEntity();
+        tppInfoEntity.setAuthorisationNumber(tppAuthorisationNumber);
+        tppInfoEntity.setAuthorityId("UNKNOWN");
+        return tppInfoRepository.save(tppInfoEntity);
     }
 
     private boolean isInvalidConsentCreationRequest(@NotNull PsuIdData psuIdData, CreatePiisConsentRequest request) {

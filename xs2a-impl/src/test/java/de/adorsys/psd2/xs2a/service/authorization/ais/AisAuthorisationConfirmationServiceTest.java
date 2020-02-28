@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
@@ -27,7 +28,6 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -98,7 +98,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest = new SpiCheckConfirmationCodeRequest(request.getConfirmationCode(), AUTHORISATION_ID);
         SpiContextData contextData = getSpiContextData();
-        AccountConsent consent = createConsent();
+        AisConsent consent = createConsent();
         Authorisation aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
 
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
@@ -266,7 +266,7 @@ class AisAuthorisationConfirmationServiceTest {
                                                                           .build();
         SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest = new SpiCheckConfirmationCodeRequest(request.getConfirmationCode(), AUTHORISATION_ID);
         SpiContextData contextData = getSpiContextData();
-        AccountConsent consent = createConsent();
+        AisConsent consent = createConsent();
         Authorisation aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
 
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
@@ -306,8 +306,8 @@ class AisAuthorisationConfirmationServiceTest {
         return new SpiContextData(null, null, null, null, null);
     }
 
-    private AccountConsent createConsent() {
-        return jsonReader.getObjectFromFile("json/service/account-consent.json", AccountConsent.class);
+    private AisConsent createConsent() {
+        return jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
     }
 
     private Authorisation getConsentAuthorisationResponse() {
@@ -325,7 +325,7 @@ class AisAuthorisationConfirmationServiceTest {
     }
 
     private SpiConsentConfirmationCodeValidationResponse preparationsForNotifyConfirmationCodeValidation(boolean confirmationCodeValidationResult) {
-        AccountConsent consent = createConsent();
+        AisConsent consent = createConsent();
         SpiConsentConfirmationCodeValidationResponse spiConsentConfirmationCodeValidationResponse = confirmationCodeValidationResult
                                                                                                         ? new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FINALISED, ConsentStatus.VALID)
                                                                                                         : new SpiConsentConfirmationCodeValidationResponse(ScaStatus.FAILED, ConsentStatus.REJECTED);

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public interface CmsPsuPiisService {
      * @return Consent object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<PiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
+    Optional<CmsPiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId);
 
     /**
      * Returns a list of PIIS Consent objects by PSU ID
@@ -44,7 +44,7 @@ public interface CmsPsuPiisService {
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<PiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
 
     /**
      * Revokes PIIS Consent object by its ID. Consent gets status "Revoked by PSU".

@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.util.Optional;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -167,7 +168,7 @@ class AccountAccessValidatorImplTest {
         validator = createValidator(consents);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_CONSENT_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(FORMAT_ERROR_CONSENT_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -176,7 +177,7 @@ class AccountAccessValidatorImplTest {
         validator = createValidator(consents);
 
         validator.validate(request, messageError);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_CONSENT_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(FORMAT_ERROR_CONSENT_INCORRECT, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
@@ -204,7 +205,7 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
-    public void validate_account_additionalInformation_ownerName_wrongIban_error() {
+    public void validate_account_additionalInformation_ownerName_incorrectIban_error() {
         // Given
         consents.getAccess().getAdditionalInformation().getOwnerName().get(0).setIban("123");
 
@@ -212,8 +213,32 @@ class AccountAccessValidatorImplTest {
         validator.validate(request, messageError);
 
         // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertEquals(2, messageError.getTppMessages().size());
+        assertTrue(messageError.getTppMessages().contains(TppMessageInformation.of(SERVICE_INVALID_400)));
+        assertTrue(messageError.getTppMessages().contains(TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "IBAN")));
     }
+
+    @Test
+    public void validate_account_additionalInformation_ownerName_twoIbans_error() {
+        // Given
+        Consents wrongConsents = jsonReader.getObjectFromFile("json/validation/ais/consents_two_ibans_in_owner_name.json", Consents.class);
+        AccountAccessValidatorImpl accountAccessValidator = createValidator(wrongConsents);
+
+        // When
+        accountAccessValidator.validate(request, messageError);
+
+        // Then
+        assertEquals(MessageErrorCode.SERVICE_INVALID_400, messageError.getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void validate_wrongAdditionalInformation_error() {
+        consents.getAccess().getAdditionalInformation().getOwnerName().get(0).setIban("DE69760700240340283600");
+
+        validator.validate(request, messageError);
+        assertEquals(MessageErrorCode.SERVICE_INVALID_400, messageError.getTppMessage().getMessageErrorCode());
+    }
+
 
     private AccountAccessValidatorImpl createValidator(Consents consents) {
         return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new Xs2aObjectMapper(),

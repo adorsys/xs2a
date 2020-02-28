@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,34 @@
 
 package de.adorsys.psd2.consent.repository.specification;
 
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Join;
 import java.time.LocalDate;
 
+import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
 
 @Service
-public class PisCommonPaymentDataSpecification extends GenericSpecification {
+@RequiredArgsConstructor
+public class PisCommonPaymentDataSpecification {
+    private final CommonSpecification<PisCommonPaymentData> commonSpecification;
+
     public Specification<PisCommonPaymentData> byPaymentId(String paymentId) {
-        return Specification.where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId));
+        return Specification.where(provideSpecificationForEntityAttribute(PAYMENT_ID_ATTRIBUTE, paymentId));
     }
 
     public Specification<PisCommonPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
-        return Specification.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
-                   .and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId));
+        return Specification.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(PAYMENT_ID_ATTRIBUTE, paymentId))
+                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
     }
 
     /**
@@ -53,10 +61,10 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                                  @Nullable LocalDate createDateTo,
                                                                                                  @Nullable PsuIdData psuIdData,
                                                                                                  @Nullable String instanceId) {
-        return Specification.<PisCommonPaymentData>where(byTppAuthorisationNumber(tppAuthorisationNumber))
-                   .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byPsuIdDataInList(psuIdData))
-                   .and(byInstanceId(instanceId));
+        return Specification.where(byTppAuthorisationNumber(tppAuthorisationNumber))
+                   .and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(commonSpecification.byPsuIdDataInList(psuIdData))
+                   .and(commonSpecification.byInstanceId(instanceId));
     }
 
     /**
@@ -72,26 +80,45 @@ public class PisCommonPaymentDataSpecification extends GenericSpecification {
                                                                                          @Nullable LocalDate createDateFrom,
                                                                                          @Nullable LocalDate createDateTo,
                                                                                          @Nullable String instanceId) {
-        return Specification.<PisCommonPaymentData>where(byPsuIdDataInList(psuIdData))
-                   .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byInstanceId(instanceId));
+        return commonSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId);
     }
 
     /**
      * Returns specification for PisCommonPaymentData entity for filtering payments by aspsp account id, creation date and instance ID.
      *
-     * @param aspspAccountId         Bank specific account identifier
-     * @param createDateFrom         optional creation date that limits resulting data to payments created after this date(inclusive)
-     * @param createDateTo           optional creation date that limits resulting data to payments created before this date(inclusive)
-     * @param instanceId             optional instance ID
+     * @param aspspAccountId Bank specific account identifier
+     * @param createDateFrom optional creation date that limits resulting data to payments created after this date(inclusive)
+     * @param createDateTo   optional creation date that limits resulting data to payments created before this date(inclusive)
+     * @param instanceId     optional instance ID
      * @return resulting specification for PisCommonPaymentData entity
      */
     public Specification<PisCommonPaymentData> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
                                                                                               @Nullable LocalDate createDateFrom,
                                                                                               @Nullable LocalDate createDateTo,
                                                                                               @Nullable String instanceId) {
-        return Specification.<PisCommonPaymentData>where(byAspspAccountId(aspspAccountId))
-                                                 .and(byCreationTimestamp(createDateFrom, createDateTo))
-                                                 .and(byInstanceId(instanceId));
+        return Specification.where(byAspspAccountId(aspspAccountId))
+                   .and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo))
+                   .and(commonSpecification.byInstanceId(instanceId));
+    }
+
+    private Specification<PisCommonPaymentData> byAspspAccountId(@Nullable String aspspAccountId) {
+        return provideSpecificationForEntityAttribute(ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId);
+    }
+
+    /**
+     * Returns specification for PisCommonPaymentData entity for filtering data by TPP authorisation number.
+     *
+     * <p>
+     * If optional parameter is not provided, this specification will not affect resulting data.
+     *
+     * @param tppAuthorisationNumber optional TPP authorisation number
+     * @return resulting specification
+     */
+    private Specification<PisCommonPaymentData> byTppAuthorisationNumber(@Nullable String tppAuthorisationNumber) {
+        return (root, query, cb) -> {
+            Join<PisCommonPaymentData, TppInfoEntity> tppInfoJoin = root.join(TPP_INFO_ATTRIBUTE);
+            return provideSpecificationForJoinedEntityAttribute(tppInfoJoin, TPP_INFO_AUTHORISATION_NUMBER_ATTRIBUTE, tppAuthorisationNumber)
+                       .toPredicate(root, query, cb);
+        };
     }
 }

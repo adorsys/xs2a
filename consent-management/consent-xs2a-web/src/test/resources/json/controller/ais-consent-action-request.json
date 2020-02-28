@@ -1,0 +1,9 @@
+{
+  "tppId" : "tppId",
+  "consentId" : "consentId",
+  "actionStatus" : "SUCCESS",
+  "requestUri" : "requestUri",
+  "updateUsage" : true,
+  "resourceId" : "resourceId",
+  "transactionId" : "transactionId"
+}

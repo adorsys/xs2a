@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +30,16 @@ import java.util.Optional;
 public class Xs2aToSpiAccountAccessMapper {
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
 
-    public SpiAccountAccess mapToAccountAccess(Xs2aAccountAccess access) {
-        return Optional.ofNullable(access)
-                   .map(aa ->
-                            new SpiAccountAccess(
-                                xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getAccounts()),
-                                xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getBalances()),
-                                xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aa.getTransactions()),
-                                aa.getAvailableAccounts(),
-                                aa.getAllPsd2(),
-                                aa.getAvailableAccountsWithBalance(),
-                                mapToSpiAdditionalInformationAccess(aa.getAdditionalInformationAccess())
-                            )
-                   )
-                   .orElse(null);
+    public SpiAccountAccess mapToAccountAccess(AisConsent aisConsent) {
+        return new SpiAccountAccess(
+            xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getAccounts()),
+            xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getBalances()),
+            xs2aToSpiAccountReferenceMapper.mapToSpiAccountReferences(aisConsent.getAccess().getTransactions()),
+            aisConsent.getConsentData().getAvailableAccounts(),
+            aisConsent.getConsentData().getAllPsd2(),
+            aisConsent.getConsentData().getAvailableAccountsWithBalance(),
+            mapToSpiAdditionalInformationAccess(aisConsent.getAccess().getAdditionalInformationAccess())
+        );
     }
 
     private SpiAdditionalInformationAccess mapToSpiAdditionalInformationAccess(AdditionalInformationAccess additionalInformationAccess) {

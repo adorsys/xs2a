@@ -207,7 +207,7 @@ class PaymentControllerIT {
 
         //Then
         resultActions.andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json("{\"scaStatus\":\"received\"}"));
     }
 
@@ -236,7 +236,7 @@ class PaymentControllerIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(CANCELLATION_AUTHORISATIONS_RESP, UTF_8)));
     }
 
@@ -267,7 +267,7 @@ class PaymentControllerIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(CANCELLATION_AUTHORISATIONS_REDIRECT_OAUTH_RESP, UTF_8)));
     }
 
@@ -294,7 +294,7 @@ class PaymentControllerIT {
 
         //Then
         resultActions.andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString("/json/payment/res/Cancellations.json", UTF_8)));
     }
 

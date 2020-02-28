@@ -10,10 +10,11 @@
     }
   ],
   "consentStatus": "RECEIVED",
-  "tppInfo": {
+  "tppInformation": {
+    "tppInfo": {}
   },
   "authorisationTemplate": {
-    "redirectUri": "Mock tppOkRedirectUri",
-    "nokRedirectUri": "Mock tppNokRedirectUri"
+      "redirectUri": "Mock tppOkRedirectUri",
+      "nokRedirectUri": "Mock tppNokRedirectUri"
   }
 }

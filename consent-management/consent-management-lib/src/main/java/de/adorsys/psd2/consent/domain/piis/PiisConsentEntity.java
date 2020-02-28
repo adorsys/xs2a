@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,18 +21,21 @@ import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+/**
+ * @deprecated since 5.11, use {@link de.adorsys.psd2.consent.domain.consent.ConsentEntity} for new consents instead
+ */
+@Deprecated // TODO: complete PIIS consent migration https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1216
 @Data
 @Entity(name = "piis_consent")
-@ApiModel(description = "Piis consent entity", value = "PiisConsentEntity")
+@EqualsAndHashCode(callSuper = true)
 public class PiisConsentEntity extends InstanceDependableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "piis_consent_generator")
@@ -40,23 +43,18 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     private Long id;
 
     @Column(name = "external_id", nullable = false)
-    @ApiModelProperty(value = "An external exposed identification of the created PIIS consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String externalId;
 
     @Column(name = "recurring_indicator", nullable = false)
-    @ApiModelProperty(value = "'true', if the consent is for recurring access to the account data , 'false', if the consent is for single access to the account data", required = true, example = "false")
     private boolean recurringIndicator;
 
     @Column(name = "request_date_time", nullable = false)
-    @ApiModelProperty(value = "Date of the last request for this consent. The content is the local ASPSP date in ISODate Format", required = true, example = "2018-10-25T15:30:35.035Z")
     private OffsetDateTime requestDateTime;
 
     @Column(name = "last_action_date")
-    @ApiModelProperty(value = "Date of the last action for this consent. The content is the local ASPSP date in ISODate Format", example = "2018-05-04")
     private LocalDate lastActionDate;
 
     @Column(name = "expire_date")
-    @ApiModelProperty(value = "Expiration date for the requested consent. The content is the local ASPSP date in ISODate Format", example = "2018-05-04")
     private LocalDate expireDate;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -65,7 +63,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
 
     @Column(name = "consent_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "The following code values are permitted 'received', 'valid', 'rejected', 'expired', 'revoked by psu', 'terminated by tpp'. These values might be extended by ASPSP by more values.", required = true, example = "VALID")
     private ConsentStatus consentStatus;
 
     @JoinColumn(name = "acc_reference_id")
@@ -74,7 +71,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
 
     @Column(name = "tpp_access_type", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    @ApiModelProperty(value = "Type of the tpp access: SINGLE_TPP or ALL_TPP.", required = true, example = "ALL_TPP")
     private PiisConsentTppAccessType tppAccessType;
 
     @Column(name = "creation_timestamp", nullable = false)
@@ -96,7 +92,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     private OffsetDateTime statusChangeTimestamp;
 
     @Column(name = "tpp_authorisation_number")
-    @ApiModelProperty(value = "Fully described Tpp attribute", example = "PSDDE-FAKENCA-87B2AC")
     private String tppAuthorisationNumber;
 
     @Transient

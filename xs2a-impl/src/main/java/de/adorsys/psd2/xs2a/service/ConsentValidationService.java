@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
@@ -54,15 +54,15 @@ public class ConsentValidationService {
         return createConsentRequestValidator.validate(new CreateConsentRequestObject(request, psuIdData));
     }
 
-    public ValidationResult validateConsentOnGettingStatusById(AccountConsent consent) {
+    public ValidationResult validateConsentOnGettingStatusById(AisConsent consent) {
         return getAccountConsentsStatusByIdValidator.validate(new CommonConsentObject(consent));
     }
 
-    public ValidationResult validateConsentOnDelete(AccountConsent consent) {
+    public ValidationResult validateConsentOnDelete(AisConsent consent) {
         return deleteAccountConsentsByIdValidator.validate(new CommonConsentObject(consent));
     }
 
-    public ValidationResult validateConsentOnGettingById(AccountConsent consent) {
+    public ValidationResult validateConsentOnGettingById(AisConsent consent) {
         return getAccountConsentByIdValidator.validate(new CommonConsentObject(consent));
     }
 
@@ -70,15 +70,15 @@ public class ConsentValidationService {
         return createConsentAuthorisationValidator.validate(createConsentAuthorisationObject);
     }
 
-    public ValidationResult validateConsentPsuDataOnUpdate(AccountConsent consent, UpdateConsentPsuDataReq request) {
+    public ValidationResult validateConsentPsuDataOnUpdate(AisConsent consent, UpdateConsentPsuDataReq request) {
         return updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(consent, request));
     }
 
-    public ValidationResult validateConsentAuthorisationOnGettingById(AccountConsent consent) {
+    public ValidationResult validateConsentAuthorisationOnGettingById(AisConsent consent) {
         return getConsentAuthorisationsValidator.validate(new CommonConsentObject(consent));
     }
 
-    public ValidationResult validateConsentAuthorisationScaStatus(AccountConsent consent, String authorisationId) {
+    public ValidationResult validateConsentAuthorisationScaStatus(AisConsent consent, String authorisationId) {
         return getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(consent, authorisationId));
     }
 

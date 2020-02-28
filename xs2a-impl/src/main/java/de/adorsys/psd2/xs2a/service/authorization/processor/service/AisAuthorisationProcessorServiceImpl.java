@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -28,7 +29,6 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
@@ -109,8 +109,8 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         String consentId = request.getBusinessObjectId();
         String authorisationId = request.getAuthorisationId();
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!accountConsentOptional.isPresent()) {
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        if (!aisConsentOptional.isPresent()) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
                                           .build();
@@ -119,9 +119,9 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         }
 
         PsuIdData psuData = extractPsuIdData(request, authorisationProcessorRequest.getAuthorisation());
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisConsent);
 
         String authenticationMethodId = request.getAuthenticationMethodId();
         if (isDecoupledApproach(request.getAuthorisationId(), authenticationMethodId)) {
@@ -137,22 +137,22 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         String consentId = request.getBusinessObjectId();
         String authorisationId = request.getAuthorisationId();
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
                                           .build();
             writeErrorLog(authorisationProcessorRequest, request.getPsuData(), errorHolder, CONSENT_NOT_FOUND_LOG_MESSAGE);
             return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, request.getPsuData());
         }
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
         PsuIdData psuData = extractPsuIdData(request, authorisationProcessorRequest.getAuthorisation());
 
         SpiResponse<SpiVerifyScaAuthorisationResponse> spiResponse = aisConsentSpi.verifyScaAuthorisation(spiContextDataProvider.provideWithPsuIdData(psuData),
                                                                                                           aisConsentMapper.mapToSpiScaConfirmation(request, psuData),
-                                                                                                          aisConsentMapper.mapToSpiAccountConsent(accountConsent),
+                                                                                                          aisConsentMapper.mapToSpiAccountConsent(aisConsent),
                                                                                                           aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
 
         if (spiResponse.hasError()) {
@@ -168,11 +168,11 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
 
         ConsentStatus responseConsentStatus = spiResponse.getPayload().getConsentStatus();
 
-        if (ConsentStatus.PARTIALLY_AUTHORISED == responseConsentStatus && !accountConsent.isMultilevelScaRequired()) {
+        if (ConsentStatus.PARTIALLY_AUTHORISED == responseConsentStatus && !aisConsent.isMultilevelScaRequired()) {
             aisConsentService.updateMultilevelScaRequired(consentId, true);
         }
 
-        if (accountConsent.getConsentStatus() != responseConsentStatus) {
+        if (aisConsent.getConsentStatus() != responseConsentStatus) {
             aisConsentService.updateConsentStatus(consentId, responseConsentStatus);
         }
         aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
@@ -218,9 +218,9 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
         UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         String consentId = request.getBusinessObjectId();
         String authorisationId = request.getAuthorisationId();
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
                                           .build();
@@ -230,8 +230,8 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
 
         Authorisation authorisation = authorisationProcessorRequest.getAuthorisation();
         PsuIdData psuData = extractPsuIdData(request, authorisation);
-        AccountConsent accountConsent = accountConsentOptional.get();
-        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
+        AisConsent aisConsent = aisConsentOptional.get();
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisConsent);
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(psuData);
         SpiPsuData spiPsuData = psuDataMapper.mapToSpiPsuData(psuData);
         SpiResponse<SpiPsuAuthorisationResponse> authorisationStatusSpiResponse = aisConsentSpi.authorisePsu(spiContextData,
@@ -255,7 +255,7 @@ public class AisAuthorisationProcessorServiceImpl extends BaseAuthorisationProce
             return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuData);
         }
 
-        if (aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent)) {
+        if (aisScaAuthorisationService.isOneFactorAuthorisation(aisConsent)) {
             aisConsentService.updateConsentStatus(consentId, ConsentStatus.VALID);
 
             return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, authorisationId, psuData);

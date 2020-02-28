@@ -17,6 +17,8 @@
 package de.adorsys.psd2.xs2a.service.ais;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -25,8 +27,6 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
@@ -85,9 +85,9 @@ public class BalanceService {
     public ResponseObject<Xs2aBalancesReport> getBalancesReport(String consentId, String accountId, String requestUri) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.READ_BALANCE_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get balances report failed. Account consent not found by ID",
                      accountId, consentId);
             return ResponseObject.<Xs2aBalancesReport>builder()
@@ -95,9 +95,9 @@ public class BalanceService {
                        .build();
         }
 
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        ValidationResult validationResult = getValidationResultForCommonAccountBalanceRequest(accountId, requestUri, accountConsent);
+        ValidationResult validationResult = getValidationResultForCommonAccountBalanceRequest(accountId, requestUri, aisConsent);
 
         if (validationResult.isNotValid()) {
             log.info("Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get balances report - validation failed: {}",
@@ -107,29 +107,29 @@ public class BalanceService {
                        .build();
         }
 
-        SpiResponse<List<SpiAccountBalance>> spiResponse = getSpiResponse(accountConsent, consentId, accountId);
+        SpiResponse<List<SpiAccountBalance>> spiResponse = getSpiResponse(aisConsent, consentId, accountId);
 
         if (spiResponse.hasError()) {
             return checkSpiResponse(consentId, accountId, spiResponse);
         }
 
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
+        loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
-        return getXs2aBalancesReportResponseObject(accountConsent, accountId, consentId, requestUri, spiResponse.getPayload());
+        return getXs2aBalancesReportResponseObject(aisConsent, accountId, consentId, requestUri, spiResponse.getPayload());
     }
 
-    private ValidationResult getValidationResultForCommonAccountBalanceRequest(String accountId, String requestUri, AccountConsent accountConsent) {
+    private ValidationResult getValidationResultForCommonAccountBalanceRequest(String accountId, String requestUri, AisConsent accountConsent) {
         return getBalancesReportValidator.validate(
             new GetAccountBalanceRequestObject(accountConsent, accountId, requestUri));
     }
 
-    private SpiResponse<List<SpiAccountBalance>> getSpiResponse(AccountConsent accountConsent, String consentId, String accountId) {
-        Xs2aAccountAccess access = accountConsent.getAspspAccess();
+    private SpiResponse<List<SpiAccountBalance>> getSpiResponse(AisConsent aisConsent, String consentId, String accountId) {
+        AccountAccess access = aisConsent.getAspspAccountAccesses();
         SpiAccountReference requestedAccountReference = accountHelperService.findAccountReference(access.getBalances(), accountId);
 
         return accountSpi.requestBalancesForAccount(accountHelperService.getSpiContextData(),
                                                     requestedAccountReference,
-                                                    consentMapper.mapToSpiAccountConsent(accountConsent),
+                                                    consentMapper.mapToSpiAccountConsent(aisConsent),
                                                     aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
     }
 
@@ -143,12 +143,12 @@ public class BalanceService {
     }
 
     @NotNull
-    private ResponseObject<Xs2aBalancesReport> getXs2aBalancesReportResponseObject(AccountConsent accountConsent,
+    private ResponseObject<Xs2aBalancesReport> getXs2aBalancesReportResponseObject(AisConsent accountConsent,
                                                                                    String accountId,
                                                                                    String consentId,
                                                                                    String requestUri,
                                                                                    List<SpiAccountBalance> payload) {
-        Xs2aAccountAccess access = accountConsent.getAspspAccess();
+        AccountAccess access = accountConsent.getAspspAccountAccesses();
         List<AccountReference> balances = access.getBalances();
         if (hasNoAccessToSource(balances)) {
             return ResponseObject.<Xs2aBalancesReport>builder()

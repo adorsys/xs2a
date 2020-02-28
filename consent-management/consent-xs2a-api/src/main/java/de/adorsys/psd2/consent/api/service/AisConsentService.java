@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,5 @@
 
 package de.adorsys.psd2.consent.api.service;
 
-/**
- * AisConsentService without any encryption/decryption. Should not be used in XS2A directly.
- *
- * @see de.adorsys.psd2.consent.api.service.AisConsentServiceBase
- * @see de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted
- */
 public interface AisConsentService extends AisConsentServiceBase {
 }

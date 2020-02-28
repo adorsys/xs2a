@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "99816e45-4326-48c6-b6de-ac46d514a526",
-		"name": "CMS ASPSP API requests",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
+    "_postman_id": "9732f5c8-09e7-4f0d-a51f-e911be3eafd7",
+    "name": "CMS ASPSP API requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
 	"item": [
 		{
 			"name": "Export",
@@ -11,38 +11,95 @@
 				{
 					"name": "AIS",
 					"item": [
-						{
-							"name": "1. Creates AIS consent",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "6f709a09-78fc-40ce-8274-dc29bbcd560e",
-										"exec": [
-											"pm.globals.unset(\"redirect_id\");"
-										],
-										"type": "text/javascript"
-									}
+            {
+              "name": "1. Set redirect SCA approach",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "sca-approaches"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "2. Creates AIS consent",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "id": "6f709a09-78fc-40ce-8274-dc29bbcd560e",
+                    "exec": [
+                      "pm.globals.unset(\"redirect_id\");"
+                    ],
+                    "type": "text/javascript"
+                  }
 								},
 								{
 									"listen": "test",
 									"script": {
 										"id": "27c858ba-9ceb-426a-8e5d-438f019c0598",
 										"exec": [
-											"pm.test(\"Status code is 201\", () => {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Consent status is received\", () => {",
-											"    pm.expect(jsonData.consentStatus).to.eql('received');",
-											"});",
-											"",
-											"const scaRedirectParts = jsonData._links.updatePsuAuthentication.href.split('/');",
-											"const redirectId = scaRedirectParts.pop() || scaRedirectParts.pop();",
-											"pm.globals.set(\"redirect_id\", redirectId);"
-										],
+                      "pm.test(\"Status code is 201\", () => {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.test(\"Consent status is received\", () => {",
+                      "    pm.expect(jsonData.consentStatus).to.eql('received');",
+                      "});",
+                      "",
+                      "const scaRedirectLink = jsonData._links.scaRedirect.href;",
+                      "",
+                      "pm.test(\"scaRedirect link is present\", () => {",
+                      "    pm.expect(scaRedirectLink).not.eq(undefined);",
+                      "});",
+                      "",
+                      "if (scaRedirectLink !== undefined) {",
+                      "    const redirectLinkParts = scaRedirectLink.split('/');",
+                      "    redirectLinkParts.pop();",
+                      "    const redirectId = redirectLinkParts.pop();",
+                      "    pm.globals.set(\"redirect_id\", redirectId);",
+                      "}"
+                    ],
 										"type": "text/javascript"
 									}
 								}
@@ -66,32 +123,26 @@
 										"type": "text"
 									},
 									{
-										"key": "tpp-qwac-certificate",
-										"value": "qwac certificate",
-										"type": "text",
-										"disabled": true
-									},
-									{
 										"key": "x-request-id",
 										"value": "{{x_request_id}}",
 										"type": "text"
-									},
-									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
-										"type": "text"
-									},
-									{
-										"key": "TPP-Explicit-Authorisation-Preferred",
-										"value": "true",
-										"type": "text"
-									},
-									{
-										"key": "psu-ip-address",
-										"value": "{{ip_address}}",
-										"type": "text"
-									}
-								],
+                  },
+                  {
+                    "key": "PSU-ID",
+                    "value": "{{psu_id_none}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "psu-ip-address",
+                    "value": "{{ip_address}}",
+                    "type": "text"
+                  },
+                  {
+                    "key": "Tpp-Redirect-Uri",
+                    "value": "some.redirect.uri",
+                    "type": "text"
+                  }
+                ],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"access\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_none}}\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_none}}\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_none}}\"\n            }\n        ]\n    },\n    \"combinedServiceIndicator\": false,\n    \"frequencyPerDay\": 400,\n    \"recurringIndicator\": true,\n    \"validUntil\": \"2021-12-31\"\n}"
@@ -111,18 +162,18 @@
 							},
 							"response": []
 						},
-						{
-							"name": "2. Get consent response object by redirect id",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
+            {
+              "name": "3. Get consent response object by redirect id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
 											"const jsonData = pm.response.json();",
 											"",
 											"const consentId = jsonData.accountConsent.id;",
@@ -163,18 +214,18 @@
 							},
 							"response": []
 						},
-						{
-							"name": "3. Export AIS consents by PSU",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "3fc4e0ae-01a7-4e91-826a-f200e684188d",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
+            {
+              "name": "4. Export AIS consents by PSU",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "3fc4e0ae-01a7-4e91-826a-f200e684188d",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
 											"const jsonData = pm.response.json();",
 											"",
 											"pm.test(\"Consent is present\", () => {",
@@ -299,18 +350,18 @@
 							},
 							"response": []
 						},
-						{
-							"name": "4. Export AIS consents by TPP",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4f59f5dd-041d-42be-92ed-fe274441dc35",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
+            {
+              "name": "5. Export AIS consents by TPP",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "4f59f5dd-041d-42be-92ed-fe274441dc35",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      "",
 											"const jsonData = pm.response.json();",
 											"",
 											"pm.test(\"Consent is present\", () => {",
@@ -435,18 +486,18 @@
 							},
 							"response": []
 						},
-						{
-							"name": "5. Export AIS consents by ASPSP account ID",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "a8963198-16f3-488f-8500-a7b08aa353e9",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											""
+            {
+              "name": "6. Export AIS consents by ASPSP account ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "a8963198-16f3-488f-8500-a7b08aa353e9",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
 										],
 										"type": "text/javascript"
 									}
@@ -548,28 +599,85 @@
 				{
 					"name": "PIS",
 					"item": [
-						{
-							"name": "1. Initiate payment",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
-										"exec": [
-											"pm.test(\"Status code is 201\", () => {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Transaction status is RCVD\", () => {",
-											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
-											"});",
-											"",
-											"const scaRedirectParts = jsonData._links.updatePsuAuthentication.href.split('/');",
-											"const redirectId = scaRedirectParts.pop() || scaRedirectParts.pop();",
-											"pm.globals.set(\"redirect_id\", redirectId);"
-										],
+            {
+              "name": "1. Set redirect SCA approach",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+                    "exec": [
+                      "pm.test(\"Status code is 200\", () => {",
+                      "    pm.response.to.have.status(200);",
+                      "});",
+                      ""
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
+                },
+                "url": {
+                  "raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+                  "protocol": "{{protocol}}",
+                  "host": [
+                    "{{url_aspsp_profile}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "aspsp-profile",
+                    "for-debug",
+                    "sca-approaches"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "1. Initiate payment",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+                    "exec": [
+                      "pm.test(\"Status code is 201\", () => {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "",
+                      "const jsonData = pm.response.json();",
+                      "",
+                      "pm.test(\"Transaction status is RCVD\", () => {",
+                      "    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+                      "});",
+                      "",
+                      "const scaRedirectLink = jsonData._links.scaRedirect.href;",
+                      "",
+                      "pm.test(\"scaRedirect link is present\", () => {",
+                      "    pm.expect(scaRedirectLink).not.eq(undefined);",
+                      "});",
+                      "",
+                      "if (scaRedirectLink !== undefined) {",
+                      "    const redirectLinkParts = scaRedirectLink.split('/');",
+                      "    redirectLinkParts.pop();",
+                      "    const redirectId = redirectLinkParts.pop();",
+                      "    pm.globals.set(\"redirect_id\", redirectId);",
+                      "}"
+                    ],
 										"type": "text/javascript"
 									}
 								},
@@ -599,23 +707,23 @@
 									},
 									{
 										"key": "PSU-IP-Address",
-										"value": "{{ip_address}}"
-									},
-									{
-										"key": "X-Request-ID",
-										"value": "{{x_request_id}}"
-									},
-									{
-										"key": "TPP-Explicit-Authorisation-Preferred",
-										"type": "text",
-										"value": "true"
-									},
-									{
-										"key": "PSU-ID",
-										"type": "text",
-										"value": "{{psu_id_none}}"
-									}
-								],
+                    "value": "{{ip_address}}"
+                  },
+                  {
+                    "key": "X-Request-ID",
+                    "value": "{{x_request_id}}"
+                  },
+                  {
+                    "key": "PSU-ID",
+                    "type": "text",
+                    "value": "{{psu_id_none}}"
+                  },
+                  {
+                    "key": "Tpp-Redirect-Uri",
+                    "value": "some.redirect.uri",
+                    "type": "text"
+                  }
+                ],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n\"endToEndIdentification\": \"RI-1234567890\",\n\"debtorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"instructedAmount\": {\n  \"amount\": 1000,\n  \"currency\": \"EUR\"\n },\n\"creditorAccount\": {\n  \"currency\": \"EUR\",\n  \"iban\": \"{{iban_none}}\"\n },\n\"creditorAgent\": \"AAAADEBBXXX\",\n\"creditorName\": \"Telekom\",\n \"creditorAddress\": {\n  \"buildingNumber\": \"123-34\",\n  \"townName\": \"Nürnberg\",\n  \"country\": \"DE\",\n  \"postCode\": 90431,\n  \"streetName\": \"Herrnstraße\"\n },\n \"remittanceInformationUnstructured\": \"Ref. Number TELEKOM-1222\"\n }"
@@ -1820,206 +1928,206 @@
 								}
 							},
 							"response": [
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
+                {
+                  "name": "No Content",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": {
+                          "content": "ID of the particular service instance",
+                          "type": "text/plain"
+                        },
+                        "key": "instance-id",
+                        "value": "UNDEFINED"
 											}
 										],
 										"url": {
 											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
 											"host": [
 												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "<boolean>"
-								},
-								{
-									"name": "Forbidden",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
+                      ],
+                      "path": [
+                        "aspsp-api",
+                        "v1",
+                        "piis",
+                        "consents",
+                        "<string>"
+                      ]
+                    }
+                  },
+                  "status": "No Content",
+                  "code": 204,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "text/plain"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": ""
+                },
+                {
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": {
+                          "content": "ID of the particular service instance",
+                          "type": "text/plain"
+                        },
+                        "key": "instance-id",
+                        "value": "UNDEFINED"
 											}
 										],
 										"url": {
 											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
 											"host": [
 												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "Forbidden",
-									"code": 403,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"name": "Not Found",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
+                      ],
+                      "path": [
+                        "aspsp-api",
+                        "v1",
+                        "piis",
+                        "consents",
+                        "<string>"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "text/plain"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": ""
+                },
+                {
+                  "name": "Forbidden",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": {
+                          "content": "ID of the particular service instance",
+                          "type": "text/plain"
+                        },
+                        "key": "instance-id",
+                        "value": "UNDEFINED"
 											}
 										],
 										"url": {
 											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
 											"host": [
 												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "Not Found",
-									"code": 404,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"name": "Unauthorized",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
+                      ],
+                      "path": [
+                        "aspsp-api",
+                        "v1",
+                        "piis",
+                        "consents",
+                        "<string>"
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "text/plain"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": ""
+                },
+                {
+                  "name": "Not Found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": {
+                          "content": "ID of the particular service instance",
+                          "type": "text/plain"
+                        },
+                        "key": "instance-id",
+                        "value": "UNDEFINED"
 											}
 										],
 										"url": {
 											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
 											"host": [
 												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "Unauthorized",
-									"code": 401,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								},
-								{
-									"name": "No Content",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
+                      ],
+                      "path": [
+                        "aspsp-api",
+                        "v1",
+                        "piis",
+                        "consents",
+                        "<string>"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "text/plain"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": ""
+                },
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": {
+                          "content": "ID of the particular service instance",
+                          "type": "text/plain"
+                        },
+                        "key": "instance-id",
+                        "value": "UNDEFINED"
 											}
 										],
 										"url": {
 											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
 											"host": [
 												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "No Content",
-									"code": 204,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
-								}
+                      ],
+                      "path": [
+                        "aspsp-api",
+                        "v1",
+                        "piis",
+                        "consents",
+                        "<string>"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "<boolean>"
+                }
 							]
 						},
 						{

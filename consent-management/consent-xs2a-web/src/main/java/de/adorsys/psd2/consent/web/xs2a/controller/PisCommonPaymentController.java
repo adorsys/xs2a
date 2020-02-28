@@ -409,7 +409,7 @@ public class PisCommonPaymentController {
         @RequestBody List<CmsScaMethod> methods) {
         CmsResponse<Boolean> response = authorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, methods);
 
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
@@ -434,7 +434,7 @@ public class PisCommonPaymentController {
         @PathVariable("sca-approach") ScaApproach scaApproach) {
         CmsResponse<Boolean> response = authorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
 
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
@@ -497,7 +497,7 @@ public class PisCommonPaymentController {
         @RequestParam(value = "multilevel-sca", defaultValue = "false") boolean multilevelSca) {
         CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateMultilevelSca(paymentId, multilevelSca);
 
-        if (response.isSuccessful() && response.getPayload()) {
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
 
         }

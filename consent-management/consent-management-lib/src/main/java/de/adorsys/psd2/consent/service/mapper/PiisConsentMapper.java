@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,23 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -38,56 +43,54 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @RequiredArgsConstructor
 public class PiisConsentMapper {
     private final PsuDataMapper psuDataMapper;
-    private final AccountReferenceMapper accountReferenceMapper;
+    private final ConsentDataMapper consentDataMapper;
+    private final AccessMapper accessMapper;
 
-    public PiisConsent mapToPiisConsent(PiisConsentEntity piisConsentEntity) {
-        return new PiisConsent(piisConsentEntity.getExternalId(),
-                               piisConsentEntity.isRecurringIndicator(),
-                               piisConsentEntity.getRequestDateTime(),
-                               piisConsentEntity.getLastActionDate(),
-                               piisConsentEntity.getExpireDate(),
-                               psuDataMapper.mapToPsuIdData(piisConsentEntity.getPsuData()),
-                               piisConsentEntity.getConsentStatus(),
-                               accountReferenceMapper.mapToAccountReferenceEntity(piisConsentEntity.getAccount()),
-                               piisConsentEntity.getTppAccessType(),
-                               piisConsentEntity.getCreationTimestamp(),
-                               piisConsentEntity.getInstanceId(),
-                               piisConsentEntity.getCardNumber(),
-                               piisConsentEntity.getCardExpiryDate(),
-                               piisConsentEntity.getCardInformation(),
-                               piisConsentEntity.getRegistrationInformation(),
-                               piisConsentEntity.getStatusChangeTimestamp(),
-                               piisConsentEntity.getTppAuthorisationNumber());
-    }
-
-    public List<PiisConsent> mapToPiisConsentList(List<PiisConsentEntity> consentEntities) {
+    public List<CmsPiisConsent> mapToCmsPiisConsentList(List<ConsentEntity> consentEntities) {
         return consentEntities.stream()
-                   .map(this::mapToPiisConsent)
+                   .map(this::mapToCmsPiisConsent)
                    .collect(Collectors.toList());
     }
 
-    public PiisConsentEntity mapToPiisConsentEntity(PsuIdData psuIdData, CreatePiisConsentRequest request) {
-        PiisConsentEntity consent = new PiisConsentEntity();
-        consent.setExternalId(UUID.randomUUID().toString());
-        consent.setConsentStatus(VALID);
-        consent.setRequestDateTime(OffsetDateTime.now());
-        consent.setExpireDate(request.getValidUntil());
-        consent.setPsuData(psuDataMapper.mapToPsuData(psuIdData));
-        consent.setAccount(accountReferenceMapper.mapToAccountReferenceEntity(request.getAccount()));
-        consent.setTppAccessType(getAccessType(request));
-        consent.setCardNumber(request.getCardNumber());
-        consent.setCardExpiryDate(request.getCardExpiryDate());
-        consent.setCardInformation(request.getCardInformation());
-        consent.setRegistrationInformation(request.getRegistrationInformation());
-        consent.setTppAuthorisationNumber(request.getTppAuthorisationNumber());
-        consent.setLastActionDate(LocalDate.now());
-        return consent;
+    public CmsPiisConsent mapToCmsPiisConsent(ConsentEntity consentEntity) {
+        PiisConsentData piisConsentData = consentDataMapper.mapToPiisConsentData(consentEntity.getData());
+        AccountReference accountReference = accessMapper.mapToAccountReference(consentEntity.getAspspAccountAccesses().get(0));
+        // TODO: change type of requestDateTime to OffsetDateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1220
+        ZoneOffset offset = OffsetDateTime.now().getOffset();
+        return new CmsPiisConsent(consentEntity.getExternalId(),
+                                  consentEntity.isRecurringIndicator(),
+                                  consentEntity.getRequestDateTime() != null ? consentEntity.getRequestDateTime().atOffset(offset) : null,
+                                  consentEntity.getLastActionDate(),
+                                  consentEntity.getValidUntil(),
+                                  psuDataMapper.mapToPsuIdData(consentEntity.getPsuDataList().get(0)),
+                                  consentEntity.getConsentStatus(),
+                                  accountReference,
+                                  PiisConsentTppAccessType.SINGLE_TPP,
+                                  consentEntity.getCreationTimestamp(),
+                                  consentEntity.getInstanceId(),
+                                  piisConsentData.getCardNumber(),
+                                  piisConsentData.getCardExpiryDate(),
+                                  piisConsentData.getCardInformation(),
+                                  piisConsentData.getRegistrationInformation(),
+                                  consentEntity.getStatusChangeTimestamp(),
+                                  consentEntity.getTppInformation().getTppInfo().getAuthorisationNumber());
     }
 
-    @NotNull
-    private PiisConsentTppAccessType getAccessType(CreatePiisConsentRequest request) {
-        return StringUtils.isNotBlank(request.getTppAuthorisationNumber()) ?
-                   PiisConsentTppAccessType.SINGLE_TPP :
-                   PiisConsentTppAccessType.ALL_TPP;
+    public ConsentEntity mapToPiisConsentEntity(PsuIdData psuIdData, TppInfoEntity tppInfoEntity, CreatePiisConsentRequest request) {
+        ConsentEntity consent = new ConsentEntity();
+        consent.setExternalId(UUID.randomUUID().toString());
+        consent.setConsentStatus(VALID);
+        consent.setRequestDateTime(LocalDateTime.now());
+        consent.setValidUntil(request.getValidUntil());
+        consent.setLastActionDate(LocalDate.now());
+        consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData));
+        consent.getAspspAccountAccesses().add(accessMapper.mapToAspspAccountAccess(request.getAccount()));
+        consent.getTppInformation().setTppInfo(tppInfoEntity);
+
+        PiisConsentData consentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(),
+                                                          request.getCardInformation(), request.getRegistrationInformation());
+        consent.setData(consentDataMapper.getBytesFromConsentData(consentData));
+        consent.setConsentType(ConsentType.PIIS_ASPSP.toString());
+        return consent;
     }
 }

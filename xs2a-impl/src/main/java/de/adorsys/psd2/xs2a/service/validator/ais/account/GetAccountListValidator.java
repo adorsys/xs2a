@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountAccessMultipleAccountsValidator;
@@ -53,29 +53,29 @@ public class GetAccountListValidator extends AbstractAccountTppValidator<GetAcco
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(GetAccountListConsentObject consentObject) {
-        AccountConsent accountConsent = consentObject.getAccountConsent();
+        AisConsent aisConsent = consentObject.getAisConsent();
 
-        if (accountConsent.isConsentWithNotIbanAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (aisConsent.isConsentWithNotIbanAccount() && !aisConsent.isConsentForAllAvailableAccounts() && !aisConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
-        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(accountConsent, consentObject.getRequestUri());
+        ValidationResult accountConsentValidationResult = accountConsentValidator.validate(aisConsent, consentObject.getRequestUri());
 
         if (accountConsentValidationResult.isNotValid()) {
             return accountConsentValidationResult;
         }
 
-        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(accountConsent, consentObject.isWithBalance());
+        ValidationResult accountAccessValidationResult = accountAccessValidator.validate(aisConsent, consentObject.isWithBalance());
         if (accountAccessValidationResult.isNotValid()) {
             return accountAccessValidationResult;
         }
 
-        ValidationResult accountAccessMultipleAccountsValidatorResult = accountAccessMultipleAccountsValidator.validate(accountConsent, consentObject.isWithBalance());
+        ValidationResult accountAccessMultipleAccountsValidatorResult = accountAccessMultipleAccountsValidator.validate(aisConsent, consentObject.isWithBalance());
         if (accountAccessMultipleAccountsValidatorResult.isNotValid()) {
             return accountAccessMultipleAccountsValidatorResult;
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(accountConsent);
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(aisConsent);
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }

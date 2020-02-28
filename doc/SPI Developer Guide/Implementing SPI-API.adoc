@@ -271,7 +271,7 @@ The method returns *SpiFundsConfirmationResponse* as part of *SpiResponse* with 
 *performFundsSufficientCheck* takes the following arguments:
 
 * *spiContextData* - information about the context of the call
-* *piisConsent* - optional PIIS consent object, will be absent if the request is done from a workflow without the consent
+* *spiPiisConsent* - optional PIIS consent object, will be absent if the request is done from a workflow without the consent
 * *spiFundsConfirmationRequest* - information about the account and transaction amount, provided by the TPP
 * *aspspConsentDataProvider* - optional ASPSP consent data provider, will be absent if the request is done from a workflow without the consent
 

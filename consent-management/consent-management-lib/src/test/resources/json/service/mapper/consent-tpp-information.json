@@ -1,0 +1,19 @@
+{
+  "tppRedirectPreferred": true,
+  "tppFrequencyPerDay": 7,
+  "tppNotificationUri": "htp://tpp/notification/uri",
+  "tppInfo": {
+    "authorisationNumber": "TPP_AUTHORISATION_NUMBER",
+    "tppRoles": [
+      "AISP",
+      "ASPSP",
+      "PIISP",
+      "PISP"
+    ],
+    "authorityId": "TPP_AUTHORITY_ID"
+  },
+  "tppNotificationSupportedModes": [
+    "SCA",
+    "PROCESS"
+  ]
+}

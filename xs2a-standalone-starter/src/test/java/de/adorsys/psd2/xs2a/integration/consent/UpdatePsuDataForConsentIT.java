@@ -18,14 +18,15 @@ package de.adorsys.psd2.xs2a.integration.consent;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsent;
-import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.api.service.TppStopListService;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
@@ -35,7 +36,10 @@ import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
@@ -96,9 +100,10 @@ class UpdatePsuDataForConsentIT {
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String WRONG_AUTHORISATION_ID = "q3356ea7-8e3e-474f-b5ea-2b89346cb6jk";
     private static final String ENCRYPTED_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
-    private static final String PSU_ID = "PSU-123";
+    private static final String PSU_ID = "anton.brueckner";
     private static final String PSU_PASS = "12345";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
+    private static final String X_REQUEST_ID = "2f77a125-aa7a-45c0-b414-cea25a116035";
 
     @Autowired
     private MockMvc mockMvc;
@@ -112,27 +117,30 @@ class UpdatePsuDataForConsentIT {
     @MockBean
     private Xs2aEventServiceEncrypted eventServiceEncrypted;
     @MockBean
-    private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    private ConsentServiceEncrypted aisConsentServiceEncrypted;
     @MockBean
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private AisConsentSpi aisConsentSpi;
 
-    private JsonReader jsonReader = new JsonReader();
+    @Autowired
+    private ConsentDataMapper consentDataMapper;
 
+    private JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders = new HttpHeaders();
 
     @BeforeEach
     void setUp() {
-        httpHeaders.add("Content-Type", "application/json");
-        httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
+        httpHeaders.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        httpHeaders.add("X-Request-ID", X_REQUEST_ID);
         httpHeaders.add("PSU-ID", PSU_ID);
 
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getAspspSettings())
+            .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppService.updateTppInfo(any(TppInfo.class)))
@@ -143,19 +151,20 @@ class UpdatePsuDataForConsentIT {
 
     @Test
     void updatePsuData_success() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
+        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
+            .willReturn(true);
         Authorisation authorizationResponse = new Authorisation();
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
         authorizationResponse.setChosenScaApproach(ScaApproach.EMBEDDED);
+
         given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
             .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(authorizationResponse)
                             .build());
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(buildAisAccountConsent())
+        given(aisConsentServiceEncrypted.getConsentById(ENCRYPTED_CONSENT_ID))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(buildCmsConsent())
                             .build());
-
         given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
@@ -197,20 +206,21 @@ class UpdatePsuDataForConsentIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
 
         resultActions.andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/res/update_psu_data_consent_resp.json")));
     }
 
     @Test
     void updatePsuData_wrongAuthorisationId() throws Exception {
-        given(eventServiceEncrypted.recordEvent(any(EventBO.class))).willReturn(true);
+        given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
+            .willReturn(true);
         given(authorisationServiceEncrypted.getAuthorisationById(WRONG_AUTHORISATION_ID))
             .willReturn(CmsResponse.<Authorisation>builder()
                             .payload(new Authorisation())
                             .build());
-        given(aisConsentServiceEncrypted.getAisAccountConsentById(ENCRYPTED_CONSENT_ID))
-            .willReturn(CmsResponse.<AisAccountConsent>builder()
-                            .payload(buildAisAccountConsent())
+        given(aisConsentServiceEncrypted.getConsentById(ENCRYPTED_CONSENT_ID))
+            .willReturn(CmsResponse.<CmsConsent>builder()
+                            .payload(buildCmsConsent())
                             .build());
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.buildConsentUpdateAuthorisationUrl(ENCRYPTED_CONSENT_ID, WRONG_AUTHORISATION_ID));
@@ -220,26 +230,30 @@ class UpdatePsuDataForConsentIT {
         ResultActions resultActions = mockMvc.perform(requestBuilder);
 
         resultActions.andExpect(status().isForbidden())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/auth/res/403_resource_unknown.json")));
     }
 
     @NotNull
-    private AisAccountConsent buildAisAccountConsent() {
-        AisAccountConsent aisAccountConsent = new AisAccountConsent();
-        aisAccountConsent.setTppAccess(new AisAccountAccess(Collections.emptyList(),
-                                                            Collections.emptyList(),
-                                                            Collections.emptyList(),
-                                                            null, null, null, null));
-        aisAccountConsent.setAspspAccess(new AisAccountAccess(Collections.emptyList(),
-                                                              Collections.emptyList(),
-                                                              Collections.emptyList(),
-                                                              null, null, null, null));
+    private CmsConsent buildCmsConsent() {
+        AisConsentData aisConsentData = AisConsentData.buildDefaultAisConsentData();
+        byte[] bytes = consentDataMapper.getBytesFromConsentData(aisConsentData);
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
-        aisAccountConsent.setAccountConsentAuthorizations(Collections.singletonList(
-            new AisAccountConsentAuthorisation(AUTHORISATION_ID, psuIdData, ScaStatus.PSUIDENTIFIED)));
-        aisAccountConsent.setTppInfo(TPP_INFO);
-        aisAccountConsent.setConsentStatus(ConsentStatus.VALID);
-        return aisAccountConsent;
+        Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdData, ENCRYPTED_CONSENT_ID, AuthorisationType.AIS, ScaStatus.PSUIDENTIFIED);
+        ConsentTppInformation consentTppInformation = new ConsentTppInformation();
+        consentTppInformation.setTppInfo(TPP_INFO);
+
+        CmsConsent cmsConsent = new CmsConsent();
+        cmsConsent.setConsentData(bytes);
+        cmsConsent.setAuthorisations(Collections.singletonList(authorisation));
+        cmsConsent.setTppInformation(consentTppInformation);
+        cmsConsent.setConsentStatus(ConsentStatus.VALID);
+        cmsConsent.setFrequencyPerDay(0);
+        cmsConsent.setTppAccountAccesses(AccountAccess.EMPTY_ACCESS);
+        cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
+        cmsConsent.setAuthorisationTemplate(new AuthorisationTemplate());
+        cmsConsent.setPsuIdDataList(Collections.singletonList(psuIdData));
+        cmsConsent.setUsages(Collections.emptyMap());
+        return cmsConsent;
     }
 }

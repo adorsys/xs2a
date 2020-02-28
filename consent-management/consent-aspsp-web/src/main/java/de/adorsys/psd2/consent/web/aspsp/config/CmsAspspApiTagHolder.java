@@ -26,4 +26,7 @@ public class CmsAspspApiTagHolder {
     public static final Tag ASPSP_EXPORT_PAYMENTS = new Tag(CmsAspspApiTagName.ASPSP_EXPORT_PAYMENTS, "Provides access to the consent management system for exporting PIS payments by ASPSP");
     public static final Tag ASPSP_TPP_STOP_LIST = new Tag(CmsAspspApiTagName.ASPSP_TPP_STOP_LIST, "Provides access to the consent management system TPP Stop List");
     public static final Tag ASPSP_TPP_INFO = new Tag(CmsAspspApiTagName.ASPSP_TPP_INFO, "Provides access to the consent management system TPP Info");
+
+    private CmsAspspApiTagHolder() {
+    }
 }

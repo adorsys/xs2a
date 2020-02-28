@@ -20,13 +20,18 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.*;
+import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
+import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
+import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -37,7 +42,6 @@ import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
@@ -58,6 +62,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class Xs2aAisConsentService {
+    private final ConsentServiceEncrypted consentService;
     private final AisConsentServiceEncrypted aisConsentService;
     // ToDo move authorisation-related methods out of the service https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1198
     private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
@@ -79,11 +84,11 @@ public class Xs2aAisConsentService {
      */
     public Optional<Xs2aCreateAisConsentResponse> createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
-        CreateAisConsentRequest createAisConsentRequest = aisConsentMapper.mapToCreateAisConsentRequest(request, psuData, tppInfo, allowedFrequencyPerDay, requestProviderService.getInternalRequestIdString());
-        CmsResponse<CreateAisConsentResponse> response;
+        CmsConsent cmsConsent = aisConsentMapper.mapToCmsConsent(request, psuData, tppInfo, allowedFrequencyPerDay);
 
+        CmsResponse<CmsCreateConsentResponse> response;
         try {
-            response = aisConsentService.createConsent(createAisConsentRequest);
+            response = consentService.createConsent(cmsConsent);
         } catch (WrongChecksumException e) {
             log.info("Consent cannot be created, checksum verification failed");
             return Optional.empty();
@@ -94,9 +99,10 @@ public class Xs2aAisConsentService {
             return Optional.empty();
         }
 
-        CreateAisConsentResponse createAisConsentResponse = response.getPayload();
-        AccountConsent accountConsent = aisConsentMapper.mapToAccountConsent(createAisConsentResponse.getAisAccountConsent());
-        return Optional.of(new Xs2aCreateAisConsentResponse(createAisConsentResponse.getConsentId(), accountConsent, createAisConsentRequest.getNotificationSupportedModes()));
+        CmsCreateConsentResponse createConsentResponse = response.getPayload();
+        return Optional.of(new Xs2aCreateAisConsentResponse(createConsentResponse.getConsentId(),
+                                                            aisConsentMapper.mapToAisConsent(createConsentResponse.getCmsConsent()),
+                                                            createConsentResponse.getCmsConsent().getTppInformation().getTppNotificationSupportedModes()));
     }
 
     /**
@@ -105,15 +111,15 @@ public class Xs2aAisConsentService {
      * @param consentId String representation of identifier of stored consent
      * @return Response containing AIS Consent
      */
-    public Optional<AccountConsent> getAccountConsentById(String consentId) {
-        CmsResponse<AisAccountConsent> consentById = aisConsentService.getAisAccountConsentById(consentId);
+    public Optional<AisConsent> getAccountConsentById(String consentId) {
+        CmsResponse<CmsConsent> consentById = consentService.getConsentById(consentId);
 
         if (consentById.hasError()) {
             log.info("Get consent by id failed due to CMS problems");
             return Optional.empty();
         }
 
-        return Optional.ofNullable(aisConsentMapper.mapToAccountConsent(consentById.getPayload()));
+        return Optional.ofNullable(aisConsentMapper.mapToAisConsent(consentById.getPayload()));
     }
 
     /**
@@ -123,7 +129,7 @@ public class Xs2aAisConsentService {
      * @return true if any consents have been terminated, false - if none
      */
     public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
-        CmsResponse<Boolean> response = aisConsentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
+        CmsResponse<Boolean> response = consentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
         return response.isSuccessful() && response.getPayload();
     }
 
@@ -137,7 +143,7 @@ public class Xs2aAisConsentService {
         CmsResponse<Boolean> statusUpdated;
 
         try {
-            statusUpdated = aisConsentService.updateConsentStatusById(consentId, consentStatus);
+            statusUpdated = consentService.updateConsentStatusById(consentId, consentStatus);
         } catch (WrongChecksumException e) {
             log.info("updateConsentStatus cannot be executed, checksum verification failed");
             return;
@@ -236,13 +242,13 @@ public class Xs2aAisConsentService {
      * @param aisAccountAccessInfo AIS account access information
      * @return Response containing AIS Consent
      */
-    public CmsResponse<AccountConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
-        CmsResponse<AisAccountConsent> response;
+    public CmsResponse<AisConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+        CmsResponse<CmsConsent> response;
 
-        CmsResponse.CmsResponseBuilder<AccountConsent> builder = CmsResponse.builder();
+        CmsResponse.CmsResponseBuilder<AisConsent> builder = CmsResponse.builder();
 
         try {
-            response = aisConsentService.updateAspspAccountAccessWithResponse(consentId, aisAccountAccessInfo);
+            response = aisConsentService.updateAspspAccountAccess(consentId, aisAccountAccessInfo);
         } catch (WrongChecksumException e) {
             return builder.error(CmsError.CHECKSUM_ERROR).build();
         }
@@ -251,7 +257,7 @@ public class Xs2aAisConsentService {
             return builder.error(response.getError()).build();
         }
 
-        return builder.payload(aisConsentMapper.mapToAccountConsent(response.getPayload())).build();
+        return builder.payload(aisConsentMapper.mapToAisConsent(response.getPayload())).build();
     }
 
     /**
@@ -329,7 +335,7 @@ public class Xs2aAisConsentService {
      */
     public void updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
         try {
-            aisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+            consentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
         } catch (WrongChecksumException e) {
             log.info("updateMultilevelScaRequired cannot be executed, checksum verification failed");
         }

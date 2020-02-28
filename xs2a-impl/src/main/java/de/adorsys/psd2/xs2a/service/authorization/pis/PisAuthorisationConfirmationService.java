@@ -122,7 +122,7 @@ public class PisAuthorisationConfirmationService {
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = pisCheckAuthorisationConfirmationService.notifyConfirmationCodeValidation(contextData, codeCorrect, payment, isCancellation, aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
-            return buildConfirmationCodeValidationResultSpiErrorResponse(spiResponse, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
+            return buildConfirmationCodeSpiErrorResponse(spiResponse, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         }
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = codeCorrect
@@ -168,14 +168,6 @@ public class PisAuthorisationConfirmationService {
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse buildConfirmationCodeSpiErrorResponse(SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse, String paymentId, String authorisationId, PsuIdData psuData) {
-        ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-
-        log.info("Authorisation-ID: [{}]. Update payment PSU data failed: error occurred at SPI.", authorisationId);
-
-        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
-    }
-
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildConfirmationCodeValidationResultSpiErrorResponse(SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse, String paymentId, String authorisationId, PsuIdData psuData) {
         ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
 
         log.info("Authorisation-ID: [{}]. Update payment PSU data failed: error occurred at SPI.", authorisationId);

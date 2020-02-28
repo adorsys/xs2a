@@ -24,7 +24,7 @@
     <parent>
         <artifactId>xs2a</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>5.10</version>
+        <version>5.11</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

@@ -94,7 +94,7 @@ class CmsAspspAisExportControllerTest {
             .thenReturn(consents);
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_TPP)
-            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
@@ -108,7 +108,7 @@ class CmsAspspAisExportControllerTest {
             .thenReturn(consents);
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_PSU)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
@@ -122,7 +122,7 @@ class CmsAspspAisExportControllerTest {
             .thenReturn(consents);
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_ACCOUNT)
-                            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));

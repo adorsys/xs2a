@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.service.PisCommonPaymentConfirmationExpirationSer
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,12 +43,12 @@ public class NotConfirmedPaymentExpirationScheduleTask {
     public void obsoleteNotConfirmedPaymentIfExpired() {
         log.info("Not confirmed payment expiration schedule task is run!");
 
-        List<PisCommonPaymentData> expiredNotConfirmedPaymentDatas = paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD))
+        List<PisCommonPaymentData> expiredNotConfirmedPaymentDatas = paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC))
                                                                          .stream()
                                                                          .filter(pisCommonPaymentConfirmationExpirationService::isConfirmationExpired)
                                                                          .collect(Collectors.toList());
 
-        if (!expiredNotConfirmedPaymentDatas.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(expiredNotConfirmedPaymentDatas)) {
             pisCommonPaymentConfirmationExpirationService.updatePaymentDataListOnConfirmationExpiration(expiredNotConfirmedPaymentDatas);
         }
     }

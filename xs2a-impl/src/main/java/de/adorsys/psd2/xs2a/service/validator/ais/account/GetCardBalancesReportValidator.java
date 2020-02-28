@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAccountAccess;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountConsentValidator;
@@ -50,24 +50,24 @@ public class GetCardBalancesReportValidator extends AbstractAccountTppValidator<
     @Override
     protected ValidationResult executeBusinessValidation(GetCardAccountBalanceRequestObject consentObject) {
 
-        AccountConsent accountConsent = consentObject.getAccountConsent();
+        AisConsent aisConsent = consentObject.getAisConsent();
 
-        if (accountConsent.isConsentWithNotCardAccount() && !accountConsent.isConsentForAllAvailableAccounts() && !accountConsent.isGlobalConsent()) {
+        if (aisConsent.isConsentWithNotCardAccount() && !aisConsent.isConsentForAllAvailableAccounts() && !aisConsent.isGlobalConsent()) {
             return ValidationResult.invalid(AIS_401, CONSENT_INVALID);
         }
 
-        Xs2aAccountAccess accountAccess = consentObject.getAccountConsent().getAspspAccess();
-        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(accountAccess,
-                                                                                                     accountAccess.getBalances(), consentObject.getAccountId(), accountConsent.getAisConsentRequestType());
+        AccountAccess accountAccess = consentObject.getAisConsent().getAspspAccountAccesses();
+        ValidationResult accountReferenceValidationResult = accountReferenceAccessValidator.validate(aisConsent,
+                                                                                                     accountAccess.getBalances(), consentObject.getAccountId(), aisConsent.getAisConsentRequestType());
         if (accountReferenceValidationResult.isNotValid()) {
             return accountReferenceValidationResult;
         }
 
-        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(consentObject.getAccountConsent());
+        ValidationResult oauthConsentValidationResult = oauthConsentValidator.validate(consentObject.getAisConsent());
         if (oauthConsentValidationResult.isNotValid()) {
             return oauthConsentValidationResult;
         }
 
-        return accountConsentValidator.validate(consentObject.getAccountConsent(), consentObject.getRequestUri());
+        return accountConsentValidator.validate(consentObject.getAisConsent(), consentObject.getRequestUri());
     }
 }

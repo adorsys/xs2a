@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain.consent;
 
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import org.junit.jupiter.api.Test;
 
@@ -62,8 +63,8 @@ class CreateConsentReqTest {
         assertThat(result.size()).isEqualTo(0);
     }
 
-    private Xs2aAccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {
-        return new Xs2aAccountAccess(accounts, balances, transactions, null, null, null, null);
+    private AccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {
+        return new AccountAccess(accounts, balances, transactions, null);
     }
 
     private List<AccountReference> getRefs(int qty) {

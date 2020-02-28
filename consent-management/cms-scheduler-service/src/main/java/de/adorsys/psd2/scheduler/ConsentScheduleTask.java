@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,25 +40,25 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 @Component
 @RequiredArgsConstructor
 public class ConsentScheduleTask {
-    private final AisConsentJpaRepository aisConsentJpaRepository;
+    private final ConsentJpaRepository consentJpaRepository;
 
     @Scheduled(cron = "${consent.cron.expression}")
     @Transactional
     public void checkConsentStatus() {
         log.info("Consent schedule task is run!");
-        List<AisConsent> availableConsents = Optional.ofNullable(aisConsentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
+        List<ConsentEntity> availableConsents = Optional.ofNullable(consentJpaRepository.findByConsentStatusIn(EnumSet.of(RECEIVED, VALID)))
                                                  .orElse(Collections.emptyList());
-        aisConsentJpaRepository.saveAll(updateConsent(availableConsents));
+        consentJpaRepository.saveAll(updateConsent(availableConsents));
     }
 
-    private List<AisConsent> updateConsent(List<AisConsent> availableConsents) {
+    private List<ConsentEntity> updateConsent(List<ConsentEntity> availableConsents) {
         return availableConsents.stream()
-                   .filter(AisConsent::isExpiredByDate)
+                   .filter(ConsentEntity::isExpiredByDate)
                    .map(this::updateConsentParameters)
                    .collect(Collectors.toList());
     }
 
-    private AisConsent updateConsentParameters(AisConsent consent) {
+    private ConsentEntity updateConsentParameters(ConsentEntity consent) {
         consent.setConsentStatus(ConsentStatus.EXPIRED);
         consent.setExpireDate(LocalDate.now());
         return consent;

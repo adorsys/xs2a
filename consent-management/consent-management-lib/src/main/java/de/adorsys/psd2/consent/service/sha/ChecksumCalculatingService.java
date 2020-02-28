@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package de.adorsys.psd2.consent.service.sha;
 
-import de.adorsys.psd2.consent.domain.account.AisConsent;
+
+import de.adorsys.psd2.core.data.Consent;
 
 public interface ChecksumCalculatingService {
     String getVersion();
 
-    byte[] calculateChecksumForConsent(AisConsent consent);
+    byte[] calculateChecksumForConsent(Consent<?> consent);
 
-    boolean verifyConsentWithChecksum(AisConsent consent, byte[] checksum);
+    boolean verifyConsentWithChecksum(Consent<?> consent, byte[] checksum);
 }

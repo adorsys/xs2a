@@ -1,10 +1,11 @@
 {
-  "access": {
+  "consentData": {},
+  "tppAccountAccesses": {
     "accounts": [],
     "balances": [],
     "transactions": []
   },
-  "aspspAccess": {},
+  "aspspAccountAccesses": {},
   "recurringIndicator": true,
   "validUntil": "2037-08-06",
   "frequencyPerDay": "4"

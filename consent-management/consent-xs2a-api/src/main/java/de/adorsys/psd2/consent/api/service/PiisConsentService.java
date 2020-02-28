@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,5 +33,5 @@ public interface PiisConsentService {
      * @param accountIdentifierName The name of account reference identifier
      * @return PIIS consents
      */
-    CmsResponse<List<PiisConsent>> getPiisConsentListByAccountIdentifier(@Nullable Currency currency, AccountReferenceSelector accountIdentifierName);
+    CmsResponse<List<CmsConsent>> getPiisConsentListByAccountIdentifier(@Nullable Currency currency, AccountReferenceSelector accountIdentifierName);
 }

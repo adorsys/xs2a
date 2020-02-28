@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,9 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.aspsp.api.psu.CmsAspspPsuAccountService;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
-import de.adorsys.psd2.consent.domain.piis.PiisConsentEntity;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
-import de.adorsys.psd2.consent.repository.PiisConsentRepository;
-import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
-import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.consent.repository.specification.ConsentSpecification;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -39,41 +36,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class CmsAspspPsuAccountServiceInternal implements CmsAspspPsuAccountService {
-    private final AisConsentSpecification aisConsentSpecification;
-    private final AisConsentJpaRepository aisConsentJpaRepository;
-    private final PiisConsentRepository piisConsentRepository;
-    private final PiisConsentEntitySpecification piisConsentEntitySpecification;
+    private final ConsentSpecification consentSpecification;
+    private final ConsentJpaRepository consentJpaRepository;
 
     @Override
     @Transactional
     public boolean revokeAllConsents(@Nullable String aspspAccountId, @NotNull PsuIdData psuIdData, @Nullable String instanceId) {
-        List<AisConsent> aisConsents = aisConsentJpaRepository.findAll(aisConsentSpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(aspspAccountId, psuIdData, instanceId));
-        List<PiisConsentEntity> piisConsents = piisConsentRepository.findAll(piisConsentEntitySpecification.byAspspAccountIdAndPsuIdDataAndInstanceId(aspspAccountId, psuIdData, instanceId));
+        List<ConsentEntity> consents = consentJpaRepository
+                                           .findAll(consentSpecification.byPsuIdDataAndAspspAccountIdAndInstanceId(psuIdData, aspspAccountId, instanceId));
 
-        List<AisConsent> filteredAisConsents = aisConsents.stream()
+        List<ConsentEntity> filteredConsents = consents.stream()
                                                    .filter(cst -> !cst.getConsentStatus().isFinalisedStatus())
                                                    .collect(Collectors.toList());
 
-        List<PiisConsentEntity> filteredPiisConsents = piisConsents.stream()
-                                                           .filter(cst -> !cst.getConsentStatus().isFinalisedStatus())
-                                                           .collect(Collectors.toList());
-
-        if (CollectionUtils.isEmpty(filteredAisConsents) &&
-                CollectionUtils.isEmpty(filteredPiisConsents)) {
+        if (CollectionUtils.isEmpty(filteredConsents)) {
             return false;
         }
 
-        filteredAisConsents.forEach(cst -> {
+        filteredConsents.forEach(cst -> {
             cst.setLastActionDate(LocalDate.now());
             cst.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
-            aisConsentJpaRepository.save(cst);
-        });
-
-        filteredPiisConsents.forEach(cst -> {
-            cst.setLastActionDate(LocalDate.now());
-            cst.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
-            piisConsentRepository.save(cst);
-
+            consentJpaRepository.save(cst);
         });
 
         return true;

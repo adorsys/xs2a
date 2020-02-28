@@ -1,0 +1,16 @@
+{
+  "id": "test consent id",
+  "consentTppInformation": {
+    "tppInfo": {
+      "authorisationNumber": "12345987"
+    }
+  },
+  "recurringIndicator": false,
+  "validUntil": "2020-01-01",
+  "psuIdDataList": [
+    {
+      "psuId": "PSU_ID"
+    }
+  ],
+  "consentStatus": "VALID"
+}

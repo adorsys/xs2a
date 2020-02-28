@@ -21,7 +21,8 @@
     "additionalInformation": {
       "ownerName": [
         {
-          "iban": "DE80760700240271232400"
+          "iban": "DE80760700240271232400",
+          "currency": "EUR"
         }
       ]
     }

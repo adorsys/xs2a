@@ -17,10 +17,10 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.service.AccountService;
-import de.adorsys.psd2.consent.domain.account.AisConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
-import de.adorsys.psd2.consent.repository.AisConsentJpaRepository;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
+import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,18 +34,18 @@ import java.util.Optional;
 public class AccountServiceInternal implements AccountService {
 
     private final AisConsentTransactionRepository aisConsentTransactionRepository;
-    private final AisConsentJpaRepository aisConsentJpaRepository;
+    private final ConsentJpaRepository consentJpaRepository;
 
     @Override
     @Transactional
     public boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions) {
 
-        Optional<AisConsent> optionalAisConsent = aisConsentJpaRepository.findByExternalId(consentId);
+        Optional<ConsentEntity> optionalConsent = consentJpaRepository.findByExternalId(consentId);
 
-        if (optionalAisConsent.isPresent()) {
+        if (optionalConsent.isPresent()) {
 
             AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
-            aisConsentTransaction.setConsentId(optionalAisConsent.get());
+            aisConsentTransaction.setConsentId(optionalConsent.get());
             aisConsentTransaction.setResourceId(resourceId);
             aisConsentTransaction.setNumberOfTransactions(numberOfTransactions);
 

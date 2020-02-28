@@ -1,0 +1,17 @@
+{
+  "consentData": [],
+  "tppAccountAccesses": {"accounts": [],
+    "balances": [],
+    "transactions": []},
+  "aspspAccountAccesses": {
+    "accounts": [],
+    "balances": [],
+    "transactions": []
+  },
+  "frequencyPerDay": 10,
+  "recurringIndicator": true,
+  "validUntil": "9999-12-31",
+  "authorisationTemplate": {},
+  "psuIdDataList": [],
+  "usages": {}
+}

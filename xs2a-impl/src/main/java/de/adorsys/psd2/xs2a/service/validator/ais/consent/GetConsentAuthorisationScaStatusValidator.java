@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class GetConsentAuthorisationScaStatusValidator extends AbstractConsentTp
     @NotNull
     @Override
     protected ValidationResult executeBusinessValidation(GetConsentAuthorisationScaStatusPO consentObject) {
-        AccountConsent response = consentObject.getAccountConsent();
+        AisConsent response = consentObject.getAisConsent();
         String authorisationId = consentObject.getAuthorisationId();
 
         ValidationResult authorisationValidationResult = aisAuthorisationValidator.validate(authorisationId, response);
@@ -50,7 +50,7 @@ public class GetConsentAuthorisationScaStatusValidator extends AbstractConsentTp
             return authorisationValidationResult;
         }
 
-        ValidationResult authAuthorisationValidationResult = oauthConsentValidator.validate(consentObject.getAccountConsent());
+        ValidationResult authAuthorisationValidationResult = oauthConsentValidator.validate(consentObject.getAisConsent());
         if (authAuthorisationValidationResult.isNotValid()) {
             return authAuthorisationValidationResult;
         }

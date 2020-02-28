@@ -20,4 +20,7 @@ import springfox.documentation.service.Tag;
 
 public class CmsPsuApiTagHolder {
     public static final Tag PSU_PIIS_CONSENTS = new Tag(CmsPsuApiTagName.PSU_PIIS_CONSENTS, "Provides access to consent management system for PSU PIIS");
+
+    private CmsPsuApiTagHolder() {
+    }
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -102,16 +103,16 @@ public class ConsentAuthorisationService {
     public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!accountConsentOptional.isPresent()) {
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        if (!aisConsentOptional.isPresent()) {
             log.info("Consent-ID: [{}]. Get consent initiation authorisations failed: consent not found by id",
                      consentId);
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        ValidationResult validationResult = consentValidationService.validateConsentAuthorisationOnGettingById(accountConsent);
+        ValidationResult validationResult = consentValidationService.validateConsentAuthorisationOnGettingById(aisConsent);
         if (validationResult.isNotValid()) {
             log.info("Consent-ID: [{}]. Get consent authorisations - validation failed: {}",
                      consentId, validationResult.getMessageError());
@@ -120,7 +121,7 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
+        loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
         return getAuthorisationSubResources(consentId)
                    .map(resp -> ResponseObject.<Xs2aAuthorisationSubResources>builder().body(resp).build())
@@ -136,13 +137,13 @@ public class ConsentAuthorisationService {
     public ResponseObject<ScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!accountConsentOptional.isPresent()) {
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        if (!aisConsentOptional.isPresent()) {
             log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found by id", consentId);
             return ResponseObject.<ScaStatus>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent accountConsent = aisConsentOptional.get();
 
         ValidationResult validationResult = consentValidationService.validateConsentAuthorisationScaStatus(accountConsent, authorisationId);
         if (validationResult.isNotValid()) {
@@ -179,9 +180,9 @@ public class ConsentAuthorisationService {
 
         String consentId = updatePsuData.getConsentId();
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             log.info("Consent-ID: [{}]. Update consent PSU data failed: consent not found by id", consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
@@ -198,10 +199,10 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
-        ValidationResult validationResult = consentValidationService.validateConsentPsuDataOnUpdate(accountConsent, updatePsuData);
+        loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
+        ValidationResult validationResult = consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updatePsuData);
 
         if (validationResult.isNotValid()) {
             MessageErrorCode messageErrorCode = validationResult.getMessageError().getTppMessage().getMessageErrorCode();
@@ -217,7 +218,7 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        if (accountConsent.isExpired()) {
+        if (aisConsent.isExpired()) {
             log.info("Consent-ID: [{}]. Update consent PSU data failed: consent expired", consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_401, of(CONSENT_EXPIRED))
@@ -266,17 +267,17 @@ public class ConsentAuthorisationService {
     private ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuDataFromRequest, String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!accountConsentOptional.isPresent()) {
+        if (!aisConsentOptional.isPresent()) {
             log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by id",
                      consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
-        AccountConsent accountConsent = accountConsentOptional.get();
+        AisConsent aisConsent = aisConsentOptional.get();
 
-        ValidationResult validationResult = consentValidationService.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(accountConsent, psuDataFromRequest));
+        ValidationResult validationResult = consentValidationService.validateConsentAuthorisationOnCreate(new CreateConsentAuthorisationObject(aisConsent, psuDataFromRequest));
 
         if (validationResult.isNotValid()) {
             log.info("Consent-ID: [{}]. Create consent authorisation with response - validation failed: {}",
@@ -286,17 +287,17 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        if (accountConsent.isExpired()) {
+        if (aisConsent.isExpired()) {
             log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent expired", consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()
                        .fail(AIS_401, of(CONSENT_EXPIRED))
                        .build();
         }
 
-        loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
+        loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
         AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
-        PsuIdData psuIdData = getActualPsuData(psuDataFromRequest, accountConsent);
+        PsuIdData psuIdData = getActualPsuData(psuDataFromRequest, aisConsent);
 
         return service.createConsentAuthorization(psuIdData, consentId)
                    .map(resp -> ResponseObject.<CreateConsentAuthorizationResponse>builder().body(resp).build())
@@ -305,14 +306,14 @@ public class ConsentAuthorisationService {
                                   ::build);
     }
 
-    private PsuIdData getActualPsuData(PsuIdData psuDataFromRequest, AccountConsent accountConsent) {
-        boolean isMultilevel = accountConsent.isMultilevelScaRequired();
+    private PsuIdData getActualPsuData(PsuIdData psuDataFromRequest, AisConsent aisConsent) {
+        boolean isMultilevel = aisConsent.isMultilevelScaRequired();
 
         if (psuDataFromRequest.isNotEmpty() || isMultilevel) {
             return psuDataFromRequest;
         }
 
-        return accountConsent.getPsuIdDataList().stream()
+        return aisConsent.getPsuIdDataList().stream()
                    .findFirst()
                    .orElse(psuDataFromRequest);
     }

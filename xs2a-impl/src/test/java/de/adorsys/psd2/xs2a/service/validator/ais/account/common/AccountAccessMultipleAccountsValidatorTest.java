@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
-import de.adorsys.psd2.xs2a.domain.consent.AccountConsent;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void DEDICATED_ACCOUNTS_WithBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_PATH, AisConsentRequestType.DEDICATED_ACCOUNTS);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_PATH);
 
         //When
         ValidationResult actual = validator.validate(accountConsent, true);
@@ -53,7 +52,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void DEDICATED_ACCOUNTS_WithBalance_shouldReturnError() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_WITH_MULTIPLE_ACCOUNTS_PATH, AisConsentRequestType.DEDICATED_ACCOUNTS);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_WITH_MULTIPLE_ACCOUNTS_PATH);
 
         //When
         ValidationResult actual = validator.validate(accountConsent, true);
@@ -65,7 +64,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void DEDICATED_ACCOUNTS_WithoutBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_WITH_MULTIPLE_ACCOUNTS_PATH, AisConsentRequestType.DEDICATED_ACCOUNTS);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(DEDICATED_CONSENT_WITH_MULTIPLE_ACCOUNTS_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, false);
         //Then
@@ -75,7 +74,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void GLOBAL_WithBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(GLOBAL_CONSENT_PATH, AisConsentRequestType.GLOBAL);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(GLOBAL_CONSENT_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, true);
         //Then
@@ -85,7 +84,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void GLOBAL_WithoutBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(GLOBAL_CONSENT_PATH, AisConsentRequestType.GLOBAL);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(GLOBAL_CONSENT_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, false);
         //Then
@@ -95,7 +94,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void ALL_AVAILABLE_ACCOUNTS_WithBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, true);
         //Then
@@ -105,7 +104,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void ALL_AVAILABLE_ACCOUNTS_WithoutBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH, AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(ALL_AVAILABLE_ACCOUNTS_CONSENT_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, false);
         //Then
@@ -115,7 +114,7 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void BANK_OFFERED_ACCOUNTS_WithBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(BANK_OFFERED_CONSENT_PATH, AisConsentRequestType.BANK_OFFERED);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(BANK_OFFERED_CONSENT_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, true);
         //Then
@@ -125,25 +124,14 @@ class AccountAccessMultipleAccountsValidatorTest {
     @Test
     void BANK_OFFERED_ACCOUNTS_WithoutBalance_shouldReturnValid() {
         //Given
-        AccountConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(BANK_OFFERED_CONSENT_PATH, AisConsentRequestType.BANK_OFFERED);
+        AisConsent accountConsent = getAccountConsentFromFileAndUpdateRequestType(BANK_OFFERED_CONSENT_PATH);
         //When
         ValidationResult actual = validator.validate(accountConsent, false);
         //Then
         assertTrue(actual.isValid());
     }
 
-    private AccountConsent getAccountConsentFromFileAndUpdateRequestType(String file, AisConsentRequestType type) {
-        AccountConsent accountConsent = getAccountConsentFromFile(file);
-        return updateRequestType(accountConsent, type);
-    }
-
-    private AccountConsent getAccountConsentFromFile(String file) {
-        return jsonReader.getObjectFromFile(file, AccountConsent.class);
-    }
-
-    private AccountConsent updateRequestType(AccountConsent consent, AisConsentRequestType type) {
-        return new AccountConsent(consent.getId(), consent.getAccess(), consent.getAspspAccess(), consent.isRecurringIndicator(), consent.getValidUntil(), consent.getExpireDate(), consent.getFrequencyPerDay(),
-                                  consent.getLastActionDate(), consent.getConsentStatus(), consent.isWithBalance(), consent.isTppRedirectPreferred(), consent.getPsuIdDataList(),
-                                  consent.getTppInfo(), type, consent.isMultilevelScaRequired(), consent.getAuthorisations(), consent.getStatusChangeTimestamp(), consent.getUsageCounterMap(), consent.getCreationTimestamp());
+    private AisConsent getAccountConsentFromFileAndUpdateRequestType(String file) {
+        return jsonReader.getObjectFromFile(file, AisConsent.class);
     }
 }

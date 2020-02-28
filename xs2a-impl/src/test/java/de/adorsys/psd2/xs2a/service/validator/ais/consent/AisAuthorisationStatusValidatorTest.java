@@ -20,12 +20,10 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
@@ -35,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AisAuthorisationStatusValidatorTest {
     private static final MessageError STATUS_VALIDATION_ERROR =
         new MessageError(ErrorType.AIS_409, TppMessageInformation.of(STATUS_INVALID));
-
-    @Mock
-    private RequestProviderService requestProviderService;
 
     @InjectMocks
     private AisAuthorisationStatusValidator aisAuthorisationStatusValidator;

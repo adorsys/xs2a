@@ -48,7 +48,7 @@ public class TppErrorMessageWriter {
         try {
             log.warn("ResourceAccessException handled with message: {}", message);
             response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
-            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             xs2aObjectMapper.writeValue(response.getWriter(), new ServiceUnavailableError());
         } catch (IOException e) {
             log.info(" Writing to the httpServletResponse failed.");

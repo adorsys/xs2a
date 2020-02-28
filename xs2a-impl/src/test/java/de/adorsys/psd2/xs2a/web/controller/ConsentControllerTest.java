@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -30,7 +30,9 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -48,8 +50,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -385,31 +385,37 @@ class ConsentControllerTest {
         return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
     }
 
-    private ResponseObject<AccountConsent> getConsent(String consentId) {
-        AccountConsent accountConsent = consentId.equals(WRONG_CONSENT_ID)
+    private ResponseObject<AisConsent> getConsent(String consentId) {
+        AisConsent aisConsent = consentId.equals(WRONG_CONSENT_ID)
                                             ? null
-                                            : new AccountConsent(consentId, new Xs2aAccountAccess(null, null, null, null, null, null, null), new Xs2aAccountAccess(null, null, null, null, null, null, null), false, LocalDate.now(), null, 4, LocalDate.now(), ConsentStatus.VALID, false, false, null, null, AisConsentRequestType.GLOBAL, false, Collections.emptyList(), OffsetDateTime.now(), Collections.emptyMap(), OffsetDateTime.now());
-        return isEmpty(accountConsent)
-                   ? ResponseObject.<AccountConsent>builder().fail(MESSAGE_ERROR_AIS_404).build()
-                   : ResponseObject.<AccountConsent>builder().body(accountConsent).build();
+                                            : biuldAisConsent(consentId);
+        return isEmpty(aisConsent)
+                   ? ResponseObject.<AisConsent>builder().fail(MESSAGE_ERROR_AIS_404).build()
+                   : ResponseObject.<AisConsent>builder().body(aisConsent).build();
+    }
+
+    private AisConsent biuldAisConsent(String consentId) {
+        AisConsent aisConsent = new AisConsent();
+        aisConsent.setId(consentId);
+        return aisConsent;
     }
 
     private ResponseObject<ConsentInformationResponse200Json> getConsentInformationResponse() {
 
         ConsentInformationResponse200Json consent = new ConsentInformationResponse200Json();
-        AccountAccess access = new AccountAccess();
+        de.adorsys.psd2.model.AccountAccess access = new de.adorsys.psd2.model.AccountAccess();
         access.setAccounts(Collections.emptyList());
         access.setBalances(Collections.emptyList());
         access.setTransactions(Collections.emptyList());
-        access.setAllPsd2(AccountAccess.AllPsd2Enum.ALLACCOUNTS);
-        access.setAvailableAccounts(AccountAccess.AvailableAccountsEnum.ALLACCOUNTS);
+        access.setAllPsd2(de.adorsys.psd2.model.AccountAccess.AllPsd2Enum.ALLACCOUNTS);
+        access.setAvailableAccounts(de.adorsys.psd2.model.AccountAccess.AvailableAccountsEnum.ALLACCOUNTS);
         consent.setAccess(access);
         return ResponseObject.<ConsentInformationResponse200Json>builder().body(consent).build();
     }
 
     private Consents getConsents() {
         Consents consents = new Consents();
-        AccountAccess access = new AccountAccess();
+        de.adorsys.psd2.model.AccountAccess access = new de.adorsys.psd2.model.AccountAccess();
         consents.setAccess(access);
         return consents;
     }

@@ -23,7 +23,6 @@ import no.difi.certvalidator.api.CertificateValidationException;
 import no.difi.certvalidator.util.SimpleCertificateBucket;
 import org.apache.commons.lang3.StringUtils;
 
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 public class CertificateValidatorFactory {
@@ -38,7 +37,7 @@ public class CertificateValidatorFactory {
 				.addRule(new ChainRuleExt(rootCertificates, intermediateCertificates)).build();
 	}
 
-	public boolean validate(String encodedCert) throws CertificateException, CertificateValidationException {
+	public boolean validate(String encodedCert) throws CertificateValidationException {
 
 		if (StringUtils.isBlank(encodedCert)) {
 			throw new FailedCertValidationException(CertificateErrorMsgCode.CERTIFICATE_MISSING.name(),

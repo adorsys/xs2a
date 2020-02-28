@@ -16,6 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -123,9 +125,9 @@ public class ConsentService {
         Xs2aCreateAisConsentResponse createAisConsentResponse = createAisConsentResponseOptional.get();
         SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
-        AccountConsent accountConsent = createAisConsentResponse.getAccountConsent();
+        AisConsent aisConsent = createAisConsentResponse.getAisConsent();
 
-        SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(accountConsent), aspspConsentDataProvider);
+        SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsentSpiResponse = aisConsentSpi.initiateAisConsent(contextData, aisConsentMapper.mapToSpiAccountConsent(aisConsent), aspspConsentDataProvider);
 
         String encryptedConsentId = createAisConsentResponse.getConsentId();
         aspspConsentDataProvider.saveWith(encryptedConsentId);
@@ -142,15 +144,15 @@ public class ConsentService {
 
         SpiInitiateAisConsentResponse spiResponsePayload = initiateAisConsentSpiResponse.getPayload();
         boolean multilevelScaRequired = spiResponsePayload.isMultilevelScaRequired()
-                                            && !aisScaAuthorisationService.isOneFactorAuthorisation(accountConsent);
+                                            && !aisScaAuthorisationService.isOneFactorAuthorisation(aisConsent);
 
         updateMultilevelSca(encryptedConsentId, multilevelScaRequired);
 
-        Optional<Xs2aAccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
+        Optional<AccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
         xs2aAccountAccess.ifPresent(accountAccess ->
                                         accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
 
-        ConsentStatus consentStatus = ConsentStatus.RECEIVED;
+        ConsentStatus consentStatus = aisConsent.getConsentStatus();
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId,
                                                                                 null, null, null,
                                                                                 spiResponsePayload.getPsuMessage(), multilevelScaRequired,
@@ -187,16 +189,16 @@ public class ConsentService {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_STATUS_REQUEST_RECEIVED);
         ResponseObject.ResponseBuilder<ConsentStatusResponse> responseBuilder = ResponseObject.builder();
 
-        Optional<AccountConsent> validatedAccountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> validatedAisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!validatedAccountConsentOptional.isPresent()) {
+        if (!validatedAisConsentOptional.isPresent()) {
             log.info("Consent-ID: [{}]. Get account consents status failed: consent not found by id", consentId);
             return responseBuilder
                        .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
                        .build();
         }
 
-        AccountConsent validatedAccountConsent = validatedAccountConsentOptional.get();
+        AisConsent validatedAccountConsent = validatedAisConsentOptional.get();
 
         ValidationResult validationResult = consentValidationService.validateConsentOnGettingStatusById(validatedAccountConsent);
         if (validationResult.isNotValid()) {
@@ -238,12 +240,12 @@ public class ConsentService {
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.DELETE_AIS_CONSENT_REQUEST_RECEIVED);
-        Optional<AccountConsent> accountConsentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (accountConsentOptional.isPresent()) {
+        if (aisConsentOptional.isPresent()) {
             // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
 
-            AccountConsent accountConsent = accountConsentOptional.get();
+            AisConsent accountConsent = aisConsentOptional.get();
             ValidationResult validationResult = consentValidationService.validateConsentOnDelete(accountConsent);
             if (validationResult.isNotValid()) {
                 log.info("Consent-ID: [{}]. Delete account consent - validation failed: {}",
@@ -288,32 +290,32 @@ public class ConsentService {
      * @param consentId String representation of AccountConsent identification
      * @return AccountConsent requested by consentId
      */
-    public ResponseObject<AccountConsent> getAccountConsentById(String consentId) {
+    public ResponseObject<AisConsent> getAccountConsentById(String consentId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
 
-        Optional<AccountConsent> consentOptional = aisConsentService.getAccountConsentById(consentId);
+        Optional<AisConsent> consentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!consentOptional.isPresent()) {
             log.info("Consent-ID: [{}]. Get account consent failed: initial consent not found by id", consentId);
-            return ResponseObject.<AccountConsent>builder()
+            return ResponseObject.<AisConsent>builder()
                        .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
                        .build();
         }
 
-        AccountConsent consent = consentOptional.get();
+        AisConsent consent = consentOptional.get();
 
         ValidationResult validationResult = consentValidationService.validateConsentOnGettingById(consent);
         if (validationResult.isNotValid()) {
             log.info("Consent-ID: [{}]. Get account consent - validation failed: {}",
                      consentId, validationResult.getMessageError());
-            return ResponseObject.<AccountConsent>builder()
+            return ResponseObject.<AisConsent>builder()
                        .fail(validationResult.getMessageError())
                        .build();
         }
 
         if (Objects.nonNull(consent.getConsentStatus()) && consent.getConsentStatus().isFinalisedStatus()) {
             loggingContextService.storeConsentStatus(consent.getConsentStatus());
-            return ResponseObject.<AccountConsent>builder()
+            return ResponseObject.<AisConsent>builder()
                        .body(consent)
                        .build();
         }
@@ -323,7 +325,7 @@ public class ConsentService {
         if (spiConsentStatus.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiConsentStatus, ServiceType.AIS);
             log.info("Get account consents failed: Couldn't get AIS consent at SPI level: {}", errorHolder);
-            return ResponseObject.<AccountConsent>builder()
+            return ResponseObject.<AisConsent>builder()
                        .fail(new MessageError(errorHolder))
                        .build();
         }
@@ -332,8 +334,9 @@ public class ConsentService {
         aisConsentService.updateConsentStatus(consentId, consentStatus);
         loggingContextService.storeConsentStatus(consent.getConsentStatus());
 
-        return ResponseObject.<AccountConsent>builder()
-                   .body(aisConsentMapper.mapToAccountConsentWithNewStatus(consent, consentStatus))
+        consent.setConsentStatus(consentStatus);
+        return ResponseObject.<AisConsent>builder()
+                   .body(consent)
                    .build();
     }
 
@@ -368,8 +371,8 @@ public class ConsentService {
         return consentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
     }
 
-    private SpiResponse<SpiAisConsentStatusResponse> getConsentStatusFromSpi(AccountConsent accountConsent, String consentId) {
-        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(accountConsent);
+    private SpiResponse<SpiAisConsentStatusResponse> getConsentStatusFromSpi(AisConsent aisConsent, String consentId) {
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisConsent);
         SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         return aisConsentSpi.getConsentStatus(spiContextDataProvider.provide(), spiAccountConsent, aspspDataProvider);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,14 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PiisConsentRemoteUrls;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -45,20 +46,19 @@ public class PiisConsentServiceRemote implements PiisConsentService {
     private final PiisConsentRemoteUrls remotePiisConsentUrls;
 
     @Override
-    public CmsResponse<List<PiisConsent>> getPiisConsentListByAccountIdentifier(Currency currency, AccountReferenceSelector accountReferenceSelector) {
-        List<PiisConsent> response = Collections.emptyList();
+    public CmsResponse<List<CmsConsent>> getPiisConsentListByAccountIdentifier(@Nullable Currency currency, AccountReferenceSelector accountReferenceSelector) {
+        List<CmsConsent> response = Collections.emptyList();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("currency", currency == null ? null : currency.toString());
-
-        HttpEntity entity = new HttpEntity(headers);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
 
         try {
             response = consentRestTemplate.exchange(
                 remotePiisConsentUrls.getPiisConsent(),
                 HttpMethod.GET,
                 entity,
-                new ParameterizedTypeReference<List<PiisConsent>>() {
+                new ParameterizedTypeReference<List<CmsConsent>>() {
                 },
                 accountReferenceSelector.getAccountReferenceType().name(),
                 accountReferenceSelector.getAccountValue()
@@ -67,7 +67,7 @@ public class PiisConsentServiceRemote implements PiisConsentService {
             log.error("Failed to retrieve piis consent validation data");
         }
 
-        return CmsResponse.<List<PiisConsent>>builder()
+        return CmsResponse.<List<CmsConsent>>builder()
                    .payload(response)
                    .build();
     }

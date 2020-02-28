@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>5.10</version>
+    <version>5.11</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -39,6 +39,7 @@
         <module>xs2a-core-payments</module>
         <module>xs2a-payment-support</module>
         <module>xs2a-logger</module>
+        <module>xs2a-core-consents</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -186,14 +187,15 @@
         <javax.el.version>3.0.1-b09</javax.el.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <jaxb-api.version>2.3.0</jaxb-api.version>
-        <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <classmate.version>1.4.0</classmate.version>
-
         <jackson.version>2.10.1</jackson.version>
 
-        <spring.version>5.1.6.RELEASE</spring.version>
+        <maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M4</maven-failsafe-plugin.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+
+        <spring.version>5.2.3.RELEASE</spring.version>
         <spring-test.version>${spring.version}</spring-test.version>
         <spring-web.version>${spring.version}</spring-web.version>
         <spring-context.version>${spring.version}</spring-context.version>
@@ -202,8 +204,8 @@
         <spring-aop.version>${spring.version}</spring-aop.version>
         <spring-webmvc.version>${spring.version}</spring-webmvc.version>
         <spring-core.version>${spring.version}</spring-core.version>
-        <spring-data-jpa.version>2.1.11.RELEASE</spring-data-jpa.version>
-        <spring-boot.version>2.1.4.RELEASE</spring-boot.version>
+        <spring-data-jpa.version>2.2.5.RELEASE</spring-data-jpa.version>
+        <spring-boot.version>2.2.4.RELEASE</spring-boot.version>
 
         <dependency.locations.enabled>false</dependency.locations.enabled>
         <ruleset.basedir>${project.basedir}</ruleset.basedir>
@@ -216,7 +218,6 @@
         <mockito.version>3.2.4</mockito.version>
 
         <!--Sonar -->
-
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -287,6 +288,12 @@
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${spring-boot.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -795,7 +802,7 @@ Use it manually to generate javadocs. Don't commit it
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M4</version>
+                <version>${maven-failsafe-plugin.version}</version>
                 <configuration>
                     <includes>
                         <include>**/*IT.java</include>

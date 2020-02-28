@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.account;
 
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -36,7 +37,7 @@ public class AisConsentUsage {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "consent_id", nullable = false)
-    private AisConsent consent;
+    private ConsentEntity consent;
 
     @Column(name = "request_uri", nullable = false)
     private String requestUri;
@@ -57,7 +58,7 @@ public class AisConsentUsage {
     @Column(name = "version")
     private long version;
 
-    public AisConsentUsage(AisConsent consent, String requestUri) {
+    public AisConsentUsage(ConsentEntity consent, String requestUri) {
         this.usageDate = LocalDate.now();
         this.consent = consent;
         this.requestUri = requestUri;

@@ -33,7 +33,7 @@ import java.util.Currency;
  * @see de.adorsys.psd2.xs2a.core.profile.AccountReference
  *
  */
-@Deprecated
+@Deprecated // TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1228
 public class CmsAccountReference {
     @ApiModelProperty(value = "RESOURCE-ID: This identification is denoting the addressed account.")
     private String resourceId;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.stub.impl;
 
-import de.adorsys.psd2.xs2a.core.piis.PiisConsent;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +31,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class FundsConfirmationSpiMockImpl implements FundsConfirmationSpi {
-
     @Override
     @NotNull
-    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData, @Nullable PiisConsent piisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @Nullable SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("FundsConfirmationSpi#performFundsSufficientCheck: contextData {}, piisConsent {}, spiFundsConfirmationRequest {}, aspspConsentData {}",
-                 contextData, piisConsent, spiFundsConfirmationRequest, aspspConsentDataProvider != null ? aspspConsentDataProvider.loadAspspConsentData() : null);
+    public SpiResponse<SpiFundsConfirmationResponse> performFundsSufficientCheck(@NotNull SpiContextData contextData, @Nullable SpiPiisConsent spiPiisConsent, @NotNull SpiFundsConfirmationRequest spiFundsConfirmationRequest, @Nullable SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("FundsConfirmationSpi#performFundsSufficientCheck: contextData {}, spiPiisConsent {}, spiFundsConfirmationRequest {}, aspspConsentData {}",
+                 contextData, spiPiisConsent, spiFundsConfirmationRequest, aspspConsentDataProvider != null ? aspspConsentDataProvider.loadAspspConsentData() : null);
         SpiFundsConfirmationResponse response = new SpiFundsConfirmationResponse();
         response.setFundsAvailable(true);
 

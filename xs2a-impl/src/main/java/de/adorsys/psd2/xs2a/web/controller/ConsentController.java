@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.ConsentApi;
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -197,7 +198,7 @@ public class ConsentController implements ConsentApi {
                                                 String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                                 String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                 UUID psUDeviceID, String psUGeoLocation) {
-        ResponseObject<AccountConsent> accountConsentByIdResponse = consentService.getAccountConsentById(consentId);
+        ResponseObject<AisConsent> accountConsentByIdResponse = consentService.getAccountConsentById(consentId);
         return accountConsentByIdResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountConsentByIdResponse.getError())
                    : responseMapper.ok(accountConsentByIdResponse, consentModelMapper::mapToConsentInformationResponse200Json);
