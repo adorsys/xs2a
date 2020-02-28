@@ -1,0 +1,3 @@
+= Release notes v.7.0
+
+== Table of Contents
