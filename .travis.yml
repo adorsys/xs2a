@@ -52,7 +52,7 @@ deploy:
       all_branches: true
       condition: |-
         ( ( $TRAVIS_TAG =~ ^([[:digit:]]+\.)+[[:digit:]]+(-(RC)?[[:digit:]]+)?([\.-]([[:digit:]]+\.)+[[:digit:]]+(-[[:digit:]]+)?)?$
-          || "$TRAVIS_BRANCH" = "develop" )
+          || "$TRAVIS_BRANCH" = "develop" || "$TRAVIS_BRANCH" = "support-6.x" )
         && "$TRAVIS_JDK_VERSION" = "openjdk8" )
   - provider: pages
     skip_cleanup: true
