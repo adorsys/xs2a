@@ -805,7 +805,7 @@ class ConsentServiceTest {
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent))
             .thenReturn(ValidationResult.valid());
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                    .build();
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
@@ -814,7 +814,7 @@ class ConsentServiceTest {
         // When
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID);
         // Then
-        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.VALID));
+        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE));
     }
 
     @Test
@@ -831,7 +831,7 @@ class ConsentServiceTest {
         ResponseObject response = consentService.getAccountConsentsStatusById(CONSENT_ID_FINALISED);
 
         // Then
-        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.REJECTED));
+        assertThat(response.getBody()).isEqualTo(new ConsentStatusResponse(ConsentStatus.REJECTED, null));
     }
 
     @Test
@@ -886,7 +886,7 @@ class ConsentServiceTest {
             .thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent)).thenReturn(ValidationResult.valid());
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                    .build();
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
@@ -933,7 +933,7 @@ class ConsentServiceTest {
     void getAccountConsentsStatusById_shouldRecordIntoLoggingContext() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                    .build();
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
@@ -964,7 +964,7 @@ class ConsentServiceTest {
     void getAccountConsentsById_Success() {
         // Given
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                    .build();
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(getAisConsent()));
@@ -994,7 +994,7 @@ class ConsentServiceTest {
         // Given
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                    .build();
         //GetConsentById
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -1075,7 +1075,7 @@ class ConsentServiceTest {
         // Given
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         SpiResponse<SpiAisConsentStatusResponse> spiResponse = SpiResponse.<SpiAisConsentStatusResponse>builder()
-                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID))
+                                                                   .payload(new SpiAisConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
                                                                    .build();
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -1299,8 +1299,9 @@ class ConsentServiceTest {
         AccountAccess accountAccess = getXs2aAccountAccess(Collections.singletonList(getXs2aReference()));
         aisConsent.setTppAccountAccesses(accountAccess);
         aisConsent.setAspspAccountAccesses(accountAccess);
-        aisConsent.setConsentData(new AisConsentData(null, null, null,
-                                                     false));
+        aisConsent.setConsentData(AisConsentData.buildDefaultAisConsentData());
+        aisConsent.setUsages(Collections.emptyMap());
+
         return aisConsent;
     }
 

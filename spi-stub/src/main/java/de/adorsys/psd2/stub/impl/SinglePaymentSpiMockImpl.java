@@ -39,6 +39,7 @@ import java.util.UUID;
 @Service
 public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    private static final String PSU_MESSAGE = "Message from ASPSP to PSU";
 
     @Override
     @NotNull
@@ -71,7 +72,7 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
         log.info("SinglePaymentSpi#getPaymentStatusById: contextData {}, spiSinglePayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null))
+                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
                    .build();
     }
 

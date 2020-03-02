@@ -25,10 +25,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.consent.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
@@ -60,6 +57,15 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
 
         return SpiResponse.<SpiInitiateAisConsentResponse>builder()
                    .payload(new SpiInitiateAisConsentResponse(access, false, ""))
+                   .build();
+    }
+
+    @Override
+    public SpiResponse<SpiAisConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#getConsentStatus: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
+
+        return SpiResponse.<SpiAisConsentStatusResponse>builder()
+                   .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus(), "Mocked PSU message from SPI for this consent"))
                    .build();
     }
 

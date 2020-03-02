@@ -192,7 +192,7 @@ public class ConsentService {
         Optional<AisConsent> validatedAisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (!validatedAisConsentOptional.isPresent()) {
-            log.info("Consent-ID: [{}]. Get account consents status failed: consent not found by id", consentId);
+            log.info("Consent-ID: [{}]. Get account consents status failed: consent not found by ID", consentId);
             return responseBuilder
                        .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
                        .build();
@@ -202,7 +202,7 @@ public class ConsentService {
 
         ValidationResult validationResult = consentValidationService.validateConsentOnGettingStatusById(validatedAccountConsent);
         if (validationResult.isNotValid()) {
-            log.info("Create account consents status - validation failed: {}", validationResult.getMessageError());
+            log.info("Get account consents status - validation failed: {}", validationResult.getMessageError());
             return ResponseObject.<ConsentStatusResponse>builder()
                        .fail(validationResult.getMessageError())
                        .build();
@@ -212,7 +212,7 @@ public class ConsentService {
         if (consentStatus.isFinalisedStatus()) {
             loggingContextService.storeConsentStatus(consentStatus);
             return responseBuilder
-                       .body(new ConsentStatusResponse(consentStatus))
+                       .body(new ConsentStatusResponse(consentStatus, null))
                        .build();
         }
 
@@ -225,11 +225,15 @@ public class ConsentService {
                        .fail(new MessageError(errorHolder))
                        .build();
         }
-        ConsentStatus spiConsentStatus = spiResponse.getPayload().getConsentStatus();
+
+        SpiAisConsentStatusResponse spiPayload = spiResponse.getPayload();
+        ConsentStatus spiConsentStatus = spiPayload.getConsentStatus();
         aisConsentService.updateConsentStatus(consentId, spiConsentStatus);
         loggingContextService.storeConsentStatus(spiConsentStatus);
 
-        return responseBuilder.body(new ConsentStatusResponse(spiConsentStatus)).build();
+        return responseBuilder
+                   .body(new ConsentStatusResponse(spiConsentStatus, spiPayload.getPsuMessage()))
+                   .build();
     }
 
     /**

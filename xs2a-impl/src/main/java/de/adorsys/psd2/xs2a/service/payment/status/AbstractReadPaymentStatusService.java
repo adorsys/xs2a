@@ -83,7 +83,7 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
         }
 
         SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
-        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(), mediaTypeMapper.mapToMediaType(payload.getResponseContentType()), payload.getPaymentStatusRaw());
+        return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(), mediaTypeMapper.mapToMediaType(payload.getResponseContentType()), payload.getPaymentStatusRaw(), payload.getPsuMessage());
     }
 
     protected abstract Optional createSpiPayment(CommonPaymentData commonPaymentData);

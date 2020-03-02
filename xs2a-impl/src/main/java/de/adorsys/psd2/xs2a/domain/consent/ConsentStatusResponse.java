@@ -24,8 +24,10 @@ import lombok.Value;
 @ApiModel(description = "Consent Status response", value = "consentStatus")
 public class ConsentStatusResponse {
     private String consentStatus;
+    private String psuMessage;
 
-    public ConsentStatusResponse(ConsentStatus consentStatus) {
+    public ConsentStatusResponse(ConsentStatus consentStatus, String psuMessage) {
         this.consentStatus = consentStatus.getValue();
+        this.psuMessage = psuMessage;
     }
 }
