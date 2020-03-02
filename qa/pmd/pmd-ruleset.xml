@@ -87,8 +87,6 @@
             <property name="minimum" value="4"/>
         </properties>
     </rule>
-    <rule ref="category/java/codestyle.xml/SuspiciousConstantFieldName" />
-    <rule ref="category/java/codestyle.xml/UnnecessaryFullyQualifiedName" />
     <rule ref="category/java/codestyle.xml/UnnecessaryLocalBeforeReturn" />
     <rule ref="category/java/codestyle.xml/UnnecessaryModifier" />
     <rule ref="category/java/codestyle.xml/UnnecessaryReturn" />

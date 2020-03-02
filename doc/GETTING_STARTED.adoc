@@ -4,7 +4,7 @@
 
 == Prerequisites
 
-- Java JDK version 1.8.x or later, Maven 3.x;
+- Java JDK version 11.x or later, Maven 3.x;
 - Relational database for consent-management-system. PostgreSQL, Oracle and MariaDB are supported out of the box, the list can be extended. We recommend to use PostgreSQL 9.5 or later.
 - Docker (Optional).
 
