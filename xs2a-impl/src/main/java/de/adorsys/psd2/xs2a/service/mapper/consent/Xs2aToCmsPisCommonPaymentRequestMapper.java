@@ -66,6 +66,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                                                       .map(TppNotificationData::getNotificationModes)
                                                       .orElse(Collections.emptyList()));
         paymentInfo.setContentType(creationObject.getContentType());
+        paymentInfo.setTppBrandLoggingInformation(paymentInitiationParameters.getTppBrandLoggingInformation());
 
         return paymentInfo;
     }

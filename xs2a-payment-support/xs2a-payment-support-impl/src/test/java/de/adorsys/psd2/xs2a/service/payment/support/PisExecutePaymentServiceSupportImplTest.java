@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
 class PisExecutePaymentServiceSupportImplTest {
     private static final String STANDARD_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String RAW_PAYMENT_PRODUCT = "raw-product";
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(null, null, null, null, null);
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.defaultSpiContextData();
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(STANDARD_PAYMENT_PRODUCT);
     private static final SpiPeriodicPayment SPI_PERIODIC_PAYMENT = new SpiPeriodicPayment(STANDARD_PAYMENT_PRODUCT);
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();

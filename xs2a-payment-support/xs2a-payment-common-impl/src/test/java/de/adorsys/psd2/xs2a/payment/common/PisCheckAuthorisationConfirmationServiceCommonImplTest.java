@@ -50,7 +50,7 @@ class PisCheckAuthorisationConfirmationServiceCommonImplTest {
     @Test
     void checkConfirmationCode() {
         // Given
-        SpiContextData spiContextData = new SpiContextData(null, null, null, null, null);
+        SpiContextData spiContextData = TestSpiDataProvider.defaultSpiContextData();
         SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest = new SpiCheckConfirmationCodeRequest("some code", AUTHORISATION_ID);
         SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
 

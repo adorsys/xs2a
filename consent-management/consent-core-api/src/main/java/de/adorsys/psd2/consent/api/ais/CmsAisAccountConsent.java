@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -53,4 +54,6 @@ public class CmsAisAccountConsent {
     private Map<String, Integer> usageCounterMap;
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;
+    @Nullable
+    private String tppBrandLoggingInformation;
 }

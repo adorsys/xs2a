@@ -62,6 +62,7 @@ class PaymentModelMapperPsd2Test {
     private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null, PSU_MESSAGE);
     private static final List<NotificationSupportedMode> NOTIFICATION_MODES = Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("123456789", null, null, null, null);
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
 
     private PaymentModelMapperPsd2 mapper;
 
@@ -179,9 +180,10 @@ class PaymentModelMapperPsd2Test {
         expected.setTppExplicitAuthorisationPreferred(true);
         expected.setPsuData(PSU_ID_DATA);
         expected.setTppNotificationData(tppNotificationData);
+        expected.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
 
         PaymentInitiationParameters actual = mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "certificate".getBytes(), "ok.uri", "nok.uri",
-                                                                                  true, PSU_ID_DATA, tppNotificationData);
+                                                                                  true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION);
 
         assertEquals(expected, actual);
     }

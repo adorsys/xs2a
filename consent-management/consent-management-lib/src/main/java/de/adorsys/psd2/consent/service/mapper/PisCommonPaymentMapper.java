@@ -68,6 +68,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setTppNotificationUri(paymentInfo.getTppNotificationUri());
         commonPaymentData.setTppNotificationContentPreferred(paymentInfo.getNotificationSupportedModes());
         commonPaymentData.setContentType(paymentInfo.getContentType());
+        commonPaymentData.setTppBrandLoggingInformation(paymentInfo.getTppBrandLoggingInformation());
 
         return commonPaymentData;
     }

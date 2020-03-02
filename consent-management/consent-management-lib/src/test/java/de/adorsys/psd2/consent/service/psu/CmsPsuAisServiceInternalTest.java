@@ -1011,7 +1011,7 @@ class CmsPsuAisServiceInternalTest {
                                         null, null, 0,
                                         null, null,
                                         false, false, null, null, null, null, false, Collections.singletonList(aisAuthorisation), Collections.emptyMap(), OffsetDateTime.now(),
-                                        OffsetDateTime.now());
+                                        OffsetDateTime.now(), null);
     }
 }
 
