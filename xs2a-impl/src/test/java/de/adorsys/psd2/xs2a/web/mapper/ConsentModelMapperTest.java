@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 
-import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
@@ -31,7 +30,6 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -63,10 +61,10 @@ class ConsentModelMapperTest {
 
     private static final String ASPSP_ACCOUNT_ID = "3278921mxl-n2131-13nw";
     private static final String ACCOUNT_ID = "accountId";
-    private static final String IBAN = "Test IBAN";
-    private static final String BBAN = "Test BBAN";
-    private static final String PAN = "Test PAN";
-    private static final String MASKED_PAN = "Test MASKED_PAN";
+    private static final String IBAN = "DE62500105179972514662";
+    private static final String BBAN = "89370400440532010000";
+    private static final String PAN = "5254120000003241";
+    private static final String MASKED_PAN = "525412******3241";
     private static final String MSISDN = "Test MSISDN";
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String INVALID_DOMAIN_MESSAGE = "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate";
@@ -88,9 +86,6 @@ class ConsentModelMapperTest {
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
-
-    @Mock
-    private NotificationSupportedModeService notificationSupportedModeService;
 
     private CreateConsentResponse createConsentResponseWithScaMethods;
     private CreateConsentResponse createConsentResponseWithoutScaMethods;
@@ -275,7 +270,7 @@ class ConsentModelMapperTest {
     @Test
     void mapToConsentStatusResponse200_WithCorrectInput() {
         // Given
-        ConsentStatusResponse inputData = new ConsentStatusResponse(ConsentStatus.RECEIVED);
+        ConsentStatusResponse inputData = new ConsentStatusResponse(ConsentStatus.RECEIVED, PSU_MESSAGE);
         ConsentStatusResponse200 expected = jsonReader.getObjectFromFile("json/service/mapper/consent-status-response-200.json",
                                                                          ConsentStatusResponse200.class);
         // When
@@ -350,7 +345,7 @@ class ConsentModelMapperTest {
 
     private AisConsent getAisConsent() {
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
-        AisConsentData consentData = new AisConsentData(null, null, null, false);
+        AisConsentData consentData = AisConsentData.buildDefaultAisConsentData();
         aisConsent.setConsentData(consentData);
         return aisConsent;
     }
@@ -383,8 +378,4 @@ class ConsentModelMapperTest {
         return accountReference;
     }
 
-    private static AccountAccess createAccountAccess() {
-        AccountReference accountReference = buildXs2aAccountReference();
-        return new AccountAccess(Collections.singletonList(accountReference), Collections.singletonList(accountReference), Collections.singletonList(accountReference), null);
-    }
 }

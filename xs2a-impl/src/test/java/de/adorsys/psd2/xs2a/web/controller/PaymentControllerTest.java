@@ -110,6 +110,7 @@ class PaymentControllerTest {
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
     private static final boolean EXPLICIT_PREFERRED_FALSE = false;
     private static final String PSU_DATA_PASSWORD_JSON_PATH = "json/web/controller/psuData-password.json";
+    private static final String PSU_MESSAGE = "PSU message";
 
     @InjectMocks
     private PaymentController paymentController;
@@ -198,7 +199,10 @@ class PaymentControllerTest {
         // Given
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null)).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder()
+                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE))
+                            .build());
 
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus();
 
@@ -224,7 +228,9 @@ class PaymentControllerTest {
         doReturn(new ResponseEntity<>(rawPaymentStatus, HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder()
+                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus, PSU_MESSAGE))
+                            .build());
 
         // When
         ResponseEntity actualResponse = paymentController.getPaymentInitiationStatus(

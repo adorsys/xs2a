@@ -56,4 +56,11 @@ public class SpiGetPaymentStatusResponse {
      */
     @Nullable
     private final byte[] paymentStatusRaw;
+
+    /**
+     * Message from ASPSP to PSU. May be null.
+     */
+    @Nullable
+    private String psuMessage;
+
 }

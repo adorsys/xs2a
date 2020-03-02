@@ -39,6 +39,7 @@ import java.util.UUID;
 @Service
 public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    private static final String PSU_MESSAGE = "Message from ASPSP to PSU";
 
     @Override
     @NotNull
@@ -71,7 +72,7 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
         log.info("PeriodicPaymentSpi#getPaymentStatusById: contextData {}, spiPeriodicPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null))
+                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
                    .build();
     }
 

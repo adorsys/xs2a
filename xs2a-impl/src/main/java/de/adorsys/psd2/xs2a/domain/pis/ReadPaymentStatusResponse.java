@@ -33,12 +33,17 @@ public class ReadPaymentStatusResponse {
     private byte[] paymentStatusRaw;
     private ErrorHolder errorHolder;
 
+    @Nullable
+    private String psuMessage;
+
     public ReadPaymentStatusResponse(@NotNull TransactionStatus status, @Nullable Boolean fundsAvailable,
-                                     @NotNull MediaType responseContentType, @Nullable byte[] paymentStatusRaw) {
+                                     @NotNull MediaType responseContentType, @Nullable byte[] paymentStatusRaw,
+                                     @Nullable String psuMessage) {
         this.status = status;
         this.fundsAvailable = fundsAvailable;
         this.responseContentType = responseContentType;
         this.paymentStatusRaw = paymentStatusRaw;
+        this.psuMessage = psuMessage;
     }
 
     public ReadPaymentStatusResponse(ErrorHolder errorHolder) {

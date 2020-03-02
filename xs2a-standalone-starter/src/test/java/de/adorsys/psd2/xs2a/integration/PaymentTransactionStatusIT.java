@@ -94,6 +94,7 @@ class PaymentTransactionStatusIT {
     private static final String SEPA_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String ENCRYPTED_PAYMENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("data".getBytes(), ENCRYPTED_PAYMENT_ID);
+    private static final String PSU_MESSAGE = "PSU message";
 
     private static final String TRANSACTION_STATUS_RESPONSE_PATH = "/json/payment/res/status/payment_initiation_status_resp.json";
     private static final String TRANSACTION_STATUS_SPI_XML_PATH = "/xml/payment/spi/res/payment_initiation_status_raw.xml";
@@ -163,7 +164,9 @@ class PaymentTransactionStatusIT {
         httpHeaders.add(ACCEPT_HEADER, JSON_CONTENT_TYPE);
         requestBuilder.headers(httpHeaders);
         when(singlePaymentSpi.getPaymentStatusById(any(), eq(JSON_CONTENT_TYPE), any(), any()))
-            .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder().payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null)).build());
+            .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder()
+                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
+                            .build());
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -182,7 +185,9 @@ class PaymentTransactionStatusIT {
         requestBuilder.headers(httpHeaders);
         byte[] paymentStatusRaw = IOUtils.resourceToByteArray(TRANSACTION_STATUS_SPI_XML_PATH);
         when(singlePaymentSpi.getPaymentStatusById(any(), eq(XML_CONTENT_TYPE), any(), any()))
-            .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder().payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_XML, paymentStatusRaw)).build());
+            .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder()
+                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_XML, paymentStatusRaw, PSU_MESSAGE))
+                            .build());
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -199,7 +204,9 @@ class PaymentTransactionStatusIT {
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.buildGetTransactionStatusUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPTED_PAYMENT_ID));
         requestBuilder.headers(httpHeaders);
         when(singlePaymentSpi.getPaymentStatusById(any(), any(), any(), any()))
-            .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder().payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null)).build());
+            .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder()
+                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
+                            .build());
 
         // When
         ResultActions resultActions = mockMvc.perform(requestBuilder);

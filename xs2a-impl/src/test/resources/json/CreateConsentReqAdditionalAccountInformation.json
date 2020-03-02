@@ -4,10 +4,10 @@
       {
         "aspspAccountId": "3278921mxl-n2131-13nw",
         "resourceId": "accountId",
-        "iban": "Test IBAN",
-        "bban": "Test BBAN",
-        "pan": "Test PAN",
-        "maskedPan": "Test MASKED_PAN",
+        "iban": "DE62500105179972514662",
+        "bban": "89370400440532010000",
+        "pan": "5254120000003241",
+        "maskedPan": "525412******3241",
         "msisdn": "Test MSISDN",
         "currency": "EUR"
       }
@@ -17,7 +17,7 @@
     "additionalInformationAccess": {
       "ownerName": [
         {
-          "iban": "Test IBAN"
+          "iban": "DE62500105179972514662"
         }
       ]
     }

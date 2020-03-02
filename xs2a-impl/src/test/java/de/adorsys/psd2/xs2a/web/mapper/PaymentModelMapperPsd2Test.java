@@ -56,12 +56,12 @@ class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String NON_STANDARD_PAYMENT_PRODUCT = "pain.001-sepa-credit-transfers";
+    private static final String PSU_MESSAGE = "PSU message";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final boolean FUNDS_AVAILABLE = true;
-    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null);
+    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null, PSU_MESSAGE);
     private static final List<NotificationSupportedMode> NOTIFICATION_MODES = Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("123456789", null, null, null, null);
-
 
     private PaymentModelMapperPsd2 mapper;
 
@@ -77,6 +77,7 @@ class PaymentModelMapperPsd2Test {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
+
     private JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
@@ -138,7 +139,7 @@ class PaymentModelMapperPsd2Test {
     void mapToStatusResponseRaw_shouldReturnBytesFromResponse() {
         // Given
         byte[] rawPaymentStatusBody = "some raw body".getBytes();
-        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody);
+        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody, PSU_MESSAGE);
 
         // When
         byte[] actual = mapper.mapToStatusResponseRaw(getPaymentStatusResponse);

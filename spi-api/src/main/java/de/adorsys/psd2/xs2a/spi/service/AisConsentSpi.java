@@ -46,16 +46,16 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
 
     /**
      * This call is invoked inside of Get Consent request to give the bank ability to provide consent status, if it was not saved in CMS before.
-     * If consent status is already final one, this call will be not performed.
+     * If consent status is already finalised one, this call will be not performed.
      *
      * @param contextData              holder of call's context data (e.g. about PSU and TPP)
      * @param accountConsent           Account consent from CMS
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
-     * @return Consent Status to be saved in CMS and provided back to TPP.
+     * @return Consent Status to be saved in CMS and provided back to TPP, PSU message if added by ASPSP.
      */
     default SpiResponse<SpiAisConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiAisConsentStatusResponse>builder()
-                   .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus()))
+                   .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus(), null))
                    .build();
     }
 

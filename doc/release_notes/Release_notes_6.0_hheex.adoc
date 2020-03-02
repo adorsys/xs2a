@@ -1,0 +1,11 @@
+= Release notes v.6.0
+
+== Table of Contents
+* Feature: retrieve PSU message from SPI level to TPP
+
+== Feature: retrieve PSU message from SPI level to TPP
+
+Added ability for retrieving text message from ASPSP through SPI to the TPP for the next requests:
+
+- getting payment status `GET /v1/{payment-service}/{paymentId}/status`;
+- getting consent status: `GET /v1/consents/{consentId}/status`.

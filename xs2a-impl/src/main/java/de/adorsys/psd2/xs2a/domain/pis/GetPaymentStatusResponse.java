@@ -35,6 +35,8 @@ public class GetPaymentStatusResponse implements CustomContentTypeProvider {
     private final MediaType responseContentType;
     @Nullable
     private final byte[] paymentStatusRaw;
+    @Nullable
+    private String psuMessage;
 
     public boolean isResponseContentTypeJson() {
         return MediaType.APPLICATION_JSON.includes(responseContentType);
