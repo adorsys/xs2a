@@ -1,4 +1,4 @@
-FROM adorsys/java:8
+FROM adorsys/java:11
 
 MAINTAINER https://github.com/adorsys/xs2a
 
