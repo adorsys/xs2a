@@ -77,4 +77,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Response content type")
     private String contentType;
+
+    @ApiModelProperty(value = "Tpp brand logging information")
+    private String tppBrandLoggingInformation;
 }

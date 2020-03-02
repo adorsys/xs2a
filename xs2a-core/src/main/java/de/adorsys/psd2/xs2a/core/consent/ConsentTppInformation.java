@@ -29,4 +29,5 @@ public class ConsentTppInformation {
     private String tppNotificationUri;
     private TppInfo tppInfo;
     private List<NotificationSupportedMode> tppNotificationSupportedModes;
+    private String tppBrandLoggingInformation;
 }

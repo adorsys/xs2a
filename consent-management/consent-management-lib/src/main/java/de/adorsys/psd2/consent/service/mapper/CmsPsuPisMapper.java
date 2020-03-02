@@ -42,7 +42,7 @@ public class CmsPsuPisMapper {
     private final CmsRemittanceMapper cmsRemittanceMapper;
     private final CorePaymentsConvertService corePaymentsConvertService;
 
-        public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
+    public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
         CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
         cmsCommonPayment.setPaymentId(paymentData.getPaymentId());
         cmsCommonPayment.setPaymentProduct(paymentData.getPaymentProduct());
@@ -54,6 +54,7 @@ public class CmsPsuPisMapper {
         cmsCommonPayment.setPsuIdDatas(psuDataMapper.mapToPsuIdDataList(paymentData.getPsuDataList()));
         cmsCommonPayment.setCreationTimestamp(paymentData.getCreationTimestamp());
         cmsCommonPayment.setStatusChangeTimestamp(paymentData.getStatusChangeTimestamp());
+        cmsCommonPayment.setTppBrandLoggingInformation(paymentData.getTppBrandLoggingInformation());
         return cmsCommonPayment;
     }
 
@@ -84,7 +85,7 @@ public class CmsPsuPisMapper {
         List<PisPaymentData> pisPaymentData = pisCommonPaymentData.getPayments();
         if (pisPaymentData.isEmpty()) {
             CmsPayment cmsPayment = mapToCmsPayment(pisCommonPaymentData);
-            return corePaymentsConvertService.expandCommonPaymentWithCorePayment((CmsCommonPayment)cmsPayment);
+            return corePaymentsConvertService.expandCommonPaymentWithCorePayment((CmsCommonPayment) cmsPayment);
         } else {
             return mapToCmsPayment(pisPaymentData);
         }
@@ -172,12 +173,12 @@ public class CmsPsuPisMapper {
     private CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
                    .map(ref -> new CmsAccountReference(null,
-                       ref.getIban(),
-                       ref.getBban(),
-                       ref.getPan(),
-                       ref.getMaskedPan(),
-                       ref.getMsisdn(),
-                       ref.getCurrency())
+                                                       ref.getIban(),
+                                                       ref.getBban(),
+                                                       ref.getPan(),
+                                                       ref.getMaskedPan(),
+                                                       ref.getMsisdn(),
+                                                       ref.getCurrency())
                    ).orElse(null);
     }
 }

@@ -122,7 +122,7 @@ class ConsentControllerTest {
                                                                         null, false, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null);
+                                                                        null, null);
         ConsentsResponse201 resp = (ConsentsResponse201) responseEntity.getBody();
 
         //Then:
@@ -145,7 +145,7 @@ class ConsentControllerTest {
                                                                                            null, false, null, null,
                                                                                            EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                                            null, null, null, null, null,
-                                                                                           null));
+                                                                                           null, null));
     }
 
     @Test
@@ -165,7 +165,7 @@ class ConsentControllerTest {
                                                                         null, false, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
-                                                                        null);
+                                                                        null, null);
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }

@@ -34,5 +34,6 @@
     "nokUri" : "nokUri"
   },
   "aspspAccountId": "some account id",
-  "contentType": "application/json"
+  "contentType": "application/json",
+  "tppBrandLoggingInformation" : "tppBrandLoggingInformation"
 }

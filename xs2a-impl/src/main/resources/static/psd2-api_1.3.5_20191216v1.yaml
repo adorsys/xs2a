@@ -194,6 +194,7 @@ paths:
         - $ref: "#/components/parameters/PSU-Http-Method"
         - $ref: "#/components/parameters/PSU-Device-ID"
         - $ref: "#/components/parameters/PSU-Geo-Location"
+        - $ref: "#/components/parameters/TPP-Brand-Logging-Information"
 
       requestBody:
         $ref: "#/components/requestBodies/paymentInitiation"
@@ -2249,6 +2250,7 @@ paths:
         - $ref: "#/components/parameters/PSU-Http-Method"
         - $ref: "#/components/parameters/PSU-Device-ID"
         - $ref: "#/components/parameters/PSU-Geo-Location"
+        - $ref: "#/components/parameters/TPP-Brand-Logging-Information"
 
       requestBody:
         $ref: "#/components/requestBodies/consents"
@@ -10502,6 +10504,15 @@ components:
         format: uri
       required: false
 
+    TPP-Brand-Logging-Information:
+      name: TPP-Brand-Logging-Information
+      in: header
+      description: This header might be used by TPPs to inform the ASPSP about the brand used by the TPP towards the PSU.
+        This information is meant for logging entries to enhance communication between ASPSP and PSU or ASPSP and TPP.
+        This header might be ignored by the ASPSP.
+      schema:
+        type: string
+        required: false # conditional
 
     TPP-Explicit-Authorisation-Preferred:
       name: TPP-Explicit-Authorisation-Preferred

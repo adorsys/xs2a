@@ -90,6 +90,7 @@ class AisConsentMapperTest {
     private static final String CANCEL_REDIRECT_URI = "cancel redirect uri";
     private static final String CANCEL_NOK_REDIRECT_URI = "cancel nok redirect uri";
     private static final AisConsent AIS_CONSENT = buildAisConsent(AIS_CONSENT_DATA, Collections.emptyList(), buildTppAccountAccessAccounts(), buildAspspAccountAccessAccounts());
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -326,6 +327,7 @@ class AisConsentMapperTest {
         assertEquals(USAGE_COUNTER, aisAccountConsent.getUsageCounterMap());
         assertEquals(consentEntity.getCreationTimestamp(), aisAccountConsent.getCreationTimestamp());
         assertEquals(consentEntity.getStatusChangeTimestamp(), aisAccountConsent.getStatusChangeTimestamp());
+        assertEquals(consentEntity.getTppInformation().getTppBrandLoggingInformation(), aisAccountConsent.getTppBrandLoggingInformation());
     }
 
     private static AisConsent buildAisConsent(AisConsentData aisConsentData, List<AccountConsentAuthorization> accountConsentAuthorizations, AccountAccess tppAccountAccesses, AccountAccess aspspAccountAccesses) {
@@ -365,6 +367,7 @@ class AisConsentMapperTest {
         consentTppInformationEntity.setTppRedirectPreferred(true);
         consentTppInformationEntity.setTppInfo(TPP_INFO_ENTITY);
         consentTppInformationEntity.setTppFrequencyPerDay(7);
+        consentTppInformationEntity.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
         return consentTppInformationEntity;
     }
 

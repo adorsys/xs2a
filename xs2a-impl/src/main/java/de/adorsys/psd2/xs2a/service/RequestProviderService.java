@@ -48,6 +48,7 @@ public class RequestProviderService {
     private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
     private static final String ACCEPT_HEADER = "accept";
     private static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
@@ -158,6 +159,10 @@ public class RequestProviderService {
 
     public String getEncodedTppQwacCert() {
         return getHeader(TPP_QWAC_CERTIFICATE_HEADER);
+    }
+
+    public String getTppBrandLoggingInformationHeader() {
+        return getHeader(TPP_BRAND_LOGGING_INFORMATION);
     }
 
     private String getHeader(String headerName) {

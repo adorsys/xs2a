@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -72,7 +73,7 @@ class CancelPaymentServiceTest {
     private static final PsuIdData PSU_DATA = buildPsuIdData();
     private static final SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().psuId(PSU_DATA.getPsuId()).psuIdType(PSU_DATA.getPsuIdType()).psuCorporateId(PSU_DATA.getPsuCorporateId()).psuCorporateIdType(PSU_DATA.getPsuCorporateIdType()).build();
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, new TppInfo(), UUID.randomUUID(), UUID.randomUUID(), AUTHORISATION);
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.buildWithPsuTppAuthToken(SPI_PSU_DATA, new TppInfo(), AUTHORISATION);
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     @InjectMocks

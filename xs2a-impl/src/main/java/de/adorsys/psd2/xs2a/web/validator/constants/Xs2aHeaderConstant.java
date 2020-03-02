@@ -37,6 +37,7 @@ public class Xs2aHeaderConstant {
     public static final String TPP_EXPLICIT_AUTHORISATION_PREFERRED = "tpp-explicit-authorisation-preferred";
 
     public static final String TPP_REJECTION_NO_FUNDS_PREFERRED = "tpp-rejection-no funds-preferred";
+    public static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
 
     private Xs2aHeaderConstant() {
     }

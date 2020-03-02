@@ -13,5 +13,6 @@
     "psuCorporateId": "psu Corporate Id",
     "psuCorporateIdType": "psuCorporate Id Type",
     "psuIpAddress": "psuIp Address"
-  }
+  },
+  "tppBrandLoggingInformation" : "tppBrandLoggingInformation"
 }
