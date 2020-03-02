@@ -51,6 +51,7 @@ import java.util.UUID;
 @Service
 public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
+    private static final String PSU_MESSAGE = "Message from ASPSP to PSU";
 
     @Override
     @NotNull
@@ -88,7 +89,7 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
         log.info("BulkPaymentSpi#getPaymentStatusById: contextData {}, spiBulkPayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null))
+                   .payload(new SpiGetPaymentStatusResponse(payment.getPaymentStatus(), true, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
                    .build();
     }
 
