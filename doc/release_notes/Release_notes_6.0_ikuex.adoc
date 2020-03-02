@@ -1,0 +1,10 @@
+= Release notes v.6.0
+
+== Table of Contents
+* Support header TPP-Brand-Logging-Information
+
+== Support header TPP-Brand-Logging-Information
+
+From now on, header `TPP-Brand-Logging-Information` is supported by XS2A.
+This header can be passed with payment initiation or consent creation requests.
+This header is accessible in SPI level in SpiContextData object, also saved in CMS database and can be retrieved as a field of payment or consent from CMS-PSU-API.

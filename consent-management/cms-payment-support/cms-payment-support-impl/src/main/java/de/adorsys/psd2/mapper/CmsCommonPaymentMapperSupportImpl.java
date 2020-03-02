@@ -91,6 +91,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setUltimateCreditor(periodicPaymentInitiationJson.getUltimateCreditor());
         periodicPayment.setPurposeCode(mapToPurposeCode(periodicPaymentInitiationJson.getPurposeCode()));
         periodicPayment.setRemittanceInformationStructured(mapToCmsRemittance(periodicPaymentInitiationJson.getRemittanceInformationStructured()));
+        periodicPayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
 
         return periodicPayment;
     }
@@ -108,6 +109,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
                                               .map(p -> mapToCmsSinglePayment(p, cmsCommonPayment))
                                               .collect(Collectors.toList());
         bulkPayment.setPayments(payments);
+        bulkPayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
 
         return bulkPayment;
     }
@@ -151,6 +153,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         singlePayment.setPurposeCode(mapToPurposeCode(paymentInitiationJson.getPurposeCode()));
         singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationJson.getRemittanceInformationStructured()));
+        singlePayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
         return singlePayment;
     }
 

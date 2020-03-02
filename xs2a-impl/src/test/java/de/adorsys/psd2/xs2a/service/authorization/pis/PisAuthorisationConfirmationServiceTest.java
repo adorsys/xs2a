@@ -47,6 +47,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeReq
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -307,7 +308,7 @@ class PisAuthorisationConfirmationServiceTest {
     }
 
     private SpiContextData getSpiContextData() {
-        return new SpiContextData(null, null, null, null, null);
+        return TestSpiDataProvider.defaultSpiContextData();
     }
 
     private Authorisation buildGetPisAuthorisationResponse() {

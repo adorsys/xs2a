@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.ais.AisAccountConsentAuthorisation;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.domain.consent.ConsentTppInformationEntity;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
@@ -65,6 +66,7 @@ public class AisConsentMapper {
     public CmsAisAccountConsent mapToCmsAisAccountConsent(ConsentEntity consent, List<AuthorisationEntity> authorisations) {
         AisConsent aisConsent = mapToAisConsent(consent, authorisations);
         AisAccountAccess chosenAccess = getAvailableAccess(aisConsent);
+        ConsentTppInformationEntity tppInformation = consent.getTppInformation();
 
         return new CmsAisAccountConsent(
             consent.getExternalId(),
@@ -76,16 +78,17 @@ public class AisConsentMapper {
             consent.getLastActionDate(),
             consent.getConsentStatus(),
             aisConsent.isWithBalance(),
-            consent.getTppInformation().isTppRedirectPreferred(),
+            tppInformation.isTppRedirectPreferred(),
             aisConsent.getConsentRequestType(),
             aisConsent.getPsuIdDataList(),
-            tppInfoMapper.mapToTppInfo(consent.getTppInformation().getTppInfo()),
+            tppInfoMapper.mapToTppInfo(tppInformation.getTppInfo()),
             aisConsent.getAuthorisationTemplate(),
             consent.isMultilevelScaRequired(),
             mapToAisAccountConsentAuthorisation(authorisations),
             aisConsent.getUsageCounterMap(),
             consent.getCreationTimestamp(),
-            consent.getStatusChangeTimestamp());
+            consent.getStatusChangeTimestamp(),
+            tppInformation.getTppBrandLoggingInformation());
     }
 
     public AisConsent mapToAisConsent(ConsentEntity entity, List<AuthorisationEntity> authorisations) {

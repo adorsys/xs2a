@@ -46,7 +46,7 @@ class PisCheckAuthorisationConfirmationServiceSupportImplTest {
     private static final String STANDARD_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String RAW_PAYMENT_PRODUCT = "raw-product";
-    private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(null, null, null, null, null);
+    private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.defaultSpiContextData();
     private static final SpiCheckConfirmationCodeRequest SPI_CONFIRMATION_CODE = new SpiCheckConfirmationCodeRequest(null, AUTHORISATION_ID);
 
     @Mock

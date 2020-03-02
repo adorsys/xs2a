@@ -70,12 +70,12 @@ public class ConsentController implements ConsentApi {
                                         String tppNotificationContentPreferred, String psuIpPort, String psuAccept,
                                         String psuAcceptCharset, String psuAcceptEncoding, String psuAcceptLanguage,
                                         String psuUserAgent, String psuHttpMethod, UUID psuDeviceId,
-                                        String psuGeoLocation) {
+                                        String psuGeoLocation, String tppBrandLoggingInformation) {
 
         TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectUriString, tppNokRedirectUriString);
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, tppNotificationUri);
 
-        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri, tppNotificationData);
+        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri, tppNotificationData, tppBrandLoggingInformation);
 
         PsuIdData psuData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, psuIpAddress,
                                           new AdditionalPsuIdData(psuIpPort, psuUserAgent, psuGeoLocation, psuAccept, psuAcceptCharset, psuAcceptEncoding, psuAcceptLanguage, psuHttpMethod, psuDeviceId));

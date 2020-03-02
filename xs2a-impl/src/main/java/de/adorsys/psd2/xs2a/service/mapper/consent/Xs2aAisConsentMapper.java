@@ -142,6 +142,7 @@ public class Xs2aAisConsentMapper {
                                                             .map(TppNotificationData::getNotificationModes)
                                                             .orElse(Collections.emptyList()));
         tppInformation.setTppRedirectPreferred(requestProviderService.resolveTppRedirectPreferred().orElse(false));
+        tppInformation.setTppBrandLoggingInformation(request.getTppBrandLoggingInformation());
         cmsConsent.setTppInformation(tppInformation);
 
         AuthorisationTemplate authorisationTemplate = new AuthorisationTemplate();
