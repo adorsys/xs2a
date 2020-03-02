@@ -88,6 +88,7 @@ class PaymentServiceTest {
     private static final String XS2A_SINGLE_PAYMENT_JSON_PATH = "json/service/mapper/spi_xs2a_mappers/xs2a-single-payment.json";
     private static final String XS2A_BULK_PAYMNENT_JSON_PATH = "json/service/mapper/spi_xs2a_mappers/xs2a-bulk-payment.json";
     private static final String XS2A_PERIODIC_PAYMENT_JSON_PATH = "json/service/mapper/spi_xs2a_mappers/xs2a-periodic-payment.json";
+    private static final String PSU_MESSAGE = "PSU message";
 
     @InjectMocks
     private PaymentService paymentService;
@@ -552,7 +553,7 @@ class PaymentServiceTest {
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), eq(PAYMENT_ID), eq(JSON_MEDIA_TYPE)))
-            .thenReturn(new ReadPaymentStatusResponse(RCVD, null, MediaType.APPLICATION_JSON, null));
+            .thenReturn(new ReadPaymentStatusResponse(RCVD, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE));
         when(paymentServiceResolver.getReadPaymentStatusService(any(PisCommonPaymentResponse.class))).thenReturn(readPaymentStatusService);
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
@@ -579,7 +580,7 @@ class PaymentServiceTest {
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
         when(paymentServiceResolver.getReadPaymentStatusService(any(PisCommonPaymentResponse.class))).thenReturn(readPaymentStatusService);
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), eq(PAYMENT_ID), eq(JSON_MEDIA_TYPE)))
-            .thenReturn(new ReadPaymentStatusResponse(transactionStatus, null, MediaType.APPLICATION_JSON, null));
+            .thenReturn(new ReadPaymentStatusResponse(transactionStatus, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
         when(requestProviderService.getAcceptHeader()).thenReturn(JSON_MEDIA_TYPE);
@@ -629,7 +630,7 @@ class PaymentServiceTest {
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), any(String.class), eq(JSON_MEDIA_TYPE)))
-            .thenReturn(new ReadPaymentStatusResponse(ACCP, null, MediaType.APPLICATION_JSON, null));
+            .thenReturn(new ReadPaymentStatusResponse(ACCP, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
@@ -654,7 +655,7 @@ class PaymentServiceTest {
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(anyString())).thenReturn(Optional.of(pisCommonPaymentResponse));
         when(readPaymentStatusService.readPaymentStatus(any(), any(SpiContextData.class), any(String.class), eq(JSON_MEDIA_TYPE)))
-            .thenReturn(new ReadPaymentStatusResponse(ACCP, true, MediaType.APPLICATION_JSON, null));
+            .thenReturn(new ReadPaymentStatusResponse(ACCP, true, MediaType.APPLICATION_JSON, null, PSU_MESSAGE));
         when(updatePaymentStatusAfterSpiService.updatePaymentStatus(anyString(), any(TransactionStatus.class)))
             .thenReturn(true);
         when(spiContextDataProvider.provideWithPsuIdData(any())).thenReturn(SPI_CONTEXT_DATA);
@@ -882,14 +883,6 @@ class PaymentServiceTest {
         CancelPaymentResponse cancelPaymentResponse = jsonReader.getObjectFromFile("json/service/mapper/cancel-payment-response.json", CancelPaymentResponse.class);
         cancelPaymentResponse.setTransactionStatus(CANC);
         return cancelPaymentResponse;
-    }
-
-    private Optional<PisCommonPaymentResponse> getPisCommonPayment() {
-        PisCommonPaymentResponse response = new PisCommonPaymentResponse();
-        PisPayment pisPayment = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/pis-payment.json", PisPayment.class);
-        response.setPayments(Collections.singletonList(pisPayment));
-        response.setPaymentProduct(PAYMENT_PRODUCT);
-        return Optional.of(response);
     }
 
     private PisCommonPaymentResponse getFinalisedPisCommonPayment() {

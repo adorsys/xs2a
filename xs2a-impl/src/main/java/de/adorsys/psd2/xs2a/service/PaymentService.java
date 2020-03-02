@@ -51,7 +51,8 @@ import java.util.EnumSet;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Slf4j
@@ -201,7 +202,7 @@ public class PaymentService {
 
         // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
-            return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null)).build();
+            return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null, null)).build();
         }
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
@@ -233,7 +234,7 @@ public class PaymentService {
 
         loggingContextService.storeTransactionStatus(transactionStatus);
 
-        GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus, readPaymentStatusResponse.getFundsAvailable(), readPaymentStatusResponse.getResponseContentType(), readPaymentStatusResponse.getPaymentStatusRaw());
+        GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus, readPaymentStatusResponse.getFundsAvailable(), readPaymentStatusResponse.getResponseContentType(), readPaymentStatusResponse.getPaymentStatusRaw(), readPaymentStatusResponse.getPsuMessage());
         return ResponseObject.<GetPaymentStatusResponse>builder().body(response).build();
     }
 
