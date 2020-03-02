@@ -185,8 +185,8 @@ DOCKER test image build:
   variables:
     DOCKER_TAG: develop
   except:
-    - master-2.x
-    - support-2.x
+    - master-6.x
+    - support-6.x
 
 PMD Check Java8:
   stage: "Test"
@@ -273,61 +273,6 @@ AsciiDoc Test:
   script:
     - make pages
 
-# Build DEVELOP image and deploy to DEV
-
-Push to DockerHub (develop):
-  stage: "Package"
-  only:
-    - develop
-  variables:
-    DOCKER_TAG: develop
-  <<: *build_dockerhub_image
-
-Deploy to Openshift (develop):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - develop
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: develop # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
-  <<: *deploy_openshift
-
-# Build SUPPORT image and deploy to SUPPORT
-
-Push to DockerHub (support):
-  stage: "Package"
-  only:
-    - support-6.x
-  script:
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support" xs2a-standalone-starter
-    - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
-    - docker logout
-
-Deploy to Openshift (support):
-  stage: "Deploy"
-  only:
-    - support-6.x
-  script:
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_XS2A}:latest"
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:support"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:latest"
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:support"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
-
 #Build Support-6.x images and deploy to support-6.x
 
 Push to DockerHub (support-6.x):
@@ -364,51 +309,6 @@ Notify Slack channel (support-6.x):
     - apk update && apk add jq curl
     - sleep 60
     - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
-
-# Build NIGHTLY image and deploy (scheduled) to INTEG
-
-Push to DockerHub (nightly):
-  stage: "Package"
-  only:
-    - schedules
-  variables:
-    DOCKER_TAG: nightly
-  <<: *build_dockerhub_image
-
-Deploy to Openshift (nightly):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-  - schedules
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: nightly # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_INTEG} # Openshift target namespace
-  <<: *deploy_openshift
-
-# Build MASTER image and deploy to DEMO
-
-Push to DockerHub (master):
-  stage: "Package"
-  only:
-    - master
-  variables:
-    DOCKER_TAG: latest
-  <<: *build_dockerhub_image
-
-Deploy to Openshift (master):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - master
-  when: manual
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: latest # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
-  <<: *deploy_openshift
 
 # Build RELEASE image and deploy (manual) to DEMO
 
