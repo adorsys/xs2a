@@ -31,4 +31,5 @@ public class PaymentInitiationParameters {
     private boolean tppExplicitAuthorisationPreferred;
     private PsuIdData psuData;
     private TppNotificationData tppNotificationData;
+    private String tppBrandLoggingInformation;
 }

@@ -49,7 +49,7 @@ public class ConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri, TppNotificationData tppNotificationData) {
+    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri, TppNotificationData tppNotificationData, String tppBrandLoggingInformation) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
                        CreateConsentReq createAisConsentRequest = new CreateConsentReq();
@@ -63,6 +63,7 @@ public class ConsentModelMapper {
                        createAisConsentRequest.setAvailableAccounts(mapToAccountAccessTypeFromAvailableAccounts(cnst.getAccess().getAvailableAccounts()));
                        createAisConsentRequest.setAllPsd2(mapToAccountAccessTypeFromAllPsd2Enum(cnst.getAccess().getAllPsd2()));
                        createAisConsentRequest.setAvailableAccountsWithBalance(mapToAccountAccessTypeFromAvailableAccountsWithBalance(cnst.getAccess().getAvailableAccountsWithBalance()));
+                       createAisConsentRequest.setTppBrandLoggingInformation(tppBrandLoggingInformation);
                        return createAisConsentRequest;
                    })
                    .orElse(null);

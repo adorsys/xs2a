@@ -50,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class CmsCommonPaymentMapperSupportImplTest {
 
     private static final String PAYMENT_PRODUCT = "payments";
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
 
     @Autowired
     private CmsCommonPaymentMapperSupportImpl mapper;
@@ -156,6 +157,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setTppInfo(cmsCommonPayment.getTppInfo());
         payment.setCreationTimestamp(cmsCommonPayment.getCreationTimestamp());
         payment.setStatusChangeTimestamp(cmsCommonPayment.getStatusChangeTimestamp());
+        payment.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
 
         return payment;
     }
@@ -176,6 +178,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
 
         payment.setPayments(getBulkPayments(paymentInitiationJson.getPayments().get(0)));
+        payment.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
         return payment;
     }
 
@@ -217,6 +220,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setTppInfo(tppInfo);
         payment.setCreationTimestamp(OffsetDateTime.now());
         payment.setStatusChangeTimestamp(OffsetDateTime.now());
+        payment.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
         return payment;
     }
 
@@ -238,6 +242,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         payment.setRemittanceInformationStructured(getRemittanceInformationStructured(paymentInitiationJson.getRemittanceInformationStructured()));
         payment.setPurposeCode(paymentInitiationJson.getPurposeCode().name());
+        payment.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
         return payment;
     }
 

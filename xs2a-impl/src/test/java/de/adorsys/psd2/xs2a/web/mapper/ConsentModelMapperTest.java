@@ -167,7 +167,7 @@ class ConsentModelMapperTest {
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAvailableAccountsWithBalances.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
         //Then
         assertEquals(expected, actual);
     }
@@ -180,7 +180,7 @@ class ConsentModelMapperTest {
         Consents consent = jsonReader.getObjectFromFile("json/ConsentsAdditionalAccountInformation.json", Consents.class);
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformation.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
         //Then
         assertEquals(expected, actual);
     }
@@ -193,7 +193,19 @@ class ConsentModelMapperTest {
         consent.getAccess().getAdditionalInformation().setOwnerName(Collections.emptyList());
         CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqAdditionalAccountInformationOwnerNameEmpty.json", CreateConsentReq.class);
         //When
-        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null);
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, null);
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToCreateConsentReq_TppBrandLoggingInformation() {
+        //Given
+        when(xs2aObjectMapper.convertValue(buildAccountReferenceWithoutIds(), AccountReference.class)).thenReturn(buildXs2aAccountReference());
+        Consents consent = jsonReader.getObjectFromFile("json/ConsentsAvailableAccountsWithBalances.json", Consents.class);
+        CreateConsentReq expected = jsonReader.getObjectFromFile("json/CreateConsentReqTppBrandLoggingInformation.json", CreateConsentReq.class);
+        //When
+        CreateConsentReq actual = consentModelMapper.mapToCreateConsentReq(consent, new TppRedirectUri("ok.url", "nok.url"), null, "tppBrandLoggingInformation");
         //Then
         assertEquals(expected, actual);
     }

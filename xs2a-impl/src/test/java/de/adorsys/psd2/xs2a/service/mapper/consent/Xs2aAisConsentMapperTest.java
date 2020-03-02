@@ -58,6 +58,7 @@ import static org.mockito.Mockito.when;
 class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
 
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psuId", null, null, null, null);
     private static final TppInfo TPP_INFO = new TppInfo();
@@ -175,6 +176,7 @@ class Xs2aAisConsentMapperTest {
         assertEquals(Collections.singletonList(PSU_ID_DATA), cmsConsent.getPsuIdDataList());
         assertEquals(ConsentType.AIS, cmsConsent.getConsentType());
         assertEquals(ConsentStatus.RECEIVED, cmsConsent.getConsentStatus());
+        assertEquals(TPP_BRAND_LOGGING_INFORMATION, cmsConsent.getTppInformation().getTppBrandLoggingInformation());
     }
 
     @Test

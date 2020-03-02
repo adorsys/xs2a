@@ -49,7 +49,7 @@ class PisExecutePaymentServiceCommonImplTest {
     @Test
     void verifyScaAuthorisationAndExecutePayment() {
         // Given
-        SpiContextData spiContextData = new SpiContextData(null, null, null, null, null);
+        SpiContextData spiContextData = TestSpiDataProvider.defaultSpiContextData();
         SpiScaConfirmation spiScaConfirmation = new SpiScaConfirmation();
         SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
 
@@ -72,7 +72,7 @@ class PisExecutePaymentServiceCommonImplTest {
     @Test
     void executePaymentWithoutSca() {
         // Given
-        SpiContextData spiContextData = new SpiContextData(null, null, null, null, null);
+        SpiContextData spiContextData = TestSpiDataProvider.defaultSpiContextData();
         SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
 
         SpiResponse<SpiPaymentExecutionResponse> commonServiceResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()

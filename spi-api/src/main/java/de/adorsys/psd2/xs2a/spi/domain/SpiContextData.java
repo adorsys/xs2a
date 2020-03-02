@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -36,4 +37,6 @@ public class SpiContextData {
     private UUID xRequestId;
     private UUID internalRequestId;
     private String oAuth2Token;
+    @Nullable
+    private String tppBrandLoggingInformation;
 }
