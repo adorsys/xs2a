@@ -320,15 +320,15 @@ Push to DockerHub (release):
     DOCKER_TAG: ${CI_COMMIT_TAG}
   <<: *build_dockerhub_image
 
-Deploy to Openshift (release):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - tags
-  when: manual
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
-  <<: *deploy_openshift
+# Deploy to Openshift (release):
+#   stage: "Deploy"
+#   cache: {}
+#   dependencies: []
+#   only:
+#     - tags
+#   when: manual
+#   variables:
+#     GIT_STRATEGY: none
+#     DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
+#     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
+#   <<: *deploy_openshift
