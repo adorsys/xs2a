@@ -36,6 +36,12 @@
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>xs2a-core</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
