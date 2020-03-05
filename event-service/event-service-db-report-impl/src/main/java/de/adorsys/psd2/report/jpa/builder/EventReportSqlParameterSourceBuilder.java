@@ -64,12 +64,12 @@ public class EventReportSqlParameterSourceBuilder extends MapSqlParameterSource 
     }
 
     public EventReportSqlParameterSourceBuilder eventType(EventType eventType) {
-        values.put("eventType", eventType);
+        values.put("eventType", eventType.toString());
         return this;
     }
 
     public EventReportSqlParameterSourceBuilder eventOrigin(EventOrigin eventOrigin) {
-        values.put("eventOrigin", eventOrigin);
+        values.put("eventOrigin", eventOrigin.toString());
         return this;
     }
 

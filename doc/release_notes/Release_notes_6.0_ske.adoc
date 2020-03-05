@@ -1,0 +1,8 @@
+= Release notes v.6.0
+
+== Table of Contents
+* Fixed disabled tests in `EventReportRepositoryImplIT`
+
+== Fixed disabled tests in `EventReportRepositoryImplIT`
+
+From now, on the tests in `EventReportRepositoryImplIT` are executable again.
