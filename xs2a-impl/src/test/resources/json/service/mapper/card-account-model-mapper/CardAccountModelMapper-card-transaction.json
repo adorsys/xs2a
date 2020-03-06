@@ -3,6 +3,7 @@
   "terminalId": "4",
   "bookingDate": "2017-01-01",
   "transactionDate": "2017-01-01",
+  "acceptorTransactionDateTime": "2017-01-01T12:00:00Z",
   "transactionAmount": {
     "currency": "USD",
     "amount": "100"
@@ -17,5 +18,29 @@
       "contractIdentification": "identification"
     }
   ],
+  "originalAmount": {
+    "currency": "USD",
+    "amount": "100"
+  },
+  "markupFee": {
+    "currency": "USD",
+    "amount": "100"
+  },
+  "markupFeePercentage": "1",
+  "cardAcceptorId": "acceptor ID",
+  "cardAcceptorAddress": {
+    "streetName": "WBG Straße",
+    "buildingNumber": "56",
+    "townName": "Nürnberg",
+    "postCode": "90543",
+    "country": {
+      "code": "DE"
+    }
+  },
+  "cardAcceptorPhone": "+61-(02)9999999999-9999",
+  "merchantCategoryCode": "merchant code",
+  "maskedPAN": "23456xxxxxx1234",
+  "transactionDetails": "transaction details",
+  "invoiced": "true",
   "proprietaryBankTransactionCode": "very secret code"
 }

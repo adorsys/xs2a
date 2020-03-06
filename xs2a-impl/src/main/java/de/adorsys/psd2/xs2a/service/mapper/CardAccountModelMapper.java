@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -51,31 +50,27 @@ public abstract class CardAccountModelMapper {
     @Autowired
     protected AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    @Mapping(target = "currency", source = "currency.currencyCode")
-    public abstract CardAccountDetails mapToCardAccountDetails(AccountReference accountReference);
-
-    public abstract List<CardAccountDetails> mapToCardAccountDetails(List<AccountReference> accountReferences);
-
     public CardAccountList mapToCardAccountList(Xs2aCardAccountListHolder xs2aCardAccountListHolder) {
         List<Xs2aCardAccountDetails> accountDetailsList = xs2aCardAccountListHolder.getCardAccountDetails();
 
         List<CardAccountDetails> details = accountDetailsList.stream()
-                                               .map(this::mapToCardAccountList)
+                                               .map(this::mapToCardAccountDetails)
                                                .collect(Collectors.toList());
         return new CardAccountList().cardAccounts(details);
     }
 
     public InlineResponse2002 mapToInlineResponse202(Xs2aCardAccountDetailsHolder xs2aAccountDetailsHolder) {
         InlineResponse2002 inlineResponse202 = new InlineResponse2002();
-        inlineResponse202.setCardAccount(mapToCardAccountList(xs2aAccountDetailsHolder.getCardAccountDetails()));
+        inlineResponse202.setCardAccount(mapToCardAccountDetails(xs2aAccountDetailsHolder.getCardAccountDetails()));
         return inlineResponse202;
     }
 
+    @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()))")
     @Mapping(target = "status", source = "accountStatus")
     @Mapping(target = "usage", source = "usageType")
     @Mapping(target = "currency", expression = "java(mapToAccountDetailsCurrency(accountDetails.getCurrency()))")
-    public abstract CardAccountDetails mapToCardAccountList(Xs2aCardAccountDetails accountDetails);
+    public abstract CardAccountDetails mapToCardAccountDetails(Xs2aCardAccountDetails accountDetails);
 
     @Mapping(target = "balanceType", expression = "java(mapToBalanceType(balance.getBalanceType()))")
     @Mapping(target = "lastChangeDateTime", expression = "java(mapToOffsetDateTime(balance.getLastChangeDateTime()))")
@@ -84,9 +79,11 @@ public abstract class CardAccountModelMapper {
     @Mapping(target = "cardAccount", source = "xs2aAccountReference")
     public abstract ReadCardAccountBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport);
 
+    @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountReport.getLinks()))")
     public abstract CardAccountReport mapToCardAccountReport(Xs2aCardAccountReport accountReport);
 
+    @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(cardTransactionsReport.getLinks()))")
     @Mapping(target = "cardTransactions", source = "cardAccountReport")
     @Mapping(target = "cardAccount", source = "accountReference")

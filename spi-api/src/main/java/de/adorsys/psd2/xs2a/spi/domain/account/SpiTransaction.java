@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,13 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@RequiredArgsConstructor
 public class SpiTransaction {
     private final String transactionId;
     private final String entryReference;
@@ -43,12 +45,34 @@ public class SpiTransaction {
     private final String debtorAgent;
     private final String ultimateDebtor;
     private final String remittanceInformationUnstructured;
+    private final List<String> remittanceInformationUnstructuredArray;
     private final String remittanceInformationStructured;
+    private final List<String> remittanceInformationStructuredArray;
     private final String purposeCode;
     private final String bankTransactionCodeCode;
     private final String proprietaryBankTransactionCode;
+    private final String additionalInformation;
     private final SpiAdditionalInformationStructured additionalInformationStructured;
     private final SpiAccountBalance balanceAfterTransaction;
+
+    /**
+     * @deprecated since 6.0/7.0, use all args constructor instead
+     */
+    @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
+    public SpiTransaction(String transactionId, String entryReference, String endToEndId, String mandateId, String checkId,
+                          String creditorId, LocalDate bookingDate, LocalDate valueDate, SpiAmount spiAmount,
+                          List<SpiExchangeRate> exchangeRate, String creditorName, SpiAccountReference creditorAccount,
+                          String creditorAgent, String ultimateCreditor, String debtorName, SpiAccountReference debtorAccount,
+                          String debtorAgent, String ultimateDebtor, String remittanceInformationUnstructured,
+                          String remittanceInformationStructured, String purposeCode, String bankTransactionCodeCode,
+                          String proprietaryBankTransactionCode, SpiAdditionalInformationStructured additionalInformationStructured,
+                          SpiAccountBalance balanceAfterTransaction) {
+        this(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, spiAmount,
+             exchangeRate, creditorName, creditorAccount, creditorAgent, ultimateCreditor, debtorName, debtorAccount, debtorAgent,
+             ultimateDebtor, remittanceInformationUnstructured, null, remittanceInformationStructured,
+             null, purposeCode, bankTransactionCodeCode, proprietaryBankTransactionCode,
+             null, additionalInformationStructured, balanceAfterTransaction);
+    }
 
     public boolean isBookedTransaction() {
         return bookingDate != null;

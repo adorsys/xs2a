@@ -78,6 +78,9 @@ public class PeriodicPaymentInitiationJson {
     @JsonProperty("remittanceInformationStructured")
     private RemittanceInformationStructured remittanceInformationStructured = null;
 
+    @JsonProperty("remittanceInformationStructuredArray")
+    private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
+
     @JsonProperty("startDate")
     private LocalDate startDate = null;
 
@@ -428,6 +431,30 @@ public class PeriodicPaymentInitiationJson {
         this.remittanceInformationStructured = remittanceInformationStructured;
     }
 
+    public PeriodicPaymentInitiationJson remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+        this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+        return this;
+    }
+
+    /**
+     * Get remittanceInformationStructuredArray
+     *
+     * @return remittanceInformationStructuredArray
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("remittanceInformationStructuredArray")
+    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+        return remittanceInformationStructuredArray;
+    }
+
+    public void setRemittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+        this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+    }
+
     public PeriodicPaymentInitiationJson startDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
@@ -597,6 +624,7 @@ public class PeriodicPaymentInitiationJson {
                    Objects.equals(this.purposeCode, periodicPaymentInitiationJson.purposeCode) &&
                    Objects.equals(this.remittanceInformationUnstructured, periodicPaymentInitiationJson.remittanceInformationUnstructured) &&
                    Objects.equals(this.remittanceInformationStructured, periodicPaymentInitiationJson.remittanceInformationStructured) &&
+                   Objects.equals(this.remittanceInformationStructuredArray, periodicPaymentInitiationJson.remittanceInformationStructuredArray) &&
                    Objects.equals(this.startDate, periodicPaymentInitiationJson.startDate) &&
                    Objects.equals(this.endDate, periodicPaymentInitiationJson.endDate) &&
                    Objects.equals(this.executionRule, periodicPaymentInitiationJson.executionRule) &&
@@ -607,7 +635,7 @@ public class PeriodicPaymentInitiationJson {
 
     @Override
     public int hashCode() {
-        return Objects.hash(endToEndIdentification, instructionIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorId, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution, debtorName);
+      return Objects.hash(endToEndIdentification, instructionIdentification, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorId, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, remittanceInformationStructuredArray, startDate, endDate, executionRule, frequency, dayOfExecution, debtorName);
     }
 
     @Override
@@ -629,6 +657,7 @@ public class PeriodicPaymentInitiationJson {
         sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
         sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
         sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
+        sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");
         sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
         sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
         sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");

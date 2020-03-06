@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,14 @@ import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -67,7 +69,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     @Override
     public MessageError validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
-            doSingleValidation(paymentMapper.getSinglePayment(body), messageError, validationConfig);
+            doSingleValidation(paymentMapper.mapToSinglePayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));
@@ -116,6 +118,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(singlePayment.getInstructionIdentification(), "instructionIdentification", validationConfig.getInstructionIdentification(), messageError);
         checkFieldForMaxLength(singlePayment.getDebtorName(), "debtorName", validationConfig.getDebtorName(), messageError);
         validateRemittanceInformationStructured(singlePayment.getRemittanceInformationStructured(), messageError, validationConfig);
+        validateRemittanceInformationStructuredArray(singlePayment.getRemittanceInformationStructuredArray(), messageError, validationConfig);
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError, PaymentValidationConfig validationConfig) {
@@ -161,6 +164,12 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
 
     private String normalizeString(String string) {
         return string.replaceAll("[^a-zA-Z0-9]", "");
+    }
+
+    private void validateRemittanceInformationStructuredArray(List<Remittance> remittanceList, MessageError messageError, PaymentValidationConfig validationConfig) {
+        if (CollectionUtils.isNotEmpty(remittanceList)) {
+            remittanceList.forEach(remittance -> validateRemittanceInformationStructured(remittance, messageError, validationConfig));
+        }
     }
 
     private void validateRemittanceInformationStructured(Remittance remittance, MessageError messageError, PaymentValidationConfig validationConfig) {

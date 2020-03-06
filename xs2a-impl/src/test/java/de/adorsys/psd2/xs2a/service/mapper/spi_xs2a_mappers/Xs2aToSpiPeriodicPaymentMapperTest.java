@@ -44,10 +44,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -150,6 +147,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(ULTIMATE_CREDITOR, spiPeriodicPayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiPeriodicPayment.getPurposeCode());
         assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructured());
+        assertEquals(Collections.singletonList(remittanceMapper.mapToSpiRemittance(REMITTANCE)), spiPeriodicPayment.getRemittanceInformationStructuredArray());
         assertEquals(periodicPayment.getCreationTimestamp(), spiPeriodicPayment.getCreationTimestamp());
         assertEquals(periodicPayment.getContentType(), spiPeriodicPayment.getContentType());
     }
@@ -163,7 +161,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setDayOfExecution(PisDayOfExecution._13);
         periodicPayment.setPaymentId(PAYMENT_ID);
         periodicPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
-        periodicPayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);;
+        periodicPayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         periodicPayment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
         periodicPayment.setCreditorAccount(buildAccountReference(CRED_ACCOUNT_ID));
         periodicPayment.setInstructedAmount(buildXs2aAmount(EUR_CURRENCY, "100"));
@@ -180,6 +178,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         periodicPayment.setPurposeCode(PURPOSE_CODE);
         periodicPayment.setRemittanceInformationStructured(REMITTANCE);
+        periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(REMITTANCE));
         periodicPayment.setCreationTimestamp(OffsetDateTime.now());
         periodicPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return periodicPayment;

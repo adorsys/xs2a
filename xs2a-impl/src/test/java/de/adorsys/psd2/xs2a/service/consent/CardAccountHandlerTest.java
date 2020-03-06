@@ -94,7 +94,7 @@ class CardAccountHandlerTest {
         creditLimit.setCurrency(Currency.getInstance("EUR"));
         creditLimit.setAmount("10000");
 
-        return new Xs2aCardAccountDetails(null, null, CardAccountHandlerTest.MASKED_PAN, Currency.getInstance("EUR"), null, null,
+        return new Xs2aCardAccountDetails(null, null, CardAccountHandlerTest.MASKED_PAN, Currency.getInstance("EUR"), null, null, null,
                                           null, AccountStatus.ENABLED, Xs2aUsageType.PRIV, "details",
                                           null, creditLimit, null);
     }

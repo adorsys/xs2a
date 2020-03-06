@@ -77,6 +77,9 @@ public class PaymentInitiationBulkElementJson {
     @JsonProperty("remittanceInformationStructured")
     private RemittanceInformationStructured remittanceInformationStructured = null;
 
+    @JsonProperty("remittanceInformationStructuredArray")
+    private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
+
     @JsonProperty("debtorName")
     private String debtorName = null;
 
@@ -410,6 +413,30 @@ public class PaymentInitiationBulkElementJson {
         this.remittanceInformationStructured = remittanceInformationStructured;
     }
 
+    public PaymentInitiationBulkElementJson remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+        this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+        return this;
+    }
+
+    /**
+     * Get remittanceInformationStructuredArray
+     *
+     * @return remittanceInformationStructuredArray
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("remittanceInformationStructuredArray")
+    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
+        return remittanceInformationStructuredArray;
+    }
+
+    public void setRemittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+        this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
+    }
+
     public PaymentInitiationBulkElementJson debtorName(String debtorName) {
         this.debtorName = debtorName;
         return this;
@@ -457,12 +484,13 @@ public class PaymentInitiationBulkElementJson {
                    Objects.equals(this.purposeCode, paymentInitiationBulkElementJson.purposeCode) &&
                    Objects.equals(this.remittanceInformationUnstructured, paymentInitiationBulkElementJson.remittanceInformationUnstructured) &&
                    Objects.equals(this.remittanceInformationStructured, paymentInitiationBulkElementJson.remittanceInformationStructured) &&
+                   Objects.equals(this.remittanceInformationStructuredArray, paymentInitiationBulkElementJson.remittanceInformationStructuredArray) &&
                    Objects.equals(this.debtorName, paymentInitiationBulkElementJson.debtorName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(endToEndIdentification, instructionIdentification, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, debtorName);
+        return Objects.hash(endToEndIdentification, instructionIdentification, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorAgentName, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, remittanceInformationStructuredArray, debtorName);
     }
 
     @Override
@@ -484,6 +512,7 @@ public class PaymentInitiationBulkElementJson {
         sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
         sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
         sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
+        sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");
         sb.append("    debtorName: ").append(toIndentedString(debtorName)).append("\n");
         sb.append("}");
         return sb.toString();
