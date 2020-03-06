@@ -41,8 +41,14 @@
     "pan": "2222"
   },
   "ultimateDebtor": "Vasisualiy",
-  "remittanceInformationUnstructured": "escrte foin",
+  "remittanceInformationUnstructured": "remittance unstructured",
+  "remittanceInformationUnstructuredArray": [
+    "remittance unstructured array element"
+  ],
   "remittanceInformationStructured": "secret info",
+  "remittanceInformationStructuredArray": [
+    "remittance structured array element"
+  ],
   "purposeCode": "BKDF",
   "bankTransactionCode": "some bank code",
   "proprietaryBankTransactionCode": "very secret code"

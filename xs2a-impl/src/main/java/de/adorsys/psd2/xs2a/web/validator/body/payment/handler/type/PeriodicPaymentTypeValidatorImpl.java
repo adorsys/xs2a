@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
     @Override
     public MessageError validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
-            doPeriodicValidation(paymentMapper.getPeriodicPayment(body), messageError, validationConfig);
+            doPeriodicValidation(paymentMapper.mapToPeriodicPayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));

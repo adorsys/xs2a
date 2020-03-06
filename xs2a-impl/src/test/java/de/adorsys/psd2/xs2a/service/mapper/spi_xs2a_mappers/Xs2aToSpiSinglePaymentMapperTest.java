@@ -47,10 +47,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Currency;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -146,6 +143,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(ULTIMATE_CREDITOR, spiSinglePayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
         assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiSinglePayment.getRemittanceInformationStructured());
+        assertEquals(Collections.singletonList(remittanceMapper.mapToSpiRemittance(REMITTANCE)), spiSinglePayment.getRemittanceInformationStructuredArray());
         assertEquals(singlePayment.getCreationTimestamp(), spiSinglePayment.getCreationTimestamp());
         assertEquals(singlePayment.getContentType(), spiSinglePayment.getContentType());
     }
@@ -171,6 +169,7 @@ class Xs2aToSpiSinglePaymentMapperTest {
         singlePayment.setUltimateCreditor(ULTIMATE_CREDITOR);
         singlePayment.setPurposeCode(PURPOSE_CODE);
         singlePayment.setRemittanceInformationStructured(REMITTANCE);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(REMITTANCE));
         singlePayment.setCreationTimestamp(OffsetDateTime.now());
         singlePayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
         return singlePayment;

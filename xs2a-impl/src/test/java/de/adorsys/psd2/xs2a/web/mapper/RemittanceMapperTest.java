@@ -40,7 +40,7 @@ class RemittanceMapperTest {
     @Test
     void mapToToRemittance() {
         RemittanceInformationStructured remittanceInformationStructured = getRemittanceFromFile(RemittanceInformationStructured.class);
-        Remittance remittance = remittanceMapper.mapToToRemittance(remittanceInformationStructured);
+        Remittance remittance = remittanceMapper.mapToRemittance(remittanceInformationStructured);
         Remittance expectedRemittance = getRemittanceFromFile(Remittance.class);
         assertEquals(expectedRemittance, remittance);
     }

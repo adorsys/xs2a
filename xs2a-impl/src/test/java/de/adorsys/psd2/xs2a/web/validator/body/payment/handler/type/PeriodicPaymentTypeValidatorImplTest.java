@@ -41,13 +41,13 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class PeriodicPaymentTypeValidatorImplTest {
-
-    private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
-    private static final String VALUE_71_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
+    private static final String VALUE_36_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
+    private static final String VALUE_71_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
 
     private PeriodicPaymentTypeValidatorImpl validator;
     private MessageError messageError;
@@ -95,7 +95,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_endToEndIdentification_tooLong_error() {
-        periodicPayment.setEndToEndIdentification(VALUE_36_LENGHT);
+        periodicPayment.setEndToEndIdentification(VALUE_36_LENGTH);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -104,7 +104,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_instructionIdentification_tooLong_error() {
-        periodicPayment.setInstructionIdentification(VALUE_36_LENGHT);
+        periodicPayment.setInstructionIdentification(VALUE_36_LENGTH);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -152,7 +152,7 @@ class PeriodicPaymentTypeValidatorImplTest {
     @Test
     void doValidation_instructedAmount_amount_wrong_format_error() {
         Xs2aAmount instructedAmount = periodicPayment.getInstructedAmount();
-        instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
+        instructedAmount.setAmount(VALUE_71_LENGTH + VALUE_71_LENGTH);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
@@ -179,7 +179,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_creditorName_tooLong_error() {
-        periodicPayment.setCreditorName(VALUE_71_LENGHT);
+        periodicPayment.setCreditorName(VALUE_71_LENGTH);
 
         validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -220,7 +220,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_pan_tooLong_error() {
-        accountReference.setPan(VALUE_36_LENGHT);
+        accountReference.setPan(VALUE_36_LENGTH);
 
         validator.validateAccount(accountReference, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -229,7 +229,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_maskedPan_tooLong_error() {
-        accountReference.setMaskedPan(VALUE_36_LENGHT);
+        accountReference.setMaskedPan(VALUE_36_LENGTH);
 
         validator.validateAccount(accountReference, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -238,7 +238,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_Msisdn_tooLong_error() {
-        accountReference.setMsisdn(VALUE_36_LENGHT);
+        accountReference.setMsisdn(VALUE_36_LENGTH);
 
         validator.validateAccount(accountReference, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -253,7 +253,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void validatorAddress_street_tooLong_error() {
-        address.setStreetName(VALUE_71_LENGHT + VALUE_71_LENGHT);
+        address.setStreetName(VALUE_71_LENGTH + VALUE_71_LENGTH);
 
         validator.validateAddress(address, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -262,7 +262,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void validatorAddress_buildingNumber_tooLong_error() {
-        address.setBuildingNumber(VALUE_71_LENGHT + VALUE_71_LENGHT);
+        address.setBuildingNumber(VALUE_71_LENGTH + VALUE_71_LENGTH);
 
         validator.validateAddress(address, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -271,7 +271,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void validatorAddress_city_tooLong_error() {
-        address.setTownName(VALUE_71_LENGHT + VALUE_71_LENGHT);
+        address.setTownName(VALUE_71_LENGTH + VALUE_71_LENGTH);
 
         validator.validateAddress(address, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -280,7 +280,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void validatorAddress_postalCode_tooLong_error() {
-        address.setPostCode(VALUE_71_LENGHT + VALUE_71_LENGHT);
+        address.setPostCode(VALUE_71_LENGTH + VALUE_71_LENGTH);
 
         validator.validateAddress(address, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -351,7 +351,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_ultimate_debtor_error() {
-        periodicPayment.setUltimateDebtor(VALUE_71_LENGHT);
+        periodicPayment.setUltimateDebtor(VALUE_71_LENGTH);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -360,7 +360,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_ultimate_creditor_error() {
-        periodicPayment.setUltimateCreditor(VALUE_71_LENGHT);
+        periodicPayment.setUltimateCreditor(VALUE_71_LENGTH);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -381,7 +381,7 @@ class PeriodicPaymentTypeValidatorImplTest {
     @Test
     void doValidation_remittance_reference_error() {
         Remittance remittance = new Remittance();
-        remittance.setReference(VALUE_36_LENGHT);
+        remittance.setReference(VALUE_36_LENGTH);
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
@@ -393,7 +393,7 @@ class PeriodicPaymentTypeValidatorImplTest {
     void doValidation_remittance_reference_type_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
-        remittance.setReferenceType(VALUE_36_LENGHT);
+        remittance.setReferenceType(VALUE_36_LENGTH);
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
@@ -405,10 +405,45 @@ class PeriodicPaymentTypeValidatorImplTest {
     void doValidation_remittance_reference_tissuer_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
-        remittance.setReferenceIssuer(VALUE_36_LENGHT);
+        remittance.setReferenceIssuer(VALUE_36_LENGTH);
         periodicPayment.setRemittanceInformationStructured(remittance);
 
         validator.doSingleValidation(periodicPayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doPeriodicValidation_remittanceInformationStructuredArray_reference_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(VALUE_36_LENGTH);
+        periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"reference", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doPeriodicValidation_remittanceInformationStructuredArray_reference_type_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceType(VALUE_36_LENGTH);
+        periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"referenceType", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doPeriodicValidation_remittanceInformationStructuredArray_reference_issuer_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceIssuer(VALUE_36_LENGTH);
+        periodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[]{"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
     }

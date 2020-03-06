@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
     @Override
     public MessageError validate(Object body, MessageError messageError, PaymentValidationConfig validationConfig) {
         try {
-            doBulkValidation(paymentMapper.getBulkPayment(body), messageError, validationConfig);
+            doBulkValidation(paymentMapper.mapToBulkPayment(body), messageError, validationConfig);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().startsWith("Unrecognized field")) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, extractErrorField(e.getMessage())));

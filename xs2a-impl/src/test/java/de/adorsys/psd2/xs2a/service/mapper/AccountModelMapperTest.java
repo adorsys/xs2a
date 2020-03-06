@@ -394,10 +394,10 @@ class AccountModelMapperTest {
                                       null, null, null, currency,
                                       null, null, null, null,
                                       null, null, null, null,
-                                      null, null, null);
+                                      null, null, null, null);
     }
 
-    private void assertLinks(Map expectedLinks, Map actualLinks) {
+    private void assertLinks(Map<?, ?> expectedLinks, Map<?, ?> actualLinks) {
         assertNotNull(actualLinks);
         assertFalse(actualLinks.isEmpty());
         assertEquals(expectedLinks.size(), actualLinks.size());

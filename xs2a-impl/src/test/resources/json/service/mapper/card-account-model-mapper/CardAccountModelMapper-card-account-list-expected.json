@@ -4,6 +4,7 @@
       "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
       "currency": "EUR",
       "name": "Main Account",
+      "displayName": "Display name",
       "maskedPan": "23456xxxxxx1234",
       "product": "Girokonto",
       "status": "enabled",
