@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Add new attributes to data types according to Specification v.1.3.6
+* Fix naming inconsistency in the "Signing Baskets Service (SBS)" tag
 
 == Add new attributes to data types according to Specification v.1.3.6
 
@@ -15,3 +16,8 @@ The following changes were made to SPI models:
 - `acceptorTransactionDateTime` and `cardAcceptorPhone` have been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiCardTransaction`
 - `remittanceInformationStructuredArray` has been added to `de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment`
 - `remittanceInformationUnstructuredArray`, `remittanceInformationStructuredArray` and `additionalInformation` have been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction`
+
+== Fix naming inconsistency in the "Signing Baskets Service (SBS)" tag
+
+From now on, all endpoints related to Signing Baskets use `Signing Baskets Service (SBS)` tag in the default PSD2 OpenAPI file.
+Previously used tag `Signing Baskets (SBS)` was removed from the Swagger UI.
