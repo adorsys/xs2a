@@ -2,9 +2,14 @@
 
 == Table of Contents
 * Support header TPP-Brand-Logging-Information
+* Adjust Xs2a and SPI BalanceType objects with current specification
 
 == Support header TPP-Brand-Logging-Information
 
 From now on, header `TPP-Brand-Logging-Information` is supported by XS2A.
 This header can be passed with payment initiation or consent creation requests.
 This header is accessible in SPI level in SpiContextData object, also saved in CMS database and can be retrieved as a field of payment or consent from CMS-PSU-API.
+
+== Adjust Xs2a and SPI BalanceType objects with current specification
+
+From now on, all `BalanceType` values are adjusted according to BG Specification 1.3.6
