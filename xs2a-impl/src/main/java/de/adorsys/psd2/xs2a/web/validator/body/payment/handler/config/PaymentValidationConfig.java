@@ -25,6 +25,7 @@ public interface PaymentValidationConfig{
     ValidationObject getUltimateDebtor();
     ValidationObject getUltimateCreditor();
     ValidationObject getCreditorName();
+    ValidationObject getDebtorName();
 
     //address
     ValidationObject getStreetName();

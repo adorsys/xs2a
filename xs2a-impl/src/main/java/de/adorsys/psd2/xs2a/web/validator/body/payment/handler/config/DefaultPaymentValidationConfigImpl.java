@@ -27,6 +27,7 @@ public class DefaultPaymentValidationConfigImpl implements PaymentValidationConf
     protected ValidationObject ultimateDebtor = new ValidationObject(70);
     protected ValidationObject ultimateCreditor = new ValidationObject(70);
     protected ValidationObject creditorName = new ValidationObject(Occurrence.REQUIRED, 70);
+    protected ValidationObject debtorName = new ValidationObject(Occurrence.NONE, 0);
 
     //address
     protected ValidationObject streetName = new ValidationObject(100);

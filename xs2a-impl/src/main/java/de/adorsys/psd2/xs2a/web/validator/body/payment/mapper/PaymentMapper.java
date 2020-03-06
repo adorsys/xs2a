@@ -88,6 +88,8 @@ public class PaymentMapper {
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
+        payment.setDebtorName(paymentRequest.getDebtorName());
+
         return payment;
     }
 
@@ -116,6 +118,8 @@ public class PaymentMapper {
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(paymentRequest.getRemittanceInformationStructured()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
+        payment.setDebtorName(paymentRequest.getDebtorName());
+
         return payment;
     }
 
@@ -205,6 +209,8 @@ public class PaymentMapper {
                        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
                        payment.setRemittanceInformationStructured(remittanceMapper.mapToToRemittance(p.getRemittanceInformationStructured()));
                        payment.setInstructionIdentification(p.getInstructionIdentification());
+                       payment.setDebtorName(p.getDebtorName());
+
                        return payment;
                    })
                    .collect(Collectors.toList());
