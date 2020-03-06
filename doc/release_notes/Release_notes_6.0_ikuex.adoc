@@ -3,6 +3,7 @@
 == Table of Contents
 * Support header TPP-Brand-Logging-Information
 * Adjust Xs2a and SPI BalanceType objects with current specification
+* Bugfix: Validation for PIIS field cardNumber is missing
 
 == Support header TPP-Brand-Logging-Information
 
@@ -13,3 +14,7 @@ This header is accessible in SPI level in SpiContextData object, also saved in C
 == Adjust Xs2a and SPI BalanceType objects with current specification
 
 From now on, all `BalanceType` values are adjusted according to BG Specification 1.3.6
+
+== Bugfix: Validation for PIIS field cardNumber is missing
+
+From now on, value of the `cardNumber` field in Funds Confirmation request (`POST /v1/funds-confirmations`) is being validated and can not exceed the maximum length of 35 symbols
