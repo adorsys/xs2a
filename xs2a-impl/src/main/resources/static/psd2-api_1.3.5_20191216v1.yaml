@@ -3035,7 +3035,7 @@ paths:
         The resource identifications of these transactions are contained in the  payload of this access method
       operationId: createSigningBasket
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
 
       security:
         #####################################################
@@ -3128,7 +3128,7 @@ paths:
         Returns the content of an signing basket object.
       operationId: getSigningBasket
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
       security:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
@@ -3206,7 +3206,7 @@ paths:
         Nevertheless, single transactions might be cancelled on an individual basis on the XS2A interface.
       operationId: deleteSigningBasket
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
       security:
         #####################################################
@@ -3284,7 +3284,7 @@ paths:
         Returns the status of a signing basket object.
       operationId: getSigningBasketStatus
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
       security:
         #####################################################
@@ -3399,7 +3399,7 @@ paths:
           * The signing basket needs to be authorised yet.
       operationId: startSigningBasketAuthorisation
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
       security:
         #####################################################
@@ -3497,7 +3497,7 @@ paths:
         This function returns an array of hyperlinks to all generated authorisation sub-resources.
       operationId: getSigningBasketAuthorisation
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
 
       security:
@@ -3616,7 +3616,7 @@ paths:
             Maybe in a later version the access path will change.
       operationId: updateSigningBasketPsuData
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
 
       security:
@@ -3719,7 +3719,7 @@ paths:
         This method returns the SCA status of a signing basket's authorisation sub-resource.
       operationId: getSigningBasketScaStatus
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
 
       security:
