@@ -68,7 +68,7 @@ variables:
     - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -DskipITs --fail-at-end clean install
+    - mvn -ntp -DskipITs --fail-at-end clean install -q
 
 # Build docker images and push them to Dockerhub (depending on ${DOCKER_TAG})
 .build_dockerhub_image: &build_dockerhub_image

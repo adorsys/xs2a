@@ -9,7 +9,7 @@
   "details": "Details",
   "balances": [
     {
-      "balanceType": "authorised",
+      "balanceType": "expected",
       "referenceDate": "2019-03-21",
       "lastChangeDateTime": "2018-03-31T15:16:16.374+03:00",
       "lastCommittedTransaction": "lastCommittedTransaction"
