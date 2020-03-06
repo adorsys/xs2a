@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0d8655df-ced2-4781-90cc-2d1ccfa26a84",
+		"_postman_id": "d4587bc5-20f2-4cff-8cca-5d1d40f43122",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -499,7 +499,7 @@
 													"    pm.expect(jsonData).to.have.property('instructedAmount');",
 													"    pm.expect(jsonData).to.have.property('creditorAccount');",
 													"    pm.expect(jsonData).to.have.property('creditorName');",
-													"",
+													"    pm.expect(jsonData).to.have.property('debtorName');",
 													"});"
 												],
 												"type": "text/javascript"
@@ -21668,6 +21668,7 @@
 											"            pm.expect(entry).to.have.property('instructedAmount');",
 											"            pm.expect(entry).to.have.property('creditorAccount');",
 											"            pm.expect(entry).to.have.property('creditorName');",
+											"            pm.expect(jsonData).to.have.property('debtorName');",
 											"        });",
 											"    }",
 											"});"

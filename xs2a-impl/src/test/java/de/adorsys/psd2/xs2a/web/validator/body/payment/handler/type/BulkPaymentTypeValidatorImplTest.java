@@ -95,20 +95,6 @@ class BulkPaymentTypeValidatorImplTest {
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
-    private BulkPaymentInitiationJson getBulkPaymentInitiationJson() {
-        BulkPaymentInitiationJson bulkPaymentInitiationJson = new BulkPaymentInitiationJson();
-        bulkPaymentInitiationJson.setDebtorAccount(new AccountReference());
-        PaymentInitiationBulkElementJson paymentInitiationBulkElementJson = new PaymentInitiationBulkElementJson();
-        paymentInitiationBulkElementJson.setCreditorName("name");
-        paymentInitiationBulkElementJson.setCreditorAccount(new AccountReference());
-        Amount amount = new Amount();
-        amount.setAmount("100");
-        amount.setCurrency("EUR");
-        paymentInitiationBulkElementJson.setInstructedAmount(amount);
-        bulkPaymentInitiationJson.setPayments(Collections.singletonList(paymentInitiationBulkElementJson));
-        return bulkPaymentInitiationJson;
-    }
-
     @Test
     void doValidation_IllegalArgumentException() {
         Object body = new Object();
@@ -256,4 +242,19 @@ class BulkPaymentTypeValidatorImplTest {
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
     }
+
+    private BulkPaymentInitiationJson getBulkPaymentInitiationJson() {
+        BulkPaymentInitiationJson bulkPaymentInitiationJson = new BulkPaymentInitiationJson();
+        bulkPaymentInitiationJson.setDebtorAccount(new AccountReference());
+        PaymentInitiationBulkElementJson paymentInitiationBulkElementJson = new PaymentInitiationBulkElementJson();
+        paymentInitiationBulkElementJson.setCreditorName("name");
+        paymentInitiationBulkElementJson.setCreditorAccount(new AccountReference());
+        Amount amount = new Amount();
+        amount.setAmount("100");
+        amount.setCurrency("EUR");
+        paymentInitiationBulkElementJson.setInstructedAmount(amount);
+        bulkPaymentInitiationJson.setPayments(Collections.singletonList(paymentInitiationBulkElementJson));
+        return bulkPaymentInitiationJson;
+    }
+
 }
