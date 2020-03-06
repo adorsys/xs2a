@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.piis;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.ConfirmationOfFunds;
+import de.adorsys.psd2.validator.payment.config.ValidationObject;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
@@ -62,6 +63,8 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
         }
 
         ConfirmationOfFunds confirmationOfFunds = confirmationOfFundsOptional.get();
+
+        checkFieldForMaxLength(confirmationOfFunds.getCardNumber(), "cardNumber", new ValidationObject(35), messageError);
 
         if (confirmationOfFunds.getAccount() == null) { //NOSONAR
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "access"));
