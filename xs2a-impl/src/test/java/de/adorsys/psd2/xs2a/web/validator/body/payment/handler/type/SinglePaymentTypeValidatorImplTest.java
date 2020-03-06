@@ -183,6 +183,15 @@ class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
+    void doValidation_debtorName_notSupportedEmptyValue_error() {
+        singlePayment.setDebtorName("");
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"debtorName"}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
     void doValidation_creditorName_empty_error() {
         singlePayment.setCreditorName("   ");
 

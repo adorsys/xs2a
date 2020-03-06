@@ -68,6 +68,7 @@ public class PaymentModelMapperPsd2 {
         try {
             Map<String, String> map = xs2aObjectMapper.readValue(rawData, Map.class);
             map.put("transactionStatus", commonPayment.getTransactionStatus().toString());
+
             return map;
         } catch (JsonProcessingException e) {
             log.warn("Can't convert payment to map {}", e.getMessage());

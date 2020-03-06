@@ -61,6 +61,8 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
         periodic.setCreationTimestamp(payment.getCreationTimestamp());
         periodic.setContentType(payment.getContentType());
+        periodic.setDebtorName(payment.getDebtorName());
+
         return periodic;
     }
 }

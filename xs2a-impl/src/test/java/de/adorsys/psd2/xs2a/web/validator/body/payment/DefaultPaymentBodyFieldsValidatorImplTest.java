@@ -39,7 +39,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DefaultPaymentBodyFieldsValidatorImplTest {
+class DefaultPaymentBodyFieldsValidatorImplTest {
 
     private static final String PAYMENT_SERVICE = PaymentType.SINGLE.getValue();
 

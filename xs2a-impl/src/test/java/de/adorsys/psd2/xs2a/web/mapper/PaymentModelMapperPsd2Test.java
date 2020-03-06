@@ -54,7 +54,9 @@ import static org.mockito.Mockito.when;
     HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class})
 class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    private static final String ENCRYPTED_PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_TYPE = "payments";
     private static final String NON_STANDARD_PAYMENT_PRODUCT = "pain.001-sepa-credit-transfers";
     private static final String PSU_MESSAGE = "PSU message";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
@@ -100,10 +102,10 @@ class PaymentModelMapperPsd2Test {
         Map actual = (Map) mapper.mapToGetPaymentResponse(payment);
 
         assertEquals(7, actual.size());
-        assertEquals("payments", actual.get("paymentType"));
+        assertEquals(PAYMENT_TYPE, actual.get("paymentType"));
         assertEquals("26bb59a3-2f63-4027-ad38-67d87e59611a", actual.get("aspspAccountId"));
         assertEquals(TransactionStatus.RCVD.name(), actual.get("transactionStatus"));
-        assertEquals("2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI", actual.get("paymentId"));
+        assertEquals(ENCRYPTED_PAYMENT_ID, actual.get("paymentId"));
         assertEquals(false, actual.get("transactionFeeIndicator"));
         assertEquals(true, actual.get("multilevelScaRequired"));
         assertTrue(((Map) actual.get("aspspConsentDataProvider")).isEmpty());

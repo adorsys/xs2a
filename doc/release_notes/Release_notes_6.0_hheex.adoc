@@ -1,7 +1,9 @@
 = Release notes v.6.0
 
 == Table of Contents
+
 * Feature: retrieve PSU message from SPI level to TPP
+* Added new field to `Get payment information` response
 
 == Feature: retrieve PSU message from SPI level to TPP
 
@@ -9,3 +11,8 @@ Added ability for retrieving text message from ASPSP through SPI to the TPP for 
 
 - getting payment status `GET /v1/{payment-service}/{paymentId}/status`;
 - getting consent status: `GET /v1/consents/{consentId}/status`.
+
+== Added new field to `Get payment information` response
+
+New field was added to `Get payment information` response (`GET /v1/{payment-service}/{payment-product}/{paymentId}`) -
+`debtorName`. This string field is optional, it can be added at ASPSP side to payment payload.

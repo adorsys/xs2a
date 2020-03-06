@@ -78,6 +78,9 @@ public class SinglePayment extends CommonPayment implements AccountReferenceColl
     private LocalDate requestedExecutionDate;
 
     private OffsetDateTime requestedExecutionTime;
+
+    private String debtorName;
+
     protected PaymentType paymentType = PaymentType.SINGLE;
 
     @JsonIgnore
