@@ -132,7 +132,7 @@
         "currency": "USD",
         "amount": "100"
       },
-      "balanceType": "authorised",
+      "balanceType": "expected",
       "lastChangeDateTime": "2018-03-31T15:16:16.37Z",
       "referenceDate": "2019-03-21",
       "lastCommittedTransaction": "lastCommittedTransaction"

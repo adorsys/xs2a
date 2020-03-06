@@ -22,16 +22,16 @@ import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
+import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -47,6 +47,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -379,6 +380,13 @@ class AccountModelMapperTest {
             AccountDetails accountDetails = actualAccountList.getAccounts().get(0);
             assertEquals("XXX", accountDetails.getCurrency());
         });
+    }
+
+    @Test
+    void mapToBalanceType() {
+        Stream.of(BalanceType.values()) //Given
+            .map(mapper::mapToBalanceType) //When
+            .forEach(Assertions::assertNotNull); //Then
     }
 
     private Xs2aAccountDetails buildXs2aAccountDetails(Currency currency) {
