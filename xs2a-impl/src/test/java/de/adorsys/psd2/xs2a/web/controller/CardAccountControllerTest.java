@@ -127,10 +127,10 @@ class CardAccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity result = cardAccountController.readCardAccount(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
-                                                                      null, null, null, null,
-                                                                      null, null, null, null,
-                                                                      null, null, null, null);
+        ResponseEntity<?> result = cardAccountController.readCardAccount(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
+                                                                         null, null, null, null,
+                                                                         null, null, null, null,
+                                                                         null, null, null, null);
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -170,10 +170,10 @@ class CardAccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity result = cardAccountController.getCardAccount(null, WRONG_CONSENT_ID,
-                                                                     null, null, null, null, null, null,
-                                                                     null, null, null, null, null,
-                                                                     null, null);
+        ResponseEntity<?> result = cardAccountController.getCardAccount(null, WRONG_CONSENT_ID,
+                                                                        null, null, null, null, null, null,
+                                                                        null, null, null, null, null,
+                                                                        null, null);
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -213,10 +213,10 @@ class CardAccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity result = cardAccountController.getCardAccountBalances(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
-                                                                             null, null, null, null, null,
-                                                                             null, null, null,
-                                                                             null, null, null, null);
+        ResponseEntity<?> result = cardAccountController.getCardAccountBalances(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
+                                                                                null, null, null, null, null,
+                                                                                null, null, null,
+                                                                                null, null, null, null);
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -254,7 +254,7 @@ class CardAccountControllerTest {
 
         List<Xs2aCardAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aCardAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
-                                       null, AccountStatus.ENABLED, Xs2aUsageType.PRIV, "details",
+                                       null, null, AccountStatus.ENABLED, Xs2aUsageType.PRIV, "details",
                                        null, creditLimit, null));
         Xs2aCardAccountListHolder xs2aAccountListHolder = new Xs2aCardAccountListHolder(accountDetails, null);
         return ResponseObject.<Xs2aCardAccountListHolder>builder()

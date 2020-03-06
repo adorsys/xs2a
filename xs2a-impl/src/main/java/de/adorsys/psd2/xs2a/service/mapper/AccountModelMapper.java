@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ public abstract class AccountModelMapper {
         return inlineResponse200;
     }
 
+    @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountDetails.getLinks()))")
     @Mapping(target = "status", source = "accountStatus")
     @Mapping(target = "usage", source = "usageType")
@@ -85,9 +86,11 @@ public abstract class AccountModelMapper {
     @Mapping(target = "account", source = "xs2aAccountReference")
     public abstract ReadAccountBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport);
 
+    @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(accountReport.getLinks()))")
     public abstract AccountReport mapToAccountReport(Xs2aAccountReport accountReport);
 
+    @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(transactionsReport.getLinks()))")
     @Mapping(target = "transactions", source = "accountReport")
     @Mapping(target = "account", source = "accountReference")
@@ -101,6 +104,7 @@ public abstract class AccountModelMapper {
     @Mapping(target = "bankTransactionCode", source = "bankTransactionCodeCode.code")
     @Mapping(target = "transactionAmount", source = "amount")
     @Mapping(target = "links", ignore = true)
+    @Mapping(target = "_links", ignore = true)
     public abstract TransactionDetails mapToTransaction(Transactions transactions);
 
     public InlineResponse2001 mapToTransactionDetails(Transactions transactions) {

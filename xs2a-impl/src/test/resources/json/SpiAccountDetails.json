@@ -3,6 +3,7 @@
   "iban": "DE80760700240271232400",
   "currency": "EUR",
   "name": "anton.brueckner",
+  "displayName": "Anton Brueckner",
   "product": "Cash24",
   "cashSpiAccountType": "CASH",
   "spiAccountStatus": "ENABLED",

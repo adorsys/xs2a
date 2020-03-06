@@ -35,6 +35,7 @@ public class SpiCardAccountDetails {
     private String maskedPan;
     private Currency currency;
     private String name;
+    private String displayName;
     private String product;
     private SpiAccountStatus spiAccountStatus;
     private SpiAccountType cashSpiAccountType;
@@ -43,4 +44,16 @@ public class SpiCardAccountDetails {
     private SpiAmount creditLimit;
     private List<SpiAccountBalance> balances;
     private String ownerName;
+
+    /**
+     * @deprecated since 6.0/7.0, use all args constructor instead
+     */
+    @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
+    public SpiCardAccountDetails(String aspspAccountId, String resourceId, String maskedPan, Currency currency, String name,
+                                 String product, SpiAccountStatus spiAccountStatus, SpiAccountType cashSpiAccountType,
+                                 SpiUsageType usageType, String details, SpiAmount creditLimit,
+                                 List<SpiAccountBalance> balances, String ownerName) {
+        this(aspspAccountId, resourceId, maskedPan, currency, name, null, product, spiAccountStatus, cashSpiAccountType,
+             usageType, details, creditLimit, balances, ownerName);
+    }
 }

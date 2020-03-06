@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -74,6 +75,8 @@ public class SinglePayment extends CommonPayment implements AccountReferenceColl
 
     @Valid
     private Remittance remittanceInformationStructured;
+
+    private List<Remittance> remittanceInformationStructuredArray;
 
     private LocalDate requestedExecutionDate;
 

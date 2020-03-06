@@ -24,6 +24,7 @@ import de.adorsys.psd2.model.PaymentInitiationBulkElementJson;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -50,8 +51,8 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BulkPaymentTypeValidatorImplTest {
-    private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
-    private static final String VALUE_71_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
+    private static final String VALUE_36_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
+    private static final String VALUE_71_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
     private final BulkPaymentInitiationJson BULK_PAYMENT_INITIATION_JSON = getBulkPaymentInitiationJson();
 
     private BulkPaymentTypeValidatorImpl validator;
@@ -69,7 +70,6 @@ class BulkPaymentTypeValidatorImplTest {
         bulkPayment.setRequestedExecutionDate(LocalDate.now().plusDays(1));
         assertTrue(CollectionUtils.isNotEmpty(bulkPayment.getPayments()));
         singlePayment = bulkPayment.getPayments().get(0);
-
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
         RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
@@ -118,7 +118,7 @@ class BulkPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_endToEndIdentification_tooLong_error() {
-        singlePayment.setEndToEndIdentification(VALUE_36_LENGHT);
+        singlePayment.setEndToEndIdentification(VALUE_36_LENGTH);
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -128,7 +128,7 @@ class BulkPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_instructionIdentification_tooLong_error() {
-        singlePayment.setInstructionIdentification(VALUE_36_LENGHT);
+        singlePayment.setInstructionIdentification(VALUE_36_LENGTH);
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -201,7 +201,7 @@ class BulkPaymentTypeValidatorImplTest {
     @Test
     void doValidation_instructedAmount_amount_wrong_format_error() {
         Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
-        instructedAmount.setAmount(VALUE_71_LENGHT + VALUE_71_LENGHT);
+        instructedAmount.setAmount(VALUE_71_LENGTH + VALUE_71_LENGTH);
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
@@ -228,7 +228,7 @@ class BulkPaymentTypeValidatorImplTest {
 
     @Test
     void doValidation_creditorName_tooLong_error() {
-        singlePayment.setCreditorName(VALUE_71_LENGHT);
+        singlePayment.setCreditorName(VALUE_71_LENGTH);
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
@@ -241,6 +241,41 @@ class BulkPaymentTypeValidatorImplTest {
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST, messageError.getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void doBulkValidation_remittanceInformationStructuredArray_reference_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(VALUE_36_LENGTH);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"reference", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doBulkValidation_remittanceInformationStructuredArray_reference_type_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceType(VALUE_36_LENGTH);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"referenceType", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doBulkValidation_remittanceInformationStructuredArray_reference_issuer_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceIssuer(VALUE_36_LENGTH);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     private BulkPaymentInitiationJson getBulkPaymentInitiationJson() {

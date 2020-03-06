@@ -1,0 +1,17 @@
+= Release notes v.6.0
+
+== Table of Contents
+
+* Add new attributes to data types according to Specification v.1.3.6
+
+== Add new attributes to data types according to Specification v.1.3.6
+
+From now on, new data attributes introduced in Specification v.1.3.6 are propagated to and from SPI level.
+
+The following changes were made to SPI models:
+
+- `displayName` property has been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails` and
+ `de.adorsys.psd2.xs2a.spi.domain.account.SpiCardAccountDetails`
+- `acceptorTransactionDateTime` and `cardAcceptorPhone` have been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiCardTransaction`
+- `remittanceInformationStructuredArray` has been added to `de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment`
+- `remittanceInformationUnstructuredArray`, `remittanceInformationStructuredArray` and `additionalInformation` have been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction`

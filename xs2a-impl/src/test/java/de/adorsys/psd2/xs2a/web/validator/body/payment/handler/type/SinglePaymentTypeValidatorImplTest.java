@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,10 +56,10 @@ class SinglePaymentTypeValidatorImplTest {
     private AccountReference accountReference;
     private Xs2aAddress address;
     private PaymentValidationConfig validationConfig;
+    private JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
-        JsonReader jsonReader = new JsonReader();
         messageError = new MessageError();
         singlePayment = jsonReader.getObjectFromFile("json/validation/single-payment.json", SinglePayment.class);
         accountReference = jsonReader.getObjectFromFile("json/validation/account_reference.json", AccountReference.class);
@@ -389,11 +390,46 @@ class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    void doValidation_remittance_reference_tissuer_error() {
+    void doValidation_remittance_reference_issuer_error() {
         Remittance remittance = new Remittance();
         remittance.setReference("reference");
         remittance.setReferenceIssuer(VALUE_36_LENGHT);
         singlePayment.setRemittanceInformationStructured(remittance);
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doSingleValidation_remittanceInformationStructuredArray_reference_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference(VALUE_36_LENGHT);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"reference", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doSingleValidation_remittanceInformationStructuredArray_reference_type_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceType(VALUE_36_LENGHT);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+
+        validator.doSingleValidation(singlePayment, messageError, validationConfig);
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"referenceType", 35}, messageError.getTppMessage().getTextParameters());
+    }
+
+    @Test
+    void doSingleValidation_remittanceInformationStructuredArray_reference_issuer_error() {
+        Remittance remittance = new Remittance();
+        remittance.setReference("reference");
+        remittance.setReferenceIssuer(VALUE_36_LENGHT);
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());

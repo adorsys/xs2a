@@ -36,6 +36,13 @@
     "referenceType": "reference type",
     "referenceIssuer": "reference issuer"
   },
+  "remittanceInformationStructuredArray": [
+    {
+      "reference": "Ref Number Merchant",
+      "referenceType": "reference type",
+      "referenceIssuer": "reference issuer"
+    }
+  ],
   "purposeCode": "BKDF",
   "executionRule": "following",
   "frequency": "Annual",

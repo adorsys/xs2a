@@ -28,9 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -39,13 +37,15 @@ import java.util.List;
 @Slf4j
 @Service
 public class CardAccountSpiMockImpl implements CardAccountSpi {
+    private static final LocalDate DATE = LocalDate.of(2019, Month.JANUARY, 4);
+    private static final String NAME = "Müller";
 
     @Override
     public SpiResponse<List<SpiCardAccountDetails>> requestCardAccountList(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("CardAccountSpi#requestCardAccountList: contextData {}, accountConsent-id {}, aspspConsentData {}", contextData, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
-        SpiCardAccountDetails details = new SpiCardAccountDetails("11111-11118", "10023-999999999", "525412******3241", Currency.getInstance("EUR"), "Müller",
-                                                                  "SCT", null, null, null,
+        SpiCardAccountDetails details = new SpiCardAccountDetails("11111-11118", "10023-999999999", "525412******3241", Currency.getInstance("EUR"), NAME,
+                                                                  NAME, "SCT", null, null, null,
                                                                   null, null, Collections.singletonList(buildSpiAccountBalance()), null);
 
         return SpiResponse.<List<SpiCardAccountDetails>>builder()
@@ -57,8 +57,8 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
     public SpiResponse<SpiCardAccountDetails> requestCardAccountDetailsForAccount(@NotNull SpiContextData contextData, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("CardAccountSpi#requestCardAccountDetailForAccount: contextData {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
-        SpiCardAccountDetails accountDetails = new SpiCardAccountDetails("11111-11118", "10023-999999999", "525412******3241", Currency.getInstance("EUR"), "Müller",
-                                                                         "SCT", null, null, null,
+        SpiCardAccountDetails accountDetails = new SpiCardAccountDetails("11111-11118", "10023-999999999", "525412******3241", Currency.getInstance("EUR"), NAME,
+                                                                         NAME, "SCT", null, null, null,
                                                                          null, null, Collections.singletonList(buildSpiAccountBalance()), null);
 
         return SpiResponse.<SpiCardAccountDetails>builder()
@@ -115,39 +115,25 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
     private SpiCardTransaction buildSpiCardTransactionById(String cardTransactionId) {
         return new SpiCardTransaction(cardTransactionId,
                                       "999999999",
-                                      LocalDate.of(2019, Month.JANUARY, 4),
-                                      LocalDate.of(2019, Month.JANUARY, 4),
+                                      DATE,
+                                      OffsetDateTime.of(DATE, LocalTime.NOON, ZoneOffset.UTC),
+                                      DATE,
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
                                       new ArrayList<>(),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
                                       new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
                                       "2",
-                                      "Müller",
+                                      NAME,
                                       null,
-                                      "Müller",
-                                      "Müller",
-                                      "Müller",
+                                      "+61-(02)9999999999-9999",
+                                      NAME,
+                                      NAME,
+                                      NAME,
                                       true,
                                       "");
     }
 
     private SpiCardTransaction buildInformationSpiCardTransaction() {
-
-        return new SpiCardTransaction("999999999",
-                                      "999999999",
-                                      LocalDate.of(2019, Month.JANUARY, 4),
-                                      LocalDate.of(2019, Month.JANUARY, 4),
-                                      new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
-                                      new ArrayList<>(),
-                                      new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
-                                      new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)),
-                                      "2",
-                                      "Müller",
-                                      null,
-                                      "Müller",
-                                      "Müller",
-                                      "Müller",
-                                      true,
-                                      "");
+        return buildSpiCardTransactionById("999999999");
     }
 }

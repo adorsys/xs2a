@@ -245,7 +245,7 @@ class AccountReferenceInConsentUpdaterTest {
 
     private Xs2aAccountDetails buildXs2aAccountDetails(String aspspAccountId, String resourceId, String iban) {
         return new Xs2aAccountDetails(aspspAccountId, resourceId, iban, null, null, null, null,
-                                      CURRENCY, null, null, null,
+                                      CURRENCY, null, null, null, null,
                                       null, null, null, null,
                                       null, Collections.emptyList(), null, null);
     }

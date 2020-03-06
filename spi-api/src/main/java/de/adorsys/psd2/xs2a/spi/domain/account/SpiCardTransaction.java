@@ -19,15 +19,19 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
+@RequiredArgsConstructor
 public class SpiCardTransaction {
     private final String cardTransactionId;
     private final String terminalId;
     private final LocalDate transactionDate;
+    private final OffsetDateTime acceptorTransactionDateTime;
     private final LocalDate bookingDate;
     private final SpiAmount transactionAmount;
     private final List<SpiExchangeRate> currencyExchange;
@@ -36,11 +40,27 @@ public class SpiCardTransaction {
     private final String markupFeePercentage;
     private final String cardAcceptorId;
     private final SpiAddress cardAcceptorAddress;
+    private final String cardAcceptorPhone;
     private final String merchantCategoryCode;
     private final String maskedPAN;
     private final String transactionDetails;
     private final Boolean invoiced;
     private final String proprietaryBankTransactionCode;
+
+
+    /**
+     * @deprecated since 6.0/7.0, use all args constructor instead
+     */
+    @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
+    public SpiCardTransaction(String cardTransactionId, String terminalId, LocalDate transactionDate, LocalDate bookingDate,
+                              SpiAmount transactionAmount, List<SpiExchangeRate> currencyExchange, SpiAmount originalAmount,
+                              SpiAmount markupFee, String markupFeePercentage, String cardAcceptorId, SpiAddress cardAcceptorAddress,
+                              String merchantCategoryCode, String maskedPAN, String transactionDetails,
+                              Boolean invoiced, String proprietaryBankTransactionCode) {
+        this(cardTransactionId, terminalId, transactionDate, null, bookingDate, transactionAmount, currencyExchange,
+             originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, null,
+             merchantCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
+    }
 
     public boolean isBookedTransaction() {
         return bookingDate != null;

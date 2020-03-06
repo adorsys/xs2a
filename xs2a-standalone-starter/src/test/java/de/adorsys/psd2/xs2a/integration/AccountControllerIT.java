@@ -334,7 +334,7 @@ class AccountControllerIT {
     @NotNull
     private Xs2aAccountDetails buildXs2aAccountDetails() {
         return new Xs2aAccountDetails("accountDetail", "y1", "y2", "y3", "y4",
-                                      "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", CashAccountType.CACC,
+                                      "y5", "y6", Currency.getInstance("EUR"), "y8", "y9", "product", CashAccountType.CACC,
                                       AccountStatus.ENABLED, "y11", "linked3", Xs2aUsageType.PRIV, "details3", new ArrayList<>(), null, null);
     }
 
