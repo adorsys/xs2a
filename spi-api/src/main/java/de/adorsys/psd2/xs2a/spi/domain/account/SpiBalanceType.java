@@ -19,9 +19,9 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 public enum SpiBalanceType {
     CLOSING_BOOKED,
     EXPECTED,
-    AUTHORISED,
     OPENING_BOOKED,
     INTERIM_AVAILABLE,
+    INTERIM_BOOKED,
     FORWARD_AVAILABLE,
     NONINVOICED
 }
