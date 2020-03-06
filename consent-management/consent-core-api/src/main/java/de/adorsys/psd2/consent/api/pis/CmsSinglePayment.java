@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,16 @@ import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class CmsSinglePayment extends BaseCmsPayment {
     private String endToEndIdentification;
     private String instructionIdentification;
@@ -43,6 +48,7 @@ public class CmsSinglePayment extends BaseCmsPayment {
     private String ultimateCreditor;
     private String purposeCode;
     private CmsRemittance remittanceInformationStructured;
+    private List<CmsRemittance> remittanceInformationStructuredArray;
 
     public CmsSinglePayment(String paymentProduct) {
         setPaymentProduct(paymentProduct);

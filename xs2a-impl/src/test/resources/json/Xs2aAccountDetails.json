@@ -3,6 +3,7 @@
   "iban": "DE80760700240271232400",
   "currency": "EUR",
   "name": "anton.brueckner",
+  "displayName": "Anton Brueckner",
   "product": "Cash24",
   "cashAccountType": "CASH",
   "linkedAccounts": "4Zm0EEUDQrIlq6SJlPbinI",
@@ -30,6 +31,6 @@
     }
   ],
   "ownerName": null,
-  "_links": {
+  "links": {
   }
 }

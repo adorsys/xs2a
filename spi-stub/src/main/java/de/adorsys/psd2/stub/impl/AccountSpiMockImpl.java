@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,15 +42,19 @@ import java.util.*;
 @Slf4j
 @Service
 public class AccountSpiMockImpl implements AccountSpi {
+    private static final String ASPSP_ACCOUNT_ID = "11111-11118";
+    private static final String RESOURCE_ID = "10023-999999999";
+    private static final String IBAN = "DE52500105173911841934";
+    private static final String NAME = "Müller";
 
     private JsonReader jsonReader = new JsonReader();
 
     @Override
     public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AccountSpi#requestAccountList: contextData {}, withBalance {}, accountConsent-id {}, aspspConsentData {}", contextData, withBalance, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
-        SpiAccountDetails details = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
-                                                          "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"), "Müller",
-                                                          "SCT", null, null, "DEUTDE8EXXX", null,
+        SpiAccountDetails details = new SpiAccountDetails(ASPSP_ACCOUNT_ID, RESOURCE_ID, IBAN,
+                                                          "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"), NAME,
+                                                          NAME, "SCT", null, null, "DEUTDE8EXXX", null,
                                                           null, null, Collections.singletonList(buildSpiAccountBalance()), null, null);
 
         return SpiResponse.<List<SpiAccountDetails>>builder()
@@ -61,9 +65,9 @@ public class AccountSpiMockImpl implements AccountSpi {
     @Override
     public SpiResponse<SpiAccountDetails> requestAccountDetailForAccount(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AccountSpi#requestAccountDetailForAccount: contextData {}, withBalance {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, withBalance, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
-        SpiAccountDetails accountDetails = new SpiAccountDetails("11111-11118", "10023-999999999", "DE52500105173911841934",
-                                                                 null, null, null, null, Currency.getInstance("EUR"), "Müller",
-                                                                 "SCT", null, null, "DEUTDE8EXXX", null,
+        SpiAccountDetails accountDetails = new SpiAccountDetails(ASPSP_ACCOUNT_ID, RESOURCE_ID, IBAN,
+                                                                 null, null, null, null, Currency.getInstance("EUR"), NAME,
+                                                                 NAME, "SCT", null, null, "DEUTDE8EXXX", null,
                                                                  null, null, Collections.singletonList(buildSpiAccountBalance()), null, null);
 
         return SpiResponse.<SpiAccountDetails>builder()
@@ -145,8 +149,10 @@ public class AccountSpiMockImpl implements AccountSpi {
     private SpiTransaction buildSpiTransactionById(String transactionId) {
         return new SpiTransaction(transactionId, "", "", "", "", "aspsp", LocalDate.of(2019, Month.JANUARY, 4),
                                   LocalDate.of(2019, Month.JANUARY, 4), new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)), Collections.emptyList(),
-                                  "Müller", buildSpiAccountReference(), "Müller", "Müller","Müller", buildSpiAccountReference(),
-                                  "Müller", "Müller", "", "", "", "", null, null, buildSpiAccountBalance());
+                                  NAME, buildSpiAccountReference(), NAME, NAME, NAME, buildSpiAccountReference(),
+                                  NAME, NAME, "", Collections.singletonList("remittance information unstructured"),
+                                  "", Collections.emptyList(), "", "",
+                                  "some additional information", null, null, buildSpiAccountBalance());
     }
 
     private SpiTransaction buildInformationSpiTransaction() {
@@ -160,12 +166,14 @@ public class AccountSpiMockImpl implements AccountSpi {
                                   null, null, null, null, null,
                                   "John Miles", buildSpiAccountReference(), null, null,
                                   null, null, null,
-                                  "", null, "PMNT-ICDT-STDO",
-                                  null, null, null, additionalInformationStructured, buildSpiAccountBalance());
+                                  "", null, null,
+                                  "PMNT-ICDT-STDO", Collections.singletonList("PMNT-ICDT-STDO"),
+                                  null, null, null,
+                                  null, additionalInformationStructured, buildSpiAccountBalance());
     }
 
     private SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference("11111-11118", "10023-999999999", "DE52500105173911841934",
+        return new SpiAccountReference(ASPSP_ACCOUNT_ID, RESOURCE_ID, IBAN,
                                        "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"));
     }
 }

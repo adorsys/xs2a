@@ -152,10 +152,10 @@ class AccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity result = accountController.readAccountDetails(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, withBalance, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null, null,
-                                                                     null, null, null, null);
+        ResponseEntity<?> result = accountController.readAccountDetails(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, withBalance, null,
+                                                                        null, null, null, null,
+                                                                        null, null, null, null,
+                                                                        null, null, null, null);
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -198,10 +198,10 @@ class AccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity result = accountController.getAccountList(null, WRONG_CONSENT_ID, withBalance,
-                                                                 null, null, null, null, null, null,
-                                                                 null, null, null, null, null,
-                                                                 null, null);
+        ResponseEntity<?> result = accountController.getAccountList(null, WRONG_CONSENT_ID, withBalance,
+                                                                    null, null, null, null, null, null,
+                                                                    null, null, null, null, null,
+                                                                    null, null);
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -240,10 +240,10 @@ class AccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity result = accountController.getBalances(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
-                                                              null, null, null, null, null,
-                                                              null, null, null,
-                                                              null, null, null, null);
+        ResponseEntity<?> result = accountController.getBalances(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
+                                                                 null, null, null, null, null,
+                                                                 null, null, null,
+                                                                 null, null, null, null);
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -397,7 +397,7 @@ class AccountControllerTest {
     private ResponseObject<Xs2aAccountListHolder> getXs2aAccountListHolder() {
         List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
-                                   null, CURRENCY, "Schmidt", null,
+                                   null, CURRENCY, "Schmidt", "Display name", null,
                                    CashAccountType.CACC, AccountStatus.ENABLED, "GENODEF1N02", "", Xs2aUsageType.PRIV, "", null, null, null));
         Xs2aAccountListHolder xs2aAccountListHolder = new Xs2aAccountListHolder(accountDetails, null);
         return ResponseObject.<Xs2aAccountListHolder>builder()

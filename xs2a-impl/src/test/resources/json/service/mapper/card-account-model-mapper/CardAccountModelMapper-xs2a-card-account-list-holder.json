@@ -6,6 +6,7 @@
       "currency": "EUR",
       "maskedPan": "23456xxxxxx1234",
       "name": "Main Account",
+      "displayName": "Display name",
       "product": "Girokonto",
       "cashAccountType": "CASH",
       "accountStatus": "enabled",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,7 @@ public class SpiAccountDetails {
     private String msisdn;
     private Currency currency;
     private String name;
+    private String displayName;
     private String product;
     private SpiAccountType cashSpiAccountType;
     private SpiAccountStatus spiAccountStatus;
@@ -80,6 +81,18 @@ public class SpiAccountDetails {
 
     private String ownerName;
     private SpiAddress ownerAddress;
+
+    /**
+     * @deprecated since 6.0/7.0, use all args constructor instead
+     */
+    @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
+    public SpiAccountDetails(String aspspAccountId, String resourceId, String iban, String bban, String pan, String maskedPan,
+                             String msisdn, Currency currency, String name, String product, SpiAccountType cashSpiAccountType,
+                             SpiAccountStatus spiAccountStatus, String bic, String linkedAccounts, SpiUsageType usageType,
+                             String details, List<SpiAccountBalance> balances, String ownerName, SpiAddress ownerAddress) {
+        this(aspspAccountId, resourceId, iban, bban, pan, maskedPan, msisdn, currency, name, null, product,
+             cashSpiAccountType, spiAccountStatus, bic, linkedAccounts, usageType, details, balances, ownerName, ownerAddress);
+    }
 
     public void emptyBalances() {
         balances = null;

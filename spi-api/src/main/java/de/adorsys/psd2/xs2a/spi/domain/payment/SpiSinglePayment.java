@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ public class SpiSinglePayment implements SpiPayment {
     private String ultimateCreditor;
     private PurposeCode purposeCode;
     private SpiRemittance remittanceInformationStructured;
+    private List<SpiRemittance> remittanceInformationStructuredArray;
     private OffsetDateTime creationTimestamp;
     private String contentType;
     private String debtorName;

@@ -41,9 +41,9 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CmsCommonPaymentMapperSupportImpl.class, Xs2aObjectMapper.class})
@@ -71,7 +71,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
         CmsPayment actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
 
-        CmsSinglePayment expected = getCmsSinglePayment(paymentInitiationJson);
+        CmsSinglePayment expected = getCmsSinglePayment(paymentInitiationJson, cmsCommonPayment);
         assertEquals(expected, actual);
     }
 
@@ -129,6 +129,19 @@ class CmsCommonPaymentMapperSupportImplTest {
         assertEquals(expected, actual);
     }
 
+    @Test
+    void mapToCmsSinglePayment_noRemittanceInformationStructuredArray() throws JsonProcessingException {
+        PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/payment-initiation-resp.json", PaymentInitiationJson.class);
+        paymentInitiationJson.setRemittanceInformationStructuredArray(null);
+        cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
+
+        CmsPayment actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
+
+        assertTrue(actual instanceof CmsSinglePayment);
+        CmsSinglePayment actualSinglePayment = (CmsSinglePayment) actual;
+        assertEquals(Collections.emptyList(), actualSinglePayment.getRemittanceInformationStructuredArray());
+    }
+
     private CmsPeriodicPayment getCmsPeriodicPayment(PeriodicPaymentInitiationJson paymentInitiationJson) {
         CmsPeriodicPayment payment = new CmsPeriodicPayment(PAYMENT_PRODUCT);
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
@@ -150,6 +163,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         payment.setPurposeCode(paymentInitiationJson.getPurposeCode().name());
         payment.setRemittanceInformationStructured(getRemittanceInformationStructured(paymentInitiationJson.getRemittanceInformationStructured()));
+        payment.setRemittanceInformationStructuredArray(getRemittanceInformationStructuredArray(paymentInitiationJson.getRemittanceInformationStructuredArray()));
 
         payment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         payment.setPaymentId(cmsCommonPayment.getPaymentId());
@@ -177,12 +191,12 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setRequestedExecutionDate(paymentInitiationJson.getRequestedExecutionDate());
         payment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
 
-        payment.setPayments(getBulkPayments(paymentInitiationJson.getPayments().get(0)));
+        payment.setPayments(getBulkPayments(paymentInitiationJson.getPayments().get(0), cmsCommonPayment));
         payment.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
         return payment;
     }
 
-    private List<CmsSinglePayment> getBulkPayments(PaymentInitiationBulkElementJson paymentInitiationJson) {
+    private List<CmsSinglePayment> getBulkPayments(PaymentInitiationBulkElementJson paymentInitiationJson, CmsPayment parent) {
         CmsSinglePayment singlePayment = new CmsSinglePayment(PAYMENT_PRODUCT);
         Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
         singlePayment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
@@ -198,6 +212,12 @@ class CmsCommonPaymentMapperSupportImplTest {
         singlePayment.setUltimateDebtor(paymentInitiationJson.getUltimateDebtor());
         singlePayment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         singlePayment.setRemittanceInformationStructured(getRemittanceInformationStructured(paymentInitiationJson.getRemittanceInformationStructured()));
+        singlePayment.setRemittanceInformationStructuredArray(getRemittanceInformationStructuredArray(paymentInitiationJson.getRemittanceInformationStructuredArray()));
+        singlePayment.setPaymentId(parent.getPaymentId());
+        singlePayment.setPsuIdDatas(parent.getPsuIdDatas());
+        singlePayment.setTppInfo(parent.getTppInfo());
+        singlePayment.setStatusChangeTimestamp(parent.getStatusChangeTimestamp());
+        singlePayment.setCreationTimestamp(parent.getCreationTimestamp());
         return Collections.singletonList(singlePayment);
     }
 
@@ -224,7 +244,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         return payment;
     }
 
-    private CmsSinglePayment getCmsSinglePayment(PaymentInitiationJson paymentInitiationJson) {
+    private CmsSinglePayment getCmsSinglePayment(PaymentInitiationJson paymentInitiationJson, CmsPayment parent) {
         CmsSinglePayment payment = new CmsSinglePayment(PAYMENT_PRODUCT);
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         payment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
@@ -241,9 +261,26 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setUltimateDebtor(paymentInitiationJson.getUltimateDebtor());
         payment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         payment.setRemittanceInformationStructured(getRemittanceInformationStructured(paymentInitiationJson.getRemittanceInformationStructured()));
+        payment.setRemittanceInformationStructuredArray(getRemittanceInformationStructuredArray(paymentInitiationJson.getRemittanceInformationStructuredArray()));
         payment.setPurposeCode(paymentInitiationJson.getPurposeCode().name());
         payment.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
+
+        payment.setPaymentId(parent.getPaymentId());
+        payment.setPsuIdDatas(parent.getPsuIdDatas());
+        payment.setTppInfo(parent.getTppInfo());
+        payment.setCreationTimestamp(parent.getCreationTimestamp());
+        payment.setStatusChangeTimestamp(parent.getStatusChangeTimestamp());
         return payment;
+    }
+
+    private List<CmsRemittance> getRemittanceInformationStructuredArray(RemittanceInformationStructuredArray informationStructuredArray) {
+        if (informationStructuredArray == null) {
+            return Collections.emptyList();
+        }
+
+        return informationStructuredArray.stream()
+                   .map(this::getRemittanceInformationStructured)
+                   .collect(Collectors.toList());
     }
 
     private CmsRemittance getRemittanceInformationStructured(RemittanceInformationStructured informationStructured) {

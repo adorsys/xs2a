@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -54,6 +58,11 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setUltimateCreditor(payment.getUltimateCreditor());
         single.setPurposeCode(payment.getPurposeCode());
         single.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
+
+        List<Remittance> remittanceInformationStructuredArray = payment.getRemittanceInformationStructuredArray();
+        if (remittanceInformationStructuredArray != null) {
+            single.setRemittanceInformationStructuredArray(remittanceInformationStructuredArray.stream().map(remittanceMapper::mapToSpiRemittance).collect(Collectors.toList()));
+        }
         single.setCreationTimestamp(payment.getCreationTimestamp());
         single.setContentType(payment.getContentType());
         single.setDebtorName(payment.getDebtorName());
