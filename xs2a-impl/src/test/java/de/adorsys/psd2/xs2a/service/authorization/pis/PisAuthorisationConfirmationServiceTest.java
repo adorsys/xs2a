@@ -200,14 +200,13 @@ class PisAuthorisationConfirmationServiceTest {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
-                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_SCA_STATUS, ScaStatus.FINALISED.name(), ScaStatus.UNCONFIRMED.name(), ScaStatus.PSUAUTHENTICATED))
+                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
                                       .build();
         Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
 
 
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
-        authorisationResponse.setScaStatus(ScaStatus.PSUAUTHENTICATED);
-
+        authorisationResponse.setScaStatus(ScaStatus.FAILED);
 
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID)).thenReturn(CmsResponse.<Authorisation>builder()
                                                                                                   .payload(authorisationResponse)

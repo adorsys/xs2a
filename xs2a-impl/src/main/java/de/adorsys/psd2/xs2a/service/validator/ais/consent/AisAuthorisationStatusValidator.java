@@ -17,15 +17,24 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AisAuthorisationStatusValidator extends AuthorisationStatusValidator {
+    public AisAuthorisationStatusValidator(AspspProfileServiceWrapper aspspProfileService) {
+        super(aspspProfileService);
+    }
 
     @Override
-    protected @NotNull ErrorType getErrorType() {
+    protected @NotNull ErrorType getErrorTypeForStatusInvalid() {
         return ErrorType.AIS_409;
+    }
+
+    @Override
+    protected @NotNull ErrorType getErrorTypeForSCAInvalid() {
+        return ErrorType.AIS_400;
     }
 }
