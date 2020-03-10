@@ -1,0 +1,12 @@
+= Release notes v.6.0
+
+== Table of Contents
+* Bugfix: normalize certificate before signature verifying
+
+== Bugfix: normalize certificate before signature verifying
+
+From now on, certificate will be normalized before signature verifying and looks like:
+
+-----BEGIN CERTIFICATE-----
+(certificate)
+-----END CERTIFICATE-----
