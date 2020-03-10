@@ -173,14 +173,14 @@ class AisAuthorisationConfirmationServiceTest {
         // given
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
-                                      .tppMessages(of(FORMAT_ERROR_SCA_STATUS, ScaStatus.FINALISED.name(), ScaStatus.UNCONFIRMED.name(), ScaStatus.PSUAUTHENTICATED))
+                                      .tppMessages(of(SCA_INVALID))
                                       .build();
 
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .fail(errorHolder)
                                                                           .build();
         Authorisation aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
-        aisConsentAuthorizationResponse.setScaStatus(ScaStatus.PSUAUTHENTICATED);
+        aisConsentAuthorizationResponse.setScaStatus(ScaStatus.FINALISED);
 
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<Authorisation>builder()

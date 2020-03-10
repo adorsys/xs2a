@@ -2,7 +2,20 @@
 
 == Table of Contents
 * Fixed disabled tests in `EventReportRepositoryImplIT`
+* Add errorful response `400 SCA_INVALID` for AIS and PIS flows concerning confirmation code
 
 == Fixed disabled tests in `EventReportRepositoryImplIT`
 
 From now, on the tests in `EventReportRepositoryImplIT` are executable again.
+
+==  Add errorful response `400 SCA_INVALID` for AIS and PIS flows concerning confirmation code
+
+If confirmation of authorisation is mandated by the ASPSP profile and any of the following endpoints are called
+for the second time, assuming that the first, successful, call resulted in the authorisation switching its sca status to
+either `FINALISED` or `FAILED`, then this endpoint will now return with `400 SCA_INVALID`.
+
+Affected endpoints:
+
+* `PUT /v1/consents/{consentId}/authorisations/{authorisationId}`
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}`
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`

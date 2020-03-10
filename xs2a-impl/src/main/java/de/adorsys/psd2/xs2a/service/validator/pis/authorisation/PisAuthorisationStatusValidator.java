@@ -17,15 +17,24 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusValidator;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PisAuthorisationStatusValidator extends AuthorisationStatusValidator {
+    public PisAuthorisationStatusValidator(AspspProfileServiceWrapper aspspProfileService) {
+        super(aspspProfileService);
+    }
 
     @Override
-    protected @NotNull ErrorType getErrorType() {
+    protected @NotNull ErrorType getErrorTypeForStatusInvalid() {
         return ErrorType.PIS_409;
+    }
+
+    @Override
+    protected @NotNull ErrorType getErrorTypeForSCAInvalid() {
+        return ErrorType.PIS_400;
     }
 }
