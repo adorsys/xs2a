@@ -323,13 +323,6 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
-    // Wrong SCA status. Expecting SCA status to be %s if authorisation was sent or %s if auth code wasn’t sent yet. But was %s
-    FORMAT_ERROR_SCA_STATUS(400) {
-        @Override
-        public String getName() {
-            return FORMAT_ERROR_NAME;
-        }
-    },
     // Unknown response type
     FORMAT_ERROR_RESPONSE_TYPE(400) {
         @Override

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d4587bc5-20f2-4cff-8cca-5d1d40f43122",
+		"_postman_id": "9ee9c4fd-5afa-4b18-a01d-57903ce953b9",
 		"name": "PIS Payment requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -499,7 +499,7 @@
 													"    pm.expect(jsonData).to.have.property('instructedAmount');",
 													"    pm.expect(jsonData).to.have.property('creditorAccount');",
 													"    pm.expect(jsonData).to.have.property('creditorName');",
-													"    pm.expect(jsonData).to.have.property('debtorName');",
+													"",
 													"});"
 												],
 												"type": "text/javascript"
@@ -20502,7 +20502,55 @@
 									"response": []
 								},
 								{
-									"name": "10. Update PSU data for payment cancellation - provide code",
+									"name": "10. Update PSU Data in payment cancellation",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "5617cad6-99fb-4e1f-bbb7-07a468117230",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"psuId\": \"{{psu_id_none}}\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/authorisation/{{cancellation_id}}/psu-data",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"payment",
+												"authorisation",
+												"{{cancellation_id}}",
+												"psu-data"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "11. Update PSU data for payment cancellation - provide code",
 									"event": [
 										{
 											"listen": "test",
@@ -21668,7 +21716,6 @@
 											"            pm.expect(entry).to.have.property('instructedAmount');",
 											"            pm.expect(entry).to.have.property('creditorAccount');",
 											"            pm.expect(entry).to.have.property('creditorName');",
-											"            pm.expect(jsonData).to.have.property('debtorName');",
 											"        });",
 											"    }",
 											"});"
