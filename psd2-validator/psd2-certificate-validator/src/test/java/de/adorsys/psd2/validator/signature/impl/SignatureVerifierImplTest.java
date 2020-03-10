@@ -32,7 +32,7 @@ class SignatureVerifierImplTest {
     private static final String POST_METHOD = "POST";
     private static final String GET_METHOD = "GET";
     private static final String URI = "/request-uri/example";
-    private Map<String, String> headerMap = new HashMap();
+    private Map<String, String> headerMap;
 
     @BeforeEach
     void setUp() {
@@ -43,6 +43,15 @@ class SignatureVerifierImplTest {
     void verify_success_POST() {
         // when
         boolean actualResult = signatureVerifier.verify(signature(), certificate(), headerMap, POST_METHOD, URI);
+
+        // then
+        assertThat(actualResult).isTrue();
+    }
+
+    @Test
+    void verify_nonNormalisedCertificate_success_POST() {
+        // when
+        boolean actualResult = signatureVerifier.verify(signature(), nonNormalizedCertificate(), headerMap, POST_METHOD, URI);
 
         // then
         assertThat(actualResult).isTrue();
@@ -106,6 +115,7 @@ class SignatureVerifierImplTest {
     }
 
     private void fillDefaultHeaders() {
+        headerMap = new HashMap<>();
         headerMap.put("accept", "application/json");
         headerMap.put("psu-ip-address", "1.1.1.1");
         headerMap.put("psu-id", "anton.brueckner");
@@ -119,6 +129,10 @@ class SignatureVerifierImplTest {
 
     private String certificate() {
         return jsonReader.getStringFromFile("signature/tpp_signature_certificate.txt");
+    }
+
+    private String nonNormalizedCertificate() {
+        return jsonReader.getStringFromFile("signature/tpp_signature_non_normalised_certificate.txt");
     }
 
     private String signature() {
