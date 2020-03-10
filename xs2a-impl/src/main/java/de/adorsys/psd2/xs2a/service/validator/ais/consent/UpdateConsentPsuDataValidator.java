@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -76,7 +77,7 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
             return validationResult;
         }
 
-        ValidationResult authorisationStatusValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        ValidationResult authorisationStatusValidationResult = aisAuthorisationStatusValidator.validate(authorisation.getScaStatus(), StringUtils.isNotBlank(updatePsuData.getConfirmationCode()));
         if (authorisationStatusValidationResult.isNotValid()) {
             return authorisationStatusValidationResult;
         }

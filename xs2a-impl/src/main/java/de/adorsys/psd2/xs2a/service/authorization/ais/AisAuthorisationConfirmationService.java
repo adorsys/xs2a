@@ -51,7 +51,8 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_403;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SCA_INVALID;
 
 @Slf4j
 @Component
@@ -95,7 +96,7 @@ public class AisAuthorisationConfirmationService {
 
         UpdateConsentPsuDataResponse response = processIsAllowed
                                                     ? processAuthorisationConfirmationInternal(request, authorisation.getScaAuthenticationData())
-                                                    : buildFormatErrorResponse(request.getConsentId(), authorisationId, currentStatus, request.getPsuData());
+                                                    : buildScaConfirmationCodeErrorResponse(request.getConsentId(), authorisationId, request.getPsuData());
 
         return Optional.ofNullable(response.getErrorHolder())
                    .map(e -> ResponseObject.<UpdateConsentPsuDataResponse>builder()
@@ -182,24 +183,12 @@ public class AisAuthorisationConfirmationService {
         return response;
     }
 
-    private UpdateConsentPsuDataResponse buildFormatErrorResponse(String consentId, String authorisationId, ScaStatus currentStatus, PsuIdData psuIdData) {
-
-        ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
-                                      .tppMessages(of(FORMAT_ERROR_SCA_STATUS, ScaStatus.FINALISED.name(), ScaStatus.UNCONFIRMED.name(), currentStatus))
-                                      .build();
-
-        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: SCA status is invalid.", authorisationId);
-
-
-        return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuIdData);
-    }
-
     private UpdateConsentPsuDataResponse buildScaConfirmationCodeErrorResponse(String consentId, String authorisationId, PsuIdData psuIdData) {
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.AIS_400)
                                       .tppMessages(of(SCA_INVALID))
                                       .build();
 
-        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: confirmation code is wrong.", authorisationId);
+        log.info("Authorisation-ID: [{}]. Update consent PSU data failed: confirmation code is wrong or has been provided more than once.", authorisationId);
 
         return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuIdData);
     }
