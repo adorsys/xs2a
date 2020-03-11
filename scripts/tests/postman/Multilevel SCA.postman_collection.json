@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f8e552e7-565c-4990-b19b-134fcf8746db",
+		"_postman_id": "5765627e-4cf9-4fb4-96d3-e1d88a4592d7",
 		"name": "Multilevel SCA 5.x",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -384,7 +384,7 @@
 					"response": []
 				},
 				{
-					"name": "6. Payment initiation status request -> ACCP",
+					"name": "6. Payment initiation status request -> ACTC",
 					"event": [
 						{
 							"listen": "test",
@@ -399,7 +399,7 @@
 									"",
 									"pm.test(\"Test transaction status\", () => {",
 									"    pm.expect(jsonData).to.have.property('transactionStatus');",
-									"    pm.expect(jsonData.transactionStatus).to.eql('ACCP');",
+									"    pm.expect(jsonData.transactionStatus).to.eql('ACTC');",
 									"});"
 								],
 								"type": "text/javascript"
@@ -975,7 +975,7 @@
 									"    pm.expect(jsonData).to.have.property('_links');",
 									"    const _links = jsonData._links;",
 									"    ",
-									"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+									"    var updatePsuAuthentication = _links.startAuthorisationWithPsuAuthentication.href;",
 									"",
 									"    if (updatePsuAuthentication === undefined) {",
 									"       pm.expect().fail();",
