@@ -20,12 +20,12 @@ package de.adorsys.psd2.consent.web.xs2a.controller;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.UpdateAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
+import de.adorsys.psd2.core.data.AccountAccess;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -64,7 +64,7 @@ public class AisConsentController {
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId,
-        @RequestBody AisAccountAccessInfo request) {
+        @RequestBody AccountAccess request) {
         CmsResponse<CmsConsent> response;
 
         try {

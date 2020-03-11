@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.core.data.AccountAccess;
@@ -25,7 +24,6 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,34 +74,6 @@ class AccessMapperTest {
         List<AspspAccountAccess> actual = accessMapper.mapToAspspAccountAccess(accountAccess);
 
         List<AspspAccountAccess> expected = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-additional-information.json", AspspAccountAccess.class);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void mapToAccountAccess() {
-        AisAccountAccessInfo accountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/ais-account-access-info.json", AisAccountAccessInfo.class);
-
-        AccountAccess actual = accessMapper.mapToAccountAccess(accountAccessInfo);
-
-        AccountAccess expected = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-access.json", AccountAccess.class);
-
-        actual.getAccounts().sort(Comparator.comparing(AccountReference::getResourceId));
-        expected.getAccounts().sort(Comparator.comparing(AccountReference::getResourceId));
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void mapToAccountAccess_additionalInformation() {
-        AisAccountAccessInfo accountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/ais-account-access-info.json", AisAccountAccessInfo.class);
-
-        AccountAccess actual = accessMapper.mapToAccountAccess(accountAccessInfo);
-
-        AccountAccess expected = jsonReader.getObjectFromFile("json/service/mapper/account-access.json", AccountAccess.class);
-
-        actual.getAccounts().sort(Comparator.comparing(AccountReference::getResourceId));
-        expected.getAccounts().sort(Comparator.comparing(AccountReference::getResourceId));
-
         assertEquals(expected, actual);
     }
 

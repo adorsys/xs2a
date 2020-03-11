@@ -20,13 +20,13 @@ package de.adorsys.psd2.xs2a.integration;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.authorisation.AuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.*;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
@@ -175,7 +175,7 @@ class ContextPathIT {
             .willReturn(CmsResponse.<CmsCreateConsentResponse>builder()
                             .payload(new CmsCreateConsentResponse(ENCRYPT_CONSENT_ID, cmsConsent))
                             .build());
-        given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(ENCRYPT_CONSENT_ID), any(AisAccountAccessInfo.class)))
+        given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(ENCRYPT_CONSENT_ID), any(AccountAccess.class)))
             .willReturn(CmsResponse.<CmsConsent>builder()
                             .payload(cmsConsent)
                             .build());

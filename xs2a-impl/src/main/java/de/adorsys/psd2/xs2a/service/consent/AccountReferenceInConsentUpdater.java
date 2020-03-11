@@ -55,7 +55,7 @@ public class AccountReferenceInConsentUpdater {
      * @param newAccountAccess new object with account accesses
      */
     public void rewriteAccountAccess(@NotNull String consentId, @NotNull AccountAccess newAccountAccess) {
-        aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(newAccountAccess));
+        aisConsentService.updateAspspAccountAccess(consentId, newAccountAccess);
     }
 
     /**
@@ -96,7 +96,7 @@ public class AccountReferenceInConsentUpdater {
         AccountAccess accountAccess =
             getXs2aAccountAccess(accounts, transactions, balances, ownerName, additionalInformationAccess);
 
-        return aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(accountAccess));
+        return aisConsentService.updateAspspAccountAccess(consentId, accountAccess);
     }
 
     /**
@@ -137,7 +137,7 @@ public class AccountReferenceInConsentUpdater {
         AccountAccess accountAccess =
             getXs2aAccountAccess(accounts, transactions, balances, ownerName, additionalInformationAccess);
 
-        return aisConsentService.updateAspspAccountAccess(consentId, consentMapper.mapToAisAccountAccessInfo(accountAccess));
+        return aisConsentService.updateAspspAccountAccess(consentId, accountAccess);
     }
 
     private AccountAccess getXs2aAccountAccess(List<AccountReference> accounts,

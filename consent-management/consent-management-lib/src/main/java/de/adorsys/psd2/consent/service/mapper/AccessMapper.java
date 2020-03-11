@@ -16,11 +16,8 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.AccountInfo;
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.ais.AccountAdditionalInformationAccess;
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.core.data.AccountAccess;
@@ -28,12 +25,11 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class AccessMapper {
@@ -120,18 +116,6 @@ public class AccessMapper {
         return aspspAccountAccesses;
     }
 
-    public AccountAccess mapToAccountAccess(AisAccountAccessInfo aisAccountAccessInfo) {
-        Set<AccountReference> accounts = mapToAccountReferences(aisAccountAccessInfo.getAccounts());
-        Set<AccountReference> balances = mapToAccountReferences(aisAccountAccessInfo.getBalances());
-        Set<AccountReference> transactions = mapToAccountReferences(aisAccountAccessInfo.getTransactions());
-
-        Set<AccountReference> allAccounts = addReferencesToAccounts(accounts, balances, transactions);
-        return new AccountAccess(new ArrayList<>(allAccounts),
-                                 new ArrayList<>(balances),
-                                 new ArrayList<>(transactions),
-                                 mapToAdditionalInformationAccess(aisAccountAccessInfo.getAccountAdditionalInformationAccess()));
-    }
-
     public AspspAccountAccess mapToAspspAccountAccess(AccountReference accountReference) {
         return new AspspAccountAccess(accountReference.getUsedAccountReferenceSelector().getAccountValue(),
                                       TypeAccess.ACCOUNT,
@@ -147,48 +131,6 @@ public class AccessMapper {
                                     aspspAccountAccess.getCurrency(),
                                     aspspAccountAccess.getResourceId(),
                                     aspspAccountAccess.getAspspAccountId());
-    }
-
-    private AdditionalInformationAccess mapToAdditionalInformationAccess(AccountAdditionalInformationAccess accountAdditionalInformationAccess) {
-        if (accountAdditionalInformationAccess == null) {
-            return null;
-        }
-
-        List<AccountInfo> ownerNameAccountInfo = accountAdditionalInformationAccess.getOwnerName();
-        if (ownerNameAccountInfo == null) {
-            return new AdditionalInformationAccess(null);
-        }
-
-        List<AccountReference> ownerNameAccountReferences = ownerNameAccountInfo.stream().map(this::mapToAccountReference).collect(Collectors.toList());
-        return new AdditionalInformationAccess(ownerNameAccountReferences);
-    }
-
-    private Set<AccountReference> mapToAccountReferences(@NotNull List<AccountInfo> accountInfoList) {
-        return accountInfoList.stream()
-                   .map(this::mapToAccountReference)
-                   .collect(Collectors.toSet());
-    }
-
-    private AccountReference mapToAccountReference(AccountInfo accountInfo) {
-        return new AccountReference(accountInfo.getAccountType(),
-                                    accountInfo.getAccountIdentifier(),
-                                    getCurrencyByString(accountInfo.getCurrency()),
-                                    accountInfo.getResourceId(),
-                                    accountInfo.getAspspAccountId());
-    }
-
-    private Currency getCurrencyByString(String currency) {
-        return Optional.ofNullable(currency)
-                   .map(Currency::getInstance)
-                   .orElse(null);
-    }
-
-    private Set<AccountReference> addReferencesToAccounts(Set<AccountReference> accounts,
-                                                          Set<AccountReference> balances,
-                                                          Set<AccountReference> transactions) {
-        return Stream.of(accounts, balances, transactions)
-                   .flatMap(Collection::stream)
-                   .collect(Collectors.toSet());
     }
 
     @Getter
