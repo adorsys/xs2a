@@ -17,10 +17,9 @@
 package de.adorsys.psd2.consent.config;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
-import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -37,16 +36,13 @@ public class HibernateListenerConfig {
 
     @PostConstruct
     public void registerListeners() {
-        // TODO: Replace deprecated classes https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1227
-        if (entityManagerFactory instanceof HibernateEntityManagerFactory) {
-            final HibernateEntityManagerFactory hibernateEntityManagerFactory = (HibernateEntityManagerFactory) entityManagerFactory;
-            final SessionFactoryImpl sessionFactory = (SessionFactoryImpl) hibernateEntityManagerFactory.getSessionFactory();
+        final SessionFactoryImplementor sessionFactory = entityManagerFactory.unwrap(SessionFactoryImplementor.class);
 
-            final EventListenerRegistry registry = sessionFactory.getServiceRegistry()
-                                                       .getService(EventListenerRegistry.class);
+        final EventListenerRegistry registry = sessionFactory
+                                                   .getServiceRegistry()
+                                                   .getService(EventListenerRegistry.class);
 
-            registry.getEventListenerGroup(EventType.PRE_INSERT)
-                .appendListener(serviceInstanceIdEventListener);
-        }
+        registry.getEventListenerGroup(EventType.PRE_INSERT)
+            .appendListener(serviceInstanceIdEventListener);
     }
 }
