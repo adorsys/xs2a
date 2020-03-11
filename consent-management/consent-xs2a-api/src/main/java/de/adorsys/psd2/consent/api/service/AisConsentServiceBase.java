@@ -18,9 +18,9 @@ package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
+import de.adorsys.psd2.core.data.AccountAccess;
 
 public interface AisConsentServiceBase {
 
@@ -38,5 +38,5 @@ public interface AisConsentServiceBase {
      * @param consentId id of the consent to be updated
      * @return AisAccountConsent consent
      */
-    CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) throws WrongChecksumException;
+    CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AccountAccess request) throws WrongChecksumException;
 }

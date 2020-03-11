@@ -21,17 +21,19 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,7 +83,7 @@ class AisConsentServiceInternalEncryptedTest {
     void updateAccountAccess_success() throws WrongChecksumException {
         // Given
         CmsConsent cmsConsent = buildCmsConsent();
-        AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
+        AccountAccess accountAccess = buildAccountAccess();
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(DECRYPTED_CONSENT_ID));
         when(aisConsentService.updateAspspAccountAccess(eq(DECRYPTED_CONSENT_ID), any()))
             .thenReturn(CmsResponse.<CmsConsent>builder()
@@ -89,13 +91,13 @@ class AisConsentServiceInternalEncryptedTest {
                             .build());
 
         // When
-        CmsResponse<CmsConsent> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
+        CmsResponse<CmsConsent> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccess);
 
         // Then
         assertTrue(actual.isSuccessful());
 
         assertEquals(DECRYPTED_CONSENT_ID, actual.getPayload().getId());
-        verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
+        verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccess);
     }
 
     @Test
@@ -107,25 +109,25 @@ class AisConsentServiceInternalEncryptedTest {
                             .build());
 
         // Given
-        AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
+        AccountAccess accountAccess = buildAccountAccess();
 
         // When
-        CmsResponse<CmsConsent> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccessInfo);
+        CmsResponse<CmsConsent> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, accountAccess);
 
         // Then
         assertTrue(actual.hasError());
 
         assertEquals(CmsError.LOGICAL_ERROR, actual.getError());
-        verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccessInfo);
+        verify(aisConsentService, times(1)).updateAspspAccountAccess(DECRYPTED_CONSENT_ID, accountAccess);
     }
 
     @Test
     void updateAccountAccess_decryptionFailed() throws WrongChecksumException {
         // Given
-        AisAccountAccessInfo accountAccessInfo = buildAisAccountAccessInfo();
+        AccountAccess accountAccess = buildAccountAccess();
 
         // When
-        CmsResponse<CmsConsent> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccessInfo);
+        CmsResponse<CmsConsent> actual = aisConsentServiceInternalEncrypted.updateAspspAccountAccess(UNDECRYPTABLE_CONSENT_ID, accountAccess);
 
         // Then
         assertTrue(actual.hasError());
@@ -134,7 +136,7 @@ class AisConsentServiceInternalEncryptedTest {
         verify(aisConsentService, never()).updateAspspAccountAccess(any(), any());
     }
 
-    private CmsConsent buildCmsConsent(){
+    private CmsConsent buildCmsConsent() {
         CmsConsent cmsConsent = new CmsConsent();
         cmsConsent.setId(DECRYPTED_CONSENT_ID);
         return cmsConsent;
@@ -144,8 +146,12 @@ class AisConsentServiceInternalEncryptedTest {
         return new AisConsentActionRequest("tpp id", consentId, ActionStatus.SUCCESS, "request/uri", true, null, null);
     }
 
-    private AisAccountAccessInfo buildAisAccountAccessInfo() {
-        return new AisAccountAccessInfo();
+    private AccountAccess buildAccountAccess() {
+        return new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), buildAdditionalInformationAccess());
+    }
+
+    private AdditionalInformationAccess buildAdditionalInformationAccess() {
+        return new AdditionalInformationAccess(Collections.emptyList());
     }
 }
 

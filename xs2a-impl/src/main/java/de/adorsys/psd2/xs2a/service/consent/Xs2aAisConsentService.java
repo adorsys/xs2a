@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
@@ -31,6 +30,7 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
@@ -238,17 +238,17 @@ public class Xs2aAisConsentService {
     /**
      * Sends a PUT request to CMS to update AIS account access information by consent ID
      *
-     * @param consentId            consentId String representation of identifier of stored consent
-     * @param aisAccountAccessInfo AIS account access information
+     * @param consentId     consentId String representation of identifier of stored consent
+     * @param accountAccess AIS account access information
      * @return Response containing AIS Consent
      */
-    public CmsResponse<AisConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo aisAccountAccessInfo) {
+    public CmsResponse<AisConsent> updateAspspAccountAccess(String consentId, AccountAccess accountAccess) {
         CmsResponse<CmsConsent> response;
 
         CmsResponse.CmsResponseBuilder<AisConsent> builder = CmsResponse.builder();
 
         try {
-            response = aisConsentService.updateAspspAccountAccess(consentId, aisAccountAccessInfo);
+            response = aisConsentService.updateAspspAccountAccess(consentId, accountAccess);
         } catch (WrongChecksumException e) {
             return builder.error(CmsError.CHECKSUM_ERROR).build();
         }

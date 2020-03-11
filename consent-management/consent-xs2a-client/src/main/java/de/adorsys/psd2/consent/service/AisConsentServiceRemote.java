@@ -17,13 +17,13 @@
 package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.UpdateAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
+import de.adorsys.psd2.core.data.AccountAccess;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,7 +60,7 @@ public class AisConsentServiceRemote implements AisConsentServiceEncrypted {
     }
 
     @Override
-    public CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) {
+    public CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AccountAccess request) {
         try {
             UpdateAisConsentResponse response = consentRestTemplate.exchange(remoteAisConsentUrls.updateAisAccountAccess(), HttpMethod.PUT,
                                                                              new HttpEntity<>(request), UpdateAisConsentResponse.class, consentId).getBody();

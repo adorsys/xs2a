@@ -19,12 +19,13 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.UpdateAisConsentResponse;
 import de.adorsys.psd2.consent.config.AisConsentRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
+import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,6 +35,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -81,12 +84,12 @@ class AisConsentServiceRemoteTest {
     @Test
     void updateAspspAccountAccess() {
         when(aisConsentRemoteUrls.updateAisAccountAccess()).thenReturn(URL);
-        AisAccountAccessInfo aisAccountAccessInfo = new AisAccountAccessInfo();
+        AccountAccess accountAccess = buildEmptyAccountAccess();
         CmsConsent updatedConsent = new CmsConsent();
-        when(consentRestTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(aisAccountAccessInfo), UpdateAisConsentResponse.class, CONSENT_ID))
+        when(consentRestTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(accountAccess), UpdateAisConsentResponse.class, CONSENT_ID))
             .thenReturn(ResponseEntity.ok(new UpdateAisConsentResponse(updatedConsent)));
 
-        CmsResponse<CmsConsent> response = aisConsentServiceRemote.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
+        CmsResponse<CmsConsent> response = aisConsentServiceRemote.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
         assertTrue(response.isSuccessful());
         assertEquals(updatedConsent, response.getPayload());
@@ -95,11 +98,11 @@ class AisConsentServiceRemoteTest {
     @Test
     void updateAspspAccountAccess_nullBody() {
         when(aisConsentRemoteUrls.updateAisAccountAccess()).thenReturn(URL);
-        AisAccountAccessInfo aisAccountAccessInfo = new AisAccountAccessInfo();
-        when(consentRestTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(aisAccountAccessInfo), UpdateAisConsentResponse.class, CONSENT_ID))
+        AccountAccess accountAccess = buildEmptyAccountAccess();
+        when(consentRestTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(accountAccess), UpdateAisConsentResponse.class, CONSENT_ID))
             .thenReturn(ResponseEntity.ok().build());
 
-        CmsResponse<CmsConsent> response = aisConsentServiceRemote.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
+        CmsResponse<CmsConsent> response = aisConsentServiceRemote.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
         assertTrue(response.hasError());
         assertEquals(CmsError.TECHNICAL_ERROR, response.getError());
@@ -108,13 +111,21 @@ class AisConsentServiceRemoteTest {
     @Test
     void updateAspspAccountAccess_cmsRestException() {
         when(aisConsentRemoteUrls.updateAisAccountAccess()).thenReturn(URL);
-        AisAccountAccessInfo aisAccountAccessInfo = new AisAccountAccessInfo();
-        when(consentRestTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(aisAccountAccessInfo), UpdateAisConsentResponse.class, CONSENT_ID))
+        AccountAccess accountAccess = buildEmptyAccountAccess();
+        when(consentRestTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(accountAccess), UpdateAisConsentResponse.class, CONSENT_ID))
             .thenThrow(CmsRestException.class);
 
-        CmsResponse<CmsConsent> response = aisConsentServiceRemote.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
+        CmsResponse<CmsConsent> response = aisConsentServiceRemote.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
         assertTrue(response.hasError());
         assertEquals(CmsError.TECHNICAL_ERROR, response.getError());
+    }
+
+    private AccountAccess buildEmptyAccountAccess() {
+        return new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), buildEmptyAdditionalInformationAccess());
+    }
+
+    private AdditionalInformationAccess buildEmptyAdditionalInformationAccess() {
+        return new AdditionalInformationAccess(Collections.emptyList());
     }
 }

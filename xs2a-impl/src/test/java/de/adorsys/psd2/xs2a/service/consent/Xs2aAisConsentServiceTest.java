@@ -20,7 +20,6 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.*;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.ais.CreateAisConsentRequest;
 import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
@@ -434,8 +433,6 @@ class Xs2aAisConsentServiceTest {
         ArgumentCaptor<CmsConsent> argumentCaptor = ArgumentCaptor.forClass(CmsConsent.class);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
-        CreateAisConsentRequest createAisConsentRequesWithInternalRequestId = new CreateAisConsentRequest();
-        createAisConsentRequesWithInternalRequestId.setInternalRequestId(INTERNAL_REQUEST_ID);
         when(consentServiceEncrypted.createConsent(any()))
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))

@@ -18,12 +18,12 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.core.data.AccountAccess;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -66,7 +66,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
 
     @Override
     @Transactional(rollbackFor = WrongChecksumException.class)
-    public CmsResponse<CmsConsent> updateAspspAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) throws WrongChecksumException {
+    public CmsResponse<CmsConsent> updateAspspAccountAccess(String encryptedConsentId, AccountAccess request) throws WrongChecksumException {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
         if (!decryptIdOptional.isPresent()) {

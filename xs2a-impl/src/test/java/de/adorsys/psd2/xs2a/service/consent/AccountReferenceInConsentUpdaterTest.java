@@ -16,15 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -39,7 +38,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class AccountReferenceInConsentUpdaterTest {
@@ -51,7 +51,9 @@ class AccountReferenceInConsentUpdaterTest {
     private static final String IBAN_1 = "iban 1";
     private static final String IBAN_2 = "iban 2";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
-    private static final AisAccountAccessInfo AIS_ACCOUNT_ACCESS_INFO = new AisAccountAccessInfo();
+    private static final AccountAccess ACCOUNT_ACCESS = new AccountAccess(
+        Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), new AdditionalInformationAccess(Collections.emptyList())
+    );
 
     @Mock
     private Xs2aAisConsentService aisConsentService;
@@ -61,11 +63,6 @@ class AccountReferenceInConsentUpdaterTest {
     @InjectMocks
     private AccountReferenceInConsentUpdater accountReferenceInConsentUpdater;
 
-    @BeforeEach
-    void setUp() {
-        when(consentMapper.mapToAisAccountAccessInfo(any()))
-            .thenReturn(AIS_ACCOUNT_ACCESS_INFO);
-    }
 
     @Test
     void updateAccountReferences_withGlobalConsent_shouldSetResourceId() {
@@ -82,7 +79,8 @@ class AccountReferenceInConsentUpdaterTest {
         accountReferenceInConsentUpdater.updateAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aAccountDetails));
 
         // Then
-        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        verify(aisConsentService).updateAspspAccountAccess(eq(CONSENT_ID), xs2aAccountAccessArgumentCaptor.capture());
+
         AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
 
         List<AccountReference> accounts = value.getAccounts();
@@ -105,8 +103,6 @@ class AccountReferenceInConsentUpdaterTest {
         AccountReference transactionReference = transactions.get(0);
         assertEquals(IBAN_1, transactionReference.getIban());
         assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
-
-        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
     }
 
     @Test
@@ -124,7 +120,8 @@ class AccountReferenceInConsentUpdaterTest {
         accountReferenceInConsentUpdater.updateAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aAccountDetails));
 
         // Then
-        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        verify(aisConsentService).updateAspspAccountAccess(eq(CONSENT_ID), xs2aAccountAccessArgumentCaptor.capture());
+
         AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
 
         List<AccountReference> accounts = value.getAccounts();
@@ -147,8 +144,6 @@ class AccountReferenceInConsentUpdaterTest {
         AccountReference transactionReference = transactions.get(0);
         assertEquals(IBAN_1, transactionReference.getIban());
         assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
-
-        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
     }
 
     @Test
@@ -168,7 +163,8 @@ class AccountReferenceInConsentUpdaterTest {
         accountReferenceInConsentUpdater.updateAccountReferences(CONSENT_ID, aisConsent, Arrays.asList(xs2aAccountDetails, xs2aAccountDetails2));
 
         // Then
-        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        verify(aisConsentService).updateAspspAccountAccess(eq(CONSENT_ID), xs2aAccountAccessArgumentCaptor.capture());
+
         AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
 
         List<AccountReference> accounts = value.getAccounts();
@@ -191,8 +187,6 @@ class AccountReferenceInConsentUpdaterTest {
         AccountReference transactionReference = transactions.get(0);
         assertEquals(IBAN_1, transactionReference.getIban());
         assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
-
-        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
     }
 
     @Test
@@ -210,7 +204,8 @@ class AccountReferenceInConsentUpdaterTest {
         accountReferenceInConsentUpdater.updateAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aAccountDetails));
 
         // Then
-        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        verify(aisConsentService).updateAspspAccountAccess(eq(CONSENT_ID), xs2aAccountAccessArgumentCaptor.capture());
+
         AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
 
         List<AccountReference> accounts = value.getAccounts();
@@ -225,8 +220,6 @@ class AccountReferenceInConsentUpdaterTest {
 
         List<AccountReference> transactions = value.getTransactions();
         assertTrue(transactions.isEmpty());
-
-        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
     }
 
     private AisConsent buildAisConsent(AccountAccess accountAccess, AccountAccessType globalAccessType) {

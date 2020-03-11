@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
@@ -74,33 +72,6 @@ class Xs2aAisConsentMapperTest {
     @Autowired
     private Xs2aAisConsentMapper mapper;
     private JsonReader jsonReader = new JsonReader();
-
-    @Test
-    void mapToAisAccountAccessInfo_withAdditionalInformationAccess() {
-        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-access-with-additional-information.json", AccountAccess.class);
-        AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info-with-additional-information.json", AisAccountAccessInfo.class);
-
-        AisAccountAccessInfo aisAccountAccessInfo = mapper.mapToAisAccountAccessInfo(accountAccess);
-        assertEquals(expectedAisAccountAccessInfo, aisAccountAccessInfo);
-    }
-
-    @Test
-    void mapToAisAccountAccessInfo() {
-        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-access.json", AccountAccess.class);
-        AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info.json", AisAccountAccessInfo.class);
-
-        AisAccountAccessInfo aisAccountAccessInfo = mapper.mapToAisAccountAccessInfo(accountAccess);
-        assertEquals(expectedAisAccountAccessInfo, aisAccountAccessInfo);
-    }
-
-    @Test
-    void mapToAisAccountAccessInfo_emptyFields() {
-        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/mapper/consent/xs2a-account-access-empty.json", AccountAccess.class);
-        AisAccountAccessInfo expectedAisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/mapper/consent/account-access-info-empty.json", AisAccountAccessInfo.class);
-
-        AisAccountAccessInfo aisAccountAccessInfo = mapper.mapToAisAccountAccessInfo(accountAccess);
-        assertEquals(expectedAisAccountAccessInfo, aisAccountAccessInfo);
-    }
 
     @Test
     void mapToSpiScaConfirmation() {

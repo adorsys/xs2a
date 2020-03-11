@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.service.AisConsentService;
@@ -35,15 +34,19 @@ import de.adorsys.psd2.consent.service.mapper.AccessMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsConsentMapper;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.EXPIRED;
@@ -87,7 +90,7 @@ public class AisConsentServiceInternal implements AisConsentService {
 
     @Override
     @Transactional(rollbackFor = WrongChecksumException.class)
-    public CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) throws WrongChecksumException {
+    public CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AccountAccess request) throws WrongChecksumException {
         Optional<ConsentEntity> consentOptional = aisConsentRepository.getActualAisConsent(consentId);
 
         if (!consentOptional.isPresent()) {
@@ -99,7 +102,8 @@ public class AisConsentServiceInternal implements AisConsentService {
         }
 
         ConsentEntity consentEntity = consentOptional.get();
-        ConsentEntity updatedConsent = updateConsentAccess(consentEntity, request);
+        AccountAccess requestedAccessWithFilledAccounts = fillAccountsWithAllAccountReferences(request);
+        ConsentEntity updatedConsent = updateConsentAccess(consentEntity, requestedAccessWithFilledAccounts);
         ConsentEntity savedConsent = aisConsentRepository.verifyAndUpdate(updatedConsent);
         CmsConsent cmsConsent = mapToCmsConsent(savedConsent);
 
@@ -108,11 +112,21 @@ public class AisConsentServiceInternal implements AisConsentService {
                    .build();
     }
 
-    private ConsentEntity updateConsentAccess(ConsentEntity consentEntity, AisAccountAccessInfo request) {
+    private AccountAccess fillAccountsWithAllAccountReferences(AccountAccess accountAccess) {
+        List<AccountReference> allReferences = Stream.of(accountAccess.getAccounts(),
+                                                         accountAccess.getBalances(),
+                                                         accountAccess.getTransactions())
+                                                   .flatMap(Collection::stream)
+                                                   .distinct()
+                                                   .collect(Collectors.toList());
+        return new AccountAccess(allReferences, accountAccess.getBalances(), accountAccess.getTransactions(),
+                                 accountAccess.getAdditionalInformationAccess());
+    }
+
+    private ConsentEntity updateConsentAccess(ConsentEntity consentEntity, AccountAccess request) {
         List<AspspAccountAccess> aspspAccountAccesses = consentEntity.getAspspAccountAccesses();
         AccountAccess existingAccess = accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, consentEntity.getOwnerNameType());
-        AccountAccess requestedAccess = accessMapper.mapToAccountAccess(request);
-        AccountAccess updatedAccesses = accountAccessUpdater.updateAccountReferencesInAccess(existingAccess, requestedAccess);
+        AccountAccess updatedAccesses = accountAccessUpdater.updateAccountReferencesInAccess(existingAccess, request);
         List<AspspAccountAccess> updatedAspspAccountAccesses = accessMapper.mapToAspspAccountAccess(updatedAccesses);
         consentEntity.setAspspAccountAccesses(updatedAspspAccountAccesses);
         return consentEntity;

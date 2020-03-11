@@ -20,11 +20,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.UpdateAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +53,7 @@ class AisConsentControllerTest {
                                                                      .toUriString();
     private static final JsonReader JSON_READER = new JsonReader();
     private static final AisConsentActionRequest AIS_CONSENT_ACTION_REQUEST = JSON_READER.getObjectFromFile("json/controller/ais-consent-action-request.json", AisConsentActionRequest.class);
-    private static final AisAccountAccessInfo AIS_ACCOUNT_ACCESS_INFO = JSON_READER.getObjectFromFile("json/controller/ais-account-access-info.json", AisAccountAccessInfo.class);
+    private static final AccountAccess ACCOUNT_ACCESS = JSON_READER.getObjectFromFile("json/controller/account-access.json", AccountAccess.class);
 
     @InjectMocks
     private AisConsentController aisConsentController;
@@ -102,12 +102,12 @@ class AisConsentControllerTest {
         //Given
         CmsConsent cmsConsent = JSON_READER.getObjectFromFile("json/controller/cms-consent.json", CmsConsent.class);
         UpdateAisConsentResponse updateAisConsentResponse = new UpdateAisConsentResponse(cmsConsent, null);
-        when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO))
+        when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, ACCOUNT_ACCESS))
             .thenReturn(CmsResponse.<CmsConsent>builder().payload(cmsConsent).build());
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_ACCOUNT_ACCESS_ENDPOINT)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(JSON_READER.writeValueAsString(AIS_ACCOUNT_ACCESS_INFO)))
+                            .content(JSON_READER.writeValueAsString(ACCOUNT_ACCESS)))
             //Then
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -117,11 +117,11 @@ class AisConsentControllerTest {
     @Test
     void updateAccountAccess_WrongChecksumException() throws Exception {
         //Given
-        when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO)).thenThrow(WrongChecksumException.class);
+        when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, ACCOUNT_ACCESS)).thenThrow(WrongChecksumException.class);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_ACCOUNT_ACCESS_ENDPOINT)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(JSON_READER.writeValueAsString(AIS_ACCOUNT_ACCESS_INFO)))
+                            .content(JSON_READER.writeValueAsString(ACCOUNT_ACCESS)))
             //Then
             .andExpect(status().isBadRequest())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -132,11 +132,11 @@ class AisConsentControllerTest {
     void updateAccountAccess_logicalError() throws Exception {
         //Given
         CmsResponse<CmsConsent> cmsResponse = CmsResponse.<CmsConsent>builder().error(CmsError.LOGICAL_ERROR).build();
-        when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO)).thenReturn(cmsResponse);
+        when(aisConsentServiceEncrypted.updateAspspAccountAccess(ENCRYPTED_CONSENT_ID, ACCOUNT_ACCESS)).thenReturn(cmsResponse);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(UPDATE_ACCOUNT_ACCESS_ENDPOINT)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(JSON_READER.writeValueAsString(AIS_ACCOUNT_ACCESS_INFO)))
+                            .content(JSON_READER.writeValueAsString(ACCOUNT_ACCESS)))
             //Then
             .andExpect(status().isBadRequest())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
