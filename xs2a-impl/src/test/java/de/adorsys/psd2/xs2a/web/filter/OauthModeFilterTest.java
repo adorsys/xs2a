@@ -112,16 +112,14 @@ class OauthModeFilterTest {
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH_PRE_STEP);
 
-        ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
 
         // When
         oauthModeFilter.doFilter(request, response, chain);
 
         // Then
-        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
+        verify(tppErrorMessageWriter).writeError(eq(response), message.capture());
         verify(chain, never()).doFilter(any(), any());
-        assertEquals((Integer) 401, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_UNAUTHORIZED, message.getValue());
     }
 
@@ -136,16 +134,14 @@ class OauthModeFilterTest {
         when(aspspProfileService.getScaRedirectFlow())
             .thenReturn(ScaRedirectFlow.OAUTH);
 
-        ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
 
         // When
         oauthModeFilter.doFilter(request, response, chain);
 
         // Then
-        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
+        verify(tppErrorMessageWriter).writeError(eq(response), message.capture());
         verify(chain, never()).doFilter(any(), any());
-        assertEquals((Integer) 403, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_FORBIDDEN, message.getValue());
     }
 

@@ -111,16 +111,14 @@ class QwacCertificateFilterTest {
         when(xs2aEndpointChecker.isXs2aEndpoint(request)).thenReturn(true);
 
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_EXPIRED);
-        ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
 
         //When
         qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
-        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
+        verify(tppErrorMessageWriter).writeError(eq(response), message.capture());
         verify(chain, never()).doFilter(any(), any());
-        assertEquals((Integer) 401, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_EXPIRED, message.getValue());
     }
 
@@ -179,7 +177,6 @@ class QwacCertificateFilterTest {
         when(xs2aTppInfoMapper.mapToTppInfo(any(TppCertificateData.class))).thenReturn(new TppInfo());
 
         when(tppRoleValidationService.hasAccess(any(), any())).thenReturn(false);
-        ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
         ArgumentCaptor<TppErrorMessage> message = ArgumentCaptor.forClass(TppErrorMessage.class);
         when(requestProviderService.getEncodedTppQwacCert()).thenReturn(TEST_QWAC_CERTIFICATE_VALID);
         when(requestProviderService.getTppRolesAllowedHeader()).thenReturn("PIISP");
@@ -189,9 +186,8 @@ class QwacCertificateFilterTest {
         qwacCertificateFilter.doFilter(request, response, chain);
 
         //Then
-        verify(tppErrorMessageWriter).writeError(eq(response), statusCode.capture(), message.capture());
+        verify(tppErrorMessageWriter).writeError(eq(response), message.capture());
         verify(chain, never()).doFilter(any(), any());
-        assertEquals((Integer) 401, statusCode.getValue());
         assertEquals(TPP_ERROR_MESSAGE_ACCESS, message.getValue());
     }
 

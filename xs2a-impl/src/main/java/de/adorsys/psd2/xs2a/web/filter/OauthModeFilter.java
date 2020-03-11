@@ -81,13 +81,13 @@ public class OauthModeFilter extends AbstractXs2aFilter {
         if (shouldFilterInternal(request)) {
             if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH_PRE_STEP) && requestProviderService.getOAuth2Token() == null) {
                 log.info("OAuth pre-step selected, no authorisation header is present in the request");
-                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, new TppErrorMessage(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
+                tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, UNAUTHORIZED_NO_TOKEN, aspspProfileService.getOauthConfigurationUrl()));
                 return;
             }
 
             if (isRedirectApproachWithGivenOauthType(ScaRedirectFlow.OAUTH) && StringUtils.isNotBlank(requestProviderService.getOAuth2Token())) {
                 log.info("OAuth integrated selected, authorisation header is present in the request");
-                tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_FORBIDDEN, new TppErrorMessage(ERROR, FORBIDDEN));
+                tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, FORBIDDEN));
                 return;
             }
         }

@@ -290,7 +290,7 @@ class SignatureFilterTest {
         doAnswer((i) -> {
             mockResponse.setStatus(code);
             return null;
-        }).when(tppErrorMessageWriter).writeError(eq(mockResponse), eq(code), any());
+        }).when(tppErrorMessageWriter).writeError(eq(mockResponse), any(TppErrorMessage.class));
     }
 
     private void fillDefaultHeaders() {

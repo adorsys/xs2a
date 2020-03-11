@@ -99,7 +99,7 @@ class Xs2aRestExceptionHandlerTest {
         exceptionHandler.handleHttpRequestMethodNotSupported(methodNotSupportedException, request, response, handler);
 
         // Then
-        verify(tppErrorMessageWriter, times(1)).writeError(response, 405, tppErrorMessage);
+        verify(tppErrorMessageWriter, times(1)).writeError(response, tppErrorMessage);
     }
 
     @Test
@@ -111,6 +111,6 @@ class Xs2aRestExceptionHandlerTest {
         exceptionHandler.handleHttpMediaTypeNotAcceptable(mediaTypeNotAcceptableException, request, response, handler);
 
         // Then
-        verify(tppErrorMessageWriter, times(1)).writeError(response, 401, tppErrorMessage);
+        verify(tppErrorMessageWriter, times(1)).writeError(response, tppErrorMessage);
     }
 }

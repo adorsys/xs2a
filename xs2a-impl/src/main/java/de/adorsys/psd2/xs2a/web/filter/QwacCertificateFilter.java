@@ -172,6 +172,6 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
     }
 
     private void setResponseStatusAndErrorCode(HttpServletResponse response, MessageErrorCode messageErrorCode) throws IOException {
-        tppErrorMessageWriter.writeError(response, HttpServletResponse.SC_UNAUTHORIZED, new TppErrorMessage(ERROR, messageErrorCode));
+            tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, messageErrorCode));
     }
 }
