@@ -17,7 +17,6 @@
 package de.adorsys.psd2.xs2a.domain.consent.pis;
 
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
@@ -43,7 +42,6 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponse extends AuthorisationProc
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse(ErrorHolder errorHolder, String paymentId, String authorisationId, PsuIdData psuData) {
         this(ScaStatus.FAILED, paymentId, authorisationId, psuData);
-        this.setTransactionStatus(TransactionStatus.RJCT);
         this.errorHolder = errorHolder;
     }
 
