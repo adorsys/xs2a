@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -29,6 +28,7 @@ import de.adorsys.psd2.consent.domain.payment.PisRemittance;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -85,8 +85,8 @@ class CmsPsuPisMapperTest {
     private static final String INSTRUCTION_IDENTIFICATION = "INSTRUCTION_IDENTIFICATION";
     private static final AccountReferenceEntity DEBTOR_ACCOUNT = buildAccountReferenceEntity();
     private static final AccountReferenceEntity CREDITOR_ACCOUNT = buildAccountReferenceEntity();
-    private static final CmsAccountReference DEBTOR_CMS_ACCOUNT = buildCmsAccountReference();
-    private static final CmsAccountReference CREDITOR_CMS_ACCOUNT = buildCmsAccountReference();
+    private static final AccountReference DEBTOR_CMS_ACCOUNT = buildAccountReference();
+    private static final AccountReference CREDITOR_CMS_ACCOUNT = buildAccountReference();
     private static final String IBAN = "IBAN";
     private static final Currency CURRENCY = Currency.getInstance(Locale.GERMANY);
     private static final BigDecimal AMOUNT = BigDecimal.TEN;
@@ -353,10 +353,10 @@ class CmsPsuPisMapperTest {
         return accountReferenceEntity;
     }
 
-    private static CmsAccountReference buildCmsAccountReference() {
-        CmsAccountReference cmsAccountReference = new CmsAccountReference();
-        cmsAccountReference.setIban(IBAN);
-        return cmsAccountReference;
+    private static AccountReference buildAccountReference() {
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban(IBAN);
+        return accountReference;
     }
 
     private static PisAddress buildPisAddress() {

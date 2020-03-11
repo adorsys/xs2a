@@ -26,7 +26,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class AccountReferenceMapper {
-    AccountReference mapToCmsAccountReference(AccountReferenceEntity accountReferenceEntity) {
+    AccountReference mapToAccountReference(AccountReferenceEntity accountReferenceEntity) {
         return Optional.ofNullable(accountReferenceEntity)
                    .map(ref -> new AccountReference(null, null,
                                                        ref.getIban(),

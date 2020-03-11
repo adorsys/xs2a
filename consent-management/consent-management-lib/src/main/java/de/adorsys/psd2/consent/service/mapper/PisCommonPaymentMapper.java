@@ -110,11 +110,11 @@ public class PisCommonPaymentMapper {
                        pisPayment.setPaymentId(pm.getPaymentId());
                        pisPayment.setEndToEndIdentification(pm.getEndToEndIdentification());
                        pisPayment.setInstructionIdentification(pm.getInstructionIdentification());
-                       pisPayment.setDebtorAccount(accountReferenceMapper.mapToCmsAccountReference(pm.getDebtorAccount()));
+                       pisPayment.setDebtorAccount(accountReferenceMapper.mapToAccountReference(pm.getDebtorAccount()));
                        pisPayment.setUltimateDebtor(pm.getUltimateDebtor());
                        pisPayment.setCurrency(pm.getCurrency());
                        pisPayment.setAmount(pm.getAmount());
-                       pisPayment.setCreditorAccount(accountReferenceMapper.mapToCmsAccountReference(pm.getCreditorAccount()));
+                       pisPayment.setCreditorAccount(accountReferenceMapper.mapToAccountReference(pm.getCreditorAccount()));
                        pisPayment.setCreditorAgent(pm.getCreditorAgent());
                        pisPayment.setCreditorName(pm.getCreditorName());
                        pisPayment.setCreditorAddress(mapToCmsAddress(pm.getCreditorAddress()));

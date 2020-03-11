@@ -3,6 +3,7 @@
 == Table of Contents
 * Fixed disabled tests in `EventReportRepositoryImplIT`
 * Add errorful response `400 SCA_INVALID` for AIS and PIS flows concerning confirmation code
+* Remove deprecated `CmsAccountReference` and replaced according usages by `AccountAccess`
 
 == Fixed disabled tests in `EventReportRepositoryImplIT`
 
@@ -19,3 +20,9 @@ Affected endpoints:
 * `PUT /v1/consents/{consentId}/authorisations/{authorisationId}`
 * `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}`
 * `PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`
+
+== Remove deprecated `CmsAccountReference` and replaced according usages by `AccountAccess`
+
+All usages of `CmsAccountReference` got replaced by `de.adorsys.psd2.xs2a.core.profile.AccountReference`. The deprecated
+`CmsAccountReference` class got deleted.
+
