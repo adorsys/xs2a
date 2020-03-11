@@ -17,8 +17,8 @@
 package de.adorsys.psd2.consent.api.pis;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,9 +34,9 @@ import java.util.List;
 public class CmsSinglePayment extends BaseCmsPayment {
     private String endToEndIdentification;
     private String instructionIdentification;
-    private CmsAccountReference debtorAccount;
+    private AccountReference debtorAccount;
     private CmsAmount instructedAmount;
-    private CmsAccountReference creditorAccount;
+    private AccountReference creditorAccount;
     private String creditorAgent;
     private String creditorName;
     private CmsAddress creditorAddress;
