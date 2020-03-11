@@ -52,13 +52,13 @@ public class Xs2aRestExceptionHandler extends DefaultHandlerExceptionResolver {
 
     @Override
     protected ModelAndView handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        tppErrorMessageWriter.writeError(response, 405, new TppErrorMessage(ERROR, SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, ex.getMethod()));
+        tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, SERVICE_INVALID_405_METHOD_NOT_SUPPORTED, ex.getMethod()));
         return new ModelAndView();
     }
 
     @Override
     protected ModelAndView handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        tppErrorMessageWriter.writeError(response, 401, new TppErrorMessage(ERROR, CONSENT_INVALID));
+        tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, CONSENT_INVALID));
         return new ModelAndView();
     }
 }
