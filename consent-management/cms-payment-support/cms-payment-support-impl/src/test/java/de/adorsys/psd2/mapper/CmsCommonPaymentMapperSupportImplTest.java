@@ -18,7 +18,6 @@ package de.adorsys.psd2.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.core.payment.model.*;
 import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
@@ -295,15 +294,15 @@ class CmsCommonPaymentMapperSupportImplTest {
         return remittanceInformationStructured;
     }
 
-    private CmsAccountReference getAccount(AccountReference accountReference) {
-        CmsAccountReference cmsAccountReference = new CmsAccountReference();
-        cmsAccountReference.setIban(accountReference.getIban());
-        cmsAccountReference.setBban(accountReference.getBban());
-        cmsAccountReference.setPan(accountReference.getPan());
-        cmsAccountReference.setMaskedPan(accountReference.getMaskedPan());
-        cmsAccountReference.setMsisdn(accountReference.getMsisdn());
-        cmsAccountReference.setCurrency(Currency.getInstance(accountReference.getCurrency()));
-        return cmsAccountReference;
+    private de.adorsys.psd2.xs2a.core.profile.AccountReference getAccount(AccountReference accountReference) {
+        de.adorsys.psd2.xs2a.core.profile.AccountReference xs2aAccountReference = new de.adorsys.psd2.xs2a.core.profile.AccountReference();
+        xs2aAccountReference.setIban(accountReference.getIban());
+        xs2aAccountReference.setBban(accountReference.getBban());
+        xs2aAccountReference.setPan(accountReference.getPan());
+        xs2aAccountReference.setMaskedPan(accountReference.getMaskedPan());
+        xs2aAccountReference.setMsisdn(accountReference.getMsisdn());
+        xs2aAccountReference.setCurrency(Currency.getInstance(accountReference.getCurrency()));
+        return xs2aAccountReference;
     }
 
     private CmsAddress getCreditorAddress(Address address) {

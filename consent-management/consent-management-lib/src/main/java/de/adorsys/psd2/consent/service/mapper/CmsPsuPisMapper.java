@@ -16,13 +16,13 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
 import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -96,9 +96,9 @@ public class CmsPsuPisMapper {
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
         periodicPayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
         periodicPayment.setInstructionIdentification(pisPaymentData.getInstructionIdentification());
-        periodicPayment.setDebtorAccount(mapToCmsAccountReference(pisPaymentData.getDebtorAccount()));
+        periodicPayment.setDebtorAccount(mapToAccountReference(pisPaymentData.getDebtorAccount()));
         periodicPayment.setInstructedAmount(new CmsAmount(pisPaymentData.getCurrency(), pisPaymentData.getAmount()));
-        periodicPayment.setCreditorAccount(mapToCmsAccountReference(pisPaymentData.getCreditorAccount()));
+        periodicPayment.setCreditorAccount(mapToAccountReference(pisPaymentData.getCreditorAccount()));
         periodicPayment.setCreditorAgent(pisPaymentData.getCreditorAgent());
         periodicPayment.setCreditorName(pisPaymentData.getCreditorName());
         periodicPayment.setCreditorAddress(pisCommonPaymentMapper.mapToCmsAddress(pisPaymentData.getCreditorAddress()));
@@ -130,7 +130,7 @@ public class CmsPsuPisMapper {
         CmsBulkPayment bulkPayment = new CmsBulkPayment();
         bulkPayment.setPaymentId(bulkPisPaymentData.getPaymentData().getPaymentId());
         bulkPayment.setBatchBookingPreferred(false);
-        bulkPayment.setDebtorAccount(mapToCmsAccountReference(bulkPisPaymentData.getDebtorAccount()));
+        bulkPayment.setDebtorAccount(mapToAccountReference(bulkPisPaymentData.getDebtorAccount()));
         bulkPayment.setPaymentProduct(paymentProduct);
         List<CmsSinglePayment> payments = pisPaymentDataList.stream()
                                               .map(p -> (CmsSinglePayment) mapToCmsSinglePayment(p, paymentProduct))
@@ -146,9 +146,9 @@ public class CmsPsuPisMapper {
         singlePayment.setPaymentId(pisPaymentData.getPaymentId());
         singlePayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
         singlePayment.setInstructionIdentification(pisPaymentData.getInstructionIdentification());
-        singlePayment.setDebtorAccount(mapToCmsAccountReference(pisPaymentData.getDebtorAccount()));
+        singlePayment.setDebtorAccount(mapToAccountReference(pisPaymentData.getDebtorAccount()));
         singlePayment.setInstructedAmount(new CmsAmount(pisPaymentData.getCurrency(), pisPaymentData.getAmount()));
-        singlePayment.setCreditorAccount(mapToCmsAccountReference(pisPaymentData.getCreditorAccount()));
+        singlePayment.setCreditorAccount(mapToAccountReference(pisPaymentData.getCreditorAccount()));
         singlePayment.setCreditorAgent(pisPaymentData.getCreditorAgent());
         singlePayment.setCreditorName(pisPaymentData.getCreditorName());
         singlePayment.setCreditorAddress(pisCommonPaymentMapper.mapToCmsAddress(pisPaymentData.getCreditorAddress()));
@@ -170,15 +170,16 @@ public class CmsPsuPisMapper {
         return singlePayment;
     }
 
-    private CmsAccountReference mapToCmsAccountReference(AccountReferenceEntity pisAccountReference) {
+    private AccountReference mapToAccountReference(AccountReferenceEntity pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
-                   .map(ref -> new CmsAccountReference(null,
-                                                       ref.getIban(),
-                                                       ref.getBban(),
-                                                       ref.getPan(),
-                                                       ref.getMaskedPan(),
-                                                       ref.getMsisdn(),
-                                                       ref.getCurrency())
+                   .map(ref -> new AccountReference(null,
+                                                    null,
+                                                    ref.getIban(),
+                                                    ref.getBban(),
+                                                    ref.getPan(),
+                                                    ref.getMaskedPan(),
+                                                    ref.getMsisdn(),
+                                                    ref.getCurrency())
                    ).orElse(null);
     }
 }
