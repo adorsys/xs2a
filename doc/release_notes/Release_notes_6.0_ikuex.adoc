@@ -4,6 +4,8 @@
 * Support header TPP-Brand-Logging-Information
 * Adjust Xs2a and SPI BalanceType objects with current specification
 * Bugfix: Validation for PIIS field cardNumber is missing
+* Bugfix: DownloadTransactionsResponse ignores custom error messages
+
 
 == Support header TPP-Brand-Logging-Information
 
@@ -18,3 +20,10 @@ From now on, all `BalanceType` values are adjusted according to BG Specification
 == Bugfix: Validation for PIIS field cardNumber is missing
 
 From now on, value of the `cardNumber` field in Funds Confirmation request (`POST /v1/funds-confirmations`) is being validated and can not exceed the maximum length of 35 symbols
+
+== Bugfix: DownloadTransactionsResponse ignores custom error messages
+
+From now on, ASPSP is able to provide custom error message with `SpiResponse` to TPP during download transactions request.
+
+Also if `de.adorsys.psd2.xs2a.exception.RestException` is thrown, then the message that was passed to the constructor of the exception will be visible to TPP e.g. `throw  new RestException(MessageErrorCode.FORMAT_ERROR, "message to TPP")`
+

@@ -43,6 +43,7 @@ import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -394,6 +395,24 @@ class AccountControllerTest {
         assertEquals(0, response.getBufferSize());
     }
 
+    @Test
+    void downloadTransactions_spiErrorCustomMessage() throws IOException {
+        // Given
+        MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.buildWithCustomError(FORMAT_ERROR, "message from SPI"));
+        ArgumentCaptor<MessageError> messageErrorArgumentCaptor = ArgumentCaptor.forClass(MessageError.class);
+
+        when(transactionService.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID)).thenReturn(buildTransactionDownloadResponseError(messageError));
+
+        // When
+        accountController.downloadTransactions(CONSENT_ID, ACCOUNT_ID, DOWNLOAD_ID);
+
+        // Then
+        verify(tppErrorMessageWriter).writeError(any(HttpServletResponse.class), messageErrorArgumentCaptor.capture());
+        assertEquals(messageError, messageErrorArgumentCaptor.getValue());
+        verify(response, times(1)).flushBuffer();
+        assertEquals(0, response.getBufferSize());
+    }
+
     private ResponseObject<Xs2aAccountListHolder> getXs2aAccountListHolder() {
         List<Xs2aAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
@@ -530,6 +549,13 @@ class AccountControllerTest {
     private ResponseObject<Xs2aTransactionsDownloadResponse> buildTransactionDownloadResponseError() {
         return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
                    .fail(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(FORMAT_ERROR)))
+                   .build();
+    }
+
+
+    private ResponseObject<Xs2aTransactionsDownloadResponse> buildTransactionDownloadResponseError(MessageError messageError) {
+        return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()
+                   .fail(messageError)
                    .build();
     }
 }

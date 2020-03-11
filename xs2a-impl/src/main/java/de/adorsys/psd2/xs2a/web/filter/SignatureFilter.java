@@ -140,6 +140,6 @@ public class SignatureFilter extends AbstractXs2aFilter {
     }
 
     private void setResponseStatusAndErrorCode(HttpServletResponse response, MessageErrorCode messageErrorCode) throws IOException {
-        tppErrorMessageWriter.writeError(response, messageErrorCode.getCode(), new TppErrorMessage(ERROR, messageErrorCode));
+        tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, messageErrorCode));
     }
 }

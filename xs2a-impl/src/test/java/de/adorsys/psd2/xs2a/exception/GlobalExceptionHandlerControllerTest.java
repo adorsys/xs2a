@@ -69,4 +69,21 @@ class GlobalExceptionHandlerControllerTest {
         verify(errorTypeMapper).mapToErrorType(ServiceType.AIS, 400);
         verify(responseErrorMapper).generateErrorResponse(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR)));
     }
+
+    @Test
+    void methodRestException_shouldReturnErrorWithMessage() throws NoSuchMethodException {
+        //Given
+        ErrorType errorType = ErrorType.AIS_400;
+        MessageErrorCode messageErrorCode = MessageErrorCode.FORMAT_ERROR;
+        String restExceptionMessage = "restExceptionMessage";
+        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.AIS);
+        when(errorTypeMapper.mapToErrorType(ServiceType.AIS, 400)).thenReturn(errorType);
+        when(handlerMethod.getMethod()).thenReturn(Object.class.getMethod("toString"));
+        RestException restException = new RestException(messageErrorCode, restExceptionMessage);
+        //When
+        globalExceptionHandlerController.restException(restException, handlerMethod);
+        //Then
+        verify(errorTypeMapper).mapToErrorType(ServiceType.AIS, 400);
+        verify(responseErrorMapper).generateErrorResponse(new MessageError(errorType, TppMessageInformation.buildWithCustomError(messageErrorCode, restExceptionMessage)));
+    }
 }
