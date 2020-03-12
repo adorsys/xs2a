@@ -13,39 +13,33 @@ No backward compatibility with 6.x is guaranteed. Will be released as Stable ver
 
 [cols="3*.<"]
 |===
-|release date|version 6.x|version 7.x
-
-|13.03.2020|6.0|7.0
-
-a|
-
-a|* New feature: Support header TPP-Brand-Logging-Information
-
-* New feature: Retrieve psuMessage from SPI for Get Status Response
-
-* New feature: In Get Payment Response the payment resource may contain the debtorName field
-
-* New feature: Add new attributes to data types according to Specification v.1.3.6
-
-* New feature: Add new message code 400 SCA_INVALID
-
-* Bugfix: Validation for PIIS field cardNumber is missing
-
-* Adjust Xs2a and SPI BalanceType objects with BG specification 1.3.6
-
-a|* All fixes and updates from v.6.0
-
-* Update to Java 11
+|release date|version 6.x (Stable)|version 7.x (Development)
 
 |27.03.2020|6.1|7.1
 
 a|
 
-a|* Remove "owner_address_type" column from "ais_consent" table
+a|* Migrate to .yaml open API ver 1.3.6 20200306v1
 
-* Bugfix: Validation for PIIS field cardNumber is missing
+* Adjustments in Account Owner Name service responses 
+
+* CMS database: Remove "owner_address_type" column from "ais_consent" table
 
 a|* All fixes and updates from v.6.1
+
+* New feature: Extend Response of GET SCA Status with trustedBeneficiary Flag according to BG specification 1.3.6
+
+|10.04.2020|6.2|7.2
+
+a|
+
+a|* Drop deprecated tables for AIS and PIS authorisations
+
+a|* All fixes and updates from v.6.2
+
+* New feature: Support List of Trusted Beneficiaries Service in ASPSP-Profile
+
+* New feature: Implement Read the List of Trusted Beneficiaries
 
 * New feature: Funds Confirmation consent support in Profile
 
@@ -53,57 +47,41 @@ a|* All fixes and updates from v.6.1
 
 * New feature: Establish FundsConfirmationConsent
 
+|24.04.2020|6.3|7.3
+
+a|
+
+a| 
+
+a|* All fixes and updates from v.6.3
+
+* Provide interfaces for CMS controllers for FundsConfirmationConsent
+
 * New feature: Create Funds Confirmation consent validator
 
 * New feature: Get FundsConfirmationConsent Status + object
 
 * New feature: Revoke FundsConfirmationConsent
 
-|10.04.2020|6.2|7.2
-
-a|
-
-a|* Remove deprecated PaymentAuthorisationType
-
-* Remove deprecated PiisConsentTppAccessType 
-
-* Drop deprecated tables for AIS and PIS authorisations
-
-a|* All fixes and updates from v.6.2
-
 * New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
 
 * New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
-
-* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
-
-* New feature: Get SCA Status request for FundsConfirmationConsent 
-
-|24.04.2020|6.3|7.3
-
-a|
-
-a|* Provide interfaces for CMS controllers
-
-a|* All fixes and updates from v.6.3
-
-* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
-
-* New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
 
 |08.05.2020|6.4|7.4
 
 a|
 
-a|* Fix javadoc warnings
-
-* Fix disabled test in EventReportRepositoryImplIT
-
-* Remove unused AisConsentServiceBase#updateAspspAccountAccess
-
-* Refactor method isConsentExpired in OneOffConsentExpirationService
+a|
 
 a|* All fixes and updates from v.6.4
+
+* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+
+* New feature: Get SCA Status request for FundsConfirmationConsent 
+
+* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
+
+* New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
 
 * New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
 
