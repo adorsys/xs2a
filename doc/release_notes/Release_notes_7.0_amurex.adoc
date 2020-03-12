@@ -1,9 +1,0 @@
-= Release notes v.7.0
-
-== Table of Contents
-* Support of Java 11
-
-== Support of Java 11
-
-From now on, XS2A supports Java 11.
-
