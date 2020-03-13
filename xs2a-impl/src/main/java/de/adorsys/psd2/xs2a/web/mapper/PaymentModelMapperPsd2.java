@@ -68,6 +68,7 @@ public class PaymentModelMapperPsd2 {
         try {
             Map<String, String> map = xs2aObjectMapper.readValue(rawData, Map.class);
             map.put("transactionStatus", commonPayment.getTransactionStatus().toString());
+
             return map;
         } catch (JsonProcessingException e) {
             log.warn("Can't convert payment to map {}", e.getMessage());
@@ -78,7 +79,8 @@ public class PaymentModelMapperPsd2 {
     public PaymentInitiationStatusResponse200Json mapToStatusResponseJson(GetPaymentStatusResponse response) {
         return new PaymentInitiationStatusResponse200Json()
                    .transactionStatus(mapToTransactionStatus(response.getTransactionStatus()))
-                   .fundsAvailable(response.getFundsAvailable());
+                   .fundsAvailable(response.getFundsAvailable())
+                   .psuMessage(response.getPsuMessage());
     }
 
     public byte[] mapToStatusResponseRaw(GetPaymentStatusResponse response) {
@@ -102,7 +104,7 @@ public class PaymentModelMapperPsd2 {
 
     public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI,
                                                                      String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData,
-                                                                     TppNotificationData tppNotificationData) {
+                                                                     TppNotificationData tppNotificationData, String tppBrandLoggingInformation) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
@@ -111,6 +113,7 @@ public class PaymentModelMapperPsd2 {
         parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
         parameters.setPsuData(psuData);
         parameters.setTppNotificationData(tppNotificationData);
+        parameters.setTppBrandLoggingInformation(tppBrandLoggingInformation);
 
         return parameters;
     }

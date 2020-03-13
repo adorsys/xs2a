@@ -1,0 +1,94 @@
+= Release notes v.6.0
+
+== Table of Contents
+
+* Bugfix: normalize certificate before signature verifying
+* Feature: retrieve PSU message from SPI level to TPP
+* Added new field to `Get payment information` response
+* Support header TPP-Brand-Logging-Information
+* Adjust Xs2a and SPI BalanceType objects with current specification
+* Bugfix: Validation for PIIS field cardNumber is missing
+* Bugfix: DownloadTransactionsResponse ignores custom error messages
+* Fixed disabled tests in `EventReportRepositoryImplIT`
+* Add errorful response `400 SCA_INVALID` for AIS and PIS flows concerning confirmation code
+* Remove deprecated `CmsAccountReference` and replaced according usages by `AccountAccess`
+* Add new attributes to data types according to Specification v.1.3.6
+* Fix naming inconsistency in the "Signing Baskets Service (SBS)" tag
+
+== Bugfix: normalize certificate before signature verifying
+
+From now on, certificate will be normalized before signature verifying and looks like:
+
+-----BEGIN CERTIFICATE----- (certificate) -----END CERTIFICATE-----
+
+== Feature: retrieve PSU message from SPI level to TPP
+
+Added ability for retrieving text message from ASPSP through SPI to the TPP for the next requests:
+
+- getting payment status `GET /v1/{payment-service}/{paymentId}/status`;
+- getting consent status: `GET /v1/consents/{consentId}/status`.
+
+== Added new field to `Get payment information` response
+
+New field was added to `Get payment information` response (`GET /v1/{payment-service}/{payment-product}/{paymentId}`) -
+`debtorName`.
+This string field is optional, it can be added at ASPSP side to payment payload.
+
+== Support header TPP-Brand-Logging-Information
+
+From now on, header `TPP-Brand-Logging-Information` is supported by XS2A.
+This header can be passed with payment initiation or consent creation requests.
+This header is accessible in SPI level in SpiContextData object, also saved in CMS database and can be retrieved as a field of payment or consent from CMS-PSU-API.
+
+New Liquibase migration file (`0100-add-tpp-brand-logging-information.xml`) should be applied to the CMS database to properly create columns in the appropriate tables.
+
+== Adjust Xs2a and SPI BalanceType objects with current specification
+
+From now on, all `BalanceType` values are adjusted according to BG Specification 1.3.6
+
+== Bugfix: Validation for PIIS field cardNumber is missing
+
+From now on, value of the `cardNumber` field in Funds Confirmation request (`POST /v1/funds-confirmations`) is being validated and can not exceed the maximum length of 35 symbols
+
+== Bugfix: DownloadTransactionsResponse ignores custom error messages
+
+From now on, ASPSP is able to provide custom error message with `SpiResponse` to TPP during download transactions request.
+
+Also if `de.adorsys.psd2.xs2a.exception.RestException` is thrown, then the message that was passed to the constructor of the exception will be visible to TPP e.g. `throw  new RestException(MessageErrorCode.FORMAT_ERROR, "message to TPP")`
+
+== Fixed disabled tests in `EventReportRepositoryImplIT`
+
+From now, on the tests in `EventReportRepositoryImplIT` are executable again.
+
+== Add errorful response `400 SCA_INVALID` for AIS and PIS flows concerning confirmation code
+
+If confirmation of authorisation is mandated by the ASPSP profile and any of the following endpoints are called for the second time, assuming that the first, successful, call resulted in the authorisation switching its sca status to either `FINALISED` or `FAILED`, then this endpoint will now return with `400 SCA_INVALID`.
+
+Affected endpoints:
+
+* `PUT /v1/consents/{consentId}/authorisations/{authorisationId}`
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}`
+* `PUT /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{cancellationId}`
+
+== Remove deprecated `CmsAccountReference` and replaced according usages by `AccountAccess`
+
+All usages of `CmsAccountReference` got replaced by `de.adorsys.psd2.xs2a.core.profile.AccountReference`.
+The deprecated
+`CmsAccountReference` class got deleted.
+
+== Add new attributes to data types according to Specification v.1.3.6
+
+From now on, new data attributes introduced in Specification v.1.3.6 are propagated to and from SPI level.
+
+The following changes were made to SPI models:
+
+- `displayName` property has been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountDetails` and
+ `de.adorsys.psd2.xs2a.spi.domain.account.SpiCardAccountDetails`
+- `acceptorTransactionDateTime` and `cardAcceptorPhone` have been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiCardTransaction`
+- `remittanceInformationStructuredArray` has been added to `de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment`
+- `remittanceInformationUnstructuredArray`, `remittanceInformationStructuredArray` and `additionalInformation` have been added to `de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction`
+
+== Fix naming inconsistency in the "Signing Baskets Service (SBS)" tag
+
+From now on, all endpoints related to Signing Baskets use `Signing Baskets Service (SBS)` tag in the default PSD2 OpenAPI file.
+Previously used tag `Signing Baskets (SBS)` was removed from the Swagger UI.

@@ -17,17 +17,18 @@
 package de.adorsys.psd2.mapper;
 
 import de.adorsys.psd2.consent.api.CmsAddress;
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.consent.api.pis.*;
 import de.adorsys.psd2.core.payment.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
@@ -74,10 +75,10 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         periodicPayment.setEndToEndIdentification(periodicPaymentInitiationJson.getEndToEndIdentification());
         periodicPayment.setInstructionIdentification(periodicPaymentInitiationJson.getInstructionIdentification());
-        periodicPayment.setDebtorAccount(mapToCmsAccountReference(periodicPaymentInitiationJson.getDebtorAccount()));
+        periodicPayment.setDebtorAccount(mapToAccountReference(periodicPaymentInitiationJson.getDebtorAccount()));
         Amount instructedAmount = periodicPaymentInitiationJson.getInstructedAmount();
         periodicPayment.setInstructedAmount(new CmsAmount(mapToCurrency(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
-        periodicPayment.setCreditorAccount(mapToCmsAccountReference(periodicPaymentInitiationJson.getCreditorAccount()));
+        periodicPayment.setCreditorAccount(mapToAccountReference(periodicPaymentInitiationJson.getCreditorAccount()));
         periodicPayment.setCreditorAgent(periodicPaymentInitiationJson.getCreditorAgent());
         periodicPayment.setCreditorName(periodicPaymentInitiationJson.getCreditorName());
         periodicPayment.setCreditorAddress(mapToCmsAddress(periodicPaymentInitiationJson.getCreditorAddress()));
@@ -91,6 +92,8 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setUltimateCreditor(periodicPaymentInitiationJson.getUltimateCreditor());
         periodicPayment.setPurposeCode(mapToPurposeCode(periodicPaymentInitiationJson.getPurposeCode()));
         periodicPayment.setRemittanceInformationStructured(mapToCmsRemittance(periodicPaymentInitiationJson.getRemittanceInformationStructured()));
+        periodicPayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
+        periodicPayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(periodicPaymentInitiationJson.getRemittanceInformationStructuredArray()));
 
         return periodicPayment;
     }
@@ -101,13 +104,14 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         fillBasePaymentFields(bulkPayment, cmsCommonPayment);
         bulkPayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         bulkPayment.setBatchBookingPreferred(bulkPaymentInitiationJson.getBatchBookingPreferred());
-        bulkPayment.setDebtorAccount(mapToCmsAccountReference(bulkPaymentInitiationJson.getDebtorAccount()));
+        bulkPayment.setDebtorAccount(mapToAccountReference(bulkPaymentInitiationJson.getDebtorAccount()));
         bulkPayment.setBatchBookingPreferred(bulkPaymentInitiationJson.getBatchBookingPreferred());
         bulkPayment.setRequestedExecutionDate(bulkPaymentInitiationJson.getRequestedExecutionDate());
         List<CmsSinglePayment> payments = bulkPaymentInitiationJson.getPayments().stream()
                                               .map(p -> mapToCmsSinglePayment(p, cmsCommonPayment))
                                               .collect(Collectors.toList());
         bulkPayment.setPayments(payments);
+        bulkPayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
 
         return bulkPayment;
     }
@@ -119,7 +123,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setInstructionIdentification(paymentInitiationBulkElementJson.getInstructionIdentification());
         Amount instructedAmount = paymentInitiationBulkElementJson.getInstructedAmount();
         singlePayment.setInstructedAmount(new CmsAmount(mapToCurrency(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
-        singlePayment.setCreditorAccount(mapToCmsAccountReference(paymentInitiationBulkElementJson.getCreditorAccount()));
+        singlePayment.setCreditorAccount(mapToAccountReference(paymentInitiationBulkElementJson.getCreditorAccount()));
         singlePayment.setCreditorAgent(paymentInitiationBulkElementJson.getCreditorAgent());
         singlePayment.setCreditorName(paymentInitiationBulkElementJson.getCreditorName());
         singlePayment.setCreditorAddress(mapToCmsAddress(paymentInitiationBulkElementJson.getCreditorAddress()));
@@ -129,6 +133,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setUltimateCreditor(paymentInitiationBulkElementJson.getUltimateCreditor());
         singlePayment.setPurposeCode(mapToPurposeCode(paymentInitiationBulkElementJson.getPurposeCode()));
         singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationBulkElementJson.getRemittanceInformationStructured()));
+        singlePayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(paymentInitiationBulkElementJson.getRemittanceInformationStructuredArray()));
         return singlePayment;
     }
 
@@ -137,10 +142,10 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         fillBasePaymentFields(singlePayment, cmsCommonPayment);
         singlePayment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         singlePayment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
-        singlePayment.setDebtorAccount(mapToCmsAccountReference(paymentInitiationJson.getDebtorAccount()));
+        singlePayment.setDebtorAccount(mapToAccountReference(paymentInitiationJson.getDebtorAccount()));
         Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
         singlePayment.setInstructedAmount(new CmsAmount(mapToCurrency(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
-        singlePayment.setCreditorAccount(mapToCmsAccountReference(paymentInitiationJson.getCreditorAccount()));
+        singlePayment.setCreditorAccount(mapToAccountReference(paymentInitiationJson.getCreditorAccount()));
         singlePayment.setCreditorAgent(paymentInitiationJson.getCreditorAgent());
         singlePayment.setCreditorName(paymentInitiationJson.getCreditorName());
         singlePayment.setCreditorAddress(mapToCmsAddress(paymentInitiationJson.getCreditorAddress()));
@@ -151,6 +156,8 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setUltimateCreditor(paymentInitiationJson.getUltimateCreditor());
         singlePayment.setPurposeCode(mapToPurposeCode(paymentInitiationJson.getPurposeCode()));
         singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationJson.getRemittanceInformationStructured()));
+        singlePayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
+        singlePayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(paymentInitiationJson.getRemittanceInformationStructuredArray()));
         return singlePayment;
     }
 
@@ -185,6 +192,16 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         return cmsRemittance;
     }
 
+    private List<CmsRemittance> mapToCmsRemittanceList(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+        if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
+            return Collections.emptyList();
+        }
+
+        return remittanceInformationStructuredArray.stream()
+                   .map(this::mapToCmsRemittance)
+                   .collect(Collectors.toList());
+    }
+
     private CmsAddress mapToCmsAddress(Address pisAddress) {
         return Optional.ofNullable(pisAddress)
                    .map(adr -> {
@@ -198,15 +215,16 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
                    }).orElse(null);
     }
 
-    private CmsAccountReference mapToCmsAccountReference(AccountReference pisAccountReference) {
+    private de.adorsys.psd2.xs2a.core.profile.AccountReference mapToAccountReference(AccountReference pisAccountReference) {
         return Optional.ofNullable(pisAccountReference)
-                   .map(ref -> new CmsAccountReference(null,
-                                                       ref.getIban(),
-                                                       ref.getBban(),
-                                                       ref.getPan(),
-                                                       ref.getMaskedPan(),
-                                                       ref.getMsisdn(),
-                                                       mapToCurrency(ref.getCurrency()))
+                   .map(ref -> new de.adorsys.psd2.xs2a.core.profile.AccountReference(null,
+                                                                                      null,
+                                                                                      ref.getIban(),
+                                                                                      ref.getBban(),
+                                                                                      ref.getPan(),
+                                                                                      ref.getMaskedPan(),
+                                                                                      ref.getMsisdn(),
+                                                                                      mapToCurrency(ref.getCurrency()))
                    ).orElse(null);
     }
 

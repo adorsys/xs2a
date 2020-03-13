@@ -49,7 +49,7 @@ public class ConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri, TppNotificationData tppNotificationData) {
+    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri, TppNotificationData tppNotificationData, String tppBrandLoggingInformation) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
                        CreateConsentReq createAisConsentRequest = new CreateConsentReq();
@@ -63,6 +63,7 @@ public class ConsentModelMapper {
                        createAisConsentRequest.setAvailableAccounts(mapToAccountAccessTypeFromAvailableAccounts(cnst.getAccess().getAvailableAccounts()));
                        createAisConsentRequest.setAllPsd2(mapToAccountAccessTypeFromAllPsd2Enum(cnst.getAccess().getAllPsd2()));
                        createAisConsentRequest.setAvailableAccountsWithBalance(mapToAccountAccessTypeFromAvailableAccountsWithBalance(cnst.getAccess().getAvailableAccountsWithBalance()));
+                       createAisConsentRequest.setTppBrandLoggingInformation(tppBrandLoggingInformation);
                        return createAisConsentRequest;
                    })
                    .orElse(null);
@@ -70,7 +71,13 @@ public class ConsentModelMapper {
 
     public ConsentStatusResponse200 mapToConsentStatusResponse200(ConsentStatusResponse consentStatusResponse) {
         return Optional.ofNullable(consentStatusResponse)
-                   .map(cstr -> new ConsentStatusResponse200().consentStatus(ConsentStatus.fromValue(cstr.getConsentStatus())))
+                   .map(cstr -> {
+                       ConsentStatusResponse200 response200 = new ConsentStatusResponse200();
+                       response200.setConsentStatus(ConsentStatus.fromValue(cstr.getConsentStatus()));
+                       response200.setPsuMessage(cstr.getPsuMessage());
+
+                       return response200;
+                   })
                    .orElse(null);
     }
 
@@ -125,24 +132,24 @@ public class ConsentModelMapper {
         AisConsentData consentData = aisConsent.getConsentData();
         return Optional.ofNullable(accountAccess)
                    .map(access -> {
-                       de.adorsys.psd2.model.AccountAccess mappedAccountAccess = new de.adorsys.psd2.model.AccountAccess();
-                       mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
-                       mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
-                       mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
-                       mappedAccountAccess.setAvailableAccounts(
-                           de.adorsys.psd2.model.AccountAccess.AvailableAccountsEnum.fromValue(
-                               Optional.ofNullable(consentData.getAvailableAccounts())
-                                   .map(AccountAccessType::getDescription)
-                                   .orElse(null)
-                           )
-                       );
-                       mappedAccountAccess.setAllPsd2(
-                           de.adorsys.psd2.model.AccountAccess.AllPsd2Enum.fromValue(
-                               Optional.ofNullable(consentData.getAllPsd2())
-                                   .map(AccountAccessType::getDescription)
-                                   .orElse(null)
-                           )
-                       );
+                            de.adorsys.psd2.model.AccountAccess mappedAccountAccess = new de.adorsys.psd2.model.AccountAccess();
+                            mappedAccountAccess.setAccounts(accountModelMapper.mapToAccountReferences(access.getAccounts()));
+                            mappedAccountAccess.setBalances(accountModelMapper.mapToAccountReferences(access.getBalances()));
+                            mappedAccountAccess.setTransactions(accountModelMapper.mapToAccountReferences(access.getTransactions()));
+                            mappedAccountAccess.setAvailableAccounts(
+                                de.adorsys.psd2.model.AccountAccess.AvailableAccountsEnum.fromValue(
+                                    Optional.ofNullable(consentData.getAvailableAccounts())
+                                        .map(AccountAccessType::getDescription)
+                                        .orElse(null)
+                                )
+                            );
+                            mappedAccountAccess.setAllPsd2(
+                                de.adorsys.psd2.model.AccountAccess.AllPsd2Enum.fromValue(
+                                    Optional.ofNullable(consentData.getAllPsd2())
+                                        .map(AccountAccessType::getDescription)
+                                        .orElse(null)
+                                )
+                            );
                             mappedAccountAccess.setAvailableAccountsWithBalance(
                                 de.adorsys.psd2.model.AccountAccess.AvailableAccountsWithBalanceEnum.fromValue(
                                     Optional.ofNullable(consentData.getAvailableAccountsWithBalance())

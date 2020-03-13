@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.consent.api.ais.CmsAccountReference;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +29,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class CmsBulkPayment extends BaseCmsPayment {
     private boolean batchBookingPreferred;
-    private CmsAccountReference debtorAccount;
+    private AccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
     private TransactionStatus paymentStatus;
     private List<CmsSinglePayment> payments;

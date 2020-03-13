@@ -18,8 +18,7 @@ package de.adorsys.psd2.consent.api.ais;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.Value;
-
-import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 @Value
 public class ConsentStatusResponse {

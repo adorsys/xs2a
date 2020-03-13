@@ -51,6 +51,9 @@ public class ConsentTppInformationEntity {
     @Column(name = "tpp_ntfc_uri")
     private String tppNotificationUri;
 
+    @Column(name = "tpp_brand_log_info")
+    private String tppBrandLoggingInformation;
+
     @ElementCollection
     @CollectionTable(name = "ais_consent_tpp_ntfc", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "notification_mode", nullable = false)

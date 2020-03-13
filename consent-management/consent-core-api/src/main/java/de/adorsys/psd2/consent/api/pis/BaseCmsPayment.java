@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.pis;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -32,4 +33,6 @@ public abstract class BaseCmsPayment implements CmsPayment {
     private TppInfo tppInfo;
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;
+    @Nullable
+    private String tppBrandLoggingInformation;
 }

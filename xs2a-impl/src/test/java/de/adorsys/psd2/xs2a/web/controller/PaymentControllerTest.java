@@ -110,6 +110,7 @@ class PaymentControllerTest {
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
     private static final boolean EXPLICIT_PREFERRED_FALSE = false;
     private static final String PSU_DATA_PASSWORD_JSON_PATH = "json/web/controller/psuData-password.json";
+    private static final String PSU_MESSAGE = "PSU message";
 
     @InjectMocks
     private PaymentController paymentController;
@@ -198,7 +199,10 @@ class PaymentControllerTest {
         // Given
         doReturn(new ResponseEntity<>(getPaymentInitiationStatus(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
-        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID)).thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null)).build());
+        when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder()
+                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE))
+                            .build());
 
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus();
 
@@ -224,7 +228,9 @@ class PaymentControllerTest {
         doReturn(new ResponseEntity<>(rawPaymentStatus, HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
-            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus)).build());
+            .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder()
+                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus, PSU_MESSAGE))
+                            .build());
 
         // When
         ResponseEntity actualResponse = paymentController.getPaymentInitiationStatus(
@@ -690,7 +696,7 @@ class PaymentControllerTest {
                                                                   null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   null, null, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -704,7 +710,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         String rawRequestObject = "some body";
@@ -722,7 +728,7 @@ class PaymentControllerTest {
                                                                   null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -736,7 +742,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         String rawRequestObject = "some body";
@@ -757,7 +763,7 @@ class PaymentControllerTest {
                                                                   null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual).isNotNull();
@@ -772,7 +778,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aPayment())
@@ -792,7 +798,7 @@ class PaymentControllerTest {
                                                                   null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -805,7 +811,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aPayment())
@@ -828,7 +834,7 @@ class PaymentControllerTest {
                                                                   null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual).isNotNull();
@@ -849,7 +855,7 @@ class PaymentControllerTest {
                                                                   null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   null, null, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -867,7 +873,7 @@ class PaymentControllerTest {
                                                                   XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   null, null, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -880,7 +886,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -898,7 +904,7 @@ class PaymentControllerTest {
                                                                   XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -911,7 +917,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -933,7 +939,7 @@ class PaymentControllerTest {
                                                                   XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                   null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                   TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                  null, null, null, null, null);
+                                                                  null, null, null, null, null, null);
 
         // Then
         assertThat(actual).isNotNull();
@@ -947,7 +953,7 @@ class PaymentControllerTest {
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
 
         when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA))
+                                                                  TPP_NOTIFICATION_DATA, null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -960,7 +966,7 @@ class PaymentControllerTest {
                                                                                              XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
                                                                                              null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                                              TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
-                                                                                             null, null, null, null, null));
+                                                                                             null, null, null, null, null, null));
     }
 
     @Test

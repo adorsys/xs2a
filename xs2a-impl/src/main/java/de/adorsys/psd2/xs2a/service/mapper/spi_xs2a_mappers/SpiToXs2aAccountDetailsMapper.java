@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ public class SpiToXs2aAccountDetailsMapper {
                             ad.getMsisdn(),
                             ad.getCurrency(),
                             ad.getName(),
+                            ad.getDisplayName(),
                             ad.getProduct(),
                             mapToAccountType(ad.getCashSpiAccountType()),
                             mapToAccountStatus(ad.getSpiAccountStatus()),
@@ -73,13 +74,14 @@ public class SpiToXs2aAccountDetailsMapper {
                             ad.getMaskedPan(),
                             ad.getCurrency(),
                             ad.getName(),
+                            ad.getDisplayName(),
                             ad.getProduct(),
                             mapToAccountType(ad.getCashSpiAccountType()),
                             mapToAccountStatus(ad.getSpiAccountStatus()),
                             mapToXs2aUsageType(ad.getUsageType()),
                             ad.getDetails(),
                             balanceMapper.mapToXs2aBalanceList(ad.getBalances()),
-                            Optional.ofNullable(cardAccountDetails.getCreditLimit()).map(spiToXs2aAmountMapper::mapToXs2aAmount).orElse(null),
+                            Optional.ofNullable(ad.getCreditLimit()).map(spiToXs2aAmountMapper::mapToXs2aAmount).orElse(null),
                             ad.getOwnerName()
                         )
                    )

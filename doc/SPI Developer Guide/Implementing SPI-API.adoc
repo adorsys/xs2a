@@ -197,7 +197,7 @@ The method *getConsentStatus* provides a possibility to retrieve the consent sta
 * *spiAccountConsent* - provided data about the AIS consent from CMS;
 * *spiAspspConsentDataProvider*.
 
-Response is a *SpiAisConsentStatusResponse* object.
+Response is a *SpiAisConsentStatusResponse* object with status and PSU message (optional).
 
 The method *revokeAisConsent* provides a possibility to revoke the given AIS consent (change its status to `REJECTED` or
 `TERMINATED_BY_TPP`). Parameters of the method are:
@@ -288,7 +288,7 @@ The Interface is used for the single payment SPI implementation. The following M
 
 * *initiatePayment*: aims to initiate a payment;
 * *getPaymentById*: aims to read the payment by ID;
-* *getPaymentStatusById*: aims to read the payment status by ID;
+* *getPaymentStatusById*: aims to read the payment status by ID and PSU message (optional);
 * *executePaymentWithoutSca*: executes payment without SCA;
 * *verifyScaAuthorisationAndExecutePayment*: verifies SCA authorisation and executes payment.
 
@@ -355,8 +355,8 @@ Response by the method *getPaymentById* returns payment as a part of SpiResponse
 * *payment*: Periodic Payment;
 * *spiAspspConsentDataProvider*.
 
-Response by the method *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* (with the transaction status) and
-contains the following:
+Response by the method *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* with the transaction status
+and PSU message (optional) and contains the following:
 
 * *spiContextData*;
 * *acceptMediaType*: media type requested by the TPP;
@@ -403,8 +403,8 @@ following data:
 * *payment*: Bulk Payment;
 * *spiAspspConsentDataProvider*.
 
-Response by the methods *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* object (with the transaction status)
-and contains the following:
+Response by the methods *getPaymentStatusById* returns the *SpiGetPaymentStatusResponse* object with the transaction status
+and PSU message (optional) and contains the following:
 
 * *spiContextData*;
 * *acceptMediaType*: media type requested by the TPP;
@@ -455,7 +455,8 @@ Returns a positive or negative payment initiation response (*SpiPaymentInitiatio
 * *payment*: common payment object;
 * *spiAspspConsentDataProvider*.
 
-*getPaymentStatusById* method returns a *SpiGetPaymentStatusResponse* object (with the transaction status) and has the following parameters:
+*getPaymentStatusById* method returns a *SpiGetPaymentStatusResponse* object with the transaction status and PSU
+message (optional) and has the following parameters:
 
 * *spiContextData*;
 * *acceptMediaType*: media type requested by the TPP;

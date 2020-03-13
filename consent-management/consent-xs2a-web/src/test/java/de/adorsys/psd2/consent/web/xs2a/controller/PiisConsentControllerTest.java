@@ -35,14 +35,12 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.Validator;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,7 +63,6 @@ class PiisConsentControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(piisConsentController)
                       .setMessageConverters(new MappingJackson2HttpMessageConverter())
-                      .setValidator(mock(Validator.class))
                       .build();
     }
 

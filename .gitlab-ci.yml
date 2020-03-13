@@ -13,7 +13,7 @@ stages:
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
   - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
-  - "Notification" # Notify to specific channel about applications versions 
+  - "Notification" # Notify to specific channel about applications versions
 
 # ------------------------------------------------------------------
 # variables
@@ -48,7 +48,7 @@ variables:
   # Build variables         #
   ###########################
 
-  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
+  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 # ------------------------------------------------------------------
@@ -68,7 +68,7 @@ variables:
     - jabba use $JAVA_VERSION
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -DskipITs --fail-at-end clean install
+    - mvn -ntp -DskipITs --fail-at-end clean install -q
 
 # Build docker images and push them to Dockerhub (depending on ${DOCKER_TAG})
 .build_dockerhub_image: &build_dockerhub_image
@@ -101,19 +101,6 @@ variables:
 # jobs
 # ------------------------------------------------------------------
 
-Compile Java8:
-  stage: "Compile"
-  variables:
-    JAVA_VERSION: "system@1.8"
-  <<: *build_java
-  artifacts:
-    paths:
-      - "**/target/*"
-      - "**/**/target/*"
-      - ".m2/repository/de/adorsys/psd2/*/*"
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}"
-    expire_in: "1 day"
-
 Compile Java11:
   stage: "Compile"
   variables:
@@ -133,17 +120,6 @@ Compile Java11:
 #-------------------
 # Integration tests (IT)
 #-------------------
-IT Java8:
-  stage: "Test"
-  dependencies:
-    - "Compile Java8"
-  script:
-    - jabba use ${JAVA_VERSION}
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp failsafe:integration-test failsafe:verify
-  variables:
-    JAVA_VERSION: "system@1.8"
 
 IT Java11:
   stage: "Test"
@@ -166,12 +142,12 @@ PMD Report:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true package pmd:pmd
   variables:
-    JAVA_VERSION: "system@1.8"
+    JAVA_VERSION: "system@1.11"
   artifacts:
     paths:
-    - "qa/pmd/pmd-ruleset.xml"
-    - "**/**/*/pmd.html"
-    - "**/*/pmd.xml"
+      - "qa/pmd/pmd-ruleset.xml"
+      - "**/**/*/pmd.html"
+      - "**/*/pmd.xml"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
 
@@ -188,16 +164,6 @@ DOCKER test image build:
     - master-2.x
     - support-2.x
 
-PMD Check Java8:
-  stage: "Test"
-  variables:
-    JAVA_VERSION: "system@1.8"
-  script:
-    - jabba use ${JAVA_VERSION}
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -Dmaven.test.skip=true package pmd:check
-
 PMD Check Java11:
   stage: "Test"
   variables:
@@ -209,22 +175,6 @@ PMD Check Java11:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true package pmd:check
 
-Doc Check Java8:
-  stage: "Test"
-  variables:
-    JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-    JAVA_VERSION: "system@1.8"
-  script:
-    - jabba use ${JAVA_VERSION}
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
-  artifacts:
-    paths:
-    - "**/target/site/*"
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-javadoc"
-    expire_in: "10 day"
-
 Doc Check Java11:
   stage: "Test"
   variables:
@@ -235,17 +185,6 @@ Doc Check Java11:
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
-
-Unit Tests Java8:
-  stage: "Test"
-  <<: *java_tests
-  variables:
-    JAVA_VERSION: "system@1.8"
-  artifacts:
-    paths:
-    - "**/target/surefire-reports/*"
-    name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-*"
-    expire_in: "10 day"
 
 Unit Tests Java11:
   stage: "Test"
@@ -259,7 +198,7 @@ Sonarcube Tests:
   only:
     - develop
   script:
-    - jabba use system@1.8
+    - jabba use system@1.11
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp --fail-at-end clean install
@@ -310,7 +249,7 @@ Notify Slack channel (develop):
   script:
     - apk update && apk add jq curl
     - sleep 60
-    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers 
+    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
 
 # Build SUPPORT image and deploy to SUPPORT
 
@@ -380,7 +319,7 @@ Notify Slack channel (Integ):
   script:
     - apk update && apk add jq curl
     - sleep 60
-    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers 
+    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
 # Build MASTER image and deploy to DEMO
 
 Push to DockerHub (master):

@@ -287,17 +287,17 @@ class CardAccountModelMapperTest {
 
     private Xs2aCardAccountDetails buildXs2aCardAccountDetails(Currency currency) {
         return new Xs2aCardAccountDetails(null, null, null, currency,
-                                          null, null, null, AccountStatus.ENABLED,
+                                          null, null, null, null, AccountStatus.ENABLED,
                                           null, null, null, null, null);
     }
 
-    private void assertLinks(Map expectedLinks, Map actualLinks) {
+    private void assertLinks(Map<?, ?> expectedLinks, Map<?, ?> actualLinks) {
         assertNotNull(actualLinks);
         assertFalse(actualLinks.isEmpty());
         assertEquals(expectedLinks.size(), actualLinks.size());
         for (Object linkKey : actualLinks.keySet()) {
             HrefType actualHrefType = (HrefType) actualLinks.get(linkKey);
-            assertEquals(String.valueOf(((Map) expectedLinks.get(linkKey)).get("href")), actualHrefType.getHref());
+            assertEquals(String.valueOf(((Map<?, ?>) expectedLinks.get(linkKey)).get("href")), actualHrefType.getHref());
         }
     }
 

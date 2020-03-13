@@ -31,7 +31,6 @@ import java.util.List;
 
 @Data
 public class Xs2aCardAccountDetails {
-
     @JsonIgnore
     private final String aspspAccountId;
 
@@ -46,6 +45,8 @@ public class Xs2aCardAccountDetails {
     private final Currency currency;
 
     private final String name;
+
+    private final String displayName;
 
     @Size(max = 35)
     private final String product;

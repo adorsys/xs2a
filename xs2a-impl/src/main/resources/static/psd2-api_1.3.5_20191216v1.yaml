@@ -194,6 +194,7 @@ paths:
         - $ref: "#/components/parameters/PSU-Http-Method"
         - $ref: "#/components/parameters/PSU-Device-ID"
         - $ref: "#/components/parameters/PSU-Geo-Location"
+        - $ref: "#/components/parameters/TPP-Brand-Logging-Information"
 
       requestBody:
         $ref: "#/components/requestBodies/paymentInitiation"
@@ -2249,6 +2250,7 @@ paths:
         - $ref: "#/components/parameters/PSU-Http-Method"
         - $ref: "#/components/parameters/PSU-Device-ID"
         - $ref: "#/components/parameters/PSU-Geo-Location"
+        - $ref: "#/components/parameters/TPP-Brand-Logging-Information"
 
       requestBody:
         $ref: "#/components/requestBodies/consents"
@@ -3033,7 +3035,7 @@ paths:
         The resource identifications of these transactions are contained in the  payload of this access method
       operationId: createSigningBasket
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
 
       security:
         #####################################################
@@ -3126,7 +3128,7 @@ paths:
         Returns the content of an signing basket object.
       operationId: getSigningBasket
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
       security:
         #####################################################
         # REMARKS ON SECURITY IN THIS OPENAPI FILE
@@ -3204,7 +3206,7 @@ paths:
         Nevertheless, single transactions might be cancelled on an individual basis on the XS2A interface.
       operationId: deleteSigningBasket
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
       security:
         #####################################################
@@ -3282,7 +3284,7 @@ paths:
         Returns the status of a signing basket object.
       operationId: getSigningBasketStatus
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
       security:
         #####################################################
@@ -3397,7 +3399,7 @@ paths:
           * The signing basket needs to be authorised yet.
       operationId: startSigningBasketAuthorisation
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
       security:
         #####################################################
@@ -3495,7 +3497,7 @@ paths:
         This function returns an array of hyperlinks to all generated authorisation sub-resources.
       operationId: getSigningBasketAuthorisation
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
 
       security:
@@ -3614,7 +3616,7 @@ paths:
             Maybe in a later version the access path will change.
       operationId: updateSigningBasketPsuData
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
 
       security:
@@ -3717,7 +3719,7 @@ paths:
         This method returns the SCA status of a signing basket's authorisation sub-resource.
       operationId: getSigningBasketScaStatus
       tags:
-        - Signing Baskets (SBS)
+        - Signing Baskets Service (SBS)
         - Common Services
 
       security:
@@ -4549,6 +4551,10 @@ components:
           description: Name of the account given by the bank or the PSU in online-banking.
           type: string
           maxLength: 35
+        displayName:
+          description: Name of the account as defined by the PSU within online channels.
+          type: string
+          maxLength: 70
         product:
           description: Product name of the bank for this account, proprietary definition.
           type: string
@@ -4611,6 +4617,10 @@ components:
           description: Name of the account given by the bank or the PSU in online-banking.
           type: string
           maxLength: 35
+        displayName:
+          description: Name of the account as defined by the PSU within online channels.
+          type: string
+          maxLength: 70
         product:
           description: Product name of the bank for this account, proprietary definition.
           type: string
@@ -4786,6 +4796,8 @@ components:
           $ref: "#/components/schemas/ultimateDebtor"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
+        remittanceInformationUnstructuredArray:
+          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured:
           description: |
             Reference as contained in the structured remittance reference structure (without the surrounding XML structure).
@@ -4793,6 +4805,11 @@ components:
             Different from other places the content is containt in plain form not in form of a structered field.
           type: string
           maxLength: 140
+        remittanceInformationStructuredArray:
+          type: array
+          items:
+            type: string
+            maxLength: 140
         additionalInformation:
           description: |
             Might be used by the ASPSP to transport additional transaction related information to the PSU.
@@ -4824,6 +4841,8 @@ components:
           $ref: "#/components/schemas/terminalId"
         transactionDate:
           $ref: "#/components/schemas/transactionDate"
+        acceptorTransactionDateTime:
+          $ref: "#/components/schemas/acceptorTransactionDateTime"
         bookingDate:
           $ref: "#/components/schemas/bookingDate"
         transactionAmount:
@@ -4844,6 +4863,8 @@ components:
           maxLength: 35
         cardAcceptorAddress:
           $ref: "#/components/schemas/address"
+        cardAcceptorPhone:
+          $ref: "#/components/schemas/phoneNumber"
         merchantCategoryCode:
           $ref: "#/components/schemas/merchantCategoryCode"
         maskedPAN:
@@ -5052,6 +5073,12 @@ components:
         }
 
 
+    phoneNumber:
+      description: ISO 20022 phone number.
+      type: string
+      pattern: "\\+[0-9]{1,3}-[0-9()\\+\\-]{1,30}"
+      example: "+61-(02)9999999999-9999"
+
     countryCode:
       description: ISO 3166 ALPHA2 country code.
       type: string
@@ -5133,6 +5160,13 @@ components:
         referenceIssuer:
           type: string
           maxLength: 35
+
+    remittanceInformationStructuredArray:
+      description: |
+        Array of structured remittance information.
+      type: array
+      items:
+        $ref: "#/components/schemas/remittanceInformationStructured"
 
 
     remittanceInformationUnstructured:
@@ -5708,6 +5742,11 @@ components:
       type: string
       format: date
 
+    acceptorTransactionDateTime:
+      description: Timestamp of the actual card transaction within the acceptance system.
+      type: string
+      format: date-time
+
     startDate:
       description: |
         The first applicable day of execution starting from this date is the first payment.
@@ -5876,13 +5915,17 @@ components:
     #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructuredArray: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructuredArray"
         requestedExecutionDate: # N.A. for all, but can be used by ASPSP if needed
           type: string
           format: date
     #        requestedExecutionTime: # N.A. for all, but can be used by ASPSP if needed
     #          type: string
     #          format: date-time
-
+        debtorName:
+          type: string
+          maxLength: 70
 
     paymentInitiationBulkElement_json:
       description: |
@@ -6001,6 +6044,11 @@ components:
     #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructuredArray: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructuredArray"
+        debtorName:
+          type: string
+          maxLength: 70
 
 
     periodicPaymentInitiation_json:
@@ -6116,6 +6164,8 @@ components:
         #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured:   # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructuredArray: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructuredArray"
         #        requestedExecutionDate:  # N.A. for all, but can be used by ASPSP if needed
         #          type: string
         #          format: date
@@ -6133,6 +6183,9 @@ components:
           $ref: "#/components/schemas/frequencyCode"
         dayOfExecution:
           $ref: "#/components/schemas/dayOfExecution"
+        debtorName:
+          type: string
+          maxLength: 70
 
 
     bulkPaymentInitiation_json:
@@ -6528,6 +6581,8 @@ components:
         #          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
         remittanceInformationStructured: # N.A.
           $ref: "#/components/schemas/remittanceInformationStructured"
+        remittanceInformationStructuredArray:
+          $ref: "#/components/schemas/remittanceInformationStructuredArray"
         requestedExecutionDate: # N.A.
           type: string
           format: date
@@ -10502,6 +10557,15 @@ components:
         format: uri
       required: false
 
+    TPP-Brand-Logging-Information:
+      name: TPP-Brand-Logging-Information
+      in: header
+      description: This header might be used by TPPs to inform the ASPSP about the brand used by the TPP towards the PSU.
+        This information is meant for logging entries to enhance communication between ASPSP and PSU or ASPSP and TPP.
+        This header might be ignored by the ASPSP.
+      schema:
+        type: string
+        required: false # conditional
 
     TPP-Explicit-Authorisation-Preferred:
       name: TPP-Explicit-Authorisation-Preferred

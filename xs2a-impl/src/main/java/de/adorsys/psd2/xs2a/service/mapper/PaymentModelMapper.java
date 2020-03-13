@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ import org.mapstruct.MappingTarget;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
-@Mapper(componentModel = "spring", uses = {Xs2aAddressMapper.class, RemittanceMapper.class, PurposeCodeMapper.class})
+@Mapper(componentModel = "spring",
+    uses = {Xs2aAddressMapper.class, RemittanceMapper.class, PurposeCodeMapper.class},
+    imports = RemittanceInformationStructured.class)
 public interface PaymentModelMapper {
 
     PeriodicPayment mapToXs2aPayment(PeriodicPaymentInitiationJson paymentRequest);
@@ -46,7 +48,7 @@ public interface PaymentModelMapper {
 
     @AfterMapping
     default void mapToXs2aPaymentAfterMapping(BulkPaymentInitiationJson paymentRequest,
-                                              @MappingTarget BulkPayment bulkPayment){
+                                              @MappingTarget BulkPayment bulkPayment) {
         LocalDate requestedExecutionDate = paymentRequest.getRequestedExecutionDate();
         OffsetDateTime requestedExecutionTime = paymentRequest.getRequestedExecutionTime();
         de.adorsys.psd2.xs2a.core.profile.AccountReference debtorAccount = mapToAccountReference(paymentRequest.getDebtorAccount());

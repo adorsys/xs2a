@@ -285,7 +285,7 @@ class CmsAspspAisExportServiceInternalTest {
                                         null, false,
                                         null, null, 0,
                                         null, null,
-                                        false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME);
+                                        false, false, null, null, null, null, false, Collections.emptyList(), Collections.emptyMap(), CREATION_DATE_TIME, STATUS_CHANGE_DATE_TIME, null);
     }
 
     private ConsentEntity buildConsentEntity() {

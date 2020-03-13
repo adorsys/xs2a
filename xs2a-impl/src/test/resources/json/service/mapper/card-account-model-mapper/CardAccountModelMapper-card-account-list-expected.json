@@ -4,6 +4,7 @@
       "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
       "currency": "EUR",
       "name": "Main Account",
+      "displayName": "Display name",
       "maskedPan": "23456xxxxxx1234",
       "product": "Girokonto",
       "status": "enabled",
@@ -15,7 +16,7 @@
             "currency": "USD",
             "amount": "100"
           },
-          "balanceType": "authorised",
+          "balanceType": "expected",
           "referenceDate": "2019-03-21",
           "lastChangeDateTime": "2018-03-31T15:16:16.374+03:00",
           "lastCommittedTransaction": "lastCommittedTransaction"

@@ -54,14 +54,17 @@ import static org.mockito.Mockito.when;
     HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class})
 class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
+    private static final String ENCRYPTED_PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_TYPE = "payments";
     private static final String NON_STANDARD_PAYMENT_PRODUCT = "pain.001-sepa-credit-transfers";
+    private static final String PSU_MESSAGE = "PSU message";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final boolean FUNDS_AVAILABLE = true;
-    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null);
+    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null, PSU_MESSAGE);
     private static final List<NotificationSupportedMode> NOTIFICATION_MODES = Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("123456789", null, null, null, null);
-
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
 
     private PaymentModelMapperPsd2 mapper;
 
@@ -77,6 +80,7 @@ class PaymentModelMapperPsd2Test {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
+
     private JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
@@ -98,10 +102,10 @@ class PaymentModelMapperPsd2Test {
         Map actual = (Map) mapper.mapToGetPaymentResponse(payment);
 
         assertEquals(7, actual.size());
-        assertEquals("payments", actual.get("paymentType"));
+        assertEquals(PAYMENT_TYPE, actual.get("paymentType"));
         assertEquals("26bb59a3-2f63-4027-ad38-67d87e59611a", actual.get("aspspAccountId"));
         assertEquals(TransactionStatus.RCVD.name(), actual.get("transactionStatus"));
-        assertEquals("2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI", actual.get("paymentId"));
+        assertEquals(ENCRYPTED_PAYMENT_ID, actual.get("paymentId"));
         assertEquals(false, actual.get("transactionFeeIndicator"));
         assertEquals(true, actual.get("multilevelScaRequired"));
         assertTrue(((Map) actual.get("aspspConsentDataProvider")).isEmpty());
@@ -138,7 +142,7 @@ class PaymentModelMapperPsd2Test {
     void mapToStatusResponseRaw_shouldReturnBytesFromResponse() {
         // Given
         byte[] rawPaymentStatusBody = "some raw body".getBytes();
-        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody);
+        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody, PSU_MESSAGE);
 
         // When
         byte[] actual = mapper.mapToStatusResponseRaw(getPaymentStatusResponse);
@@ -178,9 +182,10 @@ class PaymentModelMapperPsd2Test {
         expected.setTppExplicitAuthorisationPreferred(true);
         expected.setPsuData(PSU_ID_DATA);
         expected.setTppNotificationData(tppNotificationData);
+        expected.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
 
         PaymentInitiationParameters actual = mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "certificate".getBytes(), "ok.uri", "nok.uri",
-                                                                                  true, PSU_ID_DATA, tppNotificationData);
+                                                                                  true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION);
 
         assertEquals(expected, actual);
     }

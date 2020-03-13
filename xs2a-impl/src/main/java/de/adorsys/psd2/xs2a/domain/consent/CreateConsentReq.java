@@ -60,6 +60,8 @@ public class CreateConsentReq implements AccountReferenceCollector {
 
     private TppNotificationData tppNotificationData;
 
+    private String tppBrandLoggingInformation;
+
     @JsonIgnore
     @Override
     public Set<AccountReference> getAccountReferences() {

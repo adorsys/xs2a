@@ -6,6 +6,7 @@
     "bban": "Test BBAN",
     "msisdn": "0172/1111111",
     "name": "Main Account",
+    "displayName": "Display name",
     "product": "Girokonto",
     "cashAccountType": "CASH",
     "accountStatus": "enabled",
@@ -13,7 +14,7 @@
     "linkedAccounts": "Linked Accounts",
     "usageType": "PRIV",
     "details": "Details",
-    "_links": {
+    "links": {
       "scaRedirect": {
         "href": "http://scaRedirect"
       },

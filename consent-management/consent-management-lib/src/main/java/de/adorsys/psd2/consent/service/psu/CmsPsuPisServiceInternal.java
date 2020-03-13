@@ -271,9 +271,10 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                 if (AuthorisationType.PIS_CANCELLATION != authorisation.getAuthorisationType()) {
                     commonPayment.setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
                 }
+                pisCommonPaymentDataRepository.save(commonPayment);
             }
-            log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method because authorisation contains no PSU data.", authorisation.getExternalId());
-            pisCommonPaymentDataRepository.save(commonPayment);
+
+            log.info("Authorisation ID [{}]. The payment attached to this authorisation, contains no PSU data with an ID that matches the requested one.", authorisation.getExternalId());
         }
 
         authorisation.setPsuData(newPsuData);

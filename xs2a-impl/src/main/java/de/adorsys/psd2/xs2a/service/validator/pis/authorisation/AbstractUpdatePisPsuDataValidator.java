@@ -110,7 +110,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
             return validationResult;
         }
 
-        ValidationResult authorisationStatusValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus());
+        ValidationResult authorisationStatusValidationResult = pisAuthorisationStatusValidator.validate(authorisation.getScaStatus(), confirmationCodeReceived);
         if (authorisationStatusValidationResult.isNotValid()) {
             return authorisationStatusValidationResult;
         }

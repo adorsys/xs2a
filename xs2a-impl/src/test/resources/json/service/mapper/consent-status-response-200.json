@@ -1,3 +1,4 @@
 {
-  "consentStatus": "received"
+  "consentStatus": "received",
+  "psuMessage": "This test message is created in ASPSP and directed to PSU"
 }

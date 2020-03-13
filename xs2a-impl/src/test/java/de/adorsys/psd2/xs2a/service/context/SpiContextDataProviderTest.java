@@ -72,6 +72,7 @@ class SpiContextDataProviderTest {
     private static final SpiContextData SPI_CONTEXT_DATA = buildSpiContextData(null);
     private static final SpiContextData SPI_CONTEXT_DATA_WITH_PSU_DATA = buildSpiContextData(SPI_PSU_DATA);
     private static final String AUTHORISATION = "Bearer 1111111";
+    private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
 
     @InjectMocks
     private SpiContextDataProvider spiContextDataProvider;
@@ -88,6 +89,7 @@ class SpiContextDataProviderTest {
         when(requestProviderService.getRequestId()).thenReturn(X_REQUEST_ID);
         when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
         when(requestProviderService.getOAuth2Token()).thenReturn(AUTHORISATION);
+        when(requestProviderService.getTppBrandLoggingInformationHeader()).thenReturn(TPP_BRAND_LOGGING_INFORMATION);
     }
 
     @Test
@@ -156,6 +158,6 @@ class SpiContextDataProviderTest {
     }
 
     private static SpiContextData buildSpiContextData(SpiPsuData spiPsuData) {
-        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION);
+        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION);
     }
 }

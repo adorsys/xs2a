@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.authorisation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,17 +31,25 @@ import org.jetbrains.annotations.NotNull;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AuthorisationStatusValidator {
+    private final AspspProfileServiceWrapper aspspProfileService;
 
     @NotNull
-    public ValidationResult validate(@NotNull ScaStatus scaStatus) {
-        if (scaStatus == ScaStatus.FAILED) {
-            log.info("Authorisation has failed status");
-            return ValidationResult.invalid(getErrorType(), MessageErrorCode.STATUS_INVALID);
+    public ValidationResult validate(@NotNull ScaStatus scaStatus, @NotNull boolean confirmationCodeReceived) {
+        if (scaStatus != ScaStatus.FAILED) {
+            return ValidationResult.valid();
         }
 
-        return ValidationResult.valid();
+        if (aspspProfileService.isAuthorisationConfirmationRequestMandated() && confirmationCodeReceived) {
+            return ValidationResult.invalid(getErrorTypeForSCAInvalid(), MessageErrorCode.SCA_INVALID);
+        }
+
+        log.info("Authorisation has failed status");
+        return ValidationResult.invalid(getErrorTypeForStatusInvalid(), MessageErrorCode.STATUS_INVALID);
     }
 
     @NotNull
-    protected abstract ErrorType getErrorType();
+    protected abstract ErrorType getErrorTypeForStatusInvalid();
+
+    @NotNull
+    protected abstract ErrorType getErrorTypeForSCAInvalid();
 }

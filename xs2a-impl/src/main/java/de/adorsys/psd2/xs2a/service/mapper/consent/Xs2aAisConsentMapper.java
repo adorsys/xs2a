@@ -16,9 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.consent;
 
-import de.adorsys.psd2.consent.api.AccountInfo;
-import de.adorsys.psd2.consent.api.ais.AccountAdditionalInformationAccess;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
@@ -28,9 +25,6 @@ import de.adorsys.psd2.xs2a.core.authorisation.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
-import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
@@ -48,12 +42,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Component
 @RequiredArgsConstructor
@@ -114,17 +105,6 @@ public class Xs2aAisConsentMapper {
         return accountConfirmation;
     }
 
-    public AisAccountAccessInfo mapToAisAccountAccessInfo(AccountAccess access) {
-        AisAccountAccessInfo accessInfo = new AisAccountAccessInfo();
-        accessInfo.setAccounts(mapToListAccountInfo(access.getAccounts()));
-        accessInfo.setBalances(mapToListAccountInfo(access.getBalances()));
-        accessInfo.setTransactions(mapToListAccountInfo(access.getTransactions()));
-        accessInfo.setAccountAdditionalInformationAccess(Optional.ofNullable(access.getAdditionalInformationAccess())
-                                                             .map(this::mapToAccountAdditionalInformationAccess)
-                                                             .orElse(null));
-        return accessInfo;
-    }
-
     public CmsConsent mapToCmsConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay) {
         CmsConsent cmsConsent = new CmsConsent();
 
@@ -142,6 +122,7 @@ public class Xs2aAisConsentMapper {
                                                             .map(TppNotificationData::getNotificationModes)
                                                             .orElse(Collections.emptyList()));
         tppInformation.setTppRedirectPreferred(requestProviderService.resolveTppRedirectPreferred().orElse(false));
+        tppInformation.setTppBrandLoggingInformation(request.getTppBrandLoggingInformation());
         cmsConsent.setTppInformation(tppInformation);
 
         AuthorisationTemplate authorisationTemplate = new AuthorisationTemplate();
@@ -158,35 +139,6 @@ public class Xs2aAisConsentMapper {
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);
         return cmsConsent;
-    }
-
-    private AccountAdditionalInformationAccess mapToAccountAdditionalInformationAccess(AdditionalInformationAccess info) {
-        return new AccountAdditionalInformationAccess(mapToListAccountInfoOrDefault(info.getOwnerName(), null));
-    }
-
-    private List<AccountInfo> mapToListAccountInfo(List<AccountReference> refs) {
-        return emptyIfNull(refs).stream()
-                   .map(this::mapToAccountInfo)
-                   .collect(Collectors.toList());
-    }
-
-    private List<AccountInfo> mapToListAccountInfoOrDefault(List<AccountReference> refs, List<AccountInfo> defaultValue) {
-        return Optional.ofNullable(refs)
-                   .map(this::mapToListAccountInfo)
-                   .orElse(defaultValue);
-    }
-
-    private AccountInfo mapToAccountInfo(AccountReference ref) {
-        AccountReferenceSelector selector = ref.getUsedAccountReferenceSelector();
-        return AccountInfo.builder()
-                   .resourceId(ref.getResourceId())
-                   .accountIdentifier(selector.getAccountValue())
-                   .currency(Optional.ofNullable(ref.getCurrency())
-                                 .map(Currency::getCurrencyCode)
-                                 .orElse(null))
-                   .accountReferenceType(selector.getAccountReferenceType())
-                   .aspspAccountId(ref.getAspspAccountId())
-                   .build();
     }
 
     public AisConsent mapToAisConsent(CmsConsent ais) {

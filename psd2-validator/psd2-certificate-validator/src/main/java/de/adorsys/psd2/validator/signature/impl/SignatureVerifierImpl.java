@@ -18,6 +18,7 @@ package de.adorsys.psd2.validator.signature.impl;
 
 
 import com.nimbusds.jose.util.X509CertUtils;
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import de.adorsys.psd2.validator.signature.SignatureVerifier;
 import de.adorsys.psd2.validator.signature.service.CertificateConstants;
 import de.adorsys.psd2.validator.signature.service.RequestHeaders;
@@ -34,7 +35,9 @@ public class SignatureVerifierImpl implements SignatureVerifier {
 
     @Override
     public boolean verify(String signature, String tppEncodedCert, Map<String, String> headers, String method, String url) {
-        X509Certificate certificate = X509CertUtils.parse(tppEncodedCert);
+        X509Certificate certificate = X509CertUtils.parse(
+            CertificateUtils.normalizeCertificate(tppEncodedCert)
+        );
 
         if (certificate == null) {
             log.warn("TPP Certificate couldn't be parsed!");

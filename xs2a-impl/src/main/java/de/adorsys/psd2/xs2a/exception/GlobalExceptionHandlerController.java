@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.exception;
 
 import de.adorsys.psd2.aspsp.profile.exception.AspspProfileRestException;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
@@ -37,6 +38,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.ValidationException;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.buildWithCustomError;
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
@@ -98,7 +100,7 @@ public class GlobalExceptionHandlerController {
         log.warn("RestException handled in service: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
         log.debug("Stacktrace: {}", ex);
-        return responseErrorMapper.generateErrorResponse(createMessageError(ex.getMessageErrorCode()));
+        return responseErrorMapper.generateErrorResponse(createMessageError(ex.getMessageErrorCode(), ex.getMessage()));
     }
 
     @ExceptionHandler(value = AspspProfileRestException.class)
@@ -143,9 +145,14 @@ public class GlobalExceptionHandlerController {
     }
 
     private MessageError createMessageError(MessageErrorCode messageErrorCode) {
-        return new MessageError(
-            errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), messageErrorCode.getCode()),
-            of(messageErrorCode)
-        );
+        return new MessageError(getErrorType(messageErrorCode.getCode()), of(messageErrorCode));
+    }
+
+    private MessageError createMessageError(MessageErrorCode messageErrorCode, String message) {
+        return new MessageError(getErrorType(messageErrorCode.getCode()), buildWithCustomError(messageErrorCode, message));
+    }
+
+    private ErrorType getErrorType(int code) {
+        return errorTypeMapper.mapToErrorType(serviceTypeDiscoveryService.getServiceType(), code);
     }
 }

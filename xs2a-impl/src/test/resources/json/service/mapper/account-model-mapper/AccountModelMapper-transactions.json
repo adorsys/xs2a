@@ -45,14 +45,20 @@
     "pan": "2222"
   },
   "ultimateDebtor": "Vasisualiy",
-  "remittanceInformationUnstructured": "escrte foin",
+  "remittanceInformationUnstructured": "remittance unstructured",
+  "remittanceInformationUnstructuredArray": [
+    "remittance unstructured array element"
+  ],
   "remittanceInformationStructured": "secret info",
+  "remittanceInformationStructuredArray": [
+    "remittance structured array element"
+  ],
   "purposeCode": "BKDF",
   "bankTransactionCodeCode": {
     "code": "some bank code"
   },
   "proprietaryBankTransactionCode": "very secret code",
-  "_links": {
+  "links": {
     "balances": {
       "href": "http://localhost/api/v1/accounts/33333-999999999/balances"
     },

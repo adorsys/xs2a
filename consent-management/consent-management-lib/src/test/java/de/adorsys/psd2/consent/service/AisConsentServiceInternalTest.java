@@ -22,7 +22,6 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
-import de.adorsys.psd2.consent.api.ais.AisAccountAccessInfo;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentAction;
@@ -170,31 +169,54 @@ class AisConsentServiceInternalTest {
     void updateAspspAccountAccess() throws WrongChecksumException {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity.json", ConsentEntity.class);
         when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
-        List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<List<AspspAccountAccess>>() {
+        List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<>() {
         });
         AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
         when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS)).thenReturn(existingAccountAccess);
-        AisAccountAccessInfo aisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/ais-consent-service/ais-account-access-info.json", AisAccountAccessInfo.class);
-        AccountAccess requestedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-requested.json", AccountAccess.class);
-        when(accessMapper.mapToAccountAccess(aisAccountAccessInfo)).thenReturn(requestedAccountAccess);
+        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access.json", AccountAccess.class);
         AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
-        when(accountAccessUpdater.updateAccountReferencesInAccess(existingAccountAccess, requestedAccountAccess)).thenReturn(updatedAccountAccess);
+        when(accountAccessUpdater.updateAccountReferencesInAccess(existingAccountAccess, accountAccess)).thenReturn(updatedAccountAccess);
         CmsConsent cmsConsent = jsonReader.getObjectFromFile("json/service/ais-consent-service/cms-consent.json", CmsConsent.class);
         when(cmsConsentMapper.mapToCmsConsent(eq(consentEntity), anyList(), anyMap())).thenReturn(cmsConsent);
         when(aisConsentRepository.verifyAndUpdate(consentEntity)).thenReturn(consentEntity);
 
-        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
+        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
         assertTrue(response.isSuccessful());
-        verify(accountAccessUpdater).updateAccountReferencesInAccess(existingAccountAccess, requestedAccountAccess);
+        verify(accountAccessUpdater).updateAccountReferencesInAccess(existingAccountAccess, accountAccess);
+    }
+
+    @Test
+    void updateAspspAccountAccess_withEmptyAccounts_shouldFillAccountsWithAccountReferences() throws WrongChecksumException {
+        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/service/ais-consent-service/consent-entity.json", ConsentEntity.class);
+        when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
+        List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<>() {
+        });
+        AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
+        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS)).thenReturn(existingAccountAccess);
+        AccountAccess requestedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-requested.json", AccountAccess.class);
+        AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
+        when(accountAccessUpdater.updateAccountReferencesInAccess(eq(existingAccountAccess), any())).thenReturn(updatedAccountAccess);
+        CmsConsent cmsConsent = jsonReader.getObjectFromFile("json/service/ais-consent-service/cms-consent.json", CmsConsent.class);
+        when(cmsConsentMapper.mapToCmsConsent(eq(consentEntity), anyList(), anyMap())).thenReturn(cmsConsent);
+        when(aisConsentRepository.verifyAndUpdate(consentEntity)).thenReturn(consentEntity);
+        ArgumentCaptor<AccountAccess> requestedAccountAccessCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+        AccountAccess accountAccessWithFilledAccounts = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-requested-filled-accounts.json", AccountAccess.class);
+
+        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, requestedAccountAccess);
+
+        assertTrue(response.isSuccessful());
+        verify(accountAccessUpdater).updateAccountReferencesInAccess(eq(existingAccountAccess), requestedAccountAccessCaptor.capture());
+        AccountAccess capturedAccountAccess = requestedAccountAccessCaptor.getValue();
+        assertEquals(accountAccessWithFilledAccounts, capturedAccountAccess);
     }
 
     @Test
     void updateAspspAccountAccess_noConsent() throws WrongChecksumException {
         when(aisConsentRepository.getActualAisConsent(CONSENT_ID)).thenReturn(Optional.empty());
-        AisAccountAccessInfo aisAccountAccessInfo = jsonReader.getObjectFromFile("json/service/ais-consent-service/ais-account-access-info.json", AisAccountAccessInfo.class);
+        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access.json", AccountAccess.class);
 
-        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, aisAccountAccessInfo);
+        CmsResponse<CmsConsent> response = aisConsentServiceInternal.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
         assertTrue(response.hasError());
         assertEquals(CmsError.LOGICAL_ERROR, response.getError());

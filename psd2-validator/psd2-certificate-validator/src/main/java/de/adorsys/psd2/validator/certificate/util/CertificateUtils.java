@@ -19,6 +19,7 @@ package de.adorsys.psd2.validator.certificate.util;
 import com.nimbusds.jose.util.X509CertUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -26,6 +27,9 @@ import java.util.Arrays;
 
 @Slf4j
 public class CertificateUtils {
+    private static final int CERTIFICATE_PART_DATA_SIZE = 64;
+    private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----\n";
+    private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
     private CertificateUtils() {
     }
@@ -61,4 +65,30 @@ public class CertificateUtils {
 		return null;
 	}
 
+    /**
+     * Normalizes certificate: removes excess blanks and wraps by beginning and end tags.
+     *
+     * @param certificate certificate text
+     * @return normalized certificate
+     * <p>
+     * -----BEGIN CERTIFICATE-----
+     * (certificate)
+     * -----END CERTIFICATE-----
+     */
+    public static String normalizeCertificate(String certificate) {
+        if (certificate == null) {
+            return null;
+        }
+        String certificateData = getCertificateData(certificate);
+        return BEGIN_CERTIFICATE +
+                   certificateData.replaceAll(".{" + CERTIFICATE_PART_DATA_SIZE + "}", "$0" + StringUtils.LF) +
+                   END_CERTIFICATE;
+    }
+
+    private static String getCertificateData(String certificate) {
+        return certificate.replace(" ", "")
+                   .replace("\n", "")
+                   .replace("-----BEGINCERTIFICATE-----", "")
+                   .replace("-----ENDCERTIFICATE-----", "");
+    }
 }
