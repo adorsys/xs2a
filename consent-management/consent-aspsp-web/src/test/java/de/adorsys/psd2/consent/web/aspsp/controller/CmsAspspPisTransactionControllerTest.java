@@ -42,20 +42,20 @@ class CmsAspspPisTransactionControllerTest {
     private final String PAYMENT_ID = "paymentID";
     private final String INSTANCE_ID = "UNDEFINED";
     private final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCC;
-    private final String UPDATE_PAYMENT_STATUS_URL = "/aspsp-api/v1/pis/transaction-status/paymentID/status/ACCC";
+    private final String TRANSACTION_STATUS_NAME = TRANSACTION_STATUS.name();
+    private final String UPDATE_PAYMENT_STATUS_URL = "/aspsp-api/v1/pis/transaction-status/paymentID/status/{transaction-status}";
 
     private MockMvc mockMvc;
     private HttpHeaders httpHeaders = new HttpHeaders();
 
-    @InjectMocks
-    private CmsAspspPisTransactionController cmsAspspPisTransactionController;
-
     @Mock
     private AspspPaymentService aspspPaymentService;
 
+    @InjectMocks
+    private CmsAspspPisTransactionController cmsAspspPisTransactionController;
+
     @BeforeEach
     void setUp() {
-        httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("instance-id", INSTANCE_ID);
 
         ObjectMapperTestConfig objectMapperTestConfig = new ObjectMapperTestConfig();
@@ -66,26 +66,38 @@ class CmsAspspPisTransactionControllerTest {
     }
 
     @Test
-    void updatePaymentStatus_Success() throws Exception {
+    void updatePaymentStatus() throws Exception {
         when(aspspPaymentService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID)).thenReturn(true);
 
-        mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL)
+        mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL, TRANSACTION_STATUS_NAME)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()));
 
-        verify(aspspPaymentService, times(1)).updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID);
+        verify(aspspPaymentService).updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID);
     }
 
     @Test
-    void updatePaymentStatus_Error() throws Exception {
+    void updatePaymentStatus_serviceError() throws Exception {
         when(aspspPaymentService.updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID)).thenReturn(false);
 
-        mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL)
+        mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL, TRANSACTION_STATUS_NAME)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 
-        verify(aspspPaymentService, times(1)).updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID);
+        verify(aspspPaymentService).updatePaymentStatus(PAYMENT_ID, TRANSACTION_STATUS, INSTANCE_ID);
+    }
+
+    @Test
+    void updatePaymentStatus_wrongStatus() throws Exception {
+        String invalidStatusName = "invalidStatus";
+
+        mockMvc.perform(put(UPDATE_PAYMENT_STATUS_URL, invalidStatusName)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .headers(httpHeaders))
+            .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+
+        verify(aspspPaymentService, never()).updatePaymentStatus(any(), any(), any());
     }
 }
