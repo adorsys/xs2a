@@ -1,0 +1,74 @@
+{
+  "id": "6b94ecdd-fd44-4ffb-bd56-d41ee433a792",
+  "access": {
+    "accounts": [
+      {
+        "iban": "DE69760700240340283600",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "iban": "DE69760700240340283600",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "iban": "DE69760700240340283600",
+        "currency": "EUR"
+      }
+    ],
+    "accountAdditionalInformationAccess": {}
+  },
+  "recurringIndicator": true,
+  "validUntil": "2020-06-01",
+  "frequencyPerDay": 6,
+  "lastActionDate": "2020-03-05",
+  "consentStatus": "REJECTED",
+  "withBalance": true,
+  "tppRedirectPreferred": false,
+  "aisConsentRequestType": "DEDICATED_ACCOUNTS",
+  "psuIdDataList": [
+    {
+      "psuId": "marion.mueller",
+      "psuIpAddress": "1.1.1.1"
+    }
+  ],
+  "tppInfo": {
+    "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+    "tppName": "",
+    "tppRoles": [
+      "AISP",
+      "PISP",
+      "PIISP"
+    ],
+    "authorityId": "DE-FAKENCA",
+    "authorityName": "Trust Service Provider AG",
+    "country": "Germany",
+    "organisation": "Fictional Corporation AG",
+    "organisationUnit": "Information Technology",
+    "city": "Nuremberg",
+    "state": "Bayern"
+  },
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "TPP-Redirect-URI",
+      "nokUri": "TPP-Nok-Redirect-URI"
+    }
+  },
+  "multilevelScaRequired": false,
+  "accountConsentAuthorizations": [
+    {
+      "id": "0050c68f-7ca7-4496-96b4-7604d22088b0",
+      "psuIdData": {
+        "psuId": "marion.mueller",
+        "psuIpAddress": "1.1.1.1"
+      },
+      "scaStatus": "failed"
+    }
+  ],
+  "usageCounterMap": {},
+  "creationTimestamp": "2020-03-04T00:00:00Z",
+  "statusChangeTimestamp": "2020-03-05T00:00:00Z"
+}
