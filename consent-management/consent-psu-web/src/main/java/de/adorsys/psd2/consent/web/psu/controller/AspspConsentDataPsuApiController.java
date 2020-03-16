@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class AspspConsentDataPsuApiController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity updateAspspConsentData(
+    public ResponseEntity<Void> updateAspspConsentData(
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
@@ -88,7 +88,7 @@ public class AspspConsentDataPsuApiController {
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity deleteAspspConsentData(
+    public ResponseEntity<Void> deleteAspspConsentData(
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
