@@ -1,0 +1,9 @@
+{
+  "payment": {
+    "paymentId": "RLJWGWtrRDwj5fDvVlLK0k",
+    "paymentProduct": "sepa-credit-transfers"
+  },
+  "authorisationId": "564b5851-8ec3-4199-9313-5a7be8f95929",
+  "tppOkRedirectUri": "https://everything_is_good.html",
+  "tppNokRedirectUri": "https://everything_is_bad.html"
+}

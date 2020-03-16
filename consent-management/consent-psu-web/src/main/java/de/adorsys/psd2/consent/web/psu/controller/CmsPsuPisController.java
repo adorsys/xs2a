@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +53,7 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK", response = CreatePisCommonPaymentResponse.class),
         @ApiResponse(code = 400, message = "Bad request"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
-    public ResponseEntity updatePsuInPayment(
+    public ResponseEntity<Object> updatePsuInPayment(
         @ApiParam(name = "authorisation-id",
             value = "The authorisation's identifier",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
@@ -60,7 +61,6 @@ public class CmsPsuPisController {
         @PathVariable("authorisation-id") String authorisationId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody PsuIdData psuIdData) {
-
         try {
             return cmsPsuPisService.updatePsuInPayment(psuIdData, authorisationId, instanceId)
                        ? ResponseEntity.ok().build()
@@ -76,7 +76,7 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
-    public ResponseEntity getPaymentIdByRedirectId(
+    public ResponseEntity<Object> getPaymentIdByRedirectId(
         @ApiParam(name = "redirect-id",
             value = "The redirect identification assigned to the created payment.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
@@ -119,11 +119,7 @@ public class CmsPsuPisController {
             required = true)
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        return cmsPsuPisService.getPayment(psuIdData, paymentId, instanceId)
-                   .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return getPaymentById(psuId, psuIdType, psuCorporateId, psuCorporateIdType, paymentId, instanceId);
     }
 
     @GetMapping(path = "/cancellation/redirect/{redirect-id}")
@@ -132,7 +128,7 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK", response = CmsPaymentResponse.class),
         @ApiResponse(code = 404, message = "Not Found"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
-    public ResponseEntity getPaymentIdByRedirectIdForCancellation(
+    public ResponseEntity<Object> getPaymentIdByRedirectIdForCancellation(
         @ApiParam(name = "redirect-id",
             value = "The redirect identification assigned to the created payment.",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
@@ -174,12 +170,7 @@ public class CmsPsuPisController {
             required = true)
         @PathVariable("payment-id") String paymentId,
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
-
-        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        return cmsPsuPisService.getPayment(psuIdData, paymentId, instanceId)
-                   .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
-
+        return getPaymentById(psuId, psuIdType, psuCorporateId, psuCorporateIdType, paymentId, instanceId);
     }
 
     @GetMapping(path = "authorisation/{authorisation-id}")
@@ -206,7 +197,7 @@ public class CmsPsuPisController {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 400, message = "Bad request"),
         @ApiResponse(code = 408, message = "Request Timeout", response = CmsPaymentResponse.class)})
-    public ResponseEntity updateAuthorisationStatus(
+    public ResponseEntity<Object> updateAuthorisationStatus(
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
@@ -284,5 +275,15 @@ public class CmsPsuPisController {
         return cmsPsuPisService.getPsuDataAuthorisations(paymentId, instanceId)
                    .map(ResponseEntity::ok)
                    .orElse(ResponseEntity.notFound().build());
+    }
+
+    @NotNull
+    private ResponseEntity<CmsPayment> getPaymentById(String psuId, String psuIdType,
+                                                      String psuCorporateId, String psuCorporateIdType,
+                                                      String paymentId, String instanceId) {
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
+        return cmsPsuPisService.getPayment(psuIdData, paymentId, instanceId)
+                   .map(payment -> new ResponseEntity<>(payment, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 }
