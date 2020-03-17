@@ -79,9 +79,25 @@
     </changeSet>
 
     <changeSet id="2020-02-21-5" author="ssh@adorsys.com.ua">
+        <validCheckSum>8:06580c0179b8198531e9afecbb502f28</validCheckSum>
+
         <comment>Insert PIIS consents into temporary table</comment>
 
-        <sql dbms="h2,mariadb">
+        <sql dbms="h2">
+            INSERT INTO piis_consent_temp (consent_id, external_id, consent_status, expire_date,
+            instance_id, creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
+            authorisation_template_id, consent_tpp_information_id, tpp_id,
+            recurring_indicator)
+            SELECT NEXTVAL('consent_id_seq'), piis.external_id, piis.consent_status, piis.expire_date, piis.instance_id,
+            piis.creation_timestamp, piis.last_action_date, piis.request_date_time, piis.status_change_timestamp,
+            NEXTVAL('authorisation_template_id_seq'), NEXTVAL('consent_tpp_info_id_seq'), tpp.tpp_info_id,
+            piis.recurring_indicator
+            FROM piis_consent piis
+            INNER JOIN tpp_info tpp ON piis.tpp_authorisation_number = tpp.authorisation_number
+            WHERE piis.tpp_authorisation_number IS NOT NULL;
+        </sql>
+
+        <sql dbms="mariadb">
             INSERT INTO piis_consent_temp (consent_id, external_id, consent_status, expire_date,
             instance_id, creation_timestamp, last_action_date, request_date_time, status_change_timestamp,
             authorisation_template_id, consent_tpp_information_id, tpp_id,
