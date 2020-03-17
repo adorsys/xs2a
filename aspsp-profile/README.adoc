@@ -38,15 +38,15 @@ To supply file please provide a property to spring framework (i.e. via applicati
 | *consentTypes:* | | |
 |bankOfferedConsentSupported |This field defines whether the ASPSP supports Bank offered consent:
 
-If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INVALID|FALSE |TRUE, FALSE
+If parameter = FALSE then XS2A sends the response with HTTP code 400 SERVICE_INVALID|FALSE |TRUE, FALSE
 |globalConsentSupported  |This field defines if the ASPSP supports Global Consent.
 
 It implies a consent on all available accounts of the PSU on all PSD2 related account information services (meaning access to all account endpoints including balances and transactions).
 
-If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INVALID |FALSE |TRUE, FALSE
+If parameter = FALSE then XS2A sends the response with HTTP code 400 SERVICE_INVALID |FALSE |TRUE, FALSE
 |availableAccountsConsentSupported |This field indicates if ASPSP supports consents for providing a list of available accounts of a PSU which are open for access through the XS2A interface.
 
-If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INVALID |TRUE |TRUE, FALSE
+If parameter = FALSE then XS2A sends the response with HTTP code 400 SERVICE_INVALID |TRUE |TRUE, FALSE
 |accountAccessFrequencyPerDay |This attribute defines the maximum allowed by bank accesses for consent's usage per unique resource for each endpoint.
 
 Attribute frequencyPerDay is mandatory for Account Information Consent request. In case of attribute value in request is more than allowed by bank, then value will be adjusted according to accountAccessFrequencyPerDay in the ASPSP Profile. |4 |1, 2, 3 ...
