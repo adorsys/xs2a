@@ -208,11 +208,18 @@
     </changeSet>
 
     <changeSet id="2020-02-12-8" author="amu@adorsys.com.ua">
+        <validCheckSum>8:6c3d8ba3695ca446a706da3b689174f5</validCheckSum>
+
         <comment>
             Set max value for sequence consent_id_seq
         </comment>
 
-        <sql dbms="mariadb,h2">
+        <sql dbms="h2">
+            SET @max_value = SELECT COALESCE(MAX(consent_id),0) + 1 INTO FROM consent;
+            EXECUTE IMMEDIATE CONCAT('ALTER SEQUENCE consent_id_seq RESTART WITH ', @max_value)
+        </sql>
+
+        <sql dbms="mariadb">
             SELECT COALESCE(MAX(consent_id),0) + 1 INTO @max_value FROM consent;
             EXECUTE IMMEDIATE CONCAT('ALTER SEQUENCE consent_id_seq RESTART WITH ', @max_value)
         </sql>
