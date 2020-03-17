@@ -1,3 +1,10 @@
 = Release notes v.6.1
 
 == Table of Contents
+
+* Bugfix: Liquibase migration is not working for H2
+
+== Bugfix: Liquibase migration is not working for H2
+
+From now on, CMS Liquibase migration is working correctly for H2 database.
+Minimal version of H2 required to properly apply changelogs is `1.4.200`.
