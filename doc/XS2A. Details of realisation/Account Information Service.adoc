@@ -60,7 +60,7 @@ This function implies a consent resource at the ASPSP to return a list of all av
 
 The ability to create Consent on Account List of Available Accounts depends on successful validation:
 
-* The attribute in the ASPSP-Profile "*availableAccountsConsentSupported*" should be set to "TRUE". If Consent on Account List of Available Accounts is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in the ASPSP-Profile "*availableAccountsConsentSupported*" should be set to "TRUE". If Consent on Account List of Available Accounts is not supported in Profile - respond with 400 SERVICE_INVALID;
 * The consent should only contains the "availableAccounts" or “availableAccountsWithBalance” sub attribute within the "access" attribute with value "allAccounts";
 * All possible content of "accounts", "balances", "transactions" fields is ignored if call contains attribute "availableAccounts" or “availableAccountsWithBalance”;
 * Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP-Profile "*scaByOneTimeAvailableAccountsConsentRequired*" (true (by default), false);
@@ -115,7 +115,7 @@ When TPP requests Read Account Data with this consent-id, xs2a should respond ac
 
 The ability to create Bank Offered Consent depends on successful validation:
 
-* The attribute in ASPSP-Profile "*bankOfferedConsentSupported*" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in ASPSP-Profile "*bankOfferedConsentSupported*" should be set to "TRUE". If Bank Offered consent is not supported in Profile - respond with 400 SERVICE_INVALID;
 * The call contains the "accounts", "balances" and/or "transactions" sub attribute within the "access" attribute all with an empty array;
 * For this function the Embedded SCA Approach is not supported.
 
@@ -126,7 +126,7 @@ Global consent can be recurring and one-off.
 
 The ability to create Global Consent depends on successful validation:
 
-* The attribute in ASPSP-Profile "*globalConsentSupported*" should be set to "TRUE". If Global consent is not supported in Profile - respond with 405 SERVICE_INVALID;
+* The attribute in ASPSP-Profile "*globalConsentSupported*" should be set to "TRUE". If Global consent is not supported in Profile - respond with 400 SERVICE_INVALID;
 * The call contains the "allPsd2" sub attribute within the "access" attribute with the value "allAccounts";
 * All possible content of "accounts", "balances", "transactions", "availableAccounts" or “availableAccountsWithBalance” fields is ignored if call contains attribute "allPsd2";
 * Applying one or two-factor authorisation depends on the value  of the parameter in ASPSP-Profile "*scaByOneTimeGlobalConsentRequired*" (true (by default), false).
