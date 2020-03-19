@@ -1,0 +1,11 @@
+= Release notes v.5.10.1
+
+== Table of Contents
+
+* Bugfix: DownloadTransactionsResponse ignores custom error messages
+
+== Bugfix: DownloadTransactionsResponse ignores custom error messages
+
+From now on, ASPSP is able to provide custom error message with `SpiResponse` to TPP during download transactions request.
+
+Also if `de.adorsys.psd2.xs2a.exception.RestException` is thrown, then the message that was passed to the constructor of the exception will be visible to TPP e.g. `throw  new RestException(MessageErrorCode.FORMAT_ERROR, "message to TPP")`
