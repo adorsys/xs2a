@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.AccountApi;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -38,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -118,9 +116,7 @@ public class AccountController implements AccountApi {
         ResponseObject<Xs2aTransactionsDownloadResponse> downloadTransactionsResponse = transactionService.downloadTransactions(consentId, accountId, downloadId);
 
         if (downloadTransactionsResponse.hasError()) {
-            MessageError error = downloadTransactionsResponse.getError();
-            TppMessageInformation tppMessage = error.getTppMessage();
-            flushResponseError(error.getErrorType().getErrorCode(), new TppErrorMessage(tppMessage.getCategory(), tppMessage.getMessageErrorCode()));
+            flushResponseError(downloadTransactionsResponse.getError());
             return;
         }
 
@@ -139,7 +135,7 @@ public class AccountController implements AccountApi {
         } catch (IOException e) {
             log.info("Consent-ID: [{}], Account-ID: [{}]. Download-ID [{}]. Download transactions failed: IOException occurred in downloadTransactions controller.",
                      consentId, accountId, downloadId);
-            flushResponseError(HttpStatus.INTERNAL_SERVER_ERROR.value(), new TppErrorMessage(ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR));
+            flushResponseError(new TppErrorMessage(ERROR, MessageErrorCode.INTERNAL_SERVER_ERROR));
         }
     }
 
@@ -165,9 +161,18 @@ public class AccountController implements AccountApi {
         return String.format("attachment; filename=%s", fileName == null ? System.currentTimeMillis() : fileName);
     }
 
-    private void flushResponseError(int status, TppErrorMessage errorMessage) {
+    private void flushResponseError(TppErrorMessage errorMessage) {
         try {
-            tppErrorMessageWriter.writeError(response, status, errorMessage);
+            tppErrorMessageWriter.writeError(response, errorMessage);
+            response.flushBuffer();
+        } catch (IOException e) {
+            log.info(" Writing to the httpServletResponse failed.");
+        }
+    }
+
+    private void flushResponseError(MessageError messageError) {
+        try {
+            tppErrorMessageWriter.writeError(response, messageError);
             response.flushBuffer();
         } catch (IOException e) {
             log.info(" Writing to the httpServletResponse failed.");

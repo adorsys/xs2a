@@ -75,7 +75,7 @@ class TppErrorMessageWriterTest {
     void writeError_wrongServiceType() {
         TppErrorMessage tppErrorMessage = new TppErrorMessage(MESSAGE_CATEGORY, MESSAGE_ERROR_CODE, MESSAGE_ERROR_STRING);
 
-        assertThrows(IllegalArgumentException.class, () -> tppErrorMessageWriter.writeError(response, STATUS_CODE, tppErrorMessage));
+        assertThrows(IllegalArgumentException.class, () -> tppErrorMessageWriter.writeError(response, tppErrorMessage));
 
         verify(serviceTypeDiscoveryService).getServiceType();
     }
@@ -89,7 +89,7 @@ class TppErrorMessageWriterTest {
         when(errorMapperContainer.getErrorBody(messageError)).thenReturn(ERROR_BODY);
         when(response.getWriter()).thenReturn(PRINT_WRITER);
 
-        tppErrorMessageWriter.writeError(response, STATUS_CODE, tppErrorMessage);
+        tppErrorMessageWriter.writeError(response, tppErrorMessage);
 
         ArgumentCaptor<Writer> writerArgumentCaptor = ArgumentCaptor.forClass(Writer.class);
         ArgumentCaptor<ErrorMapperContainer.ErrorBody> errorBodyArgumentCaptor = ArgumentCaptor.forClass(ErrorMapperContainer.ErrorBody.class);
@@ -100,5 +100,26 @@ class TppErrorMessageWriterTest {
 
         assertEquals(PRINT_WRITER, writerArgumentCaptor.getValue());
         assertEquals(ERROR_BODY.getBody(), errorBodyArgumentCaptor.getValue());
+    }
+
+    @Test
+    void writeMessageError_successful() throws IOException {
+        //Given
+        MessageError messageError = new MessageError(ErrorType.AIS_400, TppMessageInformation.buildWithCustomError(MESSAGE_ERROR_CODE, MESSAGE_ERROR_STRING));
+        ErrorMapperContainer.ErrorBody errorBody = new ErrorMapperContainer.ErrorBody(messageError, HttpStatus.OK);
+
+        when(errorMapperContainer.getErrorBody(messageError)).thenReturn(errorBody);
+        when(response.getWriter()).thenReturn(PRINT_WRITER);
+        //When
+        tppErrorMessageWriter.writeError(response, messageError);
+        //Then
+        ArgumentCaptor<Writer> writerArgumentCaptor = ArgumentCaptor.forClass(Writer.class);
+        ArgumentCaptor<ErrorMapperContainer.ErrorBody> errorBodyArgumentCaptor = ArgumentCaptor.forClass(ErrorMapperContainer.ErrorBody.class);
+
+        verify(errorMapperContainer).getErrorBody(messageError);
+        verify(xs2aObjectMapper).writeValue(writerArgumentCaptor.capture(), errorBodyArgumentCaptor.capture());
+
+        assertEquals(PRINT_WRITER, writerArgumentCaptor.getValue());
+        assertEquals(errorBody.getBody(), errorBodyArgumentCaptor.getValue());
     }
 }
