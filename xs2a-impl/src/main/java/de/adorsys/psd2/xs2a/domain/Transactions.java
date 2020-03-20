@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.domain;
 
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
@@ -60,8 +61,8 @@ public class Transactions {
     private String remittanceInformationUnstructured;
     private List<String> remittanceInformationUnstructuredArray;
     @Size(max = 140)
-    private String remittanceInformationStructured;
-    private List<String> remittanceInformationStructuredArray;
+    private Remittance remittanceInformationStructured;
+    private List<Remittance> remittanceInformationStructuredArray;
     private PurposeCode purposeCode;
     private BankTransactionCode bankTransactionCodeCode;
     @Size(max = 35)

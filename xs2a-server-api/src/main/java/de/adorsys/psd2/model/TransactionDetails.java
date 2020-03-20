@@ -26,8 +26,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class TransactionDetails {
     @JsonProperty("transactionId")
@@ -100,14 +98,16 @@ public class TransactionDetails {
     private RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray = null;
 
     @JsonProperty("remittanceInformationStructured")
-    private String remittanceInformationStructured = null;
+    private RemittanceInformationStructured remittanceInformationStructured = null;
 
     @JsonProperty("remittanceInformationStructuredArray")
-    @Valid
-    private List<String> remittanceInformationStructuredArray = null;
+    private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
 
     @JsonProperty("additionalInformation")
     private String additionalInformation = null;
+
+    @JsonProperty("additionalInformationStructured")
+    private AdditionalInformationStructured additionalInformationStructured = null;
 
     @JsonProperty("purposeCode")
     private PurposeCode purposeCode = null;
@@ -117,9 +117,6 @@ public class TransactionDetails {
 
     @JsonProperty("proprietaryBankTransactionCode")
     private String proprietaryBankTransactionCode = null;
-
-    @JsonProperty("additionalInformationStructured")
-    private AdditionalInformationStructured additionalInformationStructured = null;
 
     @JsonProperty("balanceAfterTransaction")
     private Balance balanceAfterTransaction = null;
@@ -133,11 +130,11 @@ public class TransactionDetails {
     }
 
     /**
-     * the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered. If this data attribute is provided this shows that the AIS can get access on more details about this transaction using the Get transaction details request.
+     * Get transactionId
      *
      * @return transactionId
      **/
-    @ApiModelProperty(value = "the Transaction Id can be used as access-ID in the API, where more details on an transaction is offered. If this data attribute is provided this shows that the AIS can get access on more details about this transaction using the Get transaction details request. ")
+    @ApiModelProperty(value = "")
 
 
     @JsonProperty("transactionId")
@@ -247,11 +244,11 @@ public class TransactionDetails {
     }
 
     /**
-     * Identification of Creditors, e.g. a SEPA Creditor ID.
+     * Get creditorId
      *
      * @return creditorId
      **/
-    @ApiModelProperty(value = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+    @ApiModelProperty(value = "")
 
     @Size(max = 35)
 
@@ -594,39 +591,32 @@ public class TransactionDetails {
         this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
     }
 
-    public TransactionDetails remittanceInformationStructured(String remittanceInformationStructured) {
+    public TransactionDetails remittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
         this.remittanceInformationStructured = remittanceInformationStructured;
         return this;
     }
 
     /**
-     * Reference as contained in the structured remittance reference structure (without the surrounding XML structure).  Different from other places the content is containt in plain form not in form of a structered field.
+     * Get remittanceInformationStructured
      *
      * @return remittanceInformationStructured
      **/
-    @ApiModelProperty(value = "Reference as contained in the structured remittance reference structure (without the surrounding XML structure).  Different from other places the content is containt in plain form not in form of a structered field. ")
+    @ApiModelProperty(value = "")
 
-    @Size(max = 140)
+    @Valid
+
 
     @JsonProperty("remittanceInformationStructured")
-    public String getRemittanceInformationStructured() {
+    public RemittanceInformationStructured getRemittanceInformationStructured() {
         return remittanceInformationStructured;
     }
 
-    public void setRemittanceInformationStructured(String remittanceInformationStructured) {
+    public void setRemittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
         this.remittanceInformationStructured = remittanceInformationStructured;
     }
 
-    public TransactionDetails remittanceInformationStructuredArray(List<String> remittanceInformationStructuredArray) {
+    public TransactionDetails remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
         this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
-        return this;
-    }
-
-    public TransactionDetails addRemittanceInformationStructuredArrayItem(String remittanceInformationStructuredArrayItem) {
-        if (this.remittanceInformationStructuredArray == null) {
-            this.remittanceInformationStructuredArray = new ArrayList<>();
-        }
-        this.remittanceInformationStructuredArray.add(remittanceInformationStructuredArrayItem);
         return this;
     }
 
@@ -637,13 +627,15 @@ public class TransactionDetails {
      **/
     @ApiModelProperty(value = "")
 
+    @Valid
+
 
     @JsonProperty("remittanceInformationStructuredArray")
-    public List<String> getRemittanceInformationStructuredArray() {
+    public RemittanceInformationStructuredArray getRemittanceInformationStructuredArray() {
         return remittanceInformationStructuredArray;
     }
 
-    public void setRemittanceInformationStructuredArray(List<String> remittanceInformationStructuredArray) {
+    public void setRemittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
         this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
     }
 
@@ -653,11 +645,11 @@ public class TransactionDetails {
     }
 
     /**
-     * Might be used by the ASPSP to transport additional transaction related information to the PSU.
+     * Get additionalInformation
      *
      * @return additionalInformation
      **/
-    @ApiModelProperty(value = "Might be used by the ASPSP to transport additional transaction related information to the PSU. ")
+    @ApiModelProperty(value = "")
 
     @Size(max = 500)
 
@@ -668,6 +660,30 @@ public class TransactionDetails {
 
     public void setAdditionalInformation(String additionalInformation) {
         this.additionalInformation = additionalInformation;
+    }
+
+    public TransactionDetails additionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
+        this.additionalInformationStructured = additionalInformationStructured;
+        return this;
+    }
+
+    /**
+     * Get additionalInformationStructured
+     *
+     * @return additionalInformationStructured
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("additionalInformationStructured")
+    public AdditionalInformationStructured getAdditionalInformationStructured() {
+        return additionalInformationStructured;
+    }
+
+    public void setAdditionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
+        this.additionalInformationStructured = additionalInformationStructured;
     }
 
     public TransactionDetails purposeCode(PurposeCode purposeCode) {
@@ -737,30 +753,6 @@ public class TransactionDetails {
 
     public void setProprietaryBankTransactionCode(String proprietaryBankTransactionCode) {
         this.proprietaryBankTransactionCode = proprietaryBankTransactionCode;
-    }
-
-    public TransactionDetails additionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
-        this.additionalInformationStructured = additionalInformationStructured;
-        return this;
-    }
-
-    /**
-     * Get additionalInformationStructured
-     *
-     * @return additionalInformationStructured
-     **/
-    @ApiModelProperty(value = "")
-
-    @Valid
-
-
-    @JsonProperty("additionalInformationStructured")
-    public AdditionalInformationStructured getAdditionalInformationStructured() {
-        return additionalInformationStructured;
-    }
-
-    public void setAdditionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
-        this.additionalInformationStructured = additionalInformationStructured;
     }
 
     public TransactionDetails balanceAfterTransaction(Balance balanceAfterTransaction) {
@@ -844,17 +836,17 @@ public class TransactionDetails {
                    Objects.equals(this.remittanceInformationStructured, transactionDetails.remittanceInformationStructured) &&
                    Objects.equals(this.remittanceInformationStructuredArray, transactionDetails.remittanceInformationStructuredArray) &&
                    Objects.equals(this.additionalInformation, transactionDetails.additionalInformation) &&
+                   Objects.equals(this.additionalInformationStructured, transactionDetails.additionalInformationStructured) &&
                    Objects.equals(this.purposeCode, transactionDetails.purposeCode) &&
                    Objects.equals(this.bankTransactionCode, transactionDetails.bankTransactionCode) &&
                    Objects.equals(this.proprietaryBankTransactionCode, transactionDetails.proprietaryBankTransactionCode) &&
-                   Objects.equals(this.additionalInformationStructured, transactionDetails.additionalInformationStructured) &&
                    Objects.equals(this.balanceAfterTransaction, transactionDetails.balanceAfterTransaction) &&
                    Objects.equals(this._links, transactionDetails._links);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, creditorAgent, ultimateCreditor, debtorName, debtorAccount, debtorAgent, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, additionalInformation, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, additionalInformationStructured, balanceAfterTransaction, _links);
+        return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, creditorAgent, ultimateCreditor, debtorName, debtorAccount, debtorAgent, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, additionalInformation, additionalInformationStructured, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, balanceAfterTransaction, _links);
     }
 
     @Override
@@ -885,10 +877,10 @@ public class TransactionDetails {
         sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
         sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");
         sb.append("    additionalInformation: ").append(toIndentedString(additionalInformation)).append("\n");
+        sb.append("    additionalInformationStructured: ").append(toIndentedString(additionalInformationStructured)).append("\n");
         sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
         sb.append("    bankTransactionCode: ").append(toIndentedString(bankTransactionCode)).append("\n");
         sb.append("    proprietaryBankTransactionCode: ").append(toIndentedString(proprietaryBankTransactionCode)).append("\n");
-        sb.append("    additionalInformationStructured: ").append(toIndentedString(additionalInformationStructured)).append("\n");
         sb.append("    balanceAfterTransaction: ").append(toIndentedString(balanceAfterTransaction)).append("\n");
         sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
         sb.append("}");

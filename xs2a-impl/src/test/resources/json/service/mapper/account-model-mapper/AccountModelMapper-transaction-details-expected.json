@@ -45,9 +45,17 @@
   "remittanceInformationUnstructuredArray": [
     "remittance unstructured array element"
   ],
-  "remittanceInformationStructured": "secret info",
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant",
+    "referenceType": "Ref type",
+    "referenceIssuer": "Ref issuer"
+  },
   "remittanceInformationStructuredArray": [
-    "remittance structured array element"
+    {
+      "reference": "Remittance structured array element reference",
+      "referenceType": "Remittance structured array element reference type",
+      "referenceIssuer": "Remittance structured array element reference issuer"
+    }
   ],
   "purposeCode": "BKDF",
   "bankTransactionCode": "some bank code",

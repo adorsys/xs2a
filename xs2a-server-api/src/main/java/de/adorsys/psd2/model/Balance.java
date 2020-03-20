@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "A single balance element. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class Balance {
     @JsonProperty("balanceAmount")
@@ -110,11 +110,11 @@ public class Balance {
     }
 
     /**
-     * A flag indicating if the credit limit of the corresponding account is included in the calculation of the balance, where applicable.
+     * A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable.
      *
      * @return creditLimitIncluded
      **/
-    @ApiModelProperty(value = "A flag indicating if the credit limit of the corresponding account is included in the calculation of the balance, where applicable. ")
+    @ApiModelProperty(value = "A flag indicating if the credit limit of the corresponding account  is included in the calculation of the balance, where applicable. ")
 
 
     @JsonProperty("creditLimitIncluded")
@@ -132,11 +132,11 @@ public class Balance {
     }
 
     /**
-     * This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked.
+     * This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked.
      *
      * @return lastChangeDateTime
      **/
-    @ApiModelProperty(value = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known on the account, which is not yet booked. ")
+    @ApiModelProperty(value = "This data element might be used to indicate e.g. with the expected or booked balance that no action is known  on the account, which is not yet booked. ")
 
     @Valid
 
@@ -180,11 +180,11 @@ public class Balance {
     }
 
     /**
-     * \"entryReference\" of the last commited transaction to support the TPP in identifying whether all PSU transactions are already known.
+     * \"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known.
      *
      * @return lastCommittedTransaction
      **/
-    @ApiModelProperty(value = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all PSU transactions are already known. ")
+    @ApiModelProperty(value = "\"entryReference\" of the last commited transaction to support the TPP in identifying whether all  PSU transactions are already known. ")
 
     @Size(max = 35)
 

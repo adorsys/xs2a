@@ -25,11 +25,11 @@ import javax.validation.Valid;
 import java.util.Objects;
 
 /**
- * The multipart message definition for the initiation of a periodic payment initiation where the information of the payment is contained in an pain.001 message (Part 1) and the additional informations related to the periodic payment is an additional JSON message (Part 2).
+ * The multipart message definition for the initiation of a periodic payment initiation  where the information of the payment is contained in a pain.001 message (Part 1) and  the additional informations related to the periodic payment is an additional JSON message (Part 2).
  */
-@ApiModel(description = "The multipart message definition for the initiation of a periodic payment initiation where the information of the payment is contained in an pain.001 message (Part 1) and the additional informations related to the periodic payment is an additional JSON message (Part 2). ")
+@ApiModel(description = "The multipart message definition for the initiation of a periodic payment initiation  where the information of the payment is contained in a pain.001 message (Part 1) and  the additional informations related to the periodic payment is an additional JSON message (Part 2). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationMultipartBody {
     @JsonProperty("xml_sct")

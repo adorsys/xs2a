@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,70 +28,71 @@ import java.util.Objects;
  */
 @ApiModel(description = "Link to a resource.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class HrefType   {
-  @JsonProperty("href")
-  private String href = null;
+public class HrefType {
+    @JsonProperty("href")
+    private String href = null;
 
-  public HrefType href(String href) {
-    this.href = href;
-    return this;
-  }
-
-  /**
-   * Get href
-   * @return href
-  **/
-  @ApiModelProperty(value = "")
-
-
-
-  @JsonProperty("href")
-  public String getHref() {
-    return href;
-  }
-
-  public void setHref(String href) {
-    this.href = href;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public HrefType href(String href) {
+        this.href = href;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}    HrefType hrefType = (HrefType) o;
-    return Objects.equals(this.href, hrefType.href);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(href);
-  }
+    /**
+     * Get href
+     *
+     * @return href
+     **/
+    @ApiModelProperty(value = "")
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class HrefType {\n");
 
-    sb.append("    href: ").append(toIndentedString(href)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+    @JsonProperty("href")
+    public String getHref() {
+        return href;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
+
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HrefType hrefType = (HrefType) o;
+        return Objects.equals(this.href, hrefType.href);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(href);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class HrefType {\n");
+
+        sb.append("    href: ").append(toIndentedString(href)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 }
 

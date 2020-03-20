@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,100 +30,103 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful read balance for a card account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class ReadCardAccountBalanceResponse200   {
-  @JsonProperty("cardAccount")
-  private AccountReference cardAccount = null;
+public class ReadCardAccountBalanceResponse200 {
+    @JsonProperty("cardAccount")
+    private AccountReference cardAccount = null;
 
-  @JsonProperty("balances")
-  private BalanceList balances = null;
+    @JsonProperty("balances")
+    private BalanceList balances = null;
 
-  public ReadCardAccountBalanceResponse200 cardAccount(AccountReference cardAccount) {
-    this.cardAccount = cardAccount;
-    return this;
-  }
-
-  /**
-   * Get cardAccount
-   * @return cardAccount
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("cardAccount")
-  public AccountReference getCardAccount() {
-    return cardAccount;
-  }
-
-  public void setCardAccount(AccountReference cardAccount) {
-    this.cardAccount = cardAccount;
-  }
-
-  public ReadCardAccountBalanceResponse200 balances(BalanceList balances) {
-    this.balances = balances;
-    return this;
-  }
-
-  /**
-   * Get balances
-   * @return balances
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  @Valid
-
-
-  @JsonProperty("balances")
-  public BalanceList getBalances() {
-    return balances;
-  }
-
-  public void setBalances(BalanceList balances) {
-    this.balances = balances;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public ReadCardAccountBalanceResponse200 cardAccount(AccountReference cardAccount) {
+        this.cardAccount = cardAccount;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}    ReadCardAccountBalanceResponse200 readCardAccountBalanceResponse200 = (ReadCardAccountBalanceResponse200) o;
-    return Objects.equals(this.cardAccount, readCardAccountBalanceResponse200.cardAccount) &&
-    Objects.equals(this.balances, readCardAccountBalanceResponse200.balances);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(cardAccount, balances);
-  }
+    /**
+     * Get cardAccount
+     *
+     * @return cardAccount
+     **/
+    @ApiModelProperty(value = "")
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class ReadCardAccountBalanceResponse200 {\n");
+    @Valid
 
-    sb.append("    cardAccount: ").append(toIndentedString(cardAccount)).append("\n");
-    sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+    @JsonProperty("cardAccount")
+    public AccountReference getCardAccount() {
+        return cardAccount;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
+
+    public void setCardAccount(AccountReference cardAccount) {
+        this.cardAccount = cardAccount;
+    }
+
+    public ReadCardAccountBalanceResponse200 balances(BalanceList balances) {
+        this.balances = balances;
+        return this;
+    }
+
+    /**
+     * Get balances
+     *
+     * @return balances
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
+
+    @Valid
+
+
+    @JsonProperty("balances")
+    public BalanceList getBalances() {
+        return balances;
+    }
+
+    public void setBalances(BalanceList balances) {
+        this.balances = balances;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ReadCardAccountBalanceResponse200 readCardAccountBalanceResponse200 = (ReadCardAccountBalanceResponse200) o;
+        return Objects.equals(this.cardAccount, readCardAccountBalanceResponse200.cardAccount) &&
+                   Objects.equals(this.balances, readCardAccountBalanceResponse200.balances);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cardAccount, balances);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class ReadCardAccountBalanceResponse200 {\n");
+
+        sb.append("    cardAccount: ").append(toIndentedString(cardAccount)).append("\n");
+        sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 }
 
