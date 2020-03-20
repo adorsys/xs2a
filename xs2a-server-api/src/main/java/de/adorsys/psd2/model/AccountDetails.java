@@ -35,7 +35,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class AccountDetails {
     @JsonProperty("resourceId")
@@ -241,13 +241,13 @@ public class AccountDetails {
     }
 
     /**
-     * Name of the account given by the bank or the PSU in online-banking.
+     * Name of the account, as assigned by the ASPSP, in agreement with the account owner in order to provide an additional means of identification of the account.
      *
      * @return name
      **/
-    @ApiModelProperty(value = "Name of the account given by the bank or the PSU in online-banking.")
+    @ApiModelProperty(value = "Name of the account, as assigned by the ASPSP, in agreement with the account owner in order to provide an additional means of identification of the account.")
 
-    @Size(max = 35)
+    @Size(max = 70)
 
     @JsonProperty("name")
     public String getName() {
@@ -264,11 +264,11 @@ public class AccountDetails {
     }
 
     /**
-     * Name of the account as defined by the PSU within online channels.
+     * Get displayName
      *
      * @return displayName
      **/
-    @ApiModelProperty(value = "Name of the account as defined by the PSU within online channels.")
+    @ApiModelProperty(value = "")
 
     @Size(max = 70)
 
@@ -496,11 +496,11 @@ public class AccountDetails {
     }
 
     /**
-     * Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
+     * Get ownerName
      *
      * @return ownerName
      **/
-    @ApiModelProperty(value = "Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.")
+    @ApiModelProperty(value = "")
 
     @Size(max = 140)
 

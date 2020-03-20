@@ -18,7 +18,11 @@
       },
       "ultimateDebtor": "",
       "remittanceInformationUnstructured": "Ref Number Merchant",
-      "remittanceInformationStructured": "Ref Number Merchant",
+      "remittanceInformationStructured": {
+        "reference": "Ref Number Merchant",
+        "referenceType": "Ref type",
+        "referenceIssuer": "Ref issuer"
+      },
       "purposeCode": "BKDF",
       "bankTransactionCode": "BankTransactionCode"
     }

@@ -24,38 +24,38 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum TransactionStatusSBS {
 
-  ACSC("ACSC"),
+    ACSC("ACSC"),
 
-  ACTC("ACTC"),
+    ACTC("ACTC"),
 
-  PATC("PATC"),
+    PATC("PATC"),
 
-  RCVD("RCVD"),
+    RCVD("RCVD"),
 
-  RJCT("RJCT"),
+    RJCT("RJCT"),
 
-  CANC("CANC");
+    CANC("CANC");
 
-  private String value;
+    private String value;
 
-  TransactionStatusSBS(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static TransactionStatusSBS fromValue(String text) {
-    for (TransactionStatusSBS b : TransactionStatusSBS.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    TransactionStatusSBS(String value) {
+        this.value = value;
     }
-    return null;
-  }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static TransactionStatusSBS fromValue(String text) {
+        for (TransactionStatusSBS b : TransactionStatusSBS.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
 

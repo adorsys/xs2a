@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,75 +25,76 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
- * Content of the body of a Transaction authorisation request.
+ * Content of the body of a transaction authorisation request.
  */
-@ApiModel(description = "Content of the body of a Transaction authorisation request. ")
+@ApiModel(description = "Content of the body of a transaction authorisation request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class TransactionAuthorisation   {
-  @JsonProperty("scaAuthenticationData")
-  private String scaAuthenticationData = null;
+public class TransactionAuthorisation {
+    @JsonProperty("scaAuthenticationData")
+    private String scaAuthenticationData = null;
 
-  public TransactionAuthorisation scaAuthenticationData(String scaAuthenticationData) {
-    this.scaAuthenticationData = scaAuthenticationData;
-    return this;
-  }
-
-  /**
-   * Get scaAuthenticationData
-   * @return scaAuthenticationData
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-
-
-  @JsonProperty("scaAuthenticationData")
-  public String getScaAuthenticationData() {
-    return scaAuthenticationData;
-  }
-
-  public void setScaAuthenticationData(String scaAuthenticationData) {
-    this.scaAuthenticationData = scaAuthenticationData;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public TransactionAuthorisation scaAuthenticationData(String scaAuthenticationData) {
+        this.scaAuthenticationData = scaAuthenticationData;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}    TransactionAuthorisation transactionAuthorisation = (TransactionAuthorisation) o;
-    return Objects.equals(this.scaAuthenticationData, transactionAuthorisation.scaAuthenticationData);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(scaAuthenticationData);
-  }
+    /**
+     * Get scaAuthenticationData
+     *
+     * @return scaAuthenticationData
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class TransactionAuthorisation {\n");
 
-    sb.append("    scaAuthenticationData: ").append(toIndentedString(scaAuthenticationData)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+    @JsonProperty("scaAuthenticationData")
+    public String getScaAuthenticationData() {
+        return scaAuthenticationData;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
+
+    public void setScaAuthenticationData(String scaAuthenticationData) {
+        this.scaAuthenticationData = scaAuthenticationData;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        TransactionAuthorisation transactionAuthorisation = (TransactionAuthorisation) o;
+        return Objects.equals(this.scaAuthenticationData, transactionAuthorisation.scaAuthenticationData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scaAuthenticationData);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class TransactionAuthorisation {\n");
+
+        sb.append("    scaAuthenticationData: ").append(toIndentedString(scaAuthenticationData)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 }
 

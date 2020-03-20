@@ -24,44 +24,44 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum FrequencyCode {
 
-  DAILY("Daily"),
+    DAILY("Daily"),
 
-  WEEKLY("Weekly"),
+    WEEKLY("Weekly"),
 
-  EVERYTWOWEEKS("EveryTwoWeeks"),
+    EVERYTWOWEEKS("EveryTwoWeeks"),
 
-  MONTHLY("Monthly"),
+    MONTHLY("Monthly"),
 
-  EVERYTWOMONTHS("EveryTwoMonths"),
+    EVERYTWOMONTHS("EveryTwoMonths"),
 
-  QUARTERLY("Quarterly"),
+    QUARTERLY("Quarterly"),
 
-  SEMIANNUAL("SemiAnnual"),
+    SEMIANNUAL("SemiAnnual"),
 
-  ANNUAL("Annual"),
+    ANNUAL("Annual"),
 
-  MONTHLYVARIABLE("MonthlyVariable");
+    MONTHLYVARIABLE("MonthlyVariable");
 
-  private String value;
+    private String value;
 
-  FrequencyCode(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static FrequencyCode fromValue(String text) {
-    for (FrequencyCode b : FrequencyCode.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    FrequencyCode(String value) {
+        this.value = value;
     }
-    return null;
-  }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static FrequencyCode fromValue(String text) {
+        for (FrequencyCode b : FrequencyCode.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
 

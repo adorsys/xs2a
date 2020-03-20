@@ -3,8 +3,21 @@
 == Table of Contents
 
 * Bugfix: Liquibase migration is not working for H2
+* Migrate to OpenAPI file v. 1.3.6
+* Change types of remittance information structured properties in SpiTransaction
 
 == Bugfix: Liquibase migration is not working for H2
 
 From now on, CMS Liquibase migration is working correctly for H2 database.
 Minimal version of H2 required to properly apply changelogs is `1.4.200`.
+
+== Migrate to OpenAPI file v. 1.3.6
+
+From now on, XS2A uses version `1.3.6_20200306v1` of OpenAPI file provided by the Berlin Group.
+
+== Change types of remittance information structured properties in SpiTransaction
+
+In accordance with the changes to OpenAPI file v. 1.3.6, types of `remittanceInformationStructured` and `remittanceInformationStructuredArray` properties in `de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction` were changed:
+
+- from `String` to `Remittance` for `remittanceInformationStructured`
+- from `List<String>` to `List<Remittance>` for `remittanceInformationStructuredArray`

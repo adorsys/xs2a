@@ -24,40 +24,40 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ConsentStatus {
 
-  RECEIVED("received"),
+    RECEIVED("received"),
 
-  REJECTED("rejected"),
+    REJECTED("rejected"),
 
-  VALID("valid"),
+    VALID("valid"),
 
-  REVOKEDBYPSU("revokedByPsu"),
+    REVOKEDBYPSU("revokedByPsu"),
 
-  EXPIRED("expired"),
+    EXPIRED("expired"),
 
-  TERMINATEDBYTPP("terminatedByTpp"),
+    TERMINATEDBYTPP("terminatedByTpp"),
 
-  PARTIALLYAUTHORISED("partiallyAuthorised");
+    PARTIALLYAUTHORISED("partiallyAuthorised");
 
-  private String value;
+    private String value;
 
-  ConsentStatus(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static ConsentStatus fromValue(String text) {
-    for (ConsentStatus b : ConsentStatus.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    ConsentStatus(String value) {
+        this.value = value;
     }
-    return null;
-  }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static ConsentStatus fromValue(String text) {
+        for (ConsentStatus b : ConsentStatus.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
 
