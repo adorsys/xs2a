@@ -23,6 +23,7 @@ import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,8 @@ class AccountReferenceInConsentUpdaterTest {
     private static final String RESOURCE_ID_2 = "resource id 2";
     private static final String IBAN_1 = "iban 1";
     private static final String IBAN_2 = "iban 2";
+    private static final String MASKED_PAN_1 = "123456xxxxxx1234";
+    private static final String MASKED_PAN_2 = "525412******3241";
     private static final Currency CURRENCY = Currency.getInstance("EUR");
     private static final AisAccountAccessInfo AIS_ACCOUNT_ACCESS_INFO = new AisAccountAccessInfo();
 
@@ -57,6 +60,8 @@ class AccountReferenceInConsentUpdaterTest {
     private Xs2aAisConsentService aisConsentService;
     @Mock
     private Xs2aAisConsentMapper consentMapper;
+    @Mock
+    private CardAccountHandler cardAccountHandler;
 
     @InjectMocks
     private AccountReferenceInConsentUpdater accountReferenceInConsentUpdater;
@@ -110,13 +115,55 @@ class AccountReferenceInConsentUpdaterTest {
     }
 
     @Test
+    void updateAccountReferences_withGlobalConsentForOwnerName_shouldSetResourceId() {
+        // Given
+        ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.emptyList(),
+                                                             Collections.emptyList(),
+                                                             Collections.emptyList());
+        AisConsent aisConsent = buildAisConsent(accountAccess, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME);
+        Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
+
+        // When
+        accountReferenceInConsentUpdater.updateAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(1, accounts.size());
+
+        AccountReference accountReference = accounts.get(0);
+        assertEquals(IBAN_1, accountReference.getIban());
+        assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertEquals(1, balances.size());
+
+        AccountReference balanceReference = balances.get(0);
+        assertEquals(IBAN_1, balanceReference.getIban());
+        assertEquals(RESOURCE_ID_1, balanceReference.getResourceId());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertEquals(1, transactions.size());
+
+        AccountReference transactionReference = transactions.get(0);
+        assertEquals(IBAN_1, transactionReference.getIban());
+        assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
     void updateAccountReferences_shouldSetResourceId() {
         // Given
         ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
 
-        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
-                                                             Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
-                                                             Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)));
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReferenceWithIban(IBAN_1)),
+                                                             Collections.singletonList(buildAccountReferenceWithIban(IBAN_1)),
+                                                             Collections.singletonList(buildAccountReferenceWithIban(IBAN_1)));
         AisConsent aisConsent = buildAisConsent(accountAccess, null);
         Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
 
@@ -156,10 +203,10 @@ class AccountReferenceInConsentUpdaterTest {
         ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
 
         // Given
-        AccountAccess accountAccess = buildXs2aAccountAccess(Arrays.asList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1),
-                                                                           buildAccountReference(ASPSP_ACCOUNT_ID_2, IBAN_2)),
+        AccountAccess accountAccess = buildXs2aAccountAccess(Arrays.asList(buildAccountReferenceWithIban(IBAN_1),
+                                                                           buildAccountReferenceWithIban(IBAN_2)),
                                                              Collections.emptyList(),
-                                                             Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)));
+                                                             Collections.singletonList(buildAccountReferenceWithIban(IBAN_1)));
         AisConsent aisConsent = buildAisConsent(accountAccess, null);
         Xs2aAccountDetails xs2aAccountDetails = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, IBAN_1);
         Xs2aAccountDetails xs2aAccountDetails2 = buildXs2aAccountDetails(ASPSP_ACCOUNT_ID_2, RESOURCE_ID_2, IBAN_2);
@@ -200,7 +247,7 @@ class AccountReferenceInConsentUpdaterTest {
         ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
 
         // Given
-        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReference(ASPSP_ACCOUNT_ID_1, IBAN_1)),
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.singletonList(buildAccountReferenceWithIban(IBAN_1)),
                                                              Collections.emptyList(),
                                                              Collections.emptyList());
         AisConsent aisConsent = buildAisConsent(accountAccess, null);
@@ -218,6 +265,220 @@ class AccountReferenceInConsentUpdaterTest {
 
         AccountReference accountReference = accounts.get(0);
         assertEquals(IBAN_1, accountReference.getIban());
+        assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertTrue(balances.isEmpty());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertTrue(transactions.isEmpty());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
+    void updateCardAccountReferences_withGlobalConsent_shouldSetResourceId() {
+        // Given
+        ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.emptyList(),
+                                                             Collections.emptyList(),
+                                                             Collections.emptyList());
+        AisConsent aisConsent = buildAisConsent(accountAccess, AccountAccessType.ALL_ACCOUNTS);
+        Xs2aCardAccountDetails xs2aCardAccountDetails = buildXs2aCardAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, MASKED_PAN_1);
+
+        // When
+        accountReferenceInConsentUpdater.updateCardAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aCardAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(1, accounts.size());
+
+        AccountReference accountReference = accounts.get(0);
+        assertEquals(MASKED_PAN_1, accountReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertEquals(1, balances.size());
+
+        AccountReference balanceReference = balances.get(0);
+        assertEquals(MASKED_PAN_1, balanceReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, balanceReference.getResourceId());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertEquals(1, transactions.size());
+
+        AccountReference transactionReference = transactions.get(0);
+        assertEquals(MASKED_PAN_1, transactionReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
+    void updateCardAccountReferences_withGlobalConsentForOwnerName_shouldSetResourceId() {
+        // Given
+        ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.emptyList(),
+                                                             Collections.emptyList(),
+                                                             Collections.emptyList());
+        AisConsent aisConsent = buildAisConsent(accountAccess, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME);
+        Xs2aCardAccountDetails xs2aCardAccountDetails = buildXs2aCardAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, MASKED_PAN_1);
+
+        // When
+        accountReferenceInConsentUpdater.updateCardAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aCardAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(1, accounts.size());
+
+        AccountReference accountReference = accounts.get(0);
+        assertEquals(MASKED_PAN_1, accountReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertEquals(1, balances.size());
+
+        AccountReference balanceReference = balances.get(0);
+        assertEquals(MASKED_PAN_1, balanceReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, balanceReference.getResourceId());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertEquals(1, transactions.size());
+
+        AccountReference transactionReference = transactions.get(0);
+        assertEquals(MASKED_PAN_1, transactionReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
+    void updateCardAccountReferences_shouldSetResourceId() {
+        // Given
+        ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+
+        AccountReference accountReferenceWithMaskedPan = buildAccountReferenceWithMaskedPan(MASKED_PAN_1);
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.singletonList(accountReferenceWithMaskedPan),
+                                                             Collections.singletonList(accountReferenceWithMaskedPan),
+                                                             Collections.singletonList(accountReferenceWithMaskedPan));
+        AisConsent aisConsent = buildAisConsent(accountAccess, null);
+        Xs2aCardAccountDetails xs2aCardAccountDetails = buildXs2aCardAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, MASKED_PAN_1);
+        when(cardAccountHandler.areAccountsEqual(xs2aCardAccountDetails, accountReferenceWithMaskedPan)).thenReturn(true);
+
+        // When
+        accountReferenceInConsentUpdater.updateCardAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aCardAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(1, accounts.size());
+
+        AccountReference accountReference = accounts.get(0);
+        assertEquals(MASKED_PAN_1, accountReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertEquals(1, balances.size());
+
+        AccountReference balanceReference = balances.get(0);
+        assertEquals(MASKED_PAN_1, balanceReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, balanceReference.getResourceId());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertEquals(1, transactions.size());
+
+        AccountReference transactionReference = transactions.get(0);
+        assertEquals(MASKED_PAN_1, transactionReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
+    void updateCardAccountReferences_withMultipleAccountReferences_shouldProperlyUpdateResourceId() {
+        ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+
+        // Given
+        AccountReference firstAccountReference = buildAccountReferenceWithMaskedPan(MASKED_PAN_1);
+        AccountReference secondAccountReference = buildAccountReferenceWithMaskedPan(MASKED_PAN_2);
+        AccountAccess accountAccess = buildXs2aAccountAccess(Arrays.asList(firstAccountReference,
+                                                                           secondAccountReference),
+                                                             Collections.emptyList(),
+                                                             Collections.singletonList(firstAccountReference));
+        AisConsent aisConsent = buildAisConsent(accountAccess, null);
+        Xs2aCardAccountDetails firstXs2aCardAccountDetails = buildXs2aCardAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, MASKED_PAN_1);
+        Xs2aCardAccountDetails secondXs2aCardAccountDetails = buildXs2aCardAccountDetails(ASPSP_ACCOUNT_ID_2, RESOURCE_ID_2, MASKED_PAN_2);
+        when(cardAccountHandler.areAccountsEqual(firstXs2aCardAccountDetails, firstAccountReference)).thenReturn(true);
+        when(cardAccountHandler.areAccountsEqual(firstXs2aCardAccountDetails, secondAccountReference)).thenReturn(false);
+        when(cardAccountHandler.areAccountsEqual(secondXs2aCardAccountDetails, firstAccountReference)).thenReturn(false);
+        when(cardAccountHandler.areAccountsEqual(secondXs2aCardAccountDetails, secondAccountReference)).thenReturn(true);
+
+        // When
+        accountReferenceInConsentUpdater.updateCardAccountReferences(CONSENT_ID, aisConsent, Arrays.asList(firstXs2aCardAccountDetails, secondXs2aCardAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(2, accounts.size());
+
+        AccountReference firstMappedAccountReference = accounts.get(0);
+        assertEquals(MASKED_PAN_1, firstMappedAccountReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, firstMappedAccountReference.getResourceId());
+
+        AccountReference secondMappedAccountReference = accounts.get(1);
+        assertEquals(MASKED_PAN_2, secondMappedAccountReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_2, secondMappedAccountReference.getResourceId());
+
+        List<AccountReference> balances = value.getBalances();
+        assertTrue(balances.isEmpty());
+
+        List<AccountReference> transactions = value.getTransactions();
+        assertEquals(1, transactions.size());
+
+        AccountReference transactionReference = transactions.get(0);
+        assertEquals(MASKED_PAN_1, transactionReference.getMaskedPan());
+        assertEquals(RESOURCE_ID_1, transactionReference.getResourceId());
+
+        verify(aisConsentService).updateAspspAccountAccess(CONSENT_ID, AIS_ACCOUNT_ACCESS_INFO);
+    }
+
+    @Test
+    void updateCardAccountReferences_withResourceIdInAccounts_shouldNotUpdateBalancesOrTransactions() {
+        ArgumentCaptor<AccountAccess> xs2aAccountAccessArgumentCaptor = ArgumentCaptor.forClass(AccountAccess.class);
+
+        // Given
+        AccountReference accountReferenceWithMaskedPan = buildAccountReferenceWithMaskedPan(MASKED_PAN_1);
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.singletonList(accountReferenceWithMaskedPan),
+                                                             Collections.emptyList(),
+                                                             Collections.emptyList());
+        AisConsent aisConsent = buildAisConsent(accountAccess, null);
+        Xs2aCardAccountDetails xs2aCardAccountDetails = buildXs2aCardAccountDetails(ASPSP_ACCOUNT_ID_1, RESOURCE_ID_1, MASKED_PAN_1);
+        when(cardAccountHandler.areAccountsEqual(xs2aCardAccountDetails, accountReferenceWithMaskedPan)).thenReturn(true);
+
+        // When
+        accountReferenceInConsentUpdater.updateCardAccountReferences(CONSENT_ID, aisConsent, Collections.singletonList(xs2aCardAccountDetails));
+
+        // Then
+        verify(consentMapper).mapToAisAccountAccessInfo(xs2aAccountAccessArgumentCaptor.capture());
+        AccountAccess value = xs2aAccountAccessArgumentCaptor.getValue();
+
+        List<AccountReference> accounts = value.getAccounts();
+        assertEquals(1, accounts.size());
+
+        AccountReference accountReference = accounts.get(0);
+        assertEquals(MASKED_PAN_1, accountReference.getMaskedPan());
         assertEquals(RESOURCE_ID_1, accountReference.getResourceId());
 
         List<AccountReference> balances = value.getBalances();
@@ -250,7 +511,18 @@ class AccountReferenceInConsentUpdaterTest {
                                       null, Collections.emptyList(), null, null);
     }
 
-    private AccountReference buildAccountReference(String aspspAccountId, String iban) {
-        return new AccountReference(aspspAccountId, null, iban, null, null, null, null, Currency.getInstance("EUR"));
+    private Xs2aCardAccountDetails buildXs2aCardAccountDetails(String aspspAccountId, String resourceId, String maskedPan) {
+        return new Xs2aCardAccountDetails(aspspAccountId, resourceId, maskedPan,
+                                          CURRENCY, null, null, null, null,
+                                          null, null, null, Collections.emptyList(),
+                                          null, null);
+    }
+
+    private AccountReference buildAccountReferenceWithIban(String iban) {
+        return new AccountReference(null, null, iban, null, null, null, null, CURRENCY);
+    }
+
+    private AccountReference buildAccountReferenceWithMaskedPan(String maskedPan) {
+        return new AccountReference(null, null, null, null, null, maskedPan, null, CURRENCY);
     }
 }
