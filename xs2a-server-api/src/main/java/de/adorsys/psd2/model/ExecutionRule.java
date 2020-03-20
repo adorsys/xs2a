@@ -24,30 +24,30 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ExecutionRule {
 
-  FOLLOWING("following"),
+    FOLLOWING("following"),
 
-  PRECEDING("preceding");
+    PRECEDING("preceding");
 
-  private String value;
+    private String value;
 
-  ExecutionRule(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static ExecutionRule fromValue(String text) {
-    for (ExecutionRule b : ExecutionRule.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    ExecutionRule(String value) {
+        this.value = value;
     }
-    return null;
-  }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static ExecutionRule fromValue(String text) {
+        for (ExecutionRule b : ExecutionRule.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
 

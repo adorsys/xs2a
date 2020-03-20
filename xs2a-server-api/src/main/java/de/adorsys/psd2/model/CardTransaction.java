@@ -34,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class CardTransaction {
     @JsonProperty("cardTransactionId")
@@ -167,11 +167,11 @@ public class CardTransaction {
     }
 
     /**
-     * Get acceptorTransactionDateTime
+     * Timestamp of the actual card transaction within the acceptance system
      *
      * @return acceptorTransactionDateTime
      **/
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value = "Timestamp of the actual card transaction within the acceptance system")
 
     @Valid
 
@@ -387,7 +387,7 @@ public class CardTransaction {
      **/
     @ApiModelProperty(value = "")
 
-    @Pattern(regexp = "\\+[0-9]{1,3}-[0-9()\\+\\-]{1,30}")
+    @Pattern(regexp = "\\+[0-9]{1,3}\\-[0-9()+\\-]{1,30}")
 
     @JsonProperty("cardAcceptorPhone")
     public String getCardAcceptorPhone() {

@@ -28,11 +28,11 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 /**
- * The body part 2 of a periodic payment initation request containes the execution related informations of the periodic payment.
+ * The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment.
  */
-@ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations of the periodic payment. ")
+@ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson {
     @JsonProperty("startDate")

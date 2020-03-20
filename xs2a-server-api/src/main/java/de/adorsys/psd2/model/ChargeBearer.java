@@ -24,34 +24,34 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ChargeBearer {
 
-  DEBT("DEBT"),
+    DEBT("DEBT"),
 
-  CRED("CRED"),
+    CRED("CRED"),
 
-  SHAR("SHAR"),
+    SHAR("SHAR"),
 
-  SLEV("SLEV");
+    SLEV("SLEV");
 
-  private String value;
+    private String value;
 
-  ChargeBearer(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static ChargeBearer fromValue(String text) {
-    for (ChargeBearer b : ChargeBearer.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    ChargeBearer(String value) {
+        this.value = value;
     }
-    return null;
-  }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static ChargeBearer fromValue(String text) {
+        for (ChargeBearer b : ChargeBearer.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
 

@@ -24,30 +24,30 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum TppMessageCategory {
 
-  ERROR("ERROR"),
+    ERROR("ERROR"),
 
-  WARNING("WARNING");
+    WARNING("WARNING");
 
-  private String value;
+    private String value;
 
-  TppMessageCategory(String value) {
-    this.value = value;
-  }
-
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
-
-  @JsonCreator
-  public static TppMessageCategory fromValue(String text) {
-    for (TppMessageCategory b : TppMessageCategory.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
+    TppMessageCategory(String value) {
+        this.value = value;
     }
-    return null;
-  }
+
+    @Override
+    @JsonValue
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static TppMessageCategory fromValue(String text) {
+        for (TppMessageCategory b : TppMessageCategory.values()) {
+            if (String.valueOf(b.value).equals(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }
 
