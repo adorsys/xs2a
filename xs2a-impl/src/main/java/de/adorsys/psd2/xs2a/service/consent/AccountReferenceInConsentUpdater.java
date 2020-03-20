@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
@@ -49,7 +48,7 @@ public class AccountReferenceInConsentUpdater {
     /**
      * Overwrites existing account access with the new one. To be used with caution.
      * Only allowed when you get new AccountAccess from ASPSP side,
-     * NOT ALLOWED to update consent by smth coming from TPP side!
+     * NOT ALLOWED to update consent by something coming from TPP side!
      *
      * @param consentId        an external ID of consent, where account access to be stored
      * @param newAccountAccess new object with account accesses
@@ -75,7 +74,7 @@ public class AccountReferenceInConsentUpdater {
         AccountAccess existingAccess = aisConsent.getAccess();
         AdditionalInformationAccess additionalInformationAccess = existingAccess.getAdditionalInformationAccess();
 
-        if (aisConsent.getConsentData().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+        if (aisConsent.isGlobalConsent()) {
             accounts.addAll(enrichAccountReferencesGlobal(accountDetails));
             transactions.addAll(enrichAccountReferencesGlobal(accountDetails));
             balances.addAll(enrichAccountReferencesGlobal(accountDetails));
@@ -116,7 +115,7 @@ public class AccountReferenceInConsentUpdater {
         AccountAccess existingAccess = aisConsent.getAccess();
         AdditionalInformationAccess additionalInformationAccess = existingAccess.getAdditionalInformationAccess();
 
-        if (aisConsent.getConsentData().getAllPsd2() == AccountAccessType.ALL_ACCOUNTS) {
+        if (aisConsent.isGlobalConsent()) {
             accounts.addAll(enrichCardAccountReferencesGlobal(accountDetails));
             transactions.addAll(enrichCardAccountReferencesGlobal(accountDetails));
             balances.addAll(enrichCardAccountReferencesGlobal(accountDetails));

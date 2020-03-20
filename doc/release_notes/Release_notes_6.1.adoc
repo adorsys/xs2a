@@ -5,6 +5,7 @@
 * Bugfix: Liquibase migration is not working for H2
 * Migrate to OpenAPI file v. 1.3.6
 * Change types of remittance information structured properties in SpiTransaction
+* Bugfix: Read account details request returns error for global consent with owner name
 
 == Bugfix: Liquibase migration is not working for H2
 
@@ -21,3 +22,7 @@ In accordance with the changes to OpenAPI file v. 1.3.6, types of `remittanceInf
 
 - from `String` to `Remittance` for `remittanceInformationStructured`
 - from `List<String>` to `List<Remittance>` for `remittanceInformationStructuredArray`
+
+== Bugfix: Read account details request returns error for global consent with owner name
+
+From now on, executing read account details request with global consent with owner name will no longer result in `401 CONSENT_INVALID` error being returned to the TPP.
