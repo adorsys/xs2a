@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,71 +30,73 @@ import java.util.Objects;
  */
 @ApiModel(description = "Content of the body of a Select PSU authentication method request. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class SelectPsuAuthenticationMethod   {
-  @JsonProperty("authenticationMethodId")
-  private String authenticationMethodId = null;
+public class SelectPsuAuthenticationMethod {
+    @JsonProperty("authenticationMethodId")
+    private String authenticationMethodId = null;
 
-  public SelectPsuAuthenticationMethod authenticationMethodId(String authenticationMethodId) {
-    this.authenticationMethodId = authenticationMethodId;
-    return this;
-  }
-
-  /**
-   * Get authenticationMethodId
-   * @return authenticationMethodId
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-@Size(max=35)
-
-  @JsonProperty("authenticationMethodId")
-  public String getAuthenticationMethodId() {
-    return authenticationMethodId;
-  }
-
-  public void setAuthenticationMethodId(String authenticationMethodId) {
-    this.authenticationMethodId = authenticationMethodId;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public SelectPsuAuthenticationMethod authenticationMethodId(String authenticationMethodId) {
+        this.authenticationMethodId = authenticationMethodId;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}    SelectPsuAuthenticationMethod selectPsuAuthenticationMethod = (SelectPsuAuthenticationMethod) o;
-    return Objects.equals(this.authenticationMethodId, selectPsuAuthenticationMethod.authenticationMethodId);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(authenticationMethodId);
-  }
+    /**
+     * Get authenticationMethodId
+     *
+     * @return authenticationMethodId
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class SelectPsuAuthenticationMethod {\n");
+    @Size(max = 35)
 
-    sb.append("    authenticationMethodId: ").append(toIndentedString(authenticationMethodId)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
-
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+    @JsonProperty("authenticationMethodId")
+    public String getAuthenticationMethodId() {
+        return authenticationMethodId;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
+
+    public void setAuthenticationMethodId(String authenticationMethodId) {
+        this.authenticationMethodId = authenticationMethodId;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SelectPsuAuthenticationMethod selectPsuAuthenticationMethod = (SelectPsuAuthenticationMethod) o;
+        return Objects.equals(this.authenticationMethodId, selectPsuAuthenticationMethod.authenticationMethodId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(authenticationMethodId);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class SelectPsuAuthenticationMethod {\n");
+
+        sb.append("    authenticationMethodId: ").append(toIndentedString(authenticationMethodId)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 }
 

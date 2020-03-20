@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,17 +65,17 @@ public class ConsentController implements ConsentApi {
     @Override
     public ResponseEntity createConsent(UUID xRequestID, String psuIpAddress, Consents body, String digest, String signature,
                                         byte[] tppSignatureCertificate, String psuId, String psuIdType, String psuCorporateId,
-                                        String psuCorporateIdType, Boolean tppRedirectPreferred, String tppRedirectUriString, String tppNokRedirectUriString,
-                                        Boolean tppExplicitAuthorisationPreferred, String tppNotificationUri,
-                                        String tppNotificationContentPreferred, String psuIpPort, String psuAccept,
-                                        String psuAcceptCharset, String psuAcceptEncoding, String psuAcceptLanguage,
-                                        String psuUserAgent, String psuHttpMethod, UUID psuDeviceId,
-                                        String psuGeoLocation, String tppBrandLoggingInformation) {
+                                        String psuCorporateIdType, Boolean tppRedirectPreferred, String tppRedirectUri, String tppNokRedirectUri,
+                                        Boolean tppExplicitAuthorisationPreferred, String tppBrandLoggingInformation,
+                                        String tppNotificationUri, String tppNotificationContentPreferred, String psuIpPort,
+                                        String psuAccept, String psuAcceptCharset, String psuAcceptEncoding,
+                                        String psuAcceptLanguage, String psuUserAgent, String psuHttpMethod,
+                                        UUID psuDeviceId, String psuGeoLocation) {
 
-        TppRedirectUri tppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectUriString, tppNokRedirectUriString);
+        TppRedirectUri xs2aTppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectUri, tppNokRedirectUri);
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, tppNotificationUri);
 
-        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, tppRedirectUri, tppNotificationData, tppBrandLoggingInformation);
+        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, xs2aTppRedirectUri, tppNotificationData, tppBrandLoggingInformation);
 
         PsuIdData psuData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, psuIpAddress,
                                           new AdditionalPsuIdData(psuIpPort, psuUserAgent, psuGeoLocation, psuAccept, psuAcceptCharset, psuAcceptEncoding, psuAcceptLanguage, psuHttpMethod, psuDeviceId));

@@ -35,7 +35,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class CardAccountDetails {
     @JsonProperty("resourceId")
@@ -46,6 +46,9 @@ public class CardAccountDetails {
 
     @JsonProperty("currency")
     private String currency = null;
+
+    @JsonProperty("ownerName")
+    private String ownerName = null;
 
     @JsonProperty("name")
     private String name = null;
@@ -104,9 +107,6 @@ public class CardAccountDetails {
 
     @JsonProperty("_links")
     private Map _links = null;
-
-    @JsonProperty("ownerName")
-    private String ownerName = null;
 
     public CardAccountDetails resourceId(String resourceId) {
         this.resourceId = resourceId;
@@ -178,19 +178,42 @@ public class CardAccountDetails {
         this.currency = currency;
     }
 
+    public CardAccountDetails ownerName(String ownerName) {
+        this.ownerName = ownerName;
+        return this;
+    }
+
+    /**
+     * Get ownerName
+     *
+     * @return ownerName
+     **/
+    @ApiModelProperty(value = "")
+
+    @Size(max = 140)
+
+    @JsonProperty("ownerName")
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
     public CardAccountDetails name(String name) {
         this.name = name;
         return this;
     }
 
     /**
-     * Name of the account given by the bank or the PSU in online-banking.
+     * Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account.
      *
      * @return name
      **/
-    @ApiModelProperty(value = "Name of the account given by the bank or the PSU in online-banking.")
+    @ApiModelProperty(value = "Name of the account, as assigned by the ASPSP,  in agreement with the account owner in order to provide an additional means of identification of the account. ")
 
-    @Size(max = 35)
+    @Size(max = 70)
 
     @JsonProperty("name")
     public String getName() {
@@ -207,11 +230,11 @@ public class CardAccountDetails {
     }
 
     /**
-     * Name of the account as defined by the PSU within online channels.
+     * Get displayName
      *
      * @return displayName
      **/
-    @ApiModelProperty(value = "Name of the account as defined by the PSU within online channels.")
+    @ApiModelProperty(value = "")
 
     @Size(max = 70)
 
@@ -230,11 +253,11 @@ public class CardAccountDetails {
     }
 
     /**
-     * Product name of the bank for this account, proprietary definition.
+     * Product Name of the Bank for this account, proprietary definition.
      *
      * @return product
      **/
-    @ApiModelProperty(value = "Product name of the bank for this account, proprietary definition.")
+    @ApiModelProperty(value = "Product Name of the Bank for this account, proprietary definition. ")
 
     @Size(max = 35)
 
@@ -389,29 +412,6 @@ public class CardAccountDetails {
         this._links = _links;
     }
 
-    public CardAccountDetails ownerName(String ownerName) {
-        this.ownerName = ownerName;
-        return this;
-    }
-
-    /**
-     * Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.
-     *
-     * @return ownerName
-     **/
-    @ApiModelProperty(value = "Name of the legal account owner. If there is more than one owner, then e.g. two names might be noted here.")
-
-    @Size(max = 140)
-
-    @JsonProperty("ownerName")
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
-    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -425,6 +425,7 @@ public class CardAccountDetails {
         return Objects.equals(this.resourceId, cardAccountDetails.resourceId) &&
                    Objects.equals(this.maskedPan, cardAccountDetails.maskedPan) &&
                    Objects.equals(this.currency, cardAccountDetails.currency) &&
+                   Objects.equals(this.ownerName, cardAccountDetails.ownerName) &&
                    Objects.equals(this.name, cardAccountDetails.name) &&
                    Objects.equals(this.displayName, cardAccountDetails.displayName) &&
                    Objects.equals(this.product, cardAccountDetails.product) &&
@@ -433,13 +434,12 @@ public class CardAccountDetails {
                    Objects.equals(this.details, cardAccountDetails.details) &&
                    Objects.equals(this.creditLimit, cardAccountDetails.creditLimit) &&
                    Objects.equals(this.balances, cardAccountDetails.balances) &&
-                   Objects.equals(this._links, cardAccountDetails._links) &&
-                   Objects.equals(this.ownerName, cardAccountDetails.ownerName);
+                   Objects.equals(this._links, cardAccountDetails._links);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resourceId, maskedPan, currency, name, displayName, product, status, usage, details, creditLimit, balances, _links, ownerName);
+        return Objects.hash(resourceId, maskedPan, currency, ownerName, name, displayName, product, status, usage, details, creditLimit, balances, _links);
     }
 
     @Override
@@ -450,6 +450,7 @@ public class CardAccountDetails {
         sb.append("    resourceId: ").append(toIndentedString(resourceId)).append("\n");
         sb.append("    maskedPan: ").append(toIndentedString(maskedPan)).append("\n");
         sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
+        sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    displayName: ").append(toIndentedString(displayName)).append("\n");
         sb.append("    product: ").append(toIndentedString(product)).append("\n");
@@ -459,7 +460,6 @@ public class CardAccountDetails {
         sb.append("    creditLimit: ").append(toIndentedString(creditLimit)).append("\n");
         sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
         sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
-        sb.append("    ownerName: ").append(toIndentedString(ownerName)).append("\n");
         sb.append("}");
         return sb.toString();
     }

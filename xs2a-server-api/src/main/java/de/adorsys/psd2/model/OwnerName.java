@@ -22,13 +22,13 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * ISO 20022 phone number.
+ * Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU.
  */
-@ApiModel(description = "ISO 20022 phone number.")
+@ApiModel(description = "Name of the legal account owner.  If there is more than one owner, then e.g. two names might be noted here.  For a corporate account, the corporate name is used for this attribute. Even if supported by the ASPSP, the provision of this field might depend on the fact whether an explicit consent to this specific additional account information has been given by the PSU. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class PhoneNumber {
+public class OwnerName {
 
     @Override
     public boolean equals(Object o) {
@@ -49,7 +49,7 @@ public class PhoneNumber {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class PhoneNumber {\n");
+        sb.append("class OwnerName {\n");
 
         sb.append("}");
         return sb.toString();

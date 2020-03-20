@@ -25,20 +25,21 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
  * Details of underlying standing orders.
  */
-@ApiModel(description = "Details of underlying standing orders.")
+@ApiModel(description = "Details of underlying standing orders. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
 public class StandingOrderDetails {
     @JsonProperty("startDate")
     private LocalDate startDate = null;
+
+    @JsonProperty("frequency")
+    private FrequencyCode frequency = null;
 
     @JsonProperty("endDate")
     private LocalDate endDate = null;
@@ -49,12 +50,8 @@ public class StandingOrderDetails {
     @JsonProperty("withinAMonthFlag")
     private Boolean withinAMonthFlag = null;
 
-    @JsonProperty("frequency")
-    private FrequencyCode frequency = null;
-
     @JsonProperty("monthsOfExecution")
-    @Valid
-    private List<String> monthsOfExecution = null;
+    private MonthsOfExecution monthsOfExecution = null;
 
     @JsonProperty("multiplicator")
     private Integer multiplicator = null;
@@ -65,20 +62,17 @@ public class StandingOrderDetails {
     @JsonProperty("limitAmount")
     private Amount limitAmount = null;
 
-    @JsonProperty("standingOrderDetails")
-    private StandingOrderDetails standingOrderDetails = null;
-
     public StandingOrderDetails startDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
 
     /**
-     * The first applicable day of execution starting from this date the first payment was/will be executed.
+     * Get startDate
      *
      * @return startDate
      **/
-    @ApiModelProperty(required = true, value = "The first applicable day of execution starting from this date the first payment was/will be executed.")
+    @ApiModelProperty(required = true, value = "")
     @NotNull
 
     @Valid
@@ -93,17 +87,42 @@ public class StandingOrderDetails {
         this.startDate = startDate;
     }
 
+    public StandingOrderDetails frequency(FrequencyCode frequency) {
+        this.frequency = frequency;
+        return this;
+    }
+
+    /**
+     * Get frequency
+     *
+     * @return frequency
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
+
+    @Valid
+
+
+    @JsonProperty("frequency")
+    public FrequencyCode getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(FrequencyCode frequency) {
+        this.frequency = frequency;
+    }
+
     public StandingOrderDetails endDate(LocalDate endDate) {
         this.endDate = endDate;
         return this;
     }
 
     /**
-     * The last applicable day of execution if not given, it is an infinite standing order.
+     * Get endDate
      *
      * @return endDate
      **/
-    @ApiModelProperty(value = "The last applicable day of execution if not given, it is an infinite standing order.")
+    @ApiModelProperty(value = "")
 
     @Valid
 
@@ -147,11 +166,11 @@ public class StandingOrderDetails {
     }
 
     /**
-     * This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market.
+     * This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market.
      *
      * @return withinAMonthFlag
      **/
-    @ApiModelProperty(value = "This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday. In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
+    @ApiModelProperty(value = "This element is only used in case of frequency equals \"monthly\".  If this element equals false it has no effect. If this element equals true, then the execution rule is overruled if the day of execution would fall into a different month using the execution rule.  Example: executionRule equals \"preceding\", dayOfExecution equals \"02\" and the second of a month is a Sunday.  In this case, the transaction date would be on the last day of the month before.  This would be overruled if withinAMonthFlag equals true and the payment is processed on Monday the third of the Month. Remark: This attribute is rarely supported in the market. ")
 
 
     @JsonProperty("withinAMonthFlag")
@@ -163,41 +182,8 @@ public class StandingOrderDetails {
         this.withinAMonthFlag = withinAMonthFlag;
     }
 
-    public StandingOrderDetails frequency(FrequencyCode frequency) {
-        this.frequency = frequency;
-        return this;
-    }
-
-    /**
-     * Get frequency
-     *
-     * @return frequency
-     **/
-    @ApiModelProperty(required = true, value = "")
-    @NotNull
-
-    @Valid
-
-
-    @JsonProperty("frequency")
-    public FrequencyCode getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(FrequencyCode frequency) {
-        this.frequency = frequency;
-    }
-
-    public StandingOrderDetails monthsOfExecution(List<String> monthsOfExecution) {
+    public StandingOrderDetails monthsOfExecution(MonthsOfExecution monthsOfExecution) {
         this.monthsOfExecution = monthsOfExecution;
-        return this;
-    }
-
-    public StandingOrderDetails addMonthsOfExecutionItem(String monthsOfExecutionItem) {
-        if (this.monthsOfExecution == null) {
-            this.monthsOfExecution = new ArrayList<>();
-        }
-        this.monthsOfExecution.add(monthsOfExecutionItem);
         return this;
     }
 
@@ -208,13 +194,15 @@ public class StandingOrderDetails {
      **/
     @ApiModelProperty(value = "")
 
+    @Valid
+
 
     @JsonProperty("monthsOfExecution")
-    public List<String> getMonthsOfExecution() {
+    public MonthsOfExecution getMonthsOfExecution() {
         return monthsOfExecution;
     }
 
-    public void setMonthsOfExecution(List<String> monthsOfExecution) {
+    public void setMonthsOfExecution(MonthsOfExecution monthsOfExecution) {
         this.monthsOfExecution = monthsOfExecution;
     }
 
@@ -288,30 +276,6 @@ public class StandingOrderDetails {
         this.limitAmount = limitAmount;
     }
 
-    public StandingOrderDetails standingOrderDetails(StandingOrderDetails standingOrderDetails) {
-        this.standingOrderDetails = standingOrderDetails;
-        return this;
-    }
-
-    /**
-     * Details of underlying standing orders.
-     *
-     * @return standingOrderDetails
-     **/
-    @ApiModelProperty(value = "Details of underlying standing orders. ")
-
-    @Valid
-
-
-    @JsonProperty("standingOrderDetails")
-    public StandingOrderDetails getStandingOrderDetails() {
-        return standingOrderDetails;
-    }
-
-    public void setStandingOrderDetails(StandingOrderDetails standingOrderDetails) {
-        this.standingOrderDetails = standingOrderDetails;
-    }
-
 
     @Override
     public boolean equals(Object o) {
@@ -323,20 +287,19 @@ public class StandingOrderDetails {
         }
         StandingOrderDetails standingOrderDetails = (StandingOrderDetails) o;
         return Objects.equals(this.startDate, standingOrderDetails.startDate) &&
+                   Objects.equals(this.frequency, standingOrderDetails.frequency) &&
                    Objects.equals(this.endDate, standingOrderDetails.endDate) &&
                    Objects.equals(this.executionRule, standingOrderDetails.executionRule) &&
                    Objects.equals(this.withinAMonthFlag, standingOrderDetails.withinAMonthFlag) &&
-                   Objects.equals(this.frequency, standingOrderDetails.frequency) &&
                    Objects.equals(this.monthsOfExecution, standingOrderDetails.monthsOfExecution) &&
                    Objects.equals(this.multiplicator, standingOrderDetails.multiplicator) &&
                    Objects.equals(this.dayOfExecution, standingOrderDetails.dayOfExecution) &&
-                   Objects.equals(this.limitAmount, standingOrderDetails.limitAmount) &&
-                   Objects.equals(this.standingOrderDetails, standingOrderDetails.standingOrderDetails);
+                   Objects.equals(this.limitAmount, standingOrderDetails.limitAmount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, executionRule, withinAMonthFlag, frequency, monthsOfExecution, multiplicator, dayOfExecution, limitAmount, standingOrderDetails);
+        return Objects.hash(startDate, frequency, endDate, executionRule, withinAMonthFlag, monthsOfExecution, multiplicator, dayOfExecution, limitAmount);
     }
 
     @Override
@@ -345,15 +308,14 @@ public class StandingOrderDetails {
         sb.append("class StandingOrderDetails {\n");
 
         sb.append("    startDate: ").append(toIndentedString(startDate)).append("\n");
+        sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
         sb.append("    endDate: ").append(toIndentedString(endDate)).append("\n");
         sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");
         sb.append("    withinAMonthFlag: ").append(toIndentedString(withinAMonthFlag)).append("\n");
-        sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
         sb.append("    monthsOfExecution: ").append(toIndentedString(monthsOfExecution)).append("\n");
         sb.append("    multiplicator: ").append(toIndentedString(multiplicator)).append("\n");
         sb.append("    dayOfExecution: ").append(toIndentedString(dayOfExecution)).append("\n");
         sb.append("    limitAmount: ").append(toIndentedString(limitAmount)).append("\n");
-        sb.append("    standingOrderDetails: ").append(toIndentedString(standingOrderDetails)).append("\n");
         sb.append("}");
         return sb.toString();
     }

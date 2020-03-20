@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,183 +32,189 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful select PSU authentication method request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-12-26T15:06:21.086+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class SelectPsuAuthenticationMethodResponse   {
-  @JsonProperty("chosenScaMethod")
-  private ChosenScaMethod chosenScaMethod = null;
+public class SelectPsuAuthenticationMethodResponse {
+    @JsonProperty("chosenScaMethod")
+    private ChosenScaMethod chosenScaMethod = null;
 
-  @JsonProperty("challengeData")
-  private ChallengeData challengeData = null;
+    @JsonProperty("challengeData")
+    private ChallengeData challengeData = null;
 
-  @JsonProperty("_links")
-  private Map _links = null;
+    @JsonProperty("_links")
+    private Map _links = null;
 
-  @JsonProperty("scaStatus")
-  private ScaStatus scaStatus = null;
+    @JsonProperty("scaStatus")
+    private ScaStatus scaStatus = null;
 
-  @JsonProperty("psuMessage")
-  private String psuMessage = null;
+    @JsonProperty("psuMessage")
+    private String psuMessage = null;
 
-  public SelectPsuAuthenticationMethodResponse chosenScaMethod(ChosenScaMethod chosenScaMethod) {
-    this.chosenScaMethod = chosenScaMethod;
-    return this;
-  }
-
-  /**
-   * Get chosenScaMethod
-   * @return chosenScaMethod
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("chosenScaMethod")
-  public ChosenScaMethod getChosenScaMethod() {
-    return chosenScaMethod;
-  }
-
-  public void setChosenScaMethod(ChosenScaMethod chosenScaMethod) {
-    this.chosenScaMethod = chosenScaMethod;
-  }
-
-  public SelectPsuAuthenticationMethodResponse challengeData(ChallengeData challengeData) {
-    this.challengeData = challengeData;
-    return this;
-  }
-
-  /**
-   * Get challengeData
-   * @return challengeData
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("challengeData")
-  public ChallengeData getChallengeData() {
-    return challengeData;
-  }
-
-  public void setChallengeData(ChallengeData challengeData) {
-    this.challengeData = challengeData;
-  }
-
-  public SelectPsuAuthenticationMethodResponse _links(Map _links) {
-    this._links = _links;
-    return this;
-  }
-
-  /**
-   * Get _links
-   * @return _links
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("_links")
-  public Map getLinks() {
-    return _links;
-  }
-
-  public void setLinks(Map _links) {
-    this._links = _links;
-  }
-
-  public SelectPsuAuthenticationMethodResponse scaStatus(ScaStatus scaStatus) {
-    this.scaStatus = scaStatus;
-    return this;
-  }
-
-  /**
-   * Get scaStatus
-   * @return scaStatus
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-  @Valid
-
-
-  @JsonProperty("scaStatus")
-  public ScaStatus getScaStatus() {
-    return scaStatus;
-  }
-
-  public void setScaStatus(ScaStatus scaStatus) {
-    this.scaStatus = scaStatus;
-  }
-
-  public SelectPsuAuthenticationMethodResponse psuMessage(String psuMessage) {
-    this.psuMessage = psuMessage;
-    return this;
-  }
-
-  /**
-   * Get psuMessage
-   * @return psuMessage
-  **/
-  @ApiModelProperty(value = "")
-
-@Size(max=500)
-
-  @JsonProperty("psuMessage")
-  public String getPsuMessage() {
-    return psuMessage;
-  }
-
-  public void setPsuMessage(String psuMessage) {
-    this.psuMessage = psuMessage;
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    public SelectPsuAuthenticationMethodResponse chosenScaMethod(ChosenScaMethod chosenScaMethod) {
+        this.chosenScaMethod = chosenScaMethod;
+        return this;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}    SelectPsuAuthenticationMethodResponse selectPsuAuthenticationMethodResponse = (SelectPsuAuthenticationMethodResponse) o;
-    return Objects.equals(this.chosenScaMethod, selectPsuAuthenticationMethodResponse.chosenScaMethod) &&
-    Objects.equals(this.challengeData, selectPsuAuthenticationMethodResponse.challengeData) &&
-    Objects.equals(this._links, selectPsuAuthenticationMethodResponse._links) &&
-    Objects.equals(this.scaStatus, selectPsuAuthenticationMethodResponse.scaStatus) &&
-    Objects.equals(this.psuMessage, selectPsuAuthenticationMethodResponse.psuMessage);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(chosenScaMethod, challengeData, _links, scaStatus, psuMessage);
-  }
+    /**
+     * Get chosenScaMethod
+     *
+     * @return chosenScaMethod
+     **/
+    @ApiModelProperty(value = "")
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class SelectPsuAuthenticationMethodResponse {\n");
+    @Valid
 
-    sb.append("    chosenScaMethod: ").append(toIndentedString(chosenScaMethod)).append("\n");
-    sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
-    sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
-    sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
-    sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
-    sb.append("}");
-    return sb.toString();
-  }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+    @JsonProperty("chosenScaMethod")
+    public ChosenScaMethod getChosenScaMethod() {
+        return chosenScaMethod;
     }
-    return o.toString().replace("\n", "\n    ");
-  }
+
+    public void setChosenScaMethod(ChosenScaMethod chosenScaMethod) {
+        this.chosenScaMethod = chosenScaMethod;
+    }
+
+    public SelectPsuAuthenticationMethodResponse challengeData(ChallengeData challengeData) {
+        this.challengeData = challengeData;
+        return this;
+    }
+
+    /**
+     * Get challengeData
+     *
+     * @return challengeData
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("challengeData")
+    public ChallengeData getChallengeData() {
+        return challengeData;
+    }
+
+    public void setChallengeData(ChallengeData challengeData) {
+        this.challengeData = challengeData;
+    }
+
+    public SelectPsuAuthenticationMethodResponse _links(Map _links) {
+        this._links = _links;
+        return this;
+    }
+
+    /**
+     * Get _links
+     *
+     * @return _links
+     **/
+    @ApiModelProperty(value = "")
+
+    @Valid
+
+
+    @JsonProperty("_links")
+    public Map getLinks() {
+        return _links;
+    }
+
+    public void setLinks(Map _links) {
+        this._links = _links;
+    }
+
+    public SelectPsuAuthenticationMethodResponse scaStatus(ScaStatus scaStatus) {
+        this.scaStatus = scaStatus;
+        return this;
+    }
+
+    /**
+     * Get scaStatus
+     *
+     * @return scaStatus
+     **/
+    @ApiModelProperty(required = true, value = "")
+    @NotNull
+
+    @Valid
+
+
+    @JsonProperty("scaStatus")
+    public ScaStatus getScaStatus() {
+        return scaStatus;
+    }
+
+    public void setScaStatus(ScaStatus scaStatus) {
+        this.scaStatus = scaStatus;
+    }
+
+    public SelectPsuAuthenticationMethodResponse psuMessage(String psuMessage) {
+        this.psuMessage = psuMessage;
+        return this;
+    }
+
+    /**
+     * Get psuMessage
+     *
+     * @return psuMessage
+     **/
+    @ApiModelProperty(value = "")
+
+    @Size(max = 500)
+
+    @JsonProperty("psuMessage")
+    public String getPsuMessage() {
+        return psuMessage;
+    }
+
+    public void setPsuMessage(String psuMessage) {
+        this.psuMessage = psuMessage;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SelectPsuAuthenticationMethodResponse selectPsuAuthenticationMethodResponse = (SelectPsuAuthenticationMethodResponse) o;
+        return Objects.equals(this.chosenScaMethod, selectPsuAuthenticationMethodResponse.chosenScaMethod) &&
+                   Objects.equals(this.challengeData, selectPsuAuthenticationMethodResponse.challengeData) &&
+                   Objects.equals(this._links, selectPsuAuthenticationMethodResponse._links) &&
+                   Objects.equals(this.scaStatus, selectPsuAuthenticationMethodResponse.scaStatus) &&
+                   Objects.equals(this.psuMessage, selectPsuAuthenticationMethodResponse.psuMessage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chosenScaMethod, challengeData, _links, scaStatus, psuMessage);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class SelectPsuAuthenticationMethodResponse {\n");
+
+        sb.append("    chosenScaMethod: ").append(toIndentedString(chosenScaMethod)).append("\n");
+        sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
+        sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
+        sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
+        sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
 }
 
