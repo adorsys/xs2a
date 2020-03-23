@@ -1,9 +1,9 @@
 {
 	"info": {
-      "_postman_id": "ea18af90-afee-4adf-bd11-31f58f010281",
-      "name": "Additional information",
-      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-    },
+		"_postman_id": "32311514-3a96-4ae6-94d0-ff116b6994e9",
+		"name": "Additional information",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
 	"item": [
 		{
 			"name": "Preparations",
@@ -119,7 +119,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Create consent - error",
+			"name": "Create consent without owner name",
 			"item": [
 				{
 					"name": "1. Create available accounts consent",
@@ -131,13 +131,32 @@
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 401\", () => {",
-									"    pm.response.to.have.status(401);",
+									"pm.test(\"Consent Id exists\", () => {",
+									"   pm.expect(jsonData).to.have.property('consentId');",
 									"});",
 									"",
-									"pm.test(\"Consent invalid\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].code).to.eql('CONSENT_INVALID');",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
 									"});",
+									"",
+									"pm.test(\"Update PSU authentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+									"",
+									"    if (updatePsuAuthentication === undefined) {",
+									"       pm.expect().fail();",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.globals.set(\"consent_id\", jsonData.consentId);",
+									"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+									"",
 									""
 								],
 								"type": "text/javascript"
@@ -207,7 +226,70 @@
 					"response": []
 				},
 				{
-					"name": "2. Create  available accounts with balance consent",
+					"name": "2. Get available accounts consent request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f78fd945-b5d3-4986-96e8-0738bd1f7e27",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Result validator\", () => {",
+									"      pm.expect(jsonData).to.have.property('access');",
+									"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+									"       pm.expect(jsonData).to.have.property('validUntil');",
+									"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+									"       pm.expect(jsonData).to.have.property('consentStatus');",
+									"     ",
+									"});",
+									"",
+									"pm.test(\"Consent without owner name\", () => {",
+									"    pm.expect(jsonData.access).to.have.property('availableAccounts');",
+									"    pm.expect(jsonData.access).to.not.have.property('allPsd2');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccountsWithBalance');",
+									"    pm.expect(jsonData.access).to.not.have.property('additionalInformationAccess');",
+									"    pm.expect(jsonData.access.availableAccounts).to.eql('allAccounts');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}"
+							]
+						},
+						"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create  available accounts with balance consent",
 					"event": [
 						{
 							"listen": "test",
@@ -216,13 +298,32 @@
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 401\", () => {",
-									"    pm.response.to.have.status(401);",
+									"pm.test(\"Consent Id exists\", () => {",
+									"   pm.expect(jsonData).to.have.property('consentId');",
 									"});",
 									"",
-									"pm.test(\"Consent invalid\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].code).to.eql('CONSENT_INVALID');",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
 									"});",
+									"",
+									"pm.test(\"Update PSU authentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+									"",
+									"    if (updatePsuAuthentication === undefined) {",
+									"       pm.expect().fail();",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.globals.set(\"consent_id\", jsonData.consentId);",
+									"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+									"",
 									""
 								],
 								"type": "text/javascript"
@@ -292,7 +393,70 @@
 					"response": []
 				},
 				{
-					"name": "3. Create global consent",
+					"name": "4. Get available accounts with balance consent request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f78fd945-b5d3-4986-96e8-0738bd1f7e27",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Result validator\", () => {",
+									"      pm.expect(jsonData).to.have.property('access');",
+									"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+									"       pm.expect(jsonData).to.have.property('validUntil');",
+									"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+									"       pm.expect(jsonData).to.have.property('consentStatus');",
+									"     ",
+									"});",
+									"",
+									"pm.test(\"Consent without owner name\", () => {",
+									"    pm.expect(jsonData.access).to.have.property('availableAccountsWithBalance');",
+									"    pm.expect(jsonData.access).to.not.have.property('allPsd2');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccounts');",
+									"    pm.expect(jsonData.access).to.not.have.property('additionalInformationAccess');",
+									"    pm.expect(jsonData.access.availableAccountsWithBalance).to.eql('allAccounts');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}"
+							]
+						},
+						"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+					},
+					"response": []
+				},
+				{
+					"name": "5. Create global consent",
 					"event": [
 						{
 							"listen": "test",
@@ -301,14 +465,35 @@
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 401\", () => {",
-									"    pm.response.to.have.status(401);",
+									"pm.test(\"Consent Id exists\", () => {",
+									"   pm.expect(jsonData).to.have.property('consentId');",
 									"});",
 									"",
-									"pm.test(\"Consent invalid\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].code).to.eql('CONSENT_INVALID');",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
 									"});",
-									""
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData).to.have.property('consentStatus');",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.test(\"Start updatePsuAuthentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+									"    pm.expect(_links).to.have.property('scaStatus');",
+									"     ",
+									"    const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+									"    pm.globals.set(\"authorisation_id\", authorisationId);",
+									"});",
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.globals.set(\"consent_id\", jsonData.consentId);"
 								],
 								"type": "text/javascript"
 							}
@@ -377,7 +562,70 @@
 					"response": []
 				},
 				{
-					"name": "4. Create dedicated consent with all accounts for owner name",
+					"name": "6. Get global consent request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f78fd945-b5d3-4986-96e8-0738bd1f7e27",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Result validator\", () => {",
+									"      pm.expect(jsonData).to.have.property('access');",
+									"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+									"       pm.expect(jsonData).to.have.property('validUntil');",
+									"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+									"       pm.expect(jsonData).to.have.property('consentStatus');",
+									"     ",
+									"});",
+									"",
+									"pm.test(\"Consent without owner name\", () => {",
+									"    pm.expect(jsonData.access).to.have.property('allPsd2');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccountsWithBalance');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccounts');",
+									"    pm.expect(jsonData.access).to.not.have.property('additionalInformationAccess');",
+									"    pm.expect(jsonData.access.allPsd2).to.eql('allAccounts');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}"
+							]
+						},
+						"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+					},
+					"response": []
+				},
+				{
+					"name": "7. Create dedicated consent with all accounts for owner name",
 					"event": [
 						{
 							"listen": "test",
@@ -386,13 +634,32 @@
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 401\", () => {",
-									"    pm.response.to.have.status(401);",
+									"pm.test(\"Consent Id exists\", () => {",
+									"   pm.expect(jsonData).to.have.property('consentId');",
 									"});",
 									"",
-									"pm.test(\"Consent invalid\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].code).to.eql('CONSENT_INVALID');",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
 									"});",
+									"",
+									"pm.test(\"Update PSU authentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+									"",
+									"    if (updatePsuAuthentication === undefined) {",
+									"       pm.expect().fail();",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.globals.set(\"consent_id\", jsonData.consentId);",
+									"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+									"",
 									""
 								],
 								"type": "text/javascript"
@@ -420,7 +687,7 @@
 							{
 								"key": "PSU-ID",
 								"type": "text",
-								"value": "{{psu_id_none}}"
+								"value": "{{psu_id_single}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -462,7 +729,69 @@
 					"response": []
 				},
 				{
-					"name": "5. Create dedicated consent with certain account for owner name",
+					"name": "8. Get dedicated consent request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f78fd945-b5d3-4986-96e8-0738bd1f7e27",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Result validator\", () => {",
+									"      pm.expect(jsonData).to.have.property('access');",
+									"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+									"       pm.expect(jsonData).to.have.property('validUntil');",
+									"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+									"       pm.expect(jsonData).to.have.property('consentStatus');",
+									"     ",
+									"});",
+									"",
+									"pm.test(\"Consent without owner name\", () => {",
+									"    pm.expect(jsonData.access).to.not.have.property('additionalInformation');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccountsWithBalance');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccounts');",
+									"    pm.expect(jsonData.access).to.not.have.property('allPsd2');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}"
+							]
+						},
+						"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+					},
+					"response": []
+				},
+				{
+					"name": "9. Create dedicated consent with certain account for owner name",
 					"event": [
 						{
 							"listen": "test",
@@ -471,13 +800,32 @@
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 401\", () => {",
-									"    pm.response.to.have.status(401);",
+									"pm.test(\"Consent Id exists\", () => {",
+									"   pm.expect(jsonData).to.have.property('consentId');",
 									"});",
 									"",
-									"pm.test(\"Consent invalid\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].code).to.eql('CONSENT_INVALID');",
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
 									"});",
+									"",
+									"pm.test(\"Update PSU authentication link exists\", () => {",
+									"    pm.expect(jsonData).to.have.property('_links');",
+									"    const _links = jsonData._links;",
+									"    ",
+									"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+									"",
+									"    if (updatePsuAuthentication === undefined) {",
+									"       pm.expect().fail();",
+									"    }",
+									"});",
+									"",
+									"pm.test(\"Consent status is received\", () => {",
+									"    pm.expect(jsonData.consentStatus).to.eql('received');",
+									"});",
+									"",
+									"pm.globals.set(\"consent_id\", jsonData.consentId);",
+									"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+									"",
 									""
 								],
 								"type": "text/javascript"
@@ -505,7 +853,7 @@
 							{
 								"key": "PSU-ID",
 								"type": "text",
-								"value": "{{psu_id_none}}"
+								"value": "{{psu_id_single}}"
 							},
 							{
 								"key": "X-Request-ID",
@@ -543,6 +891,68 @@
 								"consents"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "10. Get dedicated consent request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f78fd945-b5d3-4986-96e8-0738bd1f7e27",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Result validator\", () => {",
+									"      pm.expect(jsonData).to.have.property('access');",
+									"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+									"       pm.expect(jsonData).to.have.property('validUntil');",
+									"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+									"       pm.expect(jsonData).to.have.property('consentStatus');",
+									"     ",
+									"});",
+									"",
+									"pm.test(\"Consent without owner name\", () => {",
+									"    pm.expect(jsonData.access).to.not.have.property('additionalInformation');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccountsWithBalance');",
+									"    pm.expect(jsonData.access).to.not.have.property('availableAccounts');",
+									"    pm.expect(jsonData.access).to.not.have.property('allPsd2');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Request-ID",
+								"value": "{{x_request_id}}"
+							}
+						],
+						"url": {
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"consents",
+								"{{consent_id}}"
+							]
+						},
+						"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
 					},
 					"response": []
 				}
@@ -609,7 +1019,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Create consent - success",
+			"name": "Create consent - with owner name",
 			"item": [
 				{
 					"name": "Create available accounts consent",
@@ -1323,6 +1733,7 @@
 											"    if (jsonData.accounts.length > 0) {",
 											"        const firstAccount = jsonData.accounts[0];",
 											"        pm.expect(firstAccount).to.have.property('ownerName');",
+											"        pm.expect(firstAccount).to.have.property('balances');",
 											"    }",
 											"});"
 										],
@@ -1357,7 +1768,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=true",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_xs2a}}"
@@ -1369,7 +1780,7 @@
 									"query": [
 										{
 											"key": "withBalance",
-											"value": "false"
+											"value": "true"
 										}
 									]
 								},
@@ -1745,95 +2156,95 @@
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance=false",
 									"protocol": "{{protocol}}",
 									"host": [
-                                      "{{url_xs2a}}"
-                                    ],
-                                  "path": [
-                                    "v1",
-                                    "accounts"
-                                  ],
-                                  "query": [
-                                    {
-                                      "key": "withBalance",
-                                      "value": "false"
-                                    }
-                                  ]
-                                },
-                              "description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
-                            },
-                          "response": []
-                        },
-                      {
-                        "name": "6. Read Account Details",
-                        "event": [
-                          {
-                            "listen": "test",
-                            "script": {
-                              "id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
-                              "exec": [
-                                "const jsonData = pm.response.json();",
-                                "",
-                                "pm.test(\"Status code is 200\", function() {",
-                                "    pm.response.to.have.status(200);",
-                                "});",
-                                "",
-                                "pm.test(\"Additional information is present\", () => {",
-                                "    const account = jsonData.account;",
-                                "    pm.expect(account).to.have.property('ownerName');",
-                                "});"
-                              ],
-                              "type": "text/javascript"
-                            }
-                          },
-                          {
-                            "listen": "prerequest",
-                            "script": {
-                              "id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
-                              "exec": [
-                                ""
-                              ],
-                              "type": "text/javascript"
-                            }
-                          }
-                        ],
-                        "request": {
-                          "method": "GET",
-                          "header": [
-                            {
-                              "key": "Accept",
-                              "value": "application/json"
-                            },
-                            {
-                              "key": "Consent-ID",
-                              "value": "{{consent_id}}"
-                            },
-                            {
-                              "key": "X-Request-ID",
-                              "value": "{{x_request_id}}"
-                            }
-                          ],
-                          "url": {
-                            "raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{resource_id}}?withBalance=false",
-                            "protocol": "{{protocol}}",
-                            "host": [
-                              "{{url_xs2a}}"
-                            ],
-                            "path": [
-                              "v1",
-                              "accounts",
-                              "{{resource_id}}"
-                            ],
-                            "query": [
-                              {
-                                "key": "withBalance",
-                                "value": "false"
-                              }
-                            ]
-                          },
-                          "description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
-                        },
-                        "response": []
-                      }
-                    ],
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "false"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "6. Read Account Details",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Additional information is present\", () => {",
+											"    const account = jsonData.account;",
+											"    pm.expect(account).to.have.property('ownerName');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{resource_id}}?withBalance=false",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts",
+										"{{resource_id}}"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "false"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						}
+					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
