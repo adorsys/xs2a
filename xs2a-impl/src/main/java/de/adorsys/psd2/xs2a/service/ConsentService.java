@@ -85,6 +85,7 @@ public class ConsentService {
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final LoggingContextService loggingContextService;
+    private final AccountOwnerInformationService accountOwnerInformationService;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -99,8 +100,9 @@ public class ConsentService {
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData,
                                                                                    boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
+        CreateConsentReq requestAfterCheck = accountOwnerInformationService.checkSupportedAccountOwnerInformation(request);
 
-        ValidationResult validationResult = consentValidationService.validateConsentOnCreate(request, psuData);
+        ValidationResult validationResult = consentValidationService.validateConsentOnCreate(requestAfterCheck, psuData);
         if (validationResult.isNotValid()) {
             log.info("Create account consent with response - validation failed: {}",
                      validationResult.getMessageError());
@@ -109,12 +111,12 @@ public class ConsentService {
                        .build();
         }
 
-        if (request.isGlobalOrAllAccountsAccessConsent()) {
-            request.setAccess(spiToXs2aAccountAccessMapper.getAccessForGlobalOrAllAvailableAccountsConsent(request));
+        if (requestAfterCheck.isGlobalOrAllAccountsAccessConsent()) {
+            requestAfterCheck.setAccess(spiToXs2aAccountAccessMapper.getAccessForGlobalOrAllAvailableAccountsConsent(requestAfterCheck));
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
-        Optional<Xs2aCreateAisConsentResponse> createAisConsentResponseOptional = aisConsentService.createConsent(request, psuData, tppInfo);
+        Optional<Xs2aCreateAisConsentResponse> createAisConsentResponseOptional = aisConsentService.createConsent(requestAfterCheck, psuData, tppInfo);
 
         if (!createAisConsentResponseOptional.isPresent()) {
             return ResponseObject.<CreateConsentResponse>builder()
@@ -159,7 +161,7 @@ public class ConsentService {
                                                                                 requestProviderService.getInternalRequestIdString(),
                                                                                 createAisConsentResponse.getTppNotificationContentPreferred());
 
-        createConsentResponse.setTppMessageInformation(consentValidationService.buildWarningMessages(request));
+        createConsentResponse.setTppMessageInformation(consentValidationService.buildWarningMessages(requestAfterCheck));
 
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
