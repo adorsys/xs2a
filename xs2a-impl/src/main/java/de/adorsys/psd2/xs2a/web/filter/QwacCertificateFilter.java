@@ -33,7 +33,6 @@ import de.adorsys.psd2.xs2a.web.mapper.Xs2aTppInfoMapper;
 import lombok.extern.slf4j.Slf4j;
 import no.difi.certvalidator.api.CertificateValidationException;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -52,14 +51,6 @@ import java.util.stream.Collectors;
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
-/**
- * The intent of this Class is to get the Qwac certificate from header, extract
- * the information inside and set an Authentication Object with extracted data
- * and roles, thus we can use a SecurityConfig extends
- * WebSecurityConfigurerAdapter to filter path by role. And a SecurityUtil class
- * have been implemented to get this TPP data everywhere.
- */
-@Profile("!mock-qwac")
 @Component
 @Slf4j
 public class QwacCertificateFilter extends AbstractXs2aFilter {
@@ -86,7 +77,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
 
     @Override
     protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String encodedTppQwacCert = getEncodedTppQwacCert();
+        String encodedTppQwacCert = requestProviderService.getEncodedTppQwacCert();
 
         if (StringUtils.isNotBlank(encodedTppQwacCert)) {
             try {
@@ -120,10 +111,6 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
         }
 
         chain.doFilter(request, response);
-    }
-
-    protected String getEncodedTppQwacCert() {
-        return requestProviderService.getEncodedTppQwacCert();
     }
 
     private void processTppRolesFromCertificate(TppInfo tppInfo, TppCertificateData tppCertificateData) {
