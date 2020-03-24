@@ -1,0 +1,10 @@
+= Release notes v.6.1
+
+== Table of Contents
+
+* Accept certificate from request when "mock-qwac" profile is activated
+
+== Accept certificate from request when "mock-qwac" profile is activated
+
+From now on, when "mock-qwac" profile is activated accept certificate from request (`tpp-qwac-certificate` header)
+if it exists and mock certificate otherwise.

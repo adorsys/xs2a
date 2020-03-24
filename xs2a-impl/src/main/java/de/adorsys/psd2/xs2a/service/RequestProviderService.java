@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,14 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * The intent of this Class is to get the Qwac certificate from header, extract
+ * the information inside and set an Authentication Object with extracted data
+ * and roles, thus we can use a SecurityConfig extends
+ * WebSecurityConfigurerAdapter to filter path by role. And a SecurityUtil class
+ * have been implemented to get this TPP data everywhere.
+ */
+@Profile("!mock-qwac")
 @Service
 @RequiredArgsConstructor
 public class RequestProviderService {
@@ -47,7 +56,7 @@ public class RequestProviderService {
     private static final String PSU_IP_ADDRESS = "psu-ip-address";
     private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
     private static final String ACCEPT_HEADER = "accept";
-    private static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
+    static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
 
     private final HttpServletRequest httpServletRequest;
