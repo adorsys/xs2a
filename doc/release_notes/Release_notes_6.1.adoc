@@ -7,6 +7,7 @@
 * Change types of remittance information structured properties in SpiTransaction
 * Bugfix: Read account details request returns error for global consent with owner name
 * Bugfix: Create Consent Request should not be rejected when Account Owner Name Service is not supported by ASPSP
+* Removed `owner_address_type` column from `ais_consent` table
 
 == Bugfix: Liquibase migration is not working for H2
 
@@ -32,3 +33,7 @@ From now on, executing read account details request with global consent with own
 
 From now on, create consent request with owner name will not be rejected if ASPSP doesn't support owner name.
 Consent will be saved to database without owner name information.
+
+== Removed `owner_address_type` column from `ais_consent` table
+
+From now on, `owner_address_type` column is removed from `ais_consent` table
