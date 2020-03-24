@@ -126,4 +126,5 @@
     <include relativeToChangelogFile="true" file="migration/0098-create-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0099-migrate-piis-consents-to-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0100-add-tpp-brand-logging-information.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0101-remove-owner-address-type-from-ais-consent.xml"/>
 </databaseChangeLog>
