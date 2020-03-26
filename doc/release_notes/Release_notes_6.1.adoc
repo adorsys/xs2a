@@ -9,6 +9,7 @@
 * Bugfix: Create Consent Request should not be rejected when Account Owner Name Service is not supported by ASPSP
 * Removed `owner_address_type` column from `ais_consent` table
 * Fixed javadoc warnings
+* Accept certificate from request when "mock-qwac" profile is activated
 
 == Bugfix: Liquibase migration is not working for H2
 
@@ -42,3 +43,8 @@ From now on, `owner_address_type` column is removed from `ais_consent` table
 == Fixed javadoc warnings
 
 From now on, there are no javadoc warnings while executing `mvn javadoc:javadoc`
+
+== Accept certificate from request when "mock-qwac" profile is activated
+
+From now on, when "mock-qwac" profile is activated accept certificate from request (`tpp-qwac-certificate` header)
+if it exists and mock certificate otherwise.
