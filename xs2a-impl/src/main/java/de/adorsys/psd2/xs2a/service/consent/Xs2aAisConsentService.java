@@ -162,6 +162,8 @@ public class Xs2aAisConsentService {
      * @param actionStatus Enum value representing whether the action is successful or errors occurred
      * @param requestUri   target URL of the request
      * @param updateUsage  Update usage indicator
+     * @param resourceId   The identification that denotes the addressed account
+     * @param transactionId String representation of ASPSP transaction primary identifier
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage,
                                  String resourceId, String transactionId) {

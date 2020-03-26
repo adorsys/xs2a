@@ -28,6 +28,8 @@ public interface AisConsentServiceBase {
      * Saves information about uses of consent
      *
      * @param request needed parameters for logging usage AIS consent
+     * @return VoidResponse
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
     CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest request) throws WrongChecksumException;
 
@@ -37,6 +39,7 @@ public interface AisConsentServiceBase {
      * @param request   needed parameters for updating AIS consent
      * @param consentId id of the consent to be updated
      * @return AisAccountConsent consent
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
     CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AisAccountAccessInfo request) throws WrongChecksumException;
 }
