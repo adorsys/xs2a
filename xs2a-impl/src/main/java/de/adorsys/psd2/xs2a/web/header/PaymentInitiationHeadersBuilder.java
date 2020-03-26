@@ -37,6 +37,7 @@ public class PaymentInitiationHeadersBuilder extends AbstractHeadersBuilder {
      *
      * @param authorisationId id of the authorisation, if it was created implicitly
      * @param selfLink        link to the newly created payment
+     * @param notificationHeaders {@link NotificationModeResponseHeaders} notification headers
      * @return response headers
      */
     public ResponseHeaders buildInitiatePaymentHeaders(@Nullable String authorisationId, @NotNull String selfLink, @NotNull NotificationModeResponseHeaders notificationHeaders) {

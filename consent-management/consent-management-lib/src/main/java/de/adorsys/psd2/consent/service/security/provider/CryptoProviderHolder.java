@@ -56,6 +56,8 @@ public class CryptoProviderHolder {
     /**
      * Gets crypto provider from holder by its ID
      *
+     * @param cryptoProviderId Id of Crypto provider
+     *
      * @return Crypto provider
      */
     public Optional<CryptoProvider> getProviderById(String cryptoProviderId) {

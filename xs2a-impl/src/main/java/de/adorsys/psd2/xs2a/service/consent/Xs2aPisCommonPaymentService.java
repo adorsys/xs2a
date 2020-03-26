@@ -107,6 +107,7 @@ public class Xs2aPisCommonPaymentService {
      *
      * @param paymentId             Payment ID
      * @param multilevelScaRequired new value for boolean multilevel sca required
+     * @return true if payment was found and multilevel sca flag was updated, false otherwise
      */
     public boolean updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
         CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateMultilevelSca(paymentId, multilevelScaRequired);
