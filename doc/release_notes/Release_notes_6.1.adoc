@@ -1,0 +1,50 @@
+= Release notes v.6.1
+
+== Table of Contents
+
+* Bugfix: Liquibase migration is not working for H2
+* Migrate to OpenAPI file v. 1.3.6
+* Change types of remittance information structured properties in SpiTransaction
+* Bugfix: Read account details request returns error for global consent with owner name
+* Bugfix: Create Consent Request should not be rejected when Account Owner Name Service is not supported by ASPSP
+* Removed `owner_address_type` column from `ais_consent` table
+* Fixed javadoc warnings
+* Accept certificate from request when "mock-qwac" profile is activated
+
+== Bugfix: Liquibase migration is not working for H2
+
+From now on, CMS Liquibase migration is working correctly for H2 database.
+Minimal version of H2 required to properly apply changelogs is `1.4.200`.
+
+== Migrate to OpenAPI file v. 1.3.6
+
+From now on, XS2A uses version `1.3.6_20200306v1` of OpenAPI file provided by the Berlin Group.
+
+== Change types of remittance information structured properties in SpiTransaction
+
+In accordance with the changes to OpenAPI file v. 1.3.6, types of `remittanceInformationStructured` and `remittanceInformationStructuredArray` properties in `de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction` were changed:
+
+- from `String` to `Remittance` for `remittanceInformationStructured`
+- from `List<String>` to `List<Remittance>` for `remittanceInformationStructuredArray`
+
+== Bugfix: Read account details request returns error for global consent with owner name
+
+From now on, executing read account details request with global consent with owner name will no longer result in `401 CONSENT_INVALID` error being returned to the TPP.
+
+== Bugfix: Create Consent Request should not be rejected when Account Owner Name Service is not supported by ASPSP
+
+From now on, create consent request with owner name will not be rejected if ASPSP doesn't support owner name.
+Consent will be saved to database without owner name information.
+
+== Removed `owner_address_type` column from `ais_consent` table
+
+From now on, `owner_address_type` column is removed from `ais_consent` table
+
+== Fixed javadoc warnings
+
+From now on, there are no javadoc warnings while executing `mvn javadoc:javadoc`
+
+== Accept certificate from request when "mock-qwac" profile is activated
+
+From now on, when "mock-qwac" profile is activated accept certificate from request (`tpp-qwac-certificate` header)
+if it exists and mock certificate otherwise.

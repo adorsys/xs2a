@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
-import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
@@ -43,7 +42,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.List;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -258,154 +256,6 @@ class CreateConsentRequestValidatorTest {
         //Then
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult.getMessageError()).isEqualTo(COMBINED_SERVICE_VALIDATION_ERROR);
-    }
-
-    @Test
-    void validate_consentWithAdditionalInformationAccess_shouldReturnConsentInvalid() {
-        //Given
-        AccountReference accountReference = buildAccountReference();
-        List<AccountReference> accountReferences = Collections.singletonList(accountReference);
-        AdditionalInformationAccess additionalInformationAccess = new AdditionalInformationAccess(accountReferences);
-        AccountAccess accountAccess = new AccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList(), additionalInformationAccess);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, null, null, null);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultConsentInvalid(validationResult);
-    }
-
-    @Test
-    void validate_consentWithAdditionalInformationAccess_shouldReturnConsentValid() {
-        //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
-        AccountReference accountReference = buildAccountReference();
-        List<AccountReference> accountReferences = Collections.singletonList(accountReference);
-        AdditionalInformationAccess additionalInformationAccess = new AdditionalInformationAccess(accountReferences);
-        AccountAccess accountAccess = new AccountAccess(accountReferences, Collections.emptyList(), Collections.emptyList(), additionalInformationAccess);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, null, null, null);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultValid(validationResult);
-    }
-
-    @Test
-    void validate_availableAccountWithOwnerName_shouldReturnConsentInvalid() {
-        //Given
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null);
-        when(aspspProfileService.isAvailableAccountsConsentSupported()).thenReturn(true);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultConsentInvalid(validationResult);
-    }
-
-    @Test
-    void validate_availableAccountWithOwnerName_shouldReturnConsentValid() {
-        //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null, null);
-        when(aspspProfileService.isAvailableAccountsConsentSupported()).thenReturn(true);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultValid(validationResult);
-    }
-
-    @Test
-    void validate_allPsd2WithOwnerName_shouldReturnConsentInvalid() {
-        //Given
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-        when(aspspProfileService.isGlobalConsentSupported())
-            .thenReturn(true);
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultConsentInvalid(validationResult);
-    }
-
-    @Test
-    void validate_allPsd2WithOwnerName_shouldReturnConsentValid() {
-        //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME, null);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-        when(aspspProfileService.isGlobalConsentSupported())
-            .thenReturn(true);
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultValid(validationResult);
-    }
-
-    @Test
-    void validate_availableAccountWithBalanceWithOwnerName_shouldReturnConsentInvalid() {
-        //Given
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, null, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-        when(aspspProfileService.isAvailableAccountsConsentSupported())
-            .thenReturn(true);
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultConsentInvalid(validationResult);
-    }
-
-    @Test
-    void validate_availableAccountWithBalanceWithOwnerName_shouldReturnConsentValid() {
-        //Given
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(true);
-        AccountAccess accountAccess = new AccountAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
-        CreateConsentReq createConsentReq = buildCreateConsentReqWithAccess(accountAccess, null, null, AccountAccessType.ALL_ACCOUNTS_WITH_OWNER_NAME);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-        when(aspspProfileService.isAvailableAccountsConsentSupported())
-            .thenReturn(true);
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultValid(validationResult);
     }
 
     @Test

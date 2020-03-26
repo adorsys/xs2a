@@ -49,6 +49,10 @@ public class JsonReader {
     }
 
     /**
+     * @param <T> type of object to get
+     * @param fileName name of the file
+     * @param name name of the class of object to get
+     *
      * @return serialized instance read from file
      */
     public <T> T getObjectFromFile(String fileName, Class<T> name) {
@@ -61,6 +65,10 @@ public class JsonReader {
     }
 
     /**
+     * @param <T> type of object to get
+     * @param fileName name of the file
+     * @param name name of the class of object to get
+     *
      * @return serialized instance read from file
      */
     public <T> T getObjectFromFile(String fileName, TypeReference<T> name) {
@@ -73,6 +81,7 @@ public class JsonReader {
     }
 
     /**
+     * @param fileName name of the file
      * @return String representation of json file
      */
     public String getStringFromFile(String fileName) {
@@ -84,6 +93,8 @@ public class JsonReader {
     }
 
     /**
+     * @param fileName name of the file
+     *
      * @return byte array read from file
      */
     public byte[] getBytesFromFile(String fileName) {
@@ -95,6 +106,10 @@ public class JsonReader {
     }
 
     /**
+     * @param <T> type of object to get
+     * @param json json representation of object
+     * @param name name of the class of object to get
+     *
      * @return serialized object read from String
      */
     public <T> T getObjectFromString(String json, Class<T> name) {
@@ -106,6 +121,10 @@ public class JsonReader {
     }
 
     /**
+     * @param <T> type of objects in list to get
+     * @param json json representation of objects in list
+     * @param name name of the class of objects in list to get
+     *
      * @return list of serialized object read from String
      */
     public <T> List<T> getListFromString(String json, Class<T> name) {
@@ -117,6 +136,13 @@ public class JsonReader {
         }
     }
 
+    /**
+     * @param <T> type of objects in list to get
+     * @param fileName name of the file
+     * @param name name of the class of objects in list to get
+     *
+     * @return list of serialized object read from file
+     */
     public <T> List<T> getListFromFile(String fileName, Class<T> name) {
         URL resourcePath = getFileFromClasspath(fileName);
         try {
@@ -127,6 +153,11 @@ public class JsonReader {
         }
     }
 
+    /**
+     * @param value object to be written as string
+     *
+     * @return string representation of object
+     */
     public String writeValueAsString(Object value) {
         try {
             return xs2aObjectMapper.writeValueAsString(value);

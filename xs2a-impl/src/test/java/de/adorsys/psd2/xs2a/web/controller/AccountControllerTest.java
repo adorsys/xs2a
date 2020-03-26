@@ -16,8 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.AccountDetails;
 import de.adorsys.psd2.model.AccountList;
 import de.adorsys.psd2.model.AccountReport;
@@ -26,12 +24,9 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import de.adorsys.psd2.xs2a.service.ais.AccountDetailsService;
 import de.adorsys.psd2.xs2a.service.ais.AccountListService;
 import de.adorsys.psd2.xs2a.service.ais.BalanceService;
@@ -40,7 +35,7 @@ import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
-import org.apache.commons.io.IOUtils;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -56,9 +51,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -79,19 +71,17 @@ class AccountControllerTest {
     private static final String ACCOUNT_ID = "33333-999999999";
     private static final String WRONG_ACCOUNT_ID = "Wrong account id";
     private static final String CONSENT_ID = "12345";
-    private static final String ACCOUNT_DETAILS_LIST_SOURCE = "/json/AccountDetailsList.json";
-    private static final String ACCOUNT_REPORT_SOURCE = "/json/AccountReportTestData.json";
-    private static final String BALANCES_SOURCE = "/json/ReadBalanceResponse.json";
+    private static final String ACCOUNT_DETAILS_LIST_JSON = "json/web/controller/AccountDetailsList.json";
+    private static final String ACCOUNT_REPORT_JSON = "json/web/controller/AccountReportTestData.json";
+    private static final String BALANCES_JSON = "json/web/controller/ReadBalanceResponse.json";
+    private static final String TRANSACTIONS_JSON = "json/web/controller/transactions.json";
     private static final String REQUEST_URI = "/accounts";
-    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final MessageError MESSAGE_ERROR_AIS_404 = new MessageError(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final Currency CURRENCY = Currency.getInstance("EUR");
 
     @InjectMocks
     private AccountController accountController;
-
-    private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Mock
     private BalanceService balanceService;
@@ -112,14 +102,14 @@ class AccountControllerTest {
     @Mock
     private ServletOutputStream servletOutputStream;
     @Mock
-    private PrintWriter printWriter;
-    @Mock
     private ResponseErrorMapper responseErrorMapper;
     @Mock
     private TppErrorMessageWriter tppErrorMessageWriter;
 
+    private JsonReader jsonReader = new JsonReader();
+
     @Test
-    void getAccountDetails_withBalance() throws IOException {
+    void getAccountDetails_withBalance() {
         // Given
         when(accountDetailsService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -162,7 +152,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void getAccounts_ResultTest() throws IOException {
+    void getAccounts_ResultTest() {
         // Given
         when(accountListService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -208,13 +198,12 @@ class AccountControllerTest {
     }
 
     @Test
-    void getBalances_ResultTest() throws IOException {
+    void getBalances_ResultTest() {
         // Given
         when(balanceService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
-        ReadAccountBalanceResponse200 expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                                  ReadAccountBalanceResponse200.class);
+        ReadAccountBalanceResponse200 expectedResult = jsonReader.getObjectFromFile(BALANCES_JSON, ReadAccountBalanceResponse200.class);
 
         doReturn(new ResponseEntity<>(createReadBalances().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -250,10 +239,9 @@ class AccountControllerTest {
     }
 
     @Test
-    void getTransactions_ResultTest() throws IOException {
+    void getTransactions_ResultTest() {
         // Given
-        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                  AccountReport.class);
+        AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -276,12 +264,11 @@ class AccountControllerTest {
     }
 
     @Test
-    void getTransactionList_success() throws IOException {
+    void getTransactionList_success() {
         // Given
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
-        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                  AccountReport.class);
+        AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
@@ -302,10 +289,9 @@ class AccountControllerTest {
     }
 
     @Test
-    void getTransactionList_isRespContentTypeJSON_success() throws IOException {
+    void getTransactionList_isRespContentTypeJSON_success() {
         // Given
-        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                  AccountReport.class);
+        AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -326,7 +312,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void getTransactionDetails_success() throws IOException {
+    void getTransactionDetails_success() {
         // Given
         when(transactionService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransaction());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -334,8 +320,8 @@ class AccountControllerTest {
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
 
-        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                  AccountReport.class);
+        AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
+
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -347,7 +333,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void getTransactionDetails1_success() throws IOException {
+    void getTransactionDetails_error() {
         // Given
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
 
@@ -355,8 +341,7 @@ class AccountControllerTest {
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))
             .when(responseErrorMapper).generateErrorResponse(MESSAGE_ERROR_AIS_404);
 
-        AccountReport expectedResult = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                  AccountReport.class);
+        AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
         // When
         AccountReport result = (AccountReport) accountController.getTransactionDetails(ACCOUNT_ID, null,
@@ -423,8 +408,9 @@ class AccountControllerTest {
                    .body(xs2aAccountListHolder).build();
     }
 
-    private ResponseObject<AccountList> createAccountDetailsList() throws IOException {
-        AccountList details = xs2aObjectMapper.readValue(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_DETAILS_LIST_SOURCE, UTF_8), AccountList.class);
+    private ResponseObject<AccountList> createAccountDetailsList() {
+        AccountList details = jsonReader.getObjectFromFile(ACCOUNT_DETAILS_LIST_JSON, AccountList.class);
+
         return ResponseObject.<AccountList>builder()
                    .body(details).build();
     }
@@ -446,32 +432,29 @@ class AccountControllerTest {
                    .build();
     }
 
-    private ResponseObject<AccountDetails> getAccountDetails() throws IOException {
+    private ResponseObject<AccountDetails> getAccountDetails() {
         AccountDetails details = createAccountDetailsList().getBody().getAccounts().get(0);
         return ResponseObject.<AccountDetails>builder()
                    .body(details).build();
     }
 
-    private ResponseObject<AccountReport> createAccountReport() throws IOException {
-        AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(AccountControllerTest.ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                 AccountReport.class);
+    private ResponseObject<AccountReport> createAccountReport() {
+        AccountReport accountReport = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .body(accountReport).build();
     }
 
-    private ResponseObject<AccountReport> buildAccountReportWithError() throws IOException {
-        AccountReport accountReport = xs2aObjectMapper.readValue(IOUtils.resourceToString(ACCOUNT_REPORT_SOURCE, UTF_8),
-                                                                 AccountReport.class);
+    private ResponseObject<AccountReport> buildAccountReportWithError() {
+        AccountReport accountReport = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
         return ResponseObject.<AccountReport>builder()
                    .fail(AccountControllerTest.MESSAGE_ERROR_AIS_404)
                    .body(accountReport).build();
     }
 
-    private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() throws IOException {
-        ReadAccountBalanceResponse200 read = xs2aObjectMapper.readValue(IOUtils.resourceToString(BALANCES_SOURCE, UTF_8),
-                                                                        ReadAccountBalanceResponse200.class);
+    private ResponseObject<ReadAccountBalanceResponse200> createReadBalances() {
+        ReadAccountBalanceResponse200 read = jsonReader.getObjectFromFile(BALANCES_JSON, ReadAccountBalanceResponse200.class);
         return ResponseObject.<ReadAccountBalanceResponse200>builder()
                    .body(read).build();
     }
@@ -506,27 +489,9 @@ class AccountControllerTest {
     }
 
     private ResponseObject<Transactions> buildTransaction() {
-        Transactions transaction = new Transactions();
-        transaction.setTransactionId("1234578");
-        transaction.setEndToEndId("EndToEndId");
-        transaction.setMandateId("MandateId");
-        transaction.setCreditorId("CreditorId");
-        transaction.setBookingDate(LocalDate.of(2018, 3, 9));
-        Xs2aAmount amount = new Xs2aAmount();
-        amount.setAmount("3000.45");
-        amount.setCurrency(CURRENCY);
-        transaction.setAmount(amount);
-        AccountReference debtor = new AccountReference();
-        debtor.setIban("DE371234599997");
-        debtor.setCurrency(CURRENCY);
-        transaction.setDebtorAccount(debtor);
-        transaction.setRemittanceInformationStructured("Ref Number Merchant");
-        transaction.setRemittanceInformationUnstructured("Ref Number Merchant");
-        transaction.setPurposeCode(PurposeCode.fromValue("BKDF"));
-        transaction.setBankTransactionCodeCode(new BankTransactionCode("BankTransactionCode"));
-
+        Transactions transactions = jsonReader.getObjectFromFile(TRANSACTIONS_JSON, Transactions.class);
         return ResponseObject.<Transactions>builder()
-                   .body(transaction).build();
+                   .body(transactions).build();
     }
 
     private ResponseObject<Transactions> buildTransactionWithError() {

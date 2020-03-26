@@ -1,0 +1,23 @@
+{
+  "transactionId": "1234578",
+  "endToEndId": "EndToEndId",
+  "mandateId": "MandateId",
+  "creditorId": "CreditorId",
+  "bookingDate": "2018-03-09",
+  "amount": {
+    "amount": "3000.45",
+    "currency": "EUR"
+  },
+  "debtorAccount": {
+    "iban": "DE371234599997",
+    "currency": "EUR"
+  },
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant"
+  },
+  "remittanceInformationUnstructured": "Ref Number Merchant",
+  "purposeCode": "BKDF",
+  "bankTransactionCodeCode": {
+    "code": "BankTransactionCode"
+  }
+}

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -46,8 +47,8 @@ public class SpiTransaction {
     private final String ultimateDebtor;
     private final String remittanceInformationUnstructured;
     private final List<String> remittanceInformationUnstructuredArray;
-    private final String remittanceInformationStructured;
-    private final List<String> remittanceInformationStructuredArray;
+    private final Remittance remittanceInformationStructured;
+    private final List<Remittance> remittanceInformationStructuredArray;
     private final String purposeCode;
     private final String bankTransactionCodeCode;
     private final String proprietaryBankTransactionCode;
@@ -56,6 +57,32 @@ public class SpiTransaction {
     private final SpiAccountBalance balanceAfterTransaction;
 
     /**
+     * @param transactionId ID of transaction
+     * @param entryReference Is the identification of the transaction as used
+     * @param endToEndId Unique end to end identity
+     * @param mandateId Identification of Mandates
+     * @param checkId Identification of a Cheque
+     * @param creditorId Identification of Creditors
+     * @param bookingDate The Date when an entry is posted to an account on the ASPSPs books
+     * @param valueDate The Date at which assets become available to the account owner in case of a credit
+     * @param spiAmount spi amount
+     * @param exchangeRate Factor used to convert an amount from one currency into another
+     * @param creditorName Name of the creditor if a "Debited" transaction
+     * @param creditorAccount creditor account
+     * @param creditorAgent creditor agent
+     * @param ultimateCreditor ultimate creditor
+     * @param debtorName Name of the debtor if a "Credited" transaction
+     * @param debtorAccount debtor account
+     * @param debtorAgent debtor agent
+     * @param ultimateDebtor ultimate debtor
+     * @param remittanceInformationUnstructured remittance information unstructured
+     * @param remittanceInformationStructured Reference as contained in the structured remittance reference structure
+     * @param purposeCode purpose code
+     * @param bankTransactionCodeCode code type is concatenating the three ISO20022 Codes Domain Code
+     * @param proprietaryBankTransactionCode proprietary bank transaction code
+     * @param additionalInformationStructured additional information structured
+     * @param balanceAfterTransaction balance after transaction
+     *
      * @deprecated since 6.0/7.0, use all args constructor instead
      */
     @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
@@ -64,7 +91,7 @@ public class SpiTransaction {
                           List<SpiExchangeRate> exchangeRate, String creditorName, SpiAccountReference creditorAccount,
                           String creditorAgent, String ultimateCreditor, String debtorName, SpiAccountReference debtorAccount,
                           String debtorAgent, String ultimateDebtor, String remittanceInformationUnstructured,
-                          String remittanceInformationStructured, String purposeCode, String bankTransactionCodeCode,
+                          Remittance remittanceInformationStructured, String purposeCode, String bankTransactionCodeCode,
                           String proprietaryBankTransactionCode, SpiAdditionalInformationStructured additionalInformationStructured,
                           SpiAccountBalance balanceAfterTransaction) {
         this(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, spiAmount,

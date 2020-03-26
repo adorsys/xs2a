@@ -49,6 +49,23 @@ public class SpiCardTransaction {
 
 
     /**
+     * @param cardTransactionId ID of card transaction
+     * @param terminalId Identification of the Terminal, where the card has been used
+     * @param transactionDate date of the actual card transaction
+     * @param bookingDate booking date of the related booking on the card account
+     * @param transactionAmount The amount of the transaction as billed to the card account
+     * @param currencyExchange currency exchange, often is restricted by the ASPSP to use only one exchange rate
+     * @param originalAmount Original amount of the transaction at the Point of Interaction in orginal currency
+     * @param markupFee Any fee related to the transaction in billing currency
+     * @param markupFeePercentage Percentage of the involved transaction fee in relation to the billing amount
+     * @param cardAcceptorId Identification of the Card Acceptor as given in the related card transaction
+     * @param cardAcceptorAddress Address of the Card Acceptor as given in the related card transaction
+     * @param merchantCategoryCode Merchant Category Code of the Card Acceptor as given in the related card transaction
+     * @param maskedPAN The masked PAN of the card used in the transaction
+     * @param transactionDetails Additional details given for the related card transactions
+     * @param invoiced Flag indicating whether the underlying card transaction is already invoiced
+     * @param proprietaryBankTransactionCode proprietary bank transaction code as used within a community or within an ASPSP
+     *
      * @deprecated since 6.0/7.0, use all args constructor instead
      */
     @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240

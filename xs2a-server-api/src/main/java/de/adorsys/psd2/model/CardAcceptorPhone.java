@@ -22,13 +22,13 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * Timestamp of the actual card transaction within the acceptance system.
+ * Merchant phone number It consists of a \&quot;+\&quot; followed by the country code (from 1 to 3 characters) then a \&quot;-\&quot; and finally, any combination of numbers, \&quot;(\&quot;, \&quot;)\&quot;, \&quot;+\&quot; and \&quot;-\&quot; (up to 30 characters). pattern according to ISO20022 \\+[0-9]{1,3}-[0-9()+\\-]{1,30}
  */
-@ApiModel(description = "Timestamp of the actual card transaction within the acceptance system.")
+@ApiModel(description = "Merchant phone number It consists of a \"+\" followed by the country code (from 1 to 3 characters) then a \"-\" and finally, any combination of numbers, \"(\", \")\", \"+\" and \"-\" (up to 30 characters). pattern according to ISO20022 \\+[0-9]{1,3}-[0-9()+\\-]{1,30} ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-02-28T17:40:20.531650+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
 
-public class AcceptorTransactionDateTime {
+public class CardAcceptorPhone {
 
     @Override
     public boolean equals(Object o) {
@@ -49,7 +49,7 @@ public class AcceptorTransactionDateTime {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class AcceptorTransactionDateTime {\n");
+        sb.append("class CardAcceptorPhone {\n");
 
         sb.append("}");
         return sb.toString();

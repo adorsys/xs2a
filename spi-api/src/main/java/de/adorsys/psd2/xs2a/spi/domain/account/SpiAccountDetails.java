@@ -83,6 +83,26 @@ public class SpiAccountDetails {
     private SpiAddress ownerAddress;
 
     /**
+     * @param aspspAccountId Bank specific account identifier
+     * @param resourceId id of resource
+     * @param iban International Bank Account Number
+     * @param bban Basic Bank Account Number
+     * @param pan Primary Account Number
+     * @param maskedPan Primary Account Number in masked form
+     * @param msisdn Mobile Subscriber Integrated Services Digital Number
+     * @param currency Account currency
+     * @param name Name of the account given by the bank or the PSU in Online-Banking
+     * @param product Product Name of the Bank for this account, proprietary definition
+     * @param cashSpiAccountType ExternalCashAccountType1Code from ISO 20022
+     * @param spiAccountStatus status of spi account
+     * @param bic The BIC associated to the account
+     * @param linkedAccounts cash accounts associated to pending card transactions
+     * @param usageType the usage type of the account: PRIV or ORGA
+     * @param details Specifications: characteristics of the account, characteristics of the relevant card
+     * @param balances spi account balances
+     * @param ownerName Name of the legal account owner
+     * @param ownerAddress Address of the account owner
+     *
      * @deprecated since 6.0/7.0, use all args constructor instead
      */
     @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
