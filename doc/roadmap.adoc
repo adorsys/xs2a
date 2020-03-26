@@ -15,20 +15,6 @@ No backward compatibility with 6.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 6.x (Stable)|version 7.x (Development)
 
-|27.03.2020|6.1|7.1
-
-a|
-
-a|* Migrate to .yaml open API ver 1.3.6 20200306v1
-
-* Adjustments in Account Owner Name service responses 
-
-* CMS database: Remove "owner_address_type" column from "ais_consent" table
-
-a|* All fixes and updates from v.6.1
-
-* New feature: Extend Response of GET SCA Status with trustedBeneficiary Flag according to BG specification 1.3.6
-
 |10.04.2020|6.2|7.2
 
 a|
@@ -37,15 +23,9 @@ a|* Drop deprecated tables for AIS and PIS authorisations
 
 a|* All fixes and updates from v.6.2
 
-* New feature: Support List of Trusted Beneficiaries Service in ASPSP-Profile
+* New feature: Support List of Trusted Beneficiaries Service in ASPSP-Profile and Consent model
 
-* New feature: Implement Read the List of Trusted Beneficiaries
 
-* New feature: Funds Confirmation consent support in Profile
-
-* New feature: Support yaml for Funds Confirmation consent
-
-* New feature: Establish FundsConfirmationConsent
 
 |24.04.2020|6.3|7.3
 
@@ -55,7 +35,33 @@ a|
 
 a|* All fixes and updates from v.6.3
 
+* New feature: Implement Read the List of Trusted Beneficiaries
+
+* New feature: Extend Response of GET SCA Status with trustedBeneficiary Flag according to BG specification 1.3.6
+
+|08.05.2020|6.4|7.4
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.4
+
+* New feature: Funds Confirmation consent support in Profile
+
+* New feature: Support yaml for Funds Confirmation consent
+
+* New feature: Establish FundsConfirmationConsent
+
 * Provide interfaces for CMS controllers for FundsConfirmationConsent
+
+|22.05.2020|6.5|7.5
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.5
 
 * New feature: Create Funds Confirmation consent validator
 
@@ -67,13 +73,13 @@ a|* All fixes and updates from v.6.3
 
 * New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
-|08.05.2020|6.4|7.4
+|05.06.2020|6.6|7.6
 
 a|
 
 a|
 
-a|* All fixes and updates from v.6.4
+a|* All fixes and updates from v.6.6
 
 * New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
 
