@@ -37,6 +37,7 @@ public class ConsentHeadersBuilder extends AbstractHeadersBuilder {
      *
      * @param authorisationId id of the authorisation, if it was created implicitly
      * @param selfLink        link to the newly created consent
+     * @param notificationHeaders {@link NotificationModeResponseHeaders} notification headers
      * @return response headers
      */
     public ResponseHeaders buildCreateConsentHeaders(@Nullable String authorisationId, @NotNull String selfLink, @NotNull NotificationModeResponseHeaders notificationHeaders) {

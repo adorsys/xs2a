@@ -122,7 +122,7 @@ public class ConsentSpecification {
      * Returns specification for ConsentEntity entity for filtering data by TPP authorisation number using
      * the tppInformation attribute.
      *
-     * @param tppAuthorisationNumber
+     * @param tppAuthorisationNumber mandatory TPP authorisation number
      * @return specification for ConsentEntity entity
      */
     public Specification<ConsentEntity> byTpp(@Nullable String tppAuthorisationNumber) {

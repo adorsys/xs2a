@@ -50,6 +50,7 @@ public class ScaServiceResolver<T extends ScaApproachServiceTypeProvider> implem
     /**
      * Get particular service for sca approach that was chosen in resolver, works for authorisation initiation
      *
+     * @param authorisationId ID of Authorisation process
      * @return particular service for chosen sca approach
      */
     public T getService(String authorisationId) {

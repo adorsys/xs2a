@@ -38,6 +38,7 @@ public interface CmsPsuPisService {
      * @param redirectId ID of redirect
      * @param instanceId optional ID of particular service instance
      * @return <code>true</code> if payment was found and data was updated. <code>false</code> otherwise.
+     * @throws AuthorisationIsExpiredException if authorisation is expired
      */
     boolean updatePsuInPayment(@NotNull PsuIdData psuIdData, @NotNull String redirectId, @NotNull String instanceId) throws AuthorisationIsExpiredException;
 
@@ -58,6 +59,7 @@ public interface CmsPsuPisService {
      * @param redirectId ID of redirect
      * @param instanceId optional ID of particular service instance
      * @return Payment Response object that includes payment, authorisation id and ok/nok tpp redirect urls, if the payment was found
+     * @throws RedirectUrlIsExpiredException if redirect urls are expired
      */
     @NotNull
     Optional<CmsPaymentResponse> checkRedirectAndGetPayment(@NotNull String redirectId, @NotNull String instanceId) throws RedirectUrlIsExpiredException;
@@ -68,6 +70,7 @@ public interface CmsPsuPisService {
      * @param redirectId ID of redirect
      * @param instanceId optional ID of particular service instance
      * @return Payment Response object that includes payment, authorisation id and ok/nok tpp redirect urls, if the payment was found
+     * @throws RedirectUrlIsExpiredException if redirect urls are expired
      */
     @NotNull
     Optional<CmsPaymentResponse> checkRedirectAndGetPaymentForCancellation(@NotNull String redirectId, @NotNull String instanceId) throws RedirectUrlIsExpiredException;
@@ -90,7 +93,9 @@ public interface CmsPsuPisService {
      * @param authorisationId ID of Authorisation process
      * @param status          Status of Authorisation to be set
      * @param instanceId      optional ID of particular service instance
+     * @param authenticationDataHolder optional parameter for online-banking, chosen method ID and authentication data
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
+     * @throws AuthorisationIsExpiredException if authorisation is expired
      */
     boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String authorisationId, @NotNull ScaStatus status, @NotNull String instanceId, AuthenticationDataHolder authenticationDataHolder) throws AuthorisationIsExpiredException;
 
