@@ -75,6 +75,7 @@ interface PisCommonPaymentServiceBase {
      *
      * @param request   PIS payment request for update payment data
      * @param paymentId Payment ID
+     * @return VoidResponse
      */
     CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId);
 
@@ -83,6 +84,7 @@ interface PisCommonPaymentServiceBase {
      *
      * @param paymentId             Payment ID
      * @param multilevelScaRequired new value for boolean multilevel sca required
+     * @return true if payment was found and  updated, false otherwise.
      */
     CmsResponse<Boolean> updateMultilevelSca(String paymentId, boolean multilevelScaRequired);
 

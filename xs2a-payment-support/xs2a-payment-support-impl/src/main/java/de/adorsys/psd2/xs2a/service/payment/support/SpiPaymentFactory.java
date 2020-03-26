@@ -51,6 +51,8 @@ public class SpiPaymentFactory {
     /**
      * Creates Optional of SpiPayment from PisPayment, PaymentProduct and PaymentType. Should be used, when general SpiPayment type is needed.
      *
+     * @param commonPaymentData {@link CommonPaymentData} object
+     *
      * @return Optional of SpiPayment subclass of requested payment type or throws IllegalArgumentException for unknown payment type
      */
     public Optional<? extends SpiPayment> createSpiPaymentByPaymentType(CommonPaymentData commonPaymentData) {
@@ -72,6 +74,8 @@ public class SpiPaymentFactory {
     /**
      * Creates SpiSinglePayment from PisPayment and PaymentProduct. Should be used, when concrete SpiSinglePayment type is needed.
      *
+     * @param commonPaymentData {@link CommonPaymentData} object
+     *
      * @return Optional of SpiSinglePayment from PisPayment
      */
     public Optional<SpiSinglePayment> createSpiSinglePayment(CommonPaymentData commonPaymentData) {
@@ -89,6 +93,8 @@ public class SpiPaymentFactory {
     /**
      * Creates SpiPeriodicPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiPeriodicPayment type is needed.
      *
+     * @param commonPaymentData {@link CommonPaymentData} object
+     *
      * @return Optional of SpiPeriodicPayment from PisPayment
      */
     public Optional<SpiPeriodicPayment> createSpiPeriodicPayment(CommonPaymentData commonPaymentData) {
@@ -105,6 +111,8 @@ public class SpiPaymentFactory {
 
     /**
      * Creates SpiBulkPayment from PisPayment and PaymentProduct. Should be used, when concrete SpiBulkPayment type is needed.
+     *
+     * @param commonPaymentData {@link CommonPaymentData} object
      *
      * @return Optional of SpiBulkPayment from PisPayment
      */

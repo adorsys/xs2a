@@ -39,6 +39,7 @@ interface ConsentServiceBase {
      *
      * @param consent needed parameters for creating AIS consent
      * @return create consent response, containing consent and its encrypted ID
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
     CmsResponse<CmsCreateConsentResponse> createConsent(CmsConsent consent) throws WrongChecksumException;
 
@@ -55,7 +56,8 @@ interface ConsentServiceBase {
      *
      * @param consentId id of consent
      * @param status    new consent status
-     * @return Boolean
+     * @return true if consent was found and status was updated, false otherwise.
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
     CmsResponse<Boolean> updateConsentStatusById(String consentId, ConsentStatus status) throws WrongChecksumException;
 
@@ -84,6 +86,7 @@ interface ConsentServiceBase {
      * @param consentId             String representation of the consent identifier
      * @param multilevelScaRequired multilevel SCA required indicator
      * @return <code>true</code> if authorisation was found and SCA required field updated, <code>false</code> otherwise
+     * @throws WrongChecksumException in case of any attempt to change definite consent fields after its status became valid.
      */
     CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) throws WrongChecksumException;
 }

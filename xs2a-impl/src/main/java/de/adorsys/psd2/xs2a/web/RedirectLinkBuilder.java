@@ -169,6 +169,7 @@ public class RedirectLinkBuilder {
     /**
      * Builds confirmation link for consents.
      *
+     * @param consentId - ID of consent
      * @param redirectId - Redirect ID
      * @return confirmation link
      */

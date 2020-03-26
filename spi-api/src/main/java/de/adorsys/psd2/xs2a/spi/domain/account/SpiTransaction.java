@@ -57,6 +57,32 @@ public class SpiTransaction {
     private final SpiAccountBalance balanceAfterTransaction;
 
     /**
+     * @param transactionId ID of transaction
+     * @param entryReference Is the identification of the transaction as used
+     * @param endToEndId Unique end to end identity
+     * @param mandateId Identification of Mandates
+     * @param checkId Identification of a Cheque
+     * @param creditorId Identification of Creditors
+     * @param bookingDate The Date when an entry is posted to an account on the ASPSPs books
+     * @param valueDate The Date at which assets become available to the account owner in case of a credit
+     * @param spiAmount spi amount
+     * @param exchangeRate Factor used to convert an amount from one currency into another
+     * @param creditorName Name of the creditor if a "Debited" transaction
+     * @param creditorAccount creditor account
+     * @param creditorAgent creditor agent
+     * @param ultimateCreditor ultimate creditor
+     * @param debtorName Name of the debtor if a "Credited" transaction
+     * @param debtorAccount debtor account
+     * @param debtorAgent debtor agent
+     * @param ultimateDebtor ultimate debtor
+     * @param remittanceInformationUnstructured remittance information unstructured
+     * @param remittanceInformationStructured Reference as contained in the structured remittance reference structure
+     * @param purposeCode purpose code
+     * @param bankTransactionCodeCode code type is concatenating the three ISO20022 Codes Domain Code
+     * @param proprietaryBankTransactionCode proprietary bank transaction code
+     * @param additionalInformationStructured additional information structured
+     * @param balanceAfterTransaction balance after transaction
+     *
      * @deprecated since 6.0/7.0, use all args constructor instead
      */
     @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
