@@ -59,4 +59,9 @@ public class ConsentTypeBankSetting {
      * Indicates whether an ASPSP supports account owner information in consent
      */
     private boolean accountOwnerInformationSupported;
+
+    /**
+     * Indicates whether an ASPSP supports trusted beneficiaries in consent
+     */
+    private boolean trustedBeneficiariesSupported;
 }

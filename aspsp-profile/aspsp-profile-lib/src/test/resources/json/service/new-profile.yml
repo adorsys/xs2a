@@ -9,6 +9,7 @@ setting:
       globalConsentSupported: true
       maxConsentValidityDays: 0
       notConfirmedConsentExpirationTimeMs: 86400000
+      trustedBeneficiariesSupported: false
     deltaReportSettings:
       deltaListSupported: false
       entryReferenceFromSupported: false
