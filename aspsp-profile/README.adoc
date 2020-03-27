@@ -54,8 +54,14 @@ Attribute frequencyPerDay is mandatory for Account Information Consent request. 
 
 Not confirmed during this period of time AIS consents will be considered obsolete. The default value is set to 24 hours. |86 400 000 |milliseconds (1, 2,...)
 |maxConsentValidityDays |This field defines consent lifetime - maximum validity days of consent. When this value equals to 0 or empty, then the maximum lifetime of Consent is infinity. |0 |days (0, 1, ...)
-|accountOwnerInformationSupported |This field indicates if ASPSP supports account owner information in consent.
-If the parameter = FALSE, then XS2A sends the response with CONSENT_INVALID and text "An explicit consent of ownerName is not supported."
+|accountOwnerInformationSupported |This field defines if the ASPSP supports additional account information - account owner name.
+
+If the parameter = FALSE, then the ASPSP is not supporting the related consent extension, and should ignore the corresponding entries. In this case, the data will not be part of the consent model which is generated through the call where this object is contained.
+
+|FALSE |TRUE, FALSE
+|trustedBeneficiariesSupported |This field defines if the ASPSP supports additional account information - providing a list of trusted beneficiaries.
+
+If the parameter = FALSE, then the ASPSP is not supporting the related consent extension, and should ignore the corresponding entries. In this case, the data will not be part of the consent model which is generated through the call where this object is contained.
 
 |FALSE |TRUE, FALSE
 |*redirectLinkToOnlineBanking:* | | |
