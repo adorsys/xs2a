@@ -77,6 +77,36 @@ class TransactionReportAcceptHeaderValidatorTest {
     }
 
     @Test
+    void validate_isAtLeastOneAcceptHeaderSupported() {
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
+                                                                                                  .getTransactionParameters()
+                                                                                                  .getSupportedTransactionApplicationTypes());
+
+        ValidationResult actual = validator.validate("application/xml, application/json");
+        assertTrue(actual.isValid());
+    }
+
+    @Test
+    void validate_isAtLeastOneAcceptHeaderSupported_extraBlanks() {
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
+                                                                                                  .getTransactionParameters()
+                                                                                                  .getSupportedTransactionApplicationTypes());
+
+        ValidationResult actual = validator.validate("   application/xml,application/json   ");
+        assertTrue(actual.isValid());
+    }
+
+    @Test
+    void validate_isAtLeastOneAcceptHeaderSupported_ignoreCaseSensitive() {
+        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
+                                                                                                  .getTransactionParameters()
+                                                                                                  .getSupportedTransactionApplicationTypes());
+
+        ValidationResult actual = validator.validate("APPLICATION/XML,APPLICATION/JSON");
+        assertTrue(actual.isValid());
+    }
+
+    @Test
     void validate_acceptHeaderIsNotPresented_success() {
         ValidationResult actual = validator.validate(null);
         assertTrue(actual.isValid());
