@@ -326,6 +326,15 @@ public class AspspProfileServiceWrapper {
         return readAspspSettings().getAis().getConsentTypes().isAccountOwnerInformationSupported();
     }
 
+    /**
+     * Reads if 'trustedBenefeciariesSupported' parameter is supported from ASPSP profile service
+     *
+     * @return true if ASPSP supports 'trustedBenefeciariesSupported', else otherwise
+     */
+    public boolean isTrustedBeneficiariesSupported() {
+        return readAspspSettings().getAis().getConsentTypes().isTrustedBeneficiariesSupported();
+    }
+
     private AspspSettings readAspspSettings() {
         return aspspProfileService.getAspspSettings();
     }

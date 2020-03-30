@@ -72,6 +72,7 @@ public class AspspSettingsBuilder {
     private static final boolean ENTRY_REFERENCE_FROM_SUPPORTED = true;
     private static final StartAuthorisationMode START_AUTHORISATION_MODE = StartAuthorisationMode.AUTO;
     private static final boolean ACCOUNT_OWNER_INFORMATION_SUPPORTED = true;
+    private static final boolean TRUSTED_BENEFICIARIES_SUPPORTED = true;
     private static final String COUNTRY_VALIDATION_SUPPORTED = "DE";
     private static final List<String> SUPPORTED_TRANSACTION_STATUS_FORMATS = Arrays.asList("application/json", "application/xml");
     private static final boolean IS_CHECK_TPP_ROLES_FROM_CERTIFICATE = true;
@@ -90,7 +91,8 @@ public class AspspSettingsBuilder {
                                                                  ACCOUNT_ACCESS_FREQUENCY_PER_DAY,
                                                                  NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS,
                                                                  MAX_CONSENT_VALIDITY_DAYS,
-                                                                 ACCOUNT_OWNER_INFORMATION_SUPPORTED);
+                                                                 ACCOUNT_OWNER_INFORMATION_SUPPORTED,
+                                                                 TRUSTED_BENEFICIARIES_SUPPORTED);
         AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(AIS_REDIRECT_LINK);
         AisTransactionSetting transactionParameters = new AisTransactionSetting(AVAILABLE_BOOKING_STATUSES,
                                                                                 TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED,
