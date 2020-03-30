@@ -1,0 +1,9 @@
+= Release notes v.6.2
+
+== Table of Contents
+
+* Bugfix: Validation does not work when using multiple values as accept header
+
+== Bugfix: Validation does not work when using multiple values as accept header
+
+From now on, validation processes properly multiple accept headers.
