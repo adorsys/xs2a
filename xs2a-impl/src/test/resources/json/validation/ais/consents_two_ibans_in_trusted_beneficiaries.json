@@ -4,6 +4,10 @@
       {
         "currency": "EUR",
         "iban": "DE80760700240271232400"
+      },
+      {
+        "currency": "EUR",
+        "iban": "DE69760700240340283600"
       }
     ],
     "balances": [
@@ -19,22 +23,20 @@
       }
     ],
     "additionalInformation": {
-      "ownerName": [
-        {
-          "iban": "DE80760700240271232400",
-          "currency": "EUR"
-        }
-      ],
       "trustedBeneficiaries": [
         {
-          "iban": "DE80760700240271232400",
-          "currency": "EUR"
+          "currency": "EUR",
+          "iban": "DE69760700240340283600"
+        },
+        {
+          "currency": "EUR",
+          "iban": "DE38760700240320465700"
         }
       ]
     }
   },
   "combinedServiceIndicator": false,
-  "frequencyPerDay": 100,
+  "frequencyPerDay": 15,
   "recurringIndicator": true,
-  "validUntil": "2030-10-10"
+  "validUntil": "2021-10-10"
 }

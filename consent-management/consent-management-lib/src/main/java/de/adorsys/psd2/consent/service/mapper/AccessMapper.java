@@ -81,18 +81,21 @@ public class AccessMapper {
                                                                                                          a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                          a.getCurrency())).collect(Collectors.toList()));
         AdditionalInformationAccess additionalInformationAccess = accountAccess.getAdditionalInformationAccess();
-        if (additionalInformationAccess != null && CollectionUtils.isNotEmpty(additionalInformationAccess.getOwnerName())) {
-            tppAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
-                                                                                                                        TypeAccess.OWNER_NAME,
-                                                                                                                        a.getUsedAccountReferenceSelector().getAccountReferenceType(),
-                                                                                                                        a.getCurrency())).collect(Collectors.toList()));
+        if (additionalInformationAccess != null) {
+            if (CollectionUtils.isNotEmpty(additionalInformationAccess.getOwnerName())) {
+                tppAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                                                                                                                            TypeAccess.OWNER_NAME,
+                                                                                                                            a.getUsedAccountReferenceSelector().getAccountReferenceType(),
+                                                                                                                            a.getCurrency())).collect(Collectors.toList()));
+            }
+            if (CollectionUtils.isNotEmpty(additionalInformationAccess.getTrustedBeneficiaries())) {
+                tppAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                                                                                                                                       TypeAccess.BENEFICIARIES,
+                                                                                                                                       a.getUsedAccountReferenceSelector().getAccountReferenceType(),
+                                                                                                                                       a.getCurrency())).collect(Collectors.toList()));
+            }
         }
-        if (additionalInformationAccess != null && CollectionUtils.isNotEmpty(additionalInformationAccess.getTrustedBeneficiaries())) {
-            tppAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
-                                                                                                                        TypeAccess.BENEFICIARIES,
-                                                                                                                        a.getUsedAccountReferenceSelector().getAccountReferenceType(),
-                                                                                                                        a.getCurrency())).collect(Collectors.toList()));
-        }
+
         return tppAccountAccesses;
     }
 
@@ -119,12 +122,12 @@ public class AccessMapper {
         AdditionalInformationAccess additionalInformationAccess = accountAccess.getAdditionalInformationAccess();
         if (additionalInformationAccess != null) {
             if (CollectionUtils.isNotEmpty(additionalInformationAccess.getOwnerName())) {
-            aspspAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
-                                                                                                                            TypeAccess.OWNER_NAME,
-                                                                                                                            a.getUsedAccountReferenceSelector().getAccountReferenceType(),
-                                                                                                                            a.getCurrency(),
-                                                                                                                            a.getResourceId(),
-                                                                                                                            a.getAspspAccountId())).collect(Collectors.toList()));
+                aspspAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                                                                                                                                TypeAccess.OWNER_NAME,
+                                                                                                                                a.getUsedAccountReferenceSelector().getAccountReferenceType(),
+                                                                                                                                a.getCurrency(),
+                                                                                                                                a.getResourceId(),
+                                                                                                                                a.getAspspAccountId())).collect(Collectors.toList()));
             }
             if (CollectionUtils.isNotEmpty(additionalInformationAccess.getTrustedBeneficiaries())) {
                 aspspAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
