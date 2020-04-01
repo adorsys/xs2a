@@ -5136,6 +5136,19 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/accountReference"
+        trustedBeneficiaries:
+            description: |
+                Is asking for the trusted beneficiaries related to the accounts referenced within and related to the PSU.
+                If the array is empty in the request, the TPP is asking for the lists of trusted beneficiaries of all
+                accessible accounts.
+                This may be restricted in a PSU/ASPSP authorization dialogue by the PSU if also the account lists
+                addressed by the tags accounts, balances or transactions are empty.
+                The ASPSP will indicate in the consent resource after a successful authorisation, whether the
+                trustedBeneficiaries consent can be accepted by providing the accounts on which the list of trusted
+                beneficiaries will be delivered. This array can be empty.
+            type: array
+            items:
+                $ref: "#/components/schemas/accountReference"
 
 
     amount:

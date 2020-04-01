@@ -69,13 +69,16 @@ public class AccountAccessUpdater {
             return existingAccess;
         }
 
-        assert existingAccess.getOwnerName() != null;
-        assert requestedAccess.getOwnerName() != null;
+        assert existingAccess.getOwnerName() != null && existingAccess.getTrustedBeneficiaries() != null;
+        assert requestedAccess.getOwnerName() != null && requestedAccess.getTrustedBeneficiaries() != null;
         List<AccountReference> updatedOwnerName = existingAccess.getOwnerName().stream()
                                                       .map(ref -> updateAccountReference(ref, requestedAccess.getOwnerName()))
                                                       .collect(Collectors.toList());
+        List<AccountReference> updatedTrustedBeneficiaries = existingAccess.getTrustedBeneficiaries().stream()
+                                                                 .map(ref -> updateAccountReference(ref, requestedAccess.getTrustedBeneficiaries()))
+                                                                 .collect(Collectors.toList());
 
-        return new AdditionalInformationAccess(updatedOwnerName);
+        return new AdditionalInformationAccess(updatedOwnerName, updatedTrustedBeneficiaries);
     }
 
     private boolean isAdditionalInformationAbsent(AdditionalInformationAccess additionalInformationAccess) {

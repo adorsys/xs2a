@@ -152,7 +152,7 @@ class ConsentServiceTest {
     @Mock
     private AccountReferenceInConsentUpdater accountReferenceUpdater;
     @Mock
-    private AccountOwnerInformationService accountOwnerInformationService;
+    private AdditionalInformationSupportedService additionalInformationSupportedService;
 
     private AisConsent aisConsent;
 
@@ -180,7 +180,7 @@ class ConsentServiceTest {
             false
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -219,7 +219,7 @@ class ConsentServiceTest {
             false
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -259,7 +259,7 @@ class ConsentServiceTest {
             false
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -297,7 +297,7 @@ class ConsentServiceTest {
         );
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -330,7 +330,7 @@ class ConsentServiceTest {
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, true
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, true), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -364,7 +364,7 @@ class ConsentServiceTest {
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, true
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
             .thenReturn(createValidationResult(false, PARAMETER_NOT_SUPPORTED_400_ERROR));
 
@@ -389,7 +389,7 @@ class ConsentServiceTest {
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList()), false, false
         );
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList()), false, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
         when(tppService.getTppInfo())
@@ -421,7 +421,7 @@ class ConsentServiceTest {
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList()), false, false
         );
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList()), false, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -454,7 +454,7 @@ class ConsentServiceTest {
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1))), false, false
         );
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1))), false, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -490,7 +490,7 @@ class ConsentServiceTest {
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, false
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -527,7 +527,7 @@ class ConsentServiceTest {
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -564,7 +564,7 @@ class ConsentServiceTest {
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false
         );
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -610,7 +610,7 @@ class ConsentServiceTest {
         CreateConsentReq req = getCreateConsentRequest(access, true, false);
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -645,7 +645,7 @@ class ConsentServiceTest {
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         ArgumentCaptor<ScaStatus> scaStatusCaptor = ArgumentCaptor.forClass(ScaStatus.class);
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
@@ -690,7 +690,7 @@ class ConsentServiceTest {
         );
 
         // When
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
             .thenReturn(createValidationResult(true, null));
 
@@ -708,7 +708,7 @@ class ConsentServiceTest {
         );
 
         // When
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
             .thenReturn(createValidationResult(false, PARAMETER_NOT_SUPPORTED_400_ERROR));
 
@@ -734,7 +734,7 @@ class ConsentServiceTest {
         );
 
         // When
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
             .thenReturn(createValidationResult(false, SERVICE_INVALID_400_ERROR));
 
@@ -759,7 +759,7 @@ class ConsentServiceTest {
             getAccess(Collections.singletonList(getReference(WRONG_IBAN, CURRENCY_1)), Collections.emptyList(), Collections.emptyList()), false, false
         );
 
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
             .thenReturn(ValidationResult.invalid(CONSENT_INVALID_401_ERROR));
 
@@ -777,7 +777,7 @@ class ConsentServiceTest {
         CreateConsentReq req = getCreateConsentRequest(
             getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false
         );
-        when(accountOwnerInformationService.checkSupportedAccountOwnerInformation(req)).thenReturn(req);
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
             .thenReturn(Optional.of(xs2aCreateAisConsentResponse));

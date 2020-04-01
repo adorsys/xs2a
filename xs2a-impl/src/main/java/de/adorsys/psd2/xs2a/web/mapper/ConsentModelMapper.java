@@ -123,7 +123,9 @@ public class ConsentModelMapper {
 
     private de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess mapToAdditionalInformationAccess(AdditionalInformationAccess additionalInformationAccess) {
         return Optional.ofNullable(additionalInformationAccess)
-                   .map(info -> new de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess(mapToXs2aAccountReferencesOrDefault(info.getOwnerName(), null)))
+                   .map(info -> new de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess(mapToXs2aAccountReferencesOrDefault(info.getOwnerName(), null),
+                                                                                                  mapToXs2aAccountReferencesOrDefault(info.getTrustedBeneficiaries(), null)
+                   ))
                    .orElse(null);
     }
 
@@ -174,6 +176,7 @@ public class ConsentModelMapper {
                        }
                        AdditionalInformationAccess informationAccess = new AdditionalInformationAccess();
                        informationAccess.setOwnerName(accountModelMapper.mapToAccountReferences(info.getOwnerName()));
+                       informationAccess.setTrustedBeneficiaries(accountModelMapper.mapToAccountReferences(info.getTrustedBeneficiaries()));
                        return informationAccess;
                    })
                    .orElse(null);

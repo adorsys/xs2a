@@ -126,6 +126,6 @@ class AisConsentServiceRemoteTest {
     }
 
     private AdditionalInformationAccess buildEmptyAdditionalInformationAccess() {
-        return new AdditionalInformationAccess(Collections.emptyList());
+        return new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList());
     }
 }

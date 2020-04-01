@@ -23,6 +23,12 @@
         "iban": "DE80760700240271232700",
         "currency": "UAH"
       }
+    ],
+    "trustedBeneficiaries": [
+      {
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
     ]
   }
 }
