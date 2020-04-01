@@ -35,7 +35,7 @@ class AccessMapperTest {
     @Test
     void mapTppAccessesToAccountAccess() {
         List<TppAccountAccess> tppAccountAccesses = jsonReader.getListFromFile("json/service/mapper/access-mapper/tpp-account-accesses-additional-information.json", TppAccountAccess.class);
-        AccountAccess actual = accessMapper.mapTppAccessesToAccountAccess(tppAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
+        AccountAccess actual = accessMapper.mapTppAccessesToAccountAccess(tppAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
 
         AccountAccess expected = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-access-for-tpp-additional-information.json", AccountAccess.class);
         assertEquals(expected, actual);
@@ -53,7 +53,7 @@ class AccessMapperTest {
     @Test
     void mapAspspAccessesToAccountAccess() {
         List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getListFromFile("json/service/mapper/access-mapper/aspsp-account-accesses-additional-information.json", AspspAccountAccess.class);
-        AccountAccess actual = accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
+        AccountAccess actual = accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.DEDICATED_ACCOUNTS);
 
         AccountAccess expected = jsonReader.getObjectFromFile("json/service/mapper/access-mapper/account-access-for-aspsp-additional-information.json", AccountAccess.class);
         assertEquals(expected, actual);

@@ -34,7 +34,9 @@ import java.util.stream.Collectors;
 @Component
 public class AccessMapper {
 
-    public AccountAccess mapTppAccessesToAccountAccess(List<TppAccountAccess> tppAccountAccesses, AdditionalAccountInformationType additionalAccountInformationType) {
+    public AccountAccess mapTppAccessesToAccountAccess(List<TppAccountAccess> tppAccountAccesses,
+                                                       AdditionalAccountInformationType ownerNameType,
+                                                       AdditionalAccountInformationType trustedBeneficiariesType) {
         AccountAccessListHolder holder = new AccountAccessListHolder();
         tppAccountAccesses.forEach(a -> {
             AccountReference accountReference = new AccountReference(a.getAccountReferenceType(),
@@ -43,11 +45,13 @@ public class AccessMapper {
             holder.addAccountReference(accountReference, a.getTypeAccess());
         });
         return new AccountAccess(holder.getAccounts(), holder.getBalances(), holder.getTransactions(),
-                                 new AdditionalInformationAccess(additionalAccountInformationType.getReferencesByType(holder.getOwnerNames()),
-                                                                 additionalAccountInformationType.getReferencesByType(holder.getTrustedBeneficiaries())));
+                                 new AdditionalInformationAccess(ownerNameType.getReferencesByType(holder.getOwnerNames()),
+                                                                 trustedBeneficiariesType.getReferencesByType(holder.getTrustedBeneficiaries())));
     }
 
-    public AccountAccess mapAspspAccessesToAccountAccess(List<AspspAccountAccess> aspspAccountAccesses, AdditionalAccountInformationType additionalAccountInformationType) {
+    public AccountAccess mapAspspAccessesToAccountAccess(List<AspspAccountAccess> aspspAccountAccesses,
+                                                         AdditionalAccountInformationType ownerNameType,
+                                                         AdditionalAccountInformationType trustedBeneficiariesType) {
         AccountAccessListHolder holder = new AccountAccessListHolder();
         aspspAccountAccesses.forEach(a -> {
             AccountReference accountReference = new AccountReference(a.getAccountReferenceType(),
@@ -58,8 +62,8 @@ public class AccessMapper {
             holder.addAccountReference(accountReference, a.getTypeAccess());
         });
         return new AccountAccess(holder.getAccounts(), holder.getBalances(), holder.getTransactions(),
-                                 new AdditionalInformationAccess(additionalAccountInformationType.getReferencesByType(holder.getOwnerNames()),
-                                                                 additionalAccountInformationType.getReferencesByType(holder.getTrustedBeneficiaries())));
+                                 new AdditionalInformationAccess(ownerNameType.getReferencesByType(holder.getOwnerNames()),
+                                                                 trustedBeneficiariesType.getReferencesByType(holder.getTrustedBeneficiaries())));
     }
 
     public List<TppAccountAccess> mapToTppAccountAccess(AccountAccess accountAccess) {

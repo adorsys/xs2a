@@ -113,8 +113,12 @@ public class AisConsentMapper {
                               psuDataMapper.mapToPsuIdDataList(entity.getPsuDataList()),
                               mapToAccountConsentAuthorisations(authorisations),
                               usageCounterMap,
-                              accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(), entity.getOwnerNameType()),
-                              accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(), entity.getOwnerNameType()));
+                              accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(),
+                                                                         entity.getOwnerNameType(),
+                                                                         entity.getTrustedBeneficiariesType()),
+                              accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
+                                                                           entity.getOwnerNameType(),
+                                                                           entity.getTrustedBeneficiariesType()));
     }
 
     public AccountAccess mapToAccountAccess(AisAccountAccess accountAccess) {
