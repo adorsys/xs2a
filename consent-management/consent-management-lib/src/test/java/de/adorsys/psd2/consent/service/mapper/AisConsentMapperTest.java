@@ -124,8 +124,8 @@ class AisConsentMapperTest {
         ConsentEntity consent = buildConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
         when(aisConsentUsageService.getUsageCounterMap(consent)).thenReturn(USAGE_COUNTER);
-        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
-        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
+        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
+        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
 
         List<AuthorisationEntity> authorisations = Collections.emptyList();
 
@@ -154,8 +154,8 @@ class AisConsentMapperTest {
         ConsentEntity consent = buildConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountWithoutResourceId(true);
         when(aisConsentUsageService.getUsageCounterMap(consent)).thenReturn(USAGE_COUNTER);
-        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(aisConsent.getTppAccountAccesses());
-        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(aisConsent.getAspspAccountAccesses());
+        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(aisConsent.getTppAccountAccesses());
+        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(aisConsent.getAspspAccountAccesses());
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(buildAisConsentAuthorisation());
 
@@ -179,8 +179,8 @@ class AisConsentMapperTest {
         ConsentEntity consent = buildConsent();
         AisAccountAccess expectedAccess = buildAisAccountAccessAccountsWithResourceId();
         when(aisConsentUsageService.getUsageCounterMap(consent)).thenReturn(USAGE_COUNTER);
-        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
-        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
+        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
+        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(buildAisConsentAuthorisation());
 
@@ -216,8 +216,8 @@ class AisConsentMapperTest {
         ConsentEntity consent = buildConsent();
         List<AuthorisationEntity> authorisationEntities = Collections.emptyList();
         when(aisConsentUsageService.getUsageCounterMap(consent)).thenReturn(USAGE_COUNTER);
-        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
-        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
+        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
+        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
 
         //When
         AisConsent result = aisConsentMapper.mapToAisConsent(consent, authorisationEntities);
@@ -237,8 +237,8 @@ class AisConsentMapperTest {
         AisConsent expected = buildAisConsent(AIS_CONSENT_DATA, Collections.singletonList(buildAccountConsentAuthorization()), buildTppAccountAccessAccounts(), buildAspspAccountAccessAccounts());
         List<AuthorisationEntity> authorisationEntities = Collections.singletonList(buildAisConsentAuthorisation());
         when(aisConsentUsageService.getUsageCounterMap(consent)).thenReturn(USAGE_COUNTER);
-        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
-        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
+        when(accessMapper.mapTppAccessesToAccountAccess(consent.getTppAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getTppAccountAccesses());
+        when(accessMapper.mapAspspAccessesToAccountAccess(consent.getAspspAccountAccesses(), AdditionalAccountInformationType.NONE, AdditionalAccountInformationType.NONE)).thenReturn(AIS_CONSENT.getAspspAccountAccesses());
 
         //When
         AisConsent result = aisConsentMapper.mapToAisConsent(consent, authorisationEntities);

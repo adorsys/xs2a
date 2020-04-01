@@ -130,6 +130,10 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @Enumerated(value = EnumType.STRING)
     private AdditionalAccountInformationType ownerNameType = AdditionalAccountInformationType.NONE;
 
+    @Column(name = "trusted_beneficiaries_type", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private AdditionalAccountInformationType trustedBeneficiariesType = AdditionalAccountInformationType.NONE;
+
     @Transient
     private ConsentStatus previousConsentStatus;
 

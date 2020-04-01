@@ -61,8 +61,12 @@ public class CmsConsentMapper {
         cmsConsent.setLastActionDate(entity.getLastActionDate());
         cmsConsent.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
         cmsConsent.setUsages(usages);
-        cmsConsent.setTppAccountAccesses(accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(), entity.getOwnerNameType()));
-        cmsConsent.setAspspAccountAccesses(accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(), entity.getOwnerNameType()));
+        cmsConsent.setTppAccountAccesses(accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(),
+                                                                                    entity.getOwnerNameType(),
+                                                                                    entity.getTrustedBeneficiariesType()));
+        cmsConsent.setAspspAccountAccesses(accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
+                                                                                        entity.getOwnerNameType(),
+                                                                                        entity.getTrustedBeneficiariesType()));
         return cmsConsent;
     }
 
@@ -91,6 +95,7 @@ public class CmsConsentMapper {
         AdditionalInformationAccess additionalInformationAccess = tppAccountAccesses.getAdditionalInformationAccess();
         if (additionalInformationAccess != null) {
             entity.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(additionalInformationAccess.getOwnerName()));
+            entity.setTrustedBeneficiariesType(AdditionalAccountInformationType.findTypeByList(additionalInformationAccess.getTrustedBeneficiaries()));
         }
         return entity;
     }
