@@ -40,6 +40,13 @@
         "resourceId": "33333-999999999",
         "iban": "DE89370400440532015000"
       }
+    ],
+    "trustedBeneficiaries": [
+      {
+        "aspspAccountId": "123-DE89370400440532015000-EUR",
+        "resourceId": "33333-999999999",
+        "iban": "DE89370400440532015000"
+      }
     ]
   }
 }

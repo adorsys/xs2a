@@ -151,7 +151,7 @@ class AisConsentServiceInternalEncryptedTest {
     }
 
     private AdditionalInformationAccess buildAdditionalInformationAccess() {
-        return new AdditionalInformationAccess(Collections.emptyList());
+        return new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList());
     }
 }
 

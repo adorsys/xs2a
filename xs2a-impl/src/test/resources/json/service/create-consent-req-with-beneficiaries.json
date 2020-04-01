@@ -3,7 +3,14 @@
     "accounts": [],
     "balances": [],
     "transactions": [],
-    "additionalInformationAccess": {}
+    "additionalInformationAccess": {
+      "trustedBeneficiaries": [
+        {
+          "currency": "EUR",
+          "iban": "DE80760700240271232400"
+        }
+      ]
+    }
   },
   "combinedServiceIndicator": false,
   "frequencyPerDay": 10,

@@ -172,7 +172,8 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
             return null;
         }
 
-        return new AdditionalInformationAccess(mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError));
+        return new AdditionalInformationAccess(mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError),
+                                               mapToXs2aAccountReferences(additionalInformationAccess.getTrustedBeneficiaries(), messageError));
     }
 
     private List<de.adorsys.psd2.xs2a.core.profile.AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references, MessageError messageError) { // NOPMD

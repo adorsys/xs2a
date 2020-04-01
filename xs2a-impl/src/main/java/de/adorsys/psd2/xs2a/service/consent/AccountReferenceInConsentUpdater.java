@@ -69,6 +69,7 @@ public class AccountReferenceInConsentUpdater {
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();
         List<AccountReference> ownerName = new ArrayList<>();
+        List<AccountReference> trustedBeneficiaries = new ArrayList<>();
         AccountAccess existingAccess = aisConsent.getAccess();
         AdditionalInformationAccess additionalInformationAccess = existingAccess.getAdditionalInformationAccess();
 
@@ -88,10 +89,14 @@ public class AccountReferenceInConsentUpdater {
             if (additionalInformationAccess != null && additionalInformationAccess.getOwnerName() != null) {
                 ownerName.addAll(enrichAccountReferences(accountDetail, additionalInformationAccess.getOwnerName()));
             }
+
+            if (additionalInformationAccess != null && additionalInformationAccess.getTrustedBeneficiaries() != null) {
+                trustedBeneficiaries.addAll(enrichAccountReferences(accountDetail, additionalInformationAccess.getTrustedBeneficiaries()));
+            }
         }
 
         AccountAccess accountAccess =
-            getXs2aAccountAccess(accounts, transactions, balances, ownerName, additionalInformationAccess);
+            getXs2aAccountAccess(accounts, transactions, balances, ownerName, trustedBeneficiaries, additionalInformationAccess);
 
         return aisConsentService.updateAspspAccountAccess(consentId, accountAccess);
     }
@@ -110,6 +115,7 @@ public class AccountReferenceInConsentUpdater {
         List<AccountReference> transactions = new ArrayList<>();
         List<AccountReference> balances = new ArrayList<>();
         List<AccountReference> ownerName = new ArrayList<>();
+        List<AccountReference> trustedBeneficiaries = new ArrayList<>();
         AccountAccess existingAccess = aisConsent.getAccess();
         AdditionalInformationAccess additionalInformationAccess = existingAccess.getAdditionalInformationAccess();
 
@@ -129,21 +135,25 @@ public class AccountReferenceInConsentUpdater {
             if (additionalInformationAccess != null && additionalInformationAccess.getOwnerName() != null) {
                 ownerName.addAll(enrichCardAccountReferences(accountDetail, additionalInformationAccess.getOwnerName()));
             }
+            if (additionalInformationAccess != null && additionalInformationAccess.getTrustedBeneficiaries() != null) {
+                trustedBeneficiaries.addAll(enrichCardAccountReferences(accountDetail, additionalInformationAccess.getTrustedBeneficiaries()));
+            }
         }
 
         AccountAccess accountAccess =
-            getXs2aAccountAccess(accounts, transactions, balances, ownerName, additionalInformationAccess);
+            getXs2aAccountAccess(accounts, transactions, balances, ownerName, trustedBeneficiaries, additionalInformationAccess);
 
         return aisConsentService.updateAspspAccountAccess(consentId, accountAccess);
     }
 
     private AccountAccess getXs2aAccountAccess(List<AccountReference> accounts,
                                                List<AccountReference> transactions, List<AccountReference> balances,
-                                               List<AccountReference> ownerName, AdditionalInformationAccess additionalInformationAccess) {
+                                               List<AccountReference> ownerName, List<AccountReference> trustedBeneficiaries,
+                                               AdditionalInformationAccess additionalInformationAccess) {
 
         return new AccountAccess(accounts, balances, transactions,
                                  Optional.ofNullable(additionalInformationAccess)
-                                     .map(info -> new AdditionalInformationAccess(ownerName))
+                                     .map(info -> new AdditionalInformationAccess(ownerName, trustedBeneficiaries))
                                      .orElse(null));
     }
 

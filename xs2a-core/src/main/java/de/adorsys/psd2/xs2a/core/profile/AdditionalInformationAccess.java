@@ -25,8 +25,10 @@ import java.util.List;
 public class AdditionalInformationAccess {
     @Nullable
     private List<AccountReference> ownerName;
+    @Nullable
+    private List<AccountReference> trustedBeneficiaries;
 
     public boolean noAdditionalInformationAccess() {
-        return ownerName == null;
+        return ownerName == null && trustedBeneficiaries == null;
     }
 }

@@ -31,7 +31,7 @@ public class AccountAccess {
     public static final AccountAccess EMPTY_ACCESS = new AccountAccess(Collections.emptyList(),
                                                                        Collections.emptyList(),
                                                                        Collections.emptyList(),
-                                                                       new AdditionalInformationAccess(Collections.emptyList()));
+                                                                       new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList()));
 
     private List<AccountReference> accounts;
     private List<AccountReference> balances;
