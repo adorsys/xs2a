@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.psu;
 
 
 import de.adorsys.psd2.consent.api.WrongChecksumException;
+import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.api.ais.AisAccountAccess;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
@@ -50,6 +51,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -295,6 +297,12 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         consent.setAspspAccountAccesses(aspspAccountAccesses);
         consent.setValidUntil(request.getValidUntil());
         consent.setFrequencyPerDay(request.getFrequencyPerDay());
+
+        AdditionalInformationAccess requestedAdditionalInformationAccess = requestedAisAccountAccess.getAccountAdditionalInformationAccess();
+        if (requestedAdditionalInformationAccess != null) {
+            consent.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(requestedAdditionalInformationAccess.getOwnerName()));
+            consent.setTrustedBeneficiariesType(AdditionalAccountInformationType.findTypeByList(requestedAdditionalInformationAccess.getTrustedBeneficiaries()));
+        }
 
         aisConsentUsageService.resetUsage(consent);
 
