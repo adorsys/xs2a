@@ -4,6 +4,7 @@
 
 * Remove deprecated PaymentAuthorisationType
 * Drop deprecated tables for AIS and PIS authorisations
+* Remove deprecated PiisConsentTppAccessType
 
 == Remove deprecated PaymentAuthorisationType
 
@@ -17,3 +18,7 @@ Following deprecated tables were dropped from CMS database:
 * pis_consent_authorization
 * ais_available_sca_method
 * pis_available_sca_method
+
+== Remove deprecated PiisConsentTppAccessType
+
+Deprecated PiisConsentTppAccessType was removed

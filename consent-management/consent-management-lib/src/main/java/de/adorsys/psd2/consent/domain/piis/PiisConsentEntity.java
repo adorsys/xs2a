@@ -20,7 +20,6 @@ import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -68,10 +67,6 @@ public class PiisConsentEntity extends InstanceDependableEntity {
     @JoinColumn(name = "acc_reference_id")
     @ManyToOne(cascade = CascadeType.ALL)
     private AccountReferenceEntity account;
-
-    @Column(name = "tpp_access_type", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private PiisConsentTppAccessType tppAccessType;
 
     @Column(name = "creation_timestamp", nullable = false)
     private OffsetDateTime creationTimestamp = OffsetDateTime.now();

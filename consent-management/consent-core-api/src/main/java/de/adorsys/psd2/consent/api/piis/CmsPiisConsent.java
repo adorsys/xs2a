@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.api.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.AllArgsConstructor;
@@ -39,11 +38,6 @@ public class CmsPiisConsent {
     private PsuIdData psuData;
     private ConsentStatus consentStatus;
     private AccountReference account;
-    /**
-     * @deprecated since 5.11 and will be removed, all PIIS consent have SINGLE_TPP access type
-     */
-    @Deprecated
-    private PiisConsentTppAccessType tppAccessType;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
     private String cardNumber;
