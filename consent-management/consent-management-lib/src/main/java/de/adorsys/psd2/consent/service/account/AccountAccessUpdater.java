@@ -68,21 +68,33 @@ public class AccountAccessUpdater {
         if (isAdditionalInformationAbsent(existingAccess) || isAdditionalInformationAbsent(requestedAccess)) {
             return existingAccess;
         }
+        return new AdditionalInformationAccess(getAccountReferences(existingAccess.getOwnerName(), requestedAccess.getOwnerName()),
+                                               getAccountReferences(existingAccess.getTrustedBeneficiaries(), requestedAccess.getTrustedBeneficiaries()));
+    }
 
-        assert existingAccess.getOwnerName() != null && existingAccess.getTrustedBeneficiaries() != null;
-        assert requestedAccess.getOwnerName() != null && requestedAccess.getTrustedBeneficiaries() != null;
-        List<AccountReference> updatedOwnerName = existingAccess.getOwnerName().stream()
-                                                      .map(ref -> updateAccountReference(ref, requestedAccess.getOwnerName()))
-                                                      .collect(Collectors.toList());
-        List<AccountReference> updatedTrustedBeneficiaries = existingAccess.getTrustedBeneficiaries().stream()
-                                                                 .map(ref -> updateAccountReference(ref, requestedAccess.getTrustedBeneficiaries()))
-                                                                 .collect(Collectors.toList());
-
-        return new AdditionalInformationAccess(updatedOwnerName, updatedTrustedBeneficiaries);
+    private List<AccountReference> getAccountReferences(List<AccountReference> existing, List<AccountReference> requested){
+        if (existing != null && requested != null) {
+            return existing.stream()
+                       .map(ref -> updateAccountReference(ref, requested))
+                       .collect(Collectors.toList());
+        }
+        return null;
     }
 
     private boolean isAdditionalInformationAbsent(AdditionalInformationAccess additionalInformationAccess) {
-        return additionalInformationAccess == null || additionalInformationAccess.getOwnerName() == null;
+        return additionalInformationAccess == null || isAdditionalInformationEmpty(additionalInformationAccess);
+    }
+
+    private boolean isAdditionalInformationEmpty(AdditionalInformationAccess additionalInformationAccess) {
+        return isOwnerNameAbsent(additionalInformationAccess) && isTrustedBeneficiariesAbsent(additionalInformationAccess);
+    }
+
+    private boolean isOwnerNameAbsent(AdditionalInformationAccess additionalInformationAccess) {
+        return additionalInformationAccess.getOwnerName() == null;
+    }
+
+    private boolean isTrustedBeneficiariesAbsent(AdditionalInformationAccess additionalInformationAccess) {
+        return additionalInformationAccess.getTrustedBeneficiaries() == null;
     }
 
     private AccountReference updateAccountReference(AccountReference existingReference, List<AccountReference> requestedAspspReferences) {
