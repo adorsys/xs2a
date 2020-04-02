@@ -23,7 +23,6 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +64,6 @@ public class PiisConsentMapper {
                                   psuDataMapper.mapToPsuIdData(consentEntity.getPsuDataList().get(0)),
                                   consentEntity.getConsentStatus(),
                                   accountReference,
-                                  PiisConsentTppAccessType.SINGLE_TPP,
                                   consentEntity.getCreationTimestamp(),
                                   consentEntity.getInstanceId(),
                                   piisConsentData.getCardNumber(),
