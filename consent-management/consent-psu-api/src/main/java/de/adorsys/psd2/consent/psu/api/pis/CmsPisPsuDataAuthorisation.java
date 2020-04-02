@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.psu.api.pis;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
@@ -29,8 +28,5 @@ public class CmsPisPsuDataAuthorisation {
     private PsuIdData psu;
     private String authorisationId;
     private ScaStatus scaStatus;
-    @Deprecated
-    // TODO: replace by de.adorsys.psd2.consent.api.authorisation.AuthorisationType https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1197
-    private PaymentAuthorisationType authorisationType;
     private AuthorisationType type;
 }
