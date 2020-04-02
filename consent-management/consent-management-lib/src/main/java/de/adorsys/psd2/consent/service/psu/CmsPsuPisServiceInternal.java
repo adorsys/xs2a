@@ -41,7 +41,6 @@ import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
@@ -236,8 +235,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .map(auth -> new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
                                                                auth.getExternalId(),
                                                                auth.getScaStatus(),
-                                                               AuthorisationType.PIS_CREATION == auth.getAuthorisationType() ?
-                                                                   PaymentAuthorisationType.CREATED : PaymentAuthorisationType.CANCELLED,
                                                                auth.getAuthorisationType()))
                    .collect(Collectors.toList());
     }

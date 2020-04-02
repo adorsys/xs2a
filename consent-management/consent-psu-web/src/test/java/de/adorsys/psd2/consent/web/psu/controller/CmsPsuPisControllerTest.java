@@ -27,7 +27,6 @@ import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
@@ -416,7 +415,7 @@ class CmsPsuPisControllerTest {
     @Test
     void psuAuthorisationStatuses_withValidRequest_shouldReturnOk() throws Exception {
         String cmsPisPsuDataAuthorisationListJson = jsonReader.getStringFromFile("json/pis/response/cms-pis-psu-data-authorisation-list.json");
-        CmsPisPsuDataAuthorisation cmsPisPsuDataAuthorisation = new CmsPisPsuDataAuthorisation(psuIdData, AUTHORISATION_ID, ScaStatus.RECEIVED, PaymentAuthorisationType.CREATED, AuthorisationType.PIS_CREATION);
+        CmsPisPsuDataAuthorisation cmsPisPsuDataAuthorisation = new CmsPisPsuDataAuthorisation(psuIdData, AUTHORISATION_ID, ScaStatus.RECEIVED, AuthorisationType.PIS_CREATION);
         when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID))
             .thenReturn(Optional.of(Collections.singletonList(cmsPisPsuDataAuthorisation)));
 

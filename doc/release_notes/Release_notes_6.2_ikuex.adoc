@@ -1,0 +1,9 @@
+= Release notes v.6.2
+
+== Table of Contents
+
+* Remove deprecated PaymentAuthorisationType
+
+== Remove deprecated PaymentAuthorisationType
+
+Deprecated PaymentAuthorisationType was removed
