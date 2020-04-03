@@ -30,7 +30,6 @@ public interface Xs2aToSpiPiisConsentMapper {
     @Mapping(target = "psuData", expression = "java(piisConsent.getPsuIdData())")
     @Mapping(target = "registrationInformation", source = "consentData.registrationInformation")
     @Mapping(target = "requestDateTime", source = "creationTimestamp")
-    @Mapping(target = "tppAccessType", constant = "SINGLE_TPP")
     @Mapping(target = "tppAuthorisationNumber", source = "consentTppInformation.tppInfo.authorisationNumber")
     @Mapping(target = "instanceId", ignore = true)
     SpiPiisConsent mapToSpiPiisConsent(PiisConsent piisConsent);
