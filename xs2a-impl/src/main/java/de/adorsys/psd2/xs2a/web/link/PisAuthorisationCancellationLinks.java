@@ -51,7 +51,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
         } else if (cancellationScaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
         } else if (cancellationScaApproach == OAUTH) {
-            setScaOAuth(new HrefType("scaOAuth")); //TODO generate link for oauth https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/326
+            setScaOAuth(new HrefType("scaOAuth"));
         }
     }
 

@@ -249,8 +249,6 @@ public class ConsentService {
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (aisConsentOptional.isPresent()) {
-            // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
-
             AisConsent accountConsent = aisConsentOptional.get();
             ValidationResult validationResult = consentValidationService.validateConsentOnDelete(accountConsent);
             if (validationResult.isNotValid()) {

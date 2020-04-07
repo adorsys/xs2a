@@ -27,7 +27,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class BankTransactionCode {
 
-    // todo documentation doesn't have any definition. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/44
     @ApiModelProperty(value = "BankTransactionCode code", example = "123344")
     private String code;
 }

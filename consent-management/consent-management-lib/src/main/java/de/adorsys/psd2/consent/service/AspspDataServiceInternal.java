@@ -35,7 +35,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-// TODO temporary solution to switch off Hibernate dirty check. Need to understand why objects are changed here. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/364
 public class AspspDataServiceInternal implements AspspDataService {
     private final SecurityDataService securityDataService;
     private final AspspConsentDataRepository aspspConsentDataRepository;
