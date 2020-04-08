@@ -200,7 +200,6 @@ public class PaymentService {
                        .build();
         }
 
-        // TODO temporary solution: payment initiation workflow should be clarified https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/582
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
             return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null, null)).build();
         }
