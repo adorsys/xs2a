@@ -121,7 +121,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         if (isPsuDataEquals(paymentId, psuIdData)) {
             List<PisPaymentData> list = pisPaymentDataRepository.findAll(pisPaymentDataSpecification.byPaymentIdAndInstanceId(paymentId, instanceId));
 
-            // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/534
+            // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1143
             if (!list.isEmpty()) {
                 return Optional.of(cmsPsuPisMapper.mapToCmsPayment(list));
             } else {

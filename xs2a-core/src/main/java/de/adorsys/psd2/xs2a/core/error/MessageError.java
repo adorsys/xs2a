@@ -51,7 +51,6 @@ public class MessageError {
         this.errorType = errorHolder.getErrorType();
     }
 
-    // TODO task: add logic to resolve resulting MessageError https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/211
     @JsonIgnore
     public TppMessageInformation getTppMessage() {
         return tppMessages.iterator().next();

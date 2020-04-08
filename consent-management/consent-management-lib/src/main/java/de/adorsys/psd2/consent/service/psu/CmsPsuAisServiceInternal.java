@@ -76,7 +76,6 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-//TODO Discuss instanceId security workflow https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/577
 public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final ConsentJpaRepository consentJpaRepository;
     private final AisConsentVerifyingRepository aisConsentRepository;

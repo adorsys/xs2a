@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class Xs2aAisConsentMapper {
-    // TODO remove this dependency. Should not be dependencies between spi-api and consent-api https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/437
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     private final Xs2aToSpiAccountAccessMapper xs2aToSpiAccountAccessMapper;
     private final ConsentDataMapper consentDataMapper;
