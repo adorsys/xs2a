@@ -44,9 +44,7 @@ public class AccessMapper {
                                                                      a.getCurrency());
             holder.addAccountReference(accountReference, a.getTypeAccess());
         });
-        return new AccountAccess(holder.getAccounts(), holder.getBalances(), holder.getTransactions(),
-                                 new AdditionalInformationAccess(ownerNameType.getReferencesByType(holder.getOwnerNames()),
-                                                                 trustedBeneficiariesType.getReferencesByType(holder.getTrustedBeneficiaries())));
+        return buildAccountAccess(holder, ownerNameType, trustedBeneficiariesType);
     }
 
     public AccountAccess mapAspspAccessesToAccountAccess(List<AspspAccountAccess> aspspAccountAccesses,
@@ -61,9 +59,7 @@ public class AccessMapper {
                                                                      a.getAspspAccountId());
             holder.addAccountReference(accountReference, a.getTypeAccess());
         });
-        return new AccountAccess(holder.getAccounts(), holder.getBalances(), holder.getTransactions(),
-                                 new AdditionalInformationAccess(ownerNameType.getReferencesByType(holder.getOwnerNames()),
-                                                                 trustedBeneficiariesType.getReferencesByType(holder.getTrustedBeneficiaries())));
+        return buildAccountAccess(holder, ownerNameType, trustedBeneficiariesType);
     }
 
     public List<TppAccountAccess> mapToTppAccountAccess(AccountAccess accountAccess) {
@@ -180,5 +176,18 @@ public class AccessMapper {
                 trustedBeneficiaries.add(accountReference);
             }
         }
+    }
+
+    private AccountAccess buildAccountAccess(AccountAccessListHolder holder,
+                                             AdditionalAccountInformationType ownerNameType,
+                                             AdditionalAccountInformationType trustedBeneficiariesType) {
+
+        return new AccountAccess(holder.getAccounts(), holder.getBalances(), holder.getTransactions(),
+                                 new AdditionalInformationAccess(resolveAdditionalAccountInformationType(ownerNameType).getReferencesByType(holder.getOwnerNames()),
+                                                                 resolveAdditionalAccountInformationType(trustedBeneficiariesType).getReferencesByType(holder.getTrustedBeneficiaries())));
+    }
+
+    private AdditionalAccountInformationType resolveAdditionalAccountInformationType(AdditionalAccountInformationType additionalAccountInformationType) {
+        return additionalAccountInformationType == null ? AdditionalAccountInformationType.NONE : additionalAccountInformationType;
     }
 }

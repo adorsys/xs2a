@@ -591,6 +591,142 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "7. Export AIS consents by PSU for old consents",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3fc4e0ae-01a7-4e91-826a-f200e684188d",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Consent is present\", () => {",
+											"    const consent = jsonData.find(consent => {",
+											"        return consent.id === pm.globals.get(\"consent_id\");",
+											"    });",
+											"    pm.expect(consent).not.eql(undefined);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "c7a63bd2-7b8f-44d9-91f4-cf140c8d520c",
+										"exec": [
+											"",
+											"var end = new Date();",
+											"",
+											"",
+											"var dd_end = end.getDate();",
+											"var mm_end = end.getMonth()+1; ",
+											"var yyyy_end = end.getFullYear();",
+											"if(dd_end<10) ",
+											"{",
+											"    dd_end='0'+dd_end;",
+											"} ",
+											"",
+											"if(mm_end<10) ",
+											"{",
+											"    mm_end='0'+mm_end;",
+											"} ",
+											"//==========================",
+											"var start = new Date(end-(3600*24*1000));",
+											"var dd_start = start.getDate();",
+											"var mm_start = start.getMonth()+1; ",
+											"var yyyy_start = start.getFullYear();",
+											"if(dd_start<10) ",
+											"{",
+											"    dd_start='0'+dd_start;",
+											"} ",
+											"",
+											"if(mm_start<10) ",
+											"{",
+											"    mm_start='0'+mm_start;",
+											"} ",
+											"",
+											"var endFormat= yyyy_end+'-'+ mm_end  +'-'+dd_end;",
+											"var startFormat= yyyy_start+'-'+ mm_start  +'-'+dd_start;",
+											"",
+											"",
+											"console.log(\"startFormat : \"+ startFormat);",
+											"console.log(\"endFormat : \"+ endFormat);",
+											"",
+											"pm.globals.set(\"startFormat\", startFormat);",
+											"pm.globals.set(\"endFormat\", endFormat);",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "PSU-ID",
+										"type": "text",
+										"value": "{{psu_id_none}}"
+									},
+									{
+										"key": "PSU-ID-Type",
+										"type": "text",
+										"value": "some type",
+										"disabled": true
+									},
+									{
+										"key": "PSU-Corporate-ID",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									},
+									{
+										"key": "PSU-Corporate-ID- Type",
+										"type": "text",
+										"value": "",
+										"disabled": true
+									},
+									{
+										"key": "Start-Date",
+										"type": "text",
+										"value": "2020-01-01"
+									},
+									{
+										"key": "End-Date",
+										"type": "text",
+										"value": "{{endFormat}}"
+									},
+									{
+										"key": "Instance-ID",
+										"type": "text",
+										"value": "UNDEFINED"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/ais/consents/psu",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_cms}}"
+									],
+									"path": [
+										"aspsp-api",
+										"v1",
+										"ais",
+										"consents",
+										"psu"
+									]
+								}
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},

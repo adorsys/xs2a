@@ -129,4 +129,5 @@
     <include relativeToChangelogFile="true" file="migration/0101-remove-owner-address-type-from-ais-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0102-add-trusted-beneficiaries-type-column-to-consent-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0103-drop-consent-authorization-and-available-sca-method-tables-for-ais-pis.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0104-add-value-to-trusted-beneficiaries-type-column-in-consent-table.xml"/>
 </databaseChangeLog>
