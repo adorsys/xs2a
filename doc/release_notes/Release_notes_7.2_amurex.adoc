@@ -3,10 +3,14 @@
 == Table of Contents
 
 * Change type of `requestDateTime` in `ConsentEntity`
+* Move authorisation-related methods in separate service
 
 == Change type of `requestDateTime` in `ConsentEntity`
 
 From now on, type of `requestDateTime` in `ConsentEntity` was changed from `LocalDateTime` to `OffsetDateTime`.
 The following columns (`request_date_time` and `creation_timestamp`) were modified data type to `DATETIME`.
 
+== Move authorisation-related methods in separate service
 
+From now on, `Xs2aAuthorisationService` is created and contains authorisation functionality.
+`Xs2aAisConsentService` and `Xs2aPisCommonPaymentService` were refactored to move all authorisation-related methods in separate service.

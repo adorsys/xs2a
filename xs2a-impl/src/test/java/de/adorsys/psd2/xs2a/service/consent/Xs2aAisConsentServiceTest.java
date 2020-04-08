@@ -17,27 +17,27 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
-import de.adorsys.psd2.consent.api.*;
+import de.adorsys.psd2.consent.api.ActionStatus;
+import de.adorsys.psd2.consent.api.CmsError;
+import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
-import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
@@ -46,9 +46,9 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +60,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,10 +69,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class Xs2aAisConsentServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
-    private static final String WRONG_CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
-    private static final String WRONG_AUTHORISATION_ID = "00000000-0000-4b5a-8188-c45d85bfa20a";
-    private static final String AUTHENTICATION_METHOD_ID = "19ff-4b5a-8188";
     private static final String TPP_ID = "Test TppId";
     private static final String REQUEST_URI = "request/uri";
     private static final String REDIRECT_URI = "request/redirect_uri";
@@ -86,10 +82,6 @@ class Xs2aAisConsentServiceTest {
     private static final CmsConsent CMS_CONSENT = new CmsConsent();
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.VALID;
     private static final CreateAuthorisationRequest AIS_CONSENT_AUTHORISATION_REQUEST = buildAisConsentAuthorisationRequest();
-    private static final List<String> STRING_LIST = Collections.singletonList(AUTHORISATION_ID);
-    private static final List<AuthenticationObject> AUTHENTICATION_OBJECT_LIST = Collections.singletonList(new AuthenticationObject());
-    private static final List<CmsScaMethod> CMS_SCA_METHOD_LIST = Collections.singletonList(new CmsScaMethod(AUTHORISATION_ID, true));
-    private static final String INTERNAL_REQUEST_ID = "1234-5678-9012-3456";
 
     @InjectMocks
     private Xs2aAisConsentService xs2aAisConsentService;
@@ -99,15 +91,13 @@ class Xs2aAisConsentServiceTest {
     @Mock
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
     @Mock
-    private AuthorisationServiceEncrypted authorisationServiceEncrypted;
+    private Xs2aAuthorisationService authorisationService;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     private Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
     @Mock
     private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
-    @Mock
-    private Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
     @Mock
     private ScaApproachResolver scaApproachResolver;
     @Mock
@@ -145,6 +135,22 @@ class Xs2aAisConsentServiceTest {
         // Then
         assertTrue(actualResponse.isPresent());
         assertEquals(expected, actualResponse.get());
+    }
+
+    @Test
+    void createConsent_WrongChecksumException() throws WrongChecksumException {
+        // Given
+        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
+            .thenReturn(1);
+        when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
+            .thenReturn(CMS_CONSENT);
+        when(consentServiceEncrypted.createConsent(any())).thenThrow(new WrongChecksumException());
+
+        // When
+        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+
+        // Then
+        assertTrue(actualResponse.isEmpty());
     }
 
     @Test
@@ -226,15 +232,15 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
             .thenReturn(AIS_CONSENT_AUTHORISATION_REQUEST);
-        when(authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(CONSENT_ID), AIS_CONSENT_AUTHORISATION_REQUEST))
-            .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(buildCreateAisConsentAuthorizationResponse()).build());
+        when(authorisationService.createAuthorisation(AIS_CONSENT_AUTHORISATION_REQUEST, CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
             .thenReturn(NOK_REDIRECT_URI);
 
         // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
+        Optional<CreateAuthorisationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -244,139 +250,21 @@ class Xs2aAisConsentServiceTest {
     @Test
     void createAisConsentAuthorization_false() {
         // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
-        when(authorisationServiceEncrypted.createAuthorisation(any(AisAuthorisationParentHolder.class), any()))
-            .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(requestProviderService.getTppRedirectURI()).thenReturn("ok.uri");
+        when(requestProviderService.getTppNokRedirectURI()).thenReturn("nok.uri");
+
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(SCA_APPROACH);
+        CreateAuthorisationRequest request = new CreateAuthorisationRequest();
+        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, "ok.uri", "nok.uri"))
+            .thenReturn(request);
+        when(authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.AIS))
+            .thenReturn(Optional.empty());
 
         // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA);
+        Optional<CreateAuthorisationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    void getAccountConsentAuthorizationById_failed() {
-        // Given
-        when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
-            .thenReturn(CmsResponse.<Authorisation>builder().error(CmsError.TECHNICAL_ERROR).build());
-
-        // When
-        Optional<Authorisation> actualResponse = xs2aAisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    void getAuthorisationSubResources_success() {
-        // Given
-        when(authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(CONSENT_ID)))
-            .thenReturn(CmsResponse.<List<String>>builder().payload(STRING_LIST).build());
-
-        // When
-        Optional<List<String>> actualResponse = xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(STRING_LIST);
-    }
-
-    @Test
-    void getAuthorisationSubResources_failed() {
-        // Given
-        when(authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(CONSENT_ID)))
-            .thenReturn(CmsResponse.<List<String>>builder().error(CmsError.TECHNICAL_ERROR).build());
-
-        // When
-        Optional<List<String>> actualResponse = xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    void getAuthorisationScaStatus_success() {
-        // Given
-        when(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new AisAuthorisationParentHolder(CONSENT_ID)))
-            .thenReturn(CmsResponse.<ScaStatus>builder().payload(SCA_STATUS).build());
-
-        // When
-        Optional<ScaStatus> actualResponse = xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SCA_STATUS);
-    }
-
-    @Test
-    void getAuthorisationScaStatus_failed() {
-        // Given
-        when(authorisationServiceEncrypted.getAuthorisationScaStatus(WRONG_AUTHORISATION_ID, new AisAuthorisationParentHolder(WRONG_CONSENT_ID)))
-            .thenReturn(CmsResponse.<ScaStatus>builder().error(CmsError.TECHNICAL_ERROR).build());
-
-        // When
-        Optional<ScaStatus> actualResponse = xs2aAisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
-    }
-
-    @Test
-    void isAuthenticationMethodDecoupled_success() {
-        // Given
-        when(authorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
-
-        // When
-        boolean actualResponse = xs2aAisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
-
-        // Then
-        assertThat(actualResponse).isTrue();
-    }
-
-    @Test
-    void isAuthenticationMethodDecoupled_failed() {
-        // Given
-        when(authorisationServiceEncrypted.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
-
-        // When
-        boolean actualResponse = xs2aAisConsentService.isAuthenticationMethodDecoupled(AUTHORISATION_ID, AUTHENTICATION_METHOD_ID);
-
-        // Then
-        assertThat(actualResponse).isFalse();
-    }
-
-    @Test
-    void saveAuthenticationMethods_success() {
-        // Given
-        when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
-            .thenReturn(CMS_SCA_METHOD_LIST);
-        when(authorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
-
-        // When
-        boolean actualResponse = xs2aAisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
-
-        // Then
-        assertThat(actualResponse).isTrue();
-    }
-
-    @Test
-    void saveAuthenticationMethods_failed() {
-        // Given
-        when(xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(AUTHENTICATION_OBJECT_LIST))
-            .thenReturn(CMS_SCA_METHOD_LIST);
-        when(authorisationServiceEncrypted.saveAuthenticationMethods(AUTHORISATION_ID, CMS_SCA_METHOD_LIST))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
-
-        // When
-        boolean actualResponse = xs2aAisConsentService.saveAuthenticationMethods(AUTHORISATION_ID, AUTHENTICATION_OBJECT_LIST);
-
-        // Then
-        assertThat(actualResponse).isFalse();
     }
 
     @Test
@@ -391,6 +279,20 @@ class Xs2aAisConsentServiceTest {
         // Then
         verify(consentServiceEncrypted).updateConsentStatusById(CONSENT_ID, CONSENT_STATUS);
         verify(loggingContextService).storeConsentStatus(CONSENT_STATUS);
+    }
+
+    @Test
+    void updateConsentStatus_WrongChecksumException() throws WrongChecksumException {
+        // Given
+        when(consentServiceEncrypted.updateConsentStatusById(CONSENT_ID, CONSENT_STATUS))
+            .thenThrow(new WrongChecksumException());
+
+        // When
+        xs2aAisConsentService.updateConsentStatus(CONSENT_ID, CONSENT_STATUS);
+
+        // Then
+        verify(consentServiceEncrypted, times(1)).updateConsentStatusById(CONSENT_ID, CONSENT_STATUS);
+        verify(loggingContextService, never()).storeConsentStatus(any(ConsentStatus.class));
     }
 
     @Test
@@ -412,6 +314,28 @@ class Xs2aAisConsentServiceTest {
         // Given
         ActionStatus actionStatus = ActionStatus.SUCCESS;
         ArgumentCaptor<AisConsentActionRequest> argumentCaptor = ArgumentCaptor.forClass(AisConsentActionRequest.class);
+
+        // When
+        xs2aAisConsentService.consentActionLog(TPP_ID, CONSENT_ID, actionStatus, REQUEST_URI, true, null, null);
+
+        // Then
+        verify(aisConsentServiceEncrypted).checkConsentAndSaveActionLog(argumentCaptor.capture());
+
+        AisConsentActionRequest aisConsentActionRequest = argumentCaptor.getValue();
+        assertThat(aisConsentActionRequest.getTppId()).isEqualTo(TPP_ID);
+        assertThat(aisConsentActionRequest.getConsentId()).isEqualTo(CONSENT_ID);
+        assertThat(aisConsentActionRequest.getActionStatus()).isEqualTo(actionStatus);
+        assertThat(aisConsentActionRequest.getRequestUri()).isEqualTo(REQUEST_URI);
+        assertThat(aisConsentActionRequest.isUpdateUsage()).isTrue();
+    }
+
+    @Test
+    void consentActionLog_WrongChecksumException() throws WrongChecksumException {
+        // Given
+        ActionStatus actionStatus = ActionStatus.SUCCESS;
+        ArgumentCaptor<AisConsentActionRequest> argumentCaptor = ArgumentCaptor.forClass(AisConsentActionRequest.class);
+        when(aisConsentServiceEncrypted.checkConsentAndSaveActionLog(any(AisConsentActionRequest.class)))
+            .thenThrow(WrongChecksumException.class);
 
         // When
         xs2aAisConsentService.consentActionLog(TPP_ID, CONSENT_ID, actionStatus, REQUEST_URI, true, null, null);
@@ -456,37 +380,19 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(request);
 
         // When
-        xs2aAisConsentService.updateConsentAuthorization(updateConsentPsuDataReq);
+        xs2aAisConsentService.updateConsentAuthorisation(updateConsentPsuDataReq);
 
         // Then
-        verify(authorisationServiceEncrypted, times(1)).updateAuthorisation(AUTHORISATION_ID, request);
+        verify(authorisationService, times(1)).updateAuthorisation(request, AUTHORISATION_ID);
     }
 
     @Test
     void updateConsentAuthorization_nullValue() {
         // When
-        xs2aAisConsentService.updateConsentAuthorization(null);
+        xs2aAisConsentService.updateConsentAuthorisation(null);
 
         // Then
-        verify(authorisationServiceEncrypted, never()).updateAuthorisation(any(), any());
-    }
-
-    @Test
-    void updateConsentAuthorisationStatus() {
-        // When
-        xs2aAisConsentService.updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.RECEIVED);
-
-        // Then
-        verify(authorisationServiceEncrypted, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.RECEIVED);
-    }
-
-    @Test
-    void updateScaApproach() {
-        // When
-        xs2aAisConsentService.updateScaApproach(AUTHORISATION_ID, ScaApproach.REDIRECT);
-
-        // Then
-        verify(authorisationServiceEncrypted, times(1)).updateScaApproach(AUTHORISATION_ID, ScaApproach.REDIRECT);
+        verify(authorisationService, never()).updateAuthorisation(any(), any());
     }
 
     @Test
@@ -499,34 +405,66 @@ class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    void getAuthorisationScaApproach() {
-        // Given
-        AuthorisationScaApproachResponse payload = new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED);
-        when(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
-            .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
-                            .payload(payload)
-                            .build());
-
+    void updateMultilevelScaRequired_WrongChecksumException() throws WrongChecksumException {
         // When
-        assertEquals(Optional.of(payload), xs2aAisConsentService.getAuthorisationScaApproach(AUTHORISATION_ID));
+        doThrow(new WrongChecksumException()).when(consentServiceEncrypted).updateMultilevelScaRequired(CONSENT_ID, true);
 
         // Then
-        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(AUTHORISATION_ID);
+        xs2aAisConsentService.updateMultilevelScaRequired(CONSENT_ID, true);
+        verify(consentServiceEncrypted, times(1)).updateMultilevelScaRequired(CONSENT_ID, true);
     }
 
     @Test
-    void getAuthorisationScaApproach_error() {
-        // Given
-        when(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
-            .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
-                            .error(CmsError.TECHNICAL_ERROR)
-                            .build());
+    void getAuthorisationScaStatus() {
+        xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+        verify(authorisationService, times(1)).getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.AIS);
+    }
 
-        // When
-        assertEquals(Optional.empty(), xs2aAisConsentService.getAuthorisationScaApproach(AUTHORISATION_ID));
+    @Test
+    void getAuthorisationSubResources() {
+        xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
+        verify(authorisationService, times(1)).getAuthorisationSubResources(CONSENT_ID, AuthorisationType.AIS);
+    }
 
-        // Then
-        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(AUTHORISATION_ID);
+    @Test
+    void updateAspspAccountAccess() throws WrongChecksumException {
+        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/aspect/account-access.json", AccountAccess.class);
+
+        CmsConsent cmsConsent = new CmsConsent();
+        when(aisConsentServiceEncrypted.updateAspspAccountAccess(CONSENT_ID, accountAccess))
+            .thenReturn(CmsResponse.<CmsConsent>builder().payload(cmsConsent).build());
+        when(aisConsentMapper.mapToAisConsent(cmsConsent)).thenReturn(aisConsent);
+
+        CmsResponse<AisConsent> actual = xs2aAisConsentService.updateAspspAccountAccess(CONSENT_ID, accountAccess);
+
+        assertFalse(actual.hasError());
+        assertEquals(aisConsent, actual.getPayload());
+    }
+
+    @Test
+    void updateAspspAccountAccess_checksumError() throws WrongChecksumException {
+        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/aspect/account-access.json", AccountAccess.class);
+
+        when(aisConsentServiceEncrypted.updateAspspAccountAccess(CONSENT_ID, accountAccess))
+            .thenThrow(new WrongChecksumException());
+
+        CmsResponse<AisConsent> actual = xs2aAisConsentService.updateAspspAccountAccess(CONSENT_ID, accountAccess);
+
+        assertTrue(actual.hasError());
+        assertEquals(CmsError.CHECKSUM_ERROR, actual.getError());
+    }
+
+    @Test
+    void updateAspspAccountAccess_updateError() throws WrongChecksumException {
+        AccountAccess accountAccess = jsonReader.getObjectFromFile("json/aspect/account-access.json", AccountAccess.class);
+
+        when(aisConsentServiceEncrypted.updateAspspAccountAccess(CONSENT_ID, accountAccess))
+            .thenReturn(CmsResponse.<CmsConsent>builder().error(CmsError.TECHNICAL_ERROR).build());
+
+        CmsResponse<AisConsent> actual = xs2aAisConsentService.updateAspspAccountAccess(CONSENT_ID, accountAccess);
+
+        assertTrue(actual.hasError());
+        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
     }
 
     private static TppInfo buildTppInfo() {

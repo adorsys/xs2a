@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
@@ -57,6 +58,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
     private final Xs2aEventService xs2aEventService;
     private final PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
+    private final Xs2aAuthorisationService authorisationService;
     private final Xs2aPisCommonPaymentService pisCommonPaymentService;
     private final CreatePisAuthorisationValidator createPisAuthorisationValidator;
     private final UpdatePisCommonPaymentPsuDataValidator updatePisCommonPaymentPsuDataValidator;
@@ -118,7 +120,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(request.getPaymentId());
-        if (!pisCommonPaymentResponse.isPresent()) {
+        if (pisCommonPaymentResponse.isEmpty()) {
             log.info("Payment-ID [{}]. Update PIS CommonPayment PSU data failed. PIS CommonPayment not found by id",
                      request.getPaymentId());
             return ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
@@ -134,7 +136,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
             MessageErrorCode messageErrorCode = validationResult.getMessageError().getTppMessage().getMessageErrorCode();
 
             if (EnumSet.of(PSU_CREDENTIALS_INVALID, FORMAT_ERROR_NO_PSU).contains(messageErrorCode)) {
-                pisCommonPaymentService.updatePisAuthorisationStatus(request.getAuthorisationId(), ScaStatus.FAILED);
+                authorisationService.updateAuthorisationStatus(request.getAuthorisationId(), ScaStatus.FAILED);
             }
 
             log.info("Payment-ID [{}]. Update PIS CommonPayment PSU data - validation failed: {}",
@@ -168,7 +170,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        if (!pisCommonPaymentResponseOptional.isPresent()) {
+        if (pisCommonPaymentResponseOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get Payment authorisation failed. PIS CommonPayment not found by id", paymentId);
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -212,7 +214,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        if (!pisCommonPaymentResponseOptional.isPresent()) {
+        if (pisCommonPaymentResponseOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get SCA status payment initiation authorisation failed. PIS CommonPayment not found by id",
                      paymentId);
             return ResponseObject.<ScaStatus>builder()
@@ -236,7 +238,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService(authorisationId);
         Optional<ScaStatus> scaStatusOptional = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
 
-        if (!scaStatusOptional.isPresent()) {
+        if (scaStatusOptional.isEmpty()) {
             return ResponseObject.<ScaStatus>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
@@ -255,7 +257,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         xs2aEventService.recordPisTppRequest(paymentId, EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
-        if (!pisCommonPaymentResponseOptional.isPresent()) {
+        if (pisCommonPaymentResponseOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Create PIS Authorisation failed. PIS CommonPayment not found by id", paymentId);
             return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -279,7 +281,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         PsuIdData psuIdData = getActualPsuData(psuDataFromRequest, paymentId, pisCommonPayment.isMultilevelScaRequired());
         Optional<Xs2aCreatePisAuthorisationResponse> commonPaymentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(paymentId, paymentService, psuIdData);
 
-        if (!commonPaymentAuthorisation.isPresent()) {
+        if (commonPaymentAuthorisation.isEmpty()) {
             return ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
                        .fail(PIS_400, of(PAYMENT_FAILED))
                        .build();

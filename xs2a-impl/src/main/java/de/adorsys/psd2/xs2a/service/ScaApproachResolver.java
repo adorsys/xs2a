@@ -17,15 +17,11 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
-import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,20 +32,14 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 @Slf4j
 @Service
 public class ScaApproachResolver {
-    private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
-    private final Xs2aAisConsentService xs2aAisConsentService;
-    private final PisAuthorisationService pisAuthorisationService;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final AspspProfileService aspspProfileService;
     private final RequestProviderService requestProviderService;
 
-    public ScaApproachResolver(ServiceTypeDiscoveryService serviceTypeDiscoveryService,
-                               @Lazy Xs2aAisConsentService xs2aAisConsentService,
-                               @Lazy PisAuthorisationService pisAuthorisationService,
+    public ScaApproachResolver(Xs2aAuthorisationService xs2aAuthorisationService,
                                AspspProfileService aspspProfileService,
                                RequestProviderService requestProviderService) {
-        this.serviceTypeDiscoveryService = serviceTypeDiscoveryService;
-        this.xs2aAisConsentService = xs2aAisConsentService;
-        this.pisAuthorisationService = pisAuthorisationService;
+        this.xs2aAuthorisationService = xs2aAuthorisationService;
         this.aspspProfileService = aspspProfileService;
         this.requestProviderService = requestProviderService;
     }
@@ -69,7 +59,7 @@ public class ScaApproachResolver {
         List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches();
         ScaApproach firstScaApproach = getFirst(scaApproaches);
         Optional<Boolean> tppRedirectPreferredOptional = requestProviderService.resolveTppRedirectPreferred();
-        if (!tppRedirectPreferredOptional.isPresent()) {
+        if (tppRedirectPreferredOptional.isEmpty()) {
             return firstScaApproach;
         }
 
@@ -100,17 +90,11 @@ public class ScaApproachResolver {
 
     @NotNull
     private ScaApproach resolveScaApproach(@NotNull String authorisationId) {
-        Optional<AuthorisationScaApproachResponse> scaApproachResponse = Optional.empty();
-        ServiceType serviceType = serviceTypeDiscoveryService.getServiceType();
-        if (serviceType == ServiceType.AIS) {
-            scaApproachResponse = xs2aAisConsentService.getAuthorisationScaApproach(authorisationId);
-        } else if (serviceType == ServiceType.PIS) {
-            scaApproachResponse = pisAuthorisationService.getAuthorisationScaApproach(authorisationId);
-        }
+        Optional<AuthorisationScaApproachResponse> scaApproachResponse = xs2aAuthorisationService.getAuthorisationScaApproach(authorisationId);
 
-        if (!scaApproachResponse.isPresent()) {
+        if (scaApproachResponse.isEmpty()) {
             log.info("Couldn't retrieve SCA approach from the authorisation with id: {}", authorisationId);
-            throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId );
+            throw new IllegalArgumentException("Wrong authorisation id: " + authorisationId);
         }
 
         return scaApproachResponse.get().getScaApproach();
