@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.*;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -94,6 +95,8 @@ class PisAuthorisationProcessorServiceImplTest {
     @Mock
     private PisAspspDataService pisAspspDataService;
     @Mock
+    private Xs2aAuthorisationService xs2aAuthorisationService;
+    @Mock
     private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
     @Mock
     private SpiContextDataProvider spiContextDataProvider;
@@ -125,7 +128,7 @@ class PisAuthorisationProcessorServiceImplTest {
 
         when(embeddedPisScaAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
 
-        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(services, null, null, null, null, null, null, null, null, null, null, null, null);
+        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(services, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         //When
         pisAuthorisationProcessorService.updateAuthorisation(buildAuthorisationProcessorRequest(), buildAuthorisationProcessorResponse());
@@ -157,7 +160,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -190,10 +193,10 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.SCAMETHODSELECTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         assertThat(actual.getChosenScaMethod()).isEqualTo(buildAuthenticationObject());
         assertThat(actual.getChallengeData()).isEqualTo(buildChallengeData());
-        verify(xs2aPisCommonPaymentService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
+        verify(xs2aAuthorisationService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
     }
 
     @Test
@@ -215,9 +218,9 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.PSUAUTHENTICATED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         assertThat(actual.getAvailableScaMethods()).isEqualTo(buildXs2aAuthenticationObjectList());
-        verify(xs2aPisCommonPaymentService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
+        verify(xs2aAuthorisationService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
     }
 
     @Test
@@ -281,7 +284,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -369,7 +372,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -496,7 +499,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -545,7 +548,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
     @Test
@@ -585,7 +588,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -618,10 +621,10 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.SCAMETHODSELECTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         assertThat(actual.getChosenScaMethod()).isEqualTo(buildAuthenticationObject());
         assertThat(actual.getChallengeData()).isEqualTo(buildChallengeData());
-        verify(xs2aPisCommonPaymentService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
+        verify(xs2aAuthorisationService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
     }
 
     @Test
@@ -643,9 +646,9 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.PSUAUTHENTICATED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         assertThat(actual.getAvailableScaMethods()).isEqualTo(buildXs2aAuthenticationObjectList());
-        verify(xs2aPisCommonPaymentService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
+        verify(xs2aAuthorisationService).saveAuthenticationMethods(eq(TEST_AUTHORISATION_ID), any());
     }
 
     @Test
@@ -709,7 +712,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -797,7 +800,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -923,7 +926,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -972,7 +975,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.PSUIDENTIFIED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
     @Test
@@ -996,7 +999,7 @@ class PisAuthorisationProcessorServiceImplTest {
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
             .thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
@@ -1012,26 +1015,26 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.SCAMETHODSELECTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
     @Test
     void doScaPsuAuthenticated_decoupled_success() {
         // Given
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(true);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(true);
 
         // When
         pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
 
         // Then
-        verify(xs2aPisCommonPaymentService).updateScaApproach(TEST_AUTHORISATION_ID, ScaApproach.DECOUPLED);
+        verify(xs2aAuthorisationService).updateScaApproach(TEST_AUTHORISATION_ID, ScaApproach.DECOUPLED);
         verify(pisCommonDecoupledService).proceedDecoupledInitiation(any(), any(), any());
     }
 
     @Test
     void doScaPsuAuthenticated_embedded_spi_hasError_failure() {
         // Given
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                   .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                                   .build();
@@ -1053,7 +1056,7 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuAuthenticated_embedded_empty_result_failure() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
@@ -1079,7 +1082,7 @@ class PisAuthorisationProcessorServiceImplTest {
     @Test
     void doScaPsuAuthenticated_embedded_sca_exemption_success() {
         // Given
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
@@ -1104,14 +1107,14 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
     @Test
     void doScaPsuAuthenticated_embedded_sca_exemption_payment_execution_failure() {
         // Given
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
 
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
@@ -1141,7 +1144,7 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuAuthenticated_embedded_sca_exemption_multilevel_status_success() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = new PisCommonPaymentResponse();
-        when(xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
+        when(xs2aAuthorisationService.isAuthenticationMethodDecoupled(eq(TEST_AUTHORISATION_ID), any())).thenReturn(false);
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(PisCommonPaymentResponse.class))).thenReturn(TEST_SPI_SINGLE_PAYMENT);
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = buildSpiAuthorizationCodeResult();
@@ -1163,7 +1166,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_MULTILEVEL_SCA);
         verify(xs2aPisCommonPaymentService).updateMultilevelSca(TEST_PAYMENT_ID, true);
     }
@@ -1186,7 +1189,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(updatePaymentAfterSpiService).updatePaymentStatus(TEST_PAYMENT_ID, TEST_TRANSACTION_STATUS_SUCCESS);
     }
 
@@ -1208,7 +1211,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
         verify(xs2aPisCommonPaymentService).updateMultilevelSca(TEST_PAYMENT_ID, true);
     }
 
@@ -1244,7 +1247,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.EXEMPTED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
     @Test
@@ -1265,7 +1268,7 @@ class PisAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat(actual.getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
     @Test

@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
@@ -92,6 +93,8 @@ class PaymentAuthorisationServiceTest {
     private PisScaAuthorisationServiceResolver pisScaAuthorisationServiceResolver;
     @Mock
     private PisScaAuthorisationService pisScaAuthorisationService;
+    @Mock
+    private Xs2aAuthorisationService authorisationService;
     @Mock
     private Xs2aPisCommonPaymentService pisCommonPaymentService;
     @Mock

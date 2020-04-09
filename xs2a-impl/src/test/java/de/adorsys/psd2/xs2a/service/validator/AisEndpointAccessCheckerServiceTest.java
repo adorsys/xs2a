@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +42,7 @@ class AisEndpointAccessCheckerServiceTest {
     private AisEndpointAccessCheckerService aisEndpointAccessCheckerService;
 
     @Mock
-    private Xs2aAisConsentService aisConsentService;
+    private Xs2aAuthorisationService authorisationService;
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
@@ -53,7 +53,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.RECEIVED, ScaApproach.REDIRECT)));
 
         boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
@@ -67,7 +67,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.REDIRECT)));
 
         boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
@@ -81,7 +81,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.DECOUPLED)));
 
         boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
@@ -95,7 +95,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
 
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.EMBEDDED)));
 
         boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);

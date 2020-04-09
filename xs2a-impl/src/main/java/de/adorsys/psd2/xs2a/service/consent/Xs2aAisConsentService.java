@@ -22,23 +22,18 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.authorisation.AisAuthorisationParentHolder;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
-import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
-import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
@@ -46,9 +41,9 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,11 +59,9 @@ import java.util.Optional;
 public class Xs2aAisConsentService {
     private final ConsentServiceEncrypted consentService;
     private final AisConsentServiceEncrypted aisConsentService;
-    // ToDo move authorisation-related methods out of the service https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1198
-    private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
+    private final Xs2aAuthorisationService authorisationService;
     private final Xs2aAisConsentMapper aisConsentMapper;
     private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
-    private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final ScaApproachResolver scaApproachResolver;
     private final RequestProviderService requestProviderService;
@@ -157,12 +150,12 @@ public class Xs2aAisConsentService {
     /**
      * Sends a POST request to CMS to perform decrement of consent usages and report status of the operation held with certain AIS consent
      *
-     * @param tppId        String representation of TPP`s identifier from TPP Certificate
-     * @param consentId    String representation of identifier of stored consent
-     * @param actionStatus Enum value representing whether the action is successful or errors occurred
-     * @param requestUri   target URL of the request
-     * @param updateUsage  Update usage indicator
-     * @param resourceId   The identification that denotes the addressed account
+     * @param tppId         String representation of TPP`s identifier from TPP Certificate
+     * @param consentId     String representation of identifier of stored consent
+     * @param actionStatus  Enum value representing whether the action is successful or errors occurred
+     * @param requestUri    target URL of the request
+     * @param updateUsage   Update usage indicator
+     * @param resourceId    The identification that denotes the addressed account
      * @param transactionId String representation of ASPSP transaction primary identifier
      */
     public void consentActionLog(String tppId, String consentId, ActionStatus actionStatus, String requestUri, boolean updateUsage,
@@ -182,34 +175,11 @@ public class Xs2aAisConsentService {
      * @param psuData   authorisation data about PSU
      * @return CreateAisConsentAuthorizationResponse object with authorisation ID and scaStatus
      */
-    public Optional<CreateAuthorisationResponse> createAisConsentAuthorization(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
+    public Optional<CreateAuthorisationResponse> createAisConsentAuthorisation(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
         String tppRedirectURI = requestProviderService.getTppRedirectURI();
         String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
         CreateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
-        CmsResponse<CreateAuthorisationResponse> authorisationResponse = authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(consentId), request);
-
-        if (authorisationResponse.hasError()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(authorisationResponse.getPayload());
-    }
-
-    /**
-     * Requests CMS to retrieve AIS consent authorisation by its identifier
-     *
-     * @param authorizationId String representation of identifier of stored consent authorisation
-     * @return Response containing AIS Consent Authorisation
-     */
-
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
-        CmsResponse<Authorisation> authorisationResponse = authorisationServiceEncrypted.getAuthorisationById(authorizationId);
-
-        if (authorisationResponse.hasError()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(authorisationResponse.getPayload());
+        return authorisationService.createAuthorisation(request, consentId, AuthorisationType.AIS);
     }
 
     /**
@@ -217,24 +187,13 @@ public class Xs2aAisConsentService {
      *
      * @param updatePsuData Consent PSU data
      */
-    public void updateConsentAuthorization(UpdateConsentPsuDataReq updatePsuData) {
+    public void updateConsentAuthorisation(UpdateConsentPsuDataReq updatePsuData) {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
-                final String authorizationId = req.getAuthorizationId();
                 final UpdateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(req);
 
-                authorisationServiceEncrypted.updateAuthorisation(authorizationId, request);
+                authorisationService.updateAuthorisation(request, req.getAuthorizationId());
             });
-    }
-
-    /**
-     * Sends a PUT request to CMS to update status in consent authorisation
-     *
-     * @param authorisationId String representation of authorisation identifier
-     * @param scaStatus       Enum for status of the SCA method applied
-     */
-    public void updateConsentAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, scaStatus);
     }
 
     /**
@@ -269,13 +228,7 @@ public class Xs2aAisConsentService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
-        CmsResponse<List<String>> response = authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(consentId));
-
-        if (response.hasError()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(response.getPayload());
+        return authorisationService.getAuthorisationSubResources(consentId, AuthorisationType.AIS);
     }
 
     /**
@@ -286,47 +239,7 @@ public class Xs2aAisConsentService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        CmsResponse<ScaStatus> response = authorisationServiceEncrypted.getAuthorisationScaStatus(authorisationId, new AisAuthorisationParentHolder(consentId));
-
-        if (response.hasError()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(response.getPayload());
-    }
-
-    /**
-     * Requests CMS to retrieve authentication method and checks if requested authentication method is decoupled.
-     *
-     * @param authorisationId        String representation of the authorisation identifier
-     * @param authenticationMethodId String representation of the available authentication method identifier
-     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
-     */
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        CmsResponse<Boolean> response = authorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
-        return response.isSuccessful() && response.getPayload();
-    }
-
-    /**
-     * Saves authentication methods in provided authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @param methods         List of authentication methods to be saved
-     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
-     */
-    public boolean saveAuthenticationMethods(String authorisationId, List<AuthenticationObject> methods) {
-        CmsResponse<Boolean> response = authorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
-        return response.isSuccessful() && response.getPayload();
-    }
-
-    /**
-     * Updates AIS SCA approach in authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @param scaApproach     Chosen SCA approach
-     */
-    public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        authorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
+        return authorisationService.getAuthorisationScaStatus(authorisationId, consentId, AuthorisationType.AIS);
     }
 
     /**
@@ -343,19 +256,4 @@ public class Xs2aAisConsentService {
         }
     }
 
-    /**
-     * Gets SCA approach from the authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @return SCA approach
-     */
-    public Optional<AuthorisationScaApproachResponse> getAuthorisationScaApproach(String authorisationId) {
-        CmsResponse<AuthorisationScaApproachResponse> response = authorisationServiceEncrypted.getAuthorisationScaApproach(authorisationId);
-
-        if (response.hasError()) {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(response.getPayload());
-    }
 }

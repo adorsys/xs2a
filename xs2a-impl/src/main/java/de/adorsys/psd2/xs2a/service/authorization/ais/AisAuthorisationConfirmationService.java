@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -63,6 +64,7 @@ public class AisAuthorisationConfirmationService {
     private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final Xs2aAuthorisationService authorisationService;
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentSpi aisConsentSpi;
     private final Xs2aAisConsentMapper aisConsentMapper;
@@ -117,7 +119,7 @@ public class AisAuthorisationConfirmationService {
         String authorisationId = request.getAuthorisationId();
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
         PsuIdData psuData = request.getPsuData();
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             return buildConsentNotFoundErrorResponse(consentId, authorisationId, psuData);
         }
 
@@ -143,7 +145,7 @@ public class AisAuthorisationConfirmationService {
 
         if (spiResponse.isSuccessful()) {
             SpiConsentConfirmationCodeValidationResponse payload = spiResponse.getPayload();
-            aisConsentService.updateConsentAuthorisationStatus(authorisationId, payload.getScaStatus());
+            authorisationService.updateAuthorisationStatus(authorisationId, payload.getScaStatus());
             aisConsentService.updateConsentStatus(consentId, payload.getConsentStatus());
         }
 
@@ -156,7 +158,7 @@ public class AisAuthorisationConfirmationService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             return buildConsentNotFoundErrorResponse(consentId, authorisationId, request.getPsuData());
         }
 
@@ -180,7 +182,7 @@ public class AisAuthorisationConfirmationService {
                                                                             request.getPsuData());
         }
 
-        aisConsentService.updateConsentAuthorisationStatus(authorisationId, updateConsentPsuDataResponse.getScaStatus());
+        authorisationService.updateAuthorisationStatus(authorisationId, updateConsentPsuDataResponse.getScaStatus());
         return updateConsentPsuDataResponse;
     }
 

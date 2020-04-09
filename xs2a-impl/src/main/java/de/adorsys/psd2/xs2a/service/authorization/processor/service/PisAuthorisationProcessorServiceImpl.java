@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisCommonDecoupledService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisExecutePaymentService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
@@ -72,10 +73,11 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
                                                 SpiContextDataProvider spiContextDataProvider, SpiErrorMapper spiErrorMapper,
                                                 SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                                 Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService,
+                                                Xs2aAuthorisationService xs2aAuthorisationService,
                                                 Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                 PaymentAuthorisationSpi paymentAuthorisationSpi,
                                                 PisCommonDecoupledService pisCommonDecoupledService, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
-        super(services, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
+        super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
               pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
         this.pisExecutePaymentService = pisExecutePaymentService;

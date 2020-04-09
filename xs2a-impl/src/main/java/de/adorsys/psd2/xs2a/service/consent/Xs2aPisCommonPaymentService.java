@@ -20,17 +20,11 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
-import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAuthenticationObjectToCmsScaMethodMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -38,8 +32,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class Xs2aPisCommonPaymentService {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
-    private final AuthorisationServiceEncrypted authorisationServiceEncrypted;
-    private final Xs2aAuthenticationObjectToCmsScaMethodMapper xs2AAuthenticationObjectToCmsScaMethodMapper;
 
     public CreatePisCommonPaymentResponse createCommonPayment(PisPaymentInfo request) {
         CmsResponse<CreatePisCommonPaymentResponse> response = pisCommonPaymentServiceEncrypted.createCommonPayment(request);
@@ -61,45 +53,6 @@ public class Xs2aPisCommonPaymentService {
         }
 
         return Optional.ofNullable(response.getPayload());
-    }
-
-    public boolean updatePisAuthorisationStatus(String authorisationId, ScaStatus scaStatus) {
-        CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, scaStatus);
-        return response.isSuccessful() && response.getPayload();
-    }
-
-    /**
-     * Requests CMS to retrieve authentication method and checks if requested authentication method is decoupled.
-     *
-     * @param authorisationId        String representation of the authorisation identifier
-     * @param authenticationMethodId String representation of the available authentication method identifier
-     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
-     */
-    public boolean isAuthenticationMethodDecoupled(String authorisationId, String authenticationMethodId) {
-        CmsResponse<Boolean> response = authorisationServiceEncrypted.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
-        return response.isSuccessful() && response.getPayload();
-    }
-
-    /**
-     * Saves authentication methods in provided authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @param methods         List of authentication methods to be saved
-     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
-     */
-    public boolean saveAuthenticationMethods(String authorisationId, List<AuthenticationObject> methods) {
-        CmsResponse<Boolean> response = authorisationServiceEncrypted.saveAuthenticationMethods(authorisationId, xs2AAuthenticationObjectToCmsScaMethodMapper.mapToCmsScaMethods(methods));
-        return response.isSuccessful() && response.getPayload();
-    }
-
-    /**
-     * Updates PIS SCA approach in authorisation
-     *
-     * @param authorisationId String representation of the authorisation identifier
-     * @param scaApproach     sca approach
-     */
-    public void updateScaApproach(String authorisationId, ScaApproach scaApproach) {
-        authorisationServiceEncrypted.updateScaApproach(authorisationId, scaApproach);
     }
 
     /**

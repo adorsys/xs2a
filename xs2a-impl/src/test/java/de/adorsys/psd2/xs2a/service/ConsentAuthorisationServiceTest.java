@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorisationConfirmationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
@@ -83,6 +84,8 @@ class ConsentAuthorisationServiceTest {
     @InjectMocks
     private ConsentAuthorisationService service;
 
+    @Mock
+    private Xs2aAuthorisationService authorisationService;
     @Mock
     private Xs2aAisConsentService aisConsentService;
     @Mock
@@ -424,7 +427,7 @@ class ConsentAuthorisationServiceTest {
         ResponseObject<UpdateConsentPsuDataResponse> actualResponseObject = service.updateConsentPsuData(updateConsentPsuDataReq);
 
         // Then
-        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);
+        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FAILED);
         assertTrue(actualResponseObject.hasError());
         assertEquals(MessageErrorCode.PSU_CREDENTIALS_INVALID, actualResponseObject.getError().getTppMessage().getMessageErrorCode());
     }

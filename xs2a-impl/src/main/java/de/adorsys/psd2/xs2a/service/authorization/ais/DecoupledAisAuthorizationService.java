@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -37,11 +38,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DecoupledAisAuthorizationService implements AisAuthorizationService {
     private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
     private final Xs2aAisConsentMapper aisConsentMapper;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
-     * See {@link Xs2aAisConsentService#createAisConsentAuthorization(String, ScaStatus, PsuIdData)} for details
+     * See {@link Xs2aAisConsentService#createAisConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
      *
      * @param psuData   PsuIdData container of authorisation data about PSU
      * @param consentId String identification of consent
@@ -50,12 +52,12 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.", consentId);
             return Optional.empty();
         }
 
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.RECEIVED, psuData)
+        return aisConsentService.createAisConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -73,7 +75,7 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
             log.info("Consent-ID [{}], Authentication-ID [{}], PSU-ID [{}]. Update consent authorisation has failed. Error msg: {}.",
                      request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData().getPsuId(), response.getErrorHolder());
         } else {
-            aisConsentService.updateConsentAuthorization(aisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
+            aisConsentService.updateConsentAuthorisation(aisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
         }
 
         return response;
@@ -81,14 +83,14 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
 
     /**
      * Gets AccountConsentAuthorization using provided authorisation id and consent id by invoking CMS through AisConsentService.
-     * See {@link Xs2aAisConsentService#getAccountConsentAuthorizationById(String)} for details
+     * See {@link Xs2aAuthorisationService#getAuthorisationById(String)} (String)} for details
      *
      * @param authorisationId String identification of AccountConsentAuthorization
      * @return AccountConsentAuthorization instance
      */
     @Override
     public Optional<Authorisation> getAccountConsentAuthorizationById(String authorisationId) {
-        return aisConsentService.getAccountConsentAuthorizationById(authorisationId);
+        return authorisationService.getAuthorisationById(authorisationId);
     }
 
     /**

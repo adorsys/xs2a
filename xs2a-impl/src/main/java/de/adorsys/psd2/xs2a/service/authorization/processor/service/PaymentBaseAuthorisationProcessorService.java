@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -62,6 +63,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     private static final String EMBEDDED_SELECTING_SCA_METHOD_FAILED_MSG = "Proceed embedded approach when performs authorisation depending on selected SCA method has failed.";
 
     private List<PisScaAuthorisationService> services;
+    private Xs2aAuthorisationService xs2aAuthorisationService;
     private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
     private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
     private SpiContextDataProvider spiContextDataProvider;
@@ -72,6 +74,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     protected PaymentBaseAuthorisationProcessorService(List<PisScaAuthorisationService> services,
+                                                       Xs2aAuthorisationService xs2aAuthorisationService,
                                                        Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                        Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper,
                                                        SpiContextDataProvider spiContextDataProvider,
@@ -81,6 +84,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                        Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                                        Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
         this.services = services;
+        this.xs2aAuthorisationService = xs2aAuthorisationService;
         this.xs2aPisCommonPaymentService = xs2aPisCommonPaymentService;
         this.xs2aToSpiPaymentMapper = xs2aToSpiPaymentMapper;
         this.spiContextDataProvider = spiContextDataProvider;
@@ -109,7 +113,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         SpiPayment payment = getSpiPayment(request.getPaymentId());
 
         if (isDecoupledApproach(request.getAuthorisationId(), request.getAuthenticationMethodId())) {
-            xs2aPisCommonPaymentService.updateScaApproach(request.getAuthorisationId(), ScaApproach.DECOUPLED);
+            xs2aAuthorisationService.updateScaApproach(request.getAuthorisationId(), ScaApproach.DECOUPLED);
             return proceedDecoupledApproach(request, payment, request.getAuthenticationMethodId());
         }
 
@@ -145,7 +149,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
             Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
-                xs2aPisCommonPaymentService.updatePisAuthorisationStatus(authorisationId, FAILED);
+                xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, FAILED);
             }
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
@@ -220,7 +224,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
                                           .build();
             writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, "PSU authorisation failed due to incorrect credentials.");
-            xs2aPisCommonPaymentService.updatePisAuthorisationStatus(authorisationId, FAILED);
+            xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, FAILED);
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
@@ -292,7 +296,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     }
 
     Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodsAreMultiple(Xs2aUpdatePisCommonPaymentPsuDataRequest request, PsuIdData psuData, List<AuthenticationObject> spiScaMethods) {
-        xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), spiScaMethods);
+        xs2aAuthorisationService.saveAuthenticationMethods(request.getAuthorisationId(), spiScaMethods);
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(PSUAUTHENTICATED, request.getPaymentId(), request.getAuthorisationId(), psuData);
         response.setAvailableScaMethods(spiScaMethods);
         return response;
@@ -300,11 +304,11 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
     Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodIsSingle(AuthorisationProcessorRequest authorisationProcessorRequest, PsuIdData psuData, SpiPayment payment, SpiAspspConsentDataProvider aspspConsentDataProvider, SpiContextData contextData, List<AuthenticationObject> scaMethods) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = (Xs2aUpdatePisCommonPaymentPsuDataRequest) authorisationProcessorRequest.getUpdateAuthorisationRequest();
-        xs2aPisCommonPaymentService.saveAuthenticationMethods(request.getAuthorisationId(), scaMethods);
+        xs2aAuthorisationService.saveAuthenticationMethods(request.getAuthorisationId(), scaMethods);
         AuthenticationObject chosenMethod = scaMethods.get(0);
 
         if (chosenMethod.isDecoupled()) {
-            xs2aPisCommonPaymentService.updateScaApproach(request.getAuthorisationId(), ScaApproach.DECOUPLED);
+            xs2aAuthorisationService.updateScaApproach(request.getAuthorisationId(), ScaApproach.DECOUPLED);
             return proceedDecoupledApproach(request, payment, chosenMethod.getAuthenticationMethodId());
         }
 
@@ -344,7 +348,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
     }
 
     private boolean isDecoupledApproach(String authorisationId, String authenticationMethodId) {
-        return xs2aPisCommonPaymentService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
+        return xs2aAuthorisationService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedEmbeddedApproach(AuthorisationProcessorRequest authorisationProcessorRequest, SpiPayment payment) {
@@ -366,7 +370,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
             Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
-                xs2aPisCommonPaymentService.updatePisAuthorisationStatus(authorisationId, FAILED);
+                xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, FAILED);
             }
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }

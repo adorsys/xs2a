@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorisationConfirmationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
@@ -57,6 +58,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 @RequiredArgsConstructor
 public class ConsentAuthorisationService {
 
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final Xs2aAisConsentService aisConsentService;
     private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     private final AisEndpointAccessCheckerService endpointAccessCheckerService;
@@ -107,7 +109,7 @@ public class ConsentAuthorisationService {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get consent initiation authorisations failed: consent not found by id",
                      consentId);
             return ResponseObject.<Xs2aAuthorisationSubResources>builder()
@@ -141,7 +143,7 @@ public class ConsentAuthorisationService {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found by id", consentId);
             return ResponseObject.<ScaStatus>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
@@ -160,7 +162,7 @@ public class ConsentAuthorisationService {
         Optional<ScaStatus> scaStatusOptional = aisScaAuthorisationServiceResolver.getService(authorisationId)
                                                     .getAuthorisationScaStatus(consentId, authorisationId);
 
-        if (!scaStatusOptional.isPresent()) {
+        if (scaStatusOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found at CMS by id",
                      consentId);
             return ResponseObject.<ScaStatus>builder()
@@ -185,7 +187,7 @@ public class ConsentAuthorisationService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Update consent PSU data failed: consent not found by id", consentId);
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
@@ -211,7 +213,7 @@ public class ConsentAuthorisationService {
             MessageErrorCode messageErrorCode = validationResult.getMessageError().getTppMessage().getMessageErrorCode();
 
             if (EnumSet.of(PSU_CREDENTIALS_INVALID, FORMAT_ERROR_NO_PSU).contains(messageErrorCode)) {
-                aisConsentService.updateConsentAuthorisationStatus(authorisationId, ScaStatus.FAILED);
+                xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, ScaStatus.FAILED);
             }
 
             log.info("Consent-ID: [{}], Authorisation-ID [{}]. Update consent PSU data - validation failed: {}",
@@ -236,7 +238,7 @@ public class ConsentAuthorisationService {
 
         Optional<Authorisation> authorizationOptional = service.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
-        if (!authorizationOptional.isPresent()) {
+        if (authorizationOptional.isEmpty()) {
             log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",
                      updatePsuData.getAuthorizationId());
             return ResponseObject.<UpdateConsentPsuDataResponse>builder()
@@ -272,7 +274,7 @@ public class ConsentAuthorisationService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Create consent authorisation with response failed: consent not found by id",
                      consentId);
             return ResponseObject.<CreateConsentAuthorizationResponse>builder()

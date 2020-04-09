@@ -18,13 +18,9 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
-import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
-import de.adorsys.psd2.xs2a.service.authorization.pis.PisAuthorisationService;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
-import de.adorsys.psd2.xs2a.service.discovery.ServiceTypeDiscoveryService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,13 +48,7 @@ class ScaApproachResolverTest {
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
-    private ScaApproachHolder scaApproachHolder;
-    @Mock
-    private ServiceTypeDiscoveryService serviceTypeDiscoveryService;
-    @Mock
-    private PisAuthorisationService pisAuthorisationService;
-    @Mock
-    private Xs2aAisConsentService xs2aAisConsentService;
+    private Xs2aAuthorisationService xs2aAuthorisationService;
 
     @Test
     void resolveScaApproach_shouldReturn_Redirect() {
@@ -357,14 +347,13 @@ class ScaApproachResolverTest {
 
     @Test
     void getScaApproach() {
-        when(serviceTypeDiscoveryService.getServiceType()).thenReturn(ServiceType.AIS);
-        when(xs2aAisConsentService.getAuthorisationScaApproach(AUTHORISATION_ID))
+        when(xs2aAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(Optional.of(new AuthorisationScaApproachResponse(REDIRECT)));
 
         ScaApproach scaApproach = scaApproachResolver.getScaApproach(AUTHORISATION_ID);
 
         assertThat(scaApproach).isEqualTo(REDIRECT);
-        verify(xs2aAisConsentService, times(1))
+        verify(xs2aAuthorisationService, times(1))
             .getAuthorisationScaApproach(eq(AUTHORISATION_ID));
     }
 

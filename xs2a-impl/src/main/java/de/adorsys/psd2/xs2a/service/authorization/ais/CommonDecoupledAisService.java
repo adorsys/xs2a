@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -45,7 +45,7 @@ public class CommonDecoupledAisService {
     private final SpiErrorMapper spiErrorMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
 
     public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, SpiAccountConsent spiAccountConsent, PsuIdData psuData) {
         return proceedDecoupledApproach(consentId, authorisationId, spiAccountConsent, null, psuData);
@@ -62,7 +62,7 @@ public class CommonDecoupledAisService {
 
             Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
-                aisConsentService.updateConsentAuthorisationStatus(authorisationId, ScaStatus.FAILED);
+                authorisationService.updateAuthorisationStatus(authorisationId, ScaStatus.FAILED);
             }
             return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuData);
         }
