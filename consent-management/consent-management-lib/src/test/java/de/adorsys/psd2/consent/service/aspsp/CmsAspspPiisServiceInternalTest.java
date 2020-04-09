@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -31,7 +32,6 @@ import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.apache.commons.lang3.ArrayUtils;
@@ -47,7 +47,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -411,7 +410,7 @@ class CmsAspspPiisServiceInternalTest {
         piisConsent.setId(id);
         piisConsent.setAspspAccountAccesses(Collections.singletonList(buildAspspAccountAccess(buildAccountReference())));
         piisConsent.setExternalId(CONSENT_EXTERNAL_ID);
-        piisConsent.setRequestDateTime(LocalDateTime.now());
+        piisConsent.setRequestDateTime(OffsetDateTime.now());
         piisConsent.setPsuDataList(Collections.singletonList(buildPsuData()));
         piisConsent.setConsentStatus(ConsentStatus.RECEIVED);
         piisConsent.setValidUntil(VALID_UNTIL_DATE);

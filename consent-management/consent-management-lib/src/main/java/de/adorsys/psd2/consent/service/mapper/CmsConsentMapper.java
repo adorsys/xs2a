@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -79,7 +79,7 @@ public class CmsConsentMapper {
         entity.setConsentType(cmsConsent.getConsentType().getName());
         entity.setFrequencyPerDay(cmsConsent.getFrequencyPerDay());
         entity.setMultilevelScaRequired(cmsConsent.isMultilevelScaRequired());
-        entity.setRequestDateTime(LocalDateTime.now());
+        entity.setRequestDateTime(OffsetDateTime.now());
         entity.setValidUntil(cmsConsent.getValidUntil());
         entity.setExpireDate(cmsConsent.getExpireDate());
         entity.setPsuDataList(psuDataMapper.mapToPsuDataList(cmsConsent.getPsuIdDataList()));
