@@ -3,7 +3,15 @@
 == Table of Contents
 
 * Bugfix: Validation does not work when using multiple values as accept header
+* Move certificate generator from XS2ASandbox to XS2A-core
 
 == Bugfix: Validation does not work when using multiple values as accept header
 
 From now on, validation processes properly multiple accept headers.
+
+== Move certificate generator from XS2ASandbox to XS2A-core
+
+From now on, certificate generator is located in XS2A project.
+All functionality remains as is.
+
+See `SPI Developer Guide` for more details.
