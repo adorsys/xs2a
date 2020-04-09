@@ -4,6 +4,7 @@
 
 * Bugfix: Validation does not work when using multiple values as accept header
 * Move certificate generator from XS2ASandbox to XS2A-core
+* Change type of `requestDateTime` in `ConsentEntity`
 
 == Bugfix: Validation does not work when using multiple values as accept header
 
@@ -15,3 +16,8 @@ From now on, certificate generator is located in XS2A project.
 All functionality remains as is.
 
 See `SPI Developer Guide` for more details.
+
+== Change type of `requestDateTime` in `ConsentEntity`
+
+From now on, type of `requestDateTime` in `ConsentEntity` was changed from `LocalDateTime` to `OffsetDateTime`.
+The following columns (`request_date_time` and `creation_timestamp`) were modified data type to `DATETIME`.
