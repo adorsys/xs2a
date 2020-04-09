@@ -32,7 +32,6 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -91,9 +90,8 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @Column(name = "last_action_date")
     private LocalDate lastActionDate;
 
-    // TODO: change type to OffsetDateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1220
     @Column(name = "request_date_time", nullable = false)
-    private LocalDateTime requestDateTime;
+    private OffsetDateTime requestDateTime;
 
     @Column(name = "status_change_timestamp")
     private OffsetDateTime statusChangeTimestamp;
