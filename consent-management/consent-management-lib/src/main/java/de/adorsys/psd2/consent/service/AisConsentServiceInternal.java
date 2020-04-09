@@ -80,7 +80,7 @@ public class AisConsentServiceInternal implements AisConsentService {
             aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consent);
             checkAndUpdateOnExpiration(consent);
             updateAisConsentUsage(consent, request);
-            logConsentAction(consent.getExternalId(), resolveConsentActionStatus(request, consent), request.getTppId());
+            logConsentAction(consent.getExternalId(), request.getActionStatus(), request.getTppId());
         }
 
         return CmsResponse.<CmsResponse.VoidResponse>builder()
@@ -164,16 +164,6 @@ public class AisConsentServiceInternal implements AisConsentService {
         List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consent.getExternalId(), AuthorisationType.AIS);
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
         return cmsConsentMapper.mapToCmsConsent(consent, authorisations, usageCounterMap);
-    }
-
-    private ActionStatus resolveConsentActionStatus(AisConsentActionRequest request, ConsentEntity consent) {
-        if (consent == null) {
-            // ToDo: unreachable code, check whether bad payload should be logged https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1211
-            log.info("Consent ID: [{}]. Consent action status resolver received null consent",
-                     request.getConsentId());
-            return ActionStatus.BAD_PAYLOAD;
-        }
-        return request.getActionStatus();
     }
 
     private void logConsentAction(String requestedConsentId, ActionStatus actionStatus, String tppId) {
