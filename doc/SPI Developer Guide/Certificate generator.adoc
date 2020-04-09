@@ -1,0 +1,19 @@
+== Certificate generator
+
+---
+
+How to use certificate generator
+
+1) Build project
+
+```
+cd ./certificate-generator
+mvn clean install
+```
+
+2) Launch the application
+
+3) Open `swagger-ui.html`, fill in certificate data and execute the request.
+Mocked certificate in xs2a-impl uses the data provided as example in Swagger UI for the request with the following changes: commonName attribute contains empty value and roles attribute contains PISP, AISP and PIISP roles.
+
+4) Response will contain certificate and its private key
