@@ -40,6 +40,7 @@
         <module>xs2a-payment-support</module>
         <module>xs2a-logger</module>
         <module>xs2a-core-consents</module>
+        <module>certificate-generator</module>
     </modules>
     <packaging>pom</packaging>
 
