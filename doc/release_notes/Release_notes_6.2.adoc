@@ -1,30 +1,13 @@
-= Release notes v.7.2
+= Release notes v.6.2
 
 == Table of Contents
 
-* Support List of Trusted Beneficiaries Service
 * Bugfix: Validation does not work when using multiple values as accept header
 * Move certificate generator from XS2ASandbox to XS2A-core
 * Change type of `requestDateTime` in `ConsentEntity`
 * Remove deprecated PaymentAuthorisationType
 * Drop deprecated tables for AIS and PIS authorisations
 * Remove deprecated PiisConsentTppAccessType
-* Move authorisation-related methods in separate service
-
-== Support List of Trusted Beneficiaries Service
-
-From now on, it's possible to create consent consent to get list of trusted beneficiaries. In order to do it,
-one needs to update ASPSP profile settings with flag `trustedBeneficiariesSupported` = `true` and send to create
-dedicated consent request with `trustedBeneficiaries` list inside `additionalInformation`.
-If `trustedBeneficiariesSupported` is `false`, list `trustedBeneficiaries` in create consent request body will be
-ignored and not stored in database.
-
-If detailed accounts are referenced, it is required in addition that any account addressed within the
-additionalInformation attribute is also addressed by at least one of the attributes `accounts`, `transactions` or
-`balances`. If this requirement is not met, one will get en error `400 SERVICE_INVALID`.
-
-It's also possible to get consent object with attribute `trustedBeneficiaries` from `CMS PSU API` and update it in case
-of Bank-Offered consent.
 
 == Bugfix: Validation does not work when using multiple values as accept header
 
@@ -58,8 +41,3 @@ Following deprecated tables were dropped from CMS database:
 == Remove deprecated PiisConsentTppAccessType
 
 Deprecated PiisConsentTppAccessType was removed
-
-== Move authorisation-related methods in separate service
-
-From now on, `Xs2aAuthorisationService` is created and contains authorisation functionality.
-`Xs2aAisConsentService` and `Xs2aPisCommonPaymentService` were refactored to move all authorisation-related methods in separate service.
