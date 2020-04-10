@@ -21,14 +21,17 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Validator to be used for validating whether transaction status format requested by TPP is supported by ASPSP
@@ -59,8 +62,18 @@ public class TransactionStatusAcceptHeaderValidator {
     }
 
     private boolean isMediaTypeSupported(String requestedMediaType, List<String> supportedMediaTypes) {
+        List<String> acceptHeaders = Stream.of(requestedMediaType.split(","))
+                                         .collect(Collectors.toList());
         return CollectionUtils.isEmpty(supportedMediaTypes) ||
                    supportedMediaTypes.stream()
-                       .anyMatch(s -> StringUtils.containsIgnoreCase(requestedMediaType, s));
+                       .filter(Objects::nonNull)
+                       .map(String::toLowerCase)
+                       .map(String::trim)
+                       .anyMatch(
+                           acceptHeaders.stream()
+                               .map(String::toLowerCase)
+                               .map(String::trim)
+                               .collect(toSet())
+                               ::contains);
     }
 }

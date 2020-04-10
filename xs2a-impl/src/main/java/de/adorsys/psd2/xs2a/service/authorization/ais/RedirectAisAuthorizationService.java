@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RedirectAisAuthorizationService implements AisAuthorizationService {
     private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
-     * See {@link Xs2aAisConsentService#createAisConsentAuthorization(String, ScaStatus, PsuIdData)} for details
+     * See {@link Xs2aAisConsentService#createAisConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
      *
      * @param psuData   PsuIdData container of authorisation data about PSU
      * @param consentId String identification of consent
@@ -47,7 +49,7 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        return aisConsentService.createAisConsentAuthorization(consentId, ScaStatus.RECEIVED, psuData)
+        return aisConsentService.createAisConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -67,7 +69,7 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
 
     @Override
     public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
-        return aisConsentService.getAccountConsentAuthorizationById(authorizationId);
+        return authorisationService.getAuthorisationById(authorizationId);
     }
 
     /**

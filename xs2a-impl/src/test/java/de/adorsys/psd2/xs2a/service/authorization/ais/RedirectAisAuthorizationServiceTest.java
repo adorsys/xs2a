@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -54,6 +55,9 @@ class RedirectAisAuthorizationServiceTest {
     private Xs2aAisConsentService xs2aAisConsentService;
 
     @Mock
+    private Xs2aAuthorisationService xs2aAuthorisationService;
+
+    @Mock
     private Xs2aAisConsentMapper xs2aAisConsentMapper;
 
     @Mock
@@ -64,7 +68,7 @@ class RedirectAisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_success() {
         // Given
-        when(xs2aAisConsentService.createAisConsentAuthorization(CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
+        when(xs2aAisConsentService.createAisConsentAuthorisation(CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
 
         // When
@@ -78,7 +82,7 @@ class RedirectAisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_wrongConsentId_fail() {
         // Given
-        when(xs2aAisConsentService.createAisConsentAuthorization(WRONG_CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
+        when(xs2aAisConsentService.createAisConsentAuthorisation(WRONG_CONSENT_ID, ScaStatus.RECEIVED, PSU_ID_DATA))
             .thenReturn(Optional.empty());
 
         // When

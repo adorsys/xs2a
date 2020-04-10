@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -74,6 +75,8 @@ class AisAuthorisationConfirmationServiceTest {
     private SpiContextDataProvider spiContextDataProvider;
     @Mock
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private Xs2aAuthorisationService authorisationService;
     @Mock
     private Xs2aAisConsentService aisConsentService;
     @Mock
@@ -123,7 +126,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     @Test
@@ -149,7 +152,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
+        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
         verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
     }
 
@@ -169,7 +172,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(0)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(authorisationService, times(0)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     @Test
@@ -195,7 +198,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(0)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(authorisationService, times(0)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     @Test
@@ -227,7 +230,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(1)).updateConsentAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
+        verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
         verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
     }
 
@@ -255,7 +258,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, never()).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(authorisationService, never()).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     @Test
@@ -282,7 +285,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, never()).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(authorisationService, never()).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     @Test
@@ -319,7 +322,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, never()).updateConsentAuthorisationStatus(any(), any());
+        verify(authorisationService, never()).updateAuthorisationStatus(any(), any());
         verify(aisConsentService, never()).updateConsentStatus(any(), any());
     }
 
@@ -363,7 +366,7 @@ class AisAuthorisationConfirmationServiceTest {
 
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
-        verify(aisConsentService, times(0)).updateConsentAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+        verify(authorisationService, times(0)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {

@@ -20,5 +20,6 @@ public enum TypeAccess {
     ACCOUNT,
     BALANCE,
     TRANSACTION,
-    OWNER_NAME
+    OWNER_NAME,
+    BENEFICIARIES
 }

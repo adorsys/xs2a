@@ -172,7 +172,7 @@ class AisConsentServiceInternalTest {
         List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<>() {
         });
         AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
-        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS)).thenReturn(existingAccountAccess);
+        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.NONE)).thenReturn(existingAccountAccess);
         AccountAccess accountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access.json", AccountAccess.class);
         AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
         when(accountAccessUpdater.updateAccountReferencesInAccess(existingAccountAccess, accountAccess)).thenReturn(updatedAccountAccess);
@@ -193,7 +193,7 @@ class AisConsentServiceInternalTest {
         List<AspspAccountAccess> aspspAccountAccesses = jsonReader.getObjectFromFile("json/service/ais-consent-service/aspsp-account-accesses.json", new TypeReference<>() {
         });
         AccountAccess existingAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-existing.json", AccountAccess.class);
-        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS)).thenReturn(existingAccountAccess);
+        when(accessMapper.mapAspspAccessesToAccountAccess(aspspAccountAccesses, AdditionalAccountInformationType.DEDICATED_ACCOUNTS, AdditionalAccountInformationType.NONE)).thenReturn(existingAccountAccess);
         AccountAccess requestedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-requested.json", AccountAccess.class);
         AccountAccess updatedAccountAccess = jsonReader.getObjectFromFile("json/service/ais-consent-service/account-access-updated.json", AccountAccess.class);
         when(accountAccessUpdater.updateAccountReferencesInAccess(eq(existingAccountAccess), any())).thenReturn(updatedAccountAccess);

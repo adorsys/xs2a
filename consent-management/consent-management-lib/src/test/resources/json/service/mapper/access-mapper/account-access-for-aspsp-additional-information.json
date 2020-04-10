@@ -31,6 +31,14 @@
         "iban": "DE80760700240271232700",
         "currency": "UAH"
       }
+    ],
+    "trustedBeneficiaries": [
+      {
+        "resourceId": "LGCGDC4KTx0tgnpZGYTTr8",
+        "aspspAccountId": "26bb59a3-2f63-4027-ad38-67d87e59611a",
+        "iban": "DE80760700240271232700",
+        "currency": "UAH"
+      }
     ]
   }
 }

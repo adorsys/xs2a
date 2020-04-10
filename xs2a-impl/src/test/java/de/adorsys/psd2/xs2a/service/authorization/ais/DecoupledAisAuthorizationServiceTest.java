@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
@@ -59,6 +60,8 @@ class DecoupledAisAuthorizationServiceTest {
     private DecoupledAisAuthorizationService decoupledAisAuthorizationService;
 
     @Mock
+    private Xs2aAuthorisationService authorisationService;
+    @Mock
     private Xs2aAisConsentService aisConsentService;
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
@@ -70,7 +73,7 @@ class DecoupledAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(buildConsent(CONSENT_ID)));
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, SCA_STATUS, PSU_DATA))
+        when(aisConsentService.createAisConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
 
         // When
@@ -106,7 +109,7 @@ class DecoupledAisAuthorizationServiceTest {
         AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
 
         assertEquals(processorResponse, actualResponse);
-        verify(aisConsentService).updateConsentAuthorization(mappedUpdatePsuDataRequest);
+        verify(aisConsentService).updateConsentAuthorisation(mappedUpdatePsuDataRequest);
     }
 
     @Test
@@ -117,13 +120,13 @@ class DecoupledAisAuthorizationServiceTest {
         AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
 
         assertEquals(processorResponse, actualResponse);
-        verify(aisConsentService, never()).updateConsentAuthorization(any());
+        verify(aisConsentService, never()).updateConsentAuthorisation(any());
     }
 
     @Test
     void getAccountConsentAuthorizationById_success() {
         // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(ACCOUNT_CONSENT_AUTHORIZATION));
 
         // When
@@ -137,7 +140,7 @@ class DecoupledAisAuthorizationServiceTest {
     @Test
     void getAccountConsentAuthorizationById_wrongIds_fail() {
         // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When

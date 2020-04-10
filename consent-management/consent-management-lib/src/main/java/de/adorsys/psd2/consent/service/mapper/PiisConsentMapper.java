@@ -23,16 +23,13 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.piis.PiisConsentTppAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,17 +52,14 @@ public class PiisConsentMapper {
     public CmsPiisConsent mapToCmsPiisConsent(ConsentEntity consentEntity) {
         PiisConsentData piisConsentData = consentDataMapper.mapToPiisConsentData(consentEntity.getData());
         AccountReference accountReference = accessMapper.mapToAccountReference(consentEntity.getAspspAccountAccesses().get(0));
-        // TODO: change type of requestDateTime to OffsetDateTime https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1220
-        ZoneOffset offset = OffsetDateTime.now().getOffset();
         return new CmsPiisConsent(consentEntity.getExternalId(),
                                   consentEntity.isRecurringIndicator(),
-                                  consentEntity.getRequestDateTime() != null ? consentEntity.getRequestDateTime().atOffset(offset) : null,
+                                  consentEntity.getRequestDateTime(),
                                   consentEntity.getLastActionDate(),
                                   consentEntity.getValidUntil(),
                                   psuDataMapper.mapToPsuIdData(consentEntity.getPsuDataList().get(0)),
                                   consentEntity.getConsentStatus(),
                                   accountReference,
-                                  PiisConsentTppAccessType.SINGLE_TPP,
                                   consentEntity.getCreationTimestamp(),
                                   consentEntity.getInstanceId(),
                                   piisConsentData.getCardNumber(),
@@ -80,7 +74,7 @@ public class PiisConsentMapper {
         ConsentEntity consent = new ConsentEntity();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(VALID);
-        consent.setRequestDateTime(LocalDateTime.now());
+        consent.setRequestDateTime(OffsetDateTime.now());
         consent.setValidUntil(request.getValidUntil());
         consent.setLastActionDate(LocalDate.now());
         consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData));

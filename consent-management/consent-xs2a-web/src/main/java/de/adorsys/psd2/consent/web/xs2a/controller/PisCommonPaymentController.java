@@ -367,7 +367,7 @@ public class PisCommonPaymentController {
         return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
-    // TODO return correct error code in case was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/408
+    // TODO return correct error code in case was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1254
     @PutMapping(path = "/{payment-id}/payment")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),

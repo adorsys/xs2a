@@ -17,7 +17,6 @@
     "iban": "DE69760700240340283600",
     "currency": "EUR"
   },
-  "tppAccessType": "SINGLE_TPP",
   "creationTimestamp": "2019-08-12T15:09:48.321Z",
   "instanceId": "UNDEFINED",
   "cardNumber": "1234567891234",

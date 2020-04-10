@@ -33,7 +33,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class SpiAccountConsent {
-    // TODO remove ID and add externalId https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/430
     private String id;
     private SpiAccountAccess access;
     private boolean recurringIndicator;

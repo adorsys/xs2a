@@ -50,7 +50,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                  consentTypeSetting.getAccountAccessFrequencyPerDay(),
                                                                  consentTypeSetting.getNotConfirmedConsentExpirationTimeMs(),
                                                                  consentTypeSetting.getMaxConsentValidityDays(),
-                                                                 consentTypeSetting.isAccountOwnerInformationSupported());
+                                                                 consentTypeSetting.isAccountOwnerInformationSupported(),
+                                                                 consentTypeSetting.isTrustedBeneficiariesSupported());
         AisRedirectLinkSetting aisRedirectLinkToOnlineBanking = new AisRedirectLinkSetting(aisBankSetting.getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp());
         AisTransactionSetting transactionParameters = new AisTransactionSetting(aisBankSetting.getTransactionParameters().getAvailableBookingStatuses(),
                                                                                 aisBankSetting.getTransactionParameters().isTransactionsWithoutBalancesSupported(),

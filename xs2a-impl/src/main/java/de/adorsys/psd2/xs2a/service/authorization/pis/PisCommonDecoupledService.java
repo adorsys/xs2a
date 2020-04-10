@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -52,7 +52,7 @@ public class PisCommonDecoupledService {
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiErrorMapper spiErrorMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private final Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
         return proceedDecoupledInitiation(request, payment, null);
@@ -76,7 +76,7 @@ public class PisCommonDecoupledService {
         String paymentId = request.getPaymentId();
         PsuIdData psuData = request.getPsuData();
         SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
-        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = null;
+        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse;
 
         switch (authorisationType) {
             case PIS_CREATION:
@@ -97,7 +97,7 @@ public class PisCommonDecoupledService {
 
             Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
-                xs2aPisCommonPaymentService.updatePisAuthorisationStatus(authenticationId, ScaStatus.FAILED);
+                xs2aAuthorisationService.updateAuthorisationStatus(authenticationId, ScaStatus.FAILED);
             }
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authenticationId, psuData);
         }

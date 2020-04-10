@@ -1,0 +1,25 @@
+{
+  "access": {
+    "accounts": [],
+    "balances": [],
+    "transactions": [],
+    "additionalInformationAccess": {
+      "trustedBeneficiaries": [
+        {
+          "currency": "EUR",
+          "iban": "DE80760700240271232400"
+        }
+      ],
+      "ownerName": [
+        {
+          "currency": "EUR",
+          "iban": "DE80760700240271232400"
+        }
+      ]
+    }
+  },
+  "combinedServiceIndicator": false,
+  "frequencyPerDay": 10,
+  "recurringIndicator": true,
+  "validUntil": "2021-10-10"
+}

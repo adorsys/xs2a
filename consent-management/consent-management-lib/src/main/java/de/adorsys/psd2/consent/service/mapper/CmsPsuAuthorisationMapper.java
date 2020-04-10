@@ -18,8 +18,6 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -27,14 +25,6 @@ import org.mapstruct.Mapping;
 public interface CmsPsuAuthorisationMapper {
     @Mapping(target = "psuId", source = "psuData.psuId")
     @Mapping(target = "authorisationId", source = "externalId")
-    @Mapping(target = "authorisationType", expression = "java(authorisationType(authorisationEntity.getAuthorisationType()))")
     @Mapping(target = "type", source = "authorisationType")
     CmsPsuAuthorisation mapToCmsPsuAuthorisation(AuthorisationEntity authorisationEntity);
-
-    default PaymentAuthorisationType authorisationType(AuthorisationType authorisationType) {
-        if (AuthorisationType.PIS_CANCELLATION == authorisationType) {
-            return PaymentAuthorisationType.CANCELLED;
-        }
-        return PaymentAuthorisationType.CREATED;
-    }
 }

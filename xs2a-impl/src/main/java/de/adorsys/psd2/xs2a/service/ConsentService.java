@@ -85,7 +85,7 @@ public class ConsentService {
     private final RequestProviderService requestProviderService;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final LoggingContextService loggingContextService;
-    private final AccountOwnerInformationService accountOwnerInformationService;
+    private final AdditionalInformationSupportedService additionalInformationSupportedService;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -100,7 +100,7 @@ public class ConsentService {
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData,
                                                                                    boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
-        CreateConsentReq requestAfterCheck = accountOwnerInformationService.checkSupportedAccountOwnerInformation(request);
+        CreateConsentReq requestAfterCheck = additionalInformationSupportedService.checkIfAdditionalInformationSupported(request);
 
         ValidationResult validationResult = consentValidationService.validateConsentOnCreate(requestAfterCheck, psuData);
         if (validationResult.isNotValid()) {
@@ -249,8 +249,6 @@ public class ConsentService {
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (aisConsentOptional.isPresent()) {
-            // TODO this is not correct. https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/569
-
             AisConsent accountConsent = aisConsentOptional.get();
             ValidationResult validationResult = consentValidationService.validateConsentOnDelete(accountConsent);
             if (validationResult.isNotValid()) {

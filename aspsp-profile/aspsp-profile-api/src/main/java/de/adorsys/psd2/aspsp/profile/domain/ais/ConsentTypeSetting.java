@@ -27,4 +27,5 @@ public class ConsentTypeSetting {
     private long notConfirmedConsentExpirationTimeMs;
     private int maxConsentValidityDays;
     private boolean accountOwnerInformationSupported;
+    private boolean trustedBeneficiariesSupported;
 }

@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.core.pis.PaymentAuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
@@ -29,9 +28,6 @@ public class CmsPsuAuthorisation {
     private String psuId;
     private String authorisationId;
     private ScaStatus scaStatus;
-    @Deprecated
-    //todo remove `PaymentAuthorisationType` and rename field back to `authorisationType` https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1197
-    private PaymentAuthorisationType authorisationType;
     private AuthorisationType type;
     private OffsetDateTime redirectUrlExpirationTimestamp;
     private OffsetDateTime authorisationExpirationTimestamp;

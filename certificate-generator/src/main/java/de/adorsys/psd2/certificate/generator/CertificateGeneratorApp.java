@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.core.pis;
+package de.adorsys.psd2.certificate.generator;
 
-public enum PaymentAuthorisationType {
-    CREATED,
-    CANCELLED
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CertificateGeneratorApp {
+    public static void main(String[] args) {
+        SpringApplication.run(CertificateGeneratorApp.class, args);
+    }
 }

@@ -123,4 +123,34 @@ class TransactionStatusAcceptHeaderValidatorTest {
         assertTrue(validationResult.isNotValid());
         assertEquals(VALIDATION_ERROR, validationResult.getMessageError());
     }
+
+    @Test
+    void validate_multipleAcceptHeaders() {
+        // Given
+        when(aspspProfileServiceWrapper.getSupportedTransactionStatusFormats())
+            .thenReturn(Collections.singletonList(JSON_MEDIA_TYPE));
+
+        // When
+        ValidationResult validationResult = transactionStatusAcceptHeaderValidator.validate("application/xml, application/json");
+
+        // Then
+        verify(aspspProfileServiceWrapper).getSupportedTransactionStatusFormats();
+
+        assertTrue(validationResult.isValid());
+    }
+
+    @Test
+    void validate_multipleAcceptHeaders_caseSensitive() {
+        // Given
+        when(aspspProfileServiceWrapper.getSupportedTransactionStatusFormats())
+            .thenReturn(Collections.singletonList(JSON_MEDIA_TYPE));
+
+        // When
+        ValidationResult validationResult = transactionStatusAcceptHeaderValidator.validate("   application/xml, application/JSON");
+
+        // Then
+        verify(aspspProfileServiceWrapper).getSupportedTransactionStatusFormats();
+
+        assertTrue(validationResult.isValid());
+    }
 }

@@ -26,8 +26,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Validator to be used for validating if accept header is supported by ASPSP
@@ -53,9 +56,18 @@ public class TransactionReportAcceptHeaderValidator {
     }
 
     private boolean isAtLeastOneAcceptHeaderSupported(List<String> supportedHeaders, String acceptHeader) {
+        List<String> acceptHeaders = Stream.of(acceptHeader.split(","))
+                                         .collect(Collectors.toList());
         return CollectionUtils.isEmpty(supportedHeaders) ||
                    supportedHeaders.stream()
                        .filter(Objects::nonNull)
-                       .anyMatch(acceptHeader::equalsIgnoreCase);
+                       .map(String::toLowerCase)
+                       .map(String::trim)
+                       .anyMatch(
+                           acceptHeaders.stream()
+                               .map(String::toLowerCase)
+                               .map(String::trim)
+                               .collect(toSet())
+                               ::contains);
     }
 }

@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,8 @@ class EmbeddedAisAuthorizationServiceTest {
     @InjectMocks
     private EmbeddedAisAuthorizationService authorizationService;
 
+    @Mock
+    private Xs2aAuthorisationService authorisationService;
     @Mock
     private Xs2aAisConsentService aisConsentService;
     @Mock
@@ -86,7 +89,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Test
     void getAccountConsentAuthorizationById_success() {
         // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(authorisation));
 
         // When
@@ -100,7 +103,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Test
     void getAccountConsentAuthorizationById_wrongId_fail() {
         // Given
-        when(aisConsentService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID))
+        when(authorisationService.getAuthorisationById(WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When
@@ -121,7 +124,7 @@ class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     void createConsentAuthorization_Success() {
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        when(aisConsentService.createAisConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
@@ -151,7 +154,7 @@ class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     void createConsentAuthorizationNoPsuAuthentification_Success() {
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        when(aisConsentService.createAisConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
@@ -169,7 +172,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Test
     void createConsentAuthorizationNoPsuIdentification_Success() {
         PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
-        when(aisConsentService.createAisConsentAuthorization(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
+        when(aisConsentService.createAisConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);

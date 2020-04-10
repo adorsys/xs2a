@@ -219,6 +219,20 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
+    public void validate_account_additionalInformation_trustedBeneficiaries_incorrectIban_error() {
+        // Given
+        consents.getAccess().getAdditionalInformation().getTrustedBeneficiaries().get(0).setIban("123");
+
+        // When
+        validator.validate(request, messageError);
+
+        // Then
+        assertEquals(2, messageError.getTppMessages().size());
+        assertTrue(messageError.getTppMessages().contains(TppMessageInformation.of(SERVICE_INVALID_400)));
+        assertTrue(messageError.getTppMessages().contains(TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, "IBAN")));
+    }
+
+    @Test
     public void validate_account_additionalInformation_ownerName_twoIbans_error() {
         // Given
         Consents wrongConsents = jsonReader.getObjectFromFile("json/validation/ais/consents_two_ibans_in_owner_name.json", Consents.class);
@@ -232,13 +246,33 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
-    void validate_wrongAdditionalInformation_error() {
+    public void validate_account_additionalInformation_trustedBeneficiaries_twoIbans_error() {
+        // Given
+        Consents wrongConsents = jsonReader.getObjectFromFile("json/validation/ais/consents_two_ibans_in_trusted_beneficiaries.json", Consents.class);
+        AccountAccessValidatorImpl accountAccessValidator = createValidator(wrongConsents);
+
+        // When
+        accountAccessValidator.validate(request, messageError);
+
+        // Then
+        assertEquals(MessageErrorCode.SERVICE_INVALID_400, messageError.getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void validate_wrongAdditionalInformationOwnerName_error() {
         consents.getAccess().getAdditionalInformation().getOwnerName().get(0).setIban("DE69760700240340283600");
 
         validator.validate(request, messageError);
         assertEquals(MessageErrorCode.SERVICE_INVALID_400, messageError.getTppMessage().getMessageErrorCode());
     }
 
+    @Test
+    void validate_wrongAdditionalInformationTrustedBeneficiaries_error() {
+        consents.getAccess().getAdditionalInformation().getTrustedBeneficiaries().get(0).setIban("DE69760700240340283600");
+
+        validator.validate(request, messageError);
+        assertEquals(MessageErrorCode.SERVICE_INVALID_400, messageError.getTppMessage().getMessageErrorCode());
+    }
 
     private AccountAccessValidatorImpl createValidator(Consents consents) {
         return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new Xs2aObjectMapper(),

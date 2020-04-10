@@ -2,7 +2,8 @@
   "access": {
     "accounts": [],
     "balances": [],
-    "transactions": []
+    "transactions": [],
+    "additionalInformationAccess": {}
   },
   "combinedServiceIndicator": false,
   "frequencyPerDay": 10,

@@ -2,7 +2,6 @@
   "psuId": "PSU ID",
   "authorisationId": "123",
   "scaStatus": "RECEIVED",
-  "authorisationType": "CREATED",
   "type": "AIS",
   "scaApproach": "EMBEDDED",
   "tppOkRedirectUri": "OK redirect",

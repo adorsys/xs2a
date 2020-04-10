@@ -75,7 +75,6 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForSinglePayment(singlePayment)));
         request.setPaymentProduct(paymentProduct);
-        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new TppInfo());
         return request;
     }
@@ -84,7 +83,6 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         PisCommonPaymentRequest request = new PisCommonPaymentRequest();
         request.setPayments(Collections.singletonList(mapToPisPaymentForPeriodicPayment(periodicPayment)));
         request.setPaymentProduct(paymentProduct);
-        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new TppInfo());
         return request;
     }
@@ -95,7 +93,6 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
         request.setPayments(mapToListPisPayment(bulkPayment.getPayments(), bulkPayment.getBatchBookingPreferred()));
         request.setPaymentProduct(paymentProduct);
         request.setPaymentType(PaymentType.BULK);
-        // TODO put real tppInfo data https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/406
         request.setTppInfo(new TppInfo());
         return request;
 
@@ -124,7 +121,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                        pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
-                       pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount())); // todo remake amount type from String to BigDecimal
+                       pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount()));
                        pisPayment.setCreditorAccount(pmt.getCreditorAccount());
                        pisPayment.setCreditorAgent(pmt.getCreditorAgent());
                        pisPayment.setCreditorName(pmt.getCreditorName());
@@ -154,7 +151,7 @@ public class Xs2aToCmsPisCommonPaymentRequestMapper {
                        pisPayment.setDebtorAccount(pmt.getDebtorAccount());
                        pisPayment.setUltimateDebtor(pmt.getUltimateDebtor());
                        pisPayment.setCurrency(pmt.getInstructedAmount().getCurrency());
-                       pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount())); // todo remake amount type from String to BigDecimal
+                       pisPayment.setAmount(new BigDecimal(pmt.getInstructedAmount().getAmount()));
                        pisPayment.setCreditorAccount(pmt.getCreditorAccount());
                        pisPayment.setCreditorAgent(pmt.getCreditorAgent());
                        pisPayment.setCreditorName(pmt.getCreditorName());

@@ -170,6 +170,10 @@ public class CmsConsentBuilder {
                                                 .map(CmsConsentBuilder::mapToAccountReference)
                                                 .collect(Collectors.toList());
 
-        return new AdditionalInformationAccess(ownerNames);
+        List<AccountReference> trustedBeneficiaries = psd2AdditionalInformation.getTrustedBeneficiaries().stream()
+                                                .map(CmsConsentBuilder::mapToAccountReference)
+                                                .collect(Collectors.toList());
+
+        return new AdditionalInformationAccess(ownerNames, trustedBeneficiaries);
     }
 }

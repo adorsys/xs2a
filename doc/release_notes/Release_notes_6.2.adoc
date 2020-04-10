@@ -1,0 +1,43 @@
+= Release notes v.6.2
+
+== Table of Contents
+
+* Bugfix: Validation does not work when using multiple values as accept header
+* Move certificate generator from XS2ASandbox to XS2A-core
+* Change type of `requestDateTime` in `ConsentEntity`
+* Remove deprecated PaymentAuthorisationType
+* Drop deprecated tables for AIS and PIS authorisations
+* Remove deprecated PiisConsentTppAccessType
+
+== Bugfix: Validation does not work when using multiple values as accept header
+
+From now on, validation processes properly multiple accept headers.
+
+== Move certificate generator from XS2ASandbox to XS2A-core
+
+From now on, certificate generator is located in XS2A project.
+All functionality remains as is.
+
+See `SPI Developer Guide` for more details.
+
+== Change type of `requestDateTime` in `ConsentEntity`
+
+From now on, type of `requestDateTime` in `ConsentEntity` was changed from `LocalDateTime` to `OffsetDateTime`.
+The following columns (`request_date_time` and `creation_timestamp`) were modified data type to `DATETIME`.
+
+== Remove deprecated PaymentAuthorisationType
+
+Deprecated PaymentAuthorisationType was removed
+
+== Drop deprecated tables for AIS and PIS authorisations
+
+Following deprecated tables were dropped from CMS database:
+
+* ais_consent_authorization
+* pis_consent_authorization
+* ais_available_sca_method
+* pis_available_sca_method
+
+== Remove deprecated PiisConsentTppAccessType
+
+Deprecated PiisConsentTppAccessType was removed

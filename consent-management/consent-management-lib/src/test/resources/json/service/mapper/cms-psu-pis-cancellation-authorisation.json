@@ -2,7 +2,6 @@
   "psuId": "PSU ID",
   "authorisationId": "123",
   "scaStatus": "RECEIVED",
-  "authorisationType": "CANCELLED",
   "type": "PIS_CANCELLATION",
   "scaApproach": "EMBEDDED",
   "tppOkRedirectUri": "OK redirect",

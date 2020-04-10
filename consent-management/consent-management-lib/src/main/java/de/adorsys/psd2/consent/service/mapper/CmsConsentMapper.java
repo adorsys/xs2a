@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -61,8 +61,12 @@ public class CmsConsentMapper {
         cmsConsent.setLastActionDate(entity.getLastActionDate());
         cmsConsent.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
         cmsConsent.setUsages(usages);
-        cmsConsent.setTppAccountAccesses(accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(), entity.getOwnerNameType()));
-        cmsConsent.setAspspAccountAccesses(accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(), entity.getOwnerNameType()));
+        cmsConsent.setTppAccountAccesses(accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(),
+                                                                                    entity.getOwnerNameType(),
+                                                                                    entity.getTrustedBeneficiariesType()));
+        cmsConsent.setAspspAccountAccesses(accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
+                                                                                        entity.getOwnerNameType(),
+                                                                                        entity.getTrustedBeneficiariesType()));
         return cmsConsent;
     }
 
@@ -75,7 +79,7 @@ public class CmsConsentMapper {
         entity.setConsentType(cmsConsent.getConsentType().getName());
         entity.setFrequencyPerDay(cmsConsent.getFrequencyPerDay());
         entity.setMultilevelScaRequired(cmsConsent.isMultilevelScaRequired());
-        entity.setRequestDateTime(LocalDateTime.now());
+        entity.setRequestDateTime(OffsetDateTime.now());
         entity.setValidUntil(cmsConsent.getValidUntil());
         entity.setExpireDate(cmsConsent.getExpireDate());
         entity.setPsuDataList(psuDataMapper.mapToPsuDataList(cmsConsent.getPsuIdDataList()));
@@ -91,6 +95,7 @@ public class CmsConsentMapper {
         AdditionalInformationAccess additionalInformationAccess = tppAccountAccesses.getAdditionalInformationAccess();
         if (additionalInformationAccess != null) {
             entity.setOwnerNameType(AdditionalAccountInformationType.findTypeByList(additionalInformationAccess.getOwnerName()));
+            entity.setTrustedBeneficiariesType(AdditionalAccountInformationType.findTypeByList(additionalInformationAccess.getTrustedBeneficiaries()));
         }
         return entity;
     }

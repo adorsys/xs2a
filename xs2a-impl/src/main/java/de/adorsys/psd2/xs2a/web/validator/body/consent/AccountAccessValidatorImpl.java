@@ -95,8 +95,11 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
                                                          .flatMap(Collection::stream);
 
             Stream<AccountReference> additionalReferences = Optional.ofNullable(accountAccess.getAdditionalInformation())
-                                                                .map(de.adorsys.psd2.model.AdditionalInformationAccess::getOwnerName)
-                                                                .map(Collection::stream)
+                                                                .map(additionalInformationAccess ->
+                                                                         Stream.of(additionalInformationAccess.getOwnerName(),
+                                                                                   additionalInformationAccess.getTrustedBeneficiaries())
+                                                                             .filter(Objects::nonNull)
+                                                                             .flatMap(Collection::stream))
                                                                 .orElseGet(Stream::empty);
 
             List<AccountReference> allReferencesList = allReferences.collect(Collectors.toList());
@@ -172,7 +175,8 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
             return null;
         }
 
-        return new AdditionalInformationAccess(mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError));
+        return new AdditionalInformationAccess(mapToXs2aAccountReferences(additionalInformationAccess.getOwnerName(), messageError),
+                                               mapToXs2aAccountReferences(additionalInformationAccess.getTrustedBeneficiaries(), messageError));
     }
 
     private List<de.adorsys.psd2.xs2a.core.profile.AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references, MessageError messageError) { // NOPMD
