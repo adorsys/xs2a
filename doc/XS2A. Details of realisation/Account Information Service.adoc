@@ -229,6 +229,8 @@ Field *lastActionDate* - is containing the date of the last action on the consen
 * When consent status is changed - lastActionDate also is updated with new date.
 
 === Account Owner Name Service
+
+Account Owner Name Service
 The following rules and requirements for the support of this service apply:
 
 1. An ASPSP may deliver the account owner service without any extension to the consent model as defined in [XS2A-IG].
@@ -243,8 +245,8 @@ If additional account information is supported by ASPSP, then after authorisatio
 
 Optional field *"additionalInformation"* of type *"Additional Information Access"* in the Consent Request:
 
-* is asking for additional information as added within this structured object. In case of ASPSP does not support Account Owner Name Service (accountOwnerInformationSupported = FALSE)
-then the Message Code *CONSENT_INVALID* is in response with text *"An explicit consent of ownerName is not supported"*.
+* is asking for additional information as added within this structured object. In case of ASPSP does not support Account Owner Name Service (*accountOwnerInformationSupported = FALSE*)
+the ASPSP ignores the corresponding entries. Consent will be created. In this case it will not be part of the consent model which is generated through the call where this object is contained.
 * value of this parameter can be array or empty:
 ** The usage of this data element requires at least one of the entries "accounts", "transactions" or "balances" also to be contained in the object.
 ** If the array is empty, also the arrays for accounts, balances or transactions shall be empty if used. If the array is empty in the request, the TPP is asking for the account owner name of all accessible accounts.
@@ -258,6 +260,25 @@ to retrieve additional information (*ownerName*) about PSU by it's account refer
 This information ASPSP can provide through `ownerName` field in `SpiAccountDetails` object, during invoking `requestAccountList` or `requestAccountDetailForAccount` methods in AccountSpi.
 
 Get Consent Request returns created Consent.
+
+=== Trusted Beneficiaries Service
+ASPSP may decide whether to support additional account information (Trusted Beneficiaries) or not, by setting the corresponding value for parameter in the ASPSP-Profile:
+
+* *trustedBeneficiariesSupported* (boolean, default value is FALSE).
+
+If the ASPSP is not supporting the related consent extension (**trustedBeneficiariesSupported=FALSE**), then the ASPSP ignores the corresponding entries in consent body.
+In this case it will not be part of the consent model which is generated through the call where this object is contained. And attribute "trustedBeneficiaries" won't be stored and won't be present in Get Consent Response.
+
+Permission for receiving List of Trusted Beneficiaries can be covered through:
+
+* *Detailed Consent Model* with an additionalInformation access attribute with "*trustedBeneficiaries*" entry. If detailed accounts are referenced, it is required in addition that any account
+addressed within the additionalInformation attribute is also addressed by at least one of the attributes "accounts", "transactions" or "balances".
+
+* *Global Consent Model* always covers the consent on trusted beneficiary lists, with *allPSD2* access attribute with entries "*allAccounts/allAccountsWithOwnerName"*.
+
+* Consent on *Account List of Available Accounts* will *NOT* give access to an overview of the list of beneficiaries.
+
+For Bank-offered consent there is a possibility to update consent from Online-banking (In cms-psu-api) with additionalInformation with *trustedBeneficiaries*.
 
 === Account Identifier
 *aspspAccountId* - This field is a specific unique identifier for bank accounts used in payments, AIS, and PIIS consents (known to bank and given by bank) instead of IBAN and to give all consents for account by this identifier.
