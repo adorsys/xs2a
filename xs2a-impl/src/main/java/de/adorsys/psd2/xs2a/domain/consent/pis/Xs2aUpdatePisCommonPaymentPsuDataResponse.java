@@ -47,7 +47,7 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponse extends AuthorisationProc
 
     @NotNull
     @Override
-    public String getCancellationId() {
+    public String getAuthorisationId() {
         return authorisationId;
     }
 

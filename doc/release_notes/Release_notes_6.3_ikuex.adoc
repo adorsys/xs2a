@@ -1,0 +1,21 @@
+= Release notes v.6.3
+
+== Table of Contents
+
+* Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+
+== Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+
+From now on, path parameter `cancellationId` has been renamed to `authorisationId` in
+`Read the SCA status of the payment cancellation's authorisation (GET)` and `Update PSU data for payment initiation cancellation (PUT)` endpoints `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}`.
+
+In `Get cancellation authorisation sub-resources` endpoint GET `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations` response tag “cancellationIds” has been changed to “authorisationIds”.
+
+In `Start the authorisation process for the cancellation of the addressed payment` endpoint POST `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations` response tag “cancellationId” has been changed to “authorisationId”.
+
+Also in PisCommonPaymentController (`api/v1/pis/common-payments/`) the following endpoints were changed:
+
+* authorizations/{authorization-id} => authorisations/{authorisation-id}
+* {payment-id}/authorizations => {payment-id}/authorisations
+* cancellation-authorisations/{cancellation-id} => cancellation-authorisations/{authorisation-id}
+* cancellation-authorisations/{cancellation-id}/status => cancellation-authorisations/{authorisation-id}/status

@@ -194,7 +194,7 @@ class PisCommonPaymentControllerTest {
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(getCreateAuthorisationResponse()).build());
 
         //When
-        ResponseEntity<CreateAuthorisationResponse> actual = pisCommonPaymentController.createAuthorization(PAYMENT_ID, CREATE_AUTHORISATION_REQUEST);
+        ResponseEntity<CreateAuthorisationResponse> actual = pisCommonPaymentController.createAuthorisation(PAYMENT_ID, CREATE_AUTHORISATION_REQUEST);
 
         //Then
         assertEquals(expected, actual);
@@ -208,7 +208,7 @@ class PisCommonPaymentControllerTest {
         ResponseEntity<CreateAuthorisationResponse> expected = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         //When
-        ResponseEntity<CreateAuthorisationResponse> actual = pisCommonPaymentController.createAuthorization(WRONG_PAYMENT_ID, CREATE_AUTHORISATION_REQUEST);
+        ResponseEntity<CreateAuthorisationResponse> actual = pisCommonPaymentController.createAuthorisation(WRONG_PAYMENT_ID, CREATE_AUTHORISATION_REQUEST);
 
         //Then
         assertEquals(expected, actual);
@@ -224,7 +224,7 @@ class PisCommonPaymentControllerTest {
             .thenReturn(CmsResponse.<Authorisation>builder().payload(getUpdatePisCommonPaymentPsuDataResponse()).build());
 
         //When
-        ResponseEntity<Authorisation> actual = pisCommonPaymentController.updateAuthorization(AUTHORISATION_ID, updateAuthorisationRequest);
+        ResponseEntity<Authorisation> actual = pisCommonPaymentController.updateAuthorisation(AUTHORISATION_ID, updateAuthorisationRequest);
 
         //Then
         ResponseEntity<Authorisation> expected = new ResponseEntity<>(authorisation, HttpStatus.OK);
@@ -241,7 +241,7 @@ class PisCommonPaymentControllerTest {
             .thenReturn(CmsResponse.<Authorisation>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         //When
-        ResponseEntity<Authorisation> actual = pisCommonPaymentController.updateAuthorization(WRONG_AUTHORISATION_ID, updateAuthorisationRequest);
+        ResponseEntity<Authorisation> actual = pisCommonPaymentController.updateAuthorisation(WRONG_AUTHORISATION_ID, updateAuthorisationRequest);
 
         //Then
         ResponseEntity<Authorisation> expected = new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -258,7 +258,7 @@ class PisCommonPaymentControllerTest {
         Authorisation expectedResponse = getGetPisAuthorisationResponse();
 
         // When
-        ResponseEntity<Authorisation> result = pisCommonPaymentController.getAuthorization(AUTHORISATION_ID);
+        ResponseEntity<Authorisation> result = pisCommonPaymentController.getAuthorisation(AUTHORISATION_ID);
 
         // Then
         assertEquals(HttpStatus.OK, result.getStatusCode());
@@ -272,7 +272,7 @@ class PisCommonPaymentControllerTest {
 
         // When
         ResponseEntity<Authorisation> result =
-            pisCommonPaymentController.getAuthorization(AUTHORISATION_ID);
+            pisCommonPaymentController.getAuthorisation(AUTHORISATION_ID);
 
         // Then
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());

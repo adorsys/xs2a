@@ -1,5 +1,5 @@
 {
-  "cancellationId": "authorizationId",
+  "authorisationId": "authorizationId",
   "scaStatus": "RECEIVED",
   "paymentType": "payments",
   "internalRequestId": "cancellationInternalRequestId",
