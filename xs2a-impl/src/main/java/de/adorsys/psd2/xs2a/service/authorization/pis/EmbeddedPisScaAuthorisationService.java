@@ -88,8 +88,8 @@ public class EmbeddedPisScaAuthorisationService implements PisScaAuthorisationSe
     }
 
     @Override
-    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
-        return authorisationService.getCancellationAuthorisationScaStatus(paymentId, cancellationId);
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String authorisationId) {
+        return authorisationService.getCancellationAuthorisationScaStatus(paymentId, authorisationId);
     }
 
     @Override

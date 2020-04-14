@@ -1,6 +1,6 @@
 {
   "scaStatus": "psuIdentified",
-  "cancellationId": "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc",
+  "authorisationId": "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc",
   "_links": {
     "scaStatus": {
       "href": "http://localhost/v1/payments/sepa-credit-transfers/JKDQjM02y1a9G7_kLTgAy8HJCLIOYVWZ-fQThyI7gYhZvqcmJ6kZg7CmJFgTANLhcgftJbETkzvNvu5mZQqWcA==_=_psGLvQpt9Q/cancellation-authorisations/e8356ea7-8e3e-474f-b5ea-2b89346cb2dc"

@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.model.StartCancellationScaProcessResponse;
 import de.adorsys.psd2.model.StartScaprocessResponse;
-import de.adorsys.psd2.model.UpdateCancellationPsuAuthenticationResponse;
+import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
@@ -48,9 +47,9 @@ public abstract class AuthorisationModelMapper {
         AuthorisationResponseType authorisationResponseType = cancellationAuthorisationResponse.getAuthorisationResponseType();
 
         if (authorisationResponseType == AuthorisationResponseType.START) {
-            return mapToStartCancellationScaProcessResponse((Xs2aCreatePisCancellationAuthorisationResponse) cancellationAuthorisationResponse);
+            return mapToStartScaProcessResponseCancellation((Xs2aCreatePisCancellationAuthorisationResponse) cancellationAuthorisationResponse);
         } else if (authorisationResponseType == AuthorisationResponseType.UPDATE) {
-            return mapToUpdateCancellationPsuAuthenticationResponse((Xs2aUpdatePisCommonPaymentPsuDataResponse) cancellationAuthorisationResponse);
+            return mapToUpdatePsuAuthenticationResponse((Xs2aUpdatePisCommonPaymentPsuDataResponse) cancellationAuthorisationResponse);
         } else {
             throw new IllegalArgumentException("Unknown authorisation response type: " + authorisationResponseType);
         }
@@ -74,13 +73,12 @@ public abstract class AuthorisationModelMapper {
     @Mapping(target = "_links", ignore = true)
     @Mapping(target = "challengeData", ignore = true)
     @Mapping(target = "chosenScaMethod", ignore = true)
-    @Mapping(target = "psuMessage", ignore = true)
     @Mapping(target = "scaMethods", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(xs2aResponse.getLinks()))")
-    public abstract StartCancellationScaProcessResponse mapToStartCancellationScaProcessResponse(Xs2aCreatePisCancellationAuthorisationResponse xs2aResponse);
+    public abstract StartScaprocessResponse mapToStartScaProcessResponseCancellation(Xs2aCreatePisCancellationAuthorisationResponse xs2aResponse);
 
     @Mapping(target = "_links", ignore = true)
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(xs2aResponse.getLinks()))")
     @Mapping(target = "scaMethods", source = "availableScaMethods")
-    public abstract UpdateCancellationPsuAuthenticationResponse mapToUpdateCancellationPsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aResponse);
+    public abstract UpdatePsuAuthenticationResponse mapToUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aResponse);
 }

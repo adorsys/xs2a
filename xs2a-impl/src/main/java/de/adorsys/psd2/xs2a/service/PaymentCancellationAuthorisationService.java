@@ -32,5 +32,5 @@ public interface PaymentCancellationAuthorisationService {
 
     ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> getPaymentInitiationCancellationAuthorisationInformation(String paymentId, PaymentType paymentType, String paymentProduct);
 
-    ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String cancellationId, PaymentType paymentType, String paymentProduct);
+    ResponseObject<ScaStatus> getPaymentCancellationAuthorisationScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct);
 }

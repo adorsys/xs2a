@@ -81,8 +81,8 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
             return ResponseObject.<CancellationAuthorisationResponse>builder().body(cancellationAuthorisation.getBody()).build();
         }
 
-        String cancellationId = cancellationAuthorisation.getBody().getCancellationId();
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest(request, cancellationId);
+        String authorisationId = cancellationAuthorisation.getBody().getAuthorisationId();
+        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest(request, authorisationId);
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePsuDataResponse = updatePisCancellationPsuData(updateRequest);
 
         if (updatePsuDataResponse.hasError()) {

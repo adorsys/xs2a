@@ -17,7 +17,10 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.ChosenScaMethod;
+import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.StartScaprocessResponse;
+import de.adorsys.psd2.model.UpdatePsuAuthenticationResponse;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
@@ -152,13 +155,13 @@ class AuthorisationModelMapperTest {
     }
 
     @Test
-    void mapToStartCancellationScaProcessResponse_withPaymentResponse() {
+    void mapToStartScaProcessResponseCancellation_withPaymentResponse() {
         // Given
         Xs2aCreatePisCancellationAuthorisationResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aCreatePisCancellationAuthorisationResponse.json", Xs2aCreatePisCancellationAuthorisationResponse.class);
-        StartCancellationScaProcessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/StartCancellationScaProcessResponse.json", StartCancellationScaProcessResponse.class);
+        StartScaprocessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/StartScaprocessResponseCancellation.json", StartScaprocessResponse.class);
 
         // When
-        StartCancellationScaProcessResponse actual = authorisationModelMapper.mapToStartCancellationScaProcessResponse(objectFromFile);
+        StartScaprocessResponse actual = authorisationModelMapper.mapToStartScaProcessResponseCancellation(objectFromFile);
 
         // Then
         assertEquals(expected, actual);
@@ -166,28 +169,28 @@ class AuthorisationModelMapperTest {
         verify(mockCoreObjectsMapper).mapToModelScaStatus(any(ScaStatus.class));
         verify(mockHrefLinkMapper).mapToLinksMap(any(Links.class));
 
-        assertNotNull(actual.getCancellationId());
+        assertNotNull(actual.getAuthorisationId());
         assertNotNull(actual.getScaStatus());
         assertFalse(actual.getLinks().isEmpty());
     }
 
     @Test
-    void mapToStartCancellationScaProcessResponse_withNullPaymentResponse_shouldReturnNull() {
+    void mapToStartScaProcessResponseCancellation_withNullPaymentResponse_shouldReturnNull() {
         // When
-        StartCancellationScaProcessResponse actual = authorisationModelMapper.mapToStartCancellationScaProcessResponse(null);
+        StartScaprocessResponse actual = authorisationModelMapper.mapToStartScaProcessResponseCancellation(null);
 
         // Then
         assertNull(actual);
     }
 
     @Test
-    void mapToUpdateCancellationPsuAuthenticationResponse() {
+    void mapToUpdatePsuAuthenticationResponse() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aUpdatePisCommonPaymentPsuDataResponse.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
-        UpdateCancellationPsuAuthenticationResponse expected = jsonReader.getObjectFromFile("json/web/mapper/UpdateCancellationPsuAuthenticationResponse.json", UpdateCancellationPsuAuthenticationResponse.class);
+        UpdatePsuAuthenticationResponse expected = jsonReader.getObjectFromFile("json/web/mapper/UpdatePsuAuthenticationResponse.json", UpdatePsuAuthenticationResponse.class);
 
         // When
-        UpdateCancellationPsuAuthenticationResponse actual = authorisationModelMapper.mapToUpdateCancellationPsuAuthenticationResponse(objectFromFile);
+        UpdatePsuAuthenticationResponse actual = authorisationModelMapper.mapToUpdatePsuAuthenticationResponse(objectFromFile);
 
         // Then
         assertEquals(expected, actual);
@@ -199,15 +202,15 @@ class AuthorisationModelMapperTest {
         assertNotNull(actual.getChallengeData());
         assertNotNull(actual.getScaMethods());
         assertNotNull(actual.getPsuMessage());
-        assertNotNull(actual.getCancellationId());
+        assertNotNull(actual.getAuthorisationId());
         assertNotNull(actual.getScaStatus());
         assertFalse(actual.getLinks().isEmpty());
     }
 
     @Test
-    void mapToUpdateCancellationPsuAuthenticationResponse_withNullXs2aResponse_shouldReturnNull() {
+    void mapToUpdatePsuAuthenticationResponse_withNullXs2aResponse_shouldReturnNull() {
         // When
-        UpdateCancellationPsuAuthenticationResponse actual = authorisationModelMapper.mapToUpdateCancellationPsuAuthenticationResponse(null);
+        UpdatePsuAuthenticationResponse actual = authorisationModelMapper.mapToUpdatePsuAuthenticationResponse(null);
 
         // Then
         assertNull(actual);
@@ -217,21 +220,21 @@ class AuthorisationModelMapperTest {
     void mapToStartOrUpdateCancellationResponse_withCreateResponse_shouldReturnStartResponse() {
         // Given
         Xs2aCreatePisCancellationAuthorisationResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aCreatePisCancellationAuthorisationResponse.json", Xs2aCreatePisCancellationAuthorisationResponse.class);
-        StartCancellationScaProcessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/StartCancellationScaProcessResponse.json", StartCancellationScaProcessResponse.class);
+        StartScaprocessResponse expected = jsonReader.getObjectFromFile("json/web/mapper/StartScaprocessResponseCancellation.json", StartScaprocessResponse.class);
 
         // When
         Object actual = authorisationModelMapper.mapToStartOrUpdateCancellationResponse(objectFromFile);
 
         // Then
-        assertTrue(actual instanceof StartCancellationScaProcessResponse);
+        assertTrue(actual instanceof StartScaprocessResponse);
 
-        StartCancellationScaProcessResponse actualStartResponse = (StartCancellationScaProcessResponse) actual;
+        StartScaprocessResponse actualStartResponse = (StartScaprocessResponse) actual;
         assertEquals(expected, actual);
 
         verify(mockCoreObjectsMapper).mapToModelScaStatus(any(ScaStatus.class));
         verify(mockHrefLinkMapper).mapToLinksMap(any(Links.class));
 
-        assertNotNull(actualStartResponse.getCancellationId());
+        assertNotNull(actualStartResponse.getAuthorisationId());
         assertNotNull(actualStartResponse.getScaStatus());
         assertFalse(actualStartResponse.getLinks().isEmpty());
     }
@@ -240,15 +243,15 @@ class AuthorisationModelMapperTest {
     void mapToStartOrUpdateCancellationResponse_withUpdateResponse_shouldReturnUpdateResponse() {
         // Given
         Xs2aUpdatePisCommonPaymentPsuDataResponse objectFromFile = jsonReader.getObjectFromFile("json/web/mapper/Xs2aUpdatePisCommonPaymentPsuDataResponse.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
-        UpdateCancellationPsuAuthenticationResponse expected = jsonReader.getObjectFromFile("json/web/mapper/UpdateCancellationPsuAuthenticationResponse.json", UpdateCancellationPsuAuthenticationResponse.class);
+        UpdatePsuAuthenticationResponse expected = jsonReader.getObjectFromFile("json/web/mapper/UpdatePsuAuthenticationResponse.json", UpdatePsuAuthenticationResponse.class);
 
         // When
         Object actual = authorisationModelMapper.mapToStartOrUpdateCancellationResponse(objectFromFile);
 
         // Then
-        assertTrue(actual instanceof UpdateCancellationPsuAuthenticationResponse);
+        assertTrue(actual instanceof UpdatePsuAuthenticationResponse);
 
-        UpdateCancellationPsuAuthenticationResponse actualUpdateResponse = (UpdateCancellationPsuAuthenticationResponse) actual;
+        UpdatePsuAuthenticationResponse actualUpdateResponse = (UpdatePsuAuthenticationResponse) actual;
         assertEquals(expected, actual);
 
         verify(mockCoreObjectsMapper).mapToModelScaStatus(any(ScaStatus.class));
@@ -258,7 +261,7 @@ class AuthorisationModelMapperTest {
         assertNotNull(actualUpdateResponse.getChallengeData());
         assertNotNull(actualUpdateResponse.getScaMethods());
         assertNotNull(actualUpdateResponse.getPsuMessage());
-        assertNotNull(actualUpdateResponse.getCancellationId());
+        assertNotNull(actualUpdateResponse.getAuthorisationId());
         assertNotNull(actualUpdateResponse.getScaStatus());
         assertFalse(actualUpdateResponse.getLinks().isEmpty());
     }
