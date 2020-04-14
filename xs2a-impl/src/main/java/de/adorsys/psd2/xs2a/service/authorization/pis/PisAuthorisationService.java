@@ -217,11 +217,11 @@ public class PisAuthorisationService {
      * Gets SCA status of the cancellation authorisation
      *
      * @param paymentId      String representation of the payment identifier
-     * @param cancellationId String representation of the cancellation authorisation identifier
+     * @param authorisationId String representation of the authorisation identifier
      * @return SCA status of the authorisation
      */
-    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId) {
-        CmsResponse<ScaStatus> cmsResponse = authorisationServiceEncrypted.getAuthorisationScaStatus(cancellationId, new PisCancellationAuthorisationParentHolder(paymentId));
+    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String authorisationId) {
+        CmsResponse<ScaStatus> cmsResponse = authorisationServiceEncrypted.getAuthorisationScaStatus(authorisationId, new PisCancellationAuthorisationParentHolder(paymentId));
 
         if (cmsResponse.hasError()) {
             return Optional.empty();

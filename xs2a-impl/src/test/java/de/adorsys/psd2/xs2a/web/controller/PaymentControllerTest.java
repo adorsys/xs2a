@@ -512,8 +512,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<Cancellations> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<Authorisations> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -527,7 +527,7 @@ class PaymentControllerTest {
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
-        assertTrue(actual.getBody() instanceof Cancellations);
+        assertTrue(actual.getBody() instanceof Authorisations);
     }
 
     @Test
@@ -554,15 +554,15 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationCancellationAuthorisationInformation_MethodMapperCheck() {
         // noinspection unchecked
-        ArgumentCaptor<Function<Xs2aPaymentCancellationAuthorisationSubResource, Cancellations>> argumentCaptor = ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<Function<Xs2aPaymentCancellationAuthorisationSubResource, Authorisations>> argumentCaptor = ArgumentCaptor.forClass(Function.class);
 
         List<String> cancellationsList = Collections.singletonList(CORRECT_PAYMENT_ID);
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> cancellationResponseList = getCancellationResponseList(cancellationsList);
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<Cancellations> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), argumentCaptor.capture());
+        ResponseEntity<Authorisations> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), argumentCaptor.capture());
 
         // When
         paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -576,7 +576,7 @@ class PaymentControllerTest {
 
         // Then
         argumentCaptor.getValue().apply(null);
-        verify(consentModelMapper).mapToCancellations(any());
+        verify(consentModelMapper).mapToAuthorisations(any());
     }
 
     @Test
@@ -588,8 +588,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<?> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<?> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -603,9 +603,9 @@ class PaymentControllerTest {
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
-        Cancellations actualBody = (Cancellations) actual.getBody();
+        Authorisations actualBody = (Authorisations) actual.getBody();
         assertThat(actualBody).isNotNull();
-        assertThat(actualBody.getCancellationIds().size()).isEqualTo(1);
+        assertThat(actualBody.getAuthorisationIds().size()).isEqualTo(1);
     }
 
     @Test
@@ -617,8 +617,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<?> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<?> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -631,9 +631,9 @@ class PaymentControllerTest {
                                                                                                               null, null);
 
         // Then
-        Cancellations actualBody = (Cancellations) actual.getBody();
+        Authorisations actualBody = (Authorisations) actual.getBody();
         assertThat(actualBody).isNotNull();
-        assertThat(actualBody.getCancellationIds().size()).isEqualTo(2);
+        assertThat(actualBody.getAuthorisationIds().size()).isEqualTo(2);
     }
 
     @Test
@@ -644,8 +644,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(anyString(), any(PaymentType.class), any(String.class)))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<?> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<?> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -658,9 +658,9 @@ class PaymentControllerTest {
                                                                                                               null, null);
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
-        Cancellations cancellations = (Cancellations) actual.getBody();
-        assertThat(cancellations).isNotNull();
-        assertTrue(CollectionUtils.isEmpty(cancellations.getCancellationIds()));
+        Authorisations authorisations = (Authorisations) actual.getBody();
+        assertThat(authorisations).isNotNull();
+        assertTrue(CollectionUtils.isEmpty(authorisations.getAuthorisationIds()));
     }
 
     @Test
@@ -985,8 +985,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request))
             .thenReturn(serviceResponse);
 
-        StartCancellationScaProcessResponse expectedResponse = new StartCancellationScaProcessResponse();
-        ResponseEntity<StartCancellationScaProcessResponse> value = new ResponseEntity<>(expectedResponse, CREATED);
+        StartScaprocessResponse expectedResponse = new StartScaprocessResponse();
+        ResponseEntity<StartScaprocessResponse> value = new ResponseEntity<>(expectedResponse, CREATED);
         doReturn(value).when(responseMapper).created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
 
         when(paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
@@ -1385,7 +1385,7 @@ class PaymentControllerTest {
         when(paymentAuthorisationService.createPisAuthorisation(request))
             .thenReturn(serviceResponse);
 
-        StartCancellationScaProcessResponse expectedResponse = new StartCancellationScaProcessResponse();
+        StartScaprocessResponse expectedResponse = new StartScaprocessResponse();
 
         doReturn(new ResponseEntity<>(expectedResponse, CREATED)).when(responseMapper).created(any(), eq(RESPONSE_HEADERS));
 
@@ -1513,11 +1513,11 @@ class PaymentControllerTest {
                    .build();
     }
 
-    private Cancellations buildCancellations(List<String> cancellationsList) {
-        Cancellations cancellations = new Cancellations();
-        CancellationList cancellationList = new CancellationList();
-        cancellationList.addAll(cancellationsList);
-        cancellations.setCancellationIds(cancellationList);
-        return cancellations;
+    private Authorisations buildAuthorisations(List<String> authorisationIds) {
+        Authorisations authorisations = new Authorisations();
+        AuthorisationsList authorisationsList = new AuthorisationsList();
+        authorisationsList.addAll(authorisationIds);
+        authorisations.setAuthorisationIds(authorisationsList);
+        return authorisations;
     }
 }

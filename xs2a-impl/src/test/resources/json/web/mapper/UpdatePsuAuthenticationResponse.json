@@ -1,6 +1,6 @@
 {
   "psuMessage": "some psu message",
-  "cancellationId": "5d7516bc-8f10-4da0-a19a-6b0e18d07fa5",
+  "authorisationId": "5d7516bc-8f10-4da0-a19a-6b0e18d07fa5",
   "scaStatus": "received",
   "scaMethods": [
     {

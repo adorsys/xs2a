@@ -143,7 +143,7 @@ public class CancelPaymentService {
             }
 
             CancellationAuthorisationResponse authorisationResponseBody = authorisationResponse.getBody();
-            cancelPaymentResponse.setAuthorizationId(authorisationResponseBody.getCancellationId());
+            cancelPaymentResponse.setAuthorizationId(authorisationResponseBody.getAuthorisationId());
             cancelPaymentResponse.setScaStatus(authorisationResponseBody.getScaStatus());
         }
 

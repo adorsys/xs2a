@@ -156,7 +156,7 @@ class PaymentCancellationAuthorisationServiceTest {
 
         CancellationAuthorisationResponse responseBody = pisCancellationAuthorisation.getBody();
         assertThat(responseBody.getAuthorisationResponseType()).isEqualTo(AuthorisationResponseType.START);
-        assertThat(responseBody.getCancellationId()).isEqualTo(CANCELLATION_AUTHORISATION_ID);
+        assertThat(responseBody.getAuthorisationId()).isEqualTo(CANCELLATION_AUTHORISATION_ID);
         assertThat(responseBody.getScaStatus()).isEqualTo(scaStatus);
 
         Xs2aCreatePisCancellationAuthorisationResponse concreteResponseBody = (Xs2aCreatePisCancellationAuthorisationResponse) responseBody;
@@ -235,7 +235,7 @@ class PaymentCancellationAuthorisationServiceTest {
 
         CancellationAuthorisationResponse responseBody = pisCancellationAuthorisation.getBody();
         assertThat(responseBody.getAuthorisationResponseType()).isEqualTo(AuthorisationResponseType.UPDATE);
-        assertThat(responseBody.getCancellationId()).isEqualTo(CANCELLATION_AUTHORISATION_ID);
+        assertThat(responseBody.getAuthorisationId()).isEqualTo(CANCELLATION_AUTHORISATION_ID);
         assertThat(responseBody.getScaStatus()).isEqualTo(scaStatus);
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse concreteResponseBody = (Xs2aUpdatePisCommonPaymentPsuDataResponse) responseBody;

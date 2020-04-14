@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  * Common authorisation response to be used on creating or updating cancellation authorisation
  */
 public interface CancellationAuthorisationResponse {
-    String getCancellationId();
+    String getAuthorisationId();
 
     ScaStatus getScaStatus();
 
