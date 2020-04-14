@@ -24,5 +24,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class Xs2aPaymentCancellationAuthorisationSubResource {
-    private List<String> cancellationIds;
+    private List<String> authorisationIds;
 }

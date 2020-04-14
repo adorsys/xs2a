@@ -66,11 +66,11 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
                 response.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                         redirectIdService, request.getPaymentService().getValue(),
                                                                         request.getPaymentProduct(), request.getPaymentId(),
-                                                                        body.getCancellationId(), getScaRedirectFlow(), body.getInternalRequestId()));
+                                                                        body.getAuthorisationId(), getScaRedirectFlow(), body.getInternalRequestId()));
             } else if (authorisationResponseType == AuthorisationResponseType.UPDATE) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildXs2aUpdatePisCommonPaymentPsuDataRequest(request.getPaymentId(),
-                                                                                                                       response.getCancellationId(),
+                                                                                                                       response.getAuthorisationId(),
                                                                                                                        request.getPsuData(),
                                                                                                                        request.getPaymentProduct(),
                                                                                                                        request.getPaymentService(),
@@ -85,14 +85,14 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisCommonPaymentPsuDataRequest(String paymentId,
-                                                                                                   String cancellationId,
+                                                                                                   String authorisationId,
                                                                                                    PsuIdData psuIdData,
                                                                                                    String paymentProduct,
                                                                                                    PaymentType paymentService,
                                                                                                    String password) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         updateRequest.setPaymentId(paymentId);
-        updateRequest.setAuthorisationId(cancellationId);
+        updateRequest.setAuthorisationId(authorisationId);
         updateRequest.setPsuData(psuIdData);
         updateRequest.setPassword(password);
         updateRequest.setPaymentProduct(paymentProduct);

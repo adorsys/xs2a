@@ -137,8 +137,8 @@ class DecoupledPisScaAuthorisationServiceTest {
         Optional<Xs2aPaymentCancellationAuthorisationSubResource> actual = decoupledPisScaAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
 
         assertTrue(actual.isPresent());
-        assertEquals(1, actual.get().getCancellationIds().size());
-        assertTrue(actual.get().getCancellationIds().contains(AUTHORISATION_ID));
+        assertEquals(1, actual.get().getAuthorisationIds().size());
+        assertTrue(actual.get().getAuthorisationIds().contains(AUTHORISATION_ID));
     }
 
     @Test
