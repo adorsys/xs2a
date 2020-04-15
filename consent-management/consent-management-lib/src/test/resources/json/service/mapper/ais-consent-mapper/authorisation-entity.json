@@ -1,0 +1,14 @@
+{
+  "instanceId": "UNDEFINED",
+  "externalId": "ed1d8022-1c38-49ae-898e-78f29234557c",
+  "psuData": {
+    "instanceId": "UNDEFINED",
+    "psuId": "PSU_ID",
+    "psuIdType": "PSU_ID_TYPE",
+    "psuCorporateId": "PSU_CORPORATE_ID",
+    "psuCorporateIdType": "PSU_CORPORATE_ID_TYPE",
+    "psuIpAddress": "PSU_IP_ADDRESS"
+  },
+  "scaStatus": "received",
+  "availableScaMethods": []
+}
