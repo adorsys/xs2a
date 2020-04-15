@@ -45,29 +45,4 @@ public class SpiCardAccountDetails {
     private List<SpiAccountBalance> balances;
     private String ownerName;
 
-    /**
-     * @param aspspAccountId Bank specific account identifier
-     * @param resourceId id of resource
-     * @param maskedPan Primary Account Number in masked form
-     * @param currency Account currency
-     * @param name Name of the account given by the bank or the PSU in Online-Banking
-     * @param product Product Name of the Bank for this account, proprietary definition
-     * @param spiAccountStatus status of spi account
-     * @param cashSpiAccountType ExternalCashAccountType1Code from ISO 20022
-     * @param usageType the usage type of the account: PRIV or ORGA
-     * @param details Specifications: characteristics of the account, characteristics of the relevant card
-     * @param creditLimit credit limit of the PSU aggregated for all cards related to this card account in total
-     * @param balances spi account balances
-     * @param ownerName Name of the legal account owner
-     *
-     * @deprecated since 6.0/7.0, use all args constructor instead
-     */
-    @Deprecated // ToDo remove deprecated constructor https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1240
-    public SpiCardAccountDetails(String aspspAccountId, String resourceId, String maskedPan, Currency currency, String name,
-                                 String product, SpiAccountStatus spiAccountStatus, SpiAccountType cashSpiAccountType,
-                                 SpiUsageType usageType, String details, SpiAmount creditLimit,
-                                 List<SpiAccountBalance> balances, String ownerName) {
-        this(aspspAccountId, resourceId, maskedPan, currency, name, null, product, spiAccountStatus, cashSpiAccountType,
-             usageType, details, creditLimit, balances, ownerName);
-    }
 }
