@@ -1,0 +1,9 @@
+= Release notes v.7.3
+
+== Table of Contents
+
+* Add integration tests for spring data jpa specifications
+
+== Add integration tests for spring data jpa specifications
+
+From now on, all spring data jpa specifications are covered by integration tests.
