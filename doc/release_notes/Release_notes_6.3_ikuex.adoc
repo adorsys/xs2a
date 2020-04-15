@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+* Remove AIS prefix from tables in the database that are used for common consent
 
 == Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
 
@@ -19,3 +20,15 @@ Also in PisCommonPaymentController (`api/v1/pis/common-payments/`) the following
 * {payment-id}/authorizations => {payment-id}/authorisations
 * cancellation-authorisations/{cancellation-id} => cancellation-authorisations/{authorisation-id}
 * cancellation-authorisations/{cancellation-id}/status => cancellation-authorisations/{authorisation-id}/status
+
+== Remove AIS prefix from tables in the database that are used for common consent
+
+From now on, the following tables are not used:
+
+* ais_consent_psu_data
+* ais_consent_usage
+* ais_account_access
+* ais_aspsp_account_access
+
+Instead of them new tables were created (without prefix `ais_`) and all data was migrated to these tables.
+The former tables will be deleted in upcoming release.
