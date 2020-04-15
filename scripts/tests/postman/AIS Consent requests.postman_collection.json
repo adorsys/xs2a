@@ -1509,11 +1509,6 @@
 											"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
 											"});",
 											"",
-											"pm.test(\"Redirect URLs are present\", () => {",
-											"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-											"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
-											"});",
-											"",
 											"const authorisationId = jsonData.authorisationId;",
 											"pm.test(\"Authorisation id is correct\", () => {",
 											"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
@@ -6697,11 +6692,6 @@
 											"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
 											"});",
 											"",
-											"pm.test(\"Redirect URLs are present\", () => {",
-											"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-											"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
-											"});",
-											"",
 											"const authorisationId = jsonData.authorisationId;",
 											"pm.test(\"Authorisation id is correct\", () => {",
 											"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
@@ -11571,11 +11561,6 @@
 											"",
 											"pm.test(\"Authorisation id is present\", () => {",
 											"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
-											"});",
-											"",
-											"pm.test(\"Redirect URLs are present\", () => {",
-											"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-											"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
 											"});",
 											"",
 											"const authorisationId = jsonData.authorisationId;",
@@ -24966,17 +24951,17 @@
 									}
 								],
 								"url": {
-                                  "raw": "{{protocol}}://{{url_xs2a}}/v1/accounts",
-                                  "protocol": "{{protocol}}",
-                                  "host": [
-                                    "{{url_xs2a}}"
-                                  ],
-                                  "path": [
-                                    "v1",
-                                    "accounts"
-                                  ],
-                                  "query": [
-                                    {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
 											"key": "withBalance",
 											"value": "{{with_balance}}",
 											"disabled": true
@@ -25861,17 +25846,17 @@
 									}
 								],
 								"url": {
-                                  "raw": "{{protocol}}://{{url_xs2a}}/v1/accounts",
-                                  "protocol": "{{protocol}}",
-                                  "host": [
-                                    "{{url_xs2a}}"
-                                  ],
-                                  "path": [
-                                    "v1",
-                                    "accounts"
-                                  ],
-                                  "query": [
-                                    {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
 											"key": "withBalance",
 											"value": "{{with_balance}}",
 											"disabled": true
@@ -29011,11 +28996,6 @@
 											"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
 											"});",
 											"",
-											"pm.test(\"Redirect URLs are present\", () => {",
-											"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-											"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
-											"});",
-											"",
 											"const authorisationId = jsonData.authorisationId;",
 											"pm.test(\"Authorisation id is correct\", () => {",
 											"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
@@ -30676,11 +30656,6 @@
 											"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
 											"});",
 											"",
-											"pm.test(\"Redirect URLs are present\", () => {",
-											"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-											"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
-											"});",
-											"",
 											"const authorisationId = jsonData.authorisationId;",
 											"pm.test(\"Authorisation id is correct\", () => {",
 											"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
@@ -32045,11 +32020,6 @@
 											"",
 											"pm.test(\"Authorisation id is present\", () => {",
 											"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
-											"});",
-											"",
-											"pm.test(\"Redirect URLs are present\", () => {",
-											"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-											"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
 											"});",
 											"",
 											"const authorisationId = jsonData.authorisationId;",
@@ -39608,17 +39578,17 @@
 							}
 						],
 						"url": {
-                          "raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{account_id_current}}/transactions?withBalance={{with_balance}}&bookingStatus={{booking_status}}&&dateTo=2020-12-31&dateFrom=2019-01-01",
-                          "protocol": "{{protocol}}",
-                          "host": [
-                            "{{url_xs2a}}"
-                          ],
-                          "path": [
-                            "v1",
-                            "accounts",
-                            "{{account_id_current}}",
-                            "transactions"
-                          ],
+							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts/{{account_id_current}}/transactions?withBalance={{with_balance}}&bookingStatus={{booking_status}}&&dateTo=2020-12-31&dateFrom=2019-01-01",
+							"protocol": "{{protocol}}",
+							"host": [
+								"{{url_xs2a}}"
+							],
+							"path": [
+								"v1",
+								"accounts",
+								"{{account_id_current}}",
+								"transactions"
+							],
 							"query": [
 								{
 									"key": "withBalance",
