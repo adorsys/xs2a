@@ -108,8 +108,8 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     private ConsentTppInformationEntity tppInformation = new ConsentTppInformationEntity();
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "ais_consent_psu_data",
-        joinColumns = @JoinColumn(name = "ais_consent_id"),
+    @JoinTable(name = "consent_psu_data",
+        joinColumns = @JoinColumn(name = "consent_id"),
         inverseJoinColumns = @JoinColumn(name = "psu_data_id"))
     private List<PsuData> psuDataList = new ArrayList<>();
 
@@ -117,11 +117,11 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     private List<AisConsentUsage> usages = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "ais_account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @CollectionTable(name = "account_access", joinColumns = @JoinColumn(name = "consent_id"))
     private List<TppAccountAccess> tppAccountAccesses = new ArrayList<>();
 
     @ElementCollection
-    @CollectionTable(name = "ais_aspsp_account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @CollectionTable(name = "aspsp_account_access", joinColumns = @JoinColumn(name = "consent_id"))
     private List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
 
     @Column(name = "owner_name_type", nullable = false)
