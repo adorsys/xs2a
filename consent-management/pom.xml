@@ -57,6 +57,8 @@
         <!-- Standalone service -->
         <module>cms-standalone-service</module>
         <module>cms-payment-support</module>
+
+        <module>cms-integration-test-base</module>
     </modules>
 
 </project>

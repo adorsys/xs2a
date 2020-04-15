@@ -46,7 +46,7 @@ You can check out our [Swagger API yaml file](xs2a-impl/src/main/resources/stati
 
 * If you want to play with the framework in isolated environment, check out [XS2A-Sandbox](https://github.com/adorsys/xs2a-sandbox) Repository.
 * To know how to write a connector to your banking system see our [xs2a-connector-examples](https://github.com/adorsys/xs2a-connector-examples) repository and [SPI Developer Guide](https://adorsys.github.io/xs2a/SPI%20Developer%20Guide/SPI_Developer_Guide.html)
-* [These instructions](doc/GETTING_STARTED.adoc) will help you getting you a copy of the project up and running on your local machine for development and testing purposes. 
+* [These instructions](doc/GETTING_STARTED.adoc) will help you to get a copy of the project up and running on your local machine for development and testing purposes. 
 
 ## Development and contributing
 
