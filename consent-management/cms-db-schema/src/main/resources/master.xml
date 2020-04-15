@@ -129,4 +129,8 @@
     <include relativeToChangelogFile="true" file="migration/0101-remove-owner-address-type-from-ais-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0102-drop-consent-authorization-and-available-sca-method-tables-for-ais-pis.xml"/>
     <include relativeToChangelogFile="true" file="migration/0103-change-datetime-types-in-consent-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0104-add-consent-psu-data-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0105-add-consent-usage-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0106-add-account-access-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0107-add-aspsp-account-access-table.xml"/>
 </databaseChangeLog>
