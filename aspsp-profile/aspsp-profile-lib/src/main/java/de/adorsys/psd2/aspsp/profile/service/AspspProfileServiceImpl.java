@@ -75,7 +75,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 pisBankSetting.getCountryValidationSupported(),
                                                                 pisBankSetting.getSupportedTransactionStatusFormats());
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().isPiisConsentSupported());
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().getPiisConsentSupported());
 
         CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),

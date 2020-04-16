@@ -1,0 +1,17 @@
+= Release notes v.7.3
+
+== Table of Contents
+
+* Funds Confirmation consent support in Profile
+
+== Funds Confirmation consent support in Profile
+
+From now on, Funds Confirmation consent is supported in the following modes:
+
+* `NOT_SUPPORTED` (by default);
+* `TPP_CONSENT_SUPPORTED` Establish PIIS Consent through XS2A interface;
+* `ASPSP_CONSENT_SUPPORTED` means that ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent
+
+Up to now, `piisConsentSupported` parameter in ASPSP Profile had 2 values: true and false.
+These values have been converted to `ASPSP_CONSENT_SUPPORTED` and `NOT_SUPPORTED` values accordingly.
+

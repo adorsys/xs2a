@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
@@ -89,8 +90,8 @@ class FundsConfirmationServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
             .thenReturn(buildFundsConfirmationResponse());
-        when(aspspProfileServiceWrapper.isPiisConsentSupported())
-            .thenReturn(false);
+        when(aspspProfileServiceWrapper.getPiisConsentSupported())
+            .thenReturn(PiisConsentSupported.NOT_SUPPORTED);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
             .thenReturn(buildSuccessSpiResponse());
         when(xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(any()))
@@ -122,8 +123,8 @@ class FundsConfirmationServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(spiErrorMapper.mapToErrorHolder(any(SpiResponse.class), eq(ServiceType.PIIS)))
             .thenReturn(errorHolder);
-        when(aspspProfileServiceWrapper.isPiisConsentSupported())
-            .thenReturn(false);
+        when(aspspProfileServiceWrapper.getPiisConsentSupported())
+            .thenReturn(PiisConsentSupported.NOT_SUPPORTED);
         when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
             .thenReturn(SpiResponse.<SpiFundsConfirmationResponse>builder()
                             .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))

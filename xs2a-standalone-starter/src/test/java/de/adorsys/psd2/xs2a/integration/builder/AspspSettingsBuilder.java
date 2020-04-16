@@ -25,10 +25,7 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
-import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
-import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.xs2a.core.profile.*;
 
 import java.util.*;
 
@@ -51,7 +48,7 @@ public class AspspSettingsBuilder {
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = false;
     private static final boolean PAYMENT_CANCELLATION_AUTHORISATION_MANDATED = false;
-    private static final boolean PIIS_CONSENT_SUPPORTED = false;
+    private static final PiisConsentSupported PIIS_CONSENT_SUPPORTED = PiisConsentSupported.NOT_SUPPORTED;
     private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
