@@ -200,20 +200,6 @@ class PisCommonPaymentServiceInternalEncryptedTest {
     }
 
     @Test
-    void updateCommonPayment_success() {
-        // Given
-        PisCommonPaymentRequest request = buildPisCommonPaymentRequest();
-        when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
-
-        // When
-        pisCommonPaymentServiceInternalEncrypted.updateCommonPayment(request, ENCRYPTED_PAYMENT_ID);
-
-        // Then
-        verify(pisCommonPaymentService, times(1))
-            .updateCommonPayment(request, DECRYPTED_PAYMENT_ID);
-    }
-
-    @Test
     void getPsuDataListByPaymentId_success() {
         // Given
         List<PsuIdData> expected = buildPsuIdDataList();

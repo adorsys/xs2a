@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -196,24 +195,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     }
 
     /**
-     * Update PIS common payment payment data and stores it into database
-     *
-     * @param request   PIS common payment request for update payment data
-     * @param paymentId common payment ID
-     */
-    @Override
-    @Transactional
-    public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId) {
-        Optional<PisCommonPaymentData> pisCommonPaymentById = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
-        pisCommonPaymentById
-            .ifPresent(commonPayment -> savePaymentData(request));
-
-        return CmsResponse.<CmsResponse.VoidResponse>builder()
-                   .payload(CmsResponse.voidResponse())
-                   .build();
-    }
-
-    /**
      * Updates multilevelScaRequired and stores changes into database
      *
      * @param paymentId             Payment ID
@@ -276,9 +257,5 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         }
 
         return commonPaymentData;
-    }
-
-    private void savePaymentData(PisCommonPaymentRequest request) {
-        pisCommonPaymentDataRepository.save(pisCommonPaymentMapper.mapToPisCommonPaymentData(request.getPaymentInfo()));
     }
 }
