@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

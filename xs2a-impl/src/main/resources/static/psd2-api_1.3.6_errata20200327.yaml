@@ -1821,6 +1821,86 @@ paths:
                     $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
 
 
+    /v1/trusted-beneficiaries:
+        get:
+            summary: Read trusted beneficiaries list
+            description: Reads the list of trusted beneficiaries related to the PSU who has given the (explicit) consent.
+            operationId: getTrustedBeneficiariesList
+            tags:
+                - Account Information Service (AIS)
+
+            security:
+                #####################################################
+                # REMARKS ON SECURITY IN THIS OPENAPI FILE
+                # In this file only the basic security element to transport
+                # the bearer token of an OAuth2 process, which has to
+                # be included in the HTTP header is described.
+                #
+                # WARNING:
+                # If you want to use this file for a productive implementation,
+                # it is recommended to adjust the security schemes according to
+                # your system environments and security policies.
+                #####################################################
+                - {}
+                -   BearerAuthOAuth: []
+
+            parameters:
+                #path # NO PATH PARAMETER
+                #query
+                - $ref: "#/components/parameters/accountIdQuery"
+                #header
+                #common header parameter
+                - $ref: "#/components/parameters/X-Request-ID"
+                #header to support the signature function
+                - $ref: "#/components/parameters/Digest"
+                - $ref: "#/components/parameters/Signature"
+                - $ref: "#/components/parameters/TPP-Signature-Certificate"
+                #method specific header elements
+                - $ref: "#/components/parameters/consentId_HEADER_mandatory"
+                #conditional elemention for AIS
+                - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+                #optional additional PSU Information in header
+                - $ref: "#/components/parameters/PSU-IP-Port"
+                - $ref: "#/components/parameters/PSU-Accept"
+                - $ref: "#/components/parameters/PSU-Accept-Charset"
+                - $ref: "#/components/parameters/PSU-Accept-Encoding"
+                - $ref: "#/components/parameters/PSU-Accept-Language"
+                - $ref: "#/components/parameters/PSU-User-Agent"
+                - $ref: "#/components/parameters/PSU-Http-Method"
+                - $ref: "#/components/parameters/PSU-Device-ID"
+                - $ref: "#/components/parameters/PSU-Geo-Location"
+            #NO REQUEST BODY
+
+            responses:
+                '200':
+                    $ref: "#/components/responses/OK_200_TrustedBeneficiariesList"
+
+                '400':
+                    $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+                '401':
+                    $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+                '403':
+                    $ref: "#/components/responses/FORBIDDEN_403_AIS"
+                '404':
+                    $ref: "#/components/responses/NOT_FOUND_404_AIS"
+                '405':
+                    $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+                '406':
+                    $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+                '408':
+                    $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+                '409':
+                    $ref: "#/components/responses/CONFLICT_409_AIS"
+                '415':
+                    $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+                '429':
+                    $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+                '500':
+                    $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+                '503':
+                    $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+
+
             #####################################################
             # Card Accounts
             #####################################################
@@ -4536,6 +4616,41 @@ components:
                 - "blocked"
 
 
+        trustedBeneficiaries:
+            description: |
+                Requested trusted beneficiaries services for a consent.
+            type: object
+            required:
+                - trustedBeneficiaryId
+                - creditorAccount
+                - creditorName
+            properties:
+                trustedBeneficiaryId:
+                    description: Resource identification of the list entry.
+                    type: string
+                debtorAccount:
+                    $ref: "#/components/schemas/accountReference"
+                creditorAccount:
+                    $ref: "#/components/schemas/accountReference"
+                creditorAgent:
+                    description: It is mandated where the information is mandated for related credit transfers.
+                    type: string
+                creditorName:
+                    description: Name of the creditor as provided by the PSU.
+                    type: string
+                    maxLength: 70
+                creditorAlias:
+                    description: An alias for the creditor as defined by the PSU as an alias when displaying the list of trusted beneficiaries in online channels of the ASPSP.
+                    type: string
+                    maxLength: 70
+                creditorId:
+                    description: Identification of Creditors.
+                    type: string
+                    maxLength: 35
+                creditorAddress:
+                    $ref: "#/components/schemas/address"
+
+
         accountDetails:
             description: |
                 The ASPSP shall give at least one of the account reference identifiers:
@@ -4690,6 +4805,19 @@ components:
                     type: array
                     items:
                         $ref: "#/components/schemas/cardAccountDetails"
+
+
+        trustedBeneficiariesList:
+            description: |
+                List of trustedBeneficiaries.
+            type: object
+            required:
+                - trustedBeneficiaries
+            properties:
+                trustedBeneficiaries:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/trustedBeneficiaries"
 
 
         accountReport:
@@ -10543,6 +10671,19 @@ components:
                 type: boolean
 
 
+        accountIdQuery:
+            name: account-id
+            in: query
+            description: |
+                Reference to a dedicated account, which where a list of trusted beneficiaries might be restricted to.
+                The reference is the corresponding URI resource identification of the /accounts endpoint.
+                This parameter might only be used by the TPP if the ASPSP is supporting dedicated lists of trusted
+                beneficiaries per PSU account.
+            required: false
+            schema:
+                type: string
+
+
         dateFrom:
             name: dateFrom
             in: query
@@ -11463,6 +11604,22 @@ components:
                 application/json:
                     schema:
                         $ref: "#/components/schemas/cardAccountsTransactionsResponse200"
+
+
+        OK_200_TrustedBeneficiariesList:
+            description: OK
+
+            headers:
+                X-Request-ID:
+                    $ref: "#/components/headers/X-Request-ID"
+
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/trustedBeneficiariesList"
+                    examples:
+                        Example:
+                            $ref: "#/components/examples/trustedBeneficiariesListExample"
 
 
         OK_200_ConsentInformation:
@@ -12854,6 +13011,29 @@ components:
               }
 
 
+        trustedBeneficiariesListExample:
+            summary: Trusted beneficiaries list Example
+            description: In this example, the ASPSP is supporting trusted beneficiaries lists dedicated per PSU account.
+            value:
+              {"trustedBeneficiaries":
+                 [
+                 {"trustedBeneficiaryId": "8822345-fr33-50df-qqqq",
+                  "debtorAccount": {
+                  "iban": "DE2310010010123456789"
+                 },
+                  "creditorAccount": {
+                      "iban": "FR7612345987650123456789014"
+                  },
+                  "creditorName": "Merchant1Name"
+                 },
+                 {"trustedBeneficiaryId": "8822345-fr33-50df-qqqq",
+                  "debtorAccount": "DE2310010010123456789",
+                  "creditorAccount": "FR7412345987650123456789012",
+                  "creditorName": "Merchant2Name"
+                 }
+                 ]}
+
+
         startScaProcessResponseExample1:
             value:
               {
@@ -13504,6 +13684,7 @@ tags:
             * Balances of a given account or card account
             * A list of available accounts or card account
             * Account details of a given account or card account or of the list of all accessible accounts or card account  relative to a granted consent
+            * A list of trusted beneficiaries
     - name: Signing Baskets Service (SBS)
       description: |
           Signing basket methods are used for authorising several transactions and resp. or consents with one SCA operation.

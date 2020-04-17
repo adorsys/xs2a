@@ -1,0 +1,27 @@
+= Release notes v.7.3
+
+== Table of Contents
+
+* Implemented Read the List of Trusted Beneficiaries
+
+== Implemented Read the List of Trusted Beneficiaries
+
+From now on, new endpoint `GET /v1/trusted-beneficiaries` in `AccountApi` appeared. Requesting this endpoint, TPP will
+get the list of trusted beneficiaries related to the PSU who has given the (explicit) consent.
+
+Permission for receiving List of Trusted Beneficiaries is covered through:
+
+Detailed Consent Model with an additionalInformation access attribute with "trustedBeneficiaries" entry. In case of TPP
+tries to Read the List of Trusted Beneficiaries without appropriate Consent rights, response will contain
+`401 CONSENT_INVALID`.
+
+Global Consent Model always covers the consent on trusted beneficiary lists, with allPSD2 access attribute with
+entries `allAccount/allAccountsWithOwnerName`.
+
+`Consent on Account List of Available Accounts` will not give access to an overview of the list of beneficiaries.
+The Response for the Read the List of Trusted Beneficiaries with this Consent will contain `401 CONSENT_INVALID`.
+
+In case when TPP tries to receive the List of Trusted Beneficiaries and ASPSP is not supporting this service
+(`trustedBeneficiariesSupported = FALSE`) then the response will contain `405 SERVICE_INVALID`.
+
+New endpoint was added to frequencyPerDay logic for one-off and recurring consent and to consent expiration logic.

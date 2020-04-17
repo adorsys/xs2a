@@ -16,23 +16,21 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
-import de.adorsys.psd2.model.AccountDetails;
-import de.adorsys.psd2.model.AccountList;
-import de.adorsys.psd2.model.AccountReport;
-import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
+import de.adorsys.psd2.xs2a.domain.BalanceType;
+import de.adorsys.psd2.xs2a.domain.CashAccountType;
 import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.account.AccountStatus;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.service.ais.AccountDetailsService;
-import de.adorsys.psd2.xs2a.service.ais.AccountListService;
-import de.adorsys.psd2.xs2a.service.ais.BalanceService;
-import de.adorsys.psd2.xs2a.service.ais.TransactionService;
+import de.adorsys.psd2.xs2a.service.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.service.mapper.TrustedBeneficiariesModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -74,6 +72,8 @@ class AccountControllerTest {
     private static final String ACCOUNT_DETAILS_LIST_JSON = "json/web/controller/AccountDetailsList.json";
     private static final String ACCOUNT_REPORT_JSON = "json/web/controller/AccountReportTestData.json";
     private static final String BALANCES_JSON = "json/web/controller/ReadBalanceResponse.json";
+    private static final String BENEFICIARIES_JSON = "json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries-list.json";
+    private static final String XS2A_BENEFICIARIES_JSON = "json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries-list.json";
     private static final String TRANSACTIONS_JSON = "json/web/controller/transactions.json";
     private static final String REQUEST_URI = "/accounts";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
@@ -105,6 +105,10 @@ class AccountControllerTest {
     private ResponseErrorMapper responseErrorMapper;
     @Mock
     private TppErrorMessageWriter tppErrorMessageWriter;
+    @Mock
+    private TrustedBeneficiariesModelMapper trustedBeneficiariesModelMapper;
+    @Mock
+    private TrustedBeneficiariesService trustedBeneficiariesService;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -237,6 +241,56 @@ class AccountControllerTest {
         // Then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
+
+    @Test
+    void getTrustedBeneficiaries_Fail() {
+        // Given
+        ResponseObject<Xs2aTrustedBeneficiariesList> xs2aResponse = ResponseObject.<Xs2aTrustedBeneficiariesList>builder()
+                                                                        .fail(MESSAGE_ERROR_AIS_404)
+                                                                        .build();
+
+        when(trustedBeneficiariesService.getTrustedBeneficiaries(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, REQUEST_URI)).thenReturn(xs2aResponse);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
+            .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        // When
+        ResponseEntity<?> actual = accountController.getTrustedBeneficiariesList(null, WRONG_CONSENT_ID, WRONG_ACCOUNT_ID,
+                                                                                                                   null, null, null,
+                                                                                                                   null, null, null,
+                                                                                                                   null, null, null,
+                                                                                                                   null, null, null,
+                                                                                                                   null);
+        // Then
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void getTrustedBeneficiaries_ResultTest() {
+        // Given
+        Xs2aTrustedBeneficiariesList xs2aBeneficiaries = jsonReader.getObjectFromFile(XS2A_BENEFICIARIES_JSON, Xs2aTrustedBeneficiariesList.class);
+        ResponseObject<Xs2aTrustedBeneficiariesList> xs2aResponse = ResponseObject.<Xs2aTrustedBeneficiariesList>builder()
+                                                                        .body(xs2aBeneficiaries)
+                                                                        .build();
+
+        when(trustedBeneficiariesService.getTrustedBeneficiaries(CONSENT_ID, ACCOUNT_ID, REQUEST_URI)).thenReturn(xs2aResponse);
+        when(request.getRequestURI()).thenReturn(REQUEST_URI);
+
+        TrustedBeneficiariesList expected = jsonReader.getObjectFromFile(BENEFICIARIES_JSON, TrustedBeneficiariesList.class);
+
+        doReturn(new ResponseEntity<>(expected, HttpStatus.OK)).when(responseMapper).ok(any(), any());
+
+        // When
+        TrustedBeneficiariesList actual = (TrustedBeneficiariesList) accountController.getTrustedBeneficiariesList(null, CONSENT_ID, ACCOUNT_ID,
+                                                                                                                   null, null, null,
+                                                                                                                   null, null, null,
+                                                                                                                   null, null, null,
+                                                                                                                   null, null, null,
+                                                                                                                   null).getBody();
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
 
     @Test
     void getTransactions_ResultTest() {

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
@@ -24,6 +25,7 @@ import de.adorsys.psd2.consent.service.mapper.CmsAisConsentMapper;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.PageRequest;
@@ -37,15 +39,18 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class OneOffConsentExpirationService {
+    public static final String BENEFICIARIES_URI = "/v1/trusted-beneficiaries";
 
     public static final int READ_ONLY_ACCOUNT_DETAILS_COUNT = 1;
     public static final int READ_ACCOUNT_DETAILS_AND_BALANCES_COUNT = 2;
     public static final int READ_ACCOUNT_DETAILS_AND_TRANSACTIONS_COUNT = 2;
     public static final int READ_ALL_DETAILS_COUNT = 3;
+    public static final int READ_ALL_DETAILS_WITH_BENEFICIARIES_COUNT = 4;
 
     private final AisConsentUsageRepository aisConsentUsageRepository;
     private final AisConsentTransactionRepository aisConsentTransactionRepository;
     private final CmsAisConsentMapper cmsAisConsentMapper;
+    private final AspspProfileService aspspProfileService;
 
     /**
      * Checks, should the one-off consent be expired after using its all GET endpoints (accounts, balances, transactions)
@@ -84,9 +89,9 @@ public class OneOffConsentExpirationService {
                                                                                                                            PageRequest.of(0, 1));
 
             int numberOfTransactions = CollectionUtils.isNotEmpty(consentTransactions) ? consentTransactions.get(0).getNumberOfTransactions() : 0;
-
-            int maximumNumberOfGetRequestsForConsent = getMaximumNumberOfGetRequestsForConsentsAccount(aspspAccountAccesses, resourceId, numberOfTransactions);
-            int numberOfUsedGetRequestsForConsent = aisConsentUsageRepository.countByConsentIdAndResourceId(consentId, resourceId);
+            boolean isConsentGlobal = consentRequestType == AisConsentRequestType.GLOBAL;
+            int maximumNumberOfGetRequestsForConsent = getMaximumNumberOfGetRequestsForConsentsAccount(aspspAccountAccesses, resourceId, numberOfTransactions, isConsentGlobal);
+            int numberOfUsedGetRequestsForConsent = getNumberOfUsedGetRequestsForConsent(consentId, resourceId);
 
             // There are some available not used get requests - omit all other iterations.
             if (numberOfUsedGetRequestsForConsent < maximumNumberOfGetRequestsForConsent) {
@@ -99,10 +104,23 @@ public class OneOffConsentExpirationService {
     }
 
     /**
+     * This method returns number of already used get requests for the definite consent for ONE account
+     * plus trusted beneficiaries get request.
+     */
+    private int getNumberOfUsedGetRequestsForConsent(Long consentId, String resourceId) {
+        int numberOfUsedGetRequestsForConsent = aisConsentUsageRepository.countByConsentIdAndResourceId(consentId, resourceId);
+        int numberOfUsedGetRequestsForBeneficiaries = aisConsentUsageRepository.countByConsentIdAndRequestUri(consentId, BENEFICIARIES_URI);
+        return numberOfUsedGetRequestsForConsent + numberOfUsedGetRequestsForBeneficiaries;
+    }
+
+    /**
      * This method returns maximum number of possible get requests for the definite consent for ONE account
      * except the main get call - readAccountList.
      */
-    private int getMaximumNumberOfGetRequestsForConsentsAccount(AccountAccess aspspAccountAccesses, String resourceId, int numberOfTransactions) {
+    private int getMaximumNumberOfGetRequestsForConsentsAccount(AccountAccess aspspAccountAccesses,
+                                                                String resourceId,
+                                                                int numberOfTransactions,
+                                                                boolean isConsentGlobal) {
 
         boolean accessesForAccountsEmpty = isAccessForAccountReferencesEmpty(aspspAccountAccesses.getAccounts(), resourceId);
         boolean accessesForBalanceEmpty = isAccessForAccountReferencesEmpty(aspspAccountAccesses.getBalances(), resourceId);
@@ -127,11 +145,33 @@ public class OneOffConsentExpirationService {
             return READ_ACCOUNT_DETAILS_AND_TRANSACTIONS_COUNT + numberOfTransactions;
         }
 
+        // Consent was given for accounts, balances, transactions and beneficiaries.
+        if (isBeneficiariesEndpointAllowed(isConsentGlobal, aspspAccountAccesses)) {
+            return READ_ALL_DETAILS_WITH_BENEFICIARIES_COUNT + numberOfTransactions;
+        }
+
         // Consent was given for accounts, balances and transactions.
         return READ_ALL_DETAILS_COUNT + numberOfTransactions;
     }
 
+    private boolean isBeneficiariesEndpointAllowed(boolean isConsentGlobal, AccountAccess aspspAccountAccesses) {
+        return isGlobalConsentWithBeneficiaries(isConsentGlobal) || !isTrustedBeneficiariesNotAllowed(aspspAccountAccesses);
+    }
+
+    private boolean isGlobalConsentWithBeneficiaries(boolean isConsentGlobal) {
+        return isConsentGlobal && isTrustedBeneficiariesSupported();
+    }
+
+    private boolean isTrustedBeneficiariesNotAllowed(AccountAccess aspspAccountAccesses) {
+        AdditionalInformationAccess additionalInformationAccess = aspspAccountAccesses.getAdditionalInformationAccess();
+        return additionalInformationAccess == null || additionalInformationAccess.getTrustedBeneficiaries() == null;
+    }
+
     private boolean isAccessForAccountReferencesEmpty(List<AccountReference> accounts, String resourceId) {
         return accounts.stream().noneMatch(access -> access.getResourceId().equals(resourceId));
+    }
+
+    public boolean isTrustedBeneficiariesSupported() {
+        return aspspProfileService.getAspspSettings().getAis().getConsentTypes().isTrustedBeneficiariesSupported();
     }
 }

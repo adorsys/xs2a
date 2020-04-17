@@ -40,6 +40,17 @@ public interface AccountSpi {
     SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
+     * Requests a list of trusted beneficiaries
+     *
+     * @param contextData              known Context of this call
+     * @param accountReference         SpiAccountReference
+     * @param accountConsent           SpiAccountConsent
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return List of trusted beneficiaries
+     */
+    SpiResponse<List<SpiTrustedBeneficiaries>> requestTrustedBeneficiariesList(@NotNull SpiContextData contextData, SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    /**
      * Requests an account detail for account
      *
      * @param contextData              known Context of this call
