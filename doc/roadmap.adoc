@@ -15,18 +15,6 @@ No backward compatibility with 6.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 6.x (Stable)|version 7.x (Development)
 
-|10.04.2020|6.2|7.2
-
-a|
-
-a|* Drop deprecated tables for AIS and PIS authorisations
-
-a|* All fixes and updates from v.6.2
-
-* New feature: Support List of Trusted Beneficiaries Service in ASPSP-Profile and Consent model
-
-
-
 |24.04.2020|6.3|7.3
 
 a|
@@ -39,6 +27,12 @@ a|* All fixes and updates from v.6.3
 
 * New feature: Extend Response of GET SCA Status with trustedBeneficiary Flag according to BG specification 1.3.6
 
+* New feature: Funds Confirmation consent support in Profile
+
+* Change type of postCode to Max35Text
+
+* Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+
 |08.05.2020|6.4|7.4
 
 a|
@@ -47,7 +41,7 @@ a|
 
 a|* All fixes and updates from v.6.4
 
-* New feature: Funds Confirmation consent support in Profile
+* New feature: Add possibility to reject requests if TPP URIs are not compliant with Certificate domain
 
 * New feature: Support yaml for Funds Confirmation consent
 
@@ -69,10 +63,6 @@ a|* All fixes and updates from v.6.5
 
 * New feature: Revoke FundsConfirmationConsent
 
-* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
-
-* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
-
 |05.06.2020|6.6|7.6
 
 a|
@@ -81,13 +71,49 @@ a|
 
 a|* All fixes and updates from v.6.6
 
+* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
+
+* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
+
+|19.06.2020|6.7|7.7
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.7
+
 * New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
 
 * New feature: Get SCA Status request for FundsConfirmationConsent 
 
+|03.07.2020|6.8|7.8
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.8
+
 * New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
 
+|17.07.2020|6.9|7.9
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.9
+
 * New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
+
+|31.07.2020|6.10|7.10
+
+a|
+
+a|
+
+a|* All fixes and updates from v.6.10
 
 * New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
 
