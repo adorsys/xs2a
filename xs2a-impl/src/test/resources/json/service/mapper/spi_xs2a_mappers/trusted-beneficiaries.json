@@ -1,0 +1,13 @@
+{
+  "trustedBeneficiaryId": "mocked trusted beneficiaries id",
+  "debtorAccount": {
+    "iban": "mocked debtor iban"
+  },
+  "creditorAccount": {
+    "iban": "mocked creditor iban"
+  },
+  "creditorAgent": "mocked creditor agent",
+  "creditorName": "mocked creditor name",
+  "creditorAlias": "mocked creditor alias",
+  "creditorId": "mocked creditor id"
+}

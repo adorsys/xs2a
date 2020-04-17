@@ -5010,6 +5010,71 @@
 								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
 							},
 							"response": []
+						},
+						{
+							"name": "7.Read trusted beneficiaries list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"pm.test(\"Status code is 401\", () => {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Error code is CONSENT_INVALID\", () => {",
+											"    const jsonData = pm.response.json();",
+											"    const error = jsonData.tppMessages[0];",
+											"    pm.expect(error.code).to.eql('CONSENT_INVALID');",
+											"    pm.expect(error.text).to.eql('The consent was created by this TPP but is not valid for the addressed service/resource');",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -5450,6 +5515,71 @@
 											"key": "withBalance",
 											"value": "true"
 										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "7.Read trusted beneficiaries list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"pm.test(\"Status code is 401\", () => {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Error code is CONSENT_INVALID\", () => {",
+											"    const jsonData = pm.response.json();",
+											"    const error = jsonData.tppMessages[0];",
+											"    pm.expect(error.code).to.eql('CONSENT_INVALID');",
+											"    pm.expect(error.text).to.eql('The consent was created by this TPP but is not valid for the addressed service/resource');",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
 									]
 								},
 								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
@@ -5964,6 +6094,72 @@
 								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
 							},
 							"response": []
+						},
+						{
+							"name": "8.Read trusted beneficiaries list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Mandatory fields are present\", () => {",
+											"    const trustedBeneficiaries = jsonData.trustedBeneficiaries;",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('trustedBeneficiaryId');",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('creditorAccount');",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('creditorName');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
@@ -6398,6 +6594,72 @@
 											"key": "withBalance",
 											"value": "false"
 										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "7.Read trusted beneficiaries list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Mandatory fields are present\", () => {",
+											"    const trustedBeneficiaries = jsonData.trustedBeneficiaries;",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('trustedBeneficiaryId');",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('creditorAccount');",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('creditorName');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
 									]
 								},
 								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
@@ -6842,16 +7104,82 @@
 								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
 							},
 							"response": []
+						},
+						{
+							"name": "7.Read trusted beneficiaries list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function() {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Mandatory fields are present\", () => {",
+											"    const trustedBeneficiaries = jsonData.trustedBeneficiaries;",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('trustedBeneficiaryId');",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('creditorAccount');",
+											"    pm.expect(trustedBeneficiaries).to.not.have.property('creditorName');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
 						}
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "errorful cases",
+					"name": "Create one-off consent",
 					"item": [
 						{
-							"name": "1. Update ASPSP profile settings to support trusted beneficiaries",
+							"name": "1. Update ASPSP profile settings",
 							"event": [
 								{
 									"listen": "test",
@@ -6879,7 +7207,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"trustedBeneficiariesSupported\": true\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"trustedBeneficiariesSupported\": true\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6904,23 +7232,42 @@
 							"response": []
 						},
 						{
-							"name": "2. Create available accounts consent",
+							"name": "2. Create one-off consent dedicated",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
-										"id": "21141790-2c11-40ec-bd38-e19805c7d9bc",
+										"id": "f1e1877d-5e93-4751-b6a1-779dbfb0e0a0",
 										"exec": [
-											"pm.test(\"Status code is 400\", () => {",
-											"    pm.response.to.have.status(400);",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Consent Id exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('consentId');",
 											"});",
 											"",
-											"pm.test(\"Error code is SERVICE_INVALID\", () => {",
-											"    const jsonData = pm.response.json();",
-											"    const error = jsonData.tppMessages[0];",
-											"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
-											"    pm.expect(error.text).to.eql('The addressed service is not valid for the addressed resources or the submitted data');",
-											"})"
+											"pm.test(\"Status code is 201\", () => {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Update PSU authentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+											"",
+											"    if (updatePsuAuthentication === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.test(\"Consent status is received\", () => {",
+											"    pm.expect(jsonData.consentStatus).to.eql('received');",
+											"});",
+											"",
+											"pm.globals.set(\"consent_id\", jsonData.consentId);",
+											"pm.globals.set(\"updatePsuAuthentication\", jsonData._links.updatePsuAuthentication);",
+											"",
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -6928,7 +7275,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "51dd4989-95c7-4427-86db-35f234262433",
+										"id": "dc68bfd4-4b87-45a8-8a23-0308d8941622",
 										"exec": [
 											"pm.globals.unset(\"consent_id\");"
 										],
@@ -6941,38 +7288,33 @@
 								"header": [
 									{
 										"key": "accept",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									},
 									{
 										"key": "PSU-ID",
-										"type": "text",
-										"value": "{{psu_id_single}}"
+										"value": "{{psu_id_single}}",
+										"type": "text"
 									},
 									{
 										"key": "X-Request-ID",
-										"type": "text",
-										"value": "{{x_request_id}}"
+										"value": "{{x_request_id}}",
+										"type": "text"
 									},
 									{
 										"key": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									},
-									{
-										"key": "TPP-Explicit-Authorisation-Preferred",
-										"type": "text",
-										"value": "true"
+										"value": "application/json",
+										"type": "text"
 									},
 									{
 										"key": "psu-ip-address",
-										"type": "text",
-										"value": "{{ip_address}}"
+										"value": "{{ip_address}}",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"access\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"additionalInformation\": {\n            \"trustedBeneficiaries\": [\n                {\n                    \"currency\": \"EUR\",\n                    \"iban\": \"{{iban_none}}\"\n                }\n            ]\n        }\n    },\n    \"combinedServiceIndicator\": false,\n    \"frequencyPerDay\": 15,\n    \"recurringIndicator\": true,\n    \"validUntil\": \"2021-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n        \"additionalInformation\": {\n            \"trustedBeneficiaries\": [\n                {\n                    \"currency\": \"EUR\",\n                    \"iban\": \"{{iban_single}}\"\n                }\n            ]\n        }\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 1,\n  \"recurringIndicator\": false,\n  \"validUntil\": \"2021-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -6987,6 +7329,1435 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "3. Start the authorisation process for a consent",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1957eb90-4bd3-4751-9256-ba7e705265d9",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+											"",
+											"pm.test(\"Status code is 201\", () => {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"updatePsuAuthentication link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus \", () => {",
+											"    pm.expect(jsonData).to.have.property('scaStatus');",
+											"    const scaStatus = jsonData.scaStatus;",
+											"    pm.expect(scaStatus).to.eql('psuIdentified');",
+											"});",
+											"",
+											"pm.globals.set(\"authorisation_id\", authorisationId);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9a3b9e5d-5391-4c0e-b91c-beab5542e7e3",
+										"exec": [
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents",
+										"{{consent_id}}",
+										"authorisations"
+									]
+								},
+								"description": "Create an authorisation sub-resource and start the authorisation process of a consent.  The message might in addition transmit authentication and authorisation related data.  his method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the consent.  The ASPSP might make the usage of this access method unnecessary,  since the related authorisation resource will be automatically created by  the ASPSP after the submission of the consent data with the first POST consents call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+							},
+							"response": []
+						},
+						{
+							"name": "4. Update PSU Data for consents",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ec7a30b5-de25-4aac-8f24-39cf6c64b9df",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is scaMethodSelected', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
+											"});",
+											"",
+											"pm.test(\"Select authoriseTransaction method link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('authoriseTransaction');",
+											"});",
+											"",
+											"pm.test(\"Select chosenScaMethod exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('chosenScaMethod');",
+											"    const chosenScaMethod = jsonData.chosenScaMethod;",
+											"    ",
+											"    pm.expect(chosenScaMethod).to.have.property('authenticationType');",
+											"    pm.expect(chosenScaMethod.authenticationType) !== undefined;",
+											"    ",
+											"    pm.expect(chosenScaMethod).to.have.property('authenticationMethodId');",
+											"    pm.expect(chosenScaMethod.authenticationMethodId) !== undefined;",
+											"});",
+											"",
+											"pm.test(\"Challenge data exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('challengeData');",
+											"});",
+											"",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents",
+										"{{consent_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "5. Update PSU Data for consents finalization",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5e30b6d6-16d6-4b78-a782-0c9caef3ea1a",
+										"exec": [
+											"pm.test('Status code is 200', () => {",
+											"   pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test('Sca status is finalised', () => {",
+											"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+											"});",
+											"",
+											"pm.test(\"Select scaStatus link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    pm.expect(_links).to.have.property('scaStatus');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents",
+										"{{consent_id}}",
+										"authorisations",
+										"{{authorisation_id}}"
+									]
+								},
+								"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+							},
+							"response": []
+						},
+						{
+							"name": "6. Read Account List",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.globals.set(\"account_id_current\", jsonData.accounts[0].resourceId);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Data exists\", () => {",
+											"    if (jsonData.accounts.length > 0) {",
+											"        const firstAccount = jsonData.accounts[0];",
+											"        ",
+											"        pm.expect(firstAccount).to.have.property('_links');",
+											"        pm.expect(firstAccount._links).to.have.property('balances');",
+											"        pm.expect(firstAccount._links).to.have.property('transactions');",
+											"        pm.expect(firstAccount).to.have.property('resourceId');",
+											"",
+											"        // This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.\"",
+											"        // if (pm.globals.get(\"with_balance\") === \"true\") {",
+											"            // pm.expect(firstAccount).to.have.property('balances');",
+											"        // }",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "7. Read trusted beneficiaries",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries?account-id={{account_id_current}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
+									],
+									"query": [
+										{
+											"key": "account-id",
+											"value": "{{account_id_current}}"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "8.Read trusted beneficiaries list ACCESS_EXCEEDED",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+										"exec": [
+											"pm.test(\"Status code is 429\", () => {",
+											"    pm.response.to.have.status(429);",
+											"});",
+											"",
+											"pm.test(\"Error code is ACCESS_EXCEEDED\", () => {",
+											"    const jsonData = pm.response.json();",
+											"    const error = jsonData.tppMessages[0];",
+											"    pm.expect(error.code).to.eql('ACCESS_EXCEEDED');",
+											"    pm.expect(error.text).to.eql('The access on the account has been exceeding the consented multiplicity per day');",
+											"})",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"trusted-beneficiaries"
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "58e1b26c-b78d-46d0-9c4e-5c2ee8c9ae7f",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b50190d-b180-482d-918e-3a5f97db63ac",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "errorful cases",
+					"item": [
+						{
+							"name": "Request beneficiaries when profile doesn't support them",
+							"item": [
+								{
+									"name": "1. Update ASPSP profile settings to not support trusted beneficiaries",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"trustedBeneficiariesSupported\": false\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Create available accounts consent",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "21141790-2c11-40ec-bd38-e19805c7d9bc",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent Id exists\", () => {",
+													"   pm.expect(jsonData).to.have.property('consentId');",
+													"});",
+													"",
+													"pm.test(\"Status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Update PSU authentication link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+													"",
+													"    if (updatePsuAuthentication === undefined) {",
+													"       pm.expect().fail();",
+													"    }",
+													"});",
+													"",
+													"pm.test(\"Consent status is received\", () => {",
+													"    pm.expect(jsonData.consentStatus).to.eql('received');",
+													"});",
+													"",
+													"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+													"pm.globals.set(\"consent_id\", jsonData.consentId);",
+													"pm.globals.set(\"authorisation_id\", authorisationId);",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "51dd4989-95c7-4427-86db-35f234262433",
+												"exec": [
+													"pm.globals.unset(\"consent_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"type": "text",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"type": "text",
+												"value": "{{x_request_id}}"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"type": "text",
+												"value": "true"
+											},
+											{
+												"key": "psu-ip-address",
+												"type": "text",
+												"value": "{{ip_address}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"additionalInformation\" : {\n    \t\"trustedBeneficiaries\" : []\n    }\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "3. Update PSU Data for consent",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1eb038d3-b0d2-45df-bf95-346fa27b3d45",
+												"exec": [
+													"pm.test('Status code is 200', () => {",
+													"   pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test('Sca status is scaMethodSelected', () => {",
+													"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
+													"});",
+													"",
+													"pm.test(\"Select scaStatus link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}\n"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents",
+												"{{consent_id}}",
+												"authorisations",
+												"{{authorisation_id}}"
+											]
+										},
+										"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+									},
+									"response": []
+								},
+								{
+									"name": "4. Update PSU Data for consents finalization",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "5e30b6d6-16d6-4b78-a782-0c9caef3ea1a",
+												"exec": [
+													"pm.test('Status code is 200', () => {",
+													"   pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test('Sca status is finalised', () => {",
+													"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+													"});",
+													"",
+													"pm.test(\"Select scaStatus link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents",
+												"{{consent_id}}",
+												"authorisations",
+												"{{authorisation_id}}"
+											]
+										},
+										"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+									},
+									"response": []
+								},
+								{
+									"name": "5.Read trusted beneficiaries list",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+												"exec": [
+													"pm.test(\"Status code is 405\", () => {",
+													"    pm.response.to.have.status(405);",
+													"});",
+													"",
+													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"    const jsonData = pm.response.json();",
+													"    const error = jsonData.tppMessages[0];",
+													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
+													"    pm.expect(error.text).to.eql('The addressed service is not valid for the addressed resources or the submitted data');",
+													"})",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Consent-ID",
+												"value": "{{consent_id}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"trusted-beneficiaries"
+											]
+										},
+										"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Create consent with invalid beneficiaries value",
+							"item": [
+								{
+									"name": "1. Update ASPSP profile settings to support trusted beneficiaries",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"trustedBeneficiariesSupported\": true\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Create available accounts consent",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "21141790-2c11-40ec-bd38-e19805c7d9bc",
+												"exec": [
+													"pm.test(\"Status code is 400\", () => {",
+													"    pm.response.to.have.status(400);",
+													"});",
+													"",
+													"pm.test(\"Error code is SERVICE_INVALID\", () => {",
+													"    const jsonData = pm.response.json();",
+													"    const error = jsonData.tppMessages[0];",
+													"    pm.expect(error.code).to.eql('SERVICE_INVALID');",
+													"    pm.expect(error.text).to.eql('The addressed service is not valid for the addressed resources or the submitted data');",
+													"})"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "51dd4989-95c7-4427-86db-35f234262433",
+												"exec": [
+													"pm.globals.unset(\"consent_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"type": "text",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"type": "text",
+												"value": "{{x_request_id}}"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"type": "text",
+												"value": "true"
+											},
+											{
+												"key": "psu-ip-address",
+												"type": "text",
+												"value": "{{ip_address}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"access\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"additionalInformation\": {\n            \"trustedBeneficiaries\": [\n                {\n                    \"currency\": \"EUR\",\n                    \"iban\": \"{{iban_none}}\"\n                }\n            ]\n        }\n    },\n    \"combinedServiceIndicator\": false,\n    \"frequencyPerDay\": 15,\n    \"recurringIndicator\": true,\n    \"validUntil\": \"2021-10-10\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "Request beneficiaries list for dedicated consent with no trusted beneficiaries in creation of this consent",
+							"item": [
+								{
+									"name": "1. Update ASPSP profile settings to support trusted beneficiaries",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0,\n            \"trustedBeneficiariesSupported\": true\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Create available accounts consent",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "21141790-2c11-40ec-bd38-e19805c7d9bc",
+												"exec": [
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent Id exists\", () => {",
+													"   pm.expect(jsonData).to.have.property('consentId');",
+													"});",
+													"",
+													"pm.test(\"Status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"pm.test(\"Update PSU authentication link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    ",
+													"    var updatePsuAuthentication = _links.updatePsuAuthentication.href;",
+													"",
+													"    if (updatePsuAuthentication === undefined) {",
+													"       pm.expect().fail();",
+													"    }",
+													"});",
+													"",
+													"pm.test(\"Consent status is received\", () => {",
+													"    pm.expect(jsonData.consentStatus).to.eql('received');",
+													"});",
+													"",
+													"const authorisationId = jsonData._links.updatePsuAuthentication.href.split('/').pop();",
+													"pm.globals.set(\"consent_id\", jsonData.consentId);",
+													"pm.globals.set(\"authorisation_id\", authorisationId);",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "51dd4989-95c7-4427-86db-35f234262433",
+												"exec": [
+													"pm.globals.unset(\"consent_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "accept",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"type": "text",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"type": "text",
+												"value": "{{x_request_id}}"
+											},
+											{
+												"key": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"type": "text",
+												"value": "true"
+											},
+											{
+												"key": "psu-ip-address",
+												"type": "text",
+												"value": "{{ip_address}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"access\": {\n    \"accounts\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"balances\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ],\n    \"transactions\": [\n      {\n        \"currency\": \"EUR\",\n\t\t\"iban\": \"{{iban_single}}\"\n      }\n    ]\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2021-10-10\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "3. Update PSU Data for consent",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1eb038d3-b0d2-45df-bf95-346fa27b3d45",
+												"exec": [
+													"pm.test('Status code is 200', () => {",
+													"   pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test('Sca status is scaMethodSelected', () => {",
+													"   pm.expect(jsonData.scaStatus).to.eql('scaMethodSelected');",
+													"});",
+													"",
+													"pm.test(\"Select scaStatus link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}\n"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents",
+												"{{consent_id}}",
+												"authorisations",
+												"{{authorisation_id}}"
+											]
+										},
+										"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+									},
+									"response": []
+								},
+								{
+									"name": "4. Update PSU Data for consents finalization",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "5e30b6d6-16d6-4b78-a782-0c9caef3ea1a",
+												"exec": [
+													"pm.test('Status code is 200', () => {",
+													"   pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test('Sca status is finalised', () => {",
+													"   pm.expect(jsonData.scaStatus).to.eql('finalised');",
+													"});",
+													"",
+													"pm.test(\"Select scaStatus link exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('_links');",
+													"    const _links = jsonData._links;",
+													"    pm.expect(_links).to.have.property('scaStatus');",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_single}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"scaAuthenticationData\": \"{{tanNumber}}\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents",
+												"{{consent_id}}",
+												"authorisations",
+												"{{authorisation_id}}"
+											]
+										},
+										"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
+									},
+									"response": []
+								},
+								{
+									"name": "5. Get Consent Request",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f78fd945-b5d3-4986-96e8-0738bd1f7e27",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Result validator\", () => {",
+													"      pm.expect(jsonData).to.have.property('access');",
+													"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+													"       pm.expect(jsonData).to.have.property('validUntil');",
+													"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+													"       pm.expect(jsonData).to.have.property('consentStatus');",
+													"     ",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"consents",
+												"{{consent_id}}"
+											]
+										},
+										"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+									},
+									"response": []
+								},
+								{
+									"name": "6.Read trusted beneficiaries list",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1239cbb2-da61-4e7f-81a2-d848f86d6c58",
+												"exec": [
+													"pm.test(\"Status code is 401\", () => {",
+													"    pm.response.to.have.status(401);",
+													"});",
+													"",
+													"pm.test(\"Error code is CONSENT_INVALID\", () => {",
+													"    const jsonData = pm.response.json();",
+													"    const error = jsonData.tppMessages[0];",
+													"    pm.expect(error.code).to.eql('CONSENT_INVALID');",
+													"    pm.expect(error.text).to.eql('The consent was created by this TPP but is not valid for the addressed service/resource');",
+													"})",
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "3745092a-a8c1-4018-9519-9cd65359e8fe",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "Consent-ID",
+												"value": "{{consent_id}}"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v1/trusted-beneficiaries",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v1",
+												"trusted-beneficiaries"
+											]
+										},
+										"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
 						}
 					],
 					"protocolProfileBehavior": {},

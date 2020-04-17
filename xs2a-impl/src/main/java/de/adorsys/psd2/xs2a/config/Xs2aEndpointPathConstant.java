@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.config;
 
 public class Xs2aEndpointPathConstant {
     public static final String ACCOUNTS_PATH = "/v1/accounts/**";
+    public static final String BENEFICIARIES_PATH = "/v1/trusted-beneficiaries";
     public static final String CARD_ACCOUNTS_PATH = "/v1/card-accounts/**";
     public static final String CONSENTS_PATH = "/v1/consents/**";
     public static final String FUNDS_CONFIRMATION_PATH = "/v1/funds-confirmations/**";
@@ -30,6 +31,6 @@ public class Xs2aEndpointPathConstant {
     private Xs2aEndpointPathConstant() {}
 
     public static String[] getAllXs2aEndpointPaths() {
-        return new String[]{ACCOUNTS_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH};
+        return new String[]{ACCOUNTS_PATH, BENEFICIARIES_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH};
     }
 }

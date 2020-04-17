@@ -23,12 +23,10 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.service.ais.AccountDetailsService;
-import de.adorsys.psd2.xs2a.service.ais.AccountListService;
-import de.adorsys.psd2.xs2a.service.ais.BalanceService;
-import de.adorsys.psd2.xs2a.service.ais.TransactionService;
+import de.adorsys.psd2.xs2a.service.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.service.mapper.TrustedBeneficiariesModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.psd2.xs2a.web.filter.TppErrorMessage;
@@ -66,8 +64,10 @@ public class AccountController implements AccountApi {
     private final AccountListService accountListService;
     private final AccountDetailsService accountDetailsService;
     private final TransactionService transactionService;
+    private final TrustedBeneficiariesService trustedBeneficiariesService;
     private final ResponseMapper responseMapper;
     private final AccountModelMapper accountModelMapper;
+    private final TrustedBeneficiariesModelMapper trustedBeneficiariesModelMapper;
     private final ResponseErrorMapper responseErrorMapper;
     private final TppErrorMessageWriter tppErrorMessageWriter;
 
@@ -107,6 +107,15 @@ public class AccountController implements AccountApi {
         } else {
             return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponseRaw);
         }
+    }
+
+    @Override
+    public ResponseEntity getTrustedBeneficiariesList(UUID xRequestID, String consentID, String accountId, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        ResponseObject<Xs2aTrustedBeneficiariesList> trustedBeneficiaries =
+            trustedBeneficiariesService.getTrustedBeneficiaries(consentID, accountId, trimEndingSlash(request.getRequestURI()));
+        return trustedBeneficiaries.hasError()
+                   ? responseErrorMapper.generateErrorResponse(trustedBeneficiaries.getError())
+                   : responseMapper.ok(trustedBeneficiaries, trustedBeneficiariesModelMapper::mapToTrustedBeneficiariesList);
     }
 
     @GetMapping(value = "/v1/accounts/{account-id}/transactions/download/{download-id}")

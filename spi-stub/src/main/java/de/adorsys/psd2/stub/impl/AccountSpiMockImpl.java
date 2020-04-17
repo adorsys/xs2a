@@ -45,6 +45,7 @@ import java.util.*;
 public class AccountSpiMockImpl implements AccountSpi {
     private static final String ASPSP_ACCOUNT_ID = "11111-11118";
     private static final String RESOURCE_ID = "10023-999999999";
+    private static final String TRUSTED_BENEFICIARIES_ID = "874aa308-78af-11ea-bc55-0242ac130003";
     private static final String IBAN = "DE52500105173911841934";
     private static final String NAME = "Müller";
 
@@ -60,6 +61,23 @@ public class AccountSpiMockImpl implements AccountSpi {
 
         return SpiResponse.<List<SpiAccountDetails>>builder()
                    .payload(Collections.singletonList(details))
+                   .build();
+    }
+
+    @Override
+    public SpiResponse<List<SpiTrustedBeneficiaries>> requestTrustedBeneficiariesList(@NotNull SpiContextData contextData, SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AccountSpi#requestTrustedBeneficiariesList: contextData {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
+        SpiTrustedBeneficiaries beneficiaries = new SpiTrustedBeneficiaries(TRUSTED_BENEFICIARIES_ID,
+                                                                            null,
+                                                                            buildSpiAccountReference(),
+                                                                            NAME,
+                                                                            NAME,
+                                                                            null,
+                                                                            null,
+                                                                            null);
+
+        return SpiResponse.<List<SpiTrustedBeneficiaries>>builder()
+                   .payload(Collections.singletonList(beneficiaries))
                    .build();
     }
 

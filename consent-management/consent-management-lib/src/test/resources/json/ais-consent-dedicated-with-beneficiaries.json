@@ -1,0 +1,93 @@
+{
+  "consentData": {
+
+  },
+  "id": "c966f143-f6a2-41db-9036-8abaeeef3af7",
+  "internalRequestId": "1234-5678-9012-3456",
+  "consentStatus": "VALID",
+  "frequencyPerDay": 4,
+  "recurringIndicator": false,
+  "multilevelScaRequired": true,
+  "validUntil": "2030-12-31",
+  "expireDate": "2025-12-31",
+  "lastActionDate": "2019-12-31",
+  "consentTppInformation": {
+    "tppRedirectPreferred": true,
+    "tppFrequencyPerDay": 10,
+    "tppNotificationUri": "http://super-redirect.info",
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC"
+    },
+    "tppNotificationSupportedModes": [
+      "SCA",
+      "PROCESS"
+    ]
+  },
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "http://test.com",
+      "nokUri": "http://test.nok.com"
+    }
+  },
+  "psuIdDataList": [
+    {
+      "psuId": "marion.mueller"
+    }
+  ],
+  "authorisations": [
+    {
+      "id": "a8fc1f02-3639-4528-bd19-3eacf1c67038"
+    }
+  ],
+  "tppAccountAccesses": {
+    "accounts": [
+      {
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "aspspAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "LGCGDC4KTx0tgnpZGYTTr8",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "LGCGDC4KTx0tgnpZGYTTr8",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "LGCGDC4KTx0tgnpZGYTTr8",
+        "iban": "DE89370400440532013000",
+        "currency": "EUR"
+      }
+    ],
+    "additionalInformationAccess": {
+      "trustedBeneficiaries": [
+        {
+          "currency": "EUR",
+          "iban": "DE89370400440532013000"
+        }
+      ]
+    }
+  }
+}

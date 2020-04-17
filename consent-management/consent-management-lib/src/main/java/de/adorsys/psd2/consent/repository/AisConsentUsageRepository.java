@@ -34,4 +34,6 @@ public interface AisConsentUsageRepository extends CrudRepository<AisConsentUsag
     List<AisConsentUsage> findReadByConsentAndUsageDate(ConsentEntity aisConsent, LocalDate usageDate);
 
     int countByConsentIdAndResourceId(Long consentId, String resourceId);
+
+    int countByConsentIdAndRequestUri(Long consentId, String requestUri);
 }

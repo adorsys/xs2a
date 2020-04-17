@@ -34,6 +34,7 @@ class ServiceTypeDiscovery {
     static {
         pathToServiceType = new HashMap<>();
         pathToServiceType.put(ACCOUNTS_PATH, AIS);
+        pathToServiceType.put(BENEFICIARIES_PATH, AIS);
         pathToServiceType.put(CARD_ACCOUNTS_PATH, AIS);
         pathToServiceType.put(CONSENTS_PATH, AIS);
         pathToServiceType.put(SINGLE_PAYMENTS_PATH, PIS);
