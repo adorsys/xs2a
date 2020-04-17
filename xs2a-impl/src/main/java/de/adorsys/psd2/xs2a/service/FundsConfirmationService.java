@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
+import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
@@ -89,7 +90,7 @@ public class FundsConfirmationService {
         xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
 
         PiisConsent consent = null;
-        if (profileService.isPiisConsentSupported()) {
+        if (profileService.getPiisConsentSupported() == PiisConsentSupported.ASPSP_CONSENT_SUPPORTED) {
             AccountReference accountReference = request.getPsuAccount();
             PiisConsentValidationResult validationResult = validateAccountReference(accountReference);
 

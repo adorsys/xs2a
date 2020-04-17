@@ -147,12 +147,12 @@ public class AspspProfileServiceWrapper {
     }
 
     /**
-     * Reads if piis consent is supported
+     * Reads piis consent supported parameter
      *
-     * @return true if piis consent is supported, false if doesn't
+     * @return piis consent supported parameter
      */
-    public boolean isPiisConsentSupported() {
-        return readAspspSettings().getPiis().isPiisConsentSupported();
+    public PiisConsentSupported getPiisConsentSupported() {
+        return readAspspSettings().getPiis().getPiisConsentSupported();
     }
 
     /**

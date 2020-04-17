@@ -62,7 +62,7 @@
       "checkUriComplianceToDomainSupported": false
     },
     "piis": {
-      "piisConsentSupported": false
+      "piisConsentSupported": "NOT_SUPPORTED"
     },
     "pis": {
       "maxTransactionValidityDays": 0,

@@ -62,7 +62,7 @@ import static org.mockito.Mockito.when;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED = false;
-    private static final boolean PIIS_CONSENT_SUPPORTED = false;
+    private static final PiisConsentSupported PIIS_CONSENT_SUPPORTED = PiisConsentSupported.NOT_SUPPORTED;
     private static final boolean DELTA_LIST_SUPPORTED = false;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
