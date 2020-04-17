@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -128,17 +127,6 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
         }
         return CmsResponse.<String>builder()
                    .payload(decryptIdOptional.get())
-                   .build();
-    }
-
-    @Override
-    @Transactional
-    public CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String encryptedPaymentId) {
-        securityDataService.decryptId(encryptedPaymentId)
-            .ifPresent(id -> pisCommonPaymentService.updateCommonPayment(request, id));
-
-        return CmsResponse.<CmsResponse.VoidResponse>builder()
-                   .payload(CmsResponse.voidResponse())
                    .build();
     }
 

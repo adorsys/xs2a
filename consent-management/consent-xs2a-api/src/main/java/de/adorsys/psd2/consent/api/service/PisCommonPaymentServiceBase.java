@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.api.service;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
@@ -61,23 +60,6 @@ interface PisCommonPaymentServiceBase {
      * @return Response containing result of status changing
      */
     CmsResponse<Boolean> updateCommonPaymentStatusById(String paymentId, TransactionStatus status);
-
-    /**
-     * Creates payment authorisation
-     *
-     * @param paymentId String representation of the payment identifier
-     * @param request   PIS authorisation request
-     * @return Response containing authorisation id
-     */
-
-    /**
-     * Updates PIS payment data and stores it into database
-     *
-     * @param request   PIS payment request for update payment data
-     * @param paymentId Payment ID
-     * @return VoidResponse
-     */
-    CmsResponse<CmsResponse.VoidResponse> updateCommonPayment(PisCommonPaymentRequest request, String paymentId);
 
     /**
      * Updates multilevelScaRequired and stores changes into database
