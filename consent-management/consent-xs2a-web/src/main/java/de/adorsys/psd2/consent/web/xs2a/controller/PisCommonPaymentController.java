@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.api.CmsScaMethod;
 import de.adorsys.psd2.consent.api.authorisation.*;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentDataStatusResponse;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
@@ -365,16 +364,6 @@ public class PisCommonPaymentController {
         }
 
         return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
-    }
-
-    // TODO return correct error code in case was not found https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1254
-    @PutMapping(path = "/{payment-id}/payment")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updatePaymentCommonPaymentData(@RequestBody PisCommonPaymentRequest request, @PathVariable("payment-id") String paymentId) {
-        pisCommonPaymentServiceEncrypted.updateCommonPayment(request, paymentId);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path = "/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}")
