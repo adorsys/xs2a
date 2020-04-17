@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentRequest;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
@@ -241,27 +240,6 @@ class PisCommonPaymentServiceInternalTest {
         assertEquals(TransactionStatus.ACCC, pisCommonPaymentData.getTransactionStatus());
 
         verify(pisCommonPaymentDataRepository, never()).save(any());
-    }
-
-    @Test
-    void updateCommonPayment() {
-        // Given
-        PisCommonPaymentRequest request = new PisCommonPaymentRequest();
-        PisPaymentInfo pisPaymentInfo = new PisPaymentInfo();
-        request.setPaymentInfo(pisPaymentInfo);
-        when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-
-        PisCommonPaymentData updatedPisCommonPaymentData = new PisCommonPaymentData();
-        when(pisCommonPaymentMapper.mapToPisCommonPaymentData(pisPaymentInfo)).thenReturn(updatedPisCommonPaymentData);
-
-        // When
-        CmsResponse<CmsResponse.VoidResponse> actual = pisCommonPaymentService.updateCommonPayment(request, PAYMENT_ID);
-
-        // Then
-        assertTrue(actual.isSuccessful());
-        assertEquals(CmsResponse.voidResponse(), actual.getPayload());
-
-        verify(pisCommonPaymentDataRepository).save(updatedPisCommonPaymentData);
     }
 
     @Test
