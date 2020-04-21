@@ -77,3 +77,30 @@ Parameter *"checkUriComplianceToDomainSupported"* in ASPSP-Profile, defines whet
 
 If parameter is set to *TRUE*, and TPP URIs are not compliant, then Response contains tppMessages with text "TPP URIs are not compliant with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate".
 And request is not rejected.
+
+=== TPP Certificate generation
+
+**Generating certificate with validity less than 365 days**
+
+* Clone https://github.com/adorsys/xs2a, build and execute certificate-generator. Alternatively use the TPP certificate generator mentioned in 01 Links to the environments.
+* Launch application and open swagger-ui.html, fill in certificate data and execute the request.
+* Mocked certificate in xs2a-impl uses the data provided as example in Swagger UI for the request with the following changes:  commonName attribute contains empty value and roles attribute contains PISP, AISP and PIISP roles.
+
+**Certificate generation with validity exceeding 365 days is restricted by server-side validation**
+
+There are several ways to bypass this restriction:
+
+*a. Using debug mode:*
+
+* Launch up certificate generator in debug mode;
+* Send the request for certificate generation with validity  <= 365;
+* Intercept the request on controller or service layer and set validity to the desired value using debug tools.
+
+*b. Adjusting xs2a-certificate-generator:*
+
+* Clone https://github.com/adorsys/xs2a and find certificate-generator service;
+* Remove__ @Max(365)__ from _validity_ field in the
+ ```de.adorsys.psd2.certificate.generator.model.CertificateRequest.class ```;
+
+* Rebuild the service and launch;
+* Send the request with desired validity.
