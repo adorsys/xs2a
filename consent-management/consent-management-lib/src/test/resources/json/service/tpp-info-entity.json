@@ -1,0 +1,16 @@
+{
+  "authorisationNumber": "HDIDF-SDKJHUD-767DHB",
+  "tppName": "Tpp company",
+  "tppRoles": [
+    "AISP",
+    "PISP",
+    "PIISP"
+  ],
+  "authorityId": "authority id",
+  "authorityName": "authority name",
+  "country": "Germany",
+  "organisation": "Organisation",
+  "organisationUnit": "Organisation unit",
+  "city": "Nuremberg",
+  "state": "Bayern"
+}
