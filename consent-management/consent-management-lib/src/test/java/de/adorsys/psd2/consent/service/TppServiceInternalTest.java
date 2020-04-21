@@ -20,7 +20,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,34 +31,34 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TppServiceInternalTest {
     private final static String INSTANCE_ID = "UNDEFINED";
-    private final static String AUTHORISATION_NUMBER = "HDIDF-SDKJHUD-767DHB";
 
     @InjectMocks
     private TppServiceInternal tppServiceInternal;
     @Mock
     private TppInfoRepository tppInfoRepository;
+    private final JsonReader jsonReader = new JsonReader();
+    private TppInfo tppInfo;
+    private TppInfoEntity tppInfoEntity;
 
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(tppServiceInternal, "serviceInstanceId", INSTANCE_ID);
+        tppInfo = jsonReader.getObjectFromFile("json/service/tpp-info.json", TppInfo.class);
+        tppInfoEntity = jsonReader.getObjectFromFile("json/service/tpp-info-entity.json", TppInfoEntity.class);
     }
 
     @Test
     void updateTppInfo_tppNotFound() {
         //Given
-        TppInfo tppInfo = buildTppInfo(null);
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.empty());
         //When
         CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
@@ -66,13 +66,13 @@ class TppServiceInternalTest {
         assertTrue(updateTppInfo.isSuccessful());
 
         assertFalse(updateTppInfo.getPayload());
+        verify(tppInfoRepository, never()).save(any(TppInfoEntity.class));
     }
 
     @Test
     void updateTppInfo_tppFoundAndUpdated() {
         //Given
-        TppInfo tppInfo = buildTppInfo(buildTppRoles());
-        TppInfoEntity tppInfoEntity = buildTppInfoEntity(null);
+        tppInfoEntity.setTppRoles(null);
         ArgumentCaptor<TppInfoEntity> argument = ArgumentCaptor.forClass(TppInfoEntity.class);
         when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
         //When
@@ -87,21 +87,17 @@ class TppServiceInternalTest {
         assertTrue(CollectionUtils.isEqualCollection(tppInfo.getTppRoles(), saved.getTppRoles()));
     }
 
-    private TppInfo buildTppInfo(List<TppRole> roles) {
-        TppInfo tppInfo = new TppInfo();
-        tppInfo.setAuthorisationNumber(AUTHORISATION_NUMBER);
-        tppInfo.setTppRoles(roles);
-        return tppInfo;
-    }
+    @Test
+    void updateTppInfo_tppFoundAndRolesNotChangedAndUpdated() {
+        //Given
+        when(tppInfoRepository.findFirstByAuthorisationNumberAndInstanceId(tppInfo.getAuthorisationNumber(), INSTANCE_ID)).thenReturn(Optional.of(tppInfoEntity));
+        //When
+        CmsResponse<Boolean> updateTppInfo = tppServiceInternal.updateTppInfo(tppInfo);
+        //Then
+        assertTrue(updateTppInfo.isSuccessful());
 
-    private TppInfoEntity buildTppInfoEntity(List<TppRole> roles) {
-        TppInfoEntity tppInfoEntity = new TppInfoEntity();
-        tppInfoEntity.setAuthorisationNumber(AUTHORISATION_NUMBER);
-        tppInfoEntity.setTppRoles(roles);
-        return tppInfoEntity;
-    }
+        assertTrue(updateTppInfo.getPayload());
 
-    private List<TppRole> buildTppRoles() {
-        return Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP);
+        verify(tppInfoRepository, never()).save(any(TppInfoEntity.class));
     }
 }

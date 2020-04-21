@@ -21,13 +21,16 @@ import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -49,13 +52,20 @@ public class TppServiceInternal implements TppService {
                        .payload(false)
                        .build();
         }
-
         TppInfoEntity tppInfoEntity = tppInfoEntityOptional.get();
-        tppInfoEntity.setTppRoles(tppInfo.getTppRoles());
-        tppInfoRepository.save(tppInfoEntity);
-
+        if (isRolesChanged(tppInfoEntity.getTppRoles(), tppInfo.getTppRoles())) {
+            tppInfoEntity.setTppRoles(tppInfo.getTppRoles());
+            tppInfoRepository.save(tppInfoEntity);
+        }
         return CmsResponse.<Boolean>builder()
                    .payload(true)
                    .build();
+    }
+
+    private boolean isRolesChanged(List<TppRole> savedTppRoles, List<TppRole> tppRoles) {
+        return CollectionUtils.isNotEmpty(savedTppRoles) && CollectionUtils.isEmpty(tppRoles)
+                   || CollectionUtils.isEmpty(savedTppRoles) && CollectionUtils.isNotEmpty(tppRoles)
+                   || CollectionUtils.isNotEmpty(savedTppRoles) && CollectionUtils.isNotEmpty(tppRoles) &&
+                           !CollectionUtils.isEqualCollection(savedTppRoles, tppRoles);
     }
 }
