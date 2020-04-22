@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.core.payment.model.*;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -29,13 +29,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class CmsCorePaymentMapper {
+    private final CmsAddressMapper cmsAddressMapper;
 
     public PaymentInitiationJson mapToPaymentInitiationJson(PisPayment pisPayment) {
         return Optional.ofNullable(pisPayment)
                    .map(ref -> {
                        PaymentInitiationJson payment = new PaymentInitiationJson();
-                       payment.setCreditorAddress(mapToAddress(pisPayment.getCreditorAddress()));
+                       payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
                        payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
                        payment.setCreditorAgent(pisPayment.getCreditorAgent());
                        payment.setCreditorName(pisPayment.getCreditorName());
@@ -91,7 +93,7 @@ public class CmsCorePaymentMapper {
         PeriodicPaymentInitiationJson payment = new PeriodicPaymentInitiationJson();
 
         payment.setDebtorAccount(mapToAccountReference(pisPayment.getDebtorAccount()));
-        payment.setCreditorAddress(mapToAddress(pisPayment.getCreditorAddress()));
+        payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
         payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
         payment.setCreditorAgent(pisPayment.getCreditorAgent());
         payment.setCreditorName(pisPayment.getCreditorName());
@@ -119,7 +121,7 @@ public class CmsCorePaymentMapper {
 
     private PaymentInitiationBulkElementJson mapToPaymentInitiationBulkElementJson(PisPayment pisPayment) {
         PaymentInitiationBulkElementJson payment = new PaymentInitiationBulkElementJson();
-        payment.setCreditorAddress(mapToAddress(pisPayment.getCreditorAddress()));
+        payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
         payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
         payment.setCreditorAgent(pisPayment.getCreditorAgent());
         payment.setCreditorName(pisPayment.getCreditorName());
@@ -136,20 +138,6 @@ public class CmsCorePaymentMapper {
         payment.setUltimateDebtor(pisPayment.getUltimateDebtor());
 
         return payment;
-    }
-
-    private Address mapToAddress(CmsAddress creditorAddress) {
-        return Optional.ofNullable(creditorAddress)
-                   .map(ref -> {
-                       Address address = new Address();
-                       address.setBuildingNumber(ref.getBuildingNumber());
-                       address.setCountry(ref.getCountry());
-                       address.setPostCode(ref.getPostalCode());
-                       address.setStreetName(ref.getStreet());
-                       address.setTownName(ref.getCity());
-
-                       return address;
-                   }).orElse(null);
     }
 
     private RemittanceInformationStructured mapToRemittanceInformationStructured(CmsRemittance remittanceInformationStructured) {

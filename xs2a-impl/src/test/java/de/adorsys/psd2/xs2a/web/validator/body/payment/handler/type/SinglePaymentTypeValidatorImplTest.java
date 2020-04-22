@@ -303,12 +303,12 @@ class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    void validatorAddress_postalCode_tooLong_error() {
+    void validatorAddress_postCode_tooLong_error() {
         address.setPostCode(VALUE_71_LENGHT + VALUE_71_LENGHT);
 
         validator.validateAddress(address, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"postCode", 5}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"postCode", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test

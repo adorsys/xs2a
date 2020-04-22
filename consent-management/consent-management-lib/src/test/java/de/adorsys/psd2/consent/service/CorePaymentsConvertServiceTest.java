@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPaymentMapper;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
+import de.adorsys.psd2.consent.service.mapper.CmsAddressMapperImpl;
 import de.adorsys.psd2.consent.service.mapper.CmsCorePaymentMapper;
 import de.adorsys.psd2.core.payment.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.core.payment.model.PaymentInitiationJson;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CmsCorePaymentMapper.class, Xs2aObjectMapper.class})
+@ContextConfiguration(classes = {CmsCorePaymentMapper.class, Xs2aObjectMapper.class, CmsAddressMapperImpl.class})
 class CorePaymentsConvertServiceTest {
     private CorePaymentsConvertService corePaymentsConvertService;
 

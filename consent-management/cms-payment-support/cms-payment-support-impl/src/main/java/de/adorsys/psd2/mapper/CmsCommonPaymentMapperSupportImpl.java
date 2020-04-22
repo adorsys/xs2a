@@ -209,7 +209,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
                        cmsAddress.setStreet(adr.getStreetName());
                        cmsAddress.setBuildingNumber(adr.getBuildingNumber());
                        cmsAddress.setCity(adr.getTownName());
-                       cmsAddress.setPostalCode(adr.getPostCode());
+                       cmsAddress.setPostCode(adr.getPostCode());
                        cmsAddress.setCountry(adr.getCountry());
                        return cmsAddress;
                    }).orElse(null);

@@ -32,8 +32,8 @@ public class CmsAddress {
     @ApiModelProperty(value = "City", example = "Nürnberg")
     private String city;
 
-    @ApiModelProperty(value = "Postal code", example = "90431")
-    private String postalCode;
+    @ApiModelProperty(value = "Post code", example = "90431")
+    private String postCode;
 
     @ApiModelProperty(value = "Country", example = "Germany")
     private String country;

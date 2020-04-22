@@ -148,7 +148,7 @@ public class CmsToXs2aPaymentMapper {
                        xs2aAddress.setStreetName(a.getStreet());
                        xs2aAddress.setBuildingNumber(a.getBuildingNumber());
                        xs2aAddress.setTownName(a.getCity());
-                       xs2aAddress.setPostCode(a.getPostalCode());
+                       xs2aAddress.setPostCode(a.getPostCode());
                        xs2aAddress.setCountry(new Xs2aCountryCode(a.getCountry()));
                        return xs2aAddress;
                    }).orElseGet(Xs2aAddress::new);
