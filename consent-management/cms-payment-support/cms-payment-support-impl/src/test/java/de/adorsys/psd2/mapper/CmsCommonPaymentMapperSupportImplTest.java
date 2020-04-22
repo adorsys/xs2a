@@ -311,7 +311,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         cmsAddress.setCity(address.getTownName());
         cmsAddress.setBuildingNumber(address.getBuildingNumber());
         cmsAddress.setStreet(address.getStreetName());
-        cmsAddress.setPostalCode(address.getPostCode());
+        cmsAddress.setPostCode(address.getPostCode());
         return cmsAddress;
     }
 }

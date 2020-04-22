@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Funds Confirmation consent support in Profile
+* Change type of postCode to Max35Text
 
 == Funds Confirmation consent support in Profile
 
@@ -15,3 +16,7 @@ From now on, Funds Confirmation consent is supported in the following modes:
 Up to now, `piisConsentSupported` parameter in ASPSP Profile had 2 values: true and false.
 These values have been converted to `ASPSP_CONSENT_SUPPORTED` and `NOT_SUPPORTED` values accordingly.
 
+== Change type of postCode to Max35Text
+
+From now on, maximum length of `postCode` field in Address object was extended to 35 symbols.
+Also in CmsAddress object `postalCode` field was renamed to `postCode`.

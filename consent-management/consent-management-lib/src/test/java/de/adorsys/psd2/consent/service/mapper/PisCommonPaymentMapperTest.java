@@ -16,11 +16,13 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
+import de.adorsys.psd2.consent.domain.payment.PisAddress;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -39,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +59,8 @@ class PisCommonPaymentMapperTest {
     private TppInfoMapper tppInfoMapper;
     @Mock
     private AuthorisationMapper authorisationMapper;
+    @Mock
+    private CmsAddressMapper cmsAddressMapper;
 
     @Test
     void mapToPisCommonPaymentResponse() {
@@ -77,6 +82,9 @@ class PisCommonPaymentMapperTest {
         PisCommonPaymentData pisCommonPaymentDataEntity = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-data.json", PisCommonPaymentData.class);
         pisCommonPaymentDataEntity.getPayments().forEach(p -> p.setPaymentData(pisCommonPaymentDataEntity));
         PisCommonPaymentResponse expected = jsonReader.getObjectFromFile("json/service/mapper/pis-common-payment-response.json", PisCommonPaymentResponse.class);
+
+        CmsAddress cms = jsonReader.getObjectFromFile("json/service/mapper/cms-address.json", CmsAddress.class);
+        when(cmsAddressMapper.mapToCmsAddress(any(PisAddress.class))).thenReturn(cms);
 
         // When
         Optional<PisCommonPaymentResponse> actual = pisCommonPaymentMapper.mapToPisCommonPaymentResponse(pisCommonPaymentDataEntity, Collections.singletonList(authorisationEntity));

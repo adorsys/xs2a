@@ -34,10 +34,11 @@ class CmsCorePaymentMapperTest {
 
     private CmsCorePaymentMapper mapper;
     private JsonReader jsonReader = new JsonReader();
+    private static final CmsAddressMapper cmsAddressMapper = new CmsAddressMapperImpl();
 
     @BeforeEach
     void setUp() {
-        mapper = new CmsCorePaymentMapper();
+        mapper = new CmsCorePaymentMapper(cmsAddressMapper);
     }
 
     @Test
