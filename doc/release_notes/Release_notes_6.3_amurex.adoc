@@ -1,0 +1,9 @@
+= Release notes v.6.3
+
+== Table of Contents
+
+* Fix potential deadlock during updating tpp roles
+
+== Fix potential deadlock during updating tpp roles
+
+From now on, tpp roles will be saved when the roles are different from saved ones.
