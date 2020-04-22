@@ -45,9 +45,9 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.mapper.payment.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.create.PisPaymentInfoCreationObject;
 import de.adorsys.psd2.xs2a.service.payment.support.create.spi.PeriodicPaymentInitiationService;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import org.junit.jupiter.api.BeforeEach;

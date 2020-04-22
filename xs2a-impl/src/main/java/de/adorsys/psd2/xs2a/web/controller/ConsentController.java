@@ -21,7 +21,6 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.model.Consents;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.HrefType;
@@ -175,7 +174,7 @@ public class ConsentController implements ConsentApi {
                                               String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                               String psUGeoLocation) {
 
-        ResponseObject<ScaStatus> consentAuthorisationScaStatusResponse = consentService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        ResponseObject<Xs2aScaStatusResponse> consentAuthorisationScaStatusResponse = consentService.getConsentAuthorisationScaStatus(consentId, authorisationId);
         return consentAuthorisationScaStatusResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(consentAuthorisationScaStatusResponse.getError())
                    : responseMapper.ok(consentAuthorisationScaStatusResponse, authorisationMapper::mapToScaStatusResponse);

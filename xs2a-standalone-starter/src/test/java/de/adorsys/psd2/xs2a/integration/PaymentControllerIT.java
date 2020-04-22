@@ -45,10 +45,13 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
+import de.adorsys.psd2.xs2a.service.PaymentServiceForAuthorisation;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -138,6 +141,8 @@ class PaymentControllerIT {
     @MockBean
     @Qualifier("consentRestTemplate")
     private RestTemplate consentRestTemplate;
+    @MockBean
+    private PaymentServiceForAuthorisation paymentServiceForAuthorisation;
 
     @BeforeEach
     void init() {
@@ -185,10 +190,8 @@ class PaymentControllerIT {
     void getPaymentInitiationScaStatus_successful() throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
-        given(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID)))
-            .willReturn(CmsResponse.<ScaStatus>builder()
-                            .payload(ScaStatus.RECEIVED)
-                            .build());
+        given(paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, SINGLE_PAYMENT_TYPE, SEPA_PAYMENT_PRODUCT))
+            .willReturn(ResponseObject.<Xs2aScaStatusResponse>builder().body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true)).build());
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponseWithAuthorisation(

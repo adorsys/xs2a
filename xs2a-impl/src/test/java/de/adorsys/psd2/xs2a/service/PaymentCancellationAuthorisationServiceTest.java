@@ -31,11 +31,13 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -63,7 +65,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentCancellationAuthorisationServiceTest {
-    private static final String CORRECT_PSU_ID = "123456789";
+    private static final String CORRECT_PSU_ID = "marion.mueller";
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String NOT_EXISTING_PAYMENT_ID = "not existing payment id";
@@ -104,6 +106,8 @@ class PaymentCancellationAuthorisationServiceTest {
     private LoggingContextService loggingContextService;
     @Mock
     private CreatePisCancellationAuthorisationValidator createPisCancellationAuthorisationValidator;
+    @Mock
+    private Xs2aAuthorisationService xs2aAuthorisationService;
 
     @Test
     void createPisCancellationAuthorisation_Success_ShouldRecordEvent() {
@@ -526,6 +530,9 @@ class PaymentCancellationAuthorisationServiceTest {
     @Test
     void getPaymentCancellationAuthorisationScaStatus_success() {
         // Given
+        PisCommonPaymentResponse pisCommonPaymentResponse = buildPisCommonPaymentResponse();
+        PaymentScaStatus paymentScaStatus = new PaymentScaStatus(PSU_ID_DATA, pisCommonPaymentResponse, ScaStatus.RECEIVED);
+
         when(pisScaAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
         when(pisScaAuthorisationServiceResolver.getService(CANCELLATION_AUTHORISATION_ID))
@@ -534,20 +541,20 @@ class PaymentCancellationAuthorisationServiceTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(PIS_COMMON_PAYMENT_RESPONSE));
 
-        when(getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(buildPisCommonPaymentResponse(), CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
+        when(getPaymentCancellationAuthorisationScaStatusValidator.validate(new GetPaymentCancellationAuthorisationScaStatusPO(pisCommonPaymentResponse, CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT)))
             .thenReturn(ValidationResult.valid());
 
         when(pisScaAuthorisationServiceResolver.getService(CANCELLATION_AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
 
         // When
-        ResponseObject<ScaStatus> actual =
+        ResponseObject<PaymentScaStatus> actual =
             paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID,
                                                                                                  CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertFalse(actual.hasError());
-        assertEquals(ScaStatus.RECEIVED, actual.getBody());
+        assertEquals(paymentScaStatus, actual.getBody());
     }
 
     @Test
@@ -596,7 +603,7 @@ class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(pisScaAuthorisationService);
 
         // When
-        ResponseObject<ScaStatus> response = paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<PaymentScaStatus> response = paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertFalse(response.hasError());
@@ -621,7 +628,7 @@ class PaymentCancellationAuthorisationServiceTest {
         when(pisScaAuthorisationServiceResolver.getService(CANCELLATION_AUTHORISATION_ID).getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
-        ResponseObject<ScaStatus> actual = paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<PaymentScaStatus> actual = paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
         assertTrue(actual.hasError());
         assertEquals(SCA_STATUS_ERROR, actual.getError());
@@ -638,7 +645,7 @@ class PaymentCancellationAuthorisationServiceTest {
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         // When
-        ResponseObject<ScaStatus> actualResponse =
+        ResponseObject<PaymentScaStatus> actualResponse =
             paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID,
                                                                                                  WRONG_CANCELLATION_AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
 
@@ -651,6 +658,7 @@ class PaymentCancellationAuthorisationServiceTest {
 
     private static PisCommonPaymentResponse buildPisCommonPaymentResponse() {
         PisCommonPaymentResponse response = new PisCommonPaymentResponse();
+        response.setPsuData(Collections.singletonList(PSU_ID_DATA));
         response.setTransactionStatus(TRANSACTION_STATUS);
         response.setPaymentProduct(PAYMENT_PRODUCT);
         response.setPaymentType(SINGLE);

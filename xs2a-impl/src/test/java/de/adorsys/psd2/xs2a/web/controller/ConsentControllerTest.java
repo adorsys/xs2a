@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -335,8 +336,9 @@ class ConsentControllerTest {
     @Test
     void getConsentScaStatus_success() {
         // Given
-        ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
-                                                       .body(ScaStatus.RECEIVED)
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true);
+        ResponseObject<Xs2aScaStatusResponse> responseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                       .body(xs2aScaStatusResponse)
                                                        .build();
         when(consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(responseObject);
@@ -365,7 +367,7 @@ class ConsentControllerTest {
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_403))
             .thenReturn(new ResponseEntity<>(HttpStatus.FORBIDDEN));
         when(consentService.getConsentAuthorisationScaStatus(WRONG_CONSENT_ID, AUTHORISATION_ID))
-            .thenReturn(ResponseObject.<ScaStatus>builder()
+            .thenReturn(ResponseObject.<Xs2aScaStatusResponse>builder()
                             .fail(MESSAGE_ERROR_AIS_403)
                             .build());
 
@@ -457,7 +459,9 @@ class ConsentControllerTest {
     }
 
     private ScaStatusResponse buildReceivedScaStatusResponse() {
-        return new ScaStatusResponse().scaStatus(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+        ScaStatusResponse response = new ScaStatusResponse().scaStatus(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+        response.setTrustedBeneficiaryFlag(true);
+        return response;
     }
 
     private static AdditionalPsuIdData buildEmptyAdditionalPsuIdData() {

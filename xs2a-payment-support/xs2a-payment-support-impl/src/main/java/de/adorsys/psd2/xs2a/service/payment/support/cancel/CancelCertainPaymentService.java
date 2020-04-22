@@ -17,9 +17,9 @@
 package de.adorsys.psd2.xs2a.service.payment.support.cancel;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
+import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.payment.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.cancel.AbstractCancelPaymentService;
-import de.adorsys.psd2.xs2a.service.payment.support.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.payment.support;
+package de.adorsys.psd2.xs2a.service.mapper.payment;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentSupportMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;

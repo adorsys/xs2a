@@ -87,4 +87,16 @@ interface AuthorisationSpi<T> {
                    .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
                    .build();
     }
+
+    /**
+     * Returns trusted beneficiaries flag
+     *
+     * @param contextData holder of call's context data (e.g. about PSU and TPP)
+     * @param businessObject generic consent/payment object
+     * @param authorisationId a unique identifier of authorisation process
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return returns true if the creditor was part of the related trusted beneficiary list, false otherwise
+     */
+    @NotNull
+    SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull T businessObject, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

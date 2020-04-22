@@ -161,4 +161,11 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
                    .payload(new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE))
                    .build();
     }
+
+    @Override
+    public @NotNull SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
+    }
 }

@@ -19,15 +19,14 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
@@ -202,22 +201,22 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     }
 
     /**
-     * Gets SCA status of payment initiation authorisation
+     * Gets SCA status response of payment initiation authorisation
      *
      * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
      * @param authorisationId authorisation identifier
-     * @return Response containing SCA status of authorisation or corresponding error
+     * @return Response containing SCA status of authorisation and optionally trusted beneficiary flag or corresponding error
      */
     @Override
-    public ResponseObject<ScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId,
-                                                                                PaymentType paymentType, String paymentProduct) {
+    public ResponseObject<PaymentScaStatus> getPaymentInitiationAuthorisationScaStatus(String paymentId, String authorisationId,
+                                                                                       PaymentType paymentType, String paymentProduct) {
         xs2aEventService.recordPisTppRequest(paymentId, EventType.GET_PAYMENT_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponseOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get SCA status payment initiation authorisation failed. PIS CommonPayment not found by id",
                      paymentId);
-            return ResponseObject.<ScaStatus>builder()
+            return ResponseObject.<PaymentScaStatus>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();
         }
@@ -230,7 +229,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         if (validationResult.isNotValid()) {
             log.info("Payment-ID [{}]. Get SCA status payment initiation authorisation - validation failed: {}",
                      paymentId, validationResult.getMessageError());
-            return ResponseObject.<ScaStatus>builder()
+            return ResponseObject.<PaymentScaStatus>builder()
                        .fail(validationResult.getMessageError())
                        .build();
         }
@@ -239,16 +238,23 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
         Optional<ScaStatus> scaStatusOptional = pisScaAuthorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
 
         if (scaStatusOptional.isEmpty()) {
-            return ResponseObject.<ScaStatus>builder()
+            return ResponseObject.<PaymentScaStatus>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
         ScaStatus scaStatus = scaStatusOptional.get();
+
+        PsuIdData psuIdData = authorisationService.getAuthorisationById(authorisationId)
+                                   .map(Authorisation::getPsuIdData)
+                                   .orElseGet(null);
+
+        PaymentScaStatus paymentScaStatus = new PaymentScaStatus(psuIdData, pisCommonPaymentResponse, scaStatus);
+
         loggingContextService.storeTransactionAndScaStatus(pisCommonPaymentResponse.getTransactionStatus(), scaStatus);
 
-        return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus)
+        return ResponseObject.<PaymentScaStatus>builder()
+                   .body(paymentScaStatus)
                    .build();
     }
 

@@ -24,9 +24,9 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.mapper.payment.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.create.AbstractCreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.support.create.spi.SinglePaymentInitiationService;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
