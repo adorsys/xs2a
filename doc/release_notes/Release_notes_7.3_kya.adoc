@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Implemented Read the List of Trusted Beneficiaries
+* Extended Response of GET SCA Status with trustedBeneficiary Flag
 
 == Implemented Read the List of Trusted Beneficiaries
 
@@ -25,3 +26,7 @@ In case when TPP tries to receive the List of Trusted Beneficiaries and ASPSP is
 (`trustedBeneficiariesSupported = FALSE`) then the response will contain `405 SERVICE_INVALID`.
 
 New endpoint was added to frequencyPerDay logic for one-off and recurring consent and to consent expiration logic.
+
+== Extended Response of GET SCA Status with trustedBeneficiary Flag
+
+From now on, the response of `GET SCA Status` contains `trustedBeneficiaryFlag` for final `scaStatus`.

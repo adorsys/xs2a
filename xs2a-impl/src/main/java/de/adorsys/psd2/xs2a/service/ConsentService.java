@@ -365,15 +365,69 @@ public class ConsentService {
     }
 
     /**
-     * Gets SCA status of consent authorisation
+     * Gets SCA status response of consent authorisation
      *
      * @param consentId       String representation of consent identifier
      * @param authorisationId String representation of authorisation identifier
-     * @return Response containing SCA status of the authorisation or corresponding error
+     * @return Response containing SCA status of the authorisation and optionally trusted beneficiaries flag or corresponding error
      */
-    public ResponseObject<ScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
-        return consentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+    public ResponseObject<Xs2aScaStatusResponse> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
+        ResponseObject<ConsentScaStatus> consentScaStatusResponse = consentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        if (consentScaStatusResponse.hasError()) {
+            return ResponseObject.<Xs2aScaStatusResponse>builder()
+                       .fail(consentScaStatusResponse.getError())
+                       .build();
+        }
+
+        ConsentScaStatus consentScaStatus = consentScaStatusResponse.getBody();
+        ScaStatus scaStatus = consentScaStatus.getScaStatus();
+
+        if (scaStatus.isNotFinalisedStatus()) {
+            Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus, null);
+            return ResponseObject.<Xs2aScaStatusResponse>builder()
+                       .body(response)
+                       .build();
+        }
+
+        ResponseObject<Boolean> beneficiaryFlagResponse = getTrustedBeneficiaryFlag(consentScaStatus.getPsuIdData(),
+                                                                                    consentId, authorisationId,
+                                                                                    consentScaStatus.getAccountConsent());
+        if (beneficiaryFlagResponse.hasError()) {
+            return ResponseObject.<Xs2aScaStatusResponse>builder()
+                       .fail(beneficiaryFlagResponse.getError())
+                       .build();
+        }
+
+        Boolean beneficiaryFlag = beneficiaryFlagResponse.getBody();
+        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus, beneficiaryFlag);
+
+        return ResponseObject.<Xs2aScaStatusResponse>builder()
+                   .body(response)
+                   .build();
     }
+
+    private ResponseObject<Boolean> getTrustedBeneficiaryFlag(PsuIdData psuIdData, String consentId, String authorisationId, AisConsent accountConsent) {
+
+        SpiResponse<Boolean> spiResponse =
+            aisConsentSpi.requestTrustedBeneficiaryFlag(spiContextDataProvider.provideWithPsuIdData(psuIdData),
+                                                        aisConsentMapper.mapToSpiAccountConsent(accountConsent),
+                                                        authorisationId,
+                                                        aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+
+        if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
+            log.info("Authorisation-ID [{}], Consent-ID [{}]. Get trusted beneficiaries flag failed.",
+                     authorisationId, consentId);
+            return ResponseObject.<Boolean>builder()
+                       .fail(errorHolder)
+                       .build();
+        }
+
+        return ResponseObject.<Boolean>builder()
+                   .body(spiResponse.getPayload())
+                   .build();
+    }
+
 
     private SpiResponse<SpiAisConsentStatusResponse> getConsentStatusFromSpi(AisConsent aisConsent, String consentId) {
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisConsent);

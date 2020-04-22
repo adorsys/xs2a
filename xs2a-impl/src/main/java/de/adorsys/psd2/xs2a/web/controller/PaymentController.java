@@ -38,13 +38,11 @@ import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationRespon
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
-import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentService;
+import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
@@ -80,6 +78,8 @@ public class PaymentController implements PaymentApi {
     private final PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
     private final AuthorisationModelMapper authorisationModelMapper;
     private final NotificationSupportedModeService notificationSupportedModeService;
+    private final PaymentServiceForAuthorisation paymentServiceForAuthorisation;
+    private final PaymentCancellationServiceForAuthorisation paymentCancellationServiceForAuthorisation;
 
     private static final MessageError MESSAGE_ERROR_RESOURCE_UNKNOWN_404 = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
 
@@ -305,8 +305,9 @@ public class PaymentController implements PaymentApi {
                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
-        ResponseObject<ScaStatus> serviceResponse =
-            paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(paymentId, authorisationId, paymentType.get(), paymentProduct);
+
+        ResponseObject<Xs2aScaStatusResponse> serviceResponse =
+            paymentCancellationServiceForAuthorisation.getPaymentCancellationAuthorisationScaStatus(paymentId, authorisationId, paymentType.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(serviceResponse, authorisationMapper::mapToScaStatusResponse);
@@ -367,8 +368,8 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
-        ResponseObject<ScaStatus> serviceResponse =
-            paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId, paymentTypeOptional.get(), paymentProduct);
+        ResponseObject<Xs2aScaStatusResponse> serviceResponse =
+            paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(paymentId, authorisationId, paymentTypeOptional.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(serviceResponse, authorisationMapper::mapToScaStatusResponse);

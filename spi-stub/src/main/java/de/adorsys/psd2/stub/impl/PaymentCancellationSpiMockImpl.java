@@ -126,4 +126,11 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
                    .payload(new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE))
                    .build();
     }
+
+    @Override
+    public @NotNull SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
+    }
 }

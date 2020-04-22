@@ -36,17 +36,11 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
-import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentService;
+import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
@@ -143,6 +137,10 @@ class PaymentControllerTest {
     private PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
     @Mock
     private NotificationSupportedModeService notificationSupportedModeService;
+    @Mock
+    private PaymentServiceForAuthorisation paymentServiceForAuthorisation;
+    @Mock
+    private PaymentCancellationServiceForAuthorisation paymentCancellationServiceForAuthorisation;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -367,13 +365,15 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationScaStatus_success() {
         // Given
-        ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
-                                                                                     .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true);
+        ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                                                     .body(xs2aScaStatusResponse)
                                                                                      .build();
-        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
-            .thenReturn(responseObject);
+
+        when(paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
+            .thenReturn(xs2aScaStatusResponseResponseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse()))
-            .when(responseMapper).ok(eq(responseObject), any());
+            .when(responseMapper).ok(eq(xs2aScaStatusResponseResponseObject), any());
 
         ScaStatusResponse expected = buildScaStatusResponse();
 
@@ -416,7 +416,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationScaStatus_failure() {
         // Given
-        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
+        when(paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
@@ -437,13 +437,15 @@ class PaymentControllerTest {
     @Test
     void getPaymentCancellationScaStatus_success() {
         // Given
-        ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
-                                                                                     .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
-                                                                                     .build();
-        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
-            .thenReturn(responseObject);
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true);
+        ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                                                        .body(xs2aScaStatusResponse)
+                                                                                        .build();
+
+        when(paymentCancellationServiceForAuthorisation.getPaymentCancellationAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
+            .thenReturn(xs2aScaStatusResponseResponseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse()))
-            .when(responseMapper).ok(eq(responseObject), any());
+            .when(responseMapper).ok(eq(xs2aScaStatusResponseResponseObject), any());
 
         ScaStatusResponse expected = buildScaStatusResponse();
 
@@ -486,7 +488,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentCancellationScaStatus_failure() {
         // Given
-        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
+        when(paymentCancellationServiceForAuthorisation.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
@@ -1448,11 +1450,13 @@ class PaymentControllerTest {
     }
 
     private ScaStatusResponse buildScaStatusResponse() {
-        return new ScaStatusResponse().scaStatus(ScaStatus.RECEIVED);
+        ScaStatusResponse response = new ScaStatusResponse().scaStatus(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+        response.setTrustedBeneficiaryFlag(true);
+        return response;
     }
 
-    private ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> buildScaStatusError() {
-        return ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
+    private ResponseObject<Xs2aScaStatusResponse> buildScaStatusError() {
+        return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .fail(PIS_403, of(MessageErrorCode.RESOURCE_UNKNOWN_403))
                    .build();
     }

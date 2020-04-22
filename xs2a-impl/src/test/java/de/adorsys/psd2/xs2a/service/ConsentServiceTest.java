@@ -1274,13 +1274,110 @@ class ConsentServiceTest {
     @Test
     void getConsentAuthorisationScaStatus() {
         // Given
+        ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                             .body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, null))
+                                                             .build();
+
+        ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.RECEIVED);
+        ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
+                                                                        .body(consentScaStatus)
+                                                                        .build();
+
         when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
-            .thenReturn(ResponseObject.<ScaStatus>builder().build());
+            .thenReturn(responseObject);
 
         // When
-        consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+        ResponseObject<Xs2aScaStatusResponse> actual  = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
+        assertFalse(actual.hasError());
+        assertEquals(expected.getBody(), actual.getBody());
+
+        verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+    }
+
+    @Test
+    void getConsentAuthorisationScaStatus_withBeneficiariesFlag() {
+        // Given
+        ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                             .body(new Xs2aScaStatusResponse(ScaStatus.FINALISED, true))
+                                                             .build();
+
+        ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.FINALISED);
+        ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
+                                                                        .body(consentScaStatus)
+                                                                        .build();
+
+        when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
+            .thenReturn(responseObject);
+
+        SpiResponse<Boolean> spiResponse = SpiResponse.<Boolean>builder()
+                                               .payload(true)
+                                               .build();
+        when(aisConsentSpi.requestTrustedBeneficiaryFlag(any(), any(), any(), any())).thenReturn(spiResponse);
+
+        // When
+        ResponseObject<Xs2aScaStatusResponse> actual  = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertFalse(actual.hasError());
+        assertEquals(expected.getBody(), actual.getBody());
+
+        verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+    }
+
+    @Test
+    void getConsentAuthorisationScaStatus_withBeneficiariesFlag_spiError() {
+        // Given
+        ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                             .fail(ErrorHolder.builder(ErrorType.AIS_400).build())
+                                                             .build();
+
+        ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.FINALISED);
+        ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
+                                                                        .body(consentScaStatus)
+                                                                        .build();
+
+        when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
+            .thenReturn(responseObject);
+
+        TppMessage tppMessage = new TppMessage(MessageErrorCode.FORMAT_ERROR);
+        SpiResponse<Boolean> spiResponse = SpiResponse.<Boolean>builder()
+                                               .error(tppMessage)
+                                               .build();
+        when(aisConsentSpi.requestTrustedBeneficiaryFlag(any(), any(), any(), any())).thenReturn(spiResponse);
+        when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)).thenReturn(ErrorHolder.builder(ErrorType.AIS_400).build());
+
+        // When
+        ResponseObject<Xs2aScaStatusResponse> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.hasError());
+        assertEquals(expected.getError(), actual.getError());
+
+        verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+    }
+
+    @Test
+    void getConsentAuthorisationScaStatus_spiError() {
+        // Given
+        ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                             .fail(ErrorHolder.builder(ErrorType.AIS_400).build())
+                                                             .build();
+        ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
+                                                                        .fail(ErrorHolder.builder(ErrorType.AIS_400).build())
+                                                                        .build();
+
+        when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
+            .thenReturn(responseObject);
+
+        // When
+        ResponseObject<Xs2aScaStatusResponse> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+
+        // Then
+        assertTrue(actual.hasError());
+        assertEquals(expected.getError(), actual.getError());
+
         verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
     }
 
