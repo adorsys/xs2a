@@ -15,39 +15,17 @@ No backward compatibility with 6.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 6.x (Stable)|version 7.x (Development)
 
-|24.04.2020|6.3|7.3
-
-a|
-
-a| 
-
-a|* All fixes and updates from v.6.3
-
-* New feature: Implement Read the List of Trusted Beneficiaries
-
-* New feature: Extend Response of GET SCA Status with trustedBeneficiary Flag according to BG specification 1.3.6
-
-* New feature: Funds Confirmation consent support in Profile
-
-* Change type of postCode to Max35Text
-
-* Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
-
 |08.05.2020|6.4|7.4
 
 a|
 
-a|
+a|* Bugfix: Wrong password and SCA handling
 
 a|* All fixes and updates from v.6.4
 
 * New feature: Add possibility to reject requests if TPP URIs are not compliant with Certificate domain
 
-* New feature: Support yaml for Funds Confirmation consent
-
-* New feature: Establish FundsConfirmationConsent
-
-* Provide interfaces for CMS controllers for FundsConfirmationConsent
+* Provide interfaces for CMS web controllers
 
 |22.05.2020|6.5|7.5
 
@@ -57,11 +35,11 @@ a|
 
 a|* All fixes and updates from v.6.5
 
-* New feature: Create Funds Confirmation consent validator
+* New feature: Support yaml for Funds Confirmation consent
 
-* New feature: Get FundsConfirmationConsent Status + object
+* New feature: Establish FundsConfirmationConsent
 
-* New feature: Revoke FundsConfirmationConsent
+* Provide interfaces for CMS controllers for FundsConfirmationConsent
 
 |05.06.2020|6.6|7.6
 
@@ -71,9 +49,11 @@ a|
 
 a|* All fixes and updates from v.6.6
 
-* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
+* New feature: Create Funds Confirmation consent validator
 
-* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
+* New feature: Get FundsConfirmationConsent Status + object
+
+* New feature: Revoke FundsConfirmationConsent
 
 |19.06.2020|6.7|7.7
 
@@ -83,9 +63,9 @@ a|
 
 a|* All fixes and updates from v.6.7
 
-* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
 
-* New feature: Get SCA Status request for FundsConfirmationConsent 
+* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
 |03.07.2020|6.8|7.8
 
@@ -94,6 +74,10 @@ a|
 a|
 
 a|* All fixes and updates from v.6.8
+
+* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+
+* New feature: Get SCA Status request for FundsConfirmationConsent 
 
 * New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
 
