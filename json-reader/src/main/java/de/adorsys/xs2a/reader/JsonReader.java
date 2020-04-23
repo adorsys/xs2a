@@ -88,7 +88,7 @@ public class JsonReader {
         try {
             return IOUtils.toString(getResourceAsStream(fileName), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new ParseContentJsonReaderException(String.format(READING_FILE_EXCEPTION_MSG, fileName));
+            throw new ParseContentJsonReaderException(String.format(READING_FILE_EXCEPTION_MSG, fileName, e.getMessage()));
         }
     }
 
@@ -101,7 +101,7 @@ public class JsonReader {
         try {
             return IOUtils.toByteArray(getResourceAsStream(fileName));
         } catch (Exception e) {
-            throw new ParseContentJsonReaderException(String.format(READING_FILE_EXCEPTION_MSG, fileName));
+            throw new ParseContentJsonReaderException(String.format(READING_FILE_EXCEPTION_MSG, fileName, e.getMessage()));
         }
     }
 

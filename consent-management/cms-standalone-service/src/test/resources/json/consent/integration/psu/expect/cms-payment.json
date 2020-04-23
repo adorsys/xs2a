@@ -1,0 +1,71 @@
+{
+  "paymentId": "329d04d9-cb42-4fb5-8265-de58fa00366d",
+  "paymentProduct": "sepa-credit-transfers",
+  "psuIdDatas": [
+    {
+      "psuId": "PSU ID",
+      "psuIdType": "PSU ID TYPE",
+      "psuCorporateId": "PSU CORPORATE ID",
+      "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+      "psuIpAddress": "PSU IP ADDRESS"
+    }
+  ],
+  "tppInfo": {
+    "authorisationNumber": "12345987",
+    "tppName": "Tpp company",
+    "tppRoles": [
+      "PISP"
+    ],
+    "authorityId": "authority id",
+    "authorityName": "authority name",
+    "country": "Germany",
+    "organisation": "Organisation",
+    "organisationUnit": "Organisation unit",
+    "city": "Nuremberg",
+    "state": "Bayern"
+  },
+  "creationTimestamp": "2019-08-22T11:00:00Z",
+  "statusChangeTimestamp": "2019-08-22T11:01:27Z",
+  "endToEndIdentification": "RI-123456789",
+  "instructionIdentification": "ABC/4562/2020-01-10",
+  "debtorAccount": {
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "instructedAmount": {
+    "currency": "EUR",
+    "amount": 1000.0
+  },
+  "creditorAccount": {
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "creditorAgent": "BCENECEQ",
+  "creditorName": "Telekom",
+  "creditorAddress": {
+    "street": "WBG Straße",
+    "buildingNumber": "56",
+    "city": "Nürnberg",
+    "postalCode": "90543",
+    "country": "DE"
+  },
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "paymentStatus": "RCVD",
+  "requestedExecutionDate": "2020-01-01",
+  "ultimateDebtor": "Mueller",
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant",
+    "referenceType": "reference type",
+    "referenceIssuer": "reference issuer"
+  },
+  "remittanceInformationStructuredArray": [],
+  "paymentType": "payments"
+}
