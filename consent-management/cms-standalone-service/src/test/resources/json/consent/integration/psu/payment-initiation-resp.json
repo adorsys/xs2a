@@ -1,0 +1,42 @@
+{
+  "endToEndIdentification": "RI-123456789",
+  "instructionIdentification" : "ABC/4562/2020-01-10",
+  "ultimateDebtor": "Mueller",
+  "debtorAccount": {
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "creditorAccount": {
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "creditorAgent": "BCENECEQ",
+  "creditorName": "Telekom",
+  "creditorAddress": {
+    "streetName": "WBG Straße",
+    "buildingNumber": "56",
+    "townName": "Nürnberg",
+    "postCode": "90543",
+    "country": "DE"
+  },
+  "instructedAmount": {
+    "currency": "EUR",
+    "amount": 1000.00
+  },
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+  "remittanceInformationStructured": {
+    "reference": "Ref Number Merchant",
+    "referenceType": "reference type",
+    "referenceIssuer": "reference issuer"
+  },
+  "purposeCode": "BCENECEQ",
+  "requestedExecutionDate": "2020-01-01"
+}
