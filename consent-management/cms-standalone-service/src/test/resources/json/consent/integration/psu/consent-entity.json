@@ -1,0 +1,54 @@
+{
+  "id": 1,
+  "externalId": "4b112130-6a96-4941-a220-2da8a4af2c65",
+  "consentStatus": "RECEIVED",
+  "consentType": "AIS",
+  "frequencyPerDay": 4,
+  "recurringIndicator": true,
+  "multilevelScaRequired": true,
+  "validUntil": "2021-03-14",
+  "expireDate": "2021-01-21",
+  "lastActionDate": "2020-01-13",
+  "psuDataList": [
+    {
+      "psuId": "PSU ID",
+      "psuIdType": "PSU ID TYPE",
+      "psuCorporateId": "PSU CORPORATE ID",
+      "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+      "psuIpAddress": "PSU IP ADDRESS"
+    }
+  ],
+  "tppInformation": {
+    "tppRedirectPreferred": true,
+    "tppInfo": {
+      "authorisationNumber": "12345987",
+      "tppName": "Tpp company",
+      "tppRoles": [
+        "PISP"
+      ],
+      "authorityId": "authority id",
+      "authorityName": "authority name",
+      "country": "Germany",
+      "organisation": "Organisation",
+      "organisationUnit": "Organisation unit",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    }
+  },
+  "authorisationTemplate": {
+    "redirectUri": "Mock tppOkRedirectUri",
+    "nokRedirectUri": "Mock tppNokRedirectUri"
+  },
+  "requestDateTime": "2020-01-01T15:30:35.034188+03:00",
+  "creationTimestamp": "2020-04-15T19:00:22.087585+03:00",
+  "aspspAccountAccesses": [
+    {
+      "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+      "resourceId": "33333-999999999",
+      "typeAccess": "ACCOUNT",
+      "currency": "EUR",
+      "accountReferenceType": "iban",
+      "accountIdentifier": "DE15500105172295759744"
+    }
+  ]
+}

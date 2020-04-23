@@ -1,0 +1,6 @@
+{
+  "tppAuthorisationNumber": "12345987",
+  "status": "BLOCKED",
+  "blockingExpirationTimestamp": "2020-01-01T15:30:35.035Z",
+  "instanceId": "bank-instance-id"
+}
