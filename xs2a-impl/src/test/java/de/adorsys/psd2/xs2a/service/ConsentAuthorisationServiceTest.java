@@ -101,17 +101,17 @@ class ConsentAuthorisationServiceTest {
     private RedirectAisAuthorizationService redirectAisAuthorizationService;
     @Mock
     private AisAuthorisationConfirmationService aisAuthorisationConfirmationService;
+    @Mock
+    private PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     private JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
     private CreateConsentAuthorisationObject createConsentAuthorisationObject;
-    private Authorisation authorisation;
 
     @BeforeEach
     void setUp() {
         aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
         createConsentAuthorisationObject = new CreateConsentAuthorisationObject(aisConsent, PSU_ID_DATA);
-        authorisation = jsonReader.getObjectFromFile("json/service/authorisation.json", Authorisation.class);
     }
 
     @Test
@@ -159,7 +159,8 @@ class ConsentAuthorisationServiceTest {
         when(aisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(any(), any()))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID)).thenReturn(Optional.of(authorisation));
+
+        when(psuIdDataAuthorisationService.getPsuIdData(AUTHORISATION_ID, Collections.singletonList(PSU_ID_DATA))).thenReturn(PSU_ID_DATA);
         ArgumentCaptor<ConsentStatus> consentStatusArgumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         ArgumentCaptor<ScaStatus> scaStatusArgumentCaptor = ArgumentCaptor.forClass(ScaStatus.class);
 
@@ -199,7 +200,7 @@ class ConsentAuthorisationServiceTest {
         when(aisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
         when(redirectAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(ScaStatus.RECEIVED));
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID)).thenReturn(Optional.of(authorisation));
+        when(psuIdDataAuthorisationService.getPsuIdData(AUTHORISATION_ID, Collections.singletonList(PSU_ID_DATA))).thenReturn(PSU_ID_DATA);
 
         // When
         ResponseObject<ConsentScaStatus> actual = service.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);

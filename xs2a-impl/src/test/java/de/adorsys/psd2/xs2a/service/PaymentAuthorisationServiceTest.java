@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -45,8 +44,6 @@ import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation.*;
-import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -113,14 +110,8 @@ class PaymentAuthorisationServiceTest {
     private PisPsuDataService pisPsuDataService;
     @Mock
     private LoggingContextService loggingContextService;
-
-    private JsonReader jsonReader = new JsonReader();
-    private Authorisation authorisation;
-
-    @BeforeEach
-    void setUp() {
-        authorisation = jsonReader.getObjectFromFile("json/service/authorisation.json", Authorisation.class);
-    }
+    @Mock
+    private PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     @Test
     void createPisAuthorization_Success_ShouldRecordEvent() {
@@ -555,7 +546,7 @@ class PaymentAuthorisationServiceTest {
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(commonPaymentResponse));
 
-        when(authorisationService.getAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(authorisation));
+        when(psuIdDataAuthorisationService.getPsuIdData(AUTHORISATION_ID, null)).thenReturn(PSU_ID_DATA);
 
         // When
         ResponseObject<PaymentScaStatus> actual = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID,
@@ -579,7 +570,6 @@ class PaymentAuthorisationServiceTest {
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(commonPaymentResponse));
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
-        when(authorisationService.getAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(authorisation));
 
         // When
         paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);
@@ -606,7 +596,7 @@ class PaymentAuthorisationServiceTest {
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(commonPaymentResponse));
 
-        when(authorisationService.getAuthorisationById(AUTHORISATION_ID)).thenReturn(Optional.of(authorisation));
+        when(psuIdDataAuthorisationService.getPsuIdData(AUTHORISATION_ID, null)).thenReturn(PSU_ID_DATA);
 
         // When
         ResponseObject<PaymentScaStatus> response = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT);

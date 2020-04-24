@@ -37,7 +37,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -107,7 +106,7 @@ class PaymentCancellationAuthorisationServiceTest {
     @Mock
     private CreatePisCancellationAuthorisationValidator createPisCancellationAuthorisationValidator;
     @Mock
-    private Xs2aAuthorisationService xs2aAuthorisationService;
+    private PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     @Test
     void createPisCancellationAuthorisation_Success_ShouldRecordEvent() {
@@ -546,6 +545,8 @@ class PaymentCancellationAuthorisationServiceTest {
 
         when(pisScaAuthorisationServiceResolver.getService(CANCELLATION_AUTHORISATION_ID))
             .thenReturn(pisScaAuthorisationService);
+
+        when(psuIdDataAuthorisationService.getPsuIdData(CANCELLATION_AUTHORISATION_ID, Collections.singletonList(PSU_ID_DATA))).thenReturn(PSU_ID_DATA);
 
         // When
         ResponseObject<PaymentScaStatus> actual =

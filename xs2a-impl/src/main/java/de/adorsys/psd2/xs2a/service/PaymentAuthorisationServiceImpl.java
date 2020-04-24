@@ -19,14 +19,16 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
@@ -65,6 +67,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final GetPaymentInitiationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
     private final PisPsuDataService pisPsuDataService;
     private final LoggingContextService loggingContextService;
+    private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     /**
      * Creates pis authorisation for payment. In case when psu data and password came then second step will be update psu data in created authorisation
@@ -245,9 +248,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         ScaStatus scaStatus = scaStatusOptional.get();
 
-        PsuIdData psuIdData = authorisationService.getAuthorisationById(authorisationId)
-                                   .map(Authorisation::getPsuIdData)
-                                   .orElseGet(null);
+        PsuIdData psuIdData = psuIdDataAuthorisationService.getPsuIdData(authorisationId, pisCommonPaymentResponse.getPsuData());
 
         PaymentScaStatus paymentScaStatus = new PaymentScaStatus(psuIdData, pisCommonPaymentResponse, scaStatus);
 
