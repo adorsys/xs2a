@@ -28,7 +28,7 @@ script:
   - env BUILD_NUMBER=$TRAVIS_BUILD_ID /bin/bash ./scripts/set_xs2a_connector_version_in_swagger.sh
   - MAVEN_OPTS="-Dlogging.level.root=warn -Dlogging.level.org.springframework.boot=warn -Dlogging.level.org.springframework.test=warn -Dlogging.level.org.hibernate=warn -Dlogging.level.de.adorsys=warn"
   - export MAVEN_OPTS
-  - mvn -B -V clean install pmd:check | egrep -v DEBUG || travis_terminate 1
+  - mvn -q -B -V clean install pmd:check | egrep -v DEBUG || travis_terminate 1
   # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
   - mvn -q -B -V javadoc:javadoc | egrep -v DEBUG || travis_terminate 1
   # Sonar analysis shall be run only for one version of Java
@@ -44,7 +44,7 @@ before_deploy:
 deploy:
   - skip_cleanup: true
     provider: script
-    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -B
+    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -q -B
       -U deploy | egrep -v DEBUG || travis_terminate 1
     on:
       repo: adorsys/xs2a
