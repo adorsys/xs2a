@@ -20,22 +20,17 @@ import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
-import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
-import de.adorsys.psd2.xs2a.core.pis.*;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
-import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
-import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
-import org.mockito.InjectMocks;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -73,9 +68,9 @@ class CmsToXs2aPaymentMapperTest {
     private static final String CREDITOR_AGENT = "creditor agent";
     private static final String CREDITOR_NAME = "creditor name";
 
-    private static final String CREDITOR_ADDRESS_STREET = "street";
+    private static final String CREDITOR_ADDRESS_STREET_NAME = "street name";
     private static final String CREDITOR_ADDRESS_BUILDING_NUMBER = "building number";
-    private static final String CREDITOR_ADDRESS_CITY = "city";
+    private static final String CREDITOR_ADDRESS_TOWN_NAME = "town name";
     private static final String CREDITOR_ADDRESS_POST_CODE = "post code";
     private static final String CREDITOR_ADDRESS_COUNTRY = "DE";
 
@@ -105,185 +100,7 @@ class CmsToXs2aPaymentMapperTest {
     private static final byte[] PAYMENT_DATA = "payment data".getBytes();
 
 
-    @InjectMocks
-    private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper;
-
-    @Spy
-    private Xs2aRemittanceMapper xs2aRemittanceMapper = Mappers.getMapper(Xs2aRemittanceMapper.class);
-
-    @Test
-    void mapToPeriodicPayment() {
-        PisPayment pisPayment = buildPisPayment();
-
-        PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
-
-        assertNotNull(periodicPayment);
-        assertEquals(PAYMENT_ID, periodicPayment.getPaymentId());
-        assertEquals(END_TO_END_IDENTIFICATION, periodicPayment.getEndToEndIdentification());
-        assertEquals(INSTRUCTION_IDENTIFICATION, periodicPayment.getInstructionIdentification());
-        assertEquals(DEBTOR_ACCOUNT_REFERENCE, periodicPayment.getDebtorAccount());
-
-        Xs2aAmount instructedAmount = periodicPayment.getInstructedAmount();
-        assertNotNull(instructedAmount);
-        assertEquals(CURRENCY, instructedAmount.getCurrency());
-        assertEquals(AMOUNT, instructedAmount.getAmount());
-
-        assertEquals(CREDITOR_ACCOUNT_REFERENCE, periodicPayment.getCreditorAccount());
-        assertEquals(CREDITOR_AGENT, periodicPayment.getCreditorAgent());
-        assertEquals(CREDITOR_NAME, periodicPayment.getCreditorName());
-
-        Xs2aAddress creditorAddress = periodicPayment.getCreditorAddress();
-        assertNotNull(creditorAddress);
-        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreetName());
-        assertEquals(CREDITOR_ADDRESS_BUILDING_NUMBER, creditorAddress.getBuildingNumber());
-        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getTownName());
-        assertEquals(CREDITOR_ADDRESS_POST_CODE, creditorAddress.getPostCode());
-        assertEquals(CREDITOR_ADDRESS_COUNTRY, creditorAddress.getCountry().getCode());
-
-        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, periodicPayment.getRemittanceInformationUnstructured());
-
-        assertEquals(TRANSACTION_STATUS, periodicPayment.getTransactionStatus());
-        assertEquals(PSU_ID_DATA_LIST, periodicPayment.getPsuDataList());
-
-        assertEquals(START_DATE, periodicPayment.getStartDate());
-        assertEquals(EXECUTION_RULE, periodicPayment.getExecutionRule());
-        assertEquals(END_DATE, periodicPayment.getEndDate());
-
-        FrequencyCode frequencyCode = FrequencyCode.valueOf(FREQUENCY);
-        assertEquals(frequencyCode, periodicPayment.getFrequency());
-
-        assertEquals(DAY_OF_EXECUTION, periodicPayment.getDayOfExecution());
-        assertEquals(STATUS_CHANGE_TIMESTAMP, periodicPayment.getStatusChangeTimestamp());
-        assertEquals(pisPayment.getUltimateDebtor(), periodicPayment.getUltimateDebtor());
-        assertEquals(pisPayment.getUltimateCreditor(), periodicPayment.getUltimateCreditor());
-        assertEquals(pisPayment.getPurposeCode(), periodicPayment.getPurposeCode().toString());
-        assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), periodicPayment.getRemittanceInformationStructured());
-        assertEquals(pisPayment.getCreationTimestamp(), periodicPayment.getCreationTimestamp());
-    }
-
-    @Test
-    void mapToPeriodicPayment_shouldNotMapRequestedExecutionDateAndTime() {
-        PisPayment pisPayment = buildPisPayment();
-
-        PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(pisPayment);
-
-        assertNull(periodicPayment.getRequestedExecutionDate());
-        assertNull(periodicPayment.getRequestedExecutionTime());
-    }
-
-    @Test
-    void mapToPeriodicPayment_withNullPisPayment_shouldReturnNull() {
-        PeriodicPayment periodicPayment = cmsToXs2aPaymentMapper.mapToPeriodicPayment(null);
-
-        assertNull(periodicPayment);
-    }
-
-    @Test
-    void mapToSinglePayment() {
-        PisPayment pisPayment = buildPisPayment();
-
-        SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(pisPayment);
-
-        assertNotNull(singlePayment);
-        assertEquals(PAYMENT_ID, singlePayment.getPaymentId());
-        assertEquals(END_TO_END_IDENTIFICATION, singlePayment.getEndToEndIdentification());
-        assertEquals(INSTRUCTION_IDENTIFICATION, singlePayment.getInstructionIdentification());
-        assertEquals(DEBTOR_ACCOUNT_REFERENCE, singlePayment.getDebtorAccount());
-
-        Xs2aAmount instructedAmount = singlePayment.getInstructedAmount();
-        assertNotNull(instructedAmount);
-        assertEquals(CURRENCY, instructedAmount.getCurrency());
-        assertEquals(AMOUNT, instructedAmount.getAmount());
-
-        assertEquals(CREDITOR_ACCOUNT_REFERENCE, singlePayment.getCreditorAccount());
-        assertEquals(CREDITOR_AGENT, singlePayment.getCreditorAgent());
-        assertEquals(CREDITOR_NAME, singlePayment.getCreditorName());
-
-        Xs2aAddress creditorAddress = singlePayment.getCreditorAddress();
-        assertNotNull(creditorAddress);
-        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreetName());
-        assertEquals(CREDITOR_ADDRESS_BUILDING_NUMBER, creditorAddress.getBuildingNumber());
-        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getTownName());
-        assertEquals(CREDITOR_ADDRESS_POST_CODE, creditorAddress.getPostCode());
-        assertEquals(CREDITOR_ADDRESS_COUNTRY, creditorAddress.getCountry().getCode());
-
-        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, singlePayment.getRemittanceInformationUnstructured());
-        assertEquals(REQUESTED_EXECUTION_DATE, singlePayment.getRequestedExecutionDate());
-        assertEquals(REQUESTED_EXECUTION_TIME, singlePayment.getRequestedExecutionTime());
-        assertEquals(TRANSACTION_STATUS, singlePayment.getTransactionStatus());
-        assertEquals(PSU_ID_DATA_LIST, singlePayment.getPsuDataList());
-        assertEquals(STATUS_CHANGE_TIMESTAMP, singlePayment.getStatusChangeTimestamp());
-        assertEquals(pisPayment.getUltimateDebtor(), singlePayment.getUltimateDebtor());
-        assertEquals(pisPayment.getUltimateCreditor(), singlePayment.getUltimateCreditor());
-        assertEquals(pisPayment.getPurposeCode(), singlePayment.getPurposeCode().toString());
-        assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), singlePayment.getRemittanceInformationStructured());
-        assertEquals(pisPayment.getCreationTimestamp(), singlePayment.getCreationTimestamp());
-    }
-
-    @Test
-    void mapToSinglePayment_withNullPisPayment_shouldReturnNull() {
-        SinglePayment singlePayment = cmsToXs2aPaymentMapper.mapToSinglePayment(null);
-
-        assertNull(singlePayment);
-    }
-
-    @Test
-    void mapToBulkPayment() {
-        PisPayment pisPayment = buildPisPayment();
-
-        BulkPayment bulkPayment = cmsToXs2aPaymentMapper.mapToBulkPayment(Collections.singletonList(pisPayment));
-
-        assertNotNull(bulkPayment);
-        assertEquals(PAYMENT_ID, bulkPayment.getPaymentId());
-
-        assertTrue(bulkPayment.getBatchBookingPreferred());
-
-        assertEquals(DEBTOR_ACCOUNT_REFERENCE, bulkPayment.getDebtorAccount());
-        assertEquals(REQUESTED_EXECUTION_DATE, bulkPayment.getRequestedExecutionDate());
-        assertEquals(REQUESTED_EXECUTION_TIME, bulkPayment.getRequestedExecutionTime());
-
-        assertEquals(TRANSACTION_STATUS, bulkPayment.getTransactionStatus());
-        assertEquals(PSU_ID_DATA_LIST, bulkPayment.getPsuDataList());
-
-        assertEquals(1, bulkPayment.getPayments().size());
-
-        SinglePayment firstPayment = bulkPayment.getPayments().get(0);
-
-        assertNotNull(firstPayment);
-        assertEquals(PAYMENT_ID, firstPayment.getPaymentId());
-        assertEquals(END_TO_END_IDENTIFICATION, firstPayment.getEndToEndIdentification());
-        assertEquals(INSTRUCTION_IDENTIFICATION, firstPayment.getInstructionIdentification());
-        assertEquals(DEBTOR_ACCOUNT_REFERENCE, firstPayment.getDebtorAccount());
-
-        Xs2aAmount instructedAmount = firstPayment.getInstructedAmount();
-        assertNotNull(instructedAmount);
-        assertEquals(CURRENCY, instructedAmount.getCurrency());
-        assertEquals(AMOUNT, instructedAmount.getAmount());
-
-        assertEquals(CREDITOR_ACCOUNT_REFERENCE, firstPayment.getCreditorAccount());
-        assertEquals(CREDITOR_AGENT, firstPayment.getCreditorAgent());
-        assertEquals(CREDITOR_NAME, firstPayment.getCreditorName());
-
-        Xs2aAddress creditorAddress = firstPayment.getCreditorAddress();
-        assertNotNull(creditorAddress);
-        assertEquals(CREDITOR_ADDRESS_STREET, creditorAddress.getStreetName());
-        assertEquals(CREDITOR_ADDRESS_BUILDING_NUMBER, creditorAddress.getBuildingNumber());
-        assertEquals(CREDITOR_ADDRESS_CITY, creditorAddress.getTownName());
-        assertEquals(CREDITOR_ADDRESS_POST_CODE, creditorAddress.getPostCode());
-        assertEquals(CREDITOR_ADDRESS_COUNTRY, creditorAddress.getCountry().getCode());
-
-        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, firstPayment.getRemittanceInformationUnstructured());
-        assertEquals(REQUESTED_EXECUTION_DATE, firstPayment.getRequestedExecutionDate());
-        assertEquals(REQUESTED_EXECUTION_TIME, firstPayment.getRequestedExecutionTime());
-        assertEquals(TRANSACTION_STATUS, firstPayment.getTransactionStatus());
-        assertEquals(PSU_ID_DATA_LIST, firstPayment.getPsuDataList());
-        assertEquals(STATUS_CHANGE_TIMESTAMP, firstPayment.getStatusChangeTimestamp());
-        assertEquals(pisPayment.getUltimateDebtor(), firstPayment.getUltimateDebtor());
-        assertEquals(pisPayment.getUltimateCreditor(), firstPayment.getUltimateCreditor());
-        assertEquals(pisPayment.getPurposeCode(), firstPayment.getPurposeCode().toString());
-        assertEquals(xs2aRemittanceMapper.mapToRemittance(pisPayment.getRemittanceInformationStructured()), firstPayment.getRemittanceInformationStructured());
-        assertEquals(pisPayment.getCreationTimestamp(), firstPayment.getCreationTimestamp());
-    }
+    private CmsToXs2aPaymentMapper cmsToXs2aPaymentMapper = new CmsToXs2aPaymentMapper();
 
     @Test
     void mapToXs2aCommonPayment() {
@@ -351,9 +168,9 @@ class CmsToXs2aPaymentMapperTest {
 
     private CmsAddress buildCmsAddress() {
         CmsAddress cmsAddress = new CmsAddress();
-        cmsAddress.setStreet(CREDITOR_ADDRESS_STREET);
+        cmsAddress.setStreetName(CREDITOR_ADDRESS_STREET_NAME);
         cmsAddress.setBuildingNumber(CREDITOR_ADDRESS_BUILDING_NUMBER);
-        cmsAddress.setCity(CREDITOR_ADDRESS_CITY);
+        cmsAddress.setTownName(CREDITOR_ADDRESS_TOWN_NAME);
         cmsAddress.setPostCode(CREDITOR_ADDRESS_POST_CODE);
         cmsAddress.setCountry(CREDITOR_ADDRESS_COUNTRY);
         return cmsAddress;

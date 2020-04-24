@@ -27,9 +27,9 @@
   "creditorAgent": "BCENECEQ",
   "creditorName": "Telekom",
   "creditorAddress": {
-    "street": "WBG Straße",
+    "streetName": "WBG Straße",
     "buildingNumber": "56",
-    "city": "Nürnberg",
+    "townName": "Nürnberg",
     "postCode": "90543",
     "country": "DE"
   },

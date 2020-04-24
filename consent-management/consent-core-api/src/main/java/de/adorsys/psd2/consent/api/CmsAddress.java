@@ -23,14 +23,14 @@ import lombok.Data;
 @Data
 @ApiModel(description = "Address", value = "CmsAddress")
 public class CmsAddress {
-    @ApiModelProperty(value = "Street", example = "Herrnstraße")
-    private String street;
+    @ApiModelProperty(value = "Street name", example = "Herrnstraße")
+    private String streetName;
 
     @ApiModelProperty(value = "Building number", example = "123-34")
     private String buildingNumber;
 
-    @ApiModelProperty(value = "City", example = "Nürnberg")
-    private String city;
+    @ApiModelProperty(value = "Town name", example = "Nürnberg")
+    private String townName;
 
     @ApiModelProperty(value = "Post code", example = "90431")
     private String postCode;

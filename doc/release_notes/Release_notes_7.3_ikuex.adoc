@@ -19,4 +19,10 @@ These values have been converted to `ASPSP_CONSENT_SUPPORTED` and `NOT_SUPPORTED
 == Change type of postCode to Max35Text
 
 From now on, maximum length of `postCode` field in Address object was extended to 35 symbols.
-Also in CmsAddress object `postalCode` field was renamed to `postCode`.
+
+Also in CmsAddress object following fields were renamed:
+
+* postalCode -> postCode
+* street -> streetName
+* city -> townName
+

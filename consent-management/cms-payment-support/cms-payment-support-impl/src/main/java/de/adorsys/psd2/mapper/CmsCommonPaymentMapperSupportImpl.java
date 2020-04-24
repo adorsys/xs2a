@@ -206,9 +206,9 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         return Optional.ofNullable(pisAddress)
                    .map(adr -> {
                        CmsAddress cmsAddress = new CmsAddress();
-                       cmsAddress.setStreet(adr.getStreetName());
+                       cmsAddress.setStreetName(adr.getStreetName());
                        cmsAddress.setBuildingNumber(adr.getBuildingNumber());
-                       cmsAddress.setCity(adr.getTownName());
+                       cmsAddress.setTownName(adr.getTownName());
                        cmsAddress.setPostCode(adr.getPostCode());
                        cmsAddress.setCountry(adr.getCountry());
                        return cmsAddress;

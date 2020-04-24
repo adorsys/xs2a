@@ -24,10 +24,11 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CmsAddressMapper {
-    @Mapping(target = "streetName", source = "street")
-    @Mapping(target = "townName", source = "city")
+
     Address mapToAddress(CmsAddress cmsAddress);
 
     @Mapping(target = "postCode", source = "postalCode")
+    @Mapping(target = "streetName", source = "street")
+    @Mapping(target = "townName", source = "city")
     CmsAddress mapToCmsAddress(PisAddress pisAddress);
 }
