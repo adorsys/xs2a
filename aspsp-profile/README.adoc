@@ -128,11 +128,15 @@ SINGLE:
 |paymentCancellationRedirectUrlExpirationTimeMs |This field contains the limit of expiration time of Payment cancellation redirect URL set in milliseconds.
 The value for expiration time is counted with formula "current time of authorisation creation + payment cancellation redirect URL expiration time (set in ASPSP-profile)".|600 000 |milliseconds (1, 2,...)
 |*PIIS:* | | |
-|piisConsentSupported |This field indicates whether ASPSP supports storing PIIS consent in CMS.
+|piisConsentSupported |This field defines variant of PIIS consent supporting:
 
-If piisConsentSupported = TRUE then PIIS consent should be stored in CMS and request is sent to SPI with stored value.
+- NOT_SUPPORTED (by default);
 
-If piisConsentSupported = FALSE then PIIS consent is not stored in CMS and request is sent to SPI with NULL value. |FALSE |TRUE, FALSE
+- TPP_CONSENT_SUPPORTED Establish PIIS Consent through XS2A interface;
+
+- ASPSP_CONSENT_SUPPORTED means that ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent
+
+|NOT_SUPPORTED |NOT_SUPPORTED, TPP_CONSENT_SUPPORTED, ASPSP_CONSENT_SUPPORTED
 |*Common:* | | |
 |scaApproachesSupported |This field contains the List of SCA Approach supported by ASPSP ordered by priority - first one with the highest priority. |REDIRECT |	REDIRECT, EMBEDDED, DECOUPLED
 |scaRedirectFlow |This field defines variant of the SCA redirect approach:

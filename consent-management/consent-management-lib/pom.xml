@@ -21,7 +21,7 @@
     <parent>
         <artifactId>consent-management</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>7.2</version>
+        <version>7.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -84,6 +84,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-integration-test-base</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- spring dependencies -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -98,12 +105,6 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.aspectj</groupId>
-                    <artifactId>aspectjrt</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- other dependencies -->
@@ -209,7 +210,6 @@
                                 <bannedDependencies>
                                     <excludes>
                                         <exclude>de.adorsys.psd2:consent-management</exclude>
-                                        <exclude>de.adorsys.psd2:cms-db-schema</exclude>
                                         <exclude>de.adorsys.psd2:cms-standalone-service</exclude>
                                         <exclude>de.adorsys.psd2:consent-aspsp-web</exclude>
                                         <exclude>de.adorsys.psd2:consent-core-web</exclude>

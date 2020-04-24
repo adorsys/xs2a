@@ -24,15 +24,15 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Data
-@Entity(name = "ais_consent_usage")
+@Entity(name = "consent_usage")
 @Table(uniqueConstraints = {
     @UniqueConstraint(columnNames = {"consent_id", "request_uri", "usage_date"})
 })
 @NoArgsConstructor
 public class AisConsentUsage {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ais_consent_usage_generator")
-    @SequenceGenerator(name = "ais_consent_usage_generator", sequenceName = "ais_consent_usage_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "consent_usage_generator")
+    @SequenceGenerator(name = "consent_usage_generator", sequenceName = "consent_usage_id_seq", allocationSize = 1)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)

@@ -226,5 +226,38 @@ public interface AccountApi {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+
+    @ApiOperation(value = "Read trusted beneficiaries list", nickname = "getTrustedBeneficiariesList", notes = "Reads the list of trusted beneficiaries related to the PSU who has given the (explicit) consent.", response = TrustedBeneficiariesList.class, authorizations = {
+        @Authorization(value = "BearerAuthOAuth")
+    }, tags={  })
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = TrustedBeneficiariesList.class),
+        @ApiResponse(code = 400, message = "Bad Request", response = Error400NGAIS.class),
+        @ApiResponse(code = 401, message = "Unauthorized", response = Error401NGAIS.class),
+        @ApiResponse(code = 403, message = "Forbidden", response = Error403NGAIS.class),
+        @ApiResponse(code = 404, message = "Not found", response = Error404NGAIS.class),
+        @ApiResponse(code = 405, message = "Method Not Allowed", response = Error405NGAIS.class),
+        @ApiResponse(code = 406, message = "Not Acceptable", response = Error406NGAIS.class),
+        @ApiResponse(code = 408, message = "Request Timeout"),
+        @ApiResponse(code = 409, message = "Conflict", response = Error409NGAIS.class),
+        @ApiResponse(code = 415, message = "Unsupported Media Type"),
+        @ApiResponse(code = 429, message = "Too Many Requests", response = Error429NGAIS.class),
+        @ApiResponse(code = 500, message = "Internal Server Error"),
+        @ApiResponse(code = 503, message = "Service Unavailable") })
+    @RequestMapping(value = "/v1/trusted-beneficiaries",
+        produces = { "application/json", "application/problem+json" },
+        method = RequestMethod.GET)
+    default ResponseEntity<TrustedBeneficiariesList> _getTrustedBeneficiariesList(@ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party." ,required=true) @RequestHeader(value="X-Request-ID", required=true) UUID xRequestID,@ApiParam(value = "This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. " ,required=true) @RequestHeader(value="Consent-ID", required=true) String consentID,@ApiParam(value = "Reference to a dedicated account, which where a list of trusted beneficiaries might be restricted to. The reference is the corresponding URI resource identification of the /accounts endpoint. This parameter might only be used by the TPP if the ASPSP is supporting dedicated lists of trusted beneficiaries per PSU account. ") @Valid @RequestParam(value = "account-id", required = false) String accountId,@ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request." ) @RequestHeader(value="Digest", required=false) String digest,@ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. " ) @RequestHeader(value="Signature", required=false) String signature,@ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. " ) @RequestHeader(value="TPP-Signature-Certificate", required=false) byte[] tpPSignatureCertificate,@ApiParam(value = "The forwarded IP Address header field consists of the corresponding HTTP request IP Address field between PSU and TPP. It shall be contained if and only if this request was actively initiated by the PSU. " ) @RequestHeader(value="PSU-IP-Address", required=false) String psUIPAddress,@ApiParam(value = "The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available. " ) @RequestHeader(value="PSU-IP-Port", required=false) String psUIPPort,@ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ) @RequestHeader(value="PSU-Accept", required=false) String psUAccept,@ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ) @RequestHeader(value="PSU-Accept-Charset", required=false) String psUAcceptCharset,@ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ) @RequestHeader(value="PSU-Accept-Encoding", required=false) String psUAcceptEncoding,@ApiParam(value = "The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available. " ) @RequestHeader(value="PSU-Accept-Language", required=false) String psUAcceptLanguage,@ApiParam(value = "The forwarded Agent header field of the HTTP request between PSU and TPP, if available. " ) @RequestHeader(value="PSU-User-Agent", required=false) String psUUserAgent,@ApiParam(value = "HTTP method used at the PSU ? TPP interface, if available. Valid values are: * GET * POST * PUT * PATCH * DELETE " , allowableValues="GET, POST, PUT, PATCH, DELETE") @RequestHeader(value="PSU-Http-Method", required=false) String psUHttpMethod,@ApiParam(value = "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available. UUID identifies either a device or a device dependant application installation. In case of an installation identification this ID needs to be unaltered until removal from device. " ) @RequestHeader(value="PSU-Device-ID", required=false) UUID psUDeviceID,@ApiParam(value = "The forwarded Geo Location of the corresponding http request between PSU and TPP if available. " ) @RequestHeader(value="PSU-Geo-Location", required=false) String psUGeoLocation) {
+        return getTrustedBeneficiariesList(xRequestID, consentID, accountId, digest, signature, tpPSignatureCertificate, psUIPAddress, psUIPPort, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUUserAgent, psUHttpMethod, psUDeviceID, psUGeoLocation);
+    }
+
+    // Override this method
+    default ResponseEntity<TrustedBeneficiariesList> getTrustedBeneficiariesList(UUID xRequestID,String consentID,String accountId,String digest,String signature,byte[] tpPSignatureCertificate,String psUIPAddress,String psUIPPort,String psUAccept,String psUAcceptCharset,String psUAcceptEncoding,String psUAcceptLanguage,String psUUserAgent,String psUHttpMethod,UUID psUDeviceID,String psUGeoLocation) {
+        if(getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
+        } else {
+            log.warn("ObjectMapper or HttpServletRequest not configured in default AccountInformationServiceAisApi interface so no example is generated");
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+    }
 }
 

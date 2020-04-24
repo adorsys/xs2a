@@ -26,10 +26,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorisationConfirmationService;
@@ -67,6 +64,7 @@ public class ConsentAuthorisationService {
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     private final LoggingContextService loggingContextService;
     private final AisAuthorisationConfirmationService aisAuthorisationConfirmationService;
+    private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     public ResponseObject<AuthorisationResponse> createAisAuthorisation(PsuIdData psuData, String consentId, String password) {
         ResponseObject<CreateConsentAuthorizationResponse> createAisAuthorizationResponse = createConsentAuthorizationWithResponse(psuData, consentId);
@@ -139,13 +137,13 @@ public class ConsentAuthorisationService {
                    });
     }
 
-    public ResponseObject<ScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
+    public ResponseObject<ConsentScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
         xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found by id", consentId);
-            return ResponseObject.<ScaStatus>builder()
+            return ResponseObject.<ConsentScaStatus>builder()
                        .fail(AIS_403, of(CONSENT_UNKNOWN_403)).build();
         }
         AisConsent accountConsent = aisConsentOptional.get();
@@ -154,29 +152,34 @@ public class ConsentAuthorisationService {
         if (validationResult.isNotValid()) {
             log.info("Consent-ID: [{}], Authorisation-ID [{}]. Get consent authorisation SCA status - validation failed: {}",
                      consentId, authorisationId, validationResult.getMessageError());
-            return ResponseObject.<ScaStatus>builder()
+            return ResponseObject.<ConsentScaStatus>builder()
                        .fail(validationResult.getMessageError())
                        .build();
         }
 
-        Optional<ScaStatus> scaStatusOptional = aisScaAuthorisationServiceResolver.getService(authorisationId)
+        AisAuthorizationService authorizationService = aisScaAuthorisationServiceResolver.getService(authorisationId);
+        Optional<ScaStatus> scaStatusOptional = authorizationService
                                                     .getAuthorisationScaStatus(consentId, authorisationId);
 
         if (scaStatusOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get consent authorisation SCA status failed: consent not found at CMS by id",
                      consentId);
-            return ResponseObject.<ScaStatus>builder()
+            return ResponseObject.<ConsentScaStatus>builder()
                        .fail(AIS_403, of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
         ScaStatus scaStatus = scaStatusOptional.get();
 
+        PsuIdData psuIdData = psuIdDataAuthorisationService.getPsuIdData(authorisationId, accountConsent.getPsuIdDataList());
+
+        ConsentScaStatus consentScaStatus = new ConsentScaStatus(psuIdData, accountConsent, scaStatus);
+
         loggingContextService.storeConsentStatus(accountConsent.getConsentStatus());
         loggingContextService.storeScaStatus(scaStatus);
 
-        return ResponseObject.<ScaStatus>builder()
-                   .body(scaStatus)
+        return ResponseObject.<ConsentScaStatus>builder()
+                   .body(consentScaStatus)
                    .build();
     }
 

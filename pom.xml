@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>7.2</version>
+    <version>7.3</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -217,6 +217,7 @@
 
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <mockito.version>3.2.4</mockito.version>
+        <testcontainers.version>1.11.2</testcontainers.version>
 
         <!--Sonar -->
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>

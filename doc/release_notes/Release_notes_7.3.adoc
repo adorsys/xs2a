@@ -1,0 +1,115 @@
+= Release notes v.7.3
+
+== Table of Contents
+
+* Fix potential deadlock during updating tpp roles
+* Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+* Remove AIS prefix from tables in the database that are used for common consent
+* Removed deprecated SPI constructors in `SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`
+* Removed unused methods in `PisCommonPaymentController`, `PisCommonPaymentServiceBase`, `PisCommonPaymentServiceInternalEncrypted`, `PisCommonPaymentServiceInternal`, `PisCommonPaymentServiceRemote`
+* Add integration tests for spring data jpa specifications
+* Funds Confirmation consent support in Profile
+* Change type of postCode to Max35Text
+* Implemented Read the List of Trusted Beneficiaries
+* Extended Response of GET SCA Status with trustedBeneficiary Flag
+* Add integration tests for `cms-aspsp-api` and `cms-psu-api`
+
+== Fix potential deadlock during updating tpp roles
+
+From now on, tpp roles will be saved when the roles are different from saved ones.
+
+== Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+
+From now on, path parameter `cancellationId` has been renamed to `authorisationId` in
+`Read the SCA status of the payment cancellation's authorisation (GET)` and `Update PSU data for payment initiation cancellation (PUT)` endpoints `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}`.
+
+In `Get cancellation authorisation sub-resources` endpoint GET `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations` response tag “cancellationIds” has been changed to “authorisationIds”.
+
+In `Start the authorisation process for the cancellation of the addressed payment` endpoint POST `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations` response tag “cancellationId” has been changed to “authorisationId”.
+
+Also in PisCommonPaymentController (`api/v1/pis/common-payments/`) the following endpoints were changed:
+
+* authorizations/{authorization-id} => authorisations/{authorisation-id}
+* {payment-id}/authorizations => {payment-id}/authorisations
+* cancellation-authorisations/{cancellation-id} => cancellation-authorisations/{authorisation-id}
+* cancellation-authorisations/{cancellation-id}/status => cancellation-authorisations/{authorisation-id}/status
+
+== Remove AIS prefix from tables in the database that are used for common consent
+
+From now on, the following tables are not used:
+
+* ais_consent_psu_data
+* ais_consent_usage
+* ais_account_access
+* ais_aspsp_account_access
+
+Instead of them new tables were created (without prefix `ais_`) and all data was migrated to these tables.
+The former tables will be deleted in upcoming release.
+
+== Removed deprecated SPI constructors in `SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`
+
+Deprecated SPI constructors were removed (`SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`).
+
+== Removed unused methods in `PisCommonPaymentController`, `PisCommonPaymentServiceBase`, `PisCommonPaymentServiceInternalEncrypted`, `PisCommonPaymentServiceInternal`, `PisCommonPaymentServiceRemote`
+
+Removed unused method `updatePaymentCommonPaymentData` in `PisCommonPaymentController`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceBase`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceInternalEncrypted`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceInternal`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceRemote`.
+Removed unused unit-tests for removed methods.
+
+== Add integration tests for spring data jpa specifications
+
+From now on, all spring data jpa specifications are covered by integration tests.
+
+== Funds Confirmation consent support in Profile
+
+From now on, Funds Confirmation consent is supported in the following modes:
+
+* `NOT_SUPPORTED` (by default);
+* `TPP_CONSENT_SUPPORTED` Establish PIIS Consent through XS2A interface;
+* `ASPSP_CONSENT_SUPPORTED` means that ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent
+
+Up to now, `piisConsentSupported` parameter in ASPSP Profile had 2 values: true and false.
+These values have been converted to `ASPSP_CONSENT_SUPPORTED` and `NOT_SUPPORTED` values accordingly.
+
+== Change type of postCode to Max35Text
+
+From now on, maximum length of `postCode` field in Address object was extended to 35 symbols.
+
+Also in CmsAddress object following fields were renamed:
+
+* postalCode -> postCode
+* street -> streetName
+* city -> townName
+
+== Implemented Read the List of Trusted Beneficiaries
+
+From now on, new endpoint `GET /v1/trusted-beneficiaries` in `AccountApi` appeared. Requesting this endpoint, TPP will
+get the list of trusted beneficiaries related to the PSU who has given the (explicit) consent.
+
+Permission for receiving List of Trusted Beneficiaries is covered through:
+
+Detailed Consent Model with an additionalInformation access attribute with "trustedBeneficiaries" entry. In case of TPP
+tries to Read the List of Trusted Beneficiaries without appropriate Consent rights, response will contain
+`401 CONSENT_INVALID`.
+
+Global Consent Model always covers the consent on trusted beneficiary lists, with allPSD2 access attribute with
+entries `allAccount/allAccountsWithOwnerName`.
+
+`Consent on Account List of Available Accounts` will not give access to an overview of the list of beneficiaries.
+The Response for the Read the List of Trusted Beneficiaries with this Consent will contain `401 CONSENT_INVALID`.
+
+In case when TPP tries to receive the List of Trusted Beneficiaries and ASPSP is not supporting this service
+(`trustedBeneficiariesSupported = FALSE`) then the response will contain `405 SERVICE_INVALID`.
+
+New endpoint was added to frequencyPerDay logic for one-off and recurring consent and to consent expiration logic.
+
+== Extended Response of GET SCA Status with trustedBeneficiary Flag
+
+From now on, the response of `GET SCA Status` contains `trustedBeneficiaryFlag` for final `scaStatus`.
+
+== Add integration tests for `cms-aspsp-api` and `cms-psu-api`
+
+From now on, `cms-aspsp-api` and `cms-psu-api` are covered by integration tests

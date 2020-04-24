@@ -1,0 +1,59 @@
+= Release notes v.6.3
+
+== Table of Contents
+
+* Fix potential deadlock during updating tpp roles
+* Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+* Remove AIS prefix from tables in the database that are used for common consent
+* Removed deprecated SPI constructors in `SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`
+* Removed unused methods in `PisCommonPaymentController`, `PisCommonPaymentServiceBase`, `PisCommonPaymentServiceInternalEncrypted`, `PisCommonPaymentServiceInternal`, `PisCommonPaymentServiceRemote`
+* Add integration tests for `cms-aspsp-api` and `cms-psu-api`
+
+== Fix potential deadlock during updating tpp roles
+
+From now on, tpp roles will be saved when the roles are different from saved ones.
+
+== Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
+
+From now on, path parameter `cancellationId` has been renamed to `authorisationId` in
+`Read the SCA status of the payment cancellation's authorisation (GET)` and `Update PSU data for payment initiation cancellation (PUT)` endpoints `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}`.
+
+In `Get cancellation authorisation sub-resources` endpoint GET `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations` response tag “cancellationIds” has been changed to “authorisationIds”.
+
+In `Start the authorisation process for the cancellation of the addressed payment` endpoint POST `/v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations` response tag “cancellationId” has been changed to “authorisationId”.
+
+Also in PisCommonPaymentController (`api/v1/pis/common-payments/`) the following endpoints were changed:
+
+* authorizations/{authorization-id} => authorisations/{authorisation-id}
+* {payment-id}/authorizations => {payment-id}/authorisations
+* cancellation-authorisations/{cancellation-id} => cancellation-authorisations/{authorisation-id}
+* cancellation-authorisations/{cancellation-id}/status => cancellation-authorisations/{authorisation-id}/status
+
+== Remove AIS prefix from tables in the database that are used for common consent
+
+From now on, the following tables are not used:
+
+* ais_consent_psu_data
+* ais_consent_usage
+* ais_account_access
+* ais_aspsp_account_access
+
+Instead of them new tables were created (without prefix `ais_`) and all data was migrated to these tables.
+The former tables will be deleted in upcoming release.
+
+== Removed deprecated SPI constructors in `SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`
+
+Deprecated SPI constructors were removed (`SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`).
+
+== Removed unused methods in `PisCommonPaymentController`, `PisCommonPaymentServiceBase`, `PisCommonPaymentServiceInternalEncrypted`, `PisCommonPaymentServiceInternal`, `PisCommonPaymentServiceRemote`
+
+Removed unused method `updatePaymentCommonPaymentData` in `PisCommonPaymentController`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceBase`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceInternalEncrypted`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceInternal`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceRemote`.
+Removed unused unit-tests for removed methods.
+
+== Add integration tests for `cms-aspsp-api` and `cms-psu-api`
+
+From now on, `cms-aspsp-api` and `cms-psu-api` are covered by integration tests

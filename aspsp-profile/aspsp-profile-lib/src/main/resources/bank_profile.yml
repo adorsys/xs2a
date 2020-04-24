@@ -41,7 +41,7 @@ setting:
     supportedTransactionStatusFormats:
       - application/json
   piis:
-    piisConsentSupported: FALSE
+    piisConsentSupported: NOT_SUPPORTED
   common:
     scaApproachesSupported:
       - REDIRECT

@@ -23,6 +23,7 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class NewProfileConfigurationMapper {
                                                                               setting.getNotConfirmedPaymentExpirationPeriodMs(),
                                                                               setting.isPaymentCancellationAuthorizationMandated(),
                                                                               pisRedirectLinkToOnlineBanking);
-        PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported());
+        PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED : PiisConsentSupported.NOT_SUPPORTED);
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(setting.getScaApproaches(),
                                                                                  setting.getScaRedirectFlow(),
                                                                                  DEFAULT_OAUTH_CONFIGURATION_URL,

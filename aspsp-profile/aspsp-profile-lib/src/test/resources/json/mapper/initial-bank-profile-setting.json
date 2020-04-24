@@ -46,7 +46,7 @@
     }
   },
   "piis": {
-    "piisConsentSupported": false
+    "piisConsentSupported": "NOT_SUPPORTED"
   },
   "common": {
     "scaApproachesSupported": [

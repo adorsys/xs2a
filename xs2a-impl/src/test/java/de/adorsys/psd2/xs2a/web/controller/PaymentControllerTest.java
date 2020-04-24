@@ -36,17 +36,11 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
-import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentService;
+import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
@@ -143,6 +137,10 @@ class PaymentControllerTest {
     private PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
     @Mock
     private NotificationSupportedModeService notificationSupportedModeService;
+    @Mock
+    private PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
+    @Mock
+    private PaymentCancellationServiceForAuthorisationImpl paymentCancellationServiceForAuthorisation;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -367,13 +365,15 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationScaStatus_success() {
         // Given
-        ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
-                                                                                     .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true);
+        ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                                                     .body(xs2aScaStatusResponse)
                                                                                      .build();
-        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
-            .thenReturn(responseObject);
+
+        when(paymentServiceForAuthorisation.getAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
+            .thenReturn(xs2aScaStatusResponseResponseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse()))
-            .when(responseMapper).ok(eq(responseObject), any());
+            .when(responseMapper).ok(eq(xs2aScaStatusResponseResponseObject), any());
 
         ScaStatusResponse expected = buildScaStatusResponse();
 
@@ -416,7 +416,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationScaStatus_failure() {
         // Given
-        when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
+        when(paymentServiceForAuthorisation.getAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
@@ -437,13 +437,15 @@ class PaymentControllerTest {
     @Test
     void getPaymentCancellationScaStatus_success() {
         // Given
-        ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> responseObject = ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
-                                                                                     .body(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED)
-                                                                                     .build();
-        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
-            .thenReturn(responseObject);
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true);
+        ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
+                                                                                        .body(xs2aScaStatusResponse)
+                                                                                        .build();
+
+        when(paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
+            .thenReturn(xs2aScaStatusResponseResponseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse()))
-            .when(responseMapper).ok(eq(responseObject), any());
+            .when(responseMapper).ok(eq(xs2aScaStatusResponseResponseObject), any());
 
         ScaStatusResponse expected = buildScaStatusResponse();
 
@@ -486,7 +488,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentCancellationScaStatus_failure() {
         // Given
-        when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
+        when(paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
@@ -512,8 +514,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<Cancellations> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<Authorisations> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -527,7 +529,7 @@ class PaymentControllerTest {
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
-        assertTrue(actual.getBody() instanceof Cancellations);
+        assertTrue(actual.getBody() instanceof Authorisations);
     }
 
     @Test
@@ -554,15 +556,15 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationCancellationAuthorisationInformation_MethodMapperCheck() {
         // noinspection unchecked
-        ArgumentCaptor<Function<Xs2aPaymentCancellationAuthorisationSubResource, Cancellations>> argumentCaptor = ArgumentCaptor.forClass(Function.class);
+        ArgumentCaptor<Function<Xs2aPaymentCancellationAuthorisationSubResource, Authorisations>> argumentCaptor = ArgumentCaptor.forClass(Function.class);
 
         List<String> cancellationsList = Collections.singletonList(CORRECT_PAYMENT_ID);
         ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> cancellationResponseList = getCancellationResponseList(cancellationsList);
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<Cancellations> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), argumentCaptor.capture());
+        ResponseEntity<Authorisations> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), argumentCaptor.capture());
 
         // When
         paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -576,7 +578,7 @@ class PaymentControllerTest {
 
         // Then
         argumentCaptor.getValue().apply(null);
-        verify(consentModelMapper).mapToCancellations(any());
+        verify(consentModelMapper).mapToAuthorisations(any());
     }
 
     @Test
@@ -588,8 +590,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<?> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<?> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -603,9 +605,9 @@ class PaymentControllerTest {
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
-        Cancellations actualBody = (Cancellations) actual.getBody();
+        Authorisations actualBody = (Authorisations) actual.getBody();
         assertThat(actualBody).isNotNull();
-        assertThat(actualBody.getCancellationIds().size()).isEqualTo(1);
+        assertThat(actualBody.getAuthorisationIds().size()).isEqualTo(1);
     }
 
     @Test
@@ -617,8 +619,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_ID, SINGLE, PRODUCT))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<?> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<?> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -631,9 +633,9 @@ class PaymentControllerTest {
                                                                                                               null, null);
 
         // Then
-        Cancellations actualBody = (Cancellations) actual.getBody();
+        Authorisations actualBody = (Authorisations) actual.getBody();
         assertThat(actualBody).isNotNull();
-        assertThat(actualBody.getCancellationIds().size()).isEqualTo(2);
+        assertThat(actualBody.getAuthorisationIds().size()).isEqualTo(2);
     }
 
     @Test
@@ -644,8 +646,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(anyString(), any(PaymentType.class), any(String.class)))
             .thenReturn(cancellationResponseList);
 
-        ResponseEntity<?> cancellationsResponseEntity = ResponseEntity.ok(buildCancellations(cancellationsList));
-        doReturn(cancellationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
+        ResponseEntity<?> authorisationsResponseEntity = ResponseEntity.ok(buildAuthorisations(cancellationsList));
+        doReturn(authorisationsResponseEntity).when(responseMapper).ok(eq(cancellationResponseList), any());
 
         // When
         ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
@@ -658,9 +660,9 @@ class PaymentControllerTest {
                                                                                                               null, null);
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
-        Cancellations cancellations = (Cancellations) actual.getBody();
-        assertThat(cancellations).isNotNull();
-        assertTrue(CollectionUtils.isEmpty(cancellations.getCancellationIds()));
+        Authorisations authorisations = (Authorisations) actual.getBody();
+        assertThat(authorisations).isNotNull();
+        assertTrue(CollectionUtils.isEmpty(authorisations.getAuthorisationIds()));
     }
 
     @Test
@@ -985,8 +987,8 @@ class PaymentControllerTest {
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request))
             .thenReturn(serviceResponse);
 
-        StartCancellationScaProcessResponse expectedResponse = new StartCancellationScaProcessResponse();
-        ResponseEntity<StartCancellationScaProcessResponse> value = new ResponseEntity<>(expectedResponse, CREATED);
+        StartScaprocessResponse expectedResponse = new StartScaprocessResponse();
+        ResponseEntity<StartScaprocessResponse> value = new ResponseEntity<>(expectedResponse, CREATED);
         doReturn(value).when(responseMapper).created(eq(serviceResponse), any(), eq(RESPONSE_HEADERS));
 
         when(paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(CANCELLATION_AUTHORISATION_ID)).thenReturn(RESPONSE_HEADERS);
@@ -1385,7 +1387,7 @@ class PaymentControllerTest {
         when(paymentAuthorisationService.createPisAuthorisation(request))
             .thenReturn(serviceResponse);
 
-        StartCancellationScaProcessResponse expectedResponse = new StartCancellationScaProcessResponse();
+        StartScaprocessResponse expectedResponse = new StartScaprocessResponse();
 
         doReturn(new ResponseEntity<>(expectedResponse, CREATED)).when(responseMapper).created(any(), eq(RESPONSE_HEADERS));
 
@@ -1448,11 +1450,13 @@ class PaymentControllerTest {
     }
 
     private ScaStatusResponse buildScaStatusResponse() {
-        return new ScaStatusResponse().scaStatus(ScaStatus.RECEIVED);
+        ScaStatusResponse response = new ScaStatusResponse().scaStatus(de.adorsys.psd2.model.ScaStatus.RECEIVED);
+        response.setTrustedBeneficiaryFlag(true);
+        return response;
     }
 
-    private ResponseObject<de.adorsys.psd2.xs2a.core.sca.ScaStatus> buildScaStatusError() {
-        return ResponseObject.<de.adorsys.psd2.xs2a.core.sca.ScaStatus>builder()
+    private ResponseObject<Xs2aScaStatusResponse> buildScaStatusError() {
+        return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .fail(PIS_403, of(MessageErrorCode.RESOURCE_UNKNOWN_403))
                    .build();
     }
@@ -1513,11 +1517,11 @@ class PaymentControllerTest {
                    .build();
     }
 
-    private Cancellations buildCancellations(List<String> cancellationsList) {
-        Cancellations cancellations = new Cancellations();
-        CancellationList cancellationList = new CancellationList();
-        cancellationList.addAll(cancellationsList);
-        cancellations.setCancellationIds(cancellationList);
-        return cancellations;
+    private Authorisations buildAuthorisations(List<String> authorisationIds) {
+        Authorisations authorisations = new Authorisations();
+        AuthorisationsList authorisationsList = new AuthorisationsList();
+        authorisationsList.addAll(authorisationIds);
+        authorisations.setAuthorisationIds(authorisationsList);
+        return authorisations;
     }
 }

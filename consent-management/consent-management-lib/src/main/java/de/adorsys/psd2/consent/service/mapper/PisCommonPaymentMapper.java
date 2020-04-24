@@ -16,14 +16,12 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
-import de.adorsys.psd2.consent.domain.payment.PisAddress;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisRemittance;
@@ -43,6 +41,7 @@ public class PisCommonPaymentMapper {
     private final PsuDataMapper psuDataMapper;
     private final AccountReferenceMapper accountReferenceMapper;
     private final AuthorisationMapper authorisationMapper;
+    private final CmsAddressMapper cmsAddressMapper;
 
     public PisCommonPaymentData mapToPisCommonPaymentData(PisPaymentInfo paymentInfo) {
         PisCommonPaymentData commonPaymentData = new PisCommonPaymentData();
@@ -117,7 +116,7 @@ public class PisCommonPaymentMapper {
                        pisPayment.setCreditorAccount(accountReferenceMapper.mapToAccountReference(pm.getCreditorAccount()));
                        pisPayment.setCreditorAgent(pm.getCreditorAgent());
                        pisPayment.setCreditorName(pm.getCreditorName());
-                       pisPayment.setCreditorAddress(mapToCmsAddress(pm.getCreditorAddress()));
+                       pisPayment.setCreditorAddress(cmsAddressMapper.mapToCmsAddress(pm.getCreditorAddress()));
                        pisPayment.setRemittanceInformationUnstructured(pm.getRemittanceInformationUnstructured());
                        pisPayment.setRemittanceInformationStructured(mapToCmsRemittance(pm.getRemittanceInformationStructured()));
                        pisPayment.setRequestedExecutionDate(pm.getRequestedExecutionDate());
@@ -147,18 +146,4 @@ public class PisCommonPaymentMapper {
                    })
                    .orElse(null);
     }
-
-    CmsAddress mapToCmsAddress(PisAddress pisAddress) {
-        return Optional.ofNullable(pisAddress)
-                   .map(adr -> {
-                       CmsAddress cmsAddress = new CmsAddress();
-                       cmsAddress.setStreet(adr.getStreet());
-                       cmsAddress.setBuildingNumber(adr.getBuildingNumber());
-                       cmsAddress.setCity(adr.getCity());
-                       cmsAddress.setPostalCode(adr.getPostalCode());
-                       cmsAddress.setCountry(adr.getCountry());
-                       return cmsAddress;
-                   }).orElse(null);
-    }
-
 }

@@ -468,7 +468,7 @@ public enum MessageErrorCode {
             return SERVICE_INVALID_NAME;
         }
     },
-    // 405 - The addressed service is not valid for the addressed resources or the submitted data because of http method
+    // 405 - The addressed service is not valid for the addressed resources or the submitted data
     SERVICE_INVALID_405(405) {
         @Override
         public String getName() {

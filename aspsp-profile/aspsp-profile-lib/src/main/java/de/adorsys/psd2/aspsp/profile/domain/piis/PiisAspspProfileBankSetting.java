@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.aspsp.profile.domain.piis;
 
+import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,5 +29,5 @@ public class PiisAspspProfileBankSetting {
     /**
      * Indicates whether ASPSP supports storing PIIS consent in CMS
      */
-    private boolean piisConsentSupported;
+    private PiisConsentSupported piisConsentSupported;
 }

@@ -92,14 +92,9 @@ class CmsPsuPisMapperTest {
     private static final BigDecimal AMOUNT = BigDecimal.TEN;
     private static final String CREDITOR_AGENT = "CREDITOR_AGENT";
     private static final String CREDITOR_NAME = "CREDITOR_NAME";
-    private static final long PSU_ADDRESS_ID = 123456789L;
-    private static final String COUNTRY = "COUNTRY";
-    private static final String CITY = "CITY";
-    private static final String STREET = "STREET";
-    private static final String BUILDING_NUMBER = "BUILDING_NUMBER";
-    private static final String POSTAL_CODE = "POSTAL_CODE";
-    private static final PisAddress CREDITOR_ADDRESS = buildPisAddress();
-    private static final CmsAddress CREDITOR_CMS_ADDRESS = buildCmsAddress();
+    private static final JsonReader jsonReader = new JsonReader();
+    private static final PisAddress CREDITOR_ADDRESS = jsonReader.getObjectFromFile("json/service/mapper/pis-address.json", PisAddress.class);
+    private static final CmsAddress CREDITOR_CMS_ADDRESS = jsonReader.getObjectFromFile("json/service/mapper/cms-address.json", CmsAddress.class);
     private static final String REMITTANCE_INFORMATION_UNSTRUCTURED = "REMITTANCE_INFORMATION_UNSTRUCTURED";
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
@@ -108,7 +103,6 @@ class CmsPsuPisMapperTest {
     private static final LocalDate END_DATE = LocalDate.now();
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREEQUENCY = "DAILY";
-    private static final JsonReader jsonReader = new JsonReader();
     private static final PisRemittance REMITTANCE = jsonReader.getObjectFromFile("json/remittance.json", PisRemittance.class);
     private static final PisPaymentData PIS_PAYMENT_DATA_SINGLE = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_SINGLE);
     private static final PisPaymentData PIS_PAYMENT_DATA_PERIODIC = buildPisPaymentData(PIS_COMMON_PAYMENT_DATA_PERIODIC);
@@ -124,7 +118,7 @@ class CmsPsuPisMapperTest {
     private CmsPsuPisMapper cmsPsuPisMapper;
 
     @Mock
-    private PisCommonPaymentMapper pisCommonPaymentMapper;
+    private CmsAddressMapper cmsAddressMapper;
     @Mock
     private TppInfoMapper tppInfoMapper;
     @Mock
@@ -154,7 +148,7 @@ class CmsPsuPisMapperTest {
 
     @Test
     void mapToCmsPayment_pisPaymentDataList_single_Success() {
-        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
+        when(cmsAddressMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
 
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_SINGLE_LIST);
 
@@ -191,7 +185,7 @@ class CmsPsuPisMapperTest {
 
     @Test
     void mapToCmsPayment_pisPaymentDataList_periodic_Success() {
-        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
+        when(cmsAddressMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
 
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_PERIODIC_LIST);
 
@@ -228,7 +222,7 @@ class CmsPsuPisMapperTest {
 
     @Test
     void mapToCmsPayment_pisPaymentDataList_bulk_Success() {
-        when(pisCommonPaymentMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
+        when(cmsAddressMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
 
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_BULK_LIST);
 
@@ -357,26 +351,5 @@ class CmsPsuPisMapperTest {
         AccountReference accountReference = new AccountReference();
         accountReference.setIban(IBAN);
         return accountReference;
-    }
-
-    private static PisAddress buildPisAddress() {
-        PisAddress pisAddress = new PisAddress();
-        pisAddress.setId(PSU_ADDRESS_ID);
-        pisAddress.setCountry(COUNTRY);
-        pisAddress.setCity(CITY);
-        pisAddress.setStreet(STREET);
-        pisAddress.setBuildingNumber(BUILDING_NUMBER);
-        pisAddress.setPostalCode(POSTAL_CODE);
-        return pisAddress;
-    }
-
-    private static CmsAddress buildCmsAddress() {
-        CmsAddress cmsAddress = new CmsAddress();
-        cmsAddress.setCountry(COUNTRY);
-        cmsAddress.setCity(CITY);
-        cmsAddress.setStreet(STREET);
-        cmsAddress.setBuildingNumber(BUILDING_NUMBER);
-        cmsAddress.setPostalCode(POSTAL_CODE);
-        return cmsAddress;
     }
 }

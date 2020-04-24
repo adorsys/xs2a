@@ -29,14 +29,14 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 public class Xs2aCreatePisCancellationAuthorisationResponse implements CancellationAuthorisationResponse {
     @NotNull
-    private String cancellationId;
+    private String authorisationId;
     private ScaStatus scaStatus;
     private PaymentType paymentType;
     private Links links = new Links();
     private String internalRequestId;
 
-    public Xs2aCreatePisCancellationAuthorisationResponse(@NotNull String cancellationId, ScaStatus scaStatus, PaymentType paymentType, String internalRequestId) {
-        this.cancellationId = cancellationId;
+    public Xs2aCreatePisCancellationAuthorisationResponse(@NotNull String authorisationId, ScaStatus scaStatus, PaymentType paymentType, String internalRequestId) {
+        this.authorisationId = authorisationId;
         this.scaStatus = scaStatus;
         this.paymentType = paymentType;
         this.internalRequestId = internalRequestId;

@@ -38,13 +38,11 @@ import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationRespon
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.domain.pis.*;
-import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
-import de.adorsys.psd2.xs2a.service.PaymentAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService;
-import de.adorsys.psd2.xs2a.service.PaymentService;
+import de.adorsys.psd2.xs2a.service.*;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.PaymentCancellationHeadersBuilder;
@@ -80,6 +78,8 @@ public class PaymentController implements PaymentApi {
     private final PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
     private final AuthorisationModelMapper authorisationModelMapper;
     private final NotificationSupportedModeService notificationSupportedModeService;
+    private final PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
+    private final PaymentCancellationServiceForAuthorisationImpl paymentCancellationServiceForAuthorisation;
 
     private static final MessageError MESSAGE_ERROR_RESOURCE_UNKNOWN_404 = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
 
@@ -293,7 +293,7 @@ public class PaymentController implements PaymentApi {
 
     @Override
     public ResponseEntity getPaymentCancellationScaStatus(String paymentService, String paymentProduct, String paymentId,
-                                                          String cancellationId, UUID xRequestID, String digest, String signature,
+                                                          String authorisationId, UUID xRequestID, String digest, String signature,
                                                           byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort,
                                                           String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
                                                           String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
@@ -305,8 +305,9 @@ public class PaymentController implements PaymentApi {
                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
-        ResponseObject<ScaStatus> serviceResponse =
-            paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(paymentId, cancellationId, paymentType.get(), paymentProduct);
+
+        ResponseObject<Xs2aScaStatusResponse> serviceResponse =
+            paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(paymentId, authorisationId, paymentType.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(serviceResponse, authorisationMapper::mapToScaStatusResponse);
@@ -350,7 +351,7 @@ public class PaymentController implements PaymentApi {
             paymentCancellationAuthorisationService.getPaymentInitiationCancellationAuthorisationInformation(paymentId, paymentTypeOptional.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
-                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToCancellations);
+                   : responseMapper.ok(serviceResponse, consentModelMapper::mapToAuthorisations);
     }
 
     @Override
@@ -367,8 +368,8 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
 
-        ResponseObject<ScaStatus> serviceResponse =
-            paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId, paymentTypeOptional.get(), paymentProduct);
+        ResponseObject<Xs2aScaStatusResponse> serviceResponse =
+            paymentServiceForAuthorisation.getAuthorisationScaStatus(paymentId, authorisationId, paymentTypeOptional.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(serviceResponse, authorisationMapper::mapToScaStatusResponse);
@@ -438,14 +439,14 @@ public class PaymentController implements PaymentApi {
         }
 
         CancellationAuthorisationResponse serviceResponseBody = serviceResponse.getBody();
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(serviceResponseBody.getCancellationId());
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildStartAuthorisationHeaders(serviceResponseBody.getAuthorisationId());
 
         return responseMapper.created(serviceResponse, authorisationModelMapper::mapToStartOrUpdateCancellationResponse, responseHeaders);
     }
 
     @Override
     public ResponseEntity updatePaymentCancellationPsuData(UUID xRequestID, String paymentService, String paymentProduct, String paymentId,
-                                                           String cancellationId, Object body, String digest, String signature,
+                                                           String authorisationId, Object body, String digest, String signature,
                                                            byte[] tpPSignatureCertificate, String psuId, String psUIDType,
                                                            String psUCorporateID, String psUCorporateIDType, String psUIPAddress,
                                                            String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding,
@@ -458,13 +459,13 @@ public class PaymentController implements PaymentApi {
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
         }
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress);
-        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, cancellationId, paymentType.get(), paymentProduct, (Map) body));
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentCancellationAuthorisationService.updatePisCancellationPsuData(consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, paymentType.get(), paymentProduct, (Map) body));
 
         if (serviceResponse.hasError()) {
             return responseErrorMapper.generateErrorResponse(serviceResponse.getError());
         }
 
-        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePsuDataHeaders(cancellationId);
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildUpdatePsuDataHeaders(authorisationId);
 
         return responseMapper.ok(serviceResponse, authorisationMapper::mapToPisUpdatePsuAuthenticationResponse, responseHeaders);
     }

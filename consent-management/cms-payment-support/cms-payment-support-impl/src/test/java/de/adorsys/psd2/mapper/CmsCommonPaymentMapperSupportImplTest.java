@@ -308,10 +308,10 @@ class CmsCommonPaymentMapperSupportImplTest {
     private CmsAddress getCreditorAddress(Address address) {
         CmsAddress cmsAddress = new CmsAddress();
         cmsAddress.setCountry(address.getCountry());
-        cmsAddress.setCity(address.getTownName());
+        cmsAddress.setTownName(address.getTownName());
         cmsAddress.setBuildingNumber(address.getBuildingNumber());
-        cmsAddress.setStreet(address.getStreetName());
-        cmsAddress.setPostalCode(address.getPostCode());
+        cmsAddress.setStreetName(address.getStreetName());
+        cmsAddress.setPostCode(address.getPostCode());
         return cmsAddress;
     }
 }

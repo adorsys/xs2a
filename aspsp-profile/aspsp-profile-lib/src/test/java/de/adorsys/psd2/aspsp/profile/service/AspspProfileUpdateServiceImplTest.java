@@ -69,7 +69,7 @@ class AspspProfileUpdateServiceImplTest {
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = true;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
     private static final boolean PAYMENT_CANCELLATION_AUTHORISATION_MANDATED = true;
-    private static final boolean PIIS_CONSENT_SUPPORTED = true;
+    private static final PiisConsentSupported PIIS_CONSENT_SUPPORTED = PiisConsentSupported.ASPSP_CONSENT_SUPPORTED;
     private static final boolean DELTA_LIST_SUPPORTED = true;
     private static final long REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
     private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
@@ -149,7 +149,7 @@ class AspspProfileUpdateServiceImplTest {
         assertEquals(PIS_REDIRECT_LINK, setting.getPis().getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp());
         assertEquals(COUNTRY_VALIDATION_SUPPORTED, setting.getPis().getCountryValidationSupported());
         assertEquals(SUPPORTED_TRANSACTION_STATUS_FORMATS, setting.getPis().getSupportedTransactionStatusFormats());
-        assertEquals(PIIS_CONSENT_SUPPORTED, setting.getPiis().isPiisConsentSupported());
+        assertEquals(PIIS_CONSENT_SUPPORTED, setting.getPiis().getPiisConsentSupported());
         assertEquals(PSU_IN_INITIAL_REQUEST_MANDATED, setting.getCommon().isPsuInInitialRequestMandated());
         assertEquals(FORCE_XS2A_BASE_LINKS_URL, setting.getCommon().isForceXs2aBaseLinksUrl());
         assertEquals(AUTHORISATION_EXPIRATION_TIME_MS, setting.getCommon().getAuthorisationExpirationTimeMs());

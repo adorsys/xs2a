@@ -100,8 +100,8 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
      * Gets SCA status of cancellation authorisation
      *
      * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
-     * @param cancellationId cancellation authorisation identifier
+     * @param authorisationId authorisation identifier
      * @return SCA status
      */
-    Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String cancellationId);
+    Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String authorisationId);
 }

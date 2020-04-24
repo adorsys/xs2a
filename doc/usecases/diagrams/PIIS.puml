@@ -7,7 +7,7 @@ entity CMS_PSU_API as cmspsu
 entity Core_banking as cb
 entity Online_banking as ob
 == Establish PIIS Consent ==
-group piisConsentSupported = TRUE
+group piisConsentSupported = ASPSP_CONSENT_SUPPORTED
 |||
 cb->cms: Create PIIS Consent\nPOST "aspsp-api/v1/piis/consents"
 |||
@@ -68,7 +68,7 @@ end
 |||
 == PIIS consent is not stored in CMS    ANY TPP may request Funds Confirmation ==
 |||
-group piisConsentSupported = FALSE
+group piisConsentSupported = NOT_SUPPORTED
 |||
 tpp -> xs2a: REST Call Initiate Funds Confirmation Request\nPOST "/v1/funds-confirmations"
 activate xs2a

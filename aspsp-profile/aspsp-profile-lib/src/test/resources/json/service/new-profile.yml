@@ -52,7 +52,7 @@ setting:
     tppSignatureRequired: false
     xs2aBaseLinksUrl: http://myhost.com/
   piis:
-    piisConsentSupported: false
+    piisConsentSupported: NOT_SUPPORTED
   pis:
     maxTransactionValidityDays: 0
     notConfirmedPaymentExpirationTimeMs: 86400000
