@@ -29,19 +29,16 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
-public class PaymentServiceForAuthorisation {
-    private final PaymentAuthorisationSpi paymentAuthorisationSpi;
-    private final PaymentAuthorisationService paymentAuthorisationService;
+public abstract class PaymentServiceForAuthorisation {
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiErrorMapper spiErrorMapper;
@@ -50,12 +47,12 @@ public class PaymentServiceForAuthorisation {
     /**
      * Gets SCA status response of payment authorisation
      *
-     * @param paymentId       String representation of consent identifier
+     * @param paymentId       String representation of payment identifier
      * @param authorisationId String representation of authorisation identifier
      * @return Response containing SCA status of the authorisation and optionally trusted beneficiaries flag or corresponding error
      */
-    public ResponseObject<Xs2aScaStatusResponse> getPaymentAuthorisationScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct) {
-        ResponseObject<PaymentScaStatus> paymentScaStatusResponse = paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId, paymentType, paymentProduct);
+    public ResponseObject<Xs2aScaStatusResponse> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct) {
+        ResponseObject<PaymentScaStatus> paymentScaStatusResponse = getPaymentScaStatus(paymentId, authorisationId, paymentType, paymentProduct);
         if (paymentScaStatusResponse.hasError()) {
             return ResponseObject.<Xs2aScaStatusResponse>builder()
                        .fail(paymentScaStatusResponse.getError())
@@ -89,14 +86,17 @@ public class PaymentServiceForAuthorisation {
                    .build();
     }
 
+    abstract ResponseObject<PaymentScaStatus> getPaymentScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct);
+
+    abstract SpiResponse<Boolean> getTrustedBeneficiaryFlagFromSpi(SpiContextData contextData, SpiPayment spiPayment, String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider);
+
     private ResponseObject<Boolean> getTrustedBeneficiaryFlag(PsuIdData psuIdData, String paymentId, String authorisationId, PisCommonPaymentResponse pisCommonPaymentResponse) {
         SpiPayment spiPayment = spiPaymentFactory.createSpiPaymentByPaymentType(pisCommonPaymentResponse).orElse(null);
 
-        SpiResponse<Boolean> spiResponse =
-            paymentAuthorisationSpi.requestTrustedBeneficiaryFlag(spiContextDataProvider.provideWithPsuIdData(psuIdData),
-                                                                  spiPayment,
-                                                                  authorisationId,
-                                                                  aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId));
+        SpiResponse<Boolean> spiResponse = getTrustedBeneficiaryFlagFromSpi(spiContextDataProvider.provideWithPsuIdData(psuIdData),
+                                                                            spiPayment,
+                                                                            authorisationId,
+                                                                            aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId));
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);

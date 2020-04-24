@@ -138,9 +138,9 @@ class PaymentControllerTest {
     @Mock
     private NotificationSupportedModeService notificationSupportedModeService;
     @Mock
-    private PaymentServiceForAuthorisation paymentServiceForAuthorisation;
+    private PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
     @Mock
-    private PaymentCancellationServiceForAuthorisation paymentCancellationServiceForAuthorisation;
+    private PaymentCancellationServiceForAuthorisationImpl paymentCancellationServiceForAuthorisation;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -370,7 +370,7 @@ class PaymentControllerTest {
                                                                                      .body(xs2aScaStatusResponse)
                                                                                      .build();
 
-        when(paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
+        when(paymentServiceForAuthorisation.getAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
             .thenReturn(xs2aScaStatusResponseResponseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse()))
             .when(responseMapper).ok(eq(xs2aScaStatusResponseResponseObject), any());
@@ -416,7 +416,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationScaStatus_failure() {
         // Given
-        when(paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
+        when(paymentServiceForAuthorisation.getAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
@@ -442,7 +442,7 @@ class PaymentControllerTest {
                                                                                         .body(xs2aScaStatusResponse)
                                                                                         .build();
 
-        when(paymentCancellationServiceForAuthorisation.getPaymentCancellationAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
+        when(paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(any(String.class), any(String.class), any(PaymentType.class), any(String.class)))
             .thenReturn(xs2aScaStatusResponseResponseObject);
         doReturn(ResponseEntity.ok(buildScaStatusResponse()))
             .when(responseMapper).ok(eq(xs2aScaStatusResponseResponseObject), any());
@@ -488,7 +488,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentCancellationScaStatus_failure() {
         // Given
-        when(paymentCancellationServiceForAuthorisation.getPaymentCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
+        when(paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
             .thenReturn(buildScaStatusError());
         when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_403, RESOURCE_UNKNOWN_403))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
 
