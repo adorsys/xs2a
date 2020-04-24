@@ -64,6 +64,7 @@ public class ConsentAuthorisationService {
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     private final LoggingContextService loggingContextService;
     private final AisAuthorisationConfirmationService aisAuthorisationConfirmationService;
+    private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     public ResponseObject<AuthorisationResponse> createAisAuthorisation(PsuIdData psuData, String consentId, String password) {
         ResponseObject<CreateConsentAuthorizationResponse> createAisAuthorizationResponse = createConsentAuthorizationWithResponse(psuData, consentId);
@@ -170,9 +171,7 @@ public class ConsentAuthorisationService {
 
         ScaStatus scaStatus = scaStatusOptional.get();
 
-        PsuIdData psuIdData = authorizationService
-                                  .getAccountConsentAuthorizationById(authorisationId).map(Authorisation::getPsuIdData)
-                                  .orElseGet(null);
+        PsuIdData psuIdData = psuIdDataAuthorisationService.getPsuIdData(authorisationId, accountConsent.getPsuIdDataList());
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(psuIdData, accountConsent, scaStatus);
 

@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -65,6 +64,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final GetPaymentCancellationAuthorisationsValidator getPaymentAuthorisationsValidator;
     private final GetPaymentCancellationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
     private final LoggingContextService loggingContextService;
+    private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
 
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
@@ -242,10 +242,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         ScaStatus scaStatus = scaStatusOptional.get();
 
-        PsuIdData psuIdData = xs2aAuthorisationService.getAuthorisationById(authorisationId)
-                                  .map(Authorisation::getPsuIdData)
-                                  // This is done for multilevel accounts, since we don't know which PSU requested the cancellation, we take first one
-                                  .orElse(pisCommonPaymentResponse.getPsuData().get(0));
+        PsuIdData psuIdData = psuIdDataAuthorisationService.getPsuIdData(authorisationId, pisCommonPaymentResponse.getPsuData());
 
         PaymentScaStatus paymentScaStatus = new PaymentScaStatus(psuIdData, pisCommonPaymentResponse, scaStatus);
 
