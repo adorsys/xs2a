@@ -2,8 +2,16 @@
 
 == Table of Contents
 
+* Fix potential deadlock during updating tpp roles
 * Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
 * Remove AIS prefix from tables in the database that are used for common consent
+* Removed deprecated SPI constructors in `SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`
+* Removed unused methods in `PisCommonPaymentController`, `PisCommonPaymentServiceBase`, `PisCommonPaymentServiceInternalEncrypted`, `PisCommonPaymentServiceInternal`, `PisCommonPaymentServiceRemote`
+* Add integration tests for `cms-aspsp-api` and `cms-psu-api`
+
+== Fix potential deadlock during updating tpp roles
+
+From now on, tpp roles will be saved when the roles are different from saved ones.
 
 == Unification of Payment Canc auth-subresources by authorisationId instead of cancellationId
 
@@ -32,3 +40,20 @@ From now on, the following tables are not used:
 
 Instead of them new tables were created (without prefix `ais_`) and all data was migrated to these tables.
 The former tables will be deleted in upcoming release.
+
+== Removed deprecated SPI constructors in `SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`
+
+Deprecated SPI constructors were removed (`SpiAccountDetails`, `SpiCardAccountDetails`, `SpiCardTransaction` and `SpiTransaction`).
+
+== Removed unused methods in `PisCommonPaymentController`, `PisCommonPaymentServiceBase`, `PisCommonPaymentServiceInternalEncrypted`, `PisCommonPaymentServiceInternal`, `PisCommonPaymentServiceRemote`
+
+Removed unused method `updatePaymentCommonPaymentData` in `PisCommonPaymentController`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceBase`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceInternalEncrypted`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceInternal`.
+Removed unused method `updateCommonPayment` in `PisCommonPaymentServiceRemote`.
+Removed unused unit-tests for removed methods.
+
+== Add integration tests for `cms-aspsp-api` and `cms-psu-api`
+
+From now on, `cms-aspsp-api` and `cms-psu-api` are covered by integration tests
