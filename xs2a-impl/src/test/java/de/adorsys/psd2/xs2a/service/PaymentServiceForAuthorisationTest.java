@@ -57,7 +57,7 @@ class PaymentServiceForAuthorisationTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
 
     @InjectMocks
-    private PaymentServiceForAuthorisation paymentServiceForAuthorisation;
+    private PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
 
     @Mock
     private PaymentAuthorisationSpi paymentAuthorisationSpi;
@@ -91,7 +91,7 @@ class PaymentServiceForAuthorisationTest {
             .thenReturn(paymentScaStatusResponse);
 
         // When
-        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertThat(actual).isNotNull();
@@ -113,7 +113,7 @@ class PaymentServiceForAuthorisationTest {
             .thenReturn(paymentScaStatusResponse);
 
         // When
-        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertThat(actual).isNotNull();
@@ -140,7 +140,7 @@ class PaymentServiceForAuthorisationTest {
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS)).thenReturn(ErrorHolder.builder(ErrorType.PIS_400).build());
 
         // When
-        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertThat(actual).isNotNull();
@@ -170,7 +170,7 @@ class PaymentServiceForAuthorisationTest {
         when(paymentAuthorisationSpi.requestTrustedBeneficiaryFlag(any(), any(), any(), any())).thenReturn(spiResponse);
 
         // When
-        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
+        ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
 
         // Then
         assertThat(actual).isNotNull();

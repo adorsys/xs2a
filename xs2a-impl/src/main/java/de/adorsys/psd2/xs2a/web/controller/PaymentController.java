@@ -78,8 +78,8 @@ public class PaymentController implements PaymentApi {
     private final PaymentCancellationHeadersBuilder paymentCancellationHeadersBuilder;
     private final AuthorisationModelMapper authorisationModelMapper;
     private final NotificationSupportedModeService notificationSupportedModeService;
-    private final PaymentServiceForAuthorisation paymentServiceForAuthorisation;
-    private final PaymentCancellationServiceForAuthorisation paymentCancellationServiceForAuthorisation;
+    private final PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
+    private final PaymentCancellationServiceForAuthorisationImpl paymentCancellationServiceForAuthorisation;
 
     private static final MessageError MESSAGE_ERROR_RESOURCE_UNKNOWN_404 = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
 
@@ -307,7 +307,7 @@ public class PaymentController implements PaymentApi {
         }
 
         ResponseObject<Xs2aScaStatusResponse> serviceResponse =
-            paymentCancellationServiceForAuthorisation.getPaymentCancellationAuthorisationScaStatus(paymentId, authorisationId, paymentType.get(), paymentProduct);
+            paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(paymentId, authorisationId, paymentType.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(serviceResponse, authorisationMapper::mapToScaStatusResponse);
@@ -369,7 +369,7 @@ public class PaymentController implements PaymentApi {
         }
 
         ResponseObject<Xs2aScaStatusResponse> serviceResponse =
-            paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(paymentId, authorisationId, paymentTypeOptional.get(), paymentProduct);
+            paymentServiceForAuthorisation.getAuthorisationScaStatus(paymentId, authorisationId, paymentTypeOptional.get(), paymentProduct);
         return serviceResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(serviceResponse.getError())
                    : responseMapper.ok(serviceResponse, authorisationMapper::mapToScaStatusResponse);

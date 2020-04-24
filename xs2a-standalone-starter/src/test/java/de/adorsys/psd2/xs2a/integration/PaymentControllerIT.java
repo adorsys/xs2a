@@ -51,7 +51,7 @@ import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
-import de.adorsys.psd2.xs2a.service.PaymentServiceForAuthorisation;
+import de.adorsys.psd2.xs2a.service.PaymentServiceForAuthorisationImpl;
 import de.adorsys.psd2.xs2a.spi.service.SinglePaymentSpi;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,7 +142,7 @@ class PaymentControllerIT {
     @Qualifier("consentRestTemplate")
     private RestTemplate consentRestTemplate;
     @MockBean
-    private PaymentServiceForAuthorisation paymentServiceForAuthorisation;
+    private PaymentServiceForAuthorisationImpl paymentServiceForAuthorisation;
 
     @BeforeEach
     void init() {
@@ -190,7 +190,7 @@ class PaymentControllerIT {
     void getPaymentInitiationScaStatus_successful() throws Exception {
         // Given
         given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
-        given(paymentServiceForAuthorisation.getPaymentAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, SINGLE_PAYMENT_TYPE, SEPA_PAYMENT_PRODUCT))
+        given(paymentServiceForAuthorisation.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, SINGLE_PAYMENT_TYPE, SEPA_PAYMENT_PRODUCT))
             .willReturn(ResponseObject.<Xs2aScaStatusResponse>builder().body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true)).build());
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
