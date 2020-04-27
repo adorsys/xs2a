@@ -25,7 +25,7 @@ script:
   # check code by pmd
   - mvn -ntp -V -DskipITs -DskipTests clean install pmd:pmd pmd:cpd | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
   # check UNIT tests
-  - mvn -ntp -DskipITs --fail-at-end clean install -q | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
+  - mvn -ntp -DskipITs --fail-at-end clean install | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
   # check IT tests
   - mvn -ntp failsafe:integration-test failsafe:verify | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
   # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
