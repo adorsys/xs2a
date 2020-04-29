@@ -21,6 +21,7 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
+import de.adorsys.psd2.xs2a.core.profile.TppUriCompliance;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,4 +53,5 @@ public class CommonAspspProfileSetting {
     private boolean authorisationConfirmationRequestMandated;
     private boolean authorisationConfirmationCheckByXs2a;
     private boolean checkUriComplianceToDomainSupported;
+    private TppUriCompliance tppUriComplianceResponse;
 }

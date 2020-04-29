@@ -24,6 +24,7 @@ import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
+import de.adorsys.psd2.xs2a.core.profile.TppUriCompliance;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -85,7 +86,8 @@ public class NewProfileConfigurationMapper {
                                                                                  Collections.singletonList(NotificationSupportedMode.NONE),
                                                                                  false,
                                                                                  false,
-                                                                                 false);
+                                                                                 false,
+                                                                                 TppUriCompliance.WARNING);
 
         NewProfileConfiguration result = new NewProfileConfiguration();
         result.setSetting(new NewBankProfileSetting(ais, pis, piis, common));

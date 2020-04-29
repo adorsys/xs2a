@@ -220,4 +220,11 @@ If parameter = FALSE, then TPP URIs should not be checked for compliance.
 
 If parameter = TRUE, then TPP URIs should be checked for compliance to TPP QWAC certificate.
  |FALSE |TRUE, FALSE
+
+|tppUriComplianceResponse |This field indicates which response TPP will get in case of invalid TPP URIs
+
+If parameter = WARNING, then TPP will get correct response and warning message.
+
+If parameter = REJECT, then TPP will get 400 FORMAT_ERROR and text "URIs don't comply with domain from certificate" response.
+|WARNING |WARNING, REJECT
 |===

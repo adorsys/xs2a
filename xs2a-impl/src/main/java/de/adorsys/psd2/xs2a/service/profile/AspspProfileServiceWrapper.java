@@ -409,4 +409,14 @@ public class AspspProfileServiceWrapper {
     public boolean isCheckUriComplianceToDomainSupported() {
         return readAspspSettings().getCommon().isCheckUriComplianceToDomainSupported();
     }
+
+    /**
+     * Indicates which response TPP will get in case of invalid TPP URIs
+     *
+     * @return WARNING if in case of invalid URIs response should contain correct response and warning,
+     * REJECT if in case of invalid URIs request should be rejected with error
+     */
+    public TppUriCompliance getTppUriComplianceResponse() {
+        return readAspspSettings().getCommon().getTppUriComplianceResponse();
+    }
 }

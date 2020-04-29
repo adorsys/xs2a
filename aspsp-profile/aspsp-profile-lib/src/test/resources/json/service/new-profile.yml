@@ -50,6 +50,7 @@ setting:
     - MSISDN
     - IBAN
     tppSignatureRequired: false
+    tppUriComplianceResponse: WARNING
     xs2aBaseLinksUrl: http://myhost.com/
   piis:
     piisConsentSupported: NOT_SUPPORTED
