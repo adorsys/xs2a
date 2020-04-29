@@ -17,21 +17,28 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppDomainValidator;
+import de.adorsys.psd2.xs2a.web.validator.header.ConsentHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.header.PaymentHeaderValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_URI;
 
 @Component
 @RequiredArgsConstructor
-public class TppUriHeaderValidator implements BusinessValidator<TppRedirectUri> {
+public class TppUriHeaderValidator implements BusinessValidator<TppRedirectUri>, PaymentHeaderValidator, ConsentHeaderValidator {
     private final TppDomainValidator tppDomainValidator;
     private final ScaApproachResolver scaApproachResolver;
 
@@ -56,5 +63,20 @@ public class TppUriHeaderValidator implements BusinessValidator<TppRedirectUri> 
 
     private boolean isRedirectScaApproach() {
         return ScaApproach.REDIRECT == scaApproachResolver.resolveScaApproach();
+    }
+
+    @Override
+    public MessageError validate(Map<String, String> headers, MessageError messageError) {
+        ValidationResult uriValidationResult = tppDomainValidator.validate(headers.get(TPP_REDIRECT_URI));
+        if (uriValidationResult.isNotValid()) {
+            return uriValidationResult.getMessageError();
+        }
+
+        ValidationResult nokUriValidationResult = tppDomainValidator.validate(headers.get(TPP_NOK_REDIRECT_URI));
+        if (nokUriValidationResult.isNotValid()) {
+            return nokUriValidationResult.getMessageError();
+        }
+
+        return messageError;
     }
 }

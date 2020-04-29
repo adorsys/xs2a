@@ -17,10 +17,16 @@
 package de.adorsys.psd2.xs2a.service.validator.tpp;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.TppUriCompliance;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DOMAIN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -57,21 +64,81 @@ class TppDomainValidatorTest {
     private TppService tppService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private ErrorBuildingService errorBuildingService;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+
+    @Test
+    void validate_valid_warningMode() {
+        //When
+        ValidationResult actualResult =  tppDomainValidator.validate(URL_HEADER_WRONG);
+
+        //Then
+        assertEquals(ValidationResult.valid(), actualResult);
+    }
 
     @Test
     void validate_valid() {
-        //Given
         //When
-        ValidationResult validate = tppDomainValidator.validate(null);
+        ValidationResult actualResult =  tppDomainValidator.validate("");
+
         //Then
-        assertEquals(ValidationResult.valid(), validate);
+        assertEquals(ValidationResult.valid(), actualResult);
+    }
+
+    @Test
+    void validate_valid_rejectMode() {
+        //Given
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(true);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
+        when(aspspProfileServiceWrapper.getTppUriComplianceResponse()).thenReturn(TppUriCompliance.REJECT);
+
+        //When
+        ValidationResult actualResult =  tppDomainValidator.validate(URL_HEADER_CORRECT);
+
+        //Then
+        assertEquals(ValidationResult.valid(), actualResult);
+    }
+
+    @Test
+    void validate_valid_rejectMode_emptyCertificateValues() {
+        //Given
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(true);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(null, null));
+        when(aspspProfileServiceWrapper.getTppUriComplianceResponse()).thenReturn(TppUriCompliance.REJECT);
+
+        //When
+        ValidationResult actualResult =  tppDomainValidator.validate(URL_HEADER_CORRECT);
+
+        //Then
+        assertEquals(ValidationResult.valid(), actualResult);
+    }
+
+    @Test
+    void validate_invalid() {
+        //Given
+        ValidationResult expectedResult = buildInvalidResult();
+
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(TPP_NAME_DOMAIN, TPP_DNS_DOMAIN));
+        when(aspspProfileServiceWrapper.getTppUriComplianceResponse()).thenReturn(TppUriCompliance.REJECT);
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.PIS_400);
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(true);
+
+        //When
+        ValidationResult actualResult =  tppDomainValidator.validate(URL_HEADER_WRONG);
+
+        //Then
+        assertEquals(expectedResult, actualResult);
     }
 
     @Test
     void buildWarningMessages_valid() {
         //Given
-        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported())
-            .thenReturn(false);
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(false);
         //When
         Set<TppMessageInformation> validate = tppDomainValidator.buildWarningMessages(URL_HEADER_WRONG_DOMAIN);
         //Then
@@ -243,5 +310,10 @@ class TppDomainValidatorTest {
         tppInfo.setDnsList(dnsList);
 
         return tppInfo;
+    }
+
+    private ValidationResult buildInvalidResult() {
+        return ValidationResult.invalid(
+            ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_INVALID_DOMAIN));
     }
 }

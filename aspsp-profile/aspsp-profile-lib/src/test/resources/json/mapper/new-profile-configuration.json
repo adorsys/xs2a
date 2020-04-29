@@ -59,7 +59,8 @@
       ],
       "authorisationConfirmationRequestMandated": false,
       "authorisationConfirmationCheckByXs2a": false,
-      "checkUriComplianceToDomainSupported": false
+      "checkUriComplianceToDomainSupported": false,
+      "tppUriComplianceResponse": "WARNING"
     },
     "piis": {
       "piisConsentSupported": "NOT_SUPPORTED"

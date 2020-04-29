@@ -61,4 +61,5 @@ setting:
     checkTppRolesFromCertificateSupported: TRUE
     aspspNotificationsSupported:
       - NONE
+    tppUriComplianceResponse: WARNING
 

@@ -21,6 +21,7 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.profile.TppUriCompliance;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -128,4 +129,9 @@ public class CommonAspspProfileBankSetting {
      * Indicates whether ASPSP supports validation URIs with domain from certificate
      */
     private boolean checkUriComplianceToDomainSupported;
+
+    /**
+     * Indicates whether ASPSP returns warning with correct response or rejects request when redirect URIs don't match certificate
+     */
+    private TppUriCompliance tppUriComplianceResponse;
 }
