@@ -1,0 +1,9 @@
+= Release notes v.6.4
+
+== Table of Contents
+
+* Added Postman tests for `cms-psu-api` controllers
+
+== Added Postman tests for `cms-psu-api` controllers
+
+Added Postman tests for `cms-psu-api` controllers: `AspspConsentDataPsuApiController`, `CmsPsuAisController`, `CmsPsuPiisController`, `CmsPsuPisController`.
