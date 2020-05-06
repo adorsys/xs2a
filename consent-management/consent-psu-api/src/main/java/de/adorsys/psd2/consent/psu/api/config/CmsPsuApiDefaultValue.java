@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.psu.config;
+package de.adorsys.psd2.consent.psu.api.config;
 
-import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
-import springfox.documentation.service.Tag;
+public class CmsPsuApiDefaultValue {
+    public static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
-public class CmsPsuApiTagHolder {
-    public static final Tag PSU_PIIS_CONSENTS = new Tag(CmsPsuApiTagName.PSU_PIIS_CONSENTS, "Provides access to consent management system for PSU PIIS");
-
-    private CmsPsuApiTagHolder() {
+    public CmsPsuApiDefaultValue() {
     }
 }

@@ -17,38 +17,23 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.PisPsuDataApi;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
-import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/pis")
-@Api(value = "api/v1/pis", tags = InternalCmsXs2aApiTagName.PIS_PSU_DATA)
-public class PisPsuDataController {
+public class PisPsuDataController implements PisPsuDataApi {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
 
-    @GetMapping(path = "/payment/{payment-id}/psu-data")
-    @ApiOperation(value = "Get PSU data identified by given payment id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<List<PsuIdData>> getPsuDataByPaymentId(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification.",
-            example = "32454656712432",
-            required = true)
-        @PathVariable("payment-id") String paymentId) {
+    @Override
+    public ResponseEntity<List<PsuIdData>> getPsuDataByPaymentId(String paymentId) {
         CmsResponse<List<PsuIdData>> response = pisCommonPaymentServiceEncrypted.getPsuDataListByPaymentId(paymentId);
 
         if (response.hasError()) {

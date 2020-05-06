@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.aspsp.config;
+package de.adorsys.psd2.consent.aspsp.api.config;
 
 public class CmsAspspApiTagName {
     public static final String ASPSP_EXPORT_AIS_CONSENTS ="ASPSP Export AIS Consents";

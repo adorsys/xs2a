@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.psu.api.CmsPsuPiisApi;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPiisService;
-import de.adorsys.psd2.consent.web.psu.config.CmsPsuApiTagName;
 import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,76 +29,25 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "psu-api/v1/piis/consents")
-@Api(value = "psu-api/v1/piis/consents", tags = CmsPsuApiTagName.PSU_PIIS_CONSENTS)
-public class CmsPsuPiisController {
-    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-
+public class CmsPsuPiisController implements CmsPsuPiisApi {
     private final CmsPsuPiisService cmsPsuPiisService;
 
-    @GetMapping(path = "/{consent-id}")
-    @ApiOperation(value = "Returns PIIS Consent object by its ID.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = CmsPiisConsent.class),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CmsPiisConsent> getConsent(
-        @ApiParam(name = "consent-id",
-            value = "PIIS consent identification assigned to the created PIIS consent.",
-            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
-            required = true)
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding PIIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+    @Override
+    public ResponseEntity<CmsPiisConsent> getConsent(String consentId, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         return cmsPsuPiisService.getConsent(psuIdData, consentId, instanceId)
                    .map(con -> new ResponseEntity<>(con, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping
-    @ApiOperation(value = "Returns a list of PIIS Consent objects by PSU ID")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK")})
-    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding PIIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+    @Override
+    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         return new ResponseEntity<>(cmsPsuPiisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/{consent-id}/revoke-consent")
-    @ApiOperation(value = "Revokes PIIS Consent object by its ID. Consent gets status Revoked by PSU.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = Boolean.class)})
-    public ResponseEntity<Boolean> revokeConsent(
-        @ApiParam(name = "consent-id",
-            value = "PIIS consent identification assigned to the created PIIS consent.",
-            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
-            required = true)
-        @PathVariable("consent-id") String consentId,
-        @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding PIIS service in the same session. ")
-        @RequestHeader(value = "psu-id", required = false) String psuId,
-        @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
-        @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
-        @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+    @Override
+    public ResponseEntity<Boolean> revokeConsent(String consentId, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
         return new ResponseEntity<>(cmsPsuPiisService.revokeConsent(psuIdData, consentId, instanceId), HttpStatus.OK);
     }

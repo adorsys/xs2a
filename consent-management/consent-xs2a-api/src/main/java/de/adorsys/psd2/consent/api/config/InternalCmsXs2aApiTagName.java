@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.xs2a.config;
+package de.adorsys.psd2.consent.api.config;
 
 public class InternalCmsXs2aApiTagName {
     public static final String AIS_CONSENTS = "AIS, Consents";

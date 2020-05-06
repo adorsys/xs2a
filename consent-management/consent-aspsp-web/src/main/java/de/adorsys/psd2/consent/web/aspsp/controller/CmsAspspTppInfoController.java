@@ -16,10 +16,9 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.aspsp.api.CmsAspspTppInfoApi;
 import de.adorsys.psd2.consent.aspsp.api.tpp.CmsAspspTppService;
-import de.adorsys.psd2.consent.web.aspsp.config.CmsAspspApiTagName;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,21 +26,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "aspsp-api/v1/tpp")
-@Api(value = "aspsp-api/v1/tpp", tags = CmsAspspApiTagName.ASPSP_TPP_INFO)
-public class CmsAspspTppInfoController {
+public class CmsAspspTppInfoController implements CmsAspspTppInfoApi {
     private final CmsAspspTppService cmsAspspTppService;
 
-    @GetMapping
-    @ApiOperation(value = "Returns TPP info by TPP ID")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<TppInfo> getTppInfo(
-        @ApiParam(value = "ID of TPP", required = true, example = "12345987")
-        @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
-        @ApiParam(value = "Service instance id", example = "instance id")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = "UNDEFINED") String instanceId) {
+    @Override
+    public ResponseEntity<TppInfo> getTppInfo(String tppAuthorisationNumber, String instanceId) {
         return cmsAspspTppService.getTppInfo(tppAuthorisationNumber, instanceId)
                    .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));

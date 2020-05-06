@@ -17,12 +17,11 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.PisPaymentApi;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
-import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,23 +31,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/pis")
-@Api(value = "api/v1/pis", tags = InternalCmsXs2aApiTagName.PIS_PAYMENTS)
-public class PisPaymentController {
+public class PisPaymentController implements PisPaymentApi {
     private final PisCommonPaymentServiceEncrypted pisCommonPaymentService;
     private final UpdatePaymentAfterSpiServiceEncrypted updatePaymentStatusAfterSpiService;
 
-    @GetMapping(path = "/payment/{payment-id}")
-    @ApiOperation(value = "Get inner payment id by encrypted string")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<String> getPaymentIdByEncryptedString(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification.",
-            example = "32454656712432",
-            required = true)
-        @PathVariable("payment-id") String encryptedId) {
+    @Override
+    public ResponseEntity<String> getPaymentIdByEncryptedString(String encryptedId) {
         CmsResponse<String> response = pisCommonPaymentService.getDecryptedId(encryptedId);
 
         if (response.hasError()) {
@@ -58,20 +46,8 @@ public class PisPaymentController {
         return new ResponseEntity<>(response.getPayload(), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/payment/{payment-id}/status/{status}")
-    @ApiOperation(value = "Updates payment status after SPI service. Should not be used for any other purposes!")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request")})
-    public ResponseEntity<Void> updatePaymentStatusAfterSpiService(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification assigned to the created payment.",
-            required = true)
-        @PathVariable("payment-id") String paymentId,
-        @ApiParam(value = "The following code values are permitted 'ACCC', 'ACCP', 'ACSC', 'ACSP', 'ACTC', 'ACWC', 'ACWP', 'PDNG', 'RJCT', 'RCVD', 'CANC', 'ACFC', 'PATC'. These values might be extended by ASPSP by more values.",
-            allowableValues = "ACCC, ACCP, ACSC, ACSP, ACTC, ACWC, ACWP, RCVD, PDNG, RJCT, CANC, ACFC, PATC",
-            required = true)
-        @PathVariable("status") String status) {
+    @Override
+    public ResponseEntity<Void> updatePaymentStatusAfterSpiService(String paymentId, String status) {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
 
         if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
@@ -81,21 +57,13 @@ public class PisPaymentController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping(path = "/payment/{payment-id}/cancellation/redirects")
-    @ApiOperation(value = "Updates payment cancellation redirect URIs after SPI service. Should not be used for any other purposes!")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request")})
-    public ResponseEntity<Void> updatePaymentCancellationTppRedirectUri(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification assigned to the created payment.",
-            required = true)
-        @PathVariable("payment-id") String paymentId,
-        @RequestHeader(value = "TPP-Redirect-URI", required = false) String tpPRedirectURI,
-        @RequestHeader(value = "TPP-Nok-Redirect-URI", required = false) String tpPNokRedirectURI) {
-        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(paymentId,
-                                                                                                                   new TppRedirectUri(StringUtils.defaultIfBlank(tpPRedirectURI, ""),
-                                                                                                                                      StringUtils.defaultIfBlank(tpPNokRedirectURI, "")));
+    @Override
+    public ResponseEntity<Void> updatePaymentCancellationTppRedirectUri(String paymentId, String tpPRedirectURI, String tpPNokRedirectURI) {
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(
+            paymentId,
+            new TppRedirectUri(
+                StringUtils.defaultIfBlank(tpPRedirectURI, ""),
+                StringUtils.defaultIfBlank(tpPNokRedirectURI, "")));
         if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -103,20 +71,8 @@ public class PisPaymentController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping(path = "/payment/{payment-id}/cancellation/internal-request-id/{internal-request-id}")
-    @ApiOperation(value = "Updates payment cancellation internal request ID after SPI service. Should not be used for any other purposes!")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Bad Request")})
-    public ResponseEntity<Void> updatePaymentCancellationInternalRequestId(
-        @ApiParam(name = "payment-id",
-            value = "The payment identification assigned to the created payment.",
-            required = true)
-        @PathVariable("payment-id") String paymentId,
-        @ApiParam(name = "internal-request-id",
-            value = "Cancellation internal request ID of payment.",
-            required = true)
-        @PathVariable("internal-request-id") String internalRequestId) {
+    @Override
+    public ResponseEntity<Void> updatePaymentCancellationInternalRequestId(String paymentId, String internalRequestId) {
         CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(paymentId, internalRequestId);
 
         if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
