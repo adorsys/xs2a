@@ -16,10 +16,8 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-
+import de.adorsys.psd2.consent.api.CmsAccountApi;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
-import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,24 +25,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/ais/consent")
-@Api(value = "api/v1/ais/consent", tags = InternalCmsXs2aApiTagName.AIS_CONSENTS)
-public class CmsAccountController {
+public class CmsAccountController implements CmsAccountApi {
     private final AccountServiceEncrypted accountServiceEncrypted;
 
-    @PutMapping(path = "/{encrypted-consent-id}/{resource-id}")
-    @ApiOperation(value = "Saves number of transactions for a definite account of the definite consent")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<Boolean> saveNumberOfTransactions(
-        @ApiParam(name = "consent-id",
-            value = "Encrypted consent ID",
-            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
-            required = true)
-        @PathVariable("encrypted-consent-id") String encryptedConsentId,
-        @PathVariable("resource-id") String resourceId,
-        @RequestBody Integer numberOfTransactions) {
+    @Override
+    public ResponseEntity<Boolean> saveNumberOfTransactions(String encryptedConsentId, String resourceId, Integer numberOfTransactions) {
         return accountServiceEncrypted.saveNumberOfTransactions(encryptedConsentId, resourceId, numberOfTransactions)
                    ? new ResponseEntity<>(true, HttpStatus.OK)
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);

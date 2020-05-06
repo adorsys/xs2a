@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
-
+import de.adorsys.psd2.consent.api.AisConsentApi;
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
@@ -25,8 +25,6 @@ import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.UpdateAisConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
-import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +32,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/ais/consent")
-@Api(value = "api/v1/ais/consent", tags = InternalCmsXs2aApiTagName.AIS_CONSENTS)
-public class AisConsentController {
+public class AisConsentController implements AisConsentApi {
     private final AisConsentServiceEncrypted aisConsentService;
 
-    @PostMapping(path = "/action")
-    @ApiOperation(value = "Save information about uses of consent")
-    public ResponseEntity<Object> saveConsentActionLog(@RequestBody AisConsentActionRequest request) {
+    @Override
+    public ResponseEntity<Object> saveConsentActionLog(AisConsentActionRequest request) {
 
         try {
             aisConsentService.checkConsentAndSaveActionLog(request);
@@ -52,19 +47,8 @@ public class AisConsentController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(path = "/{encrypted-consent-id}/access")
-    @ApiOperation(value = "Update AccountAccess in the consent identified by given consent id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 400, message = "Checksum verification failed"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<Object> updateAccountAccess(
-        @ApiParam(name = "consent-id",
-            value = "The account consent identification assigned to the created account consent.",
-            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
-            required = true)
-        @PathVariable("encrypted-consent-id") String encryptedConsentId,
-        @RequestBody AisAccountAccessInfo request) {
+    @Override
+    public ResponseEntity<Object> updateAccountAccess(String encryptedConsentId, AisAccountAccessInfo request) {
         CmsResponse<CmsConsent> response;
 
         try {

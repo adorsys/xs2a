@@ -16,11 +16,10 @@
 
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
+import de.adorsys.psd2.consent.api.AspspConsentDataApi;
 import de.adorsys.psd2.consent.api.AspspDataService;
 import de.adorsys.psd2.consent.api.CmsAspspConsentDataBase64;
-import de.adorsys.psd2.consent.web.xs2a.config.InternalCmsXs2aApiTagName;
 import de.adorsys.psd2.xs2a.core.consent.AspspConsentData;
-import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,23 +30,11 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "api/v1/aspsp-consent-data/consents/{consent-id}")
-@Api(value = "api/v1/aspsp-consent-data", tags = InternalCmsXs2aApiTagName.ASPSP_CONSENT_DATA)
-public class AspspConsentDataController {
+public class AspspConsentDataController implements AspspConsentDataApi {
     private final AspspDataService aspspDataService;
 
-    @GetMapping
-    @ApiOperation(value = "Get aspsp consent data identified by given consent id / payment id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentData(
-        @ApiParam(
-            name = "consent-id",
-            value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
-            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
-            required = true)
-        @PathVariable("consent-id") String encryptedConsentId) {
+    @Override
+    public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentData(String encryptedConsentId) {
         return aspspDataService.readAspspConsentData(encryptedConsentId)
                    .map(AspspConsentData::getAspspConsentData)
                    .map(Base64.getEncoder()::encodeToString)
@@ -56,18 +43,8 @@ public class AspspConsentDataController {
                    .orElseGet(ResponseEntity.notFound()::build);
     }
 
-    @PutMapping
-    @ApiOperation(value = "Update aspsp consent data identified by given consent id / payment id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity updateAspspConsentData(
-        @ApiParam(
-            name = "consent-id",
-            value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
-            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
-            required = true)
-        @PathVariable("consent-id") String encryptedConsentId,
+    @Override
+    public ResponseEntity updateAspspConsentData(String encryptedConsentId,
         @RequestBody CmsAspspConsentDataBase64 request) {
         byte[] data = Optional.ofNullable(request.getAspspConsentDataBase64())
                           .map(Base64.getDecoder()::decode)
@@ -83,19 +60,10 @@ public class AspspConsentDataController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping
-    @ApiOperation(value = "Delete aspsp consent data identified by given consent id / payment id.")
-    @ApiResponses(value = {
-        @ApiResponse(code = 204, message = "No Content"),
-        @ApiResponse(code = 404, message = "Not Found")})
-    public ResponseEntity deleteAspspConsentData(
-        @ApiParam(
-            name = "consent-id",
-            value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
-            example = "CxymMkwtykFtTeQuH1jrcoOyzcqCcwNCt5193Gfn33mqqcAy_xw2KPwMd5y6Xxe1EwE0BTNRHeyM0FI90wh0hA==_=_bS6p6XvTWI",
-            required = true)
-        @PathVariable("consent-id") String encryptedConsentId) {
+    @Override
+    public ResponseEntity deleteAspspConsentData(String encryptedConsentId) {
         boolean deleted = aspspDataService.deleteAspspConsentData(encryptedConsentId);
+
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }

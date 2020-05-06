@@ -48,6 +48,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
         <!--3rd party dependencies -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -68,6 +73,7 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
     <build>
