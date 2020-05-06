@@ -1,0 +1,9 @@
+= Release notes v.6.4
+
+== Table of Contents
+
+* Increased length limit of TPP-URIs to Max500Text
+
+== Increased length limit of TPP-URIs to Max500Text
+
+From now on, maximum allowed lengths for `tpp-redirect-uri` and `tpp-nok-redirect-uri` is 500 symbols.
