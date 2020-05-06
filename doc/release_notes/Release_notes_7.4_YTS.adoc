@@ -3,7 +3,12 @@
 == Table of Contents
 
 * Added Postman tests for `cms-psu-api` controllers
+* Provided interfaces for CMS web controllers in `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web`
 
 == Added Postman tests for `cms-psu-api` controllers
 
 Added Postman tests for `cms-psu-api` controllers: `AspspConsentDataPsuApiController`, `CmsPsuAisController`, `CmsPsuPiisController`, `CmsPsuPisController`.
+
+== Provided interfaces for CMS web controllers in `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web`
+
+Provided interfaces for CMS web controllers in `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web`.

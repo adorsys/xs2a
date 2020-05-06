@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.psu.config;
+package de.adorsys.psd2.consent.psu.api.config;
 
-import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
-import springfox.documentation.service.Tag;
+public class CmsPsuApiTagName {
+    public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";
+    public static final String PSU_AIS_CONSENTS = "PSU AIS Consents";
+    public static final String PSU_PIIS_CONSENTS = "PSU PIIS, Consents";
+    public static final String PSU_PIS_PAYMENT = "PSU PIS Payment";
 
-public class CmsPsuApiTagHolder {
-    public static final Tag PSU_PIIS_CONSENTS = new Tag(CmsPsuApiTagName.PSU_PIIS_CONSENTS, "Provides access to consent management system for PSU PIIS");
-
-    private CmsPsuApiTagHolder() {
+    private CmsPsuApiTagName() {
     }
 }
