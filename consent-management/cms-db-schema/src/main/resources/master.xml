@@ -133,4 +133,5 @@
     <include relativeToChangelogFile="true" file="migration/0105-add-consent-usage-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0106-add-account-access-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0107-add-aspsp-account-access-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0108-increase-length-of-tpp-uri-columns-in-authorisation-template-table.xml"/>
 </databaseChangeLog>
