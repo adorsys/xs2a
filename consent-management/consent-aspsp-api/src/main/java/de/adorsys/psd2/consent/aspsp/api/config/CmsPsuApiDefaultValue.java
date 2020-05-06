@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.psu.config;
+package de.adorsys.psd2.consent.aspsp.api.config;
 
-public class CmsPsuApiTagName {
-    public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";
-    public static final String PSU_AIS_CONSENTS = "PSU AIS Consents";
-    public static final String PSU_PIIS_CONSENTS = "PSU PIIS, Consents";
-    public static final String PSU_PIS_PAYMENT = "PSU PIS Payment";
+public class CmsPsuApiDefaultValue {
+    public static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
-    private CmsPsuApiTagName() {
+    public CmsPsuApiDefaultValue() {
     }
 }
