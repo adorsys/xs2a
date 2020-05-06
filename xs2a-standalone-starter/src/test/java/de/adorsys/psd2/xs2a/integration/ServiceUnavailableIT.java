@@ -395,7 +395,7 @@ class ServiceUnavailableIT {
 
     private void makePreparationsConnector(boolean throwException) {
         givenReturnOrThrowException(
-            aisConsentSpiMock.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), anyString(), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)),
+            aisConsentSpiMock.authorisePsu(any(SpiContextData.class), anyString(), any(SpiPsuData.class), anyString(), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)),
             SpiResponse.builder().payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS)).build(),
             throwException
         );

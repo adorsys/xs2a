@@ -154,6 +154,7 @@ class UpdatePsuDataForConsentIT {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
         Authorisation authorizationResponse = new Authorisation();
+        authorizationResponse.setAuthorisationId(AUTHORISATION_ID);
         authorizationResponse.setScaStatus(ScaStatus.PSUIDENTIFIED);
         authorizationResponse.setChosenScaApproach(ScaApproach.EMBEDDED);
 
@@ -169,7 +170,7 @@ class UpdatePsuDataForConsentIT {
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED))
                             .build());
-        given(aisConsentSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
+        given(aisConsentSpi.authorisePsu(any(SpiContextData.class), anyString(), any(SpiPsuData.class), eq(PSU_PASS), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                             .build());

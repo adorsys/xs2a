@@ -1,3 +1,9 @@
 = Release notes v.6.4
 
 == Table of Contents
+
+* Fixed wrong password sca handling
+
+== Fixed wrong password sca handling
+
+From now on, it's possible to enter password and tan as many times, as bank allows you to.

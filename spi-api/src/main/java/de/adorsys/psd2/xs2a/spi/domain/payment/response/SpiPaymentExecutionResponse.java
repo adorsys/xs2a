@@ -17,14 +17,16 @@
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A response object that is returned by the ASPSP after the successful execution of payment
  */
+@EqualsAndHashCode(callSuper = true)
 @Value
-public class SpiPaymentExecutionResponse {
+public class SpiPaymentExecutionResponse extends SpiPaymentResponse {
     @NotNull
     private TransactionStatus transactionStatus;
 }

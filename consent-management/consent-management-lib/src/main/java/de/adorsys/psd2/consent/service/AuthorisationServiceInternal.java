@@ -66,9 +66,9 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         String parentId = parentHolder.getParentId();
         AuthorisationType authorisationType = parentHolder.getAuthorisationType();
         AuthService authService = authServiceResolver.getAuthService(authorisationType);
-        Optional<Authorisable> paymentOptional = authService.getNotFinalisedAuthorisationParent(parentId);
+        Optional<Authorisable> parentOptional = authService.getNotFinalisedAuthorisationParent(parentId);
 
-        if (!paymentOptional.isPresent()) {
+        if (!parentOptional.isPresent()) {
             log.info("Authorisation type: [{}], Parent ID: [{}]. Create authorisation has failed, because authorisation's parent couldn't be found",
                      authorisationType, parentId);
             return CmsResponse.<CreateAuthorisationResponse>builder()
@@ -78,7 +78,7 @@ public class AuthorisationServiceInternal implements AuthorisationService {
 
         authorisationClosingService.closePreviousAuthorisationsByParent(parentId, authorisationType, request.getPsuData());
 
-        Authorisable authorisationParent = paymentOptional.get();
+        Authorisable authorisationParent = parentOptional.get();
         AuthorisationEntity newAuthorisation = authService.saveAuthorisation(request, authorisationParent);
 
         CreateAuthorisationResponse response = new CreateAuthorisationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus(), authorisationParent.getInternalRequestId(authorisationType), request.getPsuData());
