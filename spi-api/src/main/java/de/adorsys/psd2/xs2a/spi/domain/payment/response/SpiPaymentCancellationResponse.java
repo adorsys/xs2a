@@ -19,9 +19,11 @@ package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class SpiPaymentCancellationResponse {
+public class SpiPaymentCancellationResponse extends SpiPaymentResponse {
     /**
      * This parameter is used as a possibility to tell XS2A that authorisation for payment cancellation is needed.
      * Besides this parameter the same parameter can be set generally in ASPSP Profile.
@@ -29,7 +31,7 @@ public class SpiPaymentCancellationResponse {
      */
     private boolean cancellationAuthorisationMandated;
     /**
-     * Provides a possiblity to update status to an actual one. If not provided status will not be updated.
+     * Provides a possibility to update status to an actual one. If not provided status will not be updated.
      * If TransactionStatus.CANC is returned, payment will be cancelled immediately without further processing.
      */
     private TransactionStatus transactionStatus;

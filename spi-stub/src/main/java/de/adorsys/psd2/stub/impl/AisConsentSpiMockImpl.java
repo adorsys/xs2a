@@ -46,7 +46,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
 
     @Override
     public SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("AccountSpi#requestAccountList: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
+        log.info("AccountSpi#initiateAisConsent: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
         SpiAccountAccess access = new SpiAccountAccess();
         SpiAccountReference accountReference = new SpiAccountReference("11111-11118", "10023-999999999", "DE52500105173911841934",
                                                                        null, null, null, null, Currency.getInstance("EUR"));
@@ -109,7 +109,17 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     }
 
     @Override
+    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
     public SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("AisConsentSpi#authorisePsu: contextData {}, psuLoginData {}, businessObject-id {}", contextData, psuLoginData, businessObject.getId());
+
+        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                   .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                   .build();
+    }
+
+    @Override
+    public SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull SpiPsuData psuLoginData, String password, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#authorisePsu: contextData {}, psuLoginData {}, businessObject-id {}", contextData, psuLoginData, businessObject.getId());
 
         return SpiResponse.<SpiPsuAuthorisationResponse>builder()

@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -57,6 +58,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 
+@SuppressWarnings("PMD.TooManyMethods") // will be removed in 6.7 with extra deprecated methods
 abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisationProcessorService {
 
     private static final String EMBEDDED_SELECTING_SCA_METHOD_FAILED_MSG = "Proceed embedded approach when performs authorisation depending on selected SCA method has failed.";
@@ -134,14 +136,19 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
         SpiPayment payment = getSpiPayment(request.getPaymentId());
 
-        SpiResponse<Object> spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
-                                                                                  spiScaConfirmation,
-                                                                                  contextData,
-                                                                                  aspspConsentDataProvider);
+        SpiResponse<SpiPaymentResponse> spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
+                                                                                              spiScaConfirmation,
+                                                                                              contextData,
+                                                                                              aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
             writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, "Verify SCA authorisation and execute payment has failed.");
+
+            SpiPaymentResponse spiPaymentResponse = spiResponse.getPayload();
+            if (spiPaymentResponse != null && spiPaymentResponse.getSpiAuthorisationStatus() == SpiAuthorisationStatus.ATTEMPT_FAILURE) {
+                return new Xs2aUpdatePisCommonPaymentPsuDataResponse(authorisationProcessorRequest.getScaStatus(), errorHolder, paymentId, authorisationId, psuData);
+            }
 
             Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
             if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
@@ -150,11 +157,14 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
             return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
         }
 
-        updatePaymentData(paymentId, spiResponse);
+        updatePaymentDataByPaymentResponse(paymentId, spiResponse);
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, paymentId, authorisationId, psuData);
     }
 
+    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
     abstract void updatePaymentData(String paymentId, SpiResponse<Object> spiResponse);
+
+    abstract void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentResponse> spiResponse);
 
     abstract SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(SpiPayment payment, String authenticationMethodId,
                                                                               SpiContextData spiContextData,
@@ -166,9 +176,14 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                                  SpiContextData contextData,
                                                                  SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 
+    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
     abstract SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment,
                                                                    SpiAspspConsentDataProvider aspspConsentDataProvider, SpiPsuData spiPsuData,
                                                                    SpiContextData contextData);
+
+    abstract SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment,
+                                                                   SpiAspspConsentDataProvider aspspConsentDataProvider, SpiPsuData spiPsuData,
+                                                                   SpiContextData contextData, String authorisationId);
 
     abstract SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(SpiPayment payment,
                                                                                     SpiAspspConsentDataProvider aspspConsentDataProvider,
@@ -206,7 +221,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         SpiPsuData spiPsuData = xs2aToSpiPsuDataMapper.mapToSpiPsuData(psuData);
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(psuData);
 
-        SpiResponse<SpiPsuAuthorisationResponse> authPsuResponse = authorisePsu(request, payment, aspspConsentDataProvider, spiPsuData, contextData);
+        SpiResponse<SpiPsuAuthorisationResponse> authPsuResponse = authorisePsu(request, payment, aspspConsentDataProvider, spiPsuData, contextData, authorisationId);
         if (authPsuResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(authPsuResponse, ServiceType.PIS);
             writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, "Authorise PSU when apply authorisation has failed.");
