@@ -24,7 +24,7 @@ import lombok.Value;
 public class SpiPsuAuthorisationResponse extends SpiWithExemptionResponse {
 
     /**
-     * Indicates whether the PSU was authorised (SUCCESS, FAILURE)
+     * Indicates whether the PSU was authorised (SUCCESS, ATTEMPT_FAILURE, FAILURE)
      */
     private final SpiAuthorisationStatus spiAuthorisationStatus;
 

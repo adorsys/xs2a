@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
@@ -108,10 +109,12 @@ class AisAuthorisationProcessorServiceImplTest {
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorService;
     private JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
+    private Authorisation authorisation;
 
     @BeforeEach
     void setUp() {
         aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-received-status.json", AisConsent.class);
+        authorisation = jsonReader.getObjectFromFile("json/service/authorisation.json", Authorisation.class);
 
         AisAuthorizationService decoupledAisAuthorisationService = Mockito.mock(AisAuthorizationService.class);
         List<AisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, embeddedAisAuthorisationService);
@@ -126,7 +129,7 @@ class AisAuthorisationProcessorServiceImplTest {
     void updateAuthorisation_shouldUpdateWithCorrectService() {
         // Given
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateConsentPsuDataReq();
-        Authorisation authorisation = new Authorisation();
+
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
@@ -143,7 +146,7 @@ class AisAuthorisationProcessorServiceImplTest {
     void updateAuthorisation_withNoAuthorisationServiceForApproach_shouldThrowException() {
         // Given
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateConsentPsuDataReq();
-        Authorisation authorisation = new Authorisation();
+
         AuthorisationProcessorRequest processorRequest = new AuthorisationProcessorRequest(ServiceType.AIS, ScaApproach.OAUTH, ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
@@ -160,7 +163,6 @@ class AisAuthorisationProcessorServiceImplTest {
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -181,7 +183,6 @@ class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
         updateAuthorisationRequest.setPsuData(null);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -215,7 +216,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -242,7 +243,6 @@ class AisAuthorisationProcessorServiceImplTest {
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -280,7 +280,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -299,7 +299,6 @@ class AisAuthorisationProcessorServiceImplTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA))
             .thenReturn(decoupledResponse);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -338,7 +337,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -354,7 +353,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiAvailableScaMethodsResponse)
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -392,14 +390,13 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
         when(aisScaAuthorisationService.isOneFactorAuthorisation(aisConsent)).thenReturn(true);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -435,7 +432,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -443,7 +440,6 @@ class AisAuthorisationProcessorServiceImplTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, PSU_ID_DATA))
             .thenReturn(buildDecoupledUpdateConsentPsuDataResponse());
 
-        Authorisation authorisation = new Authorisation();
         authorisation.setChosenScaApproach(ScaApproach.DECOUPLED);
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
@@ -480,7 +476,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -491,7 +487,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiAvailableScaMethodsResponse)
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -516,7 +511,6 @@ class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
-        Authorisation authorisation = new Authorisation();
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
@@ -554,7 +548,7 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiResponse<SpiPsuAuthorisationResponse> errorResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                                      .error(new TppMessage(spiErrorCode))
                                                                      .build();
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(errorResponse);
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
@@ -562,7 +556,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .tppMessages(TppMessageInformation.of(spiErrorCode))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -602,12 +595,11 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.FAILURE))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -648,7 +640,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -666,7 +658,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .tppMessages(TppMessageInformation.of(spiErrorCode))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.RECEIVED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -692,7 +683,7 @@ class AisAuthorisationProcessorServiceImplTest {
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
 
-        Authorisation authorisation = new Authorisation();
+
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -713,7 +704,6 @@ class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setUpdatePsuIdentification(true);
         updateAuthorisationRequest.setPsuData(null);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -747,7 +737,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -774,7 +764,6 @@ class AisAuthorisationProcessorServiceImplTest {
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -812,7 +801,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -831,7 +820,6 @@ class AisAuthorisationProcessorServiceImplTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA))
             .thenReturn(decoupledResponse);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -870,7 +858,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -886,7 +874,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiAvailableScaMethodsResponse)
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -924,14 +911,13 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
 
         when(aisScaAuthorisationService.isOneFactorAuthorisation(aisConsent)).thenReturn(true);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -967,7 +953,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -975,7 +961,6 @@ class AisAuthorisationProcessorServiceImplTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, PSU_ID_DATA))
             .thenReturn(buildDecoupledUpdateConsentPsuDataResponse());
 
-        Authorisation authorisation = new Authorisation();
         authorisation.setChosenScaApproach(ScaApproach.DECOUPLED);
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
@@ -1012,7 +997,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -1023,7 +1008,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiAvailableScaMethodsResponse)
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1047,7 +1031,6 @@ class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
-        Authorisation authorisation = new Authorisation();
 
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
@@ -1085,7 +1068,7 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiResponse<SpiPsuAuthorisationResponse> errorResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                                      .error(new TppMessage(spiErrorCode))
                                                                      .build();
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(errorResponse);
 
         when(spiErrorMapper.mapToErrorHolder(errorResponse, ServiceType.AIS))
@@ -1093,7 +1076,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .tppMessages(TppMessageInformation.of(spiErrorCode))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1133,12 +1115,11 @@ class AisAuthorisationProcessorServiceImplTest {
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.FAILURE))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1152,6 +1133,55 @@ class AisAuthorisationProcessorServiceImplTest {
         assertEquals(Collections.singletonList(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID)), errorHolder.getTppMessageInformationList());
 
         assertEquals(ScaStatus.FAILED, processorResponse.getScaStatus());
+        assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
+        assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
+
+        verify(aisConsentSpi, never()).requestAvailableScaMethods(any(), any(), any());
+        verify(aisConsentSpi, never()).requestAuthorisationCode(any(), any(), any(), any());
+    }
+
+    @Test
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withAttemptureFailedPsuAuthorisation_shouldReturnError() {
+        // Given
+        UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
+        updateAuthorisationRequest.setPassword(PSU_PASSWORD);
+
+        when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
+
+        SpiAccountConsent spiAccountConsent = new SpiAccountConsent();
+        when(xs2aAisConsentMapper.mapToSpiAccountConsent(aisConsent)).thenReturn(spiAccountConsent);
+
+        SpiPsuData spiPsuData = SpiPsuData.builder().psuId(PSU_ID).build();
+        when(spiContextDataProvider.provideWithPsuIdData(PSU_ID_DATA)).thenReturn(SPI_CONTEXT_DATA);
+
+        when(xs2aToSpiPsuDataMapper.mapToSpiPsuData(PSU_ID_DATA)).thenReturn(spiPsuData);
+
+        SpiAspspConsentDataProvider spiAspspConsentDataProvider = mock(SpiAspspConsentDataProvider.class);
+        when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
+
+        SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
+                                                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.ATTEMPT_FAILURE))
+                                                             .build();
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+            .thenReturn(spiResponse);
+
+        when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)).thenReturn(ErrorHolder.builder(ErrorType.AIS_401)
+                                                                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                                                                                           .build());
+
+        AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
+
+        // When
+        AuthorisationProcessorResponse processorResponse = aisAuthorisationProcessorService.doScaPsuIdentified(processorRequest);
+
+        // Then
+        assertTrue(processorResponse.hasError());
+
+        ErrorHolder errorHolder = processorResponse.getErrorHolder();
+        assertEquals(AIS_401, errorHolder.getErrorType());
+        assertEquals(Collections.singletonList(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID)), errorHolder.getTppMessageInformationList());
+
+        assertEquals(ScaStatus.PSUIDENTIFIED, processorResponse.getScaStatus());
         assertEquals(ENCRYPTED_CONSENT_ID, processorResponse.getConsentId());
         assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
 
@@ -1179,7 +1209,7 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiPsuAuthorisationResponse spiPsuAuthorisationResponse = new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS);
-        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
+        when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(spiPsuAuthorisationResponse)
                             .build());
@@ -1197,7 +1227,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .tppMessages(TppMessageInformation.of(spiErrorCode))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1246,7 +1275,6 @@ class AisAuthorisationProcessorServiceImplTest {
 
         AuthenticationObject chosenScaMethod = new AuthenticationObject();
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1280,7 +1308,6 @@ class AisAuthorisationProcessorServiceImplTest {
         when(commonDecoupledAisService.proceedDecoupledApproach(ENCRYPTED_CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA))
             .thenReturn(decoupledResponse);
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1306,7 +1333,6 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1361,7 +1387,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .tppMessages(TppMessageInformation.of(spiErrorCode))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1405,7 +1430,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiVerifyScaAuthorisationResponse)
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1450,7 +1474,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .payload(spiVerifyScaAuthorisationResponse)
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1476,7 +1499,6 @@ class AisAuthorisationProcessorServiceImplTest {
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
 
         // When
@@ -1523,7 +1545,6 @@ class AisAuthorisationProcessorServiceImplTest {
                             .tppMessages(TppMessageInformation.of(spiErrorCode))
                             .build());
 
-        Authorisation authorisation = new Authorisation();
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.SCAMETHODSELECTED, updateAuthorisationRequest, authorisation);
 
         // When

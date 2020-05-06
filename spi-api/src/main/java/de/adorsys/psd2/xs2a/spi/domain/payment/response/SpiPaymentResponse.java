@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.spi.payment;
+package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.spi.service.PaymentSpi;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public interface SpiPaymentServiceResolver {
-    PaymentSpi getPaymentService(String paymentProduct, PaymentType paymentType);
+@Data
+@AllArgsConstructor
+public class SpiPaymentResponse {
+    /**
+     * Indicates whether the PSU was authorised (SUCCESS, ATTEMPT_FAILURE, FAILURE)
+     */
+    private SpiAuthorisationStatus spiAuthorisationStatus;
+
+    public SpiPaymentResponse() {
+    }
 }

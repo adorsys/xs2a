@@ -30,6 +30,11 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UpdateConsentPsuDataResponse extends AuthorisationProcessorResponse {
 
+    public UpdateConsentPsuDataResponse(ScaStatus scaStatus, ErrorHolder errorHolder, String consentId, String authorisationId, PsuIdData psuIdData) {
+        this(scaStatus, consentId, authorisationId, psuIdData);
+        this.errorHolder = errorHolder;
+    }
+
     public UpdateConsentPsuDataResponse(ErrorHolder errorHolder, String consentId, String authorisationId, PsuIdData psuIdData) {
         this(ScaStatus.FAILED, consentId, authorisationId, psuIdData);
         this.errorHolder = errorHolder;

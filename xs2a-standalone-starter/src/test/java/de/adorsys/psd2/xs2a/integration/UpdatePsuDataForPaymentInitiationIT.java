@@ -160,7 +160,7 @@ class UpdatePsuDataForPaymentInitiationIT {
                             .payload(buildGetPisAuthorisationResponse(ScaStatus.PSUIDENTIFIED))
                             .build());
 
-        given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
+        given(paymentAuthorisationSpi.authorisePsu(any(SpiContextData.class), anyString(), any(SpiPsuData.class), eq(PSU_PASS), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                             .build());

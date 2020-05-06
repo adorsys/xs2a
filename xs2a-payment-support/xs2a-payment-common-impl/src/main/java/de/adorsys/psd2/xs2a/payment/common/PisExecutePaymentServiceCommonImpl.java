@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
@@ -34,14 +35,22 @@ public class PisExecutePaymentServiceCommonImpl implements PisExecutePaymentServ
     private final CommonPaymentSpi commonPaymentSpi;
 
     @Override
-    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(SpiContextData contextData,
-                                                                                            SpiScaConfirmation spiScaConfirmation,
-                                                                                            SpiPayment payment,
-                                                                                            SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
-        return commonPaymentSpi.verifyScaAuthorisationAndExecutePayment(contextData,
-                                                                        spiScaConfirmation,
+    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
+    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(SpiContextData contextData, SpiScaConfirmation spiScaConfirmation, SpiPayment payment, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+        return commonPaymentSpi.verifyScaAuthorisationAndExecutePayment(contextData, spiScaConfirmation,
                                                                         (SpiPaymentInfo) payment,
                                                                         spiAspspConsentDataProvider);
+    }
+
+    @Override
+    public SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData contextData,
+                                                                                                      SpiScaConfirmation spiScaConfirmation,
+                                                                                                      SpiPayment payment,
+                                                                                                      SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+        return commonPaymentSpi.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(contextData,
+                                                                                           spiScaConfirmation,
+                                                                                           (SpiPaymentInfo) payment,
+                                                                                           spiAspspConsentDataProvider);
     }
 
     @Override
