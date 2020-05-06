@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,9 +85,24 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      *                                 May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      * @return Returns a response object, which contains the transaction status. For multilevel SCA, PATC status should be returned for all successful authorisations but the last
+     * @deprecated since 6.4, use use {@link PaymentSpi#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData, SpiScaConfirmation, SpiPayment, SpiAspspConsentDataProvider)} instead
      */
     @NotNull
+    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
     SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    /**
+     * Sends authorisation confirmation information (secure code or such) to ASPSP and if case of successful validation executes payment at ASPSP. Used only with embedded SCA Approach.
+     *
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param spiScaConfirmation       payment confirmation information
+     * @param payment                  payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     *                                 May be null if consent does not contain such data, or request isn't done from a workflow with a consent
+     * @return Returns a response object, which contains the transaction status. For multilevel SCA, PATC status should be returned for all successful authorisations but the last
+     */
+    @NotNull
+    SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull T payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Checks confirmation data at the ASPSP side in case of XS2A not supporting validation of this data. Used only with redirect SCA Approach.
