@@ -31,9 +31,9 @@ import org.springframework.web.client.RestTemplate;
 public class ConsentRestConfig {
     private final LoggingContextInterceptor loggingContextInterceptor;
 
-    @Value("${rest-consent-config.read-timeout.ms:10000}")
+    @Value("${xs2a.rest-consent-config.read-timeout.ms:10000}")
     private int readTimeout;
-    @Value("${rest-consent-config.connection-timeout.ms:10000}")
+    @Value("${xs2a.rest-consent-config.connection-timeout.ms:10000}")
     private int connectionTimeout;
 
     @Bean

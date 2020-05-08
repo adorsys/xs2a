@@ -1,0 +1,31 @@
+== Configuration properties
+
+=== Supported configuration properties
+
+|===
+|Property |Description |Default value |
+
+|xs2a.license.url|Link to license agreement|https://github.com/adorsys/xs2a/blob/master/LICENSE.md|
+
+|xs2a.rest-consent-config.read-timeout.ms|Read timeout for consent REST API in ms|10000|
+|xs2a.rest-consent-config.connection-timeout.ms|Connection timeout for consent REST API in ms|1000|
+
+|xs2a.masked-pan-begin-chars|Masked PAN begin chars for identification|6|
+|xs2a.masked-pan-end-chars|Masked PAN end chars for identification|4|
+
+|xs2a.iban.validation.enabled|Enable IBAN field validation|TRUE|
+
+|xs2a.application.ais.transaction.max-length|Number of characters in a json string|100000|
+
+|xs2a.cms.consent-service.baseurl|Consent service base URL|http://localhost:38080/api/v1|
+|xs2a.cms.aspsp-profile.baseurl|ASPSP service base URL|http://localhost:48080/api/v1|
+
+|xs2a.cms.service.instance-id|Instance identification|UNDEFINED|
+|xs2a.cms.stoplist.cron.expression|Cron expression to unblock TPP in stop list|0 0 * * * *|
+|xs2a.cms.not-confirmed-consent-expiration.cron.expression|Cron expression to update status for non confirmed consents|0 0 * * * *|
+|xs2a.cms.not-confirmed-payment-expiration.cron.expression|Cron expression to update status for non confirmed payments|0 0 * * * *|
+|xs2a.cms.used-non-recurring-consent-expiration.cron.expression|Cron expression to expire non-recurring consents|0 0 * * * *|
+|xs2a.cms.consent.cron.expression|Cron expression to expire consents with statuses (VALID and RECEIVED)|0 0 1 * * ?|
+|xs2a.cms.scheduler.pool.size|Size of CMS scheduler pool|30|
+|xs2a.cms.encryption.defaultProvider.dataProvider|Crypto provider for Data encryption|JcHZwvJMuc|
+|xs2a.cms.encryption.defaultProvider.idProvider|Crypto provider for ID encryption|psGLvQpt9Q|

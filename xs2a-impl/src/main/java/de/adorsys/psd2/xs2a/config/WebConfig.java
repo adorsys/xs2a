@@ -37,10 +37,10 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.advice.Xs2aRestExceptionHandler;
-import de.adorsys.psd2.xs2a.web.interceptor.validator.PaymentParametersValidationInterceptor;
-import de.adorsys.psd2.xs2a.web.interceptor.validator.RequestValidationInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.PaymentParametersValidationInterceptor;
+import de.adorsys.psd2.xs2a.web.interceptor.validator.RequestValidationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +66,7 @@ import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebConfig implements WebMvcConfigurer {
-    @Value("${application.ais.transaction.max-length}")
+    @Value("${xs2a.application.ais.transaction.max-length}")
     private int maxNumberOfCharInTransactionJson;
 
     @Qualifier("xs2aCorsConfigProperties")

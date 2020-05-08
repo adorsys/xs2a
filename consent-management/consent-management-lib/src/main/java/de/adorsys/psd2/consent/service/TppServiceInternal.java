@@ -40,7 +40,7 @@ import java.util.Optional;
 public class TppServiceInternal implements TppService {
     private final TppInfoRepository tppInfoRepository;
 
-    @Value("${cms.service.instance-id:UNDEFINED}")
+    @Value("${xs2a.cms.service.instance-id:UNDEFINED}")
     private String serviceInstanceId;
 
     @Override

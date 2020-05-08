@@ -1,3 +1,15 @@
 = Release notes v.7.4
 
 == Table of Contents
+
+* Refactor XS2A configuration properties
+
+== Refactor XS2A configuration properties
+
+From now on, all custom XS2A configuration properties should be named as [product].[service].[property].
+
+For example:
+
+xs2a.cms.stoplist.cron.expression = 0 0 * * * * - product - `XS2A`, service - `CMS` and property - `stoplist.cron.expression`.
+
+See `SPI Developer Guide` for more details.

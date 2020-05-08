@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class AspspConsentDataRemoteUrls {
     private static final String ASPSP_CONSENT_DATA_ENDPOINT = "/aspsp-consent-data/consents/{consent-id}";
 
-    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    @Value("${xs2a.cms.consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
     /**

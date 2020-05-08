@@ -33,7 +33,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @RequiredArgsConstructor
 public class Xs2aApiSwaggerConfig {
-    @Value("${license.url}")
+    @Value("${xs2a.license.url}")
     private String licenseUrl;
     private final BuildProperties buildProperties;
 
