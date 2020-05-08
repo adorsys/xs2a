@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AspspProfileRemoteUrls {
 
-    @Value("${aspsp-profile.baseurl:http://localhost:48080/api/v1}")
+    @Value("${xs2a.cms.aspsp-profile.baseurl:http://localhost:48080/api/v1}")
     private String aspspProfileBaseUrl;
 
     /**

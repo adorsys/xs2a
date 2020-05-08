@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
     classes = AspspProfileApplication.class)
-@TestPropertySource(properties = {"bank_profile.path = classpath:bank_profile_no_sca_redirect_flow.yml"})
+@TestPropertySource(properties = {"xs2a.bank_profile.path = classpath:bank_profile_no_sca_redirect_flow.yml"})
 class BankProfileReaderConfigurationTest {
     @Autowired
     private BankProfileReaderConfiguration bankProfileReaderConfiguration;

@@ -37,7 +37,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
 public class NonRecurringConsentExpirationScheduleTask {
     private final ConsentJpaRepository consentJpaRepository;
 
-    @Scheduled(cron = "${used-non-recurring-consent-expiration.cron.expression}")
+    @Scheduled(cron = "${xs2a.cms.used-non-recurring-consent-expiration.cron.expression}")
     @Transactional
     public void expireUsedNonRecurringConsent() {
         log.info("Non-recurring consent expiration task has started!");

@@ -22,7 +22,7 @@ spring:
     serialization:
       write_dates_as_timestamps: false
 
-license.url: https://github.com/adorsys/xs2a/blob/master/LICENSE.md
+xs2a.license.url: https://github.com/adorsys/xs2a/blob/master/LICENSE.md
 
 # Cors configuration
 management:

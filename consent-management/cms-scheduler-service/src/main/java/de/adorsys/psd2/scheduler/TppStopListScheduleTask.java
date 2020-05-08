@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class TppStopListScheduleTask {
     private final TppStopListRepository tppStopListRepository;
 
-    @Scheduled(cron = "${stoplist.cron.expression}")
+    @Scheduled(cron = "${xs2a.cms.stoplist.cron.expression}")
     @Transactional
     public void unblockTppIfBlockingExpired() {
         log.info("Tpp Stop List schedule task is run!");

@@ -38,7 +38,7 @@ public class NotConfirmedPaymentExpirationScheduleTask {
     private final PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
     private final PisCommonPaymentDataRepository paymentDataRepository;
 
-    @Scheduled(cron = "${not-confirmed-payment-expiration.cron.expression}")
+    @Scheduled(cron = "${xs2a.cms.not-confirmed-payment-expiration.cron.expression}")
     @Transactional
     public void obsoleteNotConfirmedPaymentIfExpired() {
         log.info("Not confirmed payment expiration schedule task is run!");

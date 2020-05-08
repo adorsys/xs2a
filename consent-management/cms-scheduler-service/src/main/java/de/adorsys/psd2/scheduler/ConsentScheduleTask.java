@@ -42,7 +42,7 @@ import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 public class ConsentScheduleTask {
     private final ConsentJpaRepository consentJpaRepository;
 
-    @Scheduled(cron = "${consent.cron.expression}")
+    @Scheduled(cron = "${xs2a.cms.consent.cron.expression}")
     @Transactional
     public void checkConsentStatus() {
         log.info("Consent schedule task is run!");

@@ -33,7 +33,7 @@ import java.util.Optional;
 public class TppStopListServiceInternal implements TppStopListService {
     private final TppStopListRepository tppStopListRepository;
 
-    @Value("${cms.service.instance-id:UNDEFINED}")
+    @Value("${xs2a.cms.service.instance-id:UNDEFINED}")
     private String serviceInstanceId;
 
     @Override
