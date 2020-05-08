@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.psu.config;
 
+import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
 import springfox.documentation.service.Tag;
 
 public class CmsPsuApiTagHolder {

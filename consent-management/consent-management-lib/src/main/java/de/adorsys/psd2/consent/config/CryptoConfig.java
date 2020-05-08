@@ -34,10 +34,10 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Configuration
 public class CryptoConfig {
-    @Value("${encryption.defaultProvider.dataProvider:JcHZwvJMuc}")
+    @Value("${xs2a.cms.encryption.defaultProvider.dataProvider:JcHZwvJMuc}")
     private String defaultDataProviderId;
 
-    @Value("${encryption.defaultProvider.idProvider:psGLvQpt9Q}")
+    @Value("${xs2a.cms.encryption.defaultProvider.idProvider:psGLvQpt9Q}")
     private String defaultIdProviderId;
 
     @Bean

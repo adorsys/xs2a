@@ -26,7 +26,7 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 public class SchedulerConfig implements SchedulingConfigurer {
-    @Value("${scheduler.pool.size:20}")
+    @Value("${xs2a.cms.scheduler.pool.size:20}")
     private int poolSize;
 
     @Override

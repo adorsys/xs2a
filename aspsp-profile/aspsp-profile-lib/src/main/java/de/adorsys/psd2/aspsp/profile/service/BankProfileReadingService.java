@@ -22,7 +22,7 @@ public class BankProfileReadingService implements ResourceLoaderAware {
     private static final String CLASSPATH_PREFIX = "classpath:";
     private static final String FILE_PREFIX = "file:";
 
-    @Value("${bank_profile.path:}")
+    @Value("${xs2a.bank_profile.path:}")
     private String customBankProfile;
 
     private ResourceLoader resourceLoader;

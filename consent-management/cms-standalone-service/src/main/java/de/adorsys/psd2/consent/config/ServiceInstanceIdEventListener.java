@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 public class ServiceInstanceIdEventListener implements PreInsertEventListener {
     private static final String SERVICE_INSTANCE_ID_PROPERTY = "instanceId";
 
-    @Value("${cms.service.instance-id:UNDEFINED}")
+    @Value("${xs2a.cms.service.instance-id:UNDEFINED}")
     private String serviceInstanceId;
 
     @Override

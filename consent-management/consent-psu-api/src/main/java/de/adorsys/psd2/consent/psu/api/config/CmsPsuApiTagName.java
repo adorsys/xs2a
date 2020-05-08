@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.web.psu.config;
+package de.adorsys.psd2.consent.psu.api.config;
 
 public class CmsPsuApiTagName {
     public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";

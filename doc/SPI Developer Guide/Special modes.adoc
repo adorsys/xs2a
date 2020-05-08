@@ -15,7 +15,7 @@ Each record in the database that should be isolated from different XS2A instance
 To access such resource, appropriate `instanceId` value should be passed to methods and endpoints in `cms-psu-api` and `cms-aspsp-api`.
 Default value for `instanceId` is set to `UNDEFINED`.
 
-To configure CMS service to properly work with multiple XS2A instances, multiple instances of `cms-standalone-service` can be used, with `cms.service.instance-id` property set to appropriate value for each instance.
+To configure CMS service to properly work with multiple XS2A instances, multiple instances of `cms-standalone-service` can be used, with `xs2a.cms.service.instance-id` property set to appropriate value for each instance.
 Alternatively, some kind of an interceptor should be implemented in CMS (or in connector application in case of using CMS in embedded mode) to set `instanceId` property before saving records to the database.
 Example of Hibernate interceptor with such functionality can be found in `cms-standalone-service`: in `de.adorsys.psd2.consent.config.ServiceInstanceIdEventListener`, along with the configuration in `de.adorsys.psd2.consent.config.HibernateListenerConfig`.
 

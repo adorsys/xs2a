@@ -97,7 +97,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                          commonBankSetting.getAspspNotificationsSupported(),
                                                                          commonBankSetting.isAuthorisationConfirmationRequestMandated(),
                                                                          commonBankSetting.isAuthorisationConfirmationCheckByXs2a(),
-                                                                         commonBankSetting.isCheckUriComplianceToDomainSupported());
+                                                                         commonBankSetting.isCheckUriComplianceToDomainSupported(),
+                                                                         commonBankSetting.getTppUriComplianceResponse());
 
         return new AspspSettings(ais, pis, piis, common);
     }

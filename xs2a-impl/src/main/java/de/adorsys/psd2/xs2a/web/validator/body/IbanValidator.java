@@ -35,7 +35,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVA
 @RequiredArgsConstructor
 public class IbanValidator {
 
-    @Value("${iban.validation.enabled:true}")
+    @Value("${xs2a.iban.validation.enabled:true}")
     private Boolean ibanValidationEnabled;
 
     private final ErrorBuildingService errorBuildingService;

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.aspsp.config;
 
+import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import springfox.documentation.service.Tag;
 
 public class CmsAspspApiTagHolder {

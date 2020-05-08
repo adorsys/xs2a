@@ -27,10 +27,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CardAccountHandler {
 
-    @Value("${masked-pan-begin-chars:6}")
+    @Value("${xs2a.masked-pan-begin-chars:6}")
     private int maskedPanBeginChars;
 
-    @Value("${masked-pan-end-chars:4}")
+    @Value("${xs2a.masked-pan-end-chars:4}")
     private int maskedPanEndChars;
 
     public boolean areAccountsEqual(Xs2aCardAccountDetails aspspAccount, AccountReference tppAccount) {

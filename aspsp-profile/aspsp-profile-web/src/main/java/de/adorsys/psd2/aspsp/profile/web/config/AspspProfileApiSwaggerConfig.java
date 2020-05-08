@@ -35,7 +35,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @RequiredArgsConstructor
 public class AspspProfileApiSwaggerConfig {
-    @Value("${license.url}")
+    @Value("${xs2a.license.url}")
     private String licenseUrl;
     private final BuildProperties buildProperties;
 

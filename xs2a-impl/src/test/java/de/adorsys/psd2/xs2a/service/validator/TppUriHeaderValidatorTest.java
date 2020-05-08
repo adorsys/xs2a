@@ -17,19 +17,23 @@
 package de.adorsys.psd2.xs2a.service.validator;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppDomainValidator;
+import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_DOMAIN;
+import static de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant.TPP_REDIRECT_URI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -85,5 +89,70 @@ class TppUriHeaderValidatorTest {
         // Then
         assertEquals(actual, emptySet);
         verify(tppDomainValidator, times(0)).buildWarningMessages(any());
+    }
+
+    @Test
+    void validate_valid() {
+        // Given
+        Map<String, String> headers = new HashMap<>();
+        headers.put(Xs2aHeaderConstant.TPP_REDIRECT_URI, TPP_REDIRECT_URI);
+        headers.put(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+
+        MessageError messageError = new MessageError();
+
+        when(tppDomainValidator.validate(TPP_REDIRECT_URI)).thenReturn(ValidationResult.valid());
+        when(tppDomainValidator.validate(TPP_NOK_REDIRECT_URI)).thenReturn(ValidationResult.valid());
+
+        // When
+        MessageError actual = validator.validate(headers, messageError);
+
+        // Then
+        assertEquals(messageError, actual);
+    }
+
+    @Test
+    void validate_invalidRedirectUri() {
+        // Given
+        Map<String, String> headers = new HashMap<>();
+        headers.put(Xs2aHeaderConstant.TPP_REDIRECT_URI, TPP_REDIRECT_URI);
+        headers.put(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+
+        MessageError messageError = new MessageError();
+
+        ValidationResult validationResult = buildInvalidResult();
+
+        when(tppDomainValidator.validate(TPP_REDIRECT_URI)).thenReturn(ValidationResult.valid());
+        when(tppDomainValidator.validate(TPP_NOK_REDIRECT_URI)).thenReturn(validationResult);
+
+        // When
+        MessageError actual = validator.validate(headers, messageError);
+
+        // Then
+        assertEquals(validationResult.getMessageError(), actual);
+    }
+
+    @Test
+    void validate_invalidNokRedirectUri() {
+        // Given
+        Map<String, String> headers = new HashMap<>();
+        headers.put(Xs2aHeaderConstant.TPP_REDIRECT_URI, TPP_REDIRECT_URI);
+        headers.put(Xs2aHeaderConstant.TPP_NOK_REDIRECT_URI, TPP_NOK_REDIRECT_URI);
+
+        MessageError messageError = new MessageError();
+
+        ValidationResult validationResult = buildInvalidResult();
+
+        when(tppDomainValidator.validate(TPP_REDIRECT_URI)).thenReturn(validationResult);
+
+        // When
+        MessageError actual = validator.validate(headers, messageError);
+
+        // Then
+        assertEquals(validationResult.getMessageError(), actual);
+    }
+
+    private ValidationResult buildInvalidResult() {
+        return ValidationResult.invalid(
+            ErrorType.PIS_400, TppMessageInformation.of(FORMAT_ERROR_INVALID_DOMAIN));
     }
 }

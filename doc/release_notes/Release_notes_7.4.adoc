@@ -1,0 +1,52 @@
+= Release notes v.7.4
+
+== Table of Contents
+
+* Fixed wrong password sca handling
+* Increased length limit of TPP-URIs to Max500Text
+* Added Postman tests for `cms-psu-api` controllers
+* Provided interfaces for CMS web controllers in `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web`
+* Created script to delete deprecated type of access `OWNER_ADDRESS` in `account_access` and `aspsp_account_access` tables
+* Added possibility to reject requests if TPP URIs are not compliant with Certificate domain
+* Refactor XS2A configuration properties
+
+== Fixed wrong password sca handling
+
+From now on, it's possible to enter password and tan as many times, as bank allows you to.
+
+== Increased length limit of TPP-URIs to Max500Text
+
+From now on, maximum allowed lengths for `tpp-redirect-uri` and `tpp-nok-redirect-uri` is 500 symbols.
+
+== Added Postman tests for `cms-psu-api` controllers
+
+Added Postman tests for `cms-psu-api` controllers: `AspspConsentDataPsuApiController`, `CmsPsuAisController`, `CmsPsuPiisController`, `CmsPsuPisController`.
+
+== Provided interfaces for CMS web controllers in `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web`
+
+Provided interfaces for CMS web controllers in `consent-aspsp-web`, `consent-psu-web` and `consent-xs2a-web`.
+
+== Created script to delete deprecated type of access `OWNER_ADDRESS` in `account_access` and `aspsp_account_access` tables
+
+Created script to delete deprecated type of access `OWNER_ADDRESS` in `account_access` and `aspsp_account_access` tables.
+
+== Added possibility to reject requests if TPP URIs are not compliant with Certificate domain
+
+From now on, it's possible to define in ASPSP profile `tppUriComplianceResponse` parameter. It has two values: `WARNING`
+and `REJECT`.
+
+If `WARNING` mode is activated, in case of payment/consent initiation with invalid headers `TPP-Redirect-URI` or
+`TPP-Nok-Redirect-URI` TPP will get correct response with warning.
+
+If `REJECT` mode is activated, in case of  payment/consent initiation with invalid headers `TPP-Redirect-URI` or
+`TPP-Nok-Redirect-URI` TPP will get error response ` 400 FORMAT_ERROR`.
+
+== Refactor XS2A configuration properties
+
+From now on, all custom XS2A configuration properties should be named as [product].[service].[property].
+
+For example:
+
+xs2a.cms.stoplist.cron.expression = 0 0 * * * * - product - `XS2A`, service - `CMS` and property - `stoplist.cron.expression`.
+
+See `SPI Developer Guide` for more details.

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AisConsentRemoteUrls {
-    @Value("${consent-service.baseurl:http://localhost:38080/api/v1}")
+    @Value("${xs2a.cms.consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
     /**

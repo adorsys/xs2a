@@ -40,6 +40,11 @@ public class Xs2aUpdatePisCommonPaymentPsuDataResponse extends AuthorisationProc
         this.psuData = psuData;
     }
 
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, ErrorHolder errorHolder, String paymentId, String authorisationId, PsuIdData psuData) {
+        this(scaStatus, paymentId, authorisationId, psuData);
+        this.errorHolder = errorHolder;
+    }
+
     public Xs2aUpdatePisCommonPaymentPsuDataResponse(ErrorHolder errorHolder, String paymentId, String authorisationId, PsuIdData psuData) {
         this(ScaStatus.FAILED, paymentId, authorisationId, psuData);
         this.errorHolder = errorHolder;

@@ -12,11 +12,6 @@ addons:
 git:
   submodules: false
 
-cache:
-  timeout: 1000
-  directories:
-    - "$HOME/.m2"
-
 install:
   - mvn --version
 
@@ -25,14 +20,18 @@ before_script:
   - echo "TRAVIS_JDK_VERSION is $TRAVIS_JDK_VERSION"
 
 script:
+  # add travis build id to swagger
   - env BUILD_NUMBER=$TRAVIS_BUILD_ID /bin/bash ./scripts/set_xs2a_connector_version_in_swagger.sh
-  - MAVEN_OPTS="-Dlogging.level.root=warn -Dlogging.level.org.springframework.boot=warn -Dlogging.level.org.springframework.test=warn -Dlogging.level.org.hibernate=warn -Dlogging.level.de.adorsys=warn"
-  - export MAVEN_OPTS
-  - mvn -q -B -V clean install pmd:check | egrep -v DEBUG || travis_terminate 1
+  # check code by pmd
+  - mvn -ntp -V -DskipITs -DskipTests clean install pmd:pmd pmd:cpd | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
+  # check UNIT tests
+  - mvn -ntp -DskipITs --fail-at-end clean install | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
+  # check IT tests
+  - mvn -ntp failsafe:integration-test failsafe:verify | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
   # JavaDocs are broken in Java 11 and fixed only in Java 12 : https://bugs.openjdk.java.net/browse/JDK-8212233
-  - mvn -q -B -V javadoc:javadoc | egrep -v DEBUG || travis_terminate 1
+  - mvn -ntp -V -DskipITs -DskipTests javadoc:javadoc | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
   # Sonar analysis shall be run only for one version of Java
-  - mvn -q -B -V sonar:sonar -Dsonar.projectKey=adorsys_xs2a | egrep -v DEBU || travis_terminate 1
+  - mvn -ntp -V -DskipITs -DskipTests sonar:sonar -Dsonar.projectKey=adorsys_xs2a | egrep -A2 -B2 "(Building|SUCCESS|ERROR)" || travis_terminate 1
   - docker run -it --rm -v $PWD:/src -w /src -u $(id -u ${USER}):$(id -g ${USER}) adorsys/arc42-tools
     sh -c "make pages" || travis_terminate 1
 
@@ -44,8 +43,8 @@ before_deploy:
 deploy:
   - skip_cleanup: true
     provider: script
-    script: mvn --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -q -B
-      -U deploy | egrep -v DEBUG || travis_terminate 1
+    script: mvn -ntp --settings scripts/mvn-release-settings.xml -Prelease -DskipTests  -DskipTests -B
+      -U deploy | egrep -A2 -B2 "(Building|SUCCESS|ERROR|Uploaded)" || travis_terminate 1
     on:
       repo: adorsys/xs2a
       all_branches: true

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.xs2a.config;
 
+import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import springfox.documentation.service.Tag;
 
 public class InternalCmsXs2aApiTagHolder {

@@ -38,7 +38,7 @@ public class NotConfirmedConsentExpirationScheduleTask {
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final ConsentJpaRepository consentJpaRepository;
 
-    @Scheduled(cron = "${not-confirmed-consent-expiration.cron.expression}")
+    @Scheduled(cron = "${xs2a.cms.not-confirmed-consent-expiration.cron.expression}")
     @Transactional
     public void obsoleteNotConfirmedConsentIfExpired() {
         log.info("Not confirmed consent expiration schedule task is run!");
