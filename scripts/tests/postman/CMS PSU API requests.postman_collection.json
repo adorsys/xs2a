@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b916599c-5725-498f-9b6b-9d6325d7ddce",
+		"_postman_id": "81c29a7c-6257-47ac-889f-8c05140fae0b",
 		"name": "CMS PSU API requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -3065,7 +3065,7 @@
 									"script": {
 										"id": "39c392a0-5596-483d-97c9-dd88f0c154b4",
 										"exec": [
-											""
+											"pm.globals.set(\"wrong_id\", \"kljghdgflkhjf5w67437698gyuvg97fcr6ditof6r\");"
 										],
 										"type": "text/javascript"
 									}
@@ -3075,7 +3075,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/redirect/{{internal_payment_id}}",
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/redirect/{{wrong_id}}",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
@@ -3085,7 +3085,7 @@
 										"v1",
 										"payment",
 										"redirect",
-										"{{internal_payment_id}}"
+										"{{wrong_id}}"
 									]
 								}
 							},
@@ -3129,7 +3129,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/cancellation/redirect/{{internal_payment_id}}",
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/cancellation/redirect/{{wrong_id}}",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
@@ -3140,7 +3140,7 @@
 										"payment",
 										"cancellation",
 										"redirect",
-										"{{internal_payment_id}}"
+										"{{wrong_id}}"
 									]
 								}
 							},
@@ -3415,7 +3415,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/{{internal_payment_id}}/status/PATC",
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/{{wrong_id}}/status/PATC",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
@@ -3424,7 +3424,7 @@
 										"psu-api",
 										"v1",
 										"payment",
-										"{{internal_payment_id}}",
+										"{{wrong_id}}",
 										"status",
 										"PATC"
 									]
