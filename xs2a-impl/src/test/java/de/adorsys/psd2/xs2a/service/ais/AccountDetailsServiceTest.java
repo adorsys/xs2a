@@ -19,8 +19,10 @@ package de.adorsys.psd2.xs2a.service.ais;
 import de.adorsys.psd2.consent.api.ActionStatus;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -129,12 +131,12 @@ class AccountDetailsServiceTest {
     void setUp() {
         aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent.json", AisConsent.class);
         aisConsent.setTppAccountAccesses(createAccountAccess());
+        aisConsent.setConsentData(new AisConsentData(null, null, null, false));
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         commonAccountRequestObject = buildCommonAccountRequestObject();
         spiAspspConsentDataProvider = spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID);
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
     }
 
     @Test
@@ -230,6 +232,37 @@ class AccountDetailsServiceTest {
 
         assertThat(body).isNotNull();
         assertThat(body).isEqualTo(xs2aAccountDetails);
+    }
+
+    @Test
+    void getAccountDetailsForGlobalConsent_Success() {
+        // Given
+        //global consent
+        aisConsent.setConsentData(new AisConsentData(null, AccountAccessType.ALL_ACCOUNTS, null, false));
+        ArgumentCaptor<SpiAccountReference> spiAccountReferenceCaptor = ArgumentCaptor.forClass(SpiAccountReference.class);
+
+        when(getAccountDetailsValidator.validate(any(CommonAccountRequestObject.class))).thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+        when(consentMapper.mapToSpiAccountConsent(any())).thenReturn(SPI_ACCOUNT_CONSENT);
+        when(accountSpi.requestAccountDetailForAccount(eq(SPI_CONTEXT_DATA), eq(WITH_BALANCE), spiAccountReferenceCaptor.capture(), eq(SPI_ACCOUNT_CONSENT), eq(spiAspspConsentDataProvider)))
+            .thenReturn(buildSuccessSpiResponse(spiAccountDetails));
+        when(accountDetailsMapper.mapToXs2aAccountDetails(spiAccountDetails)).thenReturn(xs2aAccountDetails);
+
+
+        // When
+        ResponseObject<Xs2aAccountDetailsHolder> actualResponse = accountDetailsService.getAccountDetails(CONSENT_ID, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+
+        Xs2aAccountDetails body = actualResponse.getBody().getAccountDetails();
+
+        assertThat(body).isNotNull();
+        assertThat(body).isEqualTo(xs2aAccountDetails);
+
+        verify(accountHelperService, never()).findAccountReference(any(), any());
+        assertThat(spiAccountReferenceCaptor.getValue().getResourceId()).isEqualTo(ACCOUNT_ID);
     }
 
     @Test

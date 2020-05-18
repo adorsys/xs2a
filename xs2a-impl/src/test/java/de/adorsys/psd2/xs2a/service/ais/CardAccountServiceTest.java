@@ -23,6 +23,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
@@ -145,8 +146,7 @@ class CardAccountServiceTest {
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
         getCardAccountDetailsRequestObject = buildCommonAccountRequestObject();
 
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
+        when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
     }
 
     @Test
@@ -597,6 +597,37 @@ class CardAccountServiceTest {
 
         assertThat(body).isNotNull();
         assertThat(body).isEqualTo(xs2aAccountDetails);
+    }
+
+    @Test
+    void getAccountDetailsForGlobalConsent_Success() {
+        // Given
+        //global consent
+        aisConsent.setConsentData(new AisConsentData(null, AccountAccessType.ALL_ACCOUNTS, null, false));
+        ArgumentCaptor<SpiAccountReference> spiAccountReferenceCaptor = ArgumentCaptor.forClass(SpiAccountReference.class);
+
+        when(getCardAccountDetailsValidator.validate(any(GetCardAccountDetailsRequestObject.class))).thenReturn(ValidationResult.valid());
+        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
+        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
+        when(consentMapper.mapToSpiAccountConsent(any())).thenReturn(SPI_ACCOUNT_CONSENT);
+        when(cardAccountSpi.requestCardAccountDetailsForAccount(eq(SPI_CONTEXT_DATA), spiAccountReferenceCaptor.capture(), eq(SPI_ACCOUNT_CONSENT), eq(spiAspspConsentDataProvider)))
+            .thenReturn(buildSuccessSpiResponse(spiCardAccountDetails));
+        when(accountDetailsMapper.mapToXs2aCardAccountDetails(spiCardAccountDetails)).thenReturn(xs2aAccountDetails);
+
+
+        // When
+        ResponseObject<Xs2aCardAccountDetailsHolder> actualResponse = cardAccountService.getCardAccountDetails(CONSENT_ID, ACCOUNT_ID, REQUEST_URI);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+
+        Xs2aCardAccountDetails body = actualResponse.getBody().getCardAccountDetails();
+
+        assertThat(body).isNotNull();
+        assertThat(body).isEqualTo(xs2aAccountDetails);
+
+        verify(accountHelperService, never()).findAccountReference(any(), any());
+        assertThat(spiAccountReferenceCaptor.getValue().getResourceId()).isEqualTo(ACCOUNT_ID);
     }
 
     private void assertResponseHasNoErrors(ResponseObject actualResponse) {
