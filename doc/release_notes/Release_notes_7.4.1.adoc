@@ -1,0 +1,9 @@
+= Release notes v.7.4.1
+
+== Table of Contents
+
+* Fixed NPE when getting account and card account details for global consent
+
+== Fixed NPE when getting account and card account details for global consent
+
+From now on, account and card account details are retrieved without errors.
