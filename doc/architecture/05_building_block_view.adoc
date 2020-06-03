@@ -74,7 +74,7 @@ This part is to be implemented for each particular deployment, depending on unde
 
 | [xs2a]#CMS#
 | Consent Management System - Service that persists and manages the PSUs Consents for account accesses and payments and corresponding to these consents data.
-Provides internal CMS-PSU-API and CMS-APSPS-API interfaces for other internal ASPSP systems.
+Provides internal CMS-PSU-API and CMS-ASPSP-API interfaces for other internal ASPSP systems.
 |===
 
 Important Interfaces::
