@@ -58,7 +58,7 @@ Previous validation payment configuration in `application.properties` file has b
 
 == Implemented support Additional Account Information in AIS
 
-From now on, Additional Account Information is supported in AIS. To activate its support set property `accountOwnerInformationSupported` in APSPS profile to "TRUE".
+From now on, Additional Account Information is supported in AIS. To activate its support set property `accountOwnerInformationSupported` in ASPSP profile to "TRUE".
 After that, if TPP asks for additional account information during consent creation process it will be present in `SpiAdditionalInformationAccess` field in `SpiAccountConsent` object.
 Based on this information, when TPP makes request for retrieving information about PSU account (`GET /v1/accounts` or `GET /v1/accounts/{account-id}`),
 ASPSP can provide additional information in `ownerName` and `ownerAddress` fields in `SpiAccountDetails` object.

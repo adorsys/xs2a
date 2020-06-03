@@ -51,7 +51,7 @@ Fixed bug with updating authorisation by wrong `authorization_id`. From now on, 
 == Implemented support of Relative links
 
 Before, ASPSP could set up in ASPSP profile the way, how the links are built by the XS2A (all links except `scaRedirect`).
-This mechanism allowed the usage of only absolute links (`xs2aBaseLinksUrl` property in APSPS profile). From now on, the
+This mechanism allowed the usage of only absolute links (`xs2aBaseLinksUrl` property in ASPSP profile). From now on, the
 relative links are supported as well. To have result links as relative ones, set in ASPSP profile `forceXs2aBaseLinksUrl`
 as `true` and `xs2aBaseLinksUrl` with a value, starting with `/` (for example `/`, `/myhost`, etc.).
 
