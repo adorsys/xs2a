@@ -128,6 +128,7 @@ public class Xs2aEventService {
                             .psuIdData(eventMapper.toEventPsuIdData(requestData.getPsuIdData()))
                             .xRequestId(requestData.getRequestId())
                             .internalRequestId(requestData.getInternalRequestId())
+                            .instanceId(requestProviderService.getInstanceId())
                             .tppAuthorisationNumber(tppService.getTppInfo().getAuthorisationNumber())
                             .build();
         RequestEventPayload payload = buildRequestEventPayload(requestData, body);

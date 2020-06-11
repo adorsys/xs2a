@@ -104,7 +104,7 @@ public class PaymentModelMapperPsd2 {
 
     public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI,
                                                                      String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData,
-                                                                     TppNotificationData tppNotificationData, String tppBrandLoggingInformation) {
+                                                                     TppNotificationData tppNotificationData, String tppBrandLoggingInformation, String instanceId) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
@@ -114,6 +114,7 @@ public class PaymentModelMapperPsd2 {
         parameters.setPsuData(psuData);
         parameters.setTppNotificationData(tppNotificationData);
         parameters.setTppBrandLoggingInformation(tppBrandLoggingInformation);
+        parameters.setInstanceId(instanceId);
 
         return parameters;
     }

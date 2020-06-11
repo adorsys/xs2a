@@ -43,4 +43,6 @@ public interface CommonPaymentData {
     OffsetDateTime getCreationTimestamp();
 
     String getContentType();
+
+    String getInstanceId();
 }

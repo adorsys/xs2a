@@ -70,7 +70,8 @@ public class PiisConsentMapper {
                                   consentEntity.getTppInformation().getTppInfo().getAuthorisationNumber());
     }
 
-    public ConsentEntity mapToPiisConsentEntity(PsuIdData psuIdData, TppInfoEntity tppInfoEntity, CreatePiisConsentRequest request) {
+    public ConsentEntity mapToPiisConsentEntity(PsuIdData psuIdData, TppInfoEntity tppInfoEntity, CreatePiisConsentRequest request,
+                                                String instanceId) {
         ConsentEntity consent = new ConsentEntity();
         consent.setExternalId(UUID.randomUUID().toString());
         consent.setConsentStatus(VALID);
@@ -85,6 +86,7 @@ public class PiisConsentMapper {
                                                           request.getCardInformation(), request.getRegistrationInformation());
         consent.setData(consentDataMapper.getBytesFromConsentData(consentData));
         consent.setConsentType(ConsentType.PIIS_ASPSP.toString());
+        consent.setInstanceId(instanceId);
         return consent;
     }
 }

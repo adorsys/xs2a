@@ -52,6 +52,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setPayment(paymentInfo.getPaymentData());
         commonPaymentData.setTppInfo(tppInfoMapper.mapToTppInfoEntity(paymentInfo.getTppInfo()));
         commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
+        commonPaymentData.getPsuDataList().forEach(p -> p.setInstanceId(paymentInfo.getInstanceId()));
         commonPaymentData.setMultilevelScaRequired(paymentInfo.isMultilevelScaRequired());
         commonPaymentData.setAspspAccountId(paymentInfo.getAspspAccountId());
         AuthorisationTemplateEntity authorisationTemplate = new AuthorisationTemplateEntity();
@@ -68,6 +69,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setTppNotificationContentPreferred(paymentInfo.getNotificationSupportedModes());
         commonPaymentData.setContentType(paymentInfo.getContentType());
         commonPaymentData.setTppBrandLoggingInformation(paymentInfo.getTppBrandLoggingInformation());
+        commonPaymentData.setInstanceId(paymentInfo.getInstanceId());
 
         return commonPaymentData;
     }
@@ -89,6 +91,7 @@ public class PisCommonPaymentMapper {
                        response.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));
                        response.setCreationTimestamp(cmd.getCreationTimestamp());
                        response.setContentType(cmd.getContentType());
+                       response.setInstanceId(cmd.getInstanceId());
                        return response;
                    });
     }

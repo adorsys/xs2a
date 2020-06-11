@@ -70,6 +70,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         P paymentRequest = getPaymentRequest(payment, paymentInitiationParameters);
         OffsetDateTime creationTimestamp = OffsetDateTime.now();
         paymentRequest.setCreationTimestamp(creationTimestamp);
+        paymentRequest.setInstanceId(paymentInitiationParameters.getInstanceId());
         PaymentInitiationResponse response = paymentInitiationService.initiatePayment(paymentRequest, paymentInitiationParameters.getPaymentProduct(), psuData);
 
         if (response.hasError()) {

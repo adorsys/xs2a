@@ -66,6 +66,7 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setCreationTimestamp(payment.getCreationTimestamp());
         single.setContentType(payment.getContentType());
         single.setDebtorName(payment.getDebtorName());
+        single.setInstanceId(payment.getInstanceId());
 
         return single;
     }

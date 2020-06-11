@@ -33,15 +33,18 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
     private RedirectLinkBuilder redirectLinkBuilder;
     private ScaRedirectFlow scaRedirectFlow;
     private RedirectIdService redirectIdService;
+    private String instanceId;
 
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                              RedirectIdService redirectIdService,
                                              String paymentService, String paymentProduct, String paymentId,
-                                             String authorisationId, ScaRedirectFlow scaRedirectFlow, String internalRequestId) {
+                                             String authorisationId, ScaRedirectFlow scaRedirectFlow, String internalRequestId,
+                                             String instanceId) {
         super(httpUrl);
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.scaRedirectFlow = scaRedirectFlow;
         this.redirectIdService = redirectIdService;
+        this.instanceId = instanceId;
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 
@@ -60,7 +63,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
 
         String paymentCancellationOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                       ? redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
-                                      : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId);
+                                      : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
         setScaRedirectOAuthLink(scaRedirectFlow, paymentCancellationOauthLink);
 

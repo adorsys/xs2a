@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
@@ -57,6 +58,8 @@ class CreatePisAuthorizationAspectTest {
     private Xs2aCreatePisAuthorisationResponse createPisAuthorisationResponse;
     @Mock
     private Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private AspspSettings aspspSettings;
     private ResponseObject responseObject;

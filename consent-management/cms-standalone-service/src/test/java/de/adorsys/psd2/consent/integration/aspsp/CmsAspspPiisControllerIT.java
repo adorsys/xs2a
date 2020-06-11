@@ -123,7 +123,7 @@ public class CmsAspspPiisControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/create-piis-consent-response.json")));
 
-        verify(piisConsentEntitySpecification).byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, TPP_AUTHORISATION_NUMBER, accountReference);
+        verify(piisConsentEntitySpecification).byPsuIdDataAndAuthorisationNumberAndAccountReferenceAndInstanceId(psuIdData, TPP_AUTHORISATION_NUMBER, accountReference, INSTANCE_ID);
     }
 
     @Test

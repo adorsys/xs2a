@@ -119,7 +119,7 @@ class DeleteConsentTest {
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(aspspProfileService.getScaApproaches())
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

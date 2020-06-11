@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -37,15 +38,18 @@ public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentControlle
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final RedirectIdService redirectIdService;
+    private RequestProviderService requestProviderService;
 
     public PaymentInitiationAspect(ScaApproachResolver scaApproachResolver,
                                    AuthorisationMethodDecider authorisationMethodDecider, RedirectLinkBuilder redirectLinkBuilder,
-                                   AspspProfileServiceWrapper aspspProfileServiceWrapper, RedirectIdService redirectIdService) {
+                                   AspspProfileServiceWrapper aspspProfileServiceWrapper, RedirectIdService redirectIdService,
+                                   RequestProviderService requestProviderService) {
         super(aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
+        this.requestProviderService = requestProviderService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.createPayment(..)) && args(payment,requestParameters, ..)", returning = "result", argNames = "result,payment,requestParameters")
@@ -58,7 +62,8 @@ public class PaymentInitiationAspect extends AbstractLinkAspect<PaymentControlle
 
             body.setLinks(new PaymentInitiationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                      redirectIdService,
-                                                     requestParameters, body, explicitMethod, signingBasketModeActive, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated()));
+                                                     requestParameters, body, explicitMethod, signingBasketModeActive, getScaRedirectFlow(),
+                                                     isAuthorisationConfirmationRequestMandated(), requestProviderService.getInstanceId()));
         }
         return result;
     }

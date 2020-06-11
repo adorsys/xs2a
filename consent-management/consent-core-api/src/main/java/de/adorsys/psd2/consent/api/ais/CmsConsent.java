@@ -55,4 +55,5 @@ public class CmsConsent {
     private Map<String, Integer> usages;
     private AccountAccess tppAccountAccesses;
     private AccountAccess aspspAccountAccesses;
+    private String instanceId;
 }

@@ -100,10 +100,11 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
     @Transactional
     void byPsuIdDataAndAuthorisationNumberAndAccountReference() {
         List<ConsentEntity> actual = consentJpaRepository.findAll(
-            piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(
+            piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReferenceAndInstanceId(
                 PSU_ID_DATA,
                 TPP_AUTHORISATION_NUMBER,
-                accountReference
+                accountReference,
+                INSTANCE_ID
             ));
 
         assertTrue(CollectionUtils.isNotEmpty(actual));
@@ -114,6 +115,7 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
         assertEquals(accountReference.getIban(), actualConsent.getAspspAccountAccesses().get(0).getAccountIdentifier());
         assertEquals(AccountReferenceType.IBAN, actualConsent.getAspspAccountAccesses().get(0).getAccountReferenceType());
         assertEquals(accountReference.getCurrency(), actualConsent.getAspspAccountAccesses().get(0).getCurrency());
+        assertEquals(INSTANCE_ID, actualConsent.getInstanceId());
     }
 
     @Test

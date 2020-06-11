@@ -36,6 +36,7 @@ public class Xs2aToSpiPaymentInfo {
         request.setStatusChangeTimestamp(payment.getStatusChangeTimestamp());
         request.setCreationTimestamp(payment.getCreationTimestamp());
         request.setContentType(payment.getContentType());
+        request.setInstanceId(payment.getInstanceId());
         return request;
     }
 }

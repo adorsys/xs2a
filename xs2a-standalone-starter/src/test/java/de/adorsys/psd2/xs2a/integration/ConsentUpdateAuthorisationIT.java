@@ -112,7 +112,7 @@ class ConsentUpdateAuthorisationIT {
     @BeforeEach
     void setUp() {
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppStopListService.checkIfTppBlocked(TPP_INFO.getAuthorisationNumber()))
+        given(tppStopListService.checkIfTppBlocked(TPP_INFO.getAuthorisationNumber(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

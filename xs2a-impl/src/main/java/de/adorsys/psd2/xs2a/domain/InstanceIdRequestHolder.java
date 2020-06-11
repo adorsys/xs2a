@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.domain;
+package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public interface Authorisable {
-    String getExternalId();
-
-    List<PsuData> getPsuDataList();
-
-    void setPsuDataList(List<PsuData> psuData);
-
-    String getInternalRequestId(AuthorisationType authorisationType);
-
-    AuthorisationTemplateEntity getAuthorisationTemplate();
-
-    String getInstanceId();
+@Getter
+@Setter
+public class InstanceIdRequestHolder {
+    @Nullable
+    private String instanceId;
 }

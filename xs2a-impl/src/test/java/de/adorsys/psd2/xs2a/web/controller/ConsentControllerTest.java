@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
@@ -103,6 +104,8 @@ class ConsentControllerTest {
     private ConsentHeadersBuilder consentHeadersBuilder;
     @Mock
     private NotificationSupportedModeService notificationSupportedModeService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private JsonReader jsonReader = new JsonReader();
 

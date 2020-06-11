@@ -46,7 +46,9 @@ public interface CmsAspspPiisApi {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
-        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType);
+        @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
+        @ApiParam(value = "ID of the particular service instance")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 
     @GetMapping
     @ApiOperation(value = "Returns a list of PIIS Consent objects by PSU ID")

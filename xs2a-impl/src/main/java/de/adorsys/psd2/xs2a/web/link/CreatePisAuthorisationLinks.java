@@ -34,7 +34,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
                                        RedirectIdService redirectIdService,
                                        Xs2aCreatePisAuthorisationRequest createRequest, String authorisationId,
                                        ScaRedirectFlow scaRedirectFlow, String internalRequestId,
-                                       boolean authorisationConfirmationRequestMandated) {
+                                       boolean authorisationConfirmationRequestMandated, String instanceId) {
         super(httpUrl);
 
         String paymentId = createRequest.getPaymentId();
@@ -52,7 +52,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
 
             String paymentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                           ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
-                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId);
+                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
             setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
 

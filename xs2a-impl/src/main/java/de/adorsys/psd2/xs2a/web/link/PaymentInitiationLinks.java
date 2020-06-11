@@ -39,13 +39,14 @@ public class PaymentInitiationLinks extends AbstractLinks {
     private boolean explicitMethod;
     private ScaRedirectFlow scaRedirectFlow;
     private boolean authorisationConfirmationRequestMandated;
+    private String instanceId;
 
     public PaymentInitiationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                   RedirectIdService redirectIdService,
                                   PaymentInitiationParameters paymentRequestParameters, PaymentInitiationResponse body,
                                   boolean explicitMethod, boolean signingBasketModeActive,
                                   ScaRedirectFlow scaRedirectFlow,
-                                  boolean authorisationConfirmationRequestMandated) {
+                                  boolean authorisationConfirmationRequestMandated, String instanceId) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
@@ -53,6 +54,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
         this.explicitMethod = explicitMethod;
         this.scaRedirectFlow = scaRedirectFlow;
         this.authorisationConfirmationRequestMandated = authorisationConfirmationRequestMandated;
+        this.instanceId = instanceId;
 
         buildPaymentLinks(paymentRequestParameters, body, signingBasketModeActive);
     }
@@ -106,7 +108,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
 
             String paymentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                           ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
-                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId);
+                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
             setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
             setScaStatus(

@@ -1,3 +1,14 @@
 = Release notes v.7.5
 
 == Table of Contents
+
+* Support multi tenancy in XS2A
+
+== Support multi tenancy in XS2A
+
+From now on, XS2A supports multi tenancy with 1 database and 1 CMS instances.
+Request header `Instance-ID` defines a current tenant. The header is not mandatory.
+
+Response link `scaRedirect` will include `Instance-ID` parameter if the mentioned header comes with request.
+
+SPI objects `SpiAccountConsent`, `SpiPaymentInfo`, `SpiSinglePayment` and `SpiBulkPayment` were extended for `instanceId` field.

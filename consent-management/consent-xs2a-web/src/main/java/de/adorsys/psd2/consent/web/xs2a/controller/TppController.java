@@ -39,8 +39,8 @@ public class TppController implements TppApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> checkIfTppBlocked(String tppAuthorisationNumber) {
-        CmsResponse<Boolean> response = tppStopListService.checkIfTppBlocked(tppAuthorisationNumber);
+    public ResponseEntity<Boolean> checkIfTppBlocked(String tppAuthorisationNumber, String instanceId) {
+        CmsResponse<Boolean> response = tppStopListService.checkIfTppBlocked(tppAuthorisationNumber, instanceId);
         return new ResponseEntity<>(response.isSuccessful() && response.getPayload(), HttpStatus.OK);
     }
 }

@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisatio
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -44,14 +45,16 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
     private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final RedirectIdService redirectIdService;
+    private RequestProviderService requestProviderService;
 
     public CreatePisAuthorisationCancellationAspect(ScaApproachResolver scaApproachResolver,
                                                     RedirectLinkBuilder redirectLinkBuilder, AspspProfileServiceWrapper aspspProfileServiceWrapper,
-                                                    RedirectIdService redirectIdService) {
+                                                    RedirectIdService redirectIdService, RequestProviderService requestProviderService) {
         super(aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
+        this.requestProviderService = requestProviderService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.createPisCancellationAuthorisation(..)) && args(request)", returning = "result", argNames = "result,request")
@@ -66,7 +69,8 @@ public class CreatePisAuthorisationCancellationAspect extends AbstractLinkAspect
                 response.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                         redirectIdService, request.getPaymentService().getValue(),
                                                                         request.getPaymentProduct(), request.getPaymentId(),
-                                                                        body.getAuthorisationId(), getScaRedirectFlow(), body.getInternalRequestId()));
+                                                                        body.getAuthorisationId(), getScaRedirectFlow(), body.getInternalRequestId(),
+                                                                        requestProviderService.getInstanceId()));
             } else if (authorisationResponseType == AuthorisationResponseType.UPDATE) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildXs2aUpdatePisCommonPaymentPsuDataRequest(request.getPaymentId(),

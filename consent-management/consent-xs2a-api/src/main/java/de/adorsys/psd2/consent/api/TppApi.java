@@ -39,5 +39,7 @@ public interface TppApi {
     @ApiResponse(code = 200, message = "OK")
     ResponseEntity<Boolean> checkIfTppBlocked(
         @ApiParam(value = "ID of TPP", example = "12345987")
-        @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber);
+        @RequestHeader(value = "tpp-authorisation-number") String tppAuthorisationNumber,
+        @ApiParam(value = "ID of the particular service instance")
+        @RequestHeader(value = "instance-id", required = false, defaultValue = "") String instanceId);
 }

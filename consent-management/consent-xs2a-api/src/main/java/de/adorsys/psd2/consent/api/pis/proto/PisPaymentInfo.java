@@ -80,4 +80,7 @@ public class PisPaymentInfo {
 
     @ApiModelProperty(value = "Tpp brand logging information")
     private String tppBrandLoggingInformation;
+
+    @ApiModelProperty(value = "Instance ID")
+    private String instanceId;
 }

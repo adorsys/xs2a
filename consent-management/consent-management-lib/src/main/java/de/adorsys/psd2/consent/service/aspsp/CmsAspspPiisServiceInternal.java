@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.aspsp;
 
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -26,7 +27,6 @@ import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecifi
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -59,16 +59,16 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     @Transactional
-    public Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request) {
+    public Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request, @NotNull String instanceId) {
         if (isInvalidConsentCreationRequest(psuIdData, request)) {
             log.info("Consent cannot be created, because request contains no allowed tppInfo or empty psuIdData or empty accounts or validUntil or cardExpiryDate in the past");
             return Optional.empty();
         }
 
-        closePreviousPiisConsents(psuIdData, request);
+        closePreviousPiisConsents(psuIdData, request, instanceId);
 
         TppInfoEntity tppInfoEntity = getTppInfoEntity(request.getTppAuthorisationNumber());
-        ConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, request);
+        ConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, request, instanceId);
         ConsentEntity savedConsent = consentJpaRepository.save(consent);
 
         if (savedConsent.getId() != null) {
@@ -115,9 +115,10 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         return true;
     }
 
-    private void closePreviousPiisConsents(PsuIdData psuIdData, CreatePiisConsentRequest request) {
+    private void closePreviousPiisConsents(PsuIdData psuIdData, CreatePiisConsentRequest request, String instanceId) {
         AccountReference accountReference = request.getAccount();
-        Specification<ConsentEntity> specification = piisConsentEntitySpecification.byPsuIdDataAndAuthorisationNumberAndAccountReference(psuIdData, request.getTppAuthorisationNumber(), accountReference);
+        Specification<ConsentEntity> specification = piisConsentEntitySpecification
+                                                         .byPsuIdDataAndAuthorisationNumberAndAccountReferenceAndInstanceId(psuIdData, request.getTppAuthorisationNumber(), accountReference, instanceId);
 
         List<ConsentEntity> piisConsentEntities = consentJpaRepository.findAll(specification);
         piisConsentEntities = piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities);

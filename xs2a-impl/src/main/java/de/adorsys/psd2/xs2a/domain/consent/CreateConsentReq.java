@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.AccountReferenceCollector;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -61,6 +62,9 @@ public class CreateConsentReq implements AccountReferenceCollector {
     private TppNotificationData tppNotificationData;
 
     private String tppBrandLoggingInformation;
+
+    @Nullable
+    private String instanceId;
 
     @JsonIgnore
     @Override
