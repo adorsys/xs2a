@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.PaymentInitiationLinks;
@@ -51,6 +52,8 @@ class PaymentInitiationAspectTest {
     private AuthorisationMethodDecider authorisationMethodDecider;
     @Mock
     private PaymentInitiationParameters requestParameters;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private ResponseObject responseObject;
 

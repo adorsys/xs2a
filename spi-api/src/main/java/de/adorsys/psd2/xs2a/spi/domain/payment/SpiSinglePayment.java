@@ -56,6 +56,7 @@ public class SpiSinglePayment implements SpiPayment {
     private OffsetDateTime creationTimestamp;
     private String contentType;
     private String debtorName;
+    private String instanceId;
 
     public SpiSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;

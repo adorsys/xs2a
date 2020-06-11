@@ -59,6 +59,7 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
                                                   .orElseGet(() -> {
                                                       TppStopListEntity entity = new TppStopListEntity();
                                                       entity.setTppAuthorisationNumber(tppAuthorisationNumber);
+                                                      entity.setInstanceId(instanceId);
                                                       return entity;
                                                   });
         entityToBeBlocked.block(lockPeriod);

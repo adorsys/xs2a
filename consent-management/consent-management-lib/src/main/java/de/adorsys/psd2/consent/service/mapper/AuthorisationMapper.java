@@ -68,6 +68,7 @@ public interface AuthorisationMapper {
         AuthorisationTemplateEntity authorisationTemplate = authorisationParent.getAuthorisationTemplate();
         entity.setTppOkRedirectUri(StringUtils.defaultIfBlank(redirectURIs.getUri(), authorisationTemplate.getRedirectUri()));
         entity.setTppNokRedirectUri(StringUtils.defaultIfBlank(redirectURIs.getNokUri(), authorisationTemplate.getNokRedirectUri()));
+        entity.setInstanceId(authorisationParent.getInstanceId());
         return entity;
     }
 }

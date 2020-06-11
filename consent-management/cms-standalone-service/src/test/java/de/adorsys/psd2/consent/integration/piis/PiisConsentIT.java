@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.integration.piis;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
@@ -27,7 +28,6 @@ import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
@@ -81,7 +81,7 @@ public class PiisConsentIT {
     @Test
     public void createPiisConsent_successWithNewStatus() {
         // When
-        cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest());
+        cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest(), DEFAULT_SERVICE_INSTANCE_ID);
         flushAndClearPersistenceContext();
         Iterable<ConsentEntity> entities = consentJpaRepository.findAll();
         ConsentEntity savedEntity = entities.iterator().next();
@@ -111,15 +111,14 @@ public class PiisConsentIT {
         PsuIdData aspsp1NoCorporateId = buildPsuIdData("aspsp1", null);
 
         //When
-        cmsAspspPiisServiceInternal.createConsent(aspsp, request);
-        cmsAspspPiisServiceInternal.createConsent(aspsp, request);
-        cmsAspspPiisServiceInternal.createConsent(aspsp1, request);
-        cmsAspspPiisServiceInternal.createConsent(aspsp1NoCorporateId, request);
+        cmsAspspPiisServiceInternal.createConsent(aspsp, request, DEFAULT_SERVICE_INSTANCE_ID);
+        cmsAspspPiisServiceInternal.createConsent(aspsp1, request, DEFAULT_SERVICE_INSTANCE_ID);
+        cmsAspspPiisServiceInternal.createConsent(aspsp1NoCorporateId, request, DEFAULT_SERVICE_INSTANCE_ID);
         flushAndClearPersistenceContext();
 
         //Then
         List<CmsPiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
-        assertEquals(2, consentsAspsp.size());
+        assertEquals(1, consentsAspsp.size());
         assertEquals(aspsp, consentsAspsp.get(0).getPsuData());
 
         List<CmsPiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
@@ -158,7 +157,7 @@ public class PiisConsentIT {
     private AccountReferenceSelector createConsentAndGetSelector(AccountReferenceType accountReferenceType, String accountReferenceValue) {
         AccountReference accountReference = new AccountReference(accountReferenceType, accountReferenceValue, EUR_CURRENCY);
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest(accountReference);
-        cmsAspspPiisServiceInternal.createConsent(PSU_ID_DATA, request);
+        cmsAspspPiisServiceInternal.createConsent(PSU_ID_DATA, request, DEFAULT_SERVICE_INSTANCE_ID);
 
         return new AccountReferenceSelector(accountReferenceType, accountReferenceValue);
     }

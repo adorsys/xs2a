@@ -51,7 +51,7 @@ class TppStopListServiceInternalTest {
         when(tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
+        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
 
         assertTrue(isTppBlocked.isSuccessful());
 
@@ -66,7 +66,7 @@ class TppStopListServiceInternalTest {
         when(tppStopListEntity.isBlocked())
             .thenReturn(false);
 
-        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER);
+        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER, INSTANCE_ID);
 
         assertTrue(isTppBlocked.isSuccessful());
 
@@ -81,7 +81,7 @@ class TppStopListServiceInternalTest {
         when(tppStopListEntity.isBlocked())
             .thenReturn(true);
 
-        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING);
+        CmsResponse<Boolean> isTppBlocked = tppStopListService.checkIfTppBlocked(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID);
 
         assertTrue(isTppBlocked.isSuccessful());
 

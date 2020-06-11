@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,10 @@ public class TppStopListServiceInternal implements TppStopListService {
     private String serviceInstanceId;
 
     @Override
-    public CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber) {
-        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber, serviceInstanceId);
+    public CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber, String instanceId) {
+        String requestedInstanceId = StringUtils.isBlank(instanceId) ? serviceInstanceId : instanceId;
+        Optional<TppStopListEntity> stopListEntityOptional = tppStopListRepository.findByTppAuthorisationNumberAndInstanceId(tppAuthorisationNumber,
+                                                                                                                             requestedInstanceId);
 
         Boolean blocked = stopListEntityOptional
                               .filter(TppStopListEntity::isBlocked)

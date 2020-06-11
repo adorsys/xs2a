@@ -134,7 +134,7 @@ class PaymentStartCancellationAuthorisationIT {
         httpHeadersExplicit.add("TPP-Redirect-URI", TPP_REDIRECT_URI);
         httpHeadersExplicit.add("TPP-Nok-Redirect-URI", TPP_NOK_REDIRECT_URI);
 
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo())).willReturn(CmsResponse.<Boolean>builder()
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null)).willReturn(CmsResponse.<Boolean>builder()
                                                                                                 .payload(false)
                                                                                                 .build());
         given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());

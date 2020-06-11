@@ -41,6 +41,7 @@ public class SpiBulkPayment implements SpiPayment {
     private OffsetDateTime statusChangeTimestamp;
     private OffsetDateTime creationTimestamp;
     private String contentType;
+    private String instanceId;
 
     @Override
     public PaymentType getPaymentType() {

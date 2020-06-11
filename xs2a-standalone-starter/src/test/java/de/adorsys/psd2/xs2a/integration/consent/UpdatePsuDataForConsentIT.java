@@ -135,7 +135,7 @@ class UpdatePsuDataForConsentIT {
         httpHeaders.add("X-Request-ID", X_REQUEST_ID);
         httpHeaders.add("PSU-ID", PSU_ID);
 
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

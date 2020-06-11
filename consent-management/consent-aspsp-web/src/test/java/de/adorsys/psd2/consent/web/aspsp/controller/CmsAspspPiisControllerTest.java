@@ -89,7 +89,7 @@ class CmsAspspPiisControllerTest {
 
     @Test
     void createConsent_Success() throws Exception {
-        when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest))
+        when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest, INSTANCE_ID))
             .thenReturn(Optional.of(CONSENT_ID));
 
         mockMvc.perform(post(CREATE_PIIS_CONSENT_URL)
@@ -99,12 +99,12 @@ class CmsAspspPiisControllerTest {
             .andExpect(status().is(HttpStatus.CREATED.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_RESPONSE_PATH)));
 
-        verify(cmsAspspPiisService, times(1)).createConsent(psuIdData, createPiisConsentRequest);
+        verify(cmsAspspPiisService, times(1)).createConsent(psuIdData, createPiisConsentRequest, INSTANCE_ID);
     }
 
     @Test
     void createConsent_BadRequest() throws Exception {
-        when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest))
+        when(cmsAspspPiisService.createConsent(psuIdData, createPiisConsentRequest, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
         mockMvc.perform(post(CREATE_PIIS_CONSENT_URL)
@@ -113,7 +113,7 @@ class CmsAspspPiisControllerTest {
                             .content(jsonReader.getStringFromFile(CREATE_PIIS_CONSENT_REQUEST_PATH)))
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 
-        verify(cmsAspspPiisService, times(1)).createConsent(psuIdData, createPiisConsentRequest);
+        verify(cmsAspspPiisService, times(1)).createConsent(psuIdData, createPiisConsentRequest, INSTANCE_ID);
     }
 
     @Test

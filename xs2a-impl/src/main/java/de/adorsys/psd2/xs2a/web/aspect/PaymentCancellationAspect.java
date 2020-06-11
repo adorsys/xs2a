@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
@@ -40,19 +41,22 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectIdService redirectIdService;
+    private RequestProviderService requestProviderService;
 
     public PaymentCancellationAspect(PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
                                      AspspProfileServiceWrapper aspspProfileServiceWrapper,
                                      ScaApproachResolver scaApproachResolver,
                                      RedirectLinkBuilder redirectLinkBuilder,
                                      AuthorisationMethodDecider authorisationMethodDecider,
-                                     RedirectIdService redirectIdService) {
+                                     RedirectIdService redirectIdService,
+                                     RequestProviderService requestProviderService) {
         super(aspspProfileServiceWrapper);
         this.cancellationScaNeededDecider = cancellationScaNeededDecider;
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectIdService = redirectIdService;
+        this.requestProviderService = requestProviderService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentCancellationRequest)", returning = "result", argNames = "result,paymentCancellationRequest")
@@ -67,7 +71,8 @@ public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentControl
                 boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(paymentCancellationRequest.getTppExplicitAuthorisationPreferred(), false);
                 response.setLinks(new PaymentCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                redirectIdService, response, isExplicitMethod, getScaRedirectFlow(),
-                                                               isAuthorisationConfirmationRequestMandated()));
+                                                               isAuthorisationConfirmationRequestMandated(),
+                                                               requestProviderService.getInstanceId()));
             }
 
         }

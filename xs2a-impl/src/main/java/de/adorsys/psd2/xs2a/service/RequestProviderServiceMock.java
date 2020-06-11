@@ -38,8 +38,9 @@ public class RequestProviderServiceMock extends RequestProviderService {
     private String qwacCertificateMock;
 
     public RequestProviderServiceMock(HttpServletRequest httpServletRequest,
-                                      InternalRequestIdService internalRequestIdService) {
-        super(httpServletRequest, internalRequestIdService);
+                                      InternalRequestIdService internalRequestIdService,
+                                      InstanceIdRequestService instanceIdRequestService) {
+        super(httpServletRequest, internalRequestIdService, instanceIdRequestService);
     }
 
     @Override

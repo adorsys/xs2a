@@ -18,11 +18,12 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mapstruct.*;
+import org.mapstruct.IterableMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.NullValueMappingStrategy;
 
 import java.util.List;
 
@@ -35,11 +36,4 @@ public interface TppInfoMapper {
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     @NotNull List<TppRole> copyTppRoles(@Nullable List<TppRole> tppRoles);
-
-    default TppRedirectUri createTppRedirectUri(String redirectUri, String nokRedirectUri) {
-        if (redirectUri != null) {
-            return new TppRedirectUri(redirectUri, nokRedirectUri);
-        }
-        return null;
-    }
 }

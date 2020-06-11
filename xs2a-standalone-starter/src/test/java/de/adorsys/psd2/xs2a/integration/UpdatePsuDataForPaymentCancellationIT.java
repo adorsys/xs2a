@@ -130,7 +130,7 @@ class UpdatePsuDataForPaymentCancellationIT {
         httpHeaders.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeaders.add("PSU-ID", PSU_ID);
 
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

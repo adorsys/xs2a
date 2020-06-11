@@ -137,7 +137,7 @@ class ContextPathIT {
 
         given(aspspProfileService.getAspspSettings())
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

@@ -367,7 +367,7 @@ class ServiceUnavailableIT {
             buildCmsResponse(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)),
             throwException);
         givenReturnOrThrowException(
-            tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()),
+            tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null),
             buildCmsResponse(false),
             throwException);
         givenReturnOrThrowException(

@@ -24,7 +24,8 @@ public interface TppStopListService {
      * Checks if TPP is blocked.
      *
      * @param tppAuthorisationNumber information about particular TPP from TPP Certificate
+     * @param instanceId instance ID
      * @return <code>true</code> if TPP is found and has status BLOCKED, <code>false</code> if TPP is not found or its status is not BLOCKED
      */
-    CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber);
+    CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber, String instanceId);
 }

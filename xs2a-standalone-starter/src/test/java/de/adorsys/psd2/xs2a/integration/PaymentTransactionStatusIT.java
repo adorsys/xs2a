@@ -133,7 +133,7 @@ class PaymentTransactionStatusIT {
             .thenReturn(AspspSettingsBuilder.buildAspspSettings());
         when(aspspProfileService.getScaApproaches())
             .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
-        when(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        when(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

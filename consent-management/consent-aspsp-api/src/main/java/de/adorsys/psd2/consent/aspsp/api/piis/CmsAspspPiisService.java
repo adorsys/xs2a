@@ -31,7 +31,7 @@ public interface CmsAspspPiisService {
      * @param request   Request with all information for creating PIIS consent.
      * @return Consent ID if the consent was created
      */
-    Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request);
+    Optional<String> createConsent(@NotNull PsuIdData psuIdData, @NotNull CreatePiisConsentRequest request, @NotNull String instanceId);
 
     /**
      * Terminates PIIS Consent object by its ID. Consent gets status "Terminated by ASPSP".
