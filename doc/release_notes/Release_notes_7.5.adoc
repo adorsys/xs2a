@@ -4,6 +4,7 @@
 
 * Support multi-tenancy in XS2A
 * Support multi-tenancy in ASPSP Profile
+* Fix not passing aspspAccountId to SPI
 
 == Support multi-tenancy in XS2A
 
@@ -27,3 +28,7 @@ xs2a.bank_profile.multitenancy.customBankProfiles={bank1:'classpath:bank1_profil
 ```
 
 By default, multi-tenancy mode for ASPSP Profile is disabled.
+
+== Fix not passing aspspAccountId to SPI
+
+From now on, `aspspAccountId` will be passed to SPI  when getting account details GET `/v1/accounts/{account-id}`.
