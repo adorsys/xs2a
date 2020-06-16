@@ -97,7 +97,7 @@ class PaymentCancellationServiceForAuthorisationTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.hasError()).isTrue();
-        verify(spiPaymentFactory, never()).createSpiPaymentByPaymentType(any());
+        verify(spiPaymentFactory, never()).getSpiPayment(any());
     }
 
     @Test
@@ -132,7 +132,7 @@ class PaymentCancellationServiceForAuthorisationTest {
 
         when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
-        when(spiPaymentFactory.createSpiPaymentByPaymentType(pisCommonPaymentResponse)).thenReturn(Optional.empty());
+        when(spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse)).thenReturn(Optional.empty());
 
         SpiResponse<Boolean> spiResponse = SpiResponse.<Boolean>builder()
                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
@@ -146,7 +146,7 @@ class PaymentCancellationServiceForAuthorisationTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.hasError()).isTrue();
-        verify(spiPaymentFactory, times(1)).createSpiPaymentByPaymentType(any());
+        verify(spiPaymentFactory, times(1)).getSpiPayment(any());
         verify(paymentCancellationSpi, times(1)).requestTrustedBeneficiaryFlag(any(), any(), any(), any());
         verify(spiErrorMapper, times(1)).mapToErrorHolder(spiResponse, ServiceType.PIS);
     }
@@ -163,7 +163,7 @@ class PaymentCancellationServiceForAuthorisationTest {
 
         when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
-        when(spiPaymentFactory.createSpiPaymentByPaymentType(pisCommonPaymentResponse)).thenReturn(Optional.empty());
+        when(spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse)).thenReturn(Optional.empty());
 
         SpiResponse<Boolean> spiResponse = SpiResponse.<Boolean>builder()
                                                .payload(true)
@@ -178,7 +178,7 @@ class PaymentCancellationServiceForAuthorisationTest {
         assertThat(actual.hasError()).isFalse();
         assertThat(actual.getBody()).isEqualTo(expected);
 
-        verify(spiPaymentFactory, times(1)).createSpiPaymentByPaymentType(any());
+        verify(spiPaymentFactory, times(1)).getSpiPayment(any());
         verify(paymentCancellationSpi, times(1)).requestTrustedBeneficiaryFlag(any(), any(), any(), any());
         verify(spiErrorMapper, never()).mapToErrorHolder(any(), any());
     }

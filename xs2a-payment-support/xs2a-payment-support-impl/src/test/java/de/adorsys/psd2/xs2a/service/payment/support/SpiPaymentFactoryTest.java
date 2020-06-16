@@ -22,11 +22,10 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.mapper.payment.CmsToXs2aPaymentSupportMapper;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentSupportMapper;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
@@ -53,7 +52,7 @@ class SpiPaymentFactoryTest {
     private static final SpiBulkPayment SPI_BULK_PAYMENT = new SpiBulkPayment();
 
     @InjectMocks
-    private SpiPaymentFactory spiPaymentFactory;
+    private SpiPaymentFactoryImpl spiPaymentFactory;
 
     @Mock
     private CmsToXs2aPaymentSupportMapper cmsToXs2APaymentSupportMapper;
@@ -74,7 +73,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -89,7 +88,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -106,7 +105,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_PERIODIC_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -121,7 +120,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -138,7 +137,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_BULK_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -153,7 +152,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -170,7 +169,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         //When
-        Optional<SpiSinglePayment> actualResponse = spiPaymentFactory.createSpiSinglePayment(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -185,7 +184,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<SpiSinglePayment> actualResponse = spiPaymentFactory.createSpiSinglePayment(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -202,7 +201,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_PERIODIC_PAYMENT);
 
         //When
-        Optional<SpiPeriodicPayment> actualResponse = spiPaymentFactory.createSpiPeriodicPayment(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -217,7 +216,7 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<SpiPeriodicPayment> actualResponse = spiPaymentFactory.createSpiPeriodicPayment(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -227,14 +226,14 @@ class SpiPaymentFactoryTest {
     @Test
     void createSpiBulkPayment_success() {
         //Given
-        CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
+        CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.BULK);
         when(cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData))
             .thenReturn(BULK_PAYMENT);
         when(xs2aToSpiBulkPaymentMapper.mapToSpiBulkPayment(BULK_PAYMENT, PRODUCT))
             .thenReturn(SPI_BULK_PAYMENT);
 
         //When
-        Optional<SpiBulkPayment> actualResponse = spiPaymentFactory.createSpiBulkPayment(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -245,11 +244,9 @@ class SpiPaymentFactoryTest {
     void createSpiBulkPayment_failed() {
         //Given
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
-        when(cmsToXs2APaymentSupportMapper.mapToBulkPayment(commonPaymentData))
-            .thenReturn(null);
 
         //When
-        Optional<SpiBulkPayment> actualResponse = spiPaymentFactory.createSpiBulkPayment(commonPaymentData);
+        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();

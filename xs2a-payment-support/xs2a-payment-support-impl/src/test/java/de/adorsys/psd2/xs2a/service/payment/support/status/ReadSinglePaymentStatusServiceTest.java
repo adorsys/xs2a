@@ -27,8 +27,8 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.payment.support.SpiPaymentFactoryImpl;
 import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -71,7 +71,7 @@ class ReadSinglePaymentStatusServiceTest {
     private ReadSinglePaymentStatusService readSinglePaymentStatusService;
 
     @Mock
-    private SpiPaymentFactory spiPaymentFactory;
+    private SpiPaymentFactoryImpl spiPaymentFactory;
     @Mock
     private SinglePaymentSpi singlePaymentSpi;
     @Mock
@@ -96,8 +96,7 @@ class ReadSinglePaymentStatusServiceTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
 
-        when(spiPaymentFactory.createSpiSinglePayment(commonPaymentData))
-            .thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
+        doReturn(Optional.of(SPI_SINGLE_PAYMENT)).when(spiPaymentFactory).getSpiPayment(commonPaymentData);
         when(singlePaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
         when(mediaTypeMapper.mapToMediaType(JSON_MEDIA_TYPE))
@@ -122,20 +121,20 @@ class ReadSinglePaymentStatusServiceTest {
         ReadPaymentStatusResponse actualResponse = readSinglePaymentStatusService.readPaymentStatus(commonPaymentData, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);
 
         // Then
-        verify(spiPaymentFactory, never()).createSpiSinglePayment(any());
+        verify(spiPaymentFactory, never()).getSpiPayment(any());
 
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
     }
 
     @Test
-    void readPaymentStatus_spiPaymentFactory_createSpiSinglePayment_failed() {
+    void readPaymentStatus_spiPaymentFactory_getSpiPayment_failed() {
         //Given
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiSinglePayment(commonPaymentData))
+        when(spiPaymentFactory.getSpiPayment(commonPaymentData))
             .thenReturn(Optional.empty());
 
         //When
@@ -156,8 +155,7 @@ class ReadSinglePaymentStatusServiceTest {
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiSinglePayment(commonPaymentData))
-            .thenReturn(Optional.of(SPI_SINGLE_PAYMENT));
+        doReturn(Optional.of(SPI_SINGLE_PAYMENT)).when(spiPaymentFactory).getSpiPayment(commonPaymentData);
         when(singlePaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE_FAILURE);
         when(spiErrorMapper.mapToErrorHolder(TRANSACTION_RESPONSE_FAILURE, ServiceType.PIS))

@@ -1,0 +1,30 @@
+{
+  "paymentId": "paymentId",
+  "paymentStatus": "ACCP",
+  "statusChangeTimestamp": "2022-09-03T09:10:47.421Z",
+  "paymentProduct": "sepa-credit-transfers",
+  "paymentType": "payments",
+  "paymentData": "ewogICJlbmRUb0VuZElkZW50aWZpY2F0aW9uIjogIjU0OTQ3ZGY4MGU5ZTQ0NzFhMmY5OWFmNTA5ZmI1ODg5IiwKICAiZGVidG9yQWNjb3VudCI6IHsKICAgICJpYmFuIjogIkNINzU4OTE0NDM5MjY1NzM0NTQxNCIKICB9LCAgCiAgImRlYnRvckFnZW50IjogewoJImJpYyI6ICJSQUlGQ0gyMkUxMiIKICB9LAogICJkZWJ0b3JOYW1lIjogIkxhbGUgRmV1eiIsCiAgImRlYnRvcklkIjogImlkMiIsCiAgInVsdGltYXRlRGVidG9yIjogIlRob21hcyBSaWV0bWFubiIsCiAgImluc3RydWN0ZWRBbW91bnQiOiB7CiAgICAiY3VycmVuY3kiOiAiRVVSIiwKICAgICJhbW91bnQiOiAiNTAwMC4wMCIKICB9LAogICJleGNoYW5nZVJhdGVJbmZvcm1hdGlvbiI6IHsKICAgICJleGNoYW5nZVJhdGUiOiAiMTAuMDAyIiwKICAgICJyYXRlVHlwZSI6ICJBR1JEIiwKICAgICJjb250cmFjdElkZW50aWZpY2F0aW9uIjogImlkMSIKICB9LAogICJjcmVkaXRvckFjY291bnQiOiB7CiAgICAiaWJhbiI6ICJDSDQ0ODkxNDQ1MTE4ODUyOTQ5MzMiCiAgfSwKICAiY3JlZGl0b3JOYW1lIjogIkRhdmlkIE1vc2VyIiwKICAiY3JlZGl0b3JJZCI6ICJpZDMiLAogICJjcmVkaXRvckFkZHJlc3MiOiB7CiAgICAidG93bk5hbWUiOiAiRGFpd2lsIiwKICAgICJjb3VudHJ5IjogIkNIIiwKICAgICJwb3N0Q29kZSI6ICI0NzIgNjY5NyIsCiAgICAic3RyZWV0TmFtZSI6ICJEcmVpYsO8bmRlbnN0cmFzc2UiCiAgfSwKICAiY3JlZGl0b3JOYW1lQW5kQWRkcmVzcyI6ICJEYXZpZCBNb3NlciA0NzIgNjY5NyBEYWl3aWwiLAogICJ1bHRpbWF0ZUNyZWRpdG9yIjogIkxvdWlzIEhhdWV0ZXIiLAogICJjaGFyZ2VCZWFyZXIiOiAiU0xFViIsCiAgInB1cnBvc2VDb2RlIjogIkJLREYiLAogICJzZXJ2aWNlTGV2ZWwiOiAiU0VQQSIsCiAgInJlbWl0dGFuY2VJbmZvcm1hdGlvblVuc3RydWN0dXJlZCI6ICJSZWYuIE51bWJlciBWb2RhZm9uZS0xMjIyIiwKICAicmVtaXR0YW5jZUluZm9ybWF0aW9uU3RydWN0dXJlZCI6ICIyMTAwMDAwMDAwMDMxMzk0NzE0MzAwMDkwMTciLAogICJyZXF1ZXN0ZWRFeGVjdXRpb25EYXRlIjogIjIwMjAtMTAtMjIiICAKfQo=",
+  "psuDataList": [
+    {
+      "psuId": "marion.mueller",
+      "psuIdType": "psuIdType",
+      "psuCorporateId": "psuCorporateId",
+      "psuCorporateIdType": "psuCorporateIdType",
+      "psuIpAddress": "1.1.1.1",
+      "psuIpPort": "psuIpPort",
+      "psuUserAgent": "psuUserAgent",
+      "psuGeoLocation": "psuGeoLocation",
+      "psuAccept": "psuAccept",
+      "psuAcceptCharset": "psuAcceptCharset",
+      "psuAcceptEncoding": "psuAcceptEncoding",
+      "psuAcceptLanguage": "psuAcceptLanguage",
+      "psuHttpMethod": "psuHttpMethod",
+      "psuDeviceId": "5c92ac1a-f4fd-4a40-948f-1280e5a967ce"
+    }
+  ],
+  "creationTimestamp": "2022-09-03T09:10:47.421Z",
+  "contentType": "application/json",
+  "instanceId": "instanceId"
+}
+

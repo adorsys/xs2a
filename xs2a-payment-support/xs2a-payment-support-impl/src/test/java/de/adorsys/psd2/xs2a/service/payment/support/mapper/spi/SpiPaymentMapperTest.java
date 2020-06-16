@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.pis.*;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.mapper.payment.RawToXs2aPaymentMapper;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;

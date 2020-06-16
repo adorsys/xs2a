@@ -31,9 +31,9 @@ import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
+import de.adorsys.psd2.xs2a.service.payment.support.SpiPaymentFactoryImpl;
 import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.spi.SpiToXs2aPaymentMapperSupport;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -84,7 +84,7 @@ class ReadPeriodicPaymentServiceTest {
     @Mock
     private SpiToXs2aPaymentMapperSupport spiToXs2aPaymentMapperSupport;
     @Mock
-    private SpiPaymentFactory spiPaymentFactory;
+    private SpiPaymentFactoryImpl spiPaymentFactory;
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
@@ -104,8 +104,7 @@ class ReadPeriodicPaymentServiceTest {
     @Test
     void getPayment_success() {
         // Given
-        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
-            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        doReturn(Optional.of(SPI_PERIODIC_PAYMENT)).when(spiPaymentFactory).getSpiPayment(pisCommonPaymentResponse);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ContentType.JSON.getType(), SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
@@ -132,8 +131,7 @@ class ReadPeriodicPaymentServiceTest {
     @Test
     void getPayment_updatePaymentStatusAfterSpiService_updatePaymentStatus_failed() {
         // Given
-        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
-            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        doReturn(Optional.of(SPI_PERIODIC_PAYMENT)).when(spiPaymentFactory).getSpiPayment(pisCommonPaymentResponse);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ContentType.JSON.getType(), SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
@@ -158,14 +156,13 @@ class ReadPeriodicPaymentServiceTest {
     @Test
     void getPayment_spiPaymentFactory_createSpiPeriodicPayment_failed() {
         // Given
-        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
-            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        doReturn(Optional.of(SPI_PERIODIC_PAYMENT)).when(spiPaymentFactory).getSpiPayment(pisCommonPaymentResponse);
 
         ErrorHolder expectedError = ErrorHolder.builder(ErrorType.PIS_404)
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
+        when(spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse))
             .thenReturn(Optional.empty());
 
         // When
@@ -190,7 +187,7 @@ class ReadPeriodicPaymentServiceTest {
         PaymentInformationResponse<CommonPayment> actualResponse = readPeriodicPaymentService.getPayment(pisCommonPaymentResponse, PSU_DATA, SOME_ENCRYPTED_PAYMENT_ID, ACCEPT_MEDIA_TYPE);
 
         // Then
-        verify(spiPaymentFactory, never()).createSpiPeriodicPayment(any());
+        verify(spiPaymentFactory, never()).getSpiPayment(any());
 
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getPayment()).isNull();
@@ -200,8 +197,7 @@ class ReadPeriodicPaymentServiceTest {
     @Test
     void getPayment_periodicPaymentSpi_getPaymentById_failed() {
         // Given
-        when(spiPaymentFactory.createSpiPeriodicPayment(pisCommonPaymentResponse))
-            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        doReturn(Optional.of(SPI_PERIODIC_PAYMENT)).when(spiPaymentFactory).getSpiPayment(pisCommonPaymentResponse);
         when(spiContextDataProvider.provideWithPsuIdData(PSU_DATA))
             .thenReturn(SPI_CONTEXT_DATA);
         when(periodicPaymentSpi.getPaymentById(SPI_CONTEXT_DATA, ContentType.JSON.getType(), SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))

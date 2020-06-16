@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.mapper.payment;
+package de.adorsys.psd2.xs2a.service.payment.support.mapper;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;

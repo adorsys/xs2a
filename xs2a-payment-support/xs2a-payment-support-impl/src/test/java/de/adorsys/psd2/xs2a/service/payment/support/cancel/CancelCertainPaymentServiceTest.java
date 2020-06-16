@@ -71,7 +71,7 @@ public class CancelCertainPaymentServiceTest {
     void cancelPayment_success() {
         // Given
         Optional<SpiPayment> spiSinglePayment = Optional.of(new SpiSinglePayment(PAYMENT_PRODUCT));
-        doReturn(spiSinglePayment).when(spiPaymentFactory).createSpiPaymentByPaymentType(commonPaymentResponse);
+        doReturn(spiSinglePayment).when(spiPaymentFactory).getSpiPayment(commonPaymentResponse);
 
         CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
         when(cancelPaymentService.initiatePaymentCancellation(spiSinglePayment.get(),
@@ -94,7 +94,7 @@ public class CancelCertainPaymentServiceTest {
     @Test
     void cancelPayment_noPayment() {
         // Given
-        when(spiPaymentFactory.createSpiPaymentByPaymentType(commonPaymentResponse)).thenReturn(Optional.empty());
+        when(spiPaymentFactory.getSpiPayment(commonPaymentResponse)).thenReturn(Optional.empty());
 
         // When
         ResponseObject<CancelPaymentResponse> actualResponse = cancelCertainPaymentService.cancelPayment(commonPaymentResponse, paymentCancellationRequest);
