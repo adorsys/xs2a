@@ -80,8 +80,11 @@ public class PisCommonPaymentConfirmationExpirationServiceImpl implements PisCom
 
     @Override
     public boolean isConfirmationExpired(PisCommonPaymentData pisCommonPaymentData) {
-        long expirationPeriodMs = aspspProfileService.getAspspSettings().getPis().getNotConfirmedPaymentExpirationTimeMs();
-        return pisCommonPaymentData != null && pisCommonPaymentData.isConfirmationExpired(expirationPeriodMs);
+        if (pisCommonPaymentData == null) {
+            return false;
+        }
+        long expirationPeriodMs = aspspProfileService.getAspspSettings(pisCommonPaymentData.getInstanceId()).getPis().getNotConfirmedPaymentExpirationTimeMs();
+        return pisCommonPaymentData.isConfirmationExpired(expirationPeriodMs);
     }
 
     @Transactional

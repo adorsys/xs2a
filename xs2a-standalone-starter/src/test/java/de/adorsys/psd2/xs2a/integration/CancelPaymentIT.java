@@ -128,7 +128,7 @@ class CancelPaymentIT {
     @BeforeEach
     void init() {
         // common actions for all tests
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -179,7 +179,7 @@ class CancelPaymentIT {
     @Test
     void cancelPayment_explicit_redirect_withMandatedAuthorisation_successful() throws Exception {
         // Given
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         cancelPayment_withMandatedAuthorisation_successful(httpHeadersExplicit, REDIRECT_SCA_APPROACH, REDIRECT_EXPLICIT_CANCELLATION_RESP);
     }
@@ -199,7 +199,7 @@ class CancelPaymentIT {
     @Test
     void cancelPayment_explicit_embedded_withNotMandatedAuthorisation_successful() throws Exception {
         // Given
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         cancelPayment_withMandatedAuthorisation_successful(httpHeadersExplicit, EMBEDDED_SCA_APPROACH, EMBEDDED_EXPLICIT_CANCELLATION_RESP);
     }
@@ -213,7 +213,7 @@ class CancelPaymentIT {
         given(paymentCancellationSpi.initiatePaymentCancellation(any(), any(), any()))
             .willReturn(spiResponse);
 
-        given(aspspProfileService.getScaApproaches())
+        given(aspspProfileService.getScaApproaches(null))
             .willReturn(Collections.singletonList(scaApproach));
 
         MockHttpServletRequestBuilder requestBuilder = delete(UrlBuilder.buildCancellationPaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPTED_PAYMENT_ID));
@@ -244,7 +244,7 @@ class CancelPaymentIT {
 
         given(paymentCancellationSpi.cancelPaymentWithoutSca(any(), any(), any())).willReturn(spiCancelPaymentResponse);
 
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
 
         MockHttpServletRequestBuilder requestBuilder = delete(UrlBuilder.buildCancellationPaymentUrl(SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, ENCRYPTED_PAYMENT_ID));
         requestBuilder.headers(httpHeaders);

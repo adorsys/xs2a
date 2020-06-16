@@ -65,18 +65,18 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().minusSeconds(100));
         pisCommonPaymentData.setPaymentId(PAYMENT_ID);
 
-        AuthorisationEntity pisAuthorization = new AuthorisationEntity();
-        pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
+        AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
+        pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
         when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
-            .thenReturn(Collections.singletonList(pisAuthorization));
+            .thenReturn(Collections.singletonList(pisAuthorisation));
 
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(pisAuthorisation.getInstanceId())).thenReturn(aspspSettings);
         when(aspspSettings.getPis()).thenReturn(getPisAspspProfileSetting(1000L));
 
         service.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData);
 
         assertEquals(TransactionStatus.RJCT, pisCommonPaymentData.getTransactionStatus());
-        assertEquals(ScaStatus.FAILED, pisAuthorization.getScaStatus());
+        assertEquals(ScaStatus.FAILED, pisAuthorisation.getScaStatus());
 
         verify(pisCommonPaymentDataRepository).save(pisCommonPaymentData);
     }
@@ -87,16 +87,16 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().plusHours(1));
 
-        AuthorisationEntity pisAuthorization = new AuthorisationEntity();
-        pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
+        AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
+        pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
 
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(pisAuthorisation.getInstanceId())).thenReturn(aspspSettings);
         when(aspspSettings.getPis()).thenReturn(getPisAspspProfileSetting(10L));
 
         service.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData);
 
         assertEquals(TransactionStatus.RCVD, pisCommonPaymentData.getTransactionStatus());
-        assertEquals(ScaStatus.RECEIVED, pisAuthorization.getScaStatus());
+        assertEquals(ScaStatus.RECEIVED, pisAuthorisation.getScaStatus());
     }
 
     @Test
@@ -105,7 +105,7 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().minusHours(1));
 
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(pisCommonPaymentData.getInstanceId())).thenReturn(aspspSettings);
         when(aspspSettings.getPis()).thenReturn(getPisAspspProfileSetting(10L));
 
         boolean actual = service.isConfirmationExpired(pisCommonPaymentData);
@@ -119,7 +119,7 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RCVD);
         pisCommonPaymentData.setCreationTimestamp(OffsetDateTime.now().plusHours(1));
 
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(pisCommonPaymentData.getInstanceId())).thenReturn(aspspSettings);
         when(aspspSettings.getPis()).thenReturn(getPisAspspProfileSetting(10L));
 
         boolean actual = service.isConfirmationExpired(pisCommonPaymentData);
@@ -129,11 +129,7 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
 
     @Test
     void isConfirmationExpired_pisCommonPaymentDataIsNull() {
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
-        when(aspspSettings.getPis()).thenReturn(getPisAspspProfileSetting(10L));
-
-        boolean actual = service.isConfirmationExpired(null);
-        assertFalse(actual);
+        assertFalse(service.isConfirmationExpired(null));
     }
 
     @Test

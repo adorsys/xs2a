@@ -236,7 +236,7 @@ class ConsentServiceInternalTest {
             .thenReturn(buildFinalisedConsent());
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, Collections.emptyList(), Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(consentEntity.getInstanceId())).thenReturn(aspspSettings);
 
         CmsCreateConsentResponse expected = new CmsCreateConsentResponse(EXTERNAL_CONSENT_ID, buildCmsConsent());
 
@@ -257,7 +257,7 @@ class ConsentServiceInternalTest {
             .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, Collections.emptyList(), Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(consentEntity.getInstanceId())).thenReturn(aspspSettings);
 
         CmsCreateConsentResponse expected = new CmsCreateConsentResponse(EXTERNAL_CONSENT_ID, buildCmsConsent());
         CmsConsent cmsConsent = buildCmsConsent();
@@ -292,7 +292,7 @@ class ConsentServiceInternalTest {
             .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToNewConsentEntity(any()))
             .thenReturn(consentEntity);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(consentEntity.getInstanceId())).thenReturn(aspspSettings);
 
         // When
         CmsResponse<CmsCreateConsentResponse> actual = consentServiceInternal.createConsent(buildCmsConsent());
@@ -305,10 +305,11 @@ class ConsentServiceInternalTest {
     @Test
     void createConsent_shouldAdjustValidUntilDate() throws WrongChecksumException {
         // Given
+        CmsConsent cmsConsent = buildCmsConsent();
         when(cmsConsentMapper.mapToNewConsentEntity(any()))
             .thenReturn(buildConsentEntity(EXTERNAL_CONSENT_ID));
         int maxConsentValidity = 2;
-        when(aspspProfileService.getAspspSettings()).thenReturn(buildMockAspspSettings(maxConsentValidity));
+        when(aspspProfileService.getAspspSettings(cmsConsent.getInstanceId())).thenReturn(buildMockAspspSettings(maxConsentValidity));
         LocalDate adjustedValidUntil = LocalDate.now().plusDays(maxConsentValidity - 1);
         ConsentEntity adjustedConsentEntity = buildAdjustedConsentEntity(EXTERNAL_CONSENT_ID, adjustedValidUntil);
         when(aisConsentVerifyingRepository.verifyAndSave(any(ConsentEntity.class)))
@@ -320,7 +321,7 @@ class ConsentServiceInternalTest {
         ArgumentCaptor<ConsentEntity> consentEntityCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
 
         // When
-        CmsResponse<CmsCreateConsentResponse> actual = consentServiceInternal.createConsent(buildCmsConsent());
+        CmsResponse<CmsCreateConsentResponse> actual = consentServiceInternal.createConsent(cmsConsent);
 
         // Then
         assertTrue(actual.isSuccessful());
@@ -690,6 +691,7 @@ class ConsentServiceInternalTest {
         consentEntity.setExternalId(EXTERNAL_CONSENT_ID);
         consentEntity.setValidUntil(LocalDate.now());
         consentEntity.setConsentStatus(ConsentStatus.REJECTED);
+        consentEntity.setInstanceId(INSTANCE_ID);
         return consentEntity;
     }
 

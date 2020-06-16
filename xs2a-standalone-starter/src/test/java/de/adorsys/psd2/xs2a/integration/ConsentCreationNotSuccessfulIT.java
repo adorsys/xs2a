@@ -136,7 +136,7 @@ class ConsentCreationNotSuccessfulIT {
         // when we use Explicit auth mode we need to set 'true' and value 'signingBasketSupported' in profile also should be 'true'
         httpHeadersExplicit.add("TPP-Explicit-Authorisation-Preferred", "true");
 
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -168,7 +168,7 @@ class ConsentCreationNotSuccessfulIT {
     void creation_consent_withoutPsuIpAddress_notSuccessful() throws Exception {
         //Given
         MockHttpServletRequestBuilder requestBuilder = makeRequestBuilder(UrlBuilder.buildConsentCreation(), httpHeadersWithoutPsuIpAddress, resourceToString(BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, UTF_8));
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
 
         //When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -191,7 +191,7 @@ class ConsentCreationNotSuccessfulIT {
     }
 
     private void makePreparations(ScaApproach scaApproach, String requestJsonPath) throws Exception {
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
         CmsConsent aisAccountConsent = CmsConsentBuilder.buildCmsConsent(requestJsonPath, scaApproach, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
         CmsCreateConsentResponse cmsCreateConsentResponse = new CmsCreateConsentResponse(ENCRYPT_CONSENT_ID, aisAccountConsent);
         given(aisConsentServiceEncrypted.createConsent(any(CmsConsent.class))).willReturn(CmsResponse.<CmsCreateConsentResponse>builder().payload(cmsCreateConsentResponse).build());

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
-import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
@@ -36,11 +36,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AspspProfileServiceImpl implements AspspProfileService {
-    private final ProfileConfiguration profileConfiguration;
+    private final ProfileConfigurations profileConfigurations;
 
     @Override
-    public AspspSettings getAspspSettings() {
-        BankProfileSetting setting = profileConfiguration.getSetting();
+    public AspspSettings getAspspSettings(String instanceId) {
+        BankProfileSetting setting = profileConfigurations.getSetting(instanceId);
 
         AisAspspProfileBankSetting aisBankSetting = setting.getAis();
         ConsentTypeBankSetting consentTypeSetting = aisBankSetting.getConsentTypes();
@@ -104,9 +104,14 @@ public class AspspProfileServiceImpl implements AspspProfileService {
     }
 
     @Override
-    public List<ScaApproach> getScaApproaches() {
-        return profileConfiguration.getSetting()
+    public List<ScaApproach> getScaApproaches(String instanceId) {
+        return profileConfigurations.getSetting(instanceId)
                    .getCommon()
                    .getScaApproachesSupported();
+    }
+
+    @Override
+    public boolean isMultitenancyEnabled() {
+        return profileConfigurations.isMultitenancyEnabled();
     }
 }

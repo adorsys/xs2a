@@ -59,10 +59,10 @@ public class RequestProviderService {
     private static final String ACCEPT_HEADER = "accept";
     static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
+    static final String INSTANCE_ID = "instance-id";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
-    private final InstanceIdRequestService instanceIdRequestService;
 
     public Optional<Boolean> resolveTppRedirectPreferred() {
 
@@ -106,7 +106,7 @@ public class RequestProviderService {
 
     @Nullable
     public String getInstanceId(){
-        return instanceIdRequestService.getInstanceId();
+        return getHeader(INSTANCE_ID);
     }
 
     public String getInternalRequestIdString() {

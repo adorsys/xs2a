@@ -1,6 +1,8 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
+import de.adorsys.psd2.aspsp.profile.exception.AspspProfileConfigurationNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +16,8 @@ import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -24,6 +28,12 @@ public class BankProfileReadingService implements ResourceLoaderAware {
 
     @Value("${xs2a.bank_profile.path:}")
     private String customBankProfile;
+
+    @Value("${xs2a.bank_profile.multitenancy.enabled:false}")
+    private boolean multitenancyEnabled;
+
+    @Value("#{${xs2a.bank_profile.multitenancy.customBankProfiles:{:}}}")
+    private Map<String, String> customBankProfiles = new HashMap<>();
 
     private ResourceLoader resourceLoader;
     private Yaml yaml;
@@ -37,8 +47,16 @@ public class BankProfileReadingService implements ResourceLoaderAware {
         this.resourceLoader = resourceLoader;
     }
 
-    public ProfileConfiguration getProfileConfiguration() {
-        return yaml.loadAs(loadProfile(), ProfileConfiguration.class);
+    public ProfileConfigurations getProfileConfigurations() {
+        Map<String, ProfileConfiguration> instanceConfigurations = new HashMap<>();
+        if (multitenancyEnabled) {
+            customBankProfiles.keySet().forEach(key -> instanceConfigurations.put(
+                key.toLowerCase(),
+                yaml.loadAs(loadProfile(key), ProfileConfiguration.class)
+            ));
+        }
+        ProfileConfiguration singleProfileConfiguration = yaml.loadAs(loadProfile(), ProfileConfiguration.class);
+        return new ProfileConfigurations(multitenancyEnabled, singleProfileConfiguration, instanceConfigurations);
     }
 
     private InputStream loadProfile() {
@@ -48,6 +66,27 @@ public class BankProfileReadingService implements ResourceLoaderAware {
         } catch (IOException e) {
             log.error("PSD2 api file is not found", e);
             throw new IllegalArgumentException("PSD2 api file is not found");
+        }
+    }
+
+    private InputStream loadProfile(String instanceId) {
+        Resource resource = resourceLoader.getResource(resolveBankProfile(instanceId));
+        try {
+            return resource.getInputStream();
+        } catch (IOException e) {
+            log.error("PSD2 api file is not found", e);
+            throw new IllegalArgumentException("PSD2 api file for `instance-id` " + instanceId + "is not found");
+        }
+    }
+
+    private String resolveBankProfile(String instanceId) {
+        if (multitenancyEnabled) {
+            if (!customBankProfiles.containsKey(instanceId.toLowerCase())) {
+                throw new AspspProfileConfigurationNotFoundException(instanceId);
+            }
+            return customBankProfiles.get(instanceId);
+        } else {
+            return resolveBankProfile();
         }
     }
 

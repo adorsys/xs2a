@@ -153,7 +153,7 @@ public class ConsentCreationSuccessfulIT {
         // when we use Explicit auth mode we need to set 'true' and value 'signingBasketSupported' in profile also should be 'true'
         httpHeadersExplicit.add("TPP-Explicit-Authorisation-Preferred", "true");
 
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -181,7 +181,7 @@ public class ConsentCreationSuccessfulIT {
 
     @Test
     void creation_dedicated_consent_implicit_redirect_oauth_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
         consentCreation_successful(httpHeadersImplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH);
     }
@@ -220,84 +220,84 @@ public class ConsentCreationSuccessfulIT {
     //
     @Test
     void creation_dedicated_consent_explicit_embedded_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
     void creation_dedicated_consent_explicit_embedded_signingBasket_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationModeAndSigningBasketSupported(EXPLICIT, true));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
     void creation_dedicated_consent_explicit_redirect_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, DEDICATED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     void creation_global_consent_explicit_embedded_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
     void creation_global_consent_explicit_embedded_signingBasket_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationModeAndSigningBasketSupported(EXPLICIT, true));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
     void creation_global_consent_explicit_redirect_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, GLOBAL_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     void creation_bank_offered_consent_explicit_redirect_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, BANK_OFFERED_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     void creation_all_available_account_consent_explicit_embedded_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH);
     }
 
     @Test
     void creation_all_available_account_consent_explicit_embedded_signingBasket_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationModeAndSigningBasketSupported(EXPLICIT, true));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.EMBEDDED, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH);
     }
 
     @Test
     void creation_all_available_account_consent_explicit_redirect_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     @Test
     void creation_all_available_with_balances_account_consent_explicit_redirect_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithStartAuthorisationMode(EXPLICIT));
         consentCreation_successful(httpHeadersExplicit, ScaApproach.REDIRECT, ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH, CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH);
     }
 
     private void consentCreation_successful(HttpHeaders headers, ScaApproach scaApproach, String requestJsonPath, String responseJsonPath) throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
         given(authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(buildCreateAisConsentAuthorizationResponse())

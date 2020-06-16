@@ -319,7 +319,7 @@ public class ConsentServiceInternal implements ConsentService {
 
     private ConsentEntity adjustConsentEntity(ConsentEntity consentEntity, ConsentType consentType) {
         if (ConsentType.AIS == consentType) {
-            int lifetime = aspspProfileService.getAspspSettings().getAis().getConsentTypes().getMaxConsentValidityDays();
+            int lifetime = aspspProfileService.getAspspSettings(consentEntity.getInstanceId()).getAis().getConsentTypes().getMaxConsentValidityDays();
             consentEntity.setValidUntil(adjustValidUntilDate(consentEntity.getValidUntil(), lifetime));
         }
 

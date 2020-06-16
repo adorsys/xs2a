@@ -46,7 +46,7 @@ class RequestProviderServiceTest {
     private static final String ACCEPT_HEADER = "accept";
     private static PsuIdData PSU_ID_DATA;
     private static final JsonReader jsonReader = new JsonReader();
-    private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<Map<String, String>>() {
+    private static final Map<String, String> HEADERS = jsonReader.getObjectFromFile("json/RequestHeaders.json", new TypeReference<>() {
     });
     private static final UUID INTERNAL_REQUEST_ID = UUID.fromString("9861d849-3302-4162-b79d-c5f8e543cdb0");
     private static final String TOKEN = "111111";
@@ -60,6 +60,7 @@ class RequestProviderServiceTest {
     private static final String CONTENT_TYPE_VALUE = MediaType.APPLICATION_JSON;
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
     private static final String TPP_BRAND_LOGGING_INFORMATION_VALUE = "tppBrandLoggingInformation";
+    private static final String INSTANCE_ID = "bank1";
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -113,6 +114,16 @@ class RequestProviderServiceTest {
         // Then
         verify(internalRequestIdService).getInternalRequestId();
         assertEquals(INTERNAL_REQUEST_ID, actualInternalRequestId);
+    }
+
+    @Test
+    void getInstanceId() {
+        when(httpServletRequest.getHeader(RequestProviderService.INSTANCE_ID)).thenReturn(INSTANCE_ID);
+        // When
+        String actual = requestProviderService.getInstanceId();
+
+        // Then
+        assertEquals(INSTANCE_ID, actual);
     }
 
     @Test

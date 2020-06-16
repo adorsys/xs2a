@@ -119,7 +119,7 @@ class InitiatePaymentsNotSuccessfulIT {
         headerMap.put("PSU-Corporate-ID-Type", "Some corporate id type");
         httpHeadersWithoutPsuIpAddress.setAll(headerMap);
 
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -145,7 +145,7 @@ class InitiatePaymentsNotSuccessfulIT {
     }
 
     private void makePreparations(ScaApproach scaApproach) {
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
         given(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))

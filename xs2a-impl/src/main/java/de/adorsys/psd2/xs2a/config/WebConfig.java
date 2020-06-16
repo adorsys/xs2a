@@ -26,7 +26,6 @@ import de.adorsys.psd2.validator.signature.impl.SignatureVerifierImpl;
 import de.adorsys.psd2.xs2a.component.PaymentTypeEnumConverter;
 import de.adorsys.psd2.xs2a.component.logger.request.RequestResponseLogger;
 import de.adorsys.psd2.xs2a.config.converter.MappingJackson2TextMessageConverter;
-import de.adorsys.psd2.xs2a.domain.InstanceIdRequestHolder;
 import de.adorsys.psd2.xs2a.domain.InternalRequestIdHolder;
 import de.adorsys.psd2.xs2a.domain.RedirectIdHolder;
 import de.adorsys.psd2.xs2a.domain.ScaApproachHolder;
@@ -38,7 +37,6 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ServiceTypeToErrorTypeMapper;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoHolder;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.advice.Xs2aRestExceptionHandler;
-import de.adorsys.psd2.xs2a.web.interceptor.InstanceIdInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import de.adorsys.psd2.xs2a.web.interceptor.validator.PaymentParametersValidationInterceptor;
@@ -86,7 +84,6 @@ public class WebConfig implements WebMvcConfigurer {
     private final PathParameterExtractor pathParameterExtractor;
     private final Xs2aRestExceptionHandler xs2aRestExceptionHandler;
     private final PaymentParametersValidationInterceptor paymentParametersValidationInterceptor;
-    private final InstanceIdInterceptor instanceIdInterceptor;
 
     @Override
     public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
@@ -116,7 +113,6 @@ public class WebConfig implements WebMvcConfigurer {
         // their URLs (and 'payment-service' or 'payment-type' can be broken).
         registry.addInterceptor(paymentParametersValidationInterceptor).addPathPatterns(GLOBAL_PATH);
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
-        registry.addInterceptor(instanceIdInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
     }
 
     @Bean
@@ -165,12 +161,6 @@ public class WebConfig implements WebMvcConfigurer {
     @RequestScope
     public InternalRequestIdHolder getInternalRequestIdHolder() {
         return new InternalRequestIdHolder();
-    }
-
-    @Bean
-    @RequestScope
-    public InstanceIdRequestHolder getInstanceIdRequestHolder() {
-        return new InstanceIdRequestHolder();
     }
 
     @Override

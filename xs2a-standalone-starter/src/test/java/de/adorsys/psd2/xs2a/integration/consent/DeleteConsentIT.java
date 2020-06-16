@@ -83,7 +83,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-class DeleteConsentTest {
+class DeleteConsentIT {
     private static final String ENCRYPTED_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
 
@@ -115,9 +115,9 @@ class DeleteConsentTest {
     void init() {
         httpHeaders.setAll(buildRequestHeaders());
 
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(aspspProfileService.getScaApproaches())
+        given(aspspProfileService.getScaApproaches(null))
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()

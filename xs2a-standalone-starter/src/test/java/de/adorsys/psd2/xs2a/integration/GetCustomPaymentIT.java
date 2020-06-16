@@ -122,7 +122,7 @@ class GetCustomPaymentIT extends CustomPaymentTestParent {
         spiPaymentInfo.setPaymentData(data);
         spiPaymentInfo.setStatus(TransactionStatus.ACSP);
 
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
 
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder().payload(response).build());

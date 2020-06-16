@@ -140,9 +140,9 @@ class AccountControllerIT {
     @BeforeEach
     void init() {
         // common actions for all tests
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(aspspProfileService.getScaApproaches())
+        given(aspspProfileService.getScaApproaches(null))
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()

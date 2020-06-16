@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
@@ -37,10 +38,10 @@ public class RequestProviderServiceMock extends RequestProviderService {
     @Value("${qwac-certificate-mock}")
     private String qwacCertificateMock;
 
+    @Autowired
     public RequestProviderServiceMock(HttpServletRequest httpServletRequest,
-                                      InternalRequestIdService internalRequestIdService,
-                                      InstanceIdRequestService instanceIdRequestService) {
-        super(httpServletRequest, internalRequestIdService, instanceIdRequestService);
+                                      InternalRequestIdService internalRequestIdService) {
+        super(httpServletRequest, internalRequestIdService);
     }
 
     @Override

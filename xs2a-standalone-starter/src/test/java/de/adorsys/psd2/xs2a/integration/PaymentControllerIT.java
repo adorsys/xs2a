@@ -147,7 +147,7 @@ class PaymentControllerIT {
     @BeforeEach
     void init() {
         // common actions for all tests
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -189,7 +189,7 @@ class PaymentControllerIT {
     @Test
     void getPaymentInitiationScaStatus_successful() throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(paymentServiceForAuthorisation.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, SINGLE_PAYMENT_TYPE, SEPA_PAYMENT_PRODUCT))
             .willReturn(ResponseObject.<Xs2aScaStatusResponse>builder().body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true)).build());
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
@@ -217,7 +217,7 @@ class PaymentControllerIT {
     @Test
     void cancelPaymentAuthorisation_successful() throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID)))
             .willReturn(CmsResponse.<ScaStatus>builder()
                             .payload(ScaStatus.RECEIVED)
@@ -246,9 +246,9 @@ class PaymentControllerIT {
     @Test
     void cancelPaymentAuthorisation_Redirect_OAuth_successful() throws Exception {
         // Given
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID)))
             .willReturn(CmsResponse.<ScaStatus>builder()
                             .payload(ScaStatus.RECEIVED)
@@ -277,7 +277,7 @@ class PaymentControllerIT {
     @Test
     void getPaymentInitiationCancellationAuthorisationInformation() throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse())

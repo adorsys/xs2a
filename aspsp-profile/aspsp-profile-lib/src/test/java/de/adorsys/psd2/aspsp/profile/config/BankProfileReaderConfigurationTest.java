@@ -31,12 +31,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
  class BankProfileReaderConfigurationTest {
+    private static final String INSTANCE_ID = "bank1";
+
     @Mock
     private BankProfileReadingService bankProfileReadingService;
 
@@ -47,46 +51,45 @@ import static org.mockito.Mockito.when;
         bankProfileReaderConfiguration = new BankProfileReaderConfiguration(bankProfileReadingService);
         ProfileConfiguration profileConfiguration = buildProfileConfiguration();
         profileConfiguration.afterPropertiesSet();
-        when(bankProfileReadingService.getProfileConfiguration())
-            .thenReturn(profileConfiguration);
+        when(bankProfileReadingService.getProfileConfigurations()).thenReturn(new ProfileConfigurations(false, profileConfiguration, Collections.emptyMap()));
     }
 
     @Test
      void profileConfigurationDefaultScaRedirectFlow() {
         //Given
         //When
-        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfigurations profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting().getCommon().getScaRedirectFlow());
+        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting(INSTANCE_ID).getCommon().getScaRedirectFlow());
     }
 
     @Test
      void profileConfigurationDefaultBookingStatus() {
         //Given
         //When
-        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfigurations profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(1, profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().size());
-        assertTrue(profileConfiguration.getSetting().getAis().getTransactionParameters().getAvailableBookingStatuses().contains(BookingStatus.BOOKED));
+        assertEquals(1, profileConfiguration.getSetting(INSTANCE_ID).getAis().getTransactionParameters().getAvailableBookingStatuses().size());
+        assertTrue(profileConfiguration.getSetting(INSTANCE_ID).getAis().getTransactionParameters().getAvailableBookingStatuses().contains(BookingStatus.BOOKED));
     }
 
     @Test
      void profileConfigurationDefaultScaApproach() {
         //Given
         //When
-        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfigurations profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(1, profileConfiguration.getSetting().getCommon().getScaApproachesSupported().size());
-        assertTrue(profileConfiguration.getSetting().getCommon().getScaApproachesSupported().contains(ScaApproach.REDIRECT));
+        assertEquals(1, profileConfiguration.getSetting(INSTANCE_ID).getCommon().getScaApproachesSupported().size());
+        assertTrue(profileConfiguration.getSetting(INSTANCE_ID).getCommon().getScaApproachesSupported().contains(ScaApproach.REDIRECT));
     }
 
     @Test
      void profileConfigurationDefaultStartAuthorisationMode() {
         //Given
         //When
-        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfigurations profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(StartAuthorisationMode.AUTO.getValue(), profileConfiguration.getSetting().getCommon().getStartAuthorisationMode());
+        assertEquals(StartAuthorisationMode.AUTO.getValue(), profileConfiguration.getSetting(INSTANCE_ID).getCommon().getStartAuthorisationMode());
     }
 
     private ProfileConfiguration buildProfileConfiguration() {

@@ -133,7 +133,7 @@ class GetCustomPaymentStatusIT extends CustomPaymentTestParent {
         given(commonPaymentSpi.getPaymentStatusById(any(SpiContextData.class), anyString(), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(PisCommonPaymentResponseBuilder.buildGetPaymentStatusResponse(buildGetPaymentStatusResponse));
 
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
 
         String content = IOUtils.resourceToString(requestContentPath, UTF_8);
         String paymentUrl = UrlBuilder.buildGetTransactionStatusUrl(paymentType.getValue(), CUSTOM_PAYMENT_PRODUCT, ENCRYPT_PAYMENT_ID);

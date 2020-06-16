@@ -17,7 +17,7 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
-import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
@@ -97,37 +97,38 @@ class AspspProfileUpdateServiceImplTest {
     private static final boolean AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A = false;
     private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
     private static final TppUriCompliance TPP_URI_COMPLIANCE_RESPONSE = TppUriCompliance.WARNING;
+    private static final String INSTANCE_ID = "bank1";
 
     @InjectMocks
     private AspspProfileUpdateServiceImpl aspspProfileUpdateService;
 
     @Mock
-    private ProfileConfiguration profileConfiguration;
+    private ProfileConfigurations profileConfigurations;
 
     @Spy
     private AspspSettingsToBankProfileSettingMapper profileSettingMapper = Mappers.getMapper(AspspSettingsToBankProfileSettingMapper.class);
 
     @BeforeEach
     void setUp() {
-        when(profileConfiguration.getSetting()).thenReturn(buildBankProfileSetting());
+        when(profileConfigurations.getSetting(INSTANCE_ID)).thenReturn(buildBankProfileSetting());
     }
 
     @Test
     void updateScaApproaches_success() {
         //When:
-        aspspProfileUpdateService.updateScaApproaches(Collections.singletonList(REDIRECT_APPROACH));
+        aspspProfileUpdateService.updateScaApproaches(Collections.singletonList(REDIRECT_APPROACH), INSTANCE_ID);
 
         //Then:
-        assertEquals(Collections.singletonList(REDIRECT_APPROACH), profileConfiguration.getSetting().getCommon().getScaApproachesSupported());
+        assertEquals(Collections.singletonList(REDIRECT_APPROACH), profileConfigurations.getSetting(INSTANCE_ID).getCommon().getScaApproachesSupported());
     }
 
     @Test
     void updateAspspSettings_success() {
         //When:
-        aspspProfileUpdateService.updateAspspSettings(buildAspspSettings());
+        aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
 
         //Then:
-        BankProfileSetting setting = profileConfiguration.getSetting();
+        BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(ACCOUNT_ACCESS_FREQUENCY_PER_DAY, setting.getAis().getConsentTypes().getAccountAccessFrequencyPerDay());
         assertEquals(MAX_CONSENT_VALIDITY_DAYS, setting.getAis().getConsentTypes().getMaxConsentValidityDays());
         assertEquals(BANK_OFFERED_CONSENT_SUPPORTED, setting.getAis().getConsentTypes().isBankOfferedConsentSupported());

@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain;
+package de.adorsys.psd2.aspsp.profile.exception;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
+public class AspspProfileConfigurationNotFoundException extends RuntimeException {
 
-@Getter
-@Setter
-public class InstanceIdRequestHolder {
-    @Nullable
-    private String instanceId;
+    private static final String ERROR_MESSAGE = "Profile configuration for Instance-ID `%s` not found.";
+
+    public AspspProfileConfigurationNotFoundException(String instanceId) {
+        super(String.format(ERROR_MESSAGE, instanceId));
+    }
 }

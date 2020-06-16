@@ -2,13 +2,28 @@
 
 == Table of Contents
 
-* Support multi tenancy in XS2A
+* Support multi-tenancy in XS2A
+* Support multi-tenancy in ASPSP Profile
 
-== Support multi tenancy in XS2A
+== Support multi-tenancy in XS2A
 
-From now on, XS2A supports multi tenancy with 1 database and 1 CMS instances.
+From now on, XS2A supports multi-tenancy with 1 database and 1 CMS instances.
 Request header `Instance-ID` defines a current tenant. The header is not mandatory.
 
 Response link `scaRedirect` will include `Instance-ID` parameter if the mentioned header comes with request.
 
 SPI objects `SpiAccountConsent`, `SpiPaymentInfo`, `SpiSinglePayment` and `SpiBulkPayment` were extended for `instanceId` field.
+
+== Support multi-tenancy in ASPSP Profile
+
+From now on, ASPSP Profile supports more than one ASPSP profiles. In this mode ASPSP Profile needs to be configured for each supporting instances separately.
+HTTP header `instance-id` is required for all requests to the profile otherwise error will occur.
+
+To enable multi tenancy in ASPSP Profile in `application.yml` set flag and register config profiles for every tenant:
+
+```
+xs2a.bank_profile.multitenancy.enabled=true
+xs2a.bank_profile.multitenancy.customBankProfiles={bank1:'classpath:bank1_profile.yml', bank2:'classpath:bank2_profile.yml'}
+```
+
+By default, multi-tenancy mode for ASPSP Profile is disabled.
