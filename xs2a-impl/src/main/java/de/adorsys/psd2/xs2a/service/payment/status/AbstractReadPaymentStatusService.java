@@ -24,12 +24,15 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
+import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -40,18 +43,12 @@ import java.util.Optional;
  * This class handles traditional payments (single, bulk, periodic).
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class AbstractReadPaymentStatusService implements ReadPaymentStatusService {
     private final SpiErrorMapper spiErrorMapper;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final MediaTypeMapper mediaTypeMapper;
-
-    public AbstractReadPaymentStatusService(SpiErrorMapper spiErrorMapper,
-                                            SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                            MediaTypeMapper mediaTypeMapper) {
-        this.spiErrorMapper = spiErrorMapper;
-        this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
-        this.mediaTypeMapper = mediaTypeMapper;
-    }
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
     public ReadPaymentStatusResponse readPaymentStatus(CommonPaymentData commonPaymentData, SpiContextData spiContextData, @NotNull String encryptedPaymentId, String acceptMediaType) {
@@ -62,9 +59,9 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
                     .build());
         }
 
-        Optional spiPaymentOptional = createSpiPayment(commonPaymentData);
+        Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
-        if (!spiPaymentOptional.isPresent()) {
+        if (spiPaymentOptional.isEmpty()) {
             return new ReadPaymentStatusResponse(
                 ErrorHolder.builder(ErrorType.PIS_404)
                     .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -85,8 +82,6 @@ public abstract class AbstractReadPaymentStatusService implements ReadPaymentSta
         SpiGetPaymentStatusResponse payload = spiResponse.getPayload();
         return new ReadPaymentStatusResponse(payload.getTransactionStatus(), payload.getFundsAvailable(), mediaTypeMapper.mapToMediaType(payload.getResponseContentType()), payload.getPaymentStatusRaw(), payload.getPsuMessage());
     }
-
-    protected abstract Optional createSpiPayment(CommonPaymentData commonPaymentData);
 
     protected abstract SpiResponse<SpiGetPaymentStatusResponse> getSpiPaymentStatusById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

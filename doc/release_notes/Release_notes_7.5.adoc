@@ -5,6 +5,7 @@
 * Support multi-tenancy in XS2A
 * Support multi-tenancy in ASPSP Profile
 * Fix not passing aspspAccountId to SPI
+* Created interface for SpiPaymentFactory
 
 == Support multi-tenancy in XS2A
 
@@ -32,3 +33,9 @@ By default, multi-tenancy mode for ASPSP Profile is disabled.
 == Fix not passing aspspAccountId to SPI
 
 From now on, `aspspAccountId` will be passed to SPI  when getting account details GET `/v1/accounts/{account-id}`.
+
+== Created interface for SpiPaymentFactory
+
+From now on, `SpiPaymentFactory` is interface in xs2a-impl with two implementations - `SpiPaymentFactoryImpl`
+in `xs2a-payment-support-impl` for single, periodic and bulk xs2a payments and `SpiCommonPaymentFactory` in
+`xs2a-payment-common-impl` for common payment.

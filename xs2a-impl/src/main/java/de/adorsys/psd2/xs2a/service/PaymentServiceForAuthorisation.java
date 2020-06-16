@@ -91,7 +91,7 @@ public abstract class PaymentServiceForAuthorisation {
     abstract SpiResponse<Boolean> getTrustedBeneficiaryFlagFromSpi(SpiContextData contextData, SpiPayment spiPayment, String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     private ResponseObject<Boolean> getTrustedBeneficiaryFlag(PsuIdData psuIdData, String paymentId, String authorisationId, PisCommonPaymentResponse pisCommonPaymentResponse) {
-        SpiPayment spiPayment = spiPaymentFactory.createSpiPaymentByPaymentType(pisCommonPaymentResponse).orElse(null);
+        SpiPayment spiPayment = spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse).orElse(null);
 
         SpiResponse<Boolean> spiResponse = getTrustedBeneficiaryFlagFromSpi(spiContextDataProvider.provideWithPsuIdData(psuIdData),
                                                                             spiPayment,

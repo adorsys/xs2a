@@ -27,8 +27,8 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.payment.support.SpiPaymentFactoryImpl;
 import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -69,7 +69,7 @@ class ReadBulkPaymentStatusServiceTest {
     @InjectMocks
     private ReadBulkPaymentStatusService readBulkPaymentStatusService;
     @Mock
-    private SpiPaymentFactory spiPaymentFactory;
+    private SpiPaymentFactoryImpl spiPaymentFactory;
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
@@ -93,8 +93,7 @@ class ReadBulkPaymentStatusServiceTest {
         // Given
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
-        when(spiPaymentFactory.createSpiBulkPayment(commonPaymentData))
-            .thenReturn(Optional.of(SPI_BULK_PAYMENT));
+        doReturn(Optional.of(SPI_BULK_PAYMENT)).when(spiPaymentFactory).getSpiPayment(commonPaymentData);
         when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_BULK_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
         when(mediaTypeMapper.mapToMediaType(JSON_MEDIA_TYPE))
@@ -119,7 +118,7 @@ class ReadBulkPaymentStatusServiceTest {
         ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(commonPaymentData, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);
 
         // Then
-        verify(spiPaymentFactory, never()).createSpiBulkPayment(any());
+        verify(spiPaymentFactory, never()).getSpiPayment(any());
 
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
@@ -132,8 +131,7 @@ class ReadBulkPaymentStatusServiceTest {
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiBulkPayment(commonPaymentData))
-            .thenReturn(Optional.empty());
+        when(spiPaymentFactory.getSpiPayment(commonPaymentData)).thenReturn(Optional.empty());
 
         // When
         ReadPaymentStatusResponse actualResponse = readBulkPaymentStatusService.readPaymentStatus(commonPaymentData, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);
@@ -150,8 +148,7 @@ class ReadBulkPaymentStatusServiceTest {
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiBulkPayment(commonPaymentData))
-            .thenReturn(Optional.of(SPI_BULK_PAYMENT));
+        doReturn(Optional.of(SPI_BULK_PAYMENT)).when(spiPaymentFactory).getSpiPayment(commonPaymentData);
         when(bulkPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_BULK_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE_FAILURE);
         when(spiErrorMapper.mapToErrorHolder(TRANSACTION_RESPONSE_FAILURE, ServiceType.PIS))
