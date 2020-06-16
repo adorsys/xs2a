@@ -51,6 +51,7 @@ public class Xs2aToSpiAccountReferenceMapper {
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
         return new SpiAccountReference(
+            account.getAspspAccountId(),
             account.getResourceId(),
             account.getIban(),
             account.getBban(),
