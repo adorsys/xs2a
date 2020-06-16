@@ -1,3 +1,9 @@
 = Release notes v.6.5
 
 == Table of Contents
+
+* Fix not passing aspspAccountId to SPI
+
+== Fix not passing aspspAccountId to SPI
+
+From now on, `aspspAccountId` will be passed to SPI  when getting account details GET `/v1/accounts/{account-id}`.
