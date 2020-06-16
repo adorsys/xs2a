@@ -137,7 +137,7 @@ class PaymentStartCancellationAuthorisationIT {
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null)).willReturn(CmsResponse.<Boolean>builder()
                                                                                                 .payload(false)
                                                                                                 .build());
-        given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getAspspSettings(null)).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppService.updateTppInfo(any(TppInfo.class)))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
@@ -153,7 +153,7 @@ class PaymentStartCancellationAuthorisationIT {
                             .payload(buildPisCommonPaymentResponse())
                             .build());
 
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
         given(authorisationServiceEncrypted.createAuthorisation(pisCancellationAuthorisationParentHolderCaptor.capture(), createAuthorisationRequestCaptor.capture()))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, PIS_AUTHORISATION_SCA_STATUS, null, null))

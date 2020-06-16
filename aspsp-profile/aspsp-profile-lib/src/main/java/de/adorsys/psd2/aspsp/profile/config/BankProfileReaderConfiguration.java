@@ -29,7 +29,7 @@ public class BankProfileReaderConfiguration {
     private final BankProfileReadingService bankProfileReadingService;
 
     @Bean
-    public ProfileConfiguration profileConfiguration() {
-        return bankProfileReadingService.getProfileConfiguration();
+    public ProfileConfigurations profileConfiguration() {
+        return bankProfileReadingService.getProfileConfigurations();
     }
 }

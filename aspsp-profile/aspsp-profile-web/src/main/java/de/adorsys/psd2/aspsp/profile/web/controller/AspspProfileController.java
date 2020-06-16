@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,20 +38,32 @@ import java.util.List;
 @RequestMapping(path = "/api/v1/aspsp-profile")
 @Api(value = "Aspsp profile", tags = AspspProfileApiTagName.ASPSP_PROFILE)
 public class AspspProfileController {
+    public static final String DEFAULT_SERVICE_INSTANCE_ID = "";
 
     private final AspspProfileService aspspProfileService;
 
     @GetMapping
     @ApiOperation(value = "Reads aspsp specific settings")
     @ApiResponse(code = 200, message = "Ok", response = AspspSettings.class)
-    public ResponseEntity<AspspSettings> getAspspSettings() {
-        return new ResponseEntity<>(aspspProfileService.getAspspSettings(), HttpStatus.OK);
+    public ResponseEntity<AspspSettings> getAspspSettings(
+        @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId
+    ) {
+        return new ResponseEntity<>(aspspProfileService.getAspspSettings(instanceId), HttpStatus.OK);
     }
 
     @GetMapping(path = "/sca-approaches")
     @ApiOperation(value = "Reads list of sca approaches")
     @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
-    public ResponseEntity<List<ScaApproach>> getScaApproaches() {
-        return new ResponseEntity<>(aspspProfileService.getScaApproaches(), HttpStatus.OK);
+    public ResponseEntity<List<ScaApproach>> getScaApproaches(
+        @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId
+    ) {
+        return new ResponseEntity<>(aspspProfileService.getScaApproaches(instanceId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/multitenancy/enabled")
+    @ApiOperation(value = "Reads multitenncy supporting flag")
+    @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
+    public ResponseEntity<Boolean> isMultitenancyEnabled() {
+        return new ResponseEntity<Boolean>(aspspProfileService.isMultitenancyEnabled(), HttpStatus.OK);
     }
 }

@@ -72,7 +72,7 @@ public class AisConsentIT {
     @BeforeEach
     public void setUp() {
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(aspspSettings);
     }
 
     @Test
@@ -197,6 +197,7 @@ public class AisConsentIT {
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setTppAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setConsentData(jsonReader.getBytesFromFile("json/consent/integration/ais/ais-consent-data.json"));
+        cmsConsent.setInstanceId(DEFAULT_SERVICE_INSTANCE_ID);
         return cmsConsent;
     }
 

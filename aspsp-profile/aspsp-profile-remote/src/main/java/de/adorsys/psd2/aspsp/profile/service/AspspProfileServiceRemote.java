@@ -22,8 +22,11 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -36,15 +39,24 @@ public class AspspProfileServiceRemote implements AspspProfileService {
     private final AspspProfileRemoteUrls aspspProfileRemoteUrls;
 
     @Override
-    public AspspSettings getAspspSettings() {
+    public AspspSettings getAspspSettings(String instanceId) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Instance-ID", instanceId);
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getAspspSettings(), HttpMethod.GET, null, AspspSettings.class).getBody();
+            aspspProfileRemoteUrls.getAspspSettings(), HttpMethod.GET, new HttpEntity<>(headers), AspspSettings.class).getBody();
     }
 
     @Override
-    public List<ScaApproach> getScaApproaches() {
+    public List<ScaApproach> getScaApproaches(String instanceId) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Instance-ID", instanceId);
         return aspspProfileRestTemplate.exchange(
-            aspspProfileRemoteUrls.getScaApproaches(), HttpMethod.GET, null, new ParameterizedTypeReference<List<ScaApproach>>() {
+            aspspProfileRemoteUrls.getScaApproaches(), HttpMethod.GET, new HttpEntity<>(headers), new ParameterizedTypeReference<List<ScaApproach>>() {
             }).getBody();
+    }
+
+    @Override
+    public boolean isMultitenancyEnabled() {
+        return aspspProfileRestTemplate.getForObject(aspspProfileRemoteUrls.isMultitenancyEnabled(), Boolean.class);
     }
 }

@@ -204,7 +204,7 @@ public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null))
                             .build());
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
         given(commonPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(PisCommonPaymentResponseBuilder.buildSpiPaymentInitiationResponse());
         given(consentRestTemplate.exchange(anyString(), any(HttpMethod.class), any(), any(Class.class), anyString()))

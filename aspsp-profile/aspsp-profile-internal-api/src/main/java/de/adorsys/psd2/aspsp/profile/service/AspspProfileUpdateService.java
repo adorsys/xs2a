@@ -27,12 +27,14 @@ public interface AspspProfileUpdateService {
      *
      * @param scaApproaches SCA approaches to be set in the profile
      */
-    void updateScaApproaches(List<ScaApproach> scaApproaches);
+    void updateScaApproaches(List<ScaApproach> scaApproaches, String instanceId);
 
     /**
      * Updates ASPSP settings in ASPSP profile by replacing all existing values with new ones
      *
      * @param aspspSettings ASPSP Settings to be set in the profile
      */
-    void updateAspspSettings(AspspSettings aspspSettings);
+    void updateAspspSettings(AspspSettings aspspSettings, String instanceId);
+
+    void enableMultitenancy(Boolean multitenancyEnabled);
 }

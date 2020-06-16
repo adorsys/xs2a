@@ -135,7 +135,7 @@ class ContextPathIT {
         httpHeadersImplicit.add("TPP-Redirect-URI", "ok.uri");
 
 
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -156,7 +156,7 @@ class ContextPathIT {
 
     @Test
     void createConsent_withCustomContextPathAndForcedXs2aBaseUrl_shouldCreateConsentWithForcedLinks() throws Exception {
-        when(aspspProfileService.getAspspSettings())
+        when(aspspProfileService.getAspspSettings(null))
             .thenReturn(AspspSettingsBuilder.buildAspspSettingsWithForcedXs2aBaseUrl("http://myhost.com/mypath/"));
 
         createConsent_withCustomContextPath(httpHeadersImplicit, CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_FORCED_PATH);
@@ -166,7 +166,7 @@ class ContextPathIT {
         // Given
         CmsConsent cmsConsent = CmsConsentBuilder.buildCmsConsent(CREATE_CONSENT_REQUEST_JSON_PATH, SCA_APPROACH, ENCRYPT_CONSENT_ID, xs2aObjectMapper);
 
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(SCA_APPROACH));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null))

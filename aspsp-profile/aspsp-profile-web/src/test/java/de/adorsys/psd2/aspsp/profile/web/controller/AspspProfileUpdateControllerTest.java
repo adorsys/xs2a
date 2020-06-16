@@ -32,6 +32,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -50,12 +51,12 @@ class AspspProfileUpdateControllerTest {
         ScaApproach scaApproach = ScaApproach.REDIRECT;
 
         // When
-        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach));
+        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach), "");
 
         // Then
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
 
-        verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach));
+        verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach), "");
     }
 
     @Test
@@ -65,12 +66,12 @@ class AspspProfileUpdateControllerTest {
         ScaApproach scaApproach = ScaApproach.REDIRECT;
 
         // When
-        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach));
+        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach), "");
 
         // Then
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
 
-        verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach));
+        verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach), "");
     }
 
     @Test
@@ -80,12 +81,12 @@ class AspspProfileUpdateControllerTest {
         ScaApproach scaApproach = ScaApproach.REDIRECT;
 
         // When
-        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach));
+        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach), "");
 
         // Then
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
 
-        verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach));
+        verify(aspspProfileUpdateService).updateScaApproaches(Collections.singletonList(scaApproach), "");
     }
 
     @Test
@@ -96,10 +97,10 @@ class AspspProfileUpdateControllerTest {
         // When
         Assertions.assertThrows(
             IllegalArgumentException.class,
-            () -> aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach))
+            () -> aspspProfileUpdateController.updateScaApproach(Collections.singletonList(requestedScaApproach), "")
         );
 
-        verify(aspspProfileUpdateService, never()).updateScaApproaches(anyList());
+        verify(aspspProfileUpdateService, never()).updateScaApproaches(anyList(), eq(""));
     }
 
     @Test
@@ -108,11 +109,11 @@ class AspspProfileUpdateControllerTest {
         AspspSettings aspspSettings = AspspSettingsBuilder.buildAspspSettings();
 
         // When
-        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateAspspSettings(aspspSettings);
+        ResponseEntity<Void> actualResponse = aspspProfileUpdateController.updateAspspSettings(aspspSettings, "");
 
         // Then
         assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
 
-        verify(aspspProfileUpdateService).updateAspspSettings(aspspSettings);
+        verify(aspspProfileUpdateService).updateAspspSettings(aspspSettings, "");
     }
 }

@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.profile;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,16 +37,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AspspProfileServiceWrapperTest {
     private static final String ASPSP_SETTINGS_JSON_PATH = "json/service/profile/AspspSettings.json";
+    private static final String INSTANCE_ID = "bank1";
 
     @Mock
     private AspspProfileService aspspProfileService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @InjectMocks
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @BeforeEach
     void setUp() {
-        when(aspspProfileService.getAspspSettings())
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getAspspSettings(INSTANCE_ID))
             .thenReturn(new JsonReader().getObjectFromFile(ASPSP_SETTINGS_JSON_PATH, AspspSettings.class));
     }
 

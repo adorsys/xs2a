@@ -42,4 +42,8 @@ public class AspspProfileRemoteUrls {
     public String getAspspSettings() {
         return aspspProfileBaseUrl + "/aspsp-profile";
     }
+
+    public String isMultitenancyEnabled() {
+        return aspspProfileBaseUrl + "/aspsp-profile/multitenancy/enabled";
+    }
 }

@@ -65,7 +65,7 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
         psuDataOptional.ifPresent(psuData -> authorisationParent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, psuDataList)));
         authorisationParent.setPsuDataList(psuDataList);
 
-        CommonAspspProfileSetting commonAspspProfileSetting = aspspProfileService.getAspspSettings().getCommon();
+        CommonAspspProfileSetting commonAspspProfileSetting = aspspProfileService.getAspspSettings(authorisationParent.getInstanceId()).getCommon();
         AuthorisationEntity entity = authorisationMapper.prepareAuthorisationEntity(authorisationParent, request, psuDataOptional, getAuthorisationType(),
                                                                                     commonAspspProfileSetting.getRedirectUrlExpirationTimeMs(),
                                                                                     commonAspspProfileSetting.getAuthorisationExpirationTimeMs());

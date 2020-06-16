@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service;
+package de.adorsys.psd2.aspsp.profile.exception;
 
-import de.adorsys.psd2.xs2a.domain.InstanceIdRequestHolder;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.stereotype.Service;
+public class InstanceIdIsMandatoryHeaderException extends RuntimeException {
 
-@Service
-@RequiredArgsConstructor
-public class InstanceIdRequestService {
-    private final InstanceIdRequestHolder instanceIdRequestHolder;
-
-    @Nullable
-    public String getInstanceId() {
-        return instanceIdRequestHolder.getInstanceId();
+    public InstanceIdIsMandatoryHeaderException() {
+        super("Header `Instance-ID` is mandatory in multi tenant mode.");
     }
 }

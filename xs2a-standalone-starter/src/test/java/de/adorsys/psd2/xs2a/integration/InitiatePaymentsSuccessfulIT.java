@@ -248,7 +248,7 @@ class InitiatePaymentsSuccessfulIT {
         responseMapSigningBasketMode.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "psuIdDataIsEmpty", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_psuIdDataIsEmpty_signingBasketActive_response.json");
         responseMapSigningBasketMode.put(true, PaymentType.SINGLE, ScaApproach.EMBEDDED, "multilevelSca", "", "/json/payment/res/explicit/SinglePaymentInitiate_embedded_explicit_multilevelSca_signingBasketActive_response.json");
 
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
@@ -329,7 +329,7 @@ class InitiatePaymentsSuccessfulIT {
 
     @Test
     void initiateSinglePayment_implicit_redirect_oauth_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithScaRedirectFlow(ScaRedirectFlow.OAUTH));
         given(authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID), getAuthorisationRequest(ScaApproach.REDIRECT)))
             .willReturn(getCmsReponse(ScaStatus.RECEIVED));
@@ -383,7 +383,7 @@ class InitiatePaymentsSuccessfulIT {
 
     @Test
     void initiateSinglePayment_explicit_embedded_multilevelSca_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         given(authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID), getAuthorisationRequest(ScaApproach.EMBEDDED)))
             .willReturn(getCmsReponse(SCA_STATUS));
@@ -400,7 +400,7 @@ class InitiatePaymentsSuccessfulIT {
 
     @Test
     void initiateSinglePayment_explicit_embedded_multilevelSca_psuIdDataIsEmpty_signingBasketActive_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         given(authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID), getAuthorisationRequestWithEmptyPsuIdData(ScaApproach.EMBEDDED)))
             .willReturn(getCmsReponse(SCA_STATUS));
@@ -409,7 +409,7 @@ class InitiatePaymentsSuccessfulIT {
 
     @Test
     void initiateSinglePayment_explicit_embedded_multilevelSca_signingBasketActive_successful() throws Exception {
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettingsWithSigningBasketSupported(true));
         given(authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID), getAuthorisationRequest(ScaApproach.EMBEDDED)))
             .willReturn(getCmsReponse(SCA_STATUS));
@@ -482,7 +482,7 @@ class InitiatePaymentsSuccessfulIT {
 
     private void initiateSinglePayment_successful(HttpHeaders headers, ScaApproach scaApproach, boolean multilevelSca, boolean isPsuIdDataEmpty) throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
 
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(multilevelSca));
@@ -514,7 +514,7 @@ class InitiatePaymentsSuccessfulIT {
 
     private void initiateSinglePaymentOauth_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
 
         given(singlePaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiSinglePayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildSinglePaymentResponse(false));
@@ -541,7 +541,7 @@ class InitiatePaymentsSuccessfulIT {
 
     private void initiatePeriodicPayment_successful(HttpHeaders headers, ScaApproach scaApproach) throws Exception {
         // Given
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
         given(periodicPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPeriodicPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildPeriodicPaymentResponse());
 
@@ -570,7 +570,7 @@ class InitiatePaymentsSuccessfulIT {
         Map<String, BigDecimal> amountMap = new HashMap<>();
         amountMap.put("DE21500105176194357737", new BigDecimal("666"));
         amountMap.put("DE54500105173424724776", new BigDecimal("888"));
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(scaApproach));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
 
         given(bulkPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiBulkPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiPaymentInitiationResponseBuilder.buildBulkPaymentResponse());
@@ -604,7 +604,7 @@ class InitiatePaymentsSuccessfulIT {
     }
 
     private boolean isExplicitMethod(HttpHeaders headers, boolean multilevelScaRequired) {
-        StartAuthorisationMode startAuthorisationMode = aspspProfileService.getAspspSettings().getCommon().getStartAuthorisationMode();
+        StartAuthorisationMode startAuthorisationMode = aspspProfileService.getAspspSettings(null).getCommon().getStartAuthorisationMode();
 
         if (StartAuthorisationMode.AUTO.equals(startAuthorisationMode)) {
             return multilevelScaRequired || isSigningBasketModeActive(headers);
@@ -614,7 +614,7 @@ class InitiatePaymentsSuccessfulIT {
 
     private boolean isSigningBasketModeActive(HttpHeaders headers) {
         boolean tppExplicitAuthorisationPreferred = Boolean.parseBoolean(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
-        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings().getCommon().isSigningBasketSupported();
+        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings(null).getCommon().isSigningBasketSupported();
     }
 
     private CmsResponse<CreateAuthorisationResponse> getCmsReponse(ScaStatus scaStatus) {
