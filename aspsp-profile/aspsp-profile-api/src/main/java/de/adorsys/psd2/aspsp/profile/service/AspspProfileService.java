@@ -31,12 +31,14 @@ public interface AspspProfileService {
      *
      * @return aspsp specific settings method which is stored in profile
      */
-    AspspSettings getAspspSettings();
+    AspspSettings getAspspSettings(String instanceId);
 
     /**
      * Reads list of sca approaches
      *
      * @return list of sca approaches ordered by priority which is stored in profile
      */
-    List<ScaApproach> getScaApproaches();
+    List<ScaApproach> getScaApproaches(String instanceId);
+
+    boolean isMultitenancyEnabled();
 }

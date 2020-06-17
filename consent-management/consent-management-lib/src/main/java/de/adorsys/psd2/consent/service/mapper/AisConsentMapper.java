@@ -118,7 +118,8 @@ public class AisConsentMapper {
                                                                          entity.getTrustedBeneficiariesType()),
                               accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
                                                                            entity.getOwnerNameType(),
-                                                                           entity.getTrustedBeneficiariesType()));
+                                                                           entity.getTrustedBeneficiariesType()),
+                              entity.getInstanceId());
     }
 
     public AccountAccess mapToAccountAccess(AisAccountAccess accountAccess) {

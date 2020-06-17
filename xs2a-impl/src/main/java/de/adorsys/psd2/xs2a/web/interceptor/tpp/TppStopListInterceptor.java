@@ -43,6 +43,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CERTIFICATE_BLOCK
 @RequiredArgsConstructor
 public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     private static final String STOP_LIST_ERROR_MESSAGE = "Signature/corporate seal certificate has been blocked by the ASPSP";
+    private static final String INSTANCE_ID = "Instance-ID";
 
     private final ErrorMapperContainer errorMapperContainer;
     private final TppService tppService;
@@ -54,7 +55,8 @@ public class TppStopListInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         TppInfo tppInfo = tppService.getTppInfo();
-        CmsResponse<Boolean> cmsResponse = tppStopListService.checkIfTppBlocked(tppInfo.getAuthorisationNumber());
+        CmsResponse<Boolean> cmsResponse = tppStopListService.checkIfTppBlocked(tppInfo.getAuthorisationNumber(),
+                                                                                request.getHeader(INSTANCE_ID));
 
         if (cmsResponse.isSuccessful() && BooleanUtils.isTrue(cmsResponse.getPayload())) {
             response.getWriter().write(xs2aObjectMapper.writeValueAsString(createError()));

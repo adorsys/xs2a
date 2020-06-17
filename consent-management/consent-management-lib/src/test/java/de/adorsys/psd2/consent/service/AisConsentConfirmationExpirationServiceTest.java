@@ -86,11 +86,11 @@ class AisConsentConfirmationExpirationServiceTest {
     @Test
     void checkAndUpdateOnConfirmationExpiration_expired() {
         // Given
-        ArgumentCaptor<ConsentEntity> aisConsentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
-        when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(100L));
-
         ConsentEntity consent = buildConsent();
         consent.setCreationTimestamp(OffsetDateTime.now().minusHours(1));
+
+        ArgumentCaptor<ConsentEntity> aisConsentCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
+        when(aspspProfileService.getAspspSettings(consent.getInstanceId())).thenReturn(buildAspspSettings(100L));
 
         // When
         expirationService.checkAndUpdateOnConfirmationExpiration(consent);
@@ -103,9 +103,10 @@ class AisConsentConfirmationExpirationServiceTest {
     @Test
     void checkAndUpdateOnConfirmationExpiration_nonExpired() {
         // Given
-        when(aspspProfileService.getAspspSettings()).thenReturn(buildAspspSettings(86400L));
-
         ConsentEntity consent = buildConsent();
+
+        when(aspspProfileService.getAspspSettings(consent.getInstanceId())).thenReturn(buildAspspSettings(86400L));
+
         // When
         ConsentEntity actual = expirationService.checkAndUpdateOnConfirmationExpiration(consent);
 

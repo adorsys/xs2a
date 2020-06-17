@@ -38,11 +38,12 @@ public class PiisConsent extends Consent<PiisConsentData> {
 
     public PiisConsent(PiisConsentData consentData, String id, String internalRequestId, ConsentStatus consentStatus, boolean recurringIndicator,
                        LocalDate expireDate, LocalDate lastActionDate, OffsetDateTime creationTimestamp, ConsentTppInformation consentTppInformation,
-                       List<PsuIdData> psuIdDataList, AccountAccess aspspAccountAccess) {
+                       List<PsuIdData> psuIdDataList, AccountAccess aspspAccountAccess, String instanceId) {
 
         super(consentData, id, internalRequestId, consentStatus, 0, recurringIndicator, false,
               null, expireDate, lastActionDate, creationTimestamp, null, consentTppInformation,
-              new AuthorisationTemplate(), psuIdDataList, Collections.emptyList(), Collections.emptyMap(), AccountAccess.EMPTY_ACCESS, aspspAccountAccess);
+              new AuthorisationTemplate(), psuIdDataList, Collections.emptyList(), Collections.emptyMap(),
+              AccountAccess.EMPTY_ACCESS, aspspAccountAccess, instanceId);
     }
 
     @Override

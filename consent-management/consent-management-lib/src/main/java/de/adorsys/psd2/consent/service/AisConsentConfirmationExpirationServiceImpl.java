@@ -54,7 +54,7 @@ public class AisConsentConfirmationExpirationServiceImpl implements AisConsentCo
 
     @Override
     public boolean isConfirmationExpired(ConsentEntity consent) {
-        long expirationPeriodMs = aspspProfileService.getAspspSettings().getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs();
+        long expirationPeriodMs = aspspProfileService.getAspspSettings(consent.getInstanceId()).getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs();
         return consent != null && consent.isConfirmationExpired(expirationPeriodMs);
     }
 

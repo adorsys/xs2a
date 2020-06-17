@@ -36,7 +36,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AspspProfileControllerTest {
 
-
     @InjectMocks
     private AspspProfileController aspspProfileController;
 
@@ -47,11 +46,11 @@ class AspspProfileControllerTest {
     void getAspspSettings() {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
-        when(aspspProfileService.getAspspSettings())
+        when(aspspProfileService.getAspspSettings(""))
             .thenReturn(AspspSettingsBuilder.buildAspspSettings());
 
         //When:
-        ResponseEntity<AspspSettings> actualResponse = aspspProfileController.getAspspSettings();
+        ResponseEntity<AspspSettings> actualResponse = aspspProfileController.getAspspSettings("");
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);
@@ -65,11 +64,11 @@ class AspspProfileControllerTest {
         //Given:
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
-        when(aspspProfileService.getScaApproaches())
+        when(aspspProfileService.getScaApproaches(""))
             .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
 
         //When:
-        ResponseEntity<List<ScaApproach>> actualResponse = aspspProfileController.getScaApproaches();
+        ResponseEntity<List<ScaApproach>> actualResponse = aspspProfileController.getScaApproaches("");
 
         //Then:
         assertThat(actualResponse.getStatusCode()).isEqualTo(expectedStatusCode);

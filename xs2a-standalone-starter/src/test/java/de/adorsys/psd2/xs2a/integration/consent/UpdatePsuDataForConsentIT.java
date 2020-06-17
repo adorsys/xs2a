@@ -135,13 +135,13 @@ class UpdatePsuDataForConsentIT {
         httpHeaders.add("X-Request-ID", X_REQUEST_ID);
         httpHeaders.add("PSU-ID", PSU_ID);
 
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(aspspProfileService.getAspspSettings())
+        given(aspspProfileService.getAspspSettings(null))
             .willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(aspspProfileService.getScaApproaches())
+        given(aspspProfileService.getScaApproaches(null))
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
         given(tppService.updateTppInfo(any(TppInfo.class)))
             .willReturn(CmsResponse.<Boolean>builder()

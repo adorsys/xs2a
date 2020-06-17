@@ -39,6 +39,7 @@ public class CommonPayment implements CustomContentTypeProvider {
     protected String creditorId;
     protected OffsetDateTime creationTimestamp;
     private String contentType;
+    protected String instanceId;
 
     @Override
     public MediaType getCustomContentType() {

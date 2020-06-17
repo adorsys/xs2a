@@ -7,6 +7,19 @@
 
 === Multi-tenancy support
 
+By default, multi-tenancy mode is disabled.
+Multi-tenancy is an architecture in which a single instance of a software application serves multiple customers.
+Each customer shares the software applications (ASPSP Profile, CMS) and shares a single database. Each tenant’s data is isolated and remains invisible to other tenants.
+
+ASPSP Profile supports multi-tenancy mode. Configuration can be done by switching flag on and registering all supporting bank profiles in `application.yml`:
+
+```
+xs2a.bank_profile.multitenancy.enabled=true
+xs2a.bank_profile.multitenancy.customBankProfiles={bank1:'classpath:bank1_profile.yml', bank2:'classpath:bank2_profile.yml'}
+```
+
+When multi-tenancy is enabled and fully configured additional header `instance-id` is required for all HTTP requests, otherwise get an error 400 `BAD_REQUEST`.
+
 It's possible to use CMS database in multi-tenancy mode, with multiple XS2A instances being connected to one CMS database.
 This approach is not recommended and in general multiple XS2A instances should be used with their own database instances.
 But if it's still necessary to use one database, CMS should be additionally configured to support this mode.

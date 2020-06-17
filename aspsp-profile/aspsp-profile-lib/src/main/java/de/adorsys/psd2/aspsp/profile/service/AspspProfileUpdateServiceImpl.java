@@ -17,7 +17,7 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
-import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.mapper.AspspSettingsToBankProfileSettingMapper;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -31,7 +31,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService {
 
-    private final ProfileConfiguration profileConfiguration;
+    private final ProfileConfigurations profileConfigurations;
     private final AspspSettingsToBankProfileSettingMapper profileSettingMapper;
 
     /**
@@ -40,8 +40,8 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param scaApproaches the new value of scaApproach list
      */
     @Override
-    public void updateScaApproaches(List<ScaApproach> scaApproaches) {
-        profileConfiguration.getSetting()
+    public void updateScaApproaches(List<ScaApproach> scaApproaches, String instanceId) {
+        profileConfigurations.getSetting(instanceId)
             .getCommon()
             .setScaApproachesSupported(scaApproaches);
     }
@@ -56,8 +56,13 @@ public class AspspProfileUpdateServiceImpl implements AspspProfileUpdateService 
      * @param aspspSettings new aspsp specific settings which to be stored in profile
      */
     @Override
-    public void updateAspspSettings(@NotNull AspspSettings aspspSettings) {
-        BankProfileSetting setting = profileConfiguration.getSetting();
+    public void updateAspspSettings(@NotNull AspspSettings aspspSettings, String instanceId) {
+        BankProfileSetting setting = profileConfigurations.getSetting(instanceId);
         profileSettingMapper.updateBankProfileSetting(aspspSettings, setting);
+    }
+
+    @Override
+    public void enableMultitenancy(Boolean multitenancyEnabled) {
+        profileConfigurations.setMultitenancyEnabled(multitenancyEnabled);
     }
 }

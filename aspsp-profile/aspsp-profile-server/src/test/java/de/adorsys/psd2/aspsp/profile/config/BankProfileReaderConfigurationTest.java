@@ -32,6 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     classes = AspspProfileApplication.class)
 @TestPropertySource(properties = {"xs2a.bank_profile.path = classpath:bank_profile_no_sca_redirect_flow.yml"})
 class BankProfileReaderConfigurationTest {
+
+    private static final String INSTANCE_ID = "bank1";
+
     @Autowired
     private BankProfileReaderConfiguration bankProfileReaderConfiguration;
 
@@ -39,8 +42,8 @@ class BankProfileReaderConfigurationTest {
     void profileConfigurationDefaultScaRedirectFlow() {
         //Given
         //When
-        ProfileConfiguration profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
+        ProfileConfigurations profileConfiguration = bankProfileReaderConfiguration.profileConfiguration();
         //Then
-        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting().getCommon().getScaRedirectFlow());
+        assertEquals(ScaRedirectFlow.REDIRECT, profileConfiguration.getSetting(INSTANCE_ID).getCommon().getScaRedirectFlow());
     }
 }

@@ -70,6 +70,7 @@ public class Xs2aToSpiPeriodicPaymentMapper {
         periodic.setCreationTimestamp(payment.getCreationTimestamp());
         periodic.setContentType(payment.getContentType());
         periodic.setDebtorName(payment.getDebtorName());
+        periodic.setInstanceId(payment.getInstanceId());
 
         return periodic;
     }

@@ -95,7 +95,7 @@ class CmsAuthorisationServiceTest {
         when(psuDataMapper.mapToPsuData(request.getPsuData())).thenReturn(PSU_DATA);
         when(cmsPsuService.definePsuDataForAuthorisation(PSU_DATA, Collections.singletonList(PSU_DATA)))
             .thenReturn(Optional.of(PSU_DATA));
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(authorisationParent.getInstanceId())).thenReturn(aspspSettings);
         when(aspspSettings.getCommon()).thenReturn(commonAspspProfileSetting);
         when(commonAspspProfileSetting.getRedirectUrlExpirationTimeMs()).thenReturn(100L);
         when(commonAspspProfileSetting.getAuthorisationExpirationTimeMs()).thenReturn(200L);

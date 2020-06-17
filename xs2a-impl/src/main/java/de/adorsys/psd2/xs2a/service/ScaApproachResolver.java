@@ -56,7 +56,7 @@ public class ScaApproachResolver {
      * @return chosen ScaApproach to be used for authorisation
      */
     public ScaApproach resolveScaApproach() {
-        List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches();
+        List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches(requestProviderService.getInstanceId());
         ScaApproach firstScaApproach = getFirst(scaApproaches);
         Optional<Boolean> tppRedirectPreferredOptional = requestProviderService.resolveTppRedirectPreferred();
         if (tppRedirectPreferredOptional.isEmpty()) {

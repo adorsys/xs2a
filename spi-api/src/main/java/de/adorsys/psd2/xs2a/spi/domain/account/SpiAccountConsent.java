@@ -48,4 +48,5 @@ public class SpiAccountConsent {
     private AisConsentRequestType aisConsentRequestType;
     private OffsetDateTime statusChangeTimestamp;
     private OffsetDateTime creationTimestamp;
+    private String instanceId;
 }

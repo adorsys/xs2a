@@ -159,11 +159,11 @@ class PaymentStartAuthorisationIT {
         httpHeadersExplicit.add("X-Request-ID", "2f77a125-aa7a-45c0-b414-cea25a116035");
         httpHeadersExplicit.add("PSU-ID", PSU_ID);
 
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
-        given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getAspspSettings(null)).willReturn(AspspSettingsBuilder.buildAspspSettings());
         given(tppService.updateTppInfo(any(TppInfo.class)))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
@@ -181,7 +181,7 @@ class PaymentStartAuthorisationIT {
                             .payload(buildPisCommonPaymentResponse())
                             .build());
 
-        given(aspspProfileService.getScaApproaches()).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
+        given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
         given(authorisationServiceEncrypted.createAuthorisation(parentHolderCaptor.capture(), createAuthorisationRequest.capture()))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, buildPsuIdData()))

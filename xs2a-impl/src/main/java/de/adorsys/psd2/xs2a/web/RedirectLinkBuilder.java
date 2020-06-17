@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.web;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -45,11 +46,13 @@ public class RedirectLinkBuilder {
      * @param internalRequestId  - Internal Request ID
      * @return redirect link
      */
-    public String buildConsentScaRedirectLink(String encryptedConsentId, String redirectId, String internalRequestId) {
-        return aspspProfileService.getAisRedirectUrlToAspsp()
-                   .replace(REDIRECT_URL, redirectId)
-                   .replace(ENCRYPTED_CONSENT_ID, encryptedConsentId)
-                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
+    public String buildConsentScaRedirectLink(String encryptedConsentId, String redirectId, String internalRequestId,
+                                              String instanceId) {
+        String scaRedirectLink = aspspProfileService.getAisRedirectUrlToAspsp()
+                                     .replace(REDIRECT_URL, redirectId)
+                                     .replace(ENCRYPTED_CONSENT_ID, encryptedConsentId)
+                                     .replace(INTERNAL_REQUEST_ID, internalRequestId);
+        return enrichByInstanceId(scaRedirectLink, instanceId);
     }
 
     /**
@@ -77,11 +80,13 @@ public class RedirectLinkBuilder {
      * @param internalRequestId  - Internal Request ID
      * @return redirect link
      */
-    public String buildPaymentScaRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId) {
-        return aspspProfileService.getPisRedirectUrlToAspsp()
-                   .replace(REDIRECT_URL, redirectId)
-                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
-                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
+    public String buildPaymentScaRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId,
+                                              String instanceId) {
+        String scaRedirectLink = aspspProfileService.getPisRedirectUrlToAspsp()
+                                     .replace(REDIRECT_URL, redirectId)
+                                     .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
+                                     .replace(INTERNAL_REQUEST_ID, internalRequestId);
+        return enrichByInstanceId(scaRedirectLink, instanceId);
     }
 
     /**
@@ -109,11 +114,13 @@ public class RedirectLinkBuilder {
      * @param internalRequestId  - Internal Request ID
      * @return redirect link
      */
-    public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId) {
-        return aspspProfileService.getPisPaymentCancellationRedirectUrlToAspsp()
-                   .replace(REDIRECT_URL, redirectId)
-                   .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
-                   .replace(INTERNAL_REQUEST_ID, internalRequestId);
+    public String buildPaymentCancellationScaRedirectLink(String encryptedPaymentId, String redirectId, String internalRequestId,
+                                                          String instanceId) {
+        String scaRedirectLink = aspspProfileService.getPisPaymentCancellationRedirectUrlToAspsp()
+                                     .replace(REDIRECT_URL, redirectId)
+                                     .replace(ENCRYPTED_PAYMENT_ID, encryptedPaymentId)
+                                     .replace(INTERNAL_REQUEST_ID, internalRequestId);
+        return enrichByInstanceId(scaRedirectLink, instanceId);
     }
 
     /**
@@ -169,7 +176,7 @@ public class RedirectLinkBuilder {
     /**
      * Builds confirmation link for consents.
      *
-     * @param consentId - ID of consent
+     * @param consentId  - ID of consent
      * @param redirectId - Redirect ID
      * @return confirmation link
      */
@@ -177,5 +184,11 @@ public class RedirectLinkBuilder {
         return UrlHolder.AIS_AUTHORISATION_URL
                    .replace(CONSENT_ID, consentId)
                    .replace(AUTHORISATION_ID, redirectId);
+    }
+
+    private String enrichByInstanceId(String link, String instanceId) {
+        return link + (StringUtils.isNotBlank(instanceId) ?
+                           "?instanceId=" + instanceId :
+                           StringUtils.EMPTY);
     }
 }

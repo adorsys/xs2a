@@ -71,7 +71,8 @@ public class Xs2aAisConsentMapper {
                             ac.getTppInfo(),
                             ac.getAisConsentRequestType(),
                             ac.getStatusChangeTimestamp(),
-                            ac.getCreationTimestamp()
+                            ac.getCreationTimestamp(),
+                            aisConsent.getInstanceId()
                         )
                    )
                    .orElse(null);
@@ -137,6 +138,7 @@ public class Xs2aAisConsentMapper {
         cmsConsent.setTppAccountAccesses(request.getAccess());
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);
+        cmsConsent.setInstanceId(request.getInstanceId());
         return cmsConsent;
     }
 
@@ -162,6 +164,7 @@ public class Xs2aAisConsentMapper {
                        aisConsent.setCreationTimestamp(ac.getCreationTimestamp());
                        aisConsent.setTppAccountAccesses(ais.getTppAccountAccesses());
                        aisConsent.setAspspAccountAccesses(ais.getAspspAccountAccesses());
+                       aisConsent.setInstanceId(ac.getInstanceId());
                        return aisConsent;
                    })
                    .orElse(null);

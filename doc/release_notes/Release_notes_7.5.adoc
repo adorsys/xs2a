@@ -1,0 +1,46 @@
+= Release notes v.7.5
+
+== Table of Contents
+
+* Support multi-tenancy in XS2A
+* Support multi-tenancy in ASPSP Profile
+* Fix not passing aspspAccountId to SPI
+* Created interface for SpiPaymentFactory
+* Renew certificate in certificate generator
+
+== Support multi-tenancy in XS2A
+
+From now on, XS2A supports multi-tenancy with 1 database and 1 CMS instances.
+Request header `Instance-ID` defines a current tenant. The header is not mandatory.
+
+Response link `scaRedirect` will include `Instance-ID` parameter if the mentioned header comes with request.
+
+SPI objects `SpiAccountConsent`, `SpiPaymentInfo`, `SpiSinglePayment` and `SpiBulkPayment` were extended for `instanceId` field.
+
+== Support multi-tenancy in ASPSP Profile
+
+From now on, ASPSP Profile supports more than one ASPSP profiles. In this mode ASPSP Profile needs to be configured for each supporting instances separately.
+HTTP header `instance-id` is required for all requests to the profile otherwise error will occur.
+
+To enable multi tenancy in ASPSP Profile in `application.yml` set flag and register config profiles for every tenant:
+
+```
+xs2a.bank_profile.multitenancy.enabled=true
+xs2a.bank_profile.multitenancy.customBankProfiles={bank1:'classpath:bank1_profile.yml', bank2:'classpath:bank2_profile.yml'}
+```
+
+By default, multi-tenancy mode for ASPSP Profile is disabled.
+
+== Fix not passing aspspAccountId to SPI
+
+From now on, `aspspAccountId` will be passed to SPI  when getting account details GET `/v1/accounts/{account-id}`.
+
+== Created interface for SpiPaymentFactory
+
+From now on, `SpiPaymentFactory` is interface in xs2a-impl with two implementations - `SpiPaymentFactoryImpl`
+in `xs2a-payment-support-impl` for single, periodic and bulk xs2a payments and `SpiCommonPaymentFactory` in
+`xs2a-payment-common-impl` for common payment.
+
+== Renew certificate in certificate generator
+
+Certificate in certificate generator has been renewed with validity date till `June 13, 2030`.

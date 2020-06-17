@@ -37,11 +37,12 @@ public class PaymentCancellationLinks extends AbstractLinks {
     private boolean isExplicitMethod;
     private ScaRedirectFlow scaRedirectFlow;
     private boolean authorisationConfirmationRequestMandated;
+    private String instanceId;
 
     public PaymentCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                     RedirectIdService redirectIdService, CancelPaymentResponse response,
                                     boolean isExplicitMethod, ScaRedirectFlow scaRedirectFlow,
-                                    boolean authorisationConfirmationRequestMandated) {
+                                    boolean authorisationConfirmationRequestMandated, String instanceId) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
@@ -49,6 +50,7 @@ public class PaymentCancellationLinks extends AbstractLinks {
         this.isExplicitMethod = isExplicitMethod;
         this.scaRedirectFlow = scaRedirectFlow;
         this.authorisationConfirmationRequestMandated = authorisationConfirmationRequestMandated;
+        this.instanceId = instanceId;
 
         buildCancellationLinks(response);
     }
@@ -96,7 +98,7 @@ public class PaymentCancellationLinks extends AbstractLinks {
 
             String paymentCancellationOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                           ? redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
-                                          : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId);
+                                          : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
             setScaRedirectOAuthLink(scaRedirectFlow, paymentCancellationOauthLink);
 

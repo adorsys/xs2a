@@ -35,11 +35,13 @@ public class CmsAspspPiisController implements CmsAspspPiisApi {
     private final CmsAspspPiisService cmsAspspPiisService;
 
     @Override
-    public ResponseEntity<CreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
+    public ResponseEntity<CreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, String psuId,
+                                                                   String psuIdType, String psuCorporateId, String psuCorporateIdType,
+                                                                   String instanceId) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return cmsAspspPiisService.createConsent(psuIdData, request)
-            .map(consentId -> new ResponseEntity<>(new CreatePiisConsentResponse(consentId), HttpStatus.CREATED))
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        return cmsAspspPiisService.createConsent(psuIdData, request, instanceId)
+                   .map(consentId -> new ResponseEntity<>(new CreatePiisConsentResponse(consentId), HttpStatus.CREATED))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @Override

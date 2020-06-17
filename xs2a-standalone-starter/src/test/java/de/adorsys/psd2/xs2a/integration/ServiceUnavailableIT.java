@@ -367,7 +367,7 @@ class ServiceUnavailableIT {
             buildCmsResponse(new AuthorisationScaApproachResponse(ScaApproach.EMBEDDED)),
             throwException);
         givenReturnOrThrowException(
-            tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()),
+            tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null),
             buildCmsResponse(false),
             throwException);
         givenReturnOrThrowException(
@@ -386,8 +386,8 @@ class ServiceUnavailableIT {
 
     private void makePreparationsProfile(boolean throwException) {
         ScaApproach scaApproach = ScaApproach.EMBEDDED;
-        givenReturnOrThrowException(aspspProfileService.getAspspSettings(), AspspSettingsBuilder.buildAspspSettings(), throwException);
-        givenReturnOrThrowException(aspspProfileService.getScaApproaches(), Collections.singletonList(scaApproach), throwException);
+        givenReturnOrThrowException(aspspProfileService.getAspspSettings(null), AspspSettingsBuilder.buildAspspSettings(), throwException);
+        givenReturnOrThrowException(aspspProfileService.getScaApproaches(null), Collections.singletonList(scaApproach), throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.isPsuInInitialRequestMandated(), false, throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.getTppSignatureRequired(), false, throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.isCheckTppRolesFromCertificateSupported(), false, throwException);

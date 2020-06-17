@@ -71,5 +71,6 @@
       "chosenScaApproach": "REDIRECT",
       "authorisationType": "AIS"
     }
-  ]
+  ],
+  "instanceId": "UNDEFINED"
 }

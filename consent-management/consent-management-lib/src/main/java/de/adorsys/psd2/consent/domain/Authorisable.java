@@ -30,4 +30,6 @@ public interface Authorisable {
     String getInternalRequestId(AuthorisationType authorisationType);
 
     AuthorisationTemplateEntity getAuthorisationTemplate();
+
+    String getInstanceId();
 }

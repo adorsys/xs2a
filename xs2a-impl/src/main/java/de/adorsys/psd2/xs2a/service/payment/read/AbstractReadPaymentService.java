@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInformationResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -34,6 +35,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
@@ -44,25 +46,19 @@ import java.util.Optional;
  * This class handles traditional payments (single, bulk, periodic).
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class AbstractReadPaymentService implements ReadPaymentService {
 
     protected SpiContextDataProvider spiContextDataProvider;
 
-    private SpiErrorMapper spiErrorMapper;
-    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
-
-    public AbstractReadPaymentService(SpiErrorMapper spiErrorMapper, SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                      Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService,
-                                      SpiContextDataProvider spiContextDataProvider) {
-        this.spiContextDataProvider = spiContextDataProvider;
-        this.spiErrorMapper = spiErrorMapper;
-        this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
-        this.updatePaymentStatusAfterSpiService = updatePaymentStatusAfterSpiService;
-    }
+    private final SpiErrorMapper spiErrorMapper;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final Xs2aUpdatePaymentAfterSpiService updatePaymentStatusAfterSpiService;
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Override
-    public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData, @NotNull String encryptedPaymentId, String acceptMediaType) {
+    public PaymentInformationResponse<CommonPayment> getPayment(CommonPaymentData commonPaymentData, PsuIdData psuData,
+                                                                @NotNull String encryptedPaymentId, String acceptMediaType) {
         if (ArrayUtils.isEmpty(commonPaymentData.getPaymentData())) {
             return new PaymentInformationResponse<>(
                 ErrorHolder.builder(ErrorType.PIS_400)
@@ -70,8 +66,8 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
                     .build());
         }
 
-        Optional spiPaymentOptional = createSpiPayment(commonPaymentData);
-        if (!spiPaymentOptional.isPresent()) {
+        Optional<? extends SpiPayment> spiPaymentOptional = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        if (spiPaymentOptional.isEmpty()) {
             return new PaymentInformationResponse<>(
                 ErrorHolder.builder(ErrorType.PIS_404)
                     .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
@@ -103,8 +99,6 @@ public abstract class AbstractReadPaymentService implements ReadPaymentService {
 
         return new PaymentInformationResponse<>(xs2aPayment);
     }
-
-    protected abstract Optional createSpiPayment(CommonPaymentData commonPaymentData);
 
     protected abstract SpiResponse getSpiPaymentById(SpiContextData spiContextData, String acceptMediaType, Object spiPayment, SpiAspspConsentDataProvider aspspConsentDataProvider);
 

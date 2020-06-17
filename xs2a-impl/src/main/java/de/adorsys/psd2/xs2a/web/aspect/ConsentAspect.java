@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -45,17 +46,20 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final RedirectIdService redirectIdService;
+    private final RequestProviderService requestProviderService;
 
     public ConsentAspect(ScaApproachResolver scaApproachResolver,
                          AuthorisationMethodDecider authorisationMethodDecider,
                          RedirectLinkBuilder redirectLinkBuilder,
                          AspspProfileServiceWrapper aspspProfileServiceWrapper,
-                         RedirectIdService redirectIdService) {
+                         RedirectIdService redirectIdService,
+                         RequestProviderService requestProviderService) {
         super(aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
         this.authorisationMethodDecider = authorisationMethodDecider;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
+        this.requestProviderService = requestProviderService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args( request, psuData, explicitPreferred)", returning = "result", argNames = "result,request,psuData,explicitPreferred")
@@ -70,7 +74,8 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                                                  redirectIdService,
                                                  explicitMethod, signingBasketModeActive,
                                                  getScaRedirectFlow(),
-                                                 isAuthorisationConfirmationRequestMandated()));
+                                                 isAuthorisationConfirmationRequestMandated(),
+                                                 requestProviderService.getInstanceId()));
         }
         return result;
     }
@@ -83,7 +88,9 @@ public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
                 body.setLinks(buildLinksForUpdateConsentResponse(body));
             } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
                 CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
-                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder, redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated()));
+                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder,
+                                                              redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated(),
+                                                              requestProviderService.getInstanceId()));
             }
         }
         return result;

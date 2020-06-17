@@ -129,11 +129,11 @@ class PaymentTransactionStatusIT {
         httpHeaders.add("PSU-Corporate-ID", "Some corporate id");
         httpHeaders.add("PSU-Corporate-ID-Type", "Some corporate id type");
 
-        when(aspspProfileService.getAspspSettings())
+        when(aspspProfileService.getAspspSettings(null))
             .thenReturn(AspspSettingsBuilder.buildAspspSettings());
-        when(aspspProfileService.getScaApproaches())
+        when(aspspProfileService.getScaApproaches(null))
             .thenReturn(Collections.singletonList(ScaApproach.REDIRECT));
-        when(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        when(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

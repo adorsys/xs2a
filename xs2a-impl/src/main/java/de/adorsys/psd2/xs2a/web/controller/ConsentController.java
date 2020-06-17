@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.ConsentService;
 import de.adorsys.psd2.xs2a.service.NotificationSupportedModeService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
@@ -60,6 +61,7 @@ public class ConsentController implements ConsentApi {
     private final ResponseErrorMapper responseErrorMapper;
     private final ConsentHeadersBuilder consentHeadersBuilder;
     private final NotificationSupportedModeService notificationSupportedModeService;
+    private final RequestProviderService requestProviderService;
 
     @Override
     public ResponseEntity createConsent(UUID xRequestID, String psuIpAddress, Consents body, String digest, String signature,
@@ -74,7 +76,8 @@ public class ConsentController implements ConsentApi {
         TppRedirectUri xs2aTppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectUri, tppNokRedirectUri);
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, tppNotificationUri);
 
-        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, xs2aTppRedirectUri, tppNotificationData, tppBrandLoggingInformation);
+        CreateConsentReq createConsent = consentModelMapper.mapToCreateConsentReq(body, xs2aTppRedirectUri, tppNotificationData, tppBrandLoggingInformation,
+                                                                                  requestProviderService.getInstanceId());
 
         PsuIdData psuData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, psuIpAddress,
                                           new AdditionalPsuIdData(psuIpPort, psuUserAgent, psuGeoLocation, psuAccept, psuAcceptCharset, psuAcceptEncoding, psuAcceptLanguage, psuHttpMethod, psuDeviceId));

@@ -118,7 +118,7 @@ public class ConsentService {
         TppInfo tppInfo = tppService.getTppInfo();
         Optional<Xs2aCreateAisConsentResponse> createAisConsentResponseOptional = aisConsentService.createConsent(requestAfterCheck, psuData, tppInfo);
 
-        if (!createAisConsentResponseOptional.isPresent()) {
+        if (createAisConsentResponseOptional.isEmpty()) {
             return ResponseObject.<CreateConsentResponse>builder()
                        .fail(ErrorType.AIS_400, of(MessageErrorCode.RESOURCE_UNKNOWN_400))
                        .build();
@@ -193,7 +193,7 @@ public class ConsentService {
 
         Optional<AisConsent> validatedAisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!validatedAisConsentOptional.isPresent()) {
+        if (validatedAisConsentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get account consents status failed: consent not found by ID", consentId);
             return responseBuilder
                        .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
@@ -299,7 +299,7 @@ public class ConsentService {
 
         Optional<AisConsent> consentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!consentOptional.isPresent()) {
+        if (consentOptional.isEmpty()) {
             log.info("Consent-ID: [{}]. Get account consent failed: initial consent not found by id", consentId);
             return ResponseObject.<AisConsent>builder()
                        .fail(ErrorType.AIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))

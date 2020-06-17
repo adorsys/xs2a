@@ -2,6 +2,7 @@ package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
 import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
 import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
@@ -14,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -22,15 +25,16 @@ class BankProfileReloadingScheduleTaskTest {
     @Mock
     private BankProfileReadingService bankProfileReadingService;
     @Mock
-    private ProfileConfiguration profileConfiguration;
+    private ProfileConfigurations profileConfigurations;
 
     @InjectMocks
     private BankProfileReloadingScheduleTask bankProfileReloadingScheduleTask;
 
     @BeforeEach
     void setUp() {
-        when(bankProfileReadingService.getProfileConfiguration())
-            .thenReturn(buildNewProfileConfiguration());
+        ProfileConfiguration singleConfiguration = buildNewProfileConfiguration();
+        when(bankProfileReadingService.getProfileConfigurations())
+            .thenReturn(new ProfileConfigurations(false, singleConfiguration, Collections.singletonMap("bank1", singleConfiguration)));
     }
 
     @Test
@@ -39,12 +43,12 @@ class BankProfileReloadingScheduleTaskTest {
 
         ProfileConfiguration newProfileConfiguration = buildNewProfileConfiguration();
 
-        ArgumentCaptor<BankProfileSetting> bankProfileSettingArgumentCaptor = ArgumentCaptor.forClass(BankProfileSetting.class);
-        verify(profileConfiguration, times(1)).setSetting(bankProfileSettingArgumentCaptor.capture());
-        verify(profileConfiguration, times(1)).setDefaultProperties();
+        ArgumentCaptor<ProfileConfigurations> profileConfigurationsArgumentCaptor = ArgumentCaptor.forClass(ProfileConfigurations.class);
+        verify(profileConfigurations, times(1)).updateSettings(profileConfigurationsArgumentCaptor.capture());
+        verify(profileConfigurations, times(1)).setDefaultProperties();
 
-        assertEquals(bankProfileReadingService.getProfileConfiguration(), newProfileConfiguration);
-        assertEquals(bankProfileSettingArgumentCaptor.getValue(), newProfileConfiguration.getSetting());
+        assertEquals(bankProfileReadingService.getProfileConfigurations().getSingleConfiguration(), newProfileConfiguration);
+        assertEquals(profileConfigurationsArgumentCaptor.getValue().getSingleConfiguration().getSetting(), newProfileConfiguration.getSetting());
     }
 
     private ProfileConfiguration buildNewProfileConfiguration() {

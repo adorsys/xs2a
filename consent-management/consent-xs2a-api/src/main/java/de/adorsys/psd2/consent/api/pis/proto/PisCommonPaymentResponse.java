@@ -74,6 +74,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "Response content type")
     private String contentType;
 
+    @ApiModelProperty(value = "Response instance id")
+    private String instanceId;
+
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
                    .filter(auth -> auth.getAuthorisationId().equals(authorisationId))

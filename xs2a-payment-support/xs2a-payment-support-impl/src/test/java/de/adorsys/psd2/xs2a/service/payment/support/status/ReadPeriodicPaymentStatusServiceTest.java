@@ -27,8 +27,8 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ContentType;
 import de.adorsys.psd2.xs2a.domain.pis.ReadPaymentStatusResponse;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.payment.support.SpiPaymentFactoryImpl;
 import de.adorsys.psd2.xs2a.service.payment.support.TestSpiDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -70,7 +70,7 @@ class ReadPeriodicPaymentStatusServiceTest {
     private ReadPeriodicPaymentStatusService readPeriodicPaymentStatusService;
 
     @Mock
-    private SpiPaymentFactory spiPaymentFactory;
+    private SpiPaymentFactoryImpl spiPaymentFactory;
     @Mock
     private SpiErrorMapper spiErrorMapper;
     @Mock
@@ -95,8 +95,7 @@ class ReadPeriodicPaymentStatusServiceTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(anyString()))
             .thenReturn(spiAspspConsentDataProvider);
 
-        when(spiPaymentFactory.createSpiPeriodicPayment(commonPaymentData))
-            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        doReturn(Optional.of(SPI_PERIODIC_PAYMENT)).when(spiPaymentFactory).getSpiPayment(commonPaymentData);
         when(periodicPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE);
         when(mediaTypeMapper.mapToMediaType(JSON_MEDIA_TYPE))
@@ -121,7 +120,7 @@ class ReadPeriodicPaymentStatusServiceTest {
         ReadPaymentStatusResponse actualResponse = readPeriodicPaymentStatusService.readPaymentStatus(commonPaymentData, SPI_CONTEXT_DATA, SOME_ENCRYPTED_PAYMENT_ID, JSON_MEDIA_TYPE);
 
         // Then
-        verify(spiPaymentFactory, never()).createSpiPeriodicPayment(any());
+        verify(spiPaymentFactory, never()).getSpiPayment(any());
 
         assertThat(actualResponse.hasError()).isTrue();
         assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(expectedError);
@@ -134,7 +133,7 @@ class ReadPeriodicPaymentStatusServiceTest {
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiPeriodicPayment(commonPaymentData))
+        when(spiPaymentFactory.getSpiPayment(commonPaymentData))
             .thenReturn(Optional.empty());
 
         // When
@@ -155,8 +154,7 @@ class ReadPeriodicPaymentStatusServiceTest {
                                         .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                         .build();
 
-        when(spiPaymentFactory.createSpiPeriodicPayment(commonPaymentData))
-            .thenReturn(Optional.of(SPI_PERIODIC_PAYMENT));
+        doReturn(Optional.of(SPI_PERIODIC_PAYMENT)).when(spiPaymentFactory).getSpiPayment(commonPaymentData);
         when(periodicPaymentSpi.getPaymentStatusById(SPI_CONTEXT_DATA, JSON_MEDIA_TYPE, SPI_PERIODIC_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(TRANSACTION_RESPONSE_FAILURE);
         when(spiErrorMapper.mapToErrorHolder(TRANSACTION_RESPONSE_FAILURE, ServiceType.PIS))

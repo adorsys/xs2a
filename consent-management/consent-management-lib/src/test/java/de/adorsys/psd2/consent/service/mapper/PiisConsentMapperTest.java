@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -40,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {PiisConsentMapper.class, PsuDataMapper.class, ConsentDataMapper.class, AccessMapper.class})
 class PiisConsentMapperTest {
+    private static final String INSTANCE_ID = "UNDEFINED";
+
     @Autowired
     private PiisConsentMapper piisConsentMapper;
 
@@ -81,7 +83,7 @@ class PiisConsentMapperTest {
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-consent.json", TppInfoEntity.class);
         ;
 
-        ConsentEntity actual = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, createPiisConsentRequest);
+        ConsentEntity actual = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, createPiisConsentRequest, INSTANCE_ID);
 
         ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
         expected.setId(null);
@@ -105,7 +107,7 @@ class PiisConsentMapperTest {
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-consent.json", TppInfoEntity.class);
         ;
 
-        ConsentEntity actual = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, createPiisConsentRequest);
+        ConsentEntity actual = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, createPiisConsentRequest, INSTANCE_ID);
 
         ConsentEntity expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-entity.json", ConsentEntity.class);
         expected.setId(null);

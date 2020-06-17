@@ -41,6 +41,7 @@ public class SpiPaymentInfo implements SpiPayment {
     private OffsetDateTime statusChangeTimestamp;
     private OffsetDateTime creationTimestamp;
     private String contentType;
+    private String instanceId;
 
     @JsonCreator
     public SpiPaymentInfo(@JsonProperty("paymentProduct") String paymentProduct) {

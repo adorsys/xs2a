@@ -185,7 +185,7 @@ class PaymentModelMapperPsd2Test {
         expected.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
 
         PaymentInitiationParameters actual = mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "certificate".getBytes(), "ok.uri", "nok.uri",
-                                                                                  true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION);
+                                                                                  true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION, null);
 
         assertEquals(expected, actual);
     }

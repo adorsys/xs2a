@@ -57,6 +57,7 @@ public class PisCommonPaymentIT {
     private static final String AUTHORITY_ID = "test authority ID";
     private static final PsuIdData PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final String PAYMENT_ID = "payment id";
+    private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
     @Autowired
     private PisCommonPaymentService pisCommonPaymentService;
@@ -73,7 +74,7 @@ public class PisCommonPaymentIT {
     public void setUp() {
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
 
-        when(aspspProfileService.getAspspSettings()).thenReturn(aspspSettings);
+        when(aspspProfileService.getAspspSettings(DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(aspspSettings);
     }
 
     @Test
@@ -162,6 +163,7 @@ public class PisCommonPaymentIT {
         pisPaymentInfo.setPsuDataList(buildPsuIdDataList());
         pisPaymentInfo.setPaymentId(PAYMENT_ID);
         pisPaymentInfo.setTransactionStatus(TransactionStatus.RCVD);
+        pisPaymentInfo.setInstanceId(DEFAULT_SERVICE_INSTANCE_ID);
         return pisPaymentInfo;
     }
 

@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.config;
 import de.adorsys.psd2.consent.domain.InstanceDependableEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.event.spi.PreInsertEvent;
 import org.hibernate.event.spi.PreInsertEventListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +39,10 @@ public class ServiceInstanceIdEventListener implements PreInsertEventListener {
 
         if (object instanceof InstanceDependableEntity) {
             InstanceDependableEntity entity = (InstanceDependableEntity) object;
+            if (StringUtils.isNotBlank(entity.getInstanceId())) {
+                return false;
+            }
+
             String[] propertyNames = event.getPersister()
                                          .getEntityMetamodel()
                                          .getPropertyNames();

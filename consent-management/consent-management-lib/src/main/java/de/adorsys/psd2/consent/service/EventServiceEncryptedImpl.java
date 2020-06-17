@@ -40,17 +40,18 @@ public class EventServiceEncryptedImpl implements Xs2aEventServiceEncrypted {
         String decryptedPaymentId = decryptId(event.getPaymentId());
 
         EventBO decryptedEvent = EventBO.builder()
-                                   .timestamp(event.getTimestamp())
-                                   .consentId(decryptedConsentId)
-                                   .paymentId(decryptedPaymentId)
-                                   .payload(event.getPayload())
-                                   .eventOrigin(event.getEventOrigin())
-                                   .eventType(event.getEventType())
-                                   .psuIdData(event.getPsuIdData())
-                                   .tppAuthorisationNumber(event.getTppAuthorisationNumber())
-                                   .xRequestId(event.getXRequestId())
+                                     .timestamp(event.getTimestamp())
+                                     .consentId(decryptedConsentId)
+                                     .paymentId(decryptedPaymentId)
+                                     .payload(event.getPayload())
+                                     .eventOrigin(event.getEventOrigin())
+                                     .eventType(event.getEventType())
+                                     .psuIdData(event.getPsuIdData())
+                                     .tppAuthorisationNumber(event.getTppAuthorisationNumber())
+                                     .xRequestId(event.getXRequestId())
                                      .internalRequestId(event.getInternalRequestId())
-                                   .build();
+                                     .instanceId(event.getInstanceId())
+                                     .build();
         return eventService.recordEvent(decryptedEvent);
     }
 

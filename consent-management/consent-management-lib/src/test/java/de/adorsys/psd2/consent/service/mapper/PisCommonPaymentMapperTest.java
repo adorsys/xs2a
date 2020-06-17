@@ -46,7 +46,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PisCommonPaymentMapperTest {
-    private final static String PSU_ID = "777";
     private final static JsonReader jsonReader = new JsonReader();
 
     @InjectMocks

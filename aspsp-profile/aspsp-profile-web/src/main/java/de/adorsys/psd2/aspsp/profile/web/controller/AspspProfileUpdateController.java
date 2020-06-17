@@ -28,10 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +39,8 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api/v1/aspsp-profile/for-debug")
 @Api(value = "Update aspsp profile ", tags = AspspProfileApiTagName.UPDATE_ASPSP_PROFILE)
 public class AspspProfileUpdateController {
+    public static final String DEFAULT_SERVICE_INSTANCE_ID = "";
+
     private final AspspProfileUpdateService aspspProfileService;
 
     @PutMapping(path = "/sca-approaches")
@@ -49,12 +48,13 @@ public class AspspProfileUpdateController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok"),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateScaApproach(@RequestBody List<String> newScaApproaches) {
+    public ResponseEntity<Void> updateScaApproach(@RequestBody List<String> newScaApproaches,
+                                                  @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
         List<ScaApproach> scaApproaches = newScaApproaches.stream()
-            .map(s -> ScaApproach.valueOf(s.trim().toUpperCase()))
-            .collect(Collectors.toList());
+                                              .map(s -> ScaApproach.valueOf(s.trim().toUpperCase()))
+                                              .collect(Collectors.toList());
 
-        aspspProfileService.updateScaApproaches(scaApproaches);
+        aspspProfileService.updateScaApproaches(scaApproaches, instanceId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -63,8 +63,19 @@ public class AspspProfileUpdateController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Ok"),
         @ApiResponse(code = 400, message = "Bad request")})
-    public ResponseEntity<Void> updateAspspSettings(@RequestBody AspspSettings aspspSettings) {
-        aspspProfileService.updateAspspSettings(aspspSettings);
+    public ResponseEntity<Void> updateAspspSettings(@RequestBody AspspSettings aspspSettings,
+                                                    @RequestHeader(value = "Instance-ID", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId) {
+        aspspProfileService.updateAspspSettings(aspspSettings, instanceId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/multitenancy/enabled")
+    @ApiOperation(value = "Enable aspsp profile multi tenancy support. Only for DEBUG!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Ok"),
+        @ApiResponse(code = 400, message = "Bad request")})
+    public ResponseEntity<Void> enableMultitenancy(@RequestBody Boolean multitenancyEnabled) {
+        aspspProfileService.enableMultitenancy(multitenancyEnabled);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

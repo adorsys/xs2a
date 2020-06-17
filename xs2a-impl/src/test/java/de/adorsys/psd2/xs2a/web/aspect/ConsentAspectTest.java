@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -58,6 +59,8 @@ class ConsentAspectTest {
     private UpdateConsentPsuDataResponse updateConsentPsuDataResponse;
     @Mock
     private CreateConsentAuthorizationResponse createConsentAuthorisationResponse;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Test
     void invokeCreateAccountConsentAspect_success() {

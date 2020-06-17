@@ -34,17 +34,19 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class TppStopListServiceRemote implements TppStopListService {
     private static final String TPP_AUTHORISATION_NUMBER_HEADER = "tpp-authorisation-number";
+    private static final String INSTANCE = "Instance-ID";
 
     @Qualifier("consentRestTemplate")
     private final RestTemplate consentRestTemplate;
     private final TppStopListRemoteUrls tppStopListRemoteUrls;
 
     @Override
-    public CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber) {
+    public CmsResponse<Boolean> checkIfTppBlocked(String tppAuthorisationNumber, String instanceId) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add(HttpHeaders.ACCEPT, MediaType.ALL_VALUE);
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         headers.add(TPP_AUTHORISATION_NUMBER_HEADER, tppAuthorisationNumber);
+        headers.add(INSTANCE, instanceId);
 
         Boolean body = consentRestTemplate.exchange(tppStopListRemoteUrls.checkIfTppBlocked(), HttpMethod.GET, new HttpEntity<>(headers), Boolean.class)
                            .getBody();

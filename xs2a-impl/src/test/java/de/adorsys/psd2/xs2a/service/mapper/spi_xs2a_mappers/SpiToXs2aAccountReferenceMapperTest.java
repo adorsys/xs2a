@@ -46,7 +46,7 @@ class SpiToXs2aAccountReferenceMapperTest {
     @BeforeEach
     void setUp() {
         spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", SpiAccountReference.class);
-        expectedAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json", AccountReference.class);
+        expectedAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/account-reference.json", AccountReference.class);
     }
 
     @Test

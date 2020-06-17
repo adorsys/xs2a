@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.*;
 import de.adorsys.psd2.xs2a.domain.account.SupportedAccountReferenceField;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AspspProfileServiceWrapper {
     private final AspspProfileService aspspProfileService;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Gets a map with payment types and products allowed by current ASPSP from ASPSP profile service
@@ -50,7 +52,7 @@ public class AspspProfileServiceWrapper {
      * @return List of Available SCA approaches for tpp
      */
     public List<ScaApproach> getScaApproaches() {
-        return aspspProfileService.getScaApproaches();
+        return aspspProfileService.getScaApproaches(requestProviderService.getInstanceId());
     }
 
     /**
@@ -336,7 +338,7 @@ public class AspspProfileServiceWrapper {
     }
 
     private AspspSettings readAspspSettings() {
-        return aspspProfileService.getAspspSettings();
+        return aspspProfileService.getAspspSettings(requestProviderService.getInstanceId());
     }
 
     /**

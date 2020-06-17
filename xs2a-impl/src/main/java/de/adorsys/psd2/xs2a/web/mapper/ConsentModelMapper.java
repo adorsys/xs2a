@@ -49,22 +49,25 @@ public class ConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
 
-    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri, TppNotificationData tppNotificationData, String tppBrandLoggingInformation) {
+    public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri,
+                                                  TppNotificationData tppNotificationData, String tppBrandLoggingInformation,
+                                                  String instanceId) {
         return Optional.ofNullable(consent)
                    .map(cnst -> {
-                       CreateConsentReq createAisConsentRequest = new CreateConsentReq();
-                       createAisConsentRequest.setAccess(mapToAccountAccessInner(cnst.getAccess()));
-                       createAisConsentRequest.setRecurringIndicator(cnst.getRecurringIndicator());
-                       createAisConsentRequest.setValidUntil(cnst.getValidUntil());
-                       createAisConsentRequest.setFrequencyPerDay(cnst.getFrequencyPerDay());
-                       createAisConsentRequest.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
-                       createAisConsentRequest.setTppRedirectUri(tppRedirectUri);
-                       createAisConsentRequest.setTppNotificationData(tppNotificationData);
-                       createAisConsentRequest.setAvailableAccounts(mapToAccountAccessTypeFromAvailableAccounts(cnst.getAccess().getAvailableAccounts()));
-                       createAisConsentRequest.setAllPsd2(mapToAccountAccessTypeFromAllPsd2Enum(cnst.getAccess().getAllPsd2()));
-                       createAisConsentRequest.setAvailableAccountsWithBalance(mapToAccountAccessTypeFromAvailableAccountsWithBalance(cnst.getAccess().getAvailableAccountsWithBalance()));
-                       createAisConsentRequest.setTppBrandLoggingInformation(tppBrandLoggingInformation);
-                       return createAisConsentRequest;
+                       CreateConsentReq createConsentReq = new CreateConsentReq();
+                       createConsentReq.setAccess(mapToAccountAccessInner(cnst.getAccess()));
+                       createConsentReq.setRecurringIndicator(cnst.getRecurringIndicator());
+                       createConsentReq.setValidUntil(cnst.getValidUntil());
+                       createConsentReq.setFrequencyPerDay(cnst.getFrequencyPerDay());
+                       createConsentReq.setCombinedServiceIndicator(BooleanUtils.toBoolean(cnst.isCombinedServiceIndicator()));
+                       createConsentReq.setTppRedirectUri(tppRedirectUri);
+                       createConsentReq.setTppNotificationData(tppNotificationData);
+                       createConsentReq.setAvailableAccounts(mapToAccountAccessTypeFromAvailableAccounts(cnst.getAccess().getAvailableAccounts()));
+                       createConsentReq.setAllPsd2(mapToAccountAccessTypeFromAllPsd2Enum(cnst.getAccess().getAllPsd2()));
+                       createConsentReq.setAvailableAccountsWithBalance(mapToAccountAccessTypeFromAvailableAccountsWithBalance(cnst.getAccess().getAvailableAccountsWithBalance()));
+                       createConsentReq.setTppBrandLoggingInformation(tppBrandLoggingInformation);
+                       createConsentReq.setInstanceId(instanceId);
+                       return createConsentReq;
                    })
                    .orElse(null);
     }

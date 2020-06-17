@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,7 @@ public class RequestProviderService {
     private static final String ACCEPT_HEADER = "accept";
     static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
+    static final String INSTANCE_ID = "instance-id";
 
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
@@ -100,6 +102,11 @@ public class RequestProviderService {
     @NotNull
     public UUID getInternalRequestId() {
         return internalRequestIdService.getInternalRequestId();
+    }
+
+    @Nullable
+    public String getInstanceId(){
+        return getHeader(INSTANCE_ID);
     }
 
     public String getInternalRequestIdString() {

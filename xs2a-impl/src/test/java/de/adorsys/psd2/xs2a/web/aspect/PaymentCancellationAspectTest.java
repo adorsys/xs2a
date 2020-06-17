@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
@@ -71,6 +72,8 @@ class PaymentCancellationAspectTest {
     private RedirectIdService redirectIdService;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private ResponseObject<CancelPaymentResponse> responseObject;
     private PisPaymentCancellationRequest paymentCancellationRequest;
@@ -118,7 +121,7 @@ class PaymentCancellationAspectTest {
         when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false);
+        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false, "");
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
                              .body(response)

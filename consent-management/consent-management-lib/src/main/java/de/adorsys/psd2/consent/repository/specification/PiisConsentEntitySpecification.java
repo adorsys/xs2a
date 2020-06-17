@@ -71,13 +71,15 @@ public class PiisConsentEntitySpecification extends ConsentFilterableSpecificati
      * @param accountReference       mandatory PIIS Account Reference
      * @return resulting specification for ConsentEntity
      */
-    public Specification<ConsentEntity> byPsuIdDataAndAuthorisationNumberAndAccountReference(@NotNull PsuIdData psuIdData,
+    public Specification<ConsentEntity> byPsuIdDataAndAuthorisationNumberAndAccountReferenceAndInstanceId(@NotNull PsuIdData psuIdData,
                                                                                              @NotNull String tppAuthorisationNumber,
-                                                                                             @NotNull AccountReference accountReference) {
+                                                                                             @NotNull AccountReference accountReference,
+                                                                                             @NotNull String instanceId) {
         return Specification.where(commonSpecification.byPsuIdDataInList(psuIdData))
                    .and(consentSpecification.byTpp(tppAuthorisationNumber))
                    .and(byAccountReference(accountReference))
-                   .and(byConsentType());
+                   .and(byConsentType())
+                   .and(commonSpecification.byInstanceId(instanceId));
     }
 
     /**

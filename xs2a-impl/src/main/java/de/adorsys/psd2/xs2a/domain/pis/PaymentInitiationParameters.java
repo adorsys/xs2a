@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 @Data
 public class PaymentInitiationParameters {
@@ -32,4 +33,6 @@ public class PaymentInitiationParameters {
     private PsuIdData psuData;
     private TppNotificationData tppNotificationData;
     private String tppBrandLoggingInformation;
+    @Nullable
+    private String instanceId;
 }

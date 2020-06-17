@@ -17,7 +17,7 @@
 package de.adorsys.psd2.aspsp.profile.service;
 
 import de.adorsys.psd2.aspsp.profile.config.BankProfileSetting;
-import de.adorsys.psd2.aspsp.profile.config.ProfileConfiguration;
+import de.adorsys.psd2.aspsp.profile.config.ProfileConfigurations;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
@@ -89,20 +89,21 @@ import static org.mockito.Mockito.when;
     private static final boolean AUTHORISATION_CONFIRMATION_REQUEST_MANDATED = false;
     private static final boolean AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A = false;
     private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
+    private static final String INSTANCE_ID = "bank1";
     private static final TppUriCompliance TPP_URI_COMPLIANCE_RESPONSE = TppUriCompliance.WARNING;
 
     @InjectMocks
     private AspspProfileServiceImpl aspspProfileService;
 
     @Mock
-    private ProfileConfiguration profileConfiguration;
+    private ProfileConfigurations profileConfigurations;
     private AspspSettings actualResponse;
 
     @BeforeEach
     void setUpAccountServiceMock() {
-        when(profileConfiguration.getSetting()).thenReturn(buildBankProfileSetting());
+        when(profileConfigurations.getSetting(INSTANCE_ID)).thenReturn(buildBankProfileSetting());
 
-        actualResponse = aspspProfileService.getAspspSettings();
+        actualResponse = aspspProfileService.getAspspSettings(INSTANCE_ID);
     }
 
     @Test
@@ -128,7 +129,7 @@ import static org.mockito.Mockito.when;
     @Test
      void getScaApproach_success() {
         //When:
-        List<ScaApproach> actualResponse = aspspProfileService.getScaApproaches();
+        List<ScaApproach> actualResponse = aspspProfileService.getScaApproaches(INSTANCE_ID);
 
         //Then:
         assertEquals(Collections.singletonList(REDIRECT_APPROACH), actualResponse);

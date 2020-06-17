@@ -52,6 +52,7 @@ public class CreateCommonPaymentService extends AbstractCreatePaymentService<Com
         request.setPaymentProduct(paymentInitiationParameters.getPaymentProduct());
         request.setPaymentData(payment);
         request.setPsuDataList(Collections.singletonList(paymentInitiationParameters.getPsuData()));
+        request.setInstanceId(paymentInitiationParameters.getInstanceId());
         return request;
     }
 }

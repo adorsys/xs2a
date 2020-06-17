@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -40,14 +41,16 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
     private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final RedirectIdService redirectIdService;
+    private RequestProviderService requestProviderService;
 
     public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver,
                                         AspspProfileServiceWrapper aspspProfileServiceWrapper, RedirectLinkBuilder redirectLinkBuilder,
-                                        RedirectIdService redirectIdService) {
+                                        RedirectIdService redirectIdService, RequestProviderService requestProviderService) {
         super(aspspProfileServiceWrapper);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
+        this.requestProviderService = requestProviderService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorisation(..)) && args(createRequest)", returning = "result", argNames = "result,createRequest")
@@ -56,7 +59,11 @@ public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentCont
             if (result.getBody() instanceof Xs2aCreatePisAuthorisationResponse) {
                 Xs2aCreatePisAuthorisationResponse response = (Xs2aCreatePisAuthorisationResponse) result.getBody();
 
-                response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder, redirectIdService, createRequest, response.getAuthorisationId(), getScaRedirectFlow(), response.getInternalRequestId(), isAuthorisationConfirmationRequestMandated()));
+                response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
+                                                                  redirectIdService, createRequest, response.getAuthorisationId(),
+                                                                  getScaRedirectFlow(), response.getInternalRequestId(),
+                                                                  isAuthorisationConfirmationRequestMandated(),
+                                                                  requestProviderService.getInstanceId()));
             } else if (result.getBody() instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 response.setLinks(new UpdatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, response, createRequest));

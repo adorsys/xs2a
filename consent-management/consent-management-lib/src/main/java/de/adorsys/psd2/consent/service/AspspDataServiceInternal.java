@@ -71,13 +71,13 @@ public class AspspDataServiceInternal implements AspspDataService {
         }
 
         Optional<String> decryptConsentId = securityDataService.decryptId(encryptedConsentId);
-        if (!decryptConsentId.isPresent()) {
+        if (decryptConsentId.isEmpty()) {
             log.info("Consent ID: [{}]. Update Aspsp consent data failed, because consent id cannot be decrypted.", encryptedConsentId);
             return false;
         }
 
         Optional<EncryptedData> encryptedData = securityDataService.encryptConsentData(encryptedConsentId, data);
-        if (!encryptedData.isPresent()) {
+        if (encryptedData.isEmpty()) {
             log.info("Consent ID: [{}]. Update Aspsp consent data failed, because aspsp consent data cannot be encrypted.", encryptedConsentId);
             return false;
         }

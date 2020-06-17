@@ -86,10 +86,10 @@ public abstract class PaymentUpdateAuthorisationBase {
     protected AuthorisationServiceEncrypted authorisationServiceEncrypted;
 
     public void before() {
-        given(aspspProfileService.getAspspSettings()).willReturn(AspspSettingsBuilder.buildAspspSettings());
-        given(aspspProfileService.getScaApproaches())
+        given(aspspProfileService.getAspspSettings(null)).willReturn(AspspSettingsBuilder.buildAspspSettings());
+        given(aspspProfileService.getScaApproaches(null))
             .willReturn(Collections.singletonList(ScaApproach.REDIRECT));
-        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo()))
+        given(tppStopListService.checkIfTppBlocked(TppInfoBuilder.getTppInfo(), null))
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());

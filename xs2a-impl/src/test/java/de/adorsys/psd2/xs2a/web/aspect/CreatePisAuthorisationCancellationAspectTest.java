@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationRespon
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
@@ -63,6 +64,8 @@ class CreatePisAuthorisationCancellationAspectTest {
     private Xs2aUpdatePisCommonPaymentPsuDataResponse updateResponse;
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     private ResponseObject<CancellationAuthorisationResponse> responseObject;
 
