@@ -39,4 +39,6 @@ public interface SpiPayment {
     List<SpiPsuData> getPsuDataList();
 
     String getContentType();
+
+    String getInstanceId();
 }
