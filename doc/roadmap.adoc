@@ -15,20 +15,6 @@ No backward compatibility with 6.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 6.x (Stable)|version 7.x (Development)
 
-|03.07.2020|6.5|7.5
-
-a|
-
-a|
-
-a|* All fixes and updates from v.6.5
-
-* New feature: Support yaml for Funds Confirmation consent
-
-* New feature: Establish FundsConfirmationConsent
-
-* Provide interfaces for CMS controllers for FundsConfirmationConsent
-
 |17.07.2020|6.6|7.6
 
 a|
@@ -37,11 +23,13 @@ a|
 
 a|* All fixes and updates from v.6.6
 
-* New feature: Create Funds Confirmation consent validator
+* Migrate to psd2-api 1.3.6 20200528.yaml
 
-* New feature: Get FundsConfirmationConsent Status + object
+* New feature: Support yaml for Funds Confirmation consent
 
-* New feature: Revoke FundsConfirmationConsent
+* New feature: Establish FundsConfirmationConsent
+
+* Provide interfaces for CMS controllers for FundsConfirmationConsent
 
 |31.07.2020|6.7|7.7
 
@@ -51,9 +39,11 @@ a|
 
 a|* All fixes and updates from v.6.7
 
-* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
+* New feature: Create Funds Confirmation consent validator
 
-* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
+* New feature: Get FundsConfirmationConsent Status + object
+
+* New feature: Revoke FundsConfirmationConsent
 
 |14.08.2020|6.8|7.8
 
@@ -63,11 +53,9 @@ a|
 
 a|* All fixes and updates from v.6.8
 
-* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
 
-* New feature: Get SCA Status request for FundsConfirmationConsent 
-
-* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
+* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
 |28.08.2020|6.9|7.9
 
@@ -75,7 +63,13 @@ a|
 
 a|
 
-a|* All fixes and updates from v.6.9 only
+a|* All fixes and updates from v.6.9
+
+* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+
+* New feature: Get SCA Status request for FundsConfirmationConsent 
+
+* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
 
 |Further development| |
 
