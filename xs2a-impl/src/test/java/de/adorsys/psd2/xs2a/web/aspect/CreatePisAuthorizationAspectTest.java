@@ -16,101 +16,42 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
-import de.adorsys.psd2.xs2a.web.link.UpdatePisAuthorisationLinks;
-import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.jupiter.api.BeforeEach;
+import de.adorsys.psd2.xs2a.service.link.PaymentAuthorisationAspectService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePisAuthorizationAspectTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
+    private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
+    private static final Xs2aCreatePisAuthorisationRequest REQUEST =
+        new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, EMPTY_PSU_DATA, PAYMENT_PRODUCT, SINGLE, null);
 
     @InjectMocks
     private CreatePisAuthorizationAspect aspect;
 
     @Mock
-    private ScaApproachResolver scaApproachResolver;
+    private PaymentAuthorisationAspectService paymentAuthorisationAspectService;
     @Mock
-    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private Xs2aCreatePisAuthorisationResponse createPisAuthorisationResponse;
-    @Mock
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse;
-    @Mock
-    private RequestProviderService requestProviderService;
-
-    private AspspSettings aspspSettings;
-    private ResponseObject responseObject;
-    private Xs2aCreatePisAuthorisationRequest request;
-
-    @BeforeEach
-    void setUp() {
-        request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, null, PAYMENT_PRODUCT, SINGLE, "");
-    }
+    private AuthorisationResponse authorisationResponse;
 
     @Test
-    void createPisAuthorizationAspect_successOnCreatePisAuthorization() {
-        aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        responseObject = ResponseObject.<Xs2aCreatePisAuthorisationResponse>builder()
-                             .body(createPisAuthorisationResponse)
-                             .build();
-        ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
-
-        verify(createPisAuthorisationResponse, times(1)).setLinks(any(CreatePisAuthorisationLinks.class));
-
-        assertFalse(actualResponse.hasError());
-    }
-
-    @Test
-    void updatePisAuthorizationAspect_successOnUpdateAuthorization() {
-        aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                             .body(updatePisCommonPaymentPsuDataResponse)
-                             .build();
-        ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
-
-        verify(updatePisCommonPaymentPsuDataResponse, times(1)).setLinks(any(UpdatePisAuthorisationLinks.class));
-
-        assertFalse(actualResponse.hasError());
-    }
-
-    @Test
-    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // When
-        responseObject = ResponseObject.builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
-        ResponseObject actualResponse = aspect.createPisAuthorizationAspect(responseObject, request);
-
-        // Then
-        assertTrue(actualResponse.hasError());
+    void createPisAuthorizationAspect() {
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                            .body(authorisationResponse)
+                                            .build();
+        aspect.createPisAuthorizationAspect(responseObject, REQUEST);
+        verify(paymentAuthorisationAspectService).createPisAuthorizationAspect(responseObject, REQUEST);
     }
 }

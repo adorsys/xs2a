@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web;
 
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
+import de.adorsys.psd2.xs2a.web.link.UrlHolder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

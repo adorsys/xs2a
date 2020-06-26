@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,46 +14,25 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.aspect;
+package de.adorsys.psd2.xs2a.service.link;
 
-import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.Optional;
 
 import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.fromController;
 
-@Slf4j
-@Component
-@RequiredArgsConstructor
-public abstract class AbstractLinkAspect<T> {
-    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
-
-    protected <B> boolean hasError(ResponseEntity<B> target) {
-        Optional<B> body = Optional.ofNullable(target.getBody());
-        return body.isPresent() && body.get().getClass()
-                                       .isAssignableFrom(MessageError.class);
-    }
-
-    ScaRedirectFlow getScaRedirectFlow() {
-        return aspspProfileServiceWrapper.getScaRedirectFlow();
-    }
+@AllArgsConstructor
+public class BaseAspectService<T> {
+    final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     String getHttpUrl() {
         return aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()
                    ? aspspProfileServiceWrapper.getXs2aBaseLinksUrl()
                    : fromController(this.getControllerClass()).pathSegment(StringUtils.EMPTY).toUriString();
-    }
-
-    boolean isAuthorisationConfirmationRequestMandated() {
-        return aspspProfileServiceWrapper.isAuthorisationConfirmationRequestMandated();
     }
 
     @SuppressWarnings("unchecked")
@@ -68,4 +47,11 @@ public abstract class AbstractLinkAspect<T> {
         }
     }
 
+    ScaRedirectFlow getScaRedirectFlow() {
+        return aspspProfileServiceWrapper.getScaRedirectFlow();
+    }
+
+    boolean isAuthorisationConfirmationRequestMandated() {
+        return aspspProfileServiceWrapper.isAuthorisationConfirmationRequestMandated();
+    }
 }
