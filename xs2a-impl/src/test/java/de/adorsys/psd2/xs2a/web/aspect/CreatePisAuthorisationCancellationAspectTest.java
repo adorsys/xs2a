@@ -16,37 +16,23 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.link.PisAuthorisationCancellationLinks;
-import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
-import de.adorsys.xs2a.reader.JsonReader;
+import de.adorsys.psd2.xs2a.service.link.PaymentAuthorisationCancellationAspectService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePisAuthorisationCancellationAspectTest {
-
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_ID = "1111111111111";
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
@@ -57,66 +43,17 @@ class CreatePisAuthorisationCancellationAspectTest {
     private CreatePisAuthorisationCancellationAspect aspect;
 
     @Mock
-    private ScaApproachResolver scaApproachResolver;
+    private PaymentAuthorisationCancellationAspectService paymentAuthorisationCancellationAspectService;
     @Mock
     private Xs2aCreatePisCancellationAuthorisationResponse createResponse;
-    @Mock
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse updateResponse;
-    @Mock
-    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private RequestProviderService requestProviderService;
-
-    private ResponseObject<CancellationAuthorisationResponse> responseObject;
 
     @Test
-    void createPisAuthorisationAspect_withStartResponseType_shouldSetAuthorisationCancellationLinks() {
-        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+    void createPisAuthorisationAspect() {
+        ResponseObject<CancellationAuthorisationResponse> responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
+                                            .body(createResponse)
+                                            .build();
 
-        when(createResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.START);
-        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
-                             .body(createResponse)
-                             .build();
-        ResponseObject<CancellationAuthorisationResponse> actualResponse =
-            aspect.createPisAuthorisationAspect(responseObject, REQUEST);
-
-        verify(createResponse, times(1)).setLinks(any(PisAuthorisationCancellationLinks.class));
-
-        assertFalse(actualResponse.hasError());
+        aspect.createPisAuthorisationAspect(responseObject, REQUEST);
+        verify(paymentAuthorisationCancellationAspectService).createPisAuthorisationAspect(responseObject, REQUEST);
     }
-
-    @Test
-    void createPisAuthorisationAspect_withUpdateResponseType_shouldSetUpdatePsuDataLinks() {
-        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        when(updateResponse.getAuthorisationResponseType()).thenReturn(AuthorisationResponseType.UPDATE);
-
-        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
-                             .body(updateResponse)
-                             .build();
-        ResponseObject<CancellationAuthorisationResponse> actualResponse =
-            aspect.createPisAuthorisationAspect(responseObject, REQUEST);
-
-        verify(updateResponse, times(1)).setLinks(any(UpdatePisCancellationPsuDataLinks.class));
-
-        assertFalse(actualResponse.hasError());
-    }
-
-    @Test
-    void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-        // When
-        responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
-        ResponseObject<CancellationAuthorisationResponse> actualResponse =
-            aspect.createPisAuthorisationAspect(responseObject, REQUEST);
-
-        // Then
-        assertTrue(actualResponse.hasError());
-    }
-
 }

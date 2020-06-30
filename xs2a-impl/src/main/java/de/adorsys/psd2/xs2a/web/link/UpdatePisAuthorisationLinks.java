@@ -21,7 +21,6 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 

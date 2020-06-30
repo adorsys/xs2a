@@ -19,32 +19,22 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.controller.PaymentController;
-import de.adorsys.psd2.xs2a.web.link.UpdatePisCancellationPsuDataLinks;
+import de.adorsys.psd2.xs2a.service.link.PaymentAuthorisationCancellationAspectService;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class UpdatePisCancellationPsuDataAspect extends AbstractLinkAspect<PaymentController> {
-    private ScaApproachResolver scaApproachResolver;
+public class UpdatePisCancellationPsuDataAspect {
+    private PaymentAuthorisationCancellationAspectService paymentAuthorisationCancellationAspectService;
 
-    public UpdatePisCancellationPsuDataAspect(ScaApproachResolver scaApproachResolver, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(aspspProfileServiceWrapper);
-        this.scaApproachResolver = scaApproachResolver;
+    public UpdatePisCancellationPsuDataAspect(PaymentAuthorisationCancellationAspectService paymentAuthorisationCancellationAspectService) {
+        this.paymentAuthorisationCancellationAspectService = paymentAuthorisationCancellationAspectService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentCancellationAuthorisationService.updatePisCancellationPsuData(..)) && args( request)", returning = "result", argNames = "result,request")
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationAuthorizationAspect(ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> result, Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        if (!result.hasError()) {
-            Xs2aUpdatePisCommonPaymentPsuDataResponse body = result.getBody();
-            body.setLinks(new UpdatePisCancellationPsuDataLinks(getHttpUrl(), scaApproachResolver, request,
-                                                                body.getScaStatus(), body.getChosenScaMethod()));
-        }
-
-        return result;
+        return paymentAuthorisationCancellationAspectService.updatePisCancellationAuthorizationAspect(result, request);
     }
 }

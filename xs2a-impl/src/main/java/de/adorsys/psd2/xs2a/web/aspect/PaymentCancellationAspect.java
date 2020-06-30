@@ -17,71 +17,25 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
-import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
-import de.adorsys.psd2.xs2a.service.RedirectIdService;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisationNeededDecider;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-import de.adorsys.psd2.xs2a.web.controller.PaymentController;
-import de.adorsys.psd2.xs2a.web.link.PaymentCancellationLinks;
+import de.adorsys.psd2.xs2a.service.link.PaymentCancellationAspectService;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-public class PaymentCancellationAspect extends AbstractLinkAspect<PaymentController> {
-    private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
-    private final ScaApproachResolver scaApproachResolver;
-    private final RedirectLinkBuilder redirectLinkBuilder;
-    private final AuthorisationMethodDecider authorisationMethodDecider;
-    private final RedirectIdService redirectIdService;
-    private RequestProviderService requestProviderService;
+public class PaymentCancellationAspect {
 
-    public PaymentCancellationAspect(PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
-                                     AspspProfileServiceWrapper aspspProfileServiceWrapper,
-                                     ScaApproachResolver scaApproachResolver,
-                                     RedirectLinkBuilder redirectLinkBuilder,
-                                     AuthorisationMethodDecider authorisationMethodDecider,
-                                     RedirectIdService redirectIdService,
-                                     RequestProviderService requestProviderService) {
-        super(aspspProfileServiceWrapper);
-        this.cancellationScaNeededDecider = cancellationScaNeededDecider;
-        this.scaApproachResolver = scaApproachResolver;
-        this.redirectLinkBuilder = redirectLinkBuilder;
-        this.authorisationMethodDecider = authorisationMethodDecider;
-        this.redirectIdService = redirectIdService;
-        this.requestProviderService = requestProviderService;
+    private PaymentCancellationAspectService paymentCancellationAspectService;
+
+    public PaymentCancellationAspect(PaymentCancellationAspectService paymentCancellationAspectService) {
+        this.paymentCancellationAspectService = paymentCancellationAspectService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentService.cancelPayment(..)) && args(paymentCancellationRequest)", returning = "result", argNames = "result,paymentCancellationRequest")
     public ResponseObject<CancelPaymentResponse> cancelPayment(ResponseObject<CancelPaymentResponse> result, PisPaymentCancellationRequest paymentCancellationRequest) {
-        if (!result.hasError()) {
-            CancelPaymentResponse response = result.getBody();
-
-            boolean isScaRequired = cancellationScaNeededDecider.isScaRequired(response.isStartAuthorisationRequired());
-            if (isStartAuthorisationLinksNeeded(isScaRequired, response.getTransactionStatus())) {
-
-                // in payment cancellation case 'multilevelScaRequired' is always false
-                boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(paymentCancellationRequest.getTppExplicitAuthorisationPreferred(), false);
-                response.setLinks(new PaymentCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                               redirectIdService, response, isExplicitMethod, getScaRedirectFlow(),
-                                                               isAuthorisationConfirmationRequestMandated(),
-                                                               requestProviderService.getInstanceId()));
-            }
-
-        }
-        return result;
-    }
-
-    private boolean isStartAuthorisationLinksNeeded(boolean isScaRequired, TransactionStatus transactionStatus) {
-        return transactionStatus.isNotFinalisedStatus()
-                   && transactionStatus != TransactionStatus.RCVD
-                   && isScaRequired;
+        return paymentCancellationAspectService.cancelPayment(result, paymentCancellationRequest);
     }
 }

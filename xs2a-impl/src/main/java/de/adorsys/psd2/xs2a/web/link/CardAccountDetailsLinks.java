@@ -20,7 +20,6 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;

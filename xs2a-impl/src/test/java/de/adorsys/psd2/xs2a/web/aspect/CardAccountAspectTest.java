@@ -16,46 +16,40 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.link.CardAccountDetailsLinks;
+import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.service.link.CardAccountAspectService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class CardAccountAspectTest {
+    @InjectMocks
+    private CardAccountAspect aspect;
 
     @Mock
-    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
+    private CardAccountAspectService cardAccountAspectService;
+    @Mock
+    private Xs2aTransactionsReportByPeriodRequest request;
 
     private Xs2aCardAccountDetails accountDetails;
     private AisConsent aisConsent;
-    private ResponseObject responseObject;
     private JsonReader jsonReader = new JsonReader();
-    private CardAccountAspect aspect;
+
 
     @BeforeEach
     void setUp() {
-        aspect = new CardAccountAspect(aspspProfileServiceWrapper);
         aisConsent = jsonReader.getObjectFromFile("json/aspect/ais-consent.json", AisConsent.class);
 
         aisConsent.setConsentData(AisConsentData.buildDefaultAisConsentData());
@@ -64,72 +58,29 @@ class CardAccountAspectTest {
     }
 
     @Test
-    void getCardAccountDetailsAspect_success() {
-        // Given
-        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
-            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
-            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        responseObject = ResponseObject.<Xs2aCardAccountDetailsHolder>builder()
-                             .body(new Xs2aCardAccountDetailsHolder(accountDetails, aisConsent))
-                             .build();
-        // When
-        ResponseObject actualResponse = aspect.getCardAccountDetails(responseObject);
-
-        // Then
-        assertNotNull(accountDetails.getLinks());
-        assertTrue(accountDetails.getLinks() instanceof CardAccountDetailsLinks);
-
-        assertFalse(actualResponse.hasError());
+    void getCardAccountList() {
+        ResponseObject<Xs2aCardAccountListHolder> responseObject = ResponseObject.<Xs2aCardAccountListHolder>builder()
+                                                                       .body(new Xs2aCardAccountListHolder(Collections.singletonList(accountDetails), aisConsent))
+                                                                       .build();
+        aspect.getCardAccountList(responseObject);
+        verify(cardAccountAspectService).getCardAccountList(responseObject);
     }
 
     @Test
-    void getAccountDetailsAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
-        // When
-        ResponseObject actualResponse = aspect.getCardAccountDetails(responseObject);
-
-        // Then
-        assertTrue(actualResponse.hasError());
+    void getCardAccountDetails() {
+        ResponseObject<Xs2aCardAccountDetailsHolder> responseObject = ResponseObject.<Xs2aCardAccountDetailsHolder>builder()
+                                                                          .body(new Xs2aCardAccountDetailsHolder(accountDetails, aisConsent))
+                                                                          .build();
+        aspect.getCardAccountDetails(responseObject);
+        verify(cardAccountAspectService).getCardAccountDetails(responseObject);
     }
 
     @Test
-    void getAccountDetailsListAspect_success() {
-        // Given
-        AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
-            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
-            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        responseObject = ResponseObject.<Xs2aCardAccountListHolder>builder()
-                             .body(new Xs2aCardAccountListHolder(Collections.singletonList(accountDetails), aisConsent))
-                             .build();
-        // When
-        ResponseObject actualResponse = aspect.getCardAccountList(responseObject);
-
-        // Then
-        assertNotNull(accountDetails.getLinks());
-        assertTrue(accountDetails.getLinks() instanceof CardAccountDetailsLinks);
-
-        assertFalse(actualResponse.hasError());
-    }
-
-    @Test
-    void getAccountDetailsListAspect_withError_shouldAddTextErrorMessage() {
-        // Given
-        responseObject = ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
-        // When
-        ResponseObject actualResponse = aspect.getCardAccountList(responseObject);
-
-        // Then
-        assertTrue(actualResponse.hasError());
+    void getTransactionsReportByPeriod() {
+        ResponseObject<Xs2aCardTransactionsReport> responseObject = ResponseObject.<Xs2aCardTransactionsReport>builder()
+                                                                        .body(new Xs2aCardTransactionsReport())
+                                                                        .build();
+        aspect.getTransactionsReportByPeriod(responseObject, request);
+        verify(cardAccountAspectService).getTransactionsReportByPeriod(responseObject, request);
     }
 }
