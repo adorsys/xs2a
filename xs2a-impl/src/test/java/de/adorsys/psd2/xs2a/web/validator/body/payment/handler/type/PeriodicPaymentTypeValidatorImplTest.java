@@ -284,7 +284,7 @@ class PeriodicPaymentTypeValidatorImplTest {
 
         validator.validateAddress(address, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"postCode", 5}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"postCode", 35}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
