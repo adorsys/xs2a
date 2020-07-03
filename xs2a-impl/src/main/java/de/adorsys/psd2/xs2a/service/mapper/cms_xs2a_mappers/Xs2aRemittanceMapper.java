@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.mapper.consent;
+package de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers;
 
-import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.core.mapper.ConsentDataMapper;
+import de.adorsys.psd2.consent.api.pis.CmsRemittance;
+import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = ConsentDataMapper.class)
-public interface Xs2aPiisConsentMapper {
-    @Mapping(target = "consentTppInformation", source = "tppInformation")
-    PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
+@Mapper(componentModel = "spring")
+public interface Xs2aRemittanceMapper {
+    CmsRemittance mapToCmsRemittance(Remittance remittance);
+    Remittance mapToRemittance(CmsRemittance cmsRemittance);
 }
