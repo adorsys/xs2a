@@ -32,7 +32,7 @@ public class DefaultPaymentValidationConfigImpl implements PaymentValidationConf
     protected ValidationObject streetName = new ValidationObject(100);
     protected ValidationObject buildingNumber = new ValidationObject(20);
     protected ValidationObject townName = new ValidationObject(100);
-    protected ValidationObject postCode = new ValidationObject(5);
+    protected ValidationObject postCode = new ValidationObject(35);
 
     //account reference
     protected ValidationObject pan = new ValidationObject(35);
