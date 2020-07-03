@@ -53,7 +53,7 @@ public class AuthorisationServiceInternalEncrypted implements AuthorisationServi
         String encryptedId = parentHolder.getParentId();
         Optional<String> decryptedIdOptional = securityDataService.decryptId(encryptedId);
 
-        if (!decryptedIdOptional.isPresent()) {
+        if (decryptedIdOptional.isEmpty()) {
             log.info("Encrypted Parent ID: [{}]. Create authorisation has failed, couldn't decrypt parent id",
                      encryptedId);
             return CmsResponse.<CreateAuthorisationResponse>builder()
@@ -88,7 +88,7 @@ public class AuthorisationServiceInternalEncrypted implements AuthorisationServi
         String encryptedId = parentHolder.getParentId();
         Optional<String> decryptedIdOptional = securityDataService.decryptId(encryptedId);
 
-        if (!decryptedIdOptional.isPresent()) {
+        if (decryptedIdOptional.isEmpty()) {
             log.info("Encrypted Parent ID: [{}]. Get authorisation has failed, couldn't decrypt parent id",
                      encryptedId);
             return CmsResponse.<List<String>>builder()
@@ -105,7 +105,7 @@ public class AuthorisationServiceInternalEncrypted implements AuthorisationServi
         String encryptedId = parentHolder.getParentId();
         Optional<String> decryptedIdOptional = securityDataService.decryptId(encryptedId);
 
-        if (!decryptedIdOptional.isPresent()) {
+        if (decryptedIdOptional.isEmpty()) {
             log.info("Encrypted Parent ID: [{}]. Get SCA status has failed, couldn't decrypt parent id",
                      encryptedId);
             return CmsResponse.<ScaStatus>builder()

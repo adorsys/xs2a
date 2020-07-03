@@ -97,7 +97,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
 
         Optional<Authorisation> authorisationOptional = pisCommonPaymentResponse.findAuthorisationInPayment(authorisationId);
 
-        if (!authorisationOptional.isPresent()) {
+        if (authorisationOptional.isEmpty()) {
             return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_UNKNOWN_403);
         }
 

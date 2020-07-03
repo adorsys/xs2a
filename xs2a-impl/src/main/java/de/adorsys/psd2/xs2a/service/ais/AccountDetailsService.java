@@ -87,7 +87,7 @@ public class AccountDetailsService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get account details failed. Account consent not found by id",
                      accountId, consentId);
             return ResponseObject.<Xs2aAccountDetailsHolder>builder()

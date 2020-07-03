@@ -65,7 +65,7 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
 
         Optional<AccountConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
 
-        if (!authorisationOptional.isPresent()) {
+        if (authorisationOptional.isEmpty()) {
             return ValidationResult.invalid(ErrorType.AIS_403, RESOURCE_UNKNOWN_403);
         }
 

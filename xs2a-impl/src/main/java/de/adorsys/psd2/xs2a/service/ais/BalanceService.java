@@ -87,7 +87,7 @@ public class BalanceService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get balances report failed. Account consent not found by ID",
                      accountId, consentId);
             return ResponseObject.<Xs2aBalancesReport>builder()

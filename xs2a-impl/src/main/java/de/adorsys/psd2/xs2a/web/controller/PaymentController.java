@@ -142,7 +142,7 @@ public class PaymentController implements PaymentApi {
                                                                               UUID psUDeviceID, String psUGeoLocation) {
 
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
-        if (!PaymentType.getByValue(paymentService).isPresent()) {
+        if (PaymentType.getByValue(paymentService).isEmpty()) {
             ResponseObject<PaymentInitiationResponse> responseObject = ResponseObject.<PaymentInitiationResponse>builder()
                                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -189,7 +189,7 @@ public class PaymentController implements PaymentApi {
                                                                               String psUUserAgent, String psUHttpMethod,
                                                                               UUID psUDeviceID, String psUGeoLocation) {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
-        if (!PaymentType.getByValue(paymentService).isPresent()) {
+        if (PaymentType.getByValue(paymentService).isEmpty()) {
             ResponseObject<PaymentInitiationResponse> responseObject = ResponseObject.<PaymentInitiationResponse>builder()
                                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -241,7 +241,7 @@ public class PaymentController implements PaymentApi {
                                                                               String psUAcceptLanguage, String psUUserAgent,
                                                                               String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         // As this method is mapped to '/v1/{payment-service}/{payment-product}' path, we need to check payment-service value to be compliant with spec
-        if (!PaymentType.getByValue(paymentService).isPresent()) {
+        if (PaymentType.getByValue(paymentService).isEmpty()) {
             ResponseObject<PaymentInitiationResponse> responseObject = ResponseObject.<PaymentInitiationResponse>builder()
                                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -307,7 +307,7 @@ public class PaymentController implements PaymentApi {
                                                           UUID psUDeviceID, String psUGeoLocation) {
 
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
-        if (!paymentType.isPresent()) {
+        if (paymentType.isEmpty()) {
             ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -327,7 +327,7 @@ public class PaymentController implements PaymentApi {
                                                             String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         Optional<PaymentType> paymentTypeOptional = PaymentType.getByValue(paymentService);
-        if (!paymentTypeOptional.isPresent()) {
+        if (paymentTypeOptional.isEmpty()) {
             ResponseObject<Xs2aAuthorisationSubResources> responseObject = ResponseObject.<Xs2aAuthorisationSubResources>builder()
                                                                                .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -348,7 +348,7 @@ public class PaymentController implements PaymentApi {
                                                                                    String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                                                                    String psUGeoLocation) {
         Optional<PaymentType> paymentTypeOptional = PaymentType.getByValue(paymentService);
-        if (!paymentTypeOptional.isPresent()) {
+        if (paymentTypeOptional.isEmpty()) {
             ResponseObject<Xs2aPaymentCancellationAuthorisationSubResource> responseObject = ResponseObject.<Xs2aPaymentCancellationAuthorisationSubResource>builder()
                                                                                                  .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -369,7 +369,7 @@ public class PaymentController implements PaymentApi {
                                                         String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         Optional<PaymentType> paymentTypeOptional = PaymentType.getByValue(paymentService);
-        if (!paymentTypeOptional.isPresent()) {
+        if (paymentTypeOptional.isEmpty()) {
             ResponseObject<ScaStatus> responseObject = ResponseObject.<ScaStatus>builder()
                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -393,7 +393,7 @@ public class PaymentController implements PaymentApi {
                                                     String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod,
                                                     UUID psUDeviceID, String psUGeoLocation) {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
-        if (!paymentType.isPresent()) {
+        if (paymentType.isEmpty()) {
             ResponseObject<TransactionStatus> responseObject = ResponseObject.<TransactionStatus>builder()
                                                                    .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -431,7 +431,7 @@ public class PaymentController implements PaymentApi {
                                                                           String psUHttpMethod, UUID psUDeviceID,
                                                                           String psUGeoLocation) {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
-        if (!paymentType.isPresent()) {
+        if (paymentType.isEmpty()) {
             ResponseObject<CancellationAuthorisationResponse> responseObject = ResponseObject.<CancellationAuthorisationResponse>builder()
                                                                                    .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -460,7 +460,7 @@ public class PaymentController implements PaymentApi {
                                                            String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID,
                                                            String psUGeoLocation) {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
-        if (!paymentType.isPresent()) {
+        if (paymentType.isEmpty()) {
             ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                                                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());
@@ -491,7 +491,7 @@ public class PaymentController implements PaymentApi {
 
     private ResponseEntity updatePisAuthorisation(PsuIdData psuData, String authorisationId, String paymentService, String paymentProduct, String paymentId, Object body) {
         Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
-        if (!paymentType.isPresent()) {
+        if (paymentType.isEmpty()) {
             ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
                                                                                            .fail(MESSAGE_ERROR_RESOURCE_UNKNOWN_404).build();
             return responseErrorMapper.generateErrorResponse(responseObject.getError());

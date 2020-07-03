@@ -120,7 +120,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
         try {
             response = cmsPsuAisService.checkRedirectAndGetConsent(redirectId, instanceId);
 
-            if (!response.isPresent()) {
+            if (response.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 

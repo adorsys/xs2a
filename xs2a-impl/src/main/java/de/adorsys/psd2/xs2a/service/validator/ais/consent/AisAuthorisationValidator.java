@@ -35,7 +35,7 @@ public class AisAuthorisationValidator {
     @NotNull
     public ValidationResult validate(@NotNull String authorisationId, @NotNull AisConsent consent) {
         Optional<AccountConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
-        if (!authorisationOptional.isPresent()) {
+        if (authorisationOptional.isEmpty()) {
             log.info("Consent ID: [{}], Authorisation ID: [{}]. Authorisation validation has failed: couldn't find authorisation with given authorisationId for consent",
                      consent.getId(), authorisationId);
             return ValidationResult.invalid(ErrorType.AIS_403, RESOURCE_UNKNOWN_403);

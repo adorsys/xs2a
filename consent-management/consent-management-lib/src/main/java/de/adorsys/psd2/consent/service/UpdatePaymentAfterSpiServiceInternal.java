@@ -40,7 +40,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
     @Transactional
     public CmsResponse<Boolean> updatePaymentStatus(@NotNull String paymentId, @NotNull TransactionStatus status) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
-        if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
+        if (paymentDataOptional.isEmpty() || paymentDataOptional.get().isFinalised()) {
             log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
                      paymentId);
             return CmsResponse.<Boolean>builder()
@@ -59,7 +59,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
     public CmsResponse<Boolean> updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
 
-        if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
+        if (paymentDataOptional.isEmpty() || paymentDataOptional.get().isFinalised()) {
             log.info("Payment ID [{}]. Update payment status by id failed, because pis payment data not found or payment is finalized",
                      paymentId);
             return CmsResponse.<Boolean>builder()
@@ -78,7 +78,7 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
     @Transactional
     public CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String paymentId, @NotNull String internalRequestId) {
         Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
-        if (!paymentDataOptional.isPresent() || paymentDataOptional.get().isFinalised()) {
+        if (paymentDataOptional.isEmpty() || paymentDataOptional.get().isFinalised()) {
             log.info("Payment ID [{}]. Update payment intrenal request id failed, because pis payment data not found or payment is finalized",
                      paymentId);
             return CmsResponse.<Boolean>builder()

@@ -90,7 +90,7 @@ public class PaymentParametersValidationInterceptor extends HandlerInterceptorAd
         Optional<PaymentType> paymentTypeOptional = Optional.ofNullable(paymentTypeString)
                                                         .flatMap(PaymentType::getByValue);
 
-        if (!paymentTypeOptional.isPresent()) {
+        if (paymentTypeOptional.isEmpty()) {
             MessageError messageError = new MessageError(ErrorType.PIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, paymentTypeString));
             errorBuildingService.buildPaymentErrorResponse(response, messageError);
             return false;

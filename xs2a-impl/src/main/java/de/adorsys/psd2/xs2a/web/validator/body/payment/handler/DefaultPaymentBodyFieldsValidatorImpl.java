@@ -51,12 +51,12 @@ public class DefaultPaymentBodyFieldsValidatorImpl implements PaymentBodyFieldsV
         Optional<Object> bodyOptional = fieldExtractor.mapBodyToInstance(request, messageError, Object.class);
 
         // In case of wrong JSON - we don't proceed to the inner fields validation.
-        if (!bodyOptional.isPresent()) {
+        if (bodyOptional.isEmpty()) {
             return messageError;
         }
 
         Optional<PaymentTypeValidator> validator = paymentTypeValidatorContext.getValidator(paymentService);
-        if (!validator.isPresent()) {
+        if (validator.isEmpty()) {
             throw new IllegalArgumentException("Unsupported payment service");
         }
 

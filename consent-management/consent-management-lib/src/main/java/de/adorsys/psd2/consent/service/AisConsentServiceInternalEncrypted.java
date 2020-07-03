@@ -46,7 +46,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public CmsResponse<CmsResponse.VoidResponse> checkConsentAndSaveActionLog(AisConsentActionRequest encryptedRequest) throws WrongChecksumException {
         String consentId = encryptedRequest.getConsentId();
         Optional<String> decryptedConsentId = securityDataService.decryptId(consentId);
-        if (!decryptedConsentId.isPresent()) {
+        if (decryptedConsentId.isEmpty()) {
             log.info("Encrypted Consent ID: [{}]. Check consent and save action log failed, couldn't decrypt consent id",
                      consentId);
             return CmsResponse.<CmsResponse.VoidResponse>builder()
@@ -69,7 +69,7 @@ public class AisConsentServiceInternalEncrypted implements AisConsentServiceEncr
     public CmsResponse<CmsConsent> updateAspspAccountAccess(String encryptedConsentId, AccountAccess request) throws WrongChecksumException {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedConsentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Consent ID: [{}]. Update aspsp account access with response failed, couldn't decrypt consent id",
                      encryptedConsentId);
             return CmsResponse.<CmsConsent>builder()

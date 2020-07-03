@@ -99,7 +99,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     public boolean terminateConsent(@NotNull String consentId, @NotNull String instanceId) {
         Optional<ConsentEntity> entityOptional = consentJpaRepository.findOne(piisConsentEntitySpecification.byConsentIdAndInstanceId(consentId, instanceId));
 
-        if (!entityOptional.isPresent()) {
+        if (entityOptional.isEmpty()) {
             log.info("Consent ID: [{}], Instance ID: [{}]. PIIS consent cannot be terminated, because it was not found by consentId and instanceId",
                      consentId, instanceId);
             return false;

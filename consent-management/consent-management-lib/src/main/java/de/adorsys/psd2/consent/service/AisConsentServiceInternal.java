@@ -93,7 +93,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     public CmsResponse<CmsConsent> updateAspspAccountAccess(String consentId, AccountAccess request) throws WrongChecksumException {
         Optional<ConsentEntity> consentOptional = aisConsentRepository.getActualAisConsent(consentId);
 
-        if (!consentOptional.isPresent()) {
+        if (consentOptional.isEmpty()) {
             log.info("Consent ID [{}]. Update aspsp account access with response failed, because consent not found",
                      consentId);
             return CmsResponse.<CmsConsent>builder()

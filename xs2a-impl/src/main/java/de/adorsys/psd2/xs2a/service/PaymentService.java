@@ -132,7 +132,7 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_PAYMENT_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
-        if (!pisCommonPaymentOptional.isPresent()) {
+        if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.<CommonPayment>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
@@ -183,7 +183,7 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(encryptedPaymentId, EventType.GET_TRANSACTION_STATUS_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
 
-        if (!pisCommonPaymentOptional.isPresent()) {
+        if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
                        .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
@@ -247,7 +247,7 @@ public class PaymentService {
         xs2aEventService.recordPisTppRequest(paymentCancellationRequest.getEncryptedPaymentId(), EventType.PAYMENT_CANCELLATION_REQUEST_RECEIVED);
         Optional<PisCommonPaymentResponse> pisCommonPaymentOptional = pisCommonPaymentService.getPisCommonPaymentById(paymentCancellationRequest.getEncryptedPaymentId());
 
-        if (!pisCommonPaymentOptional.isPresent()) {
+        if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Cancel payment has failed. Payment not found by ID.",
                      paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
