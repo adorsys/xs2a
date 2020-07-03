@@ -135,4 +135,5 @@
     <include relativeToChangelogFile="true" file="migration/0107-add-aspsp-account-access-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0108-increase-length-of-tpp-uri-columns-in-authorisation-template-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0109-remove-deprecated-type-access-from-account-access-tables.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0112-increase-length-of-postCode-column.xml"/>
 </databaseChangeLog>
