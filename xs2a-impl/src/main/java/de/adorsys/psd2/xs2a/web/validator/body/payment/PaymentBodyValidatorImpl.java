@@ -148,7 +148,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         Optional<String> frequencyOptional = fieldExtractor.extractField(request, FREQUENCY_FIELD_NAME, messageError);
         boolean isPeriodicPayment = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(PERIODIC_PAYMENT_PATH_VAR);
         if (isPeriodicPayment) {
-            if (!frequencyOptional.isPresent()) {
+            if (frequencyOptional.isEmpty()) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, FREQUENCY_FIELD_NAME));
             } else if (FrequencyCode.fromValue(frequencyOptional.get()) == null) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, FREQUENCY_FIELD_NAME));

@@ -58,7 +58,7 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
         Optional<ConfirmationOfFunds> confirmationOfFundsOptional = fieldExtractor.mapBodyToInstance(request, messageError, ConfirmationOfFunds.class);
 
         // In case of wrong JSON - we don't proceed to the inner fields validation.
-        if (!confirmationOfFundsOptional.isPresent()) {
+        if (confirmationOfFundsOptional.isEmpty()) {
             return messageError;
         }
 

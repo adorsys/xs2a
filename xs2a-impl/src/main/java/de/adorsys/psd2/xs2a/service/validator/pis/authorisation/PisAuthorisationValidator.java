@@ -36,7 +36,7 @@ public class PisAuthorisationValidator {
     public ValidationResult validate(@NotNull String authorisationId, @NotNull PisCommonPaymentResponse commonPaymentResponse) {
         Optional<Authorisation> authorisationOptional = commonPaymentResponse.findAuthorisationInPayment(authorisationId);
 
-        if (!authorisationOptional.isPresent()) {
+        if (authorisationOptional.isEmpty()) {
             log.info("Payment ID: [{}], Authorisation ID: [{}]. Updating PIS initiation authorisation PSU Data has failed: couldn't find authorisation with given authorisationId for payment",
                      commonPaymentResponse.getExternalId(), authorisationId);
             return ValidationResult.invalid(ErrorType.PIS_403, RESOURCE_UNKNOWN_403);

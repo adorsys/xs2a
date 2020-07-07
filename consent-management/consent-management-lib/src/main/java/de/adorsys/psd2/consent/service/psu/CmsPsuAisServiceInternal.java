@@ -164,7 +164,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                                              @NotNull String instanceId, AuthenticationDataHolder authenticationDataHolder) throws AuthorisationIsExpiredException {
         Optional<ConsentEntity> actualAisConsent = getActualAisConsent(consentId, instanceId);
 
-        if (!actualAisConsent.isPresent()) {
+        if (actualAisConsent.isEmpty()) {
             log.info("Consent ID: [{}]. Update of authorisation status failed, because consent either has finalised status or not found", consentId);
             return false;
         }
@@ -237,7 +237,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     public Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId) {
         Optional<ConsentEntity> aisConsentOptional = getActualAisConsent(consentId, instanceId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             return Optional.empty();
         }
 
@@ -375,7 +375,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             log.info("Authorisation ID [{}]. No PSU data available in the authorisation.", authorisation.getExternalId());
 
             Optional<ConsentEntity> consentOptional = consentJpaRepository.findByExternalId(authorisation.getParentExternalId());
-            if (!consentOptional.isPresent()) {
+            if (consentOptional.isEmpty()) {
                 log.info("Authorisation ID [{}]. Update PSU data in consent failed, couldn't find consent by the parent ID in the authorisation.",
                          authorisation.getExternalId());
                 return false;
@@ -429,7 +429,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAuthorisation(AuthorisationEntity authorisation, String redirectId) {
         Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalId(authorisation.getParentExternalId());
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsAisConsentResponseFromAisConsent method, because AIS consent is null",
                      redirectId);
             return Optional.empty();

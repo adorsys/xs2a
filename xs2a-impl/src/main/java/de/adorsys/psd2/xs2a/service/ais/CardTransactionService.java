@@ -97,7 +97,7 @@ public class CardTransactionService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get card transactions report by period failed. Account consent not found by ID",
                      request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aCardTransactionsReport>builder()

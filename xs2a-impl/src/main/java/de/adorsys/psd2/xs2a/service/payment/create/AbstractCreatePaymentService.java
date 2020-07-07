@@ -103,7 +103,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         if (implicitMethod) {
             PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, paymentRequest.getPaymentType(), paymentInitiationParameters.getPsuData());
-            if (!consentAuthorisation.isPresent()) {
+            if (consentAuthorisation.isEmpty()) {
                 return ResponseObject.<PaymentInitiationResponse>builder()
                            .fail(PIS_400, of(PAYMENT_FAILED))
                            .build();

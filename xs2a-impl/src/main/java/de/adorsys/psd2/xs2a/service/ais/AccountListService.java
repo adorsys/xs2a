@@ -90,7 +90,7 @@ public class AccountListService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID [{}]. Get account list failed. Account consent not found by id", consentId);
             return ResponseObject.<Xs2aAccountListHolder>builder()
                        .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))

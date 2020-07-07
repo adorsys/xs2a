@@ -186,7 +186,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                                              @NotNull String instanceId, AuthenticationDataHolder authenticationDataHolder) throws AuthorisationIsExpiredException {
         Optional<AuthorisationEntity> pisAuthorisation = getAuthorisationByExternalId(authorisationId, instanceId);
 
-        if (!pisAuthorisation.isPresent()) {
+        if (pisAuthorisation.isEmpty()) {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found.",
                      authorisationId, instanceId);
             return false;
@@ -253,7 +253,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         } else {
             Optional<PisCommonPaymentData> commonPaymentOptional = pisCommonPaymentDataRepository.findByPaymentId(authorisation.getParentExternalId());
 
-            if (!commonPaymentOptional.isPresent()) {
+            if (commonPaymentOptional.isEmpty()) {
                 log.info("Authorisation ID [{}]. Update PSU data in payment failed, couldn't find payment by the parent ID in the authorisation.",
                          authorisation.getExternalId());
                 return false;
@@ -321,7 +321,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private Optional<CmsPaymentResponse> buildCmsPaymentResponse(AuthorisationEntity authorisation) {
         Optional<PisCommonPaymentData> commonPayment = pisCommonPaymentDataRepository.findByPaymentId(authorisation.getParentExternalId());
 
-        if (!commonPayment.isPresent()) {
+        if (commonPayment.isEmpty()) {
             log.info("Authorisation ID [{}]. Creation of CMS payment response has failed, couldn't get payment by parent ID in authorisation",
                      authorisation.getExternalId());
             return Optional.empty();

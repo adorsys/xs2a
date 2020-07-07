@@ -95,7 +95,7 @@ public class CardAccountService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID [{}]. Get card account list failed. Account consent not found by ID", consentId);
             return ResponseObject.<Xs2aCardAccountListHolder>builder()
                        .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
@@ -163,7 +163,7 @@ public class CardAccountService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get card account details failed. Account consent not found by ID",
                      accountId, consentId);
             return ResponseObject.<Xs2aCardAccountDetailsHolder>builder()

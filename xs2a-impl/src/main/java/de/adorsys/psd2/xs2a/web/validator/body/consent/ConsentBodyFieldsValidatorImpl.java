@@ -73,7 +73,7 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
         Optional<Consents> consentsOptional = fieldExtractor.mapBodyToInstance(request, messageError, Consents.class);
 
         // In case of wrong JSON - we don't proceed to the inner fields validation.
-        if (!consentsOptional.isPresent()) {
+        if (consentsOptional.isEmpty()) {
             return messageError;
         }
 

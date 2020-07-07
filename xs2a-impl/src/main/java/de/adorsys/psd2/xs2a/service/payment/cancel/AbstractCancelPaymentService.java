@@ -37,7 +37,7 @@ public abstract class AbstractCancelPaymentService implements CancelPaymentServi
     @Override
     public ResponseObject<CancelPaymentResponse> cancelPayment(CommonPaymentData commonPaymentData, PisPaymentCancellationRequest paymentCancellationRequest) {
         Optional<? extends SpiPayment> spiPaymentOptional = createSpiPayment(commonPaymentData);
-        if (!spiPaymentOptional.isPresent()) {
+        if (spiPaymentOptional.isEmpty()) {
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
                        .build();

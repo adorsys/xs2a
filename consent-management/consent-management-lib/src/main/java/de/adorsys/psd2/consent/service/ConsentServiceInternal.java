@@ -172,7 +172,7 @@ public class ConsentServiceInternal implements ConsentService {
                                                             .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                             .map(this::checkAndUpdateOnExpiration);
 
-        if (!consentEntityOptional.isPresent()) {
+        if (consentEntityOptional.isEmpty()) {
             log.info("Consent ID [{}]. Get consent by ID failed, couldn't find consent by its ID", consentId);
             return CmsResponse.<CmsConsent>builder()
                        .error(LOGICAL_ERROR)
@@ -271,7 +271,7 @@ public class ConsentServiceInternal implements ConsentService {
     @Transactional(rollbackFor = WrongChecksumException.class)
     public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) throws WrongChecksumException {
         Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalId(consentId);
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
                      consentId);
             return CmsResponse.<Boolean>builder()

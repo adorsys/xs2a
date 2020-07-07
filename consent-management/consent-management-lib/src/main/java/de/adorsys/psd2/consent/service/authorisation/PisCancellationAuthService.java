@@ -67,7 +67,7 @@ public class PisCancellationAuthService extends CmsAuthorisationService<PisCommo
         Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentId(parentId)
                                                                .filter(CollectionUtils::isNotEmpty)
                                                                .map(list -> list.get(0).getPaymentData());
-        if (!commonPaymentData.isPresent()) {
+        if (commonPaymentData.isEmpty()) {
             commonPaymentData = pisCommonPaymentDataRepository.findByPaymentId(parentId);
         }
 

@@ -84,7 +84,7 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
             }
 
             Optional<Authorisable> aisConsentOptional = getAuthorisationParent(authorisationEntity.getParentExternalId());
-            if (!aisConsentOptional.isPresent()) {
+            if (aisConsentOptional.isEmpty()) {
                 log.info("Authorisation ID: [{}], Parent ID: [{}]. Update authorisation failed, couldn't find parent by ID from the authorisation",
                          authorisationEntity.getExternalId(), authorisationEntity.getParentExternalId());
                 return authorisationEntity;
