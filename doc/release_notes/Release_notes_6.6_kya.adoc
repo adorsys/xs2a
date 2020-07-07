@@ -4,6 +4,7 @@
 
 * Changed package name for Xs2aPisCommonPaymentMapper
 * Enlarged PSU-Accept to max250
+* Deleted tables with ais prefix
 
 === Changed package name for Xs2aPisCommonPaymentMapper
 
@@ -13,3 +14,12 @@ Changed package name from `de.adorsys.psd2.xs2a.service.mapper.consent` to
 === Enlarged PSU-Accept to max250
 
 From now on, max length of PSU-Accept header is 250 symbols.
+
+=== Deleted tables with ais prefix
+
+From now on, next tables with ais prefix are deleted:
+
+* ais_consent_psu_data
+* ais_consent_usage
+* ais_account_access
+* ais_aspsp_account_access
