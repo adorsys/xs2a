@@ -1,0 +1,9 @@
+= Release notes v.5.10.5
+
+== Table of Contents
+
+* Remove `chosenScaMethod` from response for decouple approach
+
+== Remove `chosenScaMethod` from response for decouple approach
+
+From now on, there is no `chosenScaMethod` in response for decouple approach.
