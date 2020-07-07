@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Changed package name for Xs2aPisCommonPaymentMapper
+* Enlarged PSU-Accept to max250
 
 === Changed package name for Xs2aPisCommonPaymentMapper
 
 Changed package name from `de.adorsys.psd2.xs2a.service.mapper.consent` to
 `de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers`.
+
+=== Enlarged PSU-Accept to max250
+
+From now on, max length of PSU-Accept header is 250 symbols.
