@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -139,20 +138,6 @@ class CommonDecoupledAisServiceTest {
         assertThat(actualResponse.getErrorHolder().getErrorType()).isEqualTo(ErrorType.AIS_400);
     }
 
-    @Test
-    void proceedDecoupledApproach_ShouldContainMethodId() {
-        // Given
-        when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
-
-        // When
-        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
-
-        // Then
-        String actualMethodId = actualResponse.getChosenScaMethod().getAuthenticationMethodId();
-        assertThat(actualMethodId).isEqualTo(AUTHENTICATION_METHOD_ID);
-    }
-
     // Needed because SpiResponse is final, so it's impossible to mock it
     private <T> SpiResponse<T> buildSuccessSpiResponse(T payload) {
         return SpiResponse.<T>builder()
@@ -171,7 +156,6 @@ class CommonDecoupledAisServiceTest {
     private static UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(METHOD_SELECTED_SCA_STATUS, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
         response.setPsuMessage(PSU_SUCCESS_MESSAGE);
-        response.setChosenScaMethod(new AuthenticationObject());
         return response;
     }
 }
