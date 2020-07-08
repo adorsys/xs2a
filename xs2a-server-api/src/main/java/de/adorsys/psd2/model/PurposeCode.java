@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2020 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,598 +8,598 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum PurposeCode {
 
-    BKDF("BKDF"),
+  BKDF("BKDF"),
 
-    BKFE("BKFE"),
+  BKFE("BKFE"),
 
-    BKFM("BKFM"),
+  BKFM("BKFM"),
 
-    BKIP("BKIP"),
+  BKIP("BKIP"),
 
-    BKPP("BKPP"),
+  BKPP("BKPP"),
 
-    CBLK("CBLK"),
+  CBLK("CBLK"),
 
-    CDCB("CDCB"),
+  CDCB("CDCB"),
 
-    CDCD("CDCD"),
+  CDCD("CDCD"),
 
-    CDCS("CDCS"),
+  CDCS("CDCS"),
 
-    CDDP("CDDP"),
+  CDDP("CDDP"),
 
-    CDOC("CDOC"),
+  CDOC("CDOC"),
 
-    CDQC("CDQC"),
+  CDQC("CDQC"),
 
-    ETUP("ETUP"),
+  ETUP("ETUP"),
 
-    FCOL("FCOL"),
+  FCOL("FCOL"),
 
-    MTUP("MTUP"),
+  MTUP("MTUP"),
 
-    ACCT("ACCT"),
+  ACCT("ACCT"),
 
-    CASH("CASH"),
+  CASH("CASH"),
 
-    COLL("COLL"),
+  COLL("COLL"),
 
-    CSDB("CSDB"),
+  CSDB("CSDB"),
 
-    DEPT("DEPT"),
+  DEPT("DEPT"),
 
-    INTC("INTC"),
+  INTC("INTC"),
 
-    LIMA("LIMA"),
+  LIMA("LIMA"),
 
-    NETT("NETT"),
+  NETT("NETT"),
 
-    BFWD("BFWD"),
+  BFWD("BFWD"),
 
-    CCIR("CCIR"),
+  CCIR("CCIR"),
 
-    CCPC("CCPC"),
+  CCPC("CCPC"),
 
-    CCPM("CCPM"),
+  CCPM("CCPM"),
 
-    CCSM("CCSM"),
+  CCSM("CCSM"),
 
-    CRDS("CRDS"),
+  CRDS("CRDS"),
 
-    CRPR("CRPR"),
+  CRPR("CRPR"),
 
-    CRSP("CRSP"),
+  CRSP("CRSP"),
 
-    CRTL("CRTL"),
+  CRTL("CRTL"),
 
-    EQPT("EQPT"),
+  EQPT("EQPT"),
 
-    EQUS("EQUS"),
+  EQUS("EQUS"),
 
-    EXPT("EXPT"),
+  EXPT("EXPT"),
 
-    EXTD("EXTD"),
+  EXTD("EXTD"),
 
-    FIXI("FIXI"),
+  FIXI("FIXI"),
 
-    FWBC("FWBC"),
+  FWBC("FWBC"),
 
-    FWCC("FWCC"),
+  FWCC("FWCC"),
 
-    FWSB("FWSB"),
+  FWSB("FWSB"),
 
-    FWSC("FWSC"),
+  FWSC("FWSC"),
 
-    MARG("MARG"),
+  MARG("MARG"),
 
-    MBSB("MBSB"),
+  MBSB("MBSB"),
 
-    MBSC("MBSC"),
+  MBSC("MBSC"),
 
-    MGCC("MGCC"),
+  MGCC("MGCC"),
 
-    MGSC("MGSC"),
+  MGSC("MGSC"),
 
-    OCCC("OCCC"),
+  OCCC("OCCC"),
 
-    OPBC("OPBC"),
+  OPBC("OPBC"),
 
-    OPCC("OPCC"),
+  OPCC("OPCC"),
 
-    OPSB("OPSB"),
+  OPSB("OPSB"),
 
-    OPSC("OPSC"),
+  OPSC("OPSC"),
 
-    OPTN("OPTN"),
+  OPTN("OPTN"),
 
-    OTCD("OTCD"),
+  OTCD("OTCD"),
 
-    REPO("REPO"),
+  REPO("REPO"),
 
-    RPBC("RPBC"),
+  RPBC("RPBC"),
 
-    RPCC("RPCC"),
+  RPCC("RPCC"),
 
-    RPSB("RPSB"),
+  RPSB("RPSB"),
 
-    RPSC("RPSC"),
+  RPSC("RPSC"),
 
-    RVPO("RVPO"),
+  RVPO("RVPO"),
 
-    SBSC("SBSC"),
+  SBSC("SBSC"),
 
-    SCIE("SCIE"),
+  SCIE("SCIE"),
 
-    SCIR("SCIR"),
+  SCIR("SCIR"),
 
-    SCRP("SCRP"),
+  SCRP("SCRP"),
 
-    SHBC("SHBC"),
+  SHBC("SHBC"),
 
-    SHCC("SHCC"),
+  SHCC("SHCC"),
 
-    SHSL("SHSL"),
+  SHSL("SHSL"),
 
-    SLEB("SLEB"),
+  SLEB("SLEB"),
 
-    SLOA("SLOA"),
+  SLOA("SLOA"),
 
-    SWBC("SWBC"),
+  SWBC("SWBC"),
 
-    SWCC("SWCC"),
+  SWCC("SWCC"),
 
-    SWPT("SWPT"),
+  SWPT("SWPT"),
 
-    SWSB("SWSB"),
+  SWSB("SWSB"),
 
-    SWSC("SWSC"),
+  SWSC("SWSC"),
 
-    TBAS("TBAS"),
+  TBAS("TBAS"),
 
-    TBBC("TBBC"),
+  TBBC("TBBC"),
 
-    TBCC("TBCC"),
+  TBCC("TBCC"),
 
-    TRCP("TRCP"),
+  TRCP("TRCP"),
 
-    AGRT("AGRT"),
+  AGRT("AGRT"),
 
-    AREN("AREN"),
+  AREN("AREN"),
 
-    BEXP("BEXP"),
+  BEXP("BEXP"),
 
-    BOCE("BOCE"),
+  BOCE("BOCE"),
 
-    COMC("COMC"),
+  COMC("COMC"),
 
-    CPYR("CPYR"),
+  CPYR("CPYR"),
 
-    GDDS("GDDS"),
+  GDDS("GDDS"),
 
-    GDSV("GDSV"),
+  GDSV("GDSV"),
 
-    GSCB("GSCB"),
+  GSCB("GSCB"),
 
-    LICF("LICF"),
+  LICF("LICF"),
 
-    MP2B("MP2B"),
+  MP2B("MP2B"),
 
-    POPE("POPE"),
+  POPE("POPE"),
 
-    ROYA("ROYA"),
+  ROYA("ROYA"),
 
-    SCVE("SCVE"),
+  SCVE("SCVE"),
 
-    SERV("SERV"),
+  SERV("SERV"),
 
-    SUBS("SUBS"),
+  SUBS("SUBS"),
 
-    SUPP("SUPP"),
+  SUPP("SUPP"),
 
-    TRAD("TRAD"),
+  TRAD("TRAD"),
 
-    CHAR("CHAR"),
+  CHAR("CHAR"),
 
-    COMT("COMT"),
+  COMT("COMT"),
 
-    MP2P("MP2P"),
+  MP2P("MP2P"),
 
-    ECPG("ECPG"),
+  ECPG("ECPG"),
 
-    ECPR("ECPR"),
+  ECPR("ECPR"),
 
-    ECPU("ECPU"),
+  ECPU("ECPU"),
 
-    EPAY("EPAY"),
+  EPAY("EPAY"),
 
-    CLPR("CLPR"),
+  CLPR("CLPR"),
 
-    COMP("COMP"),
+  COMP("COMP"),
 
-    DBTC("DBTC"),
+  DBTC("DBTC"),
 
-    GOVI("GOVI"),
+  GOVI("GOVI"),
 
-    HLRP("HLRP"),
+  HLRP("HLRP"),
 
-    HLST("HLST"),
+  HLST("HLST"),
 
-    INPC("INPC"),
+  INPC("INPC"),
 
-    INPR("INPR"),
+  INPR("INPR"),
 
-    INSC("INSC"),
+  INSC("INSC"),
 
-    INSU("INSU"),
+  INSU("INSU"),
 
-    INTE("INTE"),
+  INTE("INTE"),
 
-    LBRI("LBRI"),
+  LBRI("LBRI"),
 
-    LIFI("LIFI"),
+  LIFI("LIFI"),
 
-    LOAN("LOAN"),
+  LOAN("LOAN"),
 
-    LOAR("LOAR"),
+  LOAR("LOAR"),
 
-    PENO("PENO"),
+  PENO("PENO"),
 
-    PPTI("PPTI"),
+  PPTI("PPTI"),
 
-    RELG("RELG"),
+  RELG("RELG"),
 
-    RINP("RINP"),
+  RINP("RINP"),
 
-    TRFD("TRFD"),
+  TRFD("TRFD"),
 
-    FORW("FORW"),
+  FORW("FORW"),
 
-    FXNT("FXNT"),
+  FXNT("FXNT"),
 
-    ADMG("ADMG"),
+  ADMG("ADMG"),
 
-    ADVA("ADVA"),
+  ADVA("ADVA"),
 
-    BCDM("BCDM"),
+  BCDM("BCDM"),
 
-    BCFG("BCFG"),
+  BCFG("BCFG"),
 
-    BLDM("BLDM"),
+  BLDM("BLDM"),
 
-    BNET("BNET"),
+  BNET("BNET"),
 
-    CBFF("CBFF"),
+  CBFF("CBFF"),
 
-    CBFR("CBFR"),
+  CBFR("CBFR"),
 
-    CCRD("CCRD"),
+  CCRD("CCRD"),
 
-    CDBL("CDBL"),
+  CDBL("CDBL"),
 
-    CFEE("CFEE"),
+  CFEE("CFEE"),
 
-    CGDD("CGDD"),
+  CGDD("CGDD"),
 
-    CORT("CORT"),
+  CORT("CORT"),
 
-    COST("COST"),
+  COST("COST"),
 
-    CPKC("CPKC"),
+  CPKC("CPKC"),
 
-    DCRD("DCRD"),
+  DCRD("DCRD"),
 
-    DSMT("DSMT"),
+  DSMT("DSMT"),
 
-    DVPM("DVPM"),
+  DVPM("DVPM"),
 
-    EDUC("EDUC"),
+  EDUC("EDUC"),
 
-    FACT("FACT"),
+  FACT("FACT"),
 
-    FAND("FAND"),
+  FAND("FAND"),
 
-    FCPM("FCPM"),
+  FCPM("FCPM"),
 
-    FEES("FEES"),
+  FEES("FEES"),
 
-    GOVT("GOVT"),
+  GOVT("GOVT"),
 
-    ICCP("ICCP"),
+  ICCP("ICCP"),
 
-    IDCP("IDCP"),
+  IDCP("IDCP"),
 
-    IHRP("IHRP"),
+  IHRP("IHRP"),
 
-    INSM("INSM"),
+  INSM("INSM"),
 
-    IVPT("IVPT"),
+  IVPT("IVPT"),
 
-    MCDM("MCDM"),
+  MCDM("MCDM"),
 
-    MCFG("MCFG"),
+  MCFG("MCFG"),
 
-    MSVC("MSVC"),
+  MSVC("MSVC"),
 
-    NOWS("NOWS"),
+  NOWS("NOWS"),
 
-    OCDM("OCDM"),
+  OCDM("OCDM"),
 
-    OCFG("OCFG"),
+  OCFG("OCFG"),
 
-    OFEE("OFEE"),
+  OFEE("OFEE"),
 
-    OTHR("OTHR"),
+  OTHR("OTHR"),
 
-    PADD("PADD"),
+  PADD("PADD"),
 
-    PTSP("PTSP"),
+  PTSP("PTSP"),
 
-    RCKE("RCKE"),
+  RCKE("RCKE"),
 
-    RCPT("RCPT"),
+  RCPT("RCPT"),
 
-    REBT("REBT"),
+  REBT("REBT"),
 
-    REFU("REFU"),
+  REFU("REFU"),
 
-    RENT("RENT"),
+  RENT("RENT"),
 
-    REOD("REOD"),
+  REOD("REOD"),
 
-    RIMB("RIMB"),
+  RIMB("RIMB"),
 
-    RPNT("RPNT"),
+  RPNT("RPNT"),
 
-    RRBN("RRBN"),
+  RRBN("RRBN"),
 
-    RVPM("RVPM"),
+  RVPM("RVPM"),
 
-    SLPI("SLPI"),
+  SLPI("SLPI"),
 
-    SPLT("SPLT"),
+  SPLT("SPLT"),
 
-    STDY("STDY"),
+  STDY("STDY"),
 
-    TBAN("TBAN"),
+  TBAN("TBAN"),
 
-    TBIL("TBIL"),
+  TBIL("TBIL"),
 
-    TCSC("TCSC"),
+  TCSC("TCSC"),
 
-    TELI("TELI"),
+  TELI("TELI"),
 
-    TMPG("TMPG"),
+  TMPG("TMPG"),
 
-    TPRI("TPRI"),
+  TPRI("TPRI"),
 
-    TPRP("TPRP"),
+  TPRP("TPRP"),
 
-    TRNC("TRNC"),
+  TRNC("TRNC"),
 
-    TRVC("TRVC"),
+  TRVC("TRVC"),
 
-    WEBI("WEBI"),
+  WEBI("WEBI"),
 
-    ANNI("ANNI"),
+  ANNI("ANNI"),
 
-    CAFI("CAFI"),
+  CAFI("CAFI"),
 
-    CFDI("CFDI"),
+  CFDI("CFDI"),
 
-    CMDT("CMDT"),
+  CMDT("CMDT"),
 
-    DERI("DERI"),
+  DERI("DERI"),
 
-    DIVD("DIVD"),
+  DIVD("DIVD"),
 
-    FREX("FREX"),
+  FREX("FREX"),
 
-    HEDG("HEDG"),
+  HEDG("HEDG"),
 
-    INVS("INVS"),
+  INVS("INVS"),
 
-    PRME("PRME"),
+  PRME("PRME"),
 
-    SAVG("SAVG"),
+  SAVG("SAVG"),
 
-    SECU("SECU"),
+  SECU("SECU"),
 
-    SEPI("SEPI"),
+  SEPI("SEPI"),
 
-    TREA("TREA"),
+  TREA("TREA"),
 
-    UNIT("UNIT"),
+  UNIT("UNIT"),
 
-    FNET("FNET"),
+  FNET("FNET"),
 
-    FUTR("FUTR"),
+  FUTR("FUTR"),
 
-    ANTS("ANTS"),
+  ANTS("ANTS"),
 
-    CVCF("CVCF"),
+  CVCF("CVCF"),
 
-    DMEQ("DMEQ"),
+  DMEQ("DMEQ"),
 
-    DNTS("DNTS"),
+  DNTS("DNTS"),
 
-    HLTC("HLTC"),
+  HLTC("HLTC"),
 
-    HLTI("HLTI"),
+  HLTI("HLTI"),
 
-    HSPC("HSPC"),
+  HSPC("HSPC"),
 
-    ICRF("ICRF"),
+  ICRF("ICRF"),
 
-    LTCF("LTCF"),
+  LTCF("LTCF"),
 
-    MAFC("MAFC"),
+  MAFC("MAFC"),
 
-    MARF("MARF"),
+  MARF("MARF"),
 
-    MDCS("MDCS"),
+  MDCS("MDCS"),
 
-    VIEW("VIEW"),
+  VIEW("VIEW"),
 
-    CDEP("CDEP"),
+  CDEP("CDEP"),
 
-    SWFP("SWFP"),
+  SWFP("SWFP"),
 
-    SWPP("SWPP"),
+  SWPP("SWPP"),
 
-    SWRS("SWRS"),
+  SWRS("SWRS"),
 
-    SWUF("SWUF"),
+  SWUF("SWUF"),
 
-    ADCS("ADCS"),
+  ADCS("ADCS"),
 
-    AEMP("AEMP"),
+  AEMP("AEMP"),
 
-    ALLW("ALLW"),
+  ALLW("ALLW"),
 
-    ALMY("ALMY"),
+  ALMY("ALMY"),
 
-    BBSC("BBSC"),
+  BBSC("BBSC"),
 
-    BECH("BECH"),
+  BECH("BECH"),
 
-    BENE("BENE"),
+  BENE("BENE"),
 
-    BONU("BONU"),
+  BONU("BONU"),
 
-    CCHD("CCHD"),
+  CCHD("CCHD"),
 
-    COMM("COMM"),
+  COMM("COMM"),
 
-    CSLP("CSLP"),
+  CSLP("CSLP"),
 
-    GFRP("GFRP"),
+  GFRP("GFRP"),
 
-    GVEA("GVEA"),
+  GVEA("GVEA"),
 
-    GVEB("GVEB"),
+  GVEB("GVEB"),
 
-    GVEC("GVEC"),
+  GVEC("GVEC"),
 
-    GVED("GVED"),
+  GVED("GVED"),
 
-    GWLT("GWLT"),
+  GWLT("GWLT"),
 
-    HREC("HREC"),
+  HREC("HREC"),
 
-    PAYR("PAYR"),
+  PAYR("PAYR"),
 
-    PEFC("PEFC"),
+  PEFC("PEFC"),
 
-    PENS("PENS"),
+  PENS("PENS"),
 
-    PRCP("PRCP"),
+  PRCP("PRCP"),
 
-    RHBS("RHBS"),
+  RHBS("RHBS"),
 
-    SALA("SALA"),
+  SALA("SALA"),
 
-    SSBE("SSBE"),
+  SSBE("SSBE"),
 
-    LBIN("LBIN"),
+  LBIN("LBIN"),
 
-    LCOL("LCOL"),
+  LCOL("LCOL"),
 
-    LFEE("LFEE"),
+  LFEE("LFEE"),
 
-    LMEQ("LMEQ"),
+  LMEQ("LMEQ"),
 
-    LMFI("LMFI"),
+  LMFI("LMFI"),
 
-    LMRK("LMRK"),
+  LMRK("LMRK"),
 
-    LREB("LREB"),
+  LREB("LREB"),
 
-    LREV("LREV"),
+  LREV("LREV"),
 
-    LSFL("LSFL"),
+  LSFL("LSFL"),
 
-    ESTX("ESTX"),
+  ESTX("ESTX"),
 
-    FWLV("FWLV"),
+  FWLV("FWLV"),
 
-    GSTX("GSTX"),
+  GSTX("GSTX"),
 
-    HSTX("HSTX"),
+  HSTX("HSTX"),
 
-    INTX("INTX"),
+  INTX("INTX"),
 
-    NITX("NITX"),
+  NITX("NITX"),
 
-    PTXP("PTXP"),
+  PTXP("PTXP"),
 
-    RDTX("RDTX"),
+  RDTX("RDTX"),
 
-    TAXS("TAXS"),
+  TAXS("TAXS"),
 
-    VATX("VATX"),
+  VATX("VATX"),
 
-    WHLD("WHLD"),
+  WHLD("WHLD"),
 
-    TAXR("TAXR"),
+  TAXR("TAXR"),
 
-    B112("B112"),
+  B112("B112"),
 
-    BR12("BR12"),
+  BR12("BR12"),
 
-    TLRF("TLRF"),
+  TLRF("TLRF"),
 
-    TLRR("TLRR"),
+  TLRR("TLRR"),
 
-    AIRB("AIRB"),
+  AIRB("AIRB"),
 
-    BUSB("BUSB"),
+  BUSB("BUSB"),
 
-    FERB("FERB"),
+  FERB("FERB"),
 
-    RLWY("RLWY"),
+  RLWY("RLWY"),
 
-    TRPT("TRPT"),
+  TRPT("TRPT"),
 
-    CBTV("CBTV"),
+  CBTV("CBTV"),
 
-    ELEC("ELEC"),
+  ELEC("ELEC"),
 
-    ENRG("ENRG"),
+  ENRG("ENRG"),
 
-    GASB("GASB"),
+  GASB("GASB"),
 
-    NWCH("NWCH"),
+  NWCH("NWCH"),
 
-    NWCM("NWCM"),
+  NWCM("NWCM"),
 
-    OTLC("OTLC"),
+  OTLC("OTLC"),
 
-    PHON("PHON"),
+  PHON("PHON"),
 
-    UBIL("UBIL"),
+  UBIL("UBIL"),
 
-    WTER("WTER");
+  WTER("WTER");
 
-    private String value;
+  private String value;
 
-    PurposeCode(String value) {
-        this.value = value;
+  PurposeCode(String value) {
+    this.value = value;
+  }
+
+  @Override
+  @JsonValue
+  public String toString() {
+    return String.valueOf(value);
+  }
+
+  @JsonCreator
+  public static PurposeCode fromValue(String text) {
+    for (PurposeCode b : PurposeCode.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static PurposeCode fromValue(String text) {
-        for (PurposeCode b : PurposeCode.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 }
 

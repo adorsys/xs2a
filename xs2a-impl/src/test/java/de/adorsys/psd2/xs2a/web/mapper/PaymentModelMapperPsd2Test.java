@@ -202,7 +202,7 @@ class PaymentModelMapperPsd2Test {
         cancelPaymentResponse.setScaMethods(Collections.singletonList(authenticationObjec));
         Xs2aChosenScaMethod chosenScaMethod = new Xs2aChosenScaMethod();
         chosenScaMethod.setAuthenticationMethodId("authenticationMethodId1");
-        chosenScaMethod.setAuthenticationType("authenticationType1");
+        chosenScaMethod.setAuthenticationType("authenticationType");
         cancelPaymentResponse.setChosenScaMethod(chosenScaMethod);
         cancelPaymentResponse.setLinks(null);
 
@@ -220,7 +220,7 @@ class PaymentModelMapperPsd2Test {
         expected.setScaMethods(scaMethods);
         ChosenScaMethod expectedChosenScaMethod = new ChosenScaMethod();
         expectedChosenScaMethod.setAuthenticationMethodId("authenticationMethodId1");
-        expectedChosenScaMethod.setAuthenticationType("authenticationType1");
+        expectedChosenScaMethod.setAuthenticationType("authenticationType");
         expected.setChosenScaMethod(expectedChosenScaMethod);
         expected.setLinks(null);
 
