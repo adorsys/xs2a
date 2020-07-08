@@ -34,6 +34,8 @@ class MdcLoggingContextServiceTest {
     private static final String X_REQUEST_ID_KEY = "x-request-id";
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
+    private static final String INSTANCE_ID_KEY = "instance-id";
+    private static final String INSTANCE_ID = "bank1";
 
     private MdcLoggingContextService mdcLoggingContextService = new MdcLoggingContextService();
 
@@ -133,11 +135,12 @@ class MdcLoggingContextServiceTest {
     @Test
     void storeRequestInformation_shouldPutRequestIdsIntoMdc() {
         // When
-        mdcLoggingContextService.storeRequestInformation(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID));
+        mdcLoggingContextService.storeRequestInformation(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID, INSTANCE_ID));
 
         // Then
         assertEquals(INTERNAL_REQUEST_ID, MDC.get(INTERNAL_REQUEST_ID_KEY));
         assertEquals(X_REQUEST_ID, MDC.get(X_REQUEST_ID_KEY));
+        assertEquals(INSTANCE_ID, MDC.get(INSTANCE_ID_KEY));
     }
 
     @Test
@@ -145,13 +148,15 @@ class MdcLoggingContextServiceTest {
         // Given
         MDC.put(INTERNAL_REQUEST_ID_KEY, INTERNAL_REQUEST_ID);
         MDC.put(X_REQUEST_ID_KEY, X_REQUEST_ID);
+        MDC.put(INSTANCE_ID_KEY, INSTANCE_ID);
 
         // When
-        mdcLoggingContextService.storeRequestInformation(new RequestInfo(null, null));
+        mdcLoggingContextService.storeRequestInformation(new RequestInfo(null, null, null));
 
         // Then
         assertNull(MDC.get(INTERNAL_REQUEST_ID_KEY));
         assertNull(MDC.get(X_REQUEST_ID_KEY));
+        assertNull(MDC.get(INSTANCE_ID_KEY));
     }
 
     @Test
@@ -159,6 +164,7 @@ class MdcLoggingContextServiceTest {
         // Given
         MDC.put(INTERNAL_REQUEST_ID_KEY, INTERNAL_REQUEST_ID);
         MDC.put(X_REQUEST_ID_KEY, X_REQUEST_ID);
+        MDC.put(INSTANCE_ID_KEY, INSTANCE_ID);
 
         // When
         mdcLoggingContextService.storeRequestInformation(null);
@@ -166,6 +172,7 @@ class MdcLoggingContextServiceTest {
         // Then
         assertEquals(INTERNAL_REQUEST_ID, MDC.get(INTERNAL_REQUEST_ID_KEY));
         assertEquals(X_REQUEST_ID, MDC.get(X_REQUEST_ID_KEY));
+        assertEquals(INSTANCE_ID, MDC.get(INSTANCE_ID_KEY));
     }
 
     @Test
@@ -173,7 +180,8 @@ class MdcLoggingContextServiceTest {
         // Given
         MDC.put(INTERNAL_REQUEST_ID_KEY, INTERNAL_REQUEST_ID);
         MDC.put(X_REQUEST_ID_KEY, X_REQUEST_ID);
-        RequestInfo expectedRequestInfo = new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID);
+        MDC.put(INSTANCE_ID_KEY, INSTANCE_ID);
+        RequestInfo expectedRequestInfo = new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID, INSTANCE_ID);
 
         // When
         RequestInfo actualRequestInfo = mdcLoggingContextService.getRequestInformation();
@@ -185,7 +193,7 @@ class MdcLoggingContextServiceTest {
     @Test
     void getRequestInformation_nullValues_shouldReturnNullValues() {
         // Given
-        RequestInfo expectedRequestInfo = new RequestInfo(null, null);
+        RequestInfo expectedRequestInfo = new RequestInfo(null, null, null);
 
         // When
         RequestInfo actualRequestInfo = mdcLoggingContextService.getRequestInformation();
@@ -200,6 +208,7 @@ class MdcLoggingContextServiceTest {
         MDC.put(CONSENT_STATUS_KEY, "some consent status");
         MDC.put(TRANSACTION_STATUS_KEY, "some transaction status");
         MDC.put(SCA_STATUS_KEY, "some sca status");
+        MDC.put(INSTANCE_ID_KEY, "some instance id");
 
         // When
         mdcLoggingContextService.clearContext();
@@ -208,5 +217,6 @@ class MdcLoggingContextServiceTest {
         assertNull(MDC.get(CONSENT_STATUS_KEY));
         assertNull(MDC.get(TRANSACTION_STATUS_KEY));
         assertNull(MDC.get(SCA_STATUS_KEY));
+        assertNull(MDC.get(INSTANCE_ID_KEY));
     }
 }

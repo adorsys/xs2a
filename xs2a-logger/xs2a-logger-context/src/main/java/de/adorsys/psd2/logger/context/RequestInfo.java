@@ -22,4 +22,5 @@ import lombok.Value;
 public class RequestInfo {
     private String internalRequestId;
     private String xRequestId;
+    private String instanceId;
 }
