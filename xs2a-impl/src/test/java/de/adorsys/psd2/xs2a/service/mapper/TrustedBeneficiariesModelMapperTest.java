@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.model.TrustedBeneficiaries;
 import de.adorsys.psd2.model.TrustedBeneficiariesList;
+import de.adorsys.psd2.model.TrustedBeneficiary;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiaries;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiariesList;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapperImpl;
@@ -42,11 +42,11 @@ class TrustedBeneficiariesModelMapperTest {
     @Test
     void mapToTrustedBeneficiaries() {
         // Given
-        TrustedBeneficiaries expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries.json", TrustedBeneficiaries.class);
+        TrustedBeneficiary expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries.json", TrustedBeneficiary.class);
         Xs2aTrustedBeneficiaries input = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries.json", Xs2aTrustedBeneficiaries.class);
 
         // When
-        TrustedBeneficiaries actual = trustedBeneficiariesModelMapper.mapToTrustedBeneficiaries(input);
+        TrustedBeneficiary actual = trustedBeneficiariesModelMapper.mapToTrustedBeneficiaries(input);
 
         // Then
         assertThat(actual).isEqualTo(expected);

@@ -1,0 +1,14 @@
+= Release notes v.7.5.1
+
+== Table of Contents
+
+* Set flag withBalance=true for availableAccountsWithBalance
+* Refactor: Move functionality from aspects to service layer
+
+== Set flag withBalance=true for availableAccountsWithBalance
+
+From now on, if consent is created with `availableAccountsWithBalance` field, then flag `withBalance` of the consent will be set to true.
+
+== Refactor: Move functionality from aspects to service layer
+
+From now on, all functionality was moved to service layer (*AspectService) to add possibility extend service instead of aspect.

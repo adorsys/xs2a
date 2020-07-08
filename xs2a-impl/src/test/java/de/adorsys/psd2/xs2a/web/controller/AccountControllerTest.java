@@ -255,12 +255,7 @@ class AccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity<?> actual = accountController.getTrustedBeneficiariesList(null, WRONG_CONSENT_ID, WRONG_ACCOUNT_ID,
-                                                                                                                   null, null, null,
-                                                                                                                   null, null, null,
-                                                                                                                   null, null, null,
-                                                                                                                   null, null, null,
-                                                                                                                   null);
+        ResponseEntity<?> actual = accountController.listOfTrustedBeneficiaries(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null, null);
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -281,12 +276,8 @@ class AccountControllerTest {
         doReturn(new ResponseEntity<>(expected, HttpStatus.OK)).when(responseMapper).ok(any(), any());
 
         // When
-        TrustedBeneficiariesList actual = (TrustedBeneficiariesList) accountController.getTrustedBeneficiariesList(null, CONSENT_ID, ACCOUNT_ID,
-                                                                                                                   null, null, null,
-                                                                                                                   null, null, null,
-                                                                                                                   null, null, null,
-                                                                                                                   null, null, null,
-                                                                                                                   null).getBody();
+        TrustedBeneficiariesList actual = (TrustedBeneficiariesList) accountController.listOfTrustedBeneficiaries(ACCOUNT_ID, null, CONSENT_ID,
+                                                                                                                  null, null).getBody();
         // Then
         assertThat(actual).isEqualTo(expected);
     }

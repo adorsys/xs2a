@@ -1,5 +1,4 @@
-{
-  "trustedBeneficiaries": [
+[
     {
       "trustedBeneficiaryId": "mocked trusted beneficiaries id",
       "debtorAccount": {
@@ -21,4 +20,3 @@
       }
     }
   ]
-}

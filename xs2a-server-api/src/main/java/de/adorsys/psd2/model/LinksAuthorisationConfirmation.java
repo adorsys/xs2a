@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2020 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,76 +14,73 @@ import java.util.Objects;
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP  defined extensions):  - 'scaStatus': The link to retrieve the status of the corresponding transaction resource. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T13:49:16.891743+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
 
-public class LinksAuthorisationConfirmation extends HashMap<String, HrefType> {
-    @JsonProperty("scaStatus")
-    private HrefType scaStatus = null;
+public class LinksAuthorisationConfirmation extends HashMap<String, HrefType>  {
+  @JsonProperty("scaStatus")
+  private HrefType scaStatus = null;
 
-    public LinksAuthorisationConfirmation scaStatus(HrefType scaStatus) {
-        this.scaStatus = scaStatus;
-        return this;
+  public LinksAuthorisationConfirmation scaStatus(HrefType scaStatus) {
+    this.scaStatus = scaStatus;
+    return this;
+  }
+
+  /**
+   * Get scaStatus
+   * @return scaStatus
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("scaStatus")
+  public HrefType getScaStatus() {
+    return scaStatus;
+  }
+
+  public void setScaStatus(HrefType scaStatus) {
+    this.scaStatus = scaStatus;
+  }
+
+
+  @Override
+  public boolean equals(java.lang.Object o) {
+    if (this == o) {
+      return true;
     }
-
-    /**
-     * Get scaStatus
-     *
-     * @return scaStatus
-     **/
-    @ApiModelProperty(value = "")
-
-    @Valid
-
-
-    @JsonProperty("scaStatus")
-    public HrefType getScaStatus() {
-        return scaStatus;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    LinksAuthorisationConfirmation _linksAuthorisationConfirmation = (LinksAuthorisationConfirmation) o;
+    return Objects.equals(this.scaStatus, _linksAuthorisationConfirmation.scaStatus) &&
+        super.equals(o);
+  }
 
-    public void setScaStatus(HrefType scaStatus) {
-        this.scaStatus = scaStatus;
+  @Override
+  public int hashCode() {
+    return Objects.hash(scaStatus, super.hashCode());
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class LinksAuthorisationConfirmation {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(java.lang.Object o) {
+    if (o == null) {
+      return "null";
     }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        LinksAuthorisationConfirmation _linksAuthorisationConfirmation = (LinksAuthorisationConfirmation) o;
-        return Objects.equals(this.scaStatus, _linksAuthorisationConfirmation.scaStatus);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(scaStatus, super.hashCode());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class LinksAuthorisationConfirmation {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
+    return o.toString().replace("\n", "\n    ");
+  }
 }
 
