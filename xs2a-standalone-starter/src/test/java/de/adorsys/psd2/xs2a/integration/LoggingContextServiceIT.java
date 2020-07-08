@@ -94,7 +94,7 @@ class LoggingContextServiceIT {
 
         initMockRestServers();
 
-        when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(null, null));
+        when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(null, null, null));
     }
 
     @Test

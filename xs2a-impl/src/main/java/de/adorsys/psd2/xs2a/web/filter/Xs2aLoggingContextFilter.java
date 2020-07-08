@@ -51,7 +51,7 @@ public class Xs2aLoggingContextFilter extends AbstractXs2aFilter {
 
     @Override
     protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        RequestInfo requestInfo = new RequestInfo(requestProviderService.getInternalRequestIdString(), requestProviderService.getRequestIdString());
+        RequestInfo requestInfo = new RequestInfo(requestProviderService.getInternalRequestIdString(), requestProviderService.getRequestIdString(), requestProviderService.getInstanceId());
         loggingContextService.storeRequestInformation(requestInfo);
 
         try {

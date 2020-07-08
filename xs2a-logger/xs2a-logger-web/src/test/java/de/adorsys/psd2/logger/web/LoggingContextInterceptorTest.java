@@ -46,6 +46,7 @@ class LoggingContextInterceptorTest {
     private static final byte[] REQUEST_BODY = "some request body".getBytes();
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
+    private static final String INSTANCE_ID = "bank1";
 
     @Mock
     private LoggingContextService loggingContextService;
@@ -71,7 +72,7 @@ class LoggingContextInterceptorTest {
     @Test
     void intercept() throws IOException {
         // Given
-        when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID));
+        when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID, INSTANCE_ID));
 
         // When
         ClientHttpResponse actualResponse = loggingContextInterceptor.intercept(mockHttpRequest, REQUEST_BODY, mockClientHttpRequestExecution);
@@ -89,7 +90,7 @@ class LoggingContextInterceptorTest {
     @Test
     void intercept_noValues() throws IOException {
         // Given
-        when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(null, null));
+        when(loggingContextService.getRequestInformation()).thenReturn(new RequestInfo(null, null, null));
 
         // When
         ClientHttpResponse actualResponse = loggingContextInterceptor.intercept(mockHttpRequest, REQUEST_BODY, mockClientHttpRequestExecution);

@@ -31,6 +31,7 @@ public class MdcLoggingContextService implements LoggingContextService {
     private static final String SCA_STATUS_KEY = "scaStatus";
     private static final String INTERNAL_REQUEST_ID_KEY = "internal-request-id";
     private static final String X_REQUEST_ID_KEY = "x-request-id";
+    private static final String INSTANCE_ID_KEY = "instance-id";
 
     @Override
     public void storeConsentStatus(@NotNull ConsentStatus consentStatus) {
@@ -78,14 +79,16 @@ public class MdcLoggingContextService implements LoggingContextService {
 
         MDC.put(INTERNAL_REQUEST_ID_KEY, requestInfo.getInternalRequestId());
         MDC.put(X_REQUEST_ID_KEY, requestInfo.getXRequestId());
+        MDC.put(INSTANCE_ID_KEY, requestInfo.getInstanceId());
     }
 
     @Override
     public RequestInfo getRequestInformation() {
         String internalRequestId = MDC.get(INTERNAL_REQUEST_ID_KEY);
         String xRequestId = MDC.get(X_REQUEST_ID_KEY);
+        String instanceId = MDC.get(INSTANCE_ID_KEY);
 
-        return new RequestInfo(internalRequestId, xRequestId);
+        return new RequestInfo(internalRequestId, xRequestId, instanceId);
     }
 
     @Override

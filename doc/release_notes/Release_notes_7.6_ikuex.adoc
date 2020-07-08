@@ -1,0 +1,9 @@
+= Release notes v.7.6
+
+== Table of Contents
+
+* Add instance-id to MDC log
+
+== Add instance-id to MDC log
+
+From now on, `Instance-ID` header is stored in the MDC under `instance-id` key and is visible in XS2A logs.

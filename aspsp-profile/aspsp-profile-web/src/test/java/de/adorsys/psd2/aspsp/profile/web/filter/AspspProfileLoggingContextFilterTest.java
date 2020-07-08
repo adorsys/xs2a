@@ -45,6 +45,8 @@ class AspspProfileLoggingContextFilterTest {
     private static final String INTERNAL_REQUEST_ID_HEADER_NAME = "X-Internal-Request-ID";
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
+    private static final String INSTANCE_ID_HEADER_NAME = "Instance-ID";
+    private static final String INSTANCE_ID = "bank1";
     private static final String HTTP_METHOD = HttpMethod.GET.name();
 
     @Mock
@@ -61,6 +63,7 @@ class AspspProfileLoggingContextFilterTest {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest(HTTP_METHOD, ASPSP_PROFILE_PATH);
         mockRequest.addHeader(INTERNAL_REQUEST_ID_HEADER_NAME, INTERNAL_REQUEST_ID);
         mockRequest.addHeader(X_REQUEST_ID_HEADER_NAME, X_REQUEST_ID);
+        mockRequest.addHeader(INSTANCE_ID_HEADER_NAME, INSTANCE_ID);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
         // When
@@ -68,7 +71,7 @@ class AspspProfileLoggingContextFilterTest {
 
         // Then
         InOrder inOrder = Mockito.inOrder(filterChain, loggingContextService);
-        inOrder.verify(loggingContextService).storeRequestInformation(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID));
+        inOrder.verify(loggingContextService).storeRequestInformation(new RequestInfo(INTERNAL_REQUEST_ID, X_REQUEST_ID, INSTANCE_ID));
         inOrder.verify(filterChain).doFilter(mockRequest, mockResponse);
         inOrder.verify(loggingContextService).clearContext();
         inOrder.verifyNoMoreInteractions();
@@ -85,7 +88,7 @@ class AspspProfileLoggingContextFilterTest {
 
         // Then
         InOrder inOrder = Mockito.inOrder(filterChain, loggingContextService);
-        inOrder.verify(loggingContextService).storeRequestInformation(new RequestInfo(null, null));
+        inOrder.verify(loggingContextService).storeRequestInformation(new RequestInfo(null, null, null));
         inOrder.verify(filterChain).doFilter(mockRequest, mockResponse);
         inOrder.verify(loggingContextService).clearContext();
         inOrder.verifyNoMoreInteractions();
