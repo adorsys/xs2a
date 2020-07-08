@@ -1,13 +1,8 @@
-= Release notes v.6.6
+= Release notes v.5.10.5
 
 == Table of Contents
 
-* Change type of address postCode to Max35Text
 * Remove `chosenScaMethod` from response for decouple approach
-
-== Change type of address postCode to Max35Text
-
-From now on, maximum length of postCode field in Address object was extended to 35 symbols.
 
 == Remove `chosenScaMethod` from response for decouple approach
 

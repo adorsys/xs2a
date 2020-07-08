@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -104,15 +103,7 @@ public class PisCommonDecoupledService {
 
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, request.getPaymentId(), request.getAuthorisationId(), psuData);
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
-        response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(request.getAuthenticationMethodId()));
         return response;
-    }
-
-    // Should ONLY be used for switching from Embedded to Decoupled approach during SCA method selection
-    private AuthenticationObject buildXs2aAuthenticationObjectForDecoupledApproach(String authenticationMethodId) {
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setAuthenticationMethodId(authenticationMethodId);
-        return authenticationObject;
     }
 }
 
