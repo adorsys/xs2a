@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -239,14 +238,7 @@ class PisCommonDecoupledServiceTest {
     private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA);
         response.setPsuMessage(AUTH_DECOUPLED_RESPONSE.getPayload().getPsuMessage());
-        response.setChosenScaMethod(buildXs2aAuthenticationObjectForDecoupledApproach(request.getAuthenticationMethodId()));
         return response;
-    }
-
-    private static AuthenticationObject buildXs2aAuthenticationObjectForDecoupledApproach(String authenticationMethodId) {
-        AuthenticationObject authenticationObject = new AuthenticationObject();
-        authenticationObject.setAuthenticationMethodId(authenticationMethodId);
-        return authenticationObject;
     }
 
 }
