@@ -1,0 +1,2499 @@
+openapi: 3.0.1
+info:
+  title: NextGenPSD2 XS2A Framework
+  version: "2.0 Mar 1st 2019"
+  description: |
+    # Summary
+
+    ## General Remarks on Data Types
+
+    The Berlin Group definition of UTF-8 strings in context of the PSD2 API have to support at least the following characters
+
+    a b c d e f g h i j k l m n o p q r s t u v w x y z
+
+    A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+
+    0 1 2 3 4 5 6 7 8 9
+
+    / - ? : ( ) . , ' +
+
+    Space
+
+
+  license:
+    name: Creative Commons Attribution 4.0 International Public License
+    url: https://creativecommons.org/licenses/by/4.0/
+  #termsOfService: URL for Terms of Service of the API
+  contact:
+    name: The Berlin Group - A European Standards Initiative
+    url: https://www.berlin-group.org/
+    email: info@berlin-group.org
+
+externalDocs:
+  description: |
+    Full Documentation of NextGenPSD2 Access to Account Interoperability Framework
+    (General Introduction Paper, Operational Rules, Implementation Guidelines^, Extended Services, ...)
+  url: https://www.berlin-group.org/nextgenpsd2-downloads
+
+#servers:
+#  - url: https://api.testbank.com/psd2
+#    description: PSD2 server
+#  - url: https://test-api.testbank.com/psd2
+#    description: Optional PSD2 test server
+
+paths:
+
+
+  /v2/consents/confirmation-of-funds:
+    post:
+      summary: Create consent
+      description: |
+        This method creates a confirmation of funds consent resource at the ASPSP regarding confirmation of funds access
+        to an account specified in this request.
+
+        **Side Effects**
+        In difference to the Establish Account Information Consent as defined in [XS2A-IG], there is no side effect by the
+        Establish Confirmation of Funds Consent Request
+
+      operationId: createConsentConfirmationOfFunds
+      tags:
+        - Confirmation of Funds
+
+      security:
+      #####################################################
+      # REMARKS ON SECURITY IN THIS OPENAPI FILE
+      #In this file only the basic security element to transport
+      # the bearer token of an an OAuth2 process, which has to
+      # be included inthe HTTP header ist described.
+      #
+      # WARNING:
+      # If you want to use this file for a productive implementation,
+      # it is recommandes to adjust the security schemes according to
+      # your system enviroments and security policies.
+      #####################################################
+        - {}
+        - BearerAuthOAuth: []
+
+      parameters:
+        #path # NO PATH PARAMETER
+        #query # NO QUERY PARAMETER
+        #header
+          #common header parameter
+        - $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        - $ref: "#/components/parameters/Digest"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #method specific header elements
+        - $ref: "#/components/parameters/PSU-ID"
+        - $ref: "#/components/parameters/PSU-ID-Type"
+        - $ref: "#/components/parameters/PSU-Corporate-ID"
+        - $ref: "#/components/parameters/PSU-Corporate-ID-Type"
+        - $ref: "#/components/parameters/TPP-Redirect-Preferred"
+        - $ref: "#/components/parameters/TPP-Redirect-URI"
+        - $ref: "#/components/parameters/TPP-Nok-Redirect-URI"
+        - $ref: "#/components/parameters/TPP-Explicit-Authorisation-Preferred"
+          #conditional elemention for AIS
+        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-Accept"
+        - $ref: "#/components/parameters/PSU-Accept-Charset"
+        - $ref: "#/components/parameters/PSU-Accept-Encoding"
+        - $ref: "#/components/parameters/PSU-Accept-Language"
+        - $ref: "#/components/parameters/PSU-User-Agent"
+        - $ref: "#/components/parameters/PSU-Http-Method"
+        - $ref: "#/components/parameters/PSU-Device-ID"
+        - $ref: "#/components/parameters/PSU-Geo-Location"
+
+      requestBody:
+        $ref: "#/components/requestBodies/consentsConfirmationOfFunds"
+
+      responses:
+        '201':
+          $ref: "#/components/responses/CREATED_201_ConsentsConfirmationOfFunds"
+
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+
+
+  /v2/consents/confirmation-of-funds/{consentId}/status:
+
+    get:
+      summary: Get Consent Status
+      description: |
+        Can check the status of an account information consent resource.
+      operationId: getConsentConfirmationOfFundsStatus
+      tags:
+        - Confirmation of Funds
+
+      security:
+      #####################################################
+      # REMARKS ON SECURITY IN THIS OPENAPI FILE
+      #In this file only the basic security element to transport
+      # the bearer token of an an OAuth2 process, which has to
+      # be included inthe HTTP header ist described.
+      #
+      # WARNING:
+      # If you want to use this file for a productive implementation,
+      # it is recommandes to adjust the security schemes according to
+      # your system enviroments and security policies.
+      #####################################################
+        - {}
+        - BearerAuthOAuth: []
+
+      parameters:
+      #path
+        - $ref: "#/components/parameters/consentId_PATH"
+      #query # NO QUERY PARAMETER
+      #header
+          #common header parameter
+        - $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        - $ref: "#/components/parameters/Digest"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #conditional elemention for AIS
+        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-Accept"
+        - $ref: "#/components/parameters/PSU-Accept-Charset"
+        - $ref: "#/components/parameters/PSU-Accept-Encoding"
+        - $ref: "#/components/parameters/PSU-Accept-Language"
+        - $ref: "#/components/parameters/PSU-User-Agent"
+        - $ref: "#/components/parameters/PSU-Http-Method"
+        - $ref: "#/components/parameters/PSU-Device-ID"
+        - $ref: "#/components/parameters/PSU-Geo-Location"
+      #NO REQUEST BODY
+
+      responses:
+        '200':
+          $ref: "#/components/responses/OK_200_ConsentConfirmationOfFundsStatus"
+
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+
+
+  /v2/consents/confirmation-of-funds/{consentId}:
+
+    get:
+      summary: Get Consent Content
+      description: |
+        Returns the content of an account information consent object.
+        This is returning the data for the TPP especially in cases, where the consent was directly managed between
+        ASPSP and PSU e.g. in a re-direct SCA Approach.
+      operationId: getConsentConfirmationOfFunds
+      tags:
+        - Confirmation of Funds
+
+      security:
+      #####################################################
+      # REMARKS ON SECURITY IN THIS OPENAPI FILE
+      #In this file only the basic security element to transport
+      # the bearer token of an an OAuth2 process, which has to
+      # be included inthe HTTP header ist described.
+      #
+      # WARNING:
+      # If you want to use this file for a productive implementation,
+      # it is recommandes to adjust the security schemes according to
+      # your system enviroments and security policies.
+      #####################################################
+        - {}
+        - BearerAuthOAuth: []
+
+      parameters:
+      #path
+        - $ref: "#/components/parameters/consentId_PATH"
+      #query # NO QUERY PARAMETER
+      #header
+          #common header parameter
+        - $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        - $ref: "#/components/parameters/Digest"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #conditional elemention for AIS
+        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-Accept"
+        - $ref: "#/components/parameters/PSU-Accept-Charset"
+        - $ref: "#/components/parameters/PSU-Accept-Encoding"
+        - $ref: "#/components/parameters/PSU-Accept-Language"
+        - $ref: "#/components/parameters/PSU-User-Agent"
+        - $ref: "#/components/parameters/PSU-Http-Method"
+        - $ref: "#/components/parameters/PSU-Device-ID"
+        - $ref: "#/components/parameters/PSU-Geo-Location"
+      #NO REQUEST BODY
+
+      responses:
+        '200':
+          $ref: "#/components/responses/OK_200_ConsentConfirmationOfFundsContent"
+
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+
+    delete:
+      summary: Delete Consent Content
+      description: |
+        Deletes a given consent.
+      operationId: deleteConsentConfirmationOfFunds
+      tags:
+        - Confirmation of Funds
+
+      security:
+      #####################################################
+      # REMARKS ON SECURITY IN THIS OPENAPI FILE
+      #In this file only the basic security element to transport
+      # the bearer token of an an OAuth2 process, which has to
+      # be included inthe HTTP header ist described.
+      #
+      # WARNING:
+      # If you want to use this file for a productive implementation,
+      # it is recommandes to adjust the security schemes according to
+      # your system enviroments and security policies.
+      #####################################################
+        - {}
+        - BearerAuthOAuth: []
+
+      parameters:
+      #path
+        - $ref: "#/components/parameters/consentId_PATH"
+      #query # NO QUERY PARAMETER
+      #header
+          #common header parameter
+        - $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        - $ref: "#/components/parameters/Digest"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #conditional elemention for AIS
+        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-Accept"
+        - $ref: "#/components/parameters/PSU-Accept-Charset"
+        - $ref: "#/components/parameters/PSU-Accept-Encoding"
+        - $ref: "#/components/parameters/PSU-Accept-Language"
+        - $ref: "#/components/parameters/PSU-User-Agent"
+        - $ref: "#/components/parameters/PSU-Http-Method"
+        - $ref: "#/components/parameters/PSU-Device-ID"
+        - $ref: "#/components/parameters/PSU-Geo-Location"
+      #NO REQUEST BODY
+
+      responses:
+        '204':
+          $ref: "#/components/responses/OK_204_ConsentConfirmationOfFundsDelete"
+
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+
+
+
+
+components:
+#####################################################
+# Predefined Components
+#####################################################
+
+  securitySchemes:
+  #####################################################
+  # Predefined Security Schemes:
+  #
+  # In this file only the basic security element to transport
+  # the bearer token of an an OAuth2 process, which has to
+  # be included inthe HTTP header ist described.
+  #
+  # WARNING:
+  # If you want to use this file for a productive implementation,
+  # it is recommandes to adjust the security schemes according to
+  # your system enviroments and security policies.
+  #####################################################
+    BearerAuthOAuth:
+      description: |
+        Bearer Token.
+
+        Is contained only, if an OAuth2 based authentication was performed in a pre-step or
+        an OAuth2 based SCA was performed in an preceding AIS service in the same session.
+      type: http
+      scheme: bearer
+
+
+  schemas:
+  #####################################################
+  # Predefined Schemas
+  #####################################################
+
+
+    consentId:
+      description: |
+        ID of the corresponding consent object as returned by an Account Information Consent Request.
+      type: string
+
+    hrefType:
+      description: Link to a resource
+      type: object
+      properties:
+        href:
+          $ref: "#/components/schemas/hrefEntry"
+
+    hrefEntry:
+      description: Link to a resource
+      type: string
+      example: "/v1/payments/sepa-credit-transfers/1234-wertiq-983"
+
+    accountReference:
+      description: |
+        Reference to an account by either
+          * IBAN, of a payment accounts, or
+          * BBAN, for payment accounts if there is no IBAN, or
+          * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or
+          * the Primary Account Number (PAN) of a card in a masked form, or
+          * an alias to access a payment account via a registered mobile phone number (MSISDN).
+      type: object
+      properties:
+        iban:
+          $ref: "#/components/schemas/iban"
+        bban:
+          $ref: "#/components/schemas/bban"
+        pan:
+          $ref: "#/components/schemas/pan"
+        maskedPan:
+          $ref: "#/components/schemas/maskedPan"
+        msisdn:
+          $ref: "#/components/schemas/msisdn"
+        currency:
+          $ref: "#/components/schemas/currencyCode"
+
+    iban:
+      type: string
+      description: IBAN of an account
+      pattern: "[A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}"
+      example: "FR7612345987650123456789014"
+
+    bban:
+      description: |
+        Basic Bank Account Number (BBAN) Identifier
+
+        This data element can be used in the body of the Consent Request
+          Message for retrieving Account access Consent from this Account. This
+          data elements is used for payment Accounts which have no IBAN.
+          ISO20022: Basic Bank Account Number (BBAN).
+
+          Identifier used nationally by financial institutions, i.e., in individual countries,
+          generally as part of a National Account Numbering Scheme(s),
+          which uniquely identifies the account of a customer.
+      type: string
+      pattern: "[a-zA-Z0-9]{1,30}"
+      example: "BARC12345612345678"
+
+    pan:
+      description: |
+        Primary Account Number according to ISO/IEC 7812.
+      type: string
+      maxLength: 35
+      #According to ISO the following should be valid.
+      #maxLength: 19
+      #minLength: 8
+      #pattern: "[0-9]{8,19}"
+      example: "5409050000000000"
+
+    maskedPan:
+      description: |
+        Masked Primary Account Number
+      type: string
+      maxLength: 35
+      example: "123456xxxxxx1234"
+
+    msisdn:
+      type: string
+      maxLength: 35
+      description: Mobile phone number.
+      example: "+49 170 1234567"
+
+    currencyCode:
+      description: |
+        ISO 4217 Alpha 3 currency code
+      type: string
+      pattern: "[A-Z]{3}"
+      example: "EUR"
+
+    consentStatus:
+      description: |
+        This is the overall lifecycle status of the consent.
+
+        Valid values are:
+          - 'received': The consent data have been received and are technically correct.
+            The data is not authorised yet.
+          - 'rejected': The consent data have been rejected e.g. since no successful authorisation has taken place.
+          - 'valid': The consent is accepted and valid for GET account data calls and others as specified in the consent object.
+          - 'revokedByPsu': The consent has been revoked by the PSU towards the ASPSP.
+          - 'expired': The consent expired.
+          - 'terminatedByTpp': The corresponding TPP has terminated the consent by applying the DELETE method to the consent resource.
+
+        The ASPSP might add further codes. These codes then shall be contained in the ASPSP's documentation of the XS2A interface
+        and has to be added to this API definition as well.
+      type: string
+      enum:
+        - "received"
+        - "rejected"
+        - "valid"
+        - "revokedByPsu"
+        - "expired"
+        - "terminatedByTpp"
+
+    scaMethods:
+      description: |
+        This data element might be contained, if SCA is required and if the PSU has a choice between different
+        authentication methods.
+
+        Depending on the risk management of the ASPSP this choice might be offered before or after the PSU
+        has been identified with the first relevant factor, or if an access token is transported.
+
+        If this data element is contained, then there is also an hyperlink of type 'startAuthorisationWithAuthenticationMethodSelection'
+        contained in the response body.
+
+        These methods shall be presented towards the PSU for selection by the TPP.
+
+      type: array
+      items:
+        $ref: "#/components/schemas/authenticationObject"
+
+    authenticationObject:
+      description: |
+        Authentication Object
+      type: object
+      required:
+        - authenticationType
+        - authenticationMethodId
+      properties:
+        authenticationType:
+          $ref: "#/components/schemas/authenticationType"
+        authenticationVersion:
+          description: |
+            Depending on the "authenticationType".
+            This version can be used by differentiating authentication tools used within performing OTP generation in the same authentication type.
+            This version can be referred to in the ASPSP?s documentation.
+          type: string
+        authenticationMethodId:
+          $ref: "#/components/schemas/authenticationMethodId"
+        name:
+          description: |
+            This is the name of the authentication method defined by the PSU in the Online Banking frontend of the ASPSP.
+            Alternatively this could be a description provided by the ASPSP like "SMS OTP on phone +49160 xxxxx 28".
+            This name shall be used by the TPP when presenting a list of authentication methods to the PSU, if available.
+          type: string
+          example: "SMS OTP on phone +49160 xxxxx 28"
+        explanation:
+          description: |
+            Detailed information about the SCA method for the PSU.
+          type: string
+          example: Detailed information about the SCA method for the PSU.
+
+    authenticationType:
+      description: |
+        Type of the authentication method.
+
+        More authentication types might be added during implementation projects and documented in the ASPSP documentation.
+
+          - 'SMS_OTP': An SCA method, where an OTP linked to the transaction to be authorised is sent to the PSU through a SMS channel.
+          - 'CHIP_OTP': An SCA method, where an OTP is generated by a chip card, e.g. an TOP derived from an EMV cryptogram.
+            To contact the card, the PSU normally needs a (handheld) device.
+            With this device, the PSU either reads the challenging data through a visual interface like flickering or
+            the PSU types in the challenge through the device key pad.
+            The device then derives an OTP from the challenge data and displays the OTP to the PSU.
+          - 'PHOTO_OTP': An SCA method, where the challenge is a QR code or similar encoded visual data
+            which can be read in by a consumer device or specific mobile app.
+            The device resp. the specific app than derives an OTP from the visual challenge data and displays
+            the OTP to the PSU.
+          - 'PUSH_OTP': An OTP is pushed to a dedicated authentication APP and displayed to the PSU.
+
+      type: string
+      enum:
+        - "SMS_OTP"
+        - "CHIP_OTP"
+        - "PHOTO_OTP"
+        - "PUSH_OTP"
+
+    authenticationMethodId:
+      description: |
+            An identification provided by the ASPSP for the later identification of the authentication method selection.
+      type: string
+      maxLength: 35
+      example: "myAuthenticationID"
+
+    chosenScaMethod:
+      # description: |
+      #  This data element is only contained in the response if the APSPS has chosen the Embedded SCA Approach,
+      #  if the PSU is already identified e.g. with the first relevant factor or alternatively an access token,
+      #  if SCA is required and if the authentication method is implicitly selected.
+      $ref: "#/components/schemas/authenticationObject"
+
+    challengeData:
+      description: |
+        It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA.
+        In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link.
+      type: object
+      properties:
+        image:
+          type: string
+          format: byte
+          description: |
+            PNG data (max. 512 kilobyte) to be displayed to the PSU,
+            Base64 encoding, cp. [RFC4648].
+            This attribute is used only, when PHOTO_OTP or CHIP_OTP
+            is the selected SCA method.
+        data:
+          type: string
+          description: String challenge data
+        imageLink:
+          type: string
+          format: url
+          description: A link where the ASPSP will provides the challenge image for the TPP.
+        otpMaxLength:
+          type: integer
+          description: The maximal length for the OTP to be typed in by the PSU.
+        otpFormat:
+          type: string
+          description: The format type of the OTP to be typed in. The admitted values are "characters" or "integer".
+          enum:
+            - "characters"
+            - "integer"
+        additionalInformation:
+          type: string
+          description: |
+            Additional explanation for the PSU to explain
+            e.g. fallback mechanism for the chosen SCA method.
+            The TPP is obliged to show this to the PSU.
+
+    _linksStartScaProcessSingleSca:
+      description: |
+        A list of hyperlinks to be recognised by the TPP.
+        Type of links admitted in this response (which might be extended by single ASPSPs as indicated in its XS2A documentation):
+
+        - 'scaRedirect':
+          In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to
+          redirect the PSU browser.
+        - 'scaOAuth':
+          In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.
+        - 'startAuthorisation':
+          In case, where an explicit start of the transaction authorisation is needed, but no more data needs to be updated (no authentication method to be selected, no PSU identification nor PSU authentication data to be uploaded).
+        - 'startAuthorisationWithPsuIdentification':
+          The link to the authorisation end-point, where the authorisation sub-resource has to be generated while uploading the PSU identification data.
+        - 'startAuthorisationWithPsuAuthentication':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where PSU authentication data needs to be uploaded.
+        - 'startAuthorisationWithEncryptedPsuAuthentication':
+          The link to the authorisation end-point, where the authorisation sub-resource has to be generated while uploading the encrypted PSU authentication data.
+        - 'startAuthorisationWithAuthentication MethodSelection':
+          The link to the authorisation end-point, where the authorisation sub-resource has to be generated while selecting the authentication method.
+          This link is contained under exactly the same conditions as the data element "scaMethods".
+        - 'startAuthorisationWithTransactionAuthorisation':
+          The link to the authorisation end-point, where the authorisation sub-resource has to be generated while authorising the transaction e.g. by uploading an OTP received by SMS.
+        - 'self':
+          The link to the Establish Account Information Consent resource created by this request.
+          This link can be used to retrieve the resource data.
+        - 'status':
+          The link to retrieve the transaction status of the payment initiation.
+        - 'scaStatus':
+          The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        scaRedirect:
+          $ref: "#/components/schemas/hrefType"
+        scaOAuth:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisation:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuIdentification:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithAuthenticationMethodSelection:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithTransactionAuthorisation:
+          $ref: "#/components/schemas/hrefType"
+        self:
+          $ref: "#/components/schemas/hrefType"
+        status:
+          $ref: "#/components/schemas/hrefType"
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
+
+    _linksStartScaProcessMultilevelSca:
+      description: |
+        - 'startAuthorisation':
+          In case, where an explicit start of the transaction authorisation is needed,
+          but no more data needs to be updated (no authentication method to be selected,
+          no PSU identification nor PSU authentication data to be uploaded).
+        - 'startAuthorisationWithPsuIdentification':
+          The link to the authorisation end-point, where the authorisation sub-resource
+          has to be generated while uploading the PSU identification data.
+        - 'startAuthorisationWithPsuAuthentication':
+          The link to the authorisation end-point, where an authorisation sub-resource
+          has to be generated while uploading the PSU authentication data.
+        - 'startAuthorisationWithEncryptedPsuAuthentication':
+          The link to the authorisation end-point, where an authorisation sub-resource
+          has to be generated while uploading the encrypted PSU authentication data.
+        - 'self':
+          The link to the consent resource created by this request.
+          This link can be used to retrieve the resource data.
+        - 'status':
+          The link to retrieve the status of the consent.
+
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        startAuthorisation:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuIdentification:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        self:
+          $ref: "#/components/schemas/hrefType"
+        status:
+          $ref: "#/components/schemas/hrefType"
+
+    psuMessageText:
+      description: Text to be displayed to the PSU
+      type: string
+      maxLength: 512
+
+    cardExpiryDate:
+      description: |
+        Expiry date of the card issued by the PIISP.
+      type: string
+      format: date
+      example: "2018-07-01"
+
+    cardNumber:
+      description: Card Number of the card issued by the PIISP. Should be delivered if available.
+      type: string
+      maxLength: 35
+
+    cardInformation:
+      description: Addtional explanation for the card product.
+      type: string
+      maxLength: 140
+
+    registrationInformation:
+      description: Addtional information about the registration process for the PSU, e. g. a reference to the TPP / PSU contract.
+      type: string
+      maxLength: 140
+
+#####################################################
+# Content of Request Bodies
+#####################################################
+
+
+
+    #####################################################
+    # Content of Request Bodies - JSON
+    #####################################################
+
+    consentsConfirmationOfFunds:
+      description: |
+        Content of the body of a consent confirmation of funds request.
+      type: object
+      required:
+        - account
+      properties:
+        account:
+          $ref: "#/components/schemas/accountReference"
+        cardNumber:
+          $ref: "#/components/schemas/cardNumber"
+        cardExpiryDate:
+          $ref: "#/components/schemas/cardExpiryDate"
+        cardInformation:
+          $ref: "#/components/schemas/cardInformation"
+        registrationInformation:
+          $ref: "#/components/schemas/registrationInformation"
+
+
+
+    #####################################################
+    # Content of Request Bodies - XML
+    #####################################################
+
+      #####################################################
+      # Content of Request Bodies - Single Part
+      #####################################################
+
+
+
+    #####################################################
+    # Content of Response Bodies
+    #####################################################
+
+    ConsentsConfirmationOfFundsResponse:
+      description: Body of the JSON response for a Start single SCA authorisation request.
+      type: object
+      required:
+        - consentStatus
+        - consentId
+        - _links
+      properties:
+        consentStatus:
+          $ref: "#/components/schemas/consentStatus"
+        consentId:
+          $ref: "#/components/schemas/consentId"
+        scaMethods:
+          $ref: "#/components/schemas/scaMethods"
+        chosenScaMethod:
+          $ref: "#/components/schemas/chosenScaMethod"
+        challengeData:
+          $ref: "#/components/schemas/challengeData"
+        _links:
+           $ref: "#/components/schemas/_linksStartScaProcessSingleSca"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
+
+    ConsentsConfirmationOfFundsMultilevelSCAResponse:
+      description: Body of the JSON response for a Start Multilevel SCA authorisation request.
+      type: object
+      required:
+        - consentStatus
+        - consentId
+        - _links
+      properties:
+        consentStatus:
+          $ref: "#/components/schemas/consentStatus"
+        consentId:
+          $ref: "#/components/schemas/consentId"
+        _links:
+           $ref: "#/components/schemas/_linksStartScaProcessMultilevelSca"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage2XX"
+
+    ConsentConfirmationOfFundsStatusResponse:
+      description: Body of the JSON response.
+      type: object
+      required:
+        - consentStatus
+      properties:
+        consentStatus:
+          $ref: "#/components/schemas/consentStatus"
+
+    ConsentConfirmationOfFundsContentResponse:
+      description: Body of the JSON response for a confirmation of funds content request.
+      type: object
+      required:
+        - account
+        - consentStatus
+      properties:
+        account:
+          $ref: "#/components/schemas/accountReference"
+        cardNumber:
+          $ref: "#/components/schemas/cardNumber"
+        cardExpiryDate:
+          $ref: "#/components/schemas/cardExpiryDate"
+        cardInformation:
+          $ref: "#/components/schemas/cardInformation"
+        registrationInformation:
+          $ref: "#/components/schemas/registrationInformation"
+        consentStatus:
+          $ref: "#/components/schemas/consentStatus"
+
+
+#####################################################
+# _links
+#####################################################
+
+    _linksAll:
+      description: |
+        A _link object with all availabel link types
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        scaRedirect:
+          $ref: "#/components/schemas/hrefType"
+        scaOAuth:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisation:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuIdentification:
+          $ref: "#/components/schemas/hrefType"
+        updatePsuIdentification:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithProprietaryData:
+          $ref: "#/components/schemas/hrefType"
+        updateProprietaryData:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        updatePsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        updateEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithAuthenticationMethodSelection:
+          $ref: "#/components/schemas/hrefType"
+        selectAuthenticationMethod:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithTransactionAuthorisation:
+          $ref: "#/components/schemas/hrefType"
+        authoriseTransaction:
+          $ref: "#/components/schemas/hrefType"
+        self:
+          $ref: "#/components/schemas/hrefType"
+        status:
+          $ref: "#/components/schemas/hrefType"
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
+        account:
+          $ref: "#/components/schemas/hrefType"
+        balances:
+          $ref: "#/components/schemas/hrefType"
+        transactions:
+          $ref: "#/components/schemas/hrefType"
+        transactionDetails:
+          $ref: "#/components/schemas/hrefType"
+        cardAccount:
+          $ref: "#/components/schemas/hrefType"
+        cardTransactions:
+          $ref: "#/components/schemas/hrefType"
+        first:
+          $ref: "#/components/schemas/hrefType"
+        next:
+          $ref: "#/components/schemas/hrefType"
+        previous:
+          $ref: "#/components/schemas/hrefType"
+        last:
+          $ref: "#/components/schemas/hrefType"
+        download:
+          $ref: "#/components/schemas/hrefType"
+
+
+
+
+
+#####################################################
+# Tpp-Messages to Communicate Error Information
+#####################################################
+
+
+  #####################################################
+  # Generic Elements
+  #####################################################
+
+    tppMessageCategory:
+      description: Category of the TPP message category
+      type: string
+      enum:
+        - "ERROR"
+        - "WARNING"
+
+    MessageCode2XX:
+      description: Message codes for HTTP Error codes 2XX.
+      type: string
+      enum:
+        - "WARNING"
+
+    MessageCode400_AIS:
+      description: Message codes defined for AIS for HTTP Error code 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - "FORMAT_ERROR"              #gen
+        - "PARAMETER_NOT_CONSISTENT"  #gen
+        - "PARAMETER_NOT_SUPPORTED"   #gen
+        - "SERVICE_INVALID"           #gen
+        - "RESOURCE_UNKNOWN"          #gen
+        - "RESOURCE_EXPIRED"          #gen
+        - "RESOURCE_BLOCKED"          #gen
+        - "TIMESTAMP_INVALID"         #gen
+        - "PERIOD_INVALID"            #gen
+        - "SCA_METHOD_UNKNOWN"        #gen
+        - "CONSENT_UNKNOWN"           #gen
+        - "SESSIONS_NOT_SUPPORTED"    #AIS
+
+    MessageCode401_AIS:
+      description: Message codes defined for AIS for HTTP Error code 401 (UNAUTHORIZED).
+      type: string
+      enum:
+        - "CERTIFICATE_INVALID"       #gen
+        - "CERTIFICATE_EXPIRED"       #gen
+        - "CERTIFICATE_BLOCKED"       #gen
+        - "CERTIFICATE_REVOKE"        #gen
+        - "CERTIFICATE_MISSING"       #gen
+        - "SIGNATURE_INVALID"         #gen
+        - "SIGNATURE_MISSING"         #gen
+        - "CORPORATE_ID_INVALID"      #gen
+        - "PSU_CREDENTIALS_INVALID"   #gen
+        - "CONSENT_INVALID"           #gen, AIS
+        - "CONSENT_EXPIRED"           #gen
+        - "TOKEN_UNKNOWN"             #gen
+        - "TOKEN_INVALID"             #gen
+        - "TOKEN_EXPIRED"             #gen
+
+    MessageCode403_AIS:
+      description: Message codes defined for AIS for HTTP Error code 403 (FORBIDDEN).
+      type: string
+      enum:
+        - "CONSENT_UNKNOWN"           #gen
+        - "SERVICE_BLOCKED"           #gen
+        - "RESOURCE_UNKNOWN"          #gen
+        - "RESOURCE_EXPIRED"          #gen
+
+    MessageCode404_AIS:
+      description: Message codes defined for AIS for HTTP Error code 404 (NOT FOUND).
+      type: string
+      enum:
+        - "RESOURCE_UNKNOWN"          #gens
+
+    MessageCode405_AIS:
+      description: Message codes defined for AIS for HTTP Error code 405 (METHOD NOT ALLOWED).
+      type: string
+      enum:
+        - "SERVICE_INVALID"           #gens
+
+    MessageCode406_AIS:
+      description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
+      type: string
+      enum:
+        - "REQUESTED_FORMATS_INVALID"  #AIS
+
+
+    MessageCode409_AIS:
+      description: Message codes defined for AIS for HTTP Error code 409 (CONFLICT).
+      type: string
+      enum:
+        - "STATUS_INVALID"            #gen
+
+    MessageCode429_AIS:
+      description: Message codes for HTTP Error code 429 (TOO MANY REQUESTS).
+      type: string
+      enum:
+        - "ACCESS_EXCEEDED"           #AIS
+
+
+
+  #####################################################
+  # Next Gen propriatary Tpp-Messages
+  #####################################################
+
+
+    tppMessageText:
+      description: Additional explaining text to the TPP.
+      type: string
+      maxLength: 512
+
+
+    tppMessage2XX:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode2XX"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage400_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode400_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage401_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode401_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage403_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode403_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage404_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode404_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage405_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode405_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage406_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode406_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+    tppMessage409_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode409_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+    tppMessage429_AIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+           $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode429_AIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+
+  #####################################################
+  # RFC7807 Messages
+  #####################################################
+
+    tppErrorTitle:
+      description: |
+        Short human readable description of error type.
+        Could be in local language.
+        To be provided by ASPSPs.
+      type: string
+      maxLength: 70
+
+    tppErrorDetail:
+      description: |
+        Detailed human readable text specific to this instance of the error.
+        XPath might be used to point to the issue generating the error in addition.
+        Remark for Future: In future, a dedicated field might be introduced for the XPath.
+      type: string
+      maxLength: 512
+
+
+
+
+  #####################################################
+  # RFC7807 Messages
+  #####################################################
+
+
+
+    Error400_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 400 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode400_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error401_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 401 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode401_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode401_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error403_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 403 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode403_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode403_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error404_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 404 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode404_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode404_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error405_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 405 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode405_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode405_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error406_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 406 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode406_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode406_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error409_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 409 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode409_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode409_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error429_AIS:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 429 for AIS.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 512
+        code:
+          $ref: "#/components/schemas/MessageCode429_AIS"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: |
+              This is a data element to support the declaration of additional errors in the context of [RFC7807]
+              in case of a HTTP error code 429 for.
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode429_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+      #example:
+        #$ref: "#/components/examples/RFC7807_ErrorInfoBody"
+
+
+    Error400_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 400.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage400_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error401_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage401_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error403_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 403.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage403_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error404_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 404.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage404_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error405_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage405_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error406_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage406_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+
+    Error409_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 409.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage409_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+      example:
+        [{
+          "category": "ERROR",
+          "code": "STATUS_INVALID",
+          "text": "additional text information of the ASPSP up to 512 characters"
+        }]
+
+
+    Error429_NG_AIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 429.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage429_AIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+      example:
+        [{
+          "category": "ERROR",
+          "code": "ACCESS_EXCEEDED",
+          "text": "additional text information of the ASPSP up to 512 characters"
+        }]
+
+
+  parameters:
+  #####################################################
+  # Predefined Parameters
+  #####################################################
+
+    consentId_PATH:
+      name: consentId
+      in: path
+      description: |
+        ID of the corresponding consent object as returned by an Account Information Consent Request.
+      required: true
+      schema:
+        $ref: "#/components/schemas/consentId"
+
+
+    X-Request-ID:
+      name: X-Request-ID
+      in: header
+      description: ID of the request, unique to the call, as determined by the initiating party.
+      required: true
+      example: "99391c7e-ad88-49ec-a2ad-99ddcb1f7721"
+      schema:
+        type: string
+        format: uuid
+
+
+    Digest:
+      name: Digest
+      in: header
+      description: Is contained if and only if the "Signature" element is contained in the header of the request.
+      schema:
+        type: string
+      required: false # conditional
+      example: "SHA-256=hl1/Eps8BEQW58FJhDApwJXjGY4nr1ArGDHIT25vq6A="
+
+
+    Signature:
+      name: Signature
+      in: header
+      description: |
+        A signature of the request by the TPP on application level. This might be mandated by ASPSP.
+      schema:
+        type: string
+      required: false # conditional
+      example: >
+        keyId="SN=9FA1,CA=CN=D-TRUST%20CA%202-1%202015,O=D-Trust%20GmbH,C=DE",algorithm="rsa-sha256",
+        headers="Digest X-Request-ID PSU-ID TPP-Redirect-URI Date",
+        signature="Base64(RSA-SHA256(signing string))"
+
+
+    TPP-Signature-Certificate:
+      name: TPP-Signature-Certificate
+      in: header
+      description: |
+        The certificate used for signing the request, in base64 encoding.
+        Must be contained if a signature is contained.
+      schema:
+        type: string
+        format: byte
+      required: false # conditional
+
+
+    TPP-Redirect-Preferred:
+      name: TPP-Redirect-Preferred
+      in: header
+      description: |
+        If it equals "true", the TPP prefers a redirect over an embedded SCA approach.
+        If it equals "false", the TPP prefers not to be redirected for SCA. The ASPSP will then choose between the Embedded or the Decoupled
+        SCA approach, depending on the choice of the SCA procedure by the TPP/PSU.
+        If the parameter is not used, the ASPSP will choose the SCA approach to be applied depending on the SCA method chosen by the
+        TPP/PSU.
+      schema:
+        type: string
+        enum:
+          - "true"
+          - "false"
+        #type: boolean
+      required: false
+
+
+    TPP-Redirect-URI:
+      name: TPP-Redirect-URI
+      in: header
+      description: |
+        URI of the TPP, where the transaction flow shall be redirected to after a Redirect.
+
+        Mandated for the Redirect SCA Approach, specifically
+        when TPP-Redirect-Preferred equals "true".
+        It is recommended to always use this header field.
+
+        **Remark for Future:**
+        This field might be changed to mandatory in the next version of the specification.
+      schema:
+        type: string
+        format: uri
+      required: false # conditional
+
+
+    TPP-Nok-Redirect-URI:
+      name: TPP-Nok-Redirect-URI
+      in: header
+      description: |
+        If this URI is contained, the TPP is asking to redirect the transaction flow to this address instead of the TPP-Redirect-URI in case
+        of a negative result of the redirect SCA method. This might be ignored by the ASPSP.
+      schema:
+        type: string
+        format: uri
+      required: false
+
+
+    TPP-Explicit-Authorisation-Preferred:
+      name: TPP-Explicit-Authorisation-Preferred
+      in: header
+      description: |
+        If it equals "true", the TPP prefers to start the authorisation process separately,
+        e.g. because of the usage of a signing basket.
+        This preference might be ignored by the ASPSP, if a signing basket is not supported as functionality.
+
+        If it equals "false" or if the parameter is not used, there is no preference of the TPP.
+        This especially indicates that the TPP assumes a direct authorisation of the transaction in the next step,
+        without using a signing basket.
+      schema:
+        type: string
+        enum:
+          - "true"
+          - "false"
+        #type: boolean
+      required: false
+
+    PSU-ID:
+      name: PSU-ID
+      in: header
+      description: |
+        Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation.
+        Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding
+        AIS service in the same session.
+      schema:
+        type: string
+      required: false
+      example: "PSU-1234"
+
+
+    PSU-ID-Type:
+      name: PSU-ID-Type
+      in: header
+      description: |
+        Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-Corporate-ID:
+      name: PSU-Corporate-ID
+      in: header
+      description: |
+        Might be mandated in the ASPSP's documentation. Only used in a corporate context.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-Corporate-ID-Type:
+      name: PSU-Corporate-ID-Type
+      in: header
+      description: |
+        Might be mandated in the ASPSP's documentation. Only used in a corporate context.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-IP-Address_conditionalForAis:
+      name: PSU-IP-Address
+      in: header
+      description: |
+        The forwarded IP Address header field consists of the corresponding HTTP request
+        IP Address field between PSU and TPP.
+        It shall be contained if and only if this request was actively initiated by the PSU.
+      schema:
+        type: string
+        format: ipv4
+      required: false
+      example: 192.168.8.78
+
+    PSU-IP-Port:
+      name: PSU-IP-Port
+      in: header
+      description: |
+        The forwarded IP Port header field consists of the corresponding HTTP request IP Port field between PSU and TPP, if available.
+      schema:
+        type: string
+      required: false
+      example: "1234"
+
+
+    PSU-Accept:
+      name: PSU-Accept
+      in: header
+      description: |
+        The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-Accept-Charset:
+      name: PSU-Accept-Charset
+      in: header
+      description: |
+        The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-Accept-Encoding:
+      name: PSU-Accept-Encoding
+      in: header
+      description: |
+        The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-Accept-Language:
+      name: PSU-Accept-Language
+      in: header
+      description: |
+        The forwarded IP Accept header fields consist of the corresponding HTTP request Accept header fields between PSU and TPP, if available.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-User-Agent:
+      name: PSU-User-Agent
+      in: header
+      description: |
+        The forwarded Agent header field of the HTTP request between PSU and TPP, if available.
+      schema:
+        type: string
+      required: false
+
+
+    PSU-Http-Method:
+      name: PSU-Http-Method
+      in: header
+      description: |
+        HTTP method used at the PSU ? TPP interface, if available.
+        Valid values are:
+        * GET
+        * POST
+        * PUT
+        * PATCH
+        * DELETE
+      schema:
+        type: string
+        enum:
+          - "GET"
+          - "POST"
+          - "PUT"
+          - "PATCH"
+          - "DELETE"
+      required: false
+
+
+    PSU-Device-ID:
+      name: PSU-Device-ID
+      in: header
+      description: |
+        UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.
+        UUID identifies either a device or a device dependant application installation.
+        In case of an installation identification this ID need to be unaltered until removal from device.
+      schema:
+        type: string
+        format: uuid
+      required: false
+      example: "99435c7e-ad88-49ec-a2ad-99ddcb1f5555"
+
+    PSU-Geo-Location:
+      name: PSU-Geo-Location
+      in: header
+      description: |
+        The forwarded Geo Location of the corresponding http request between PSU and TPP if available.
+      schema:
+        type: string
+        pattern: 'GEO:-?[0-9]{1,2}\.[0-9]{6};-?[0-9]{1,3}\.[0-9]{6}'
+      required: false
+      example: GEO:52.506931;13.144558
+
+
+
+
+  requestBodies:
+  #####################################################
+  # Reusable Request Bodies
+  #####################################################
+
+    consentsConfirmationOfFunds:
+      description: |
+        Requestbody for a consent confirmation of funds request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/consentsConfirmationOfFunds"
+          examples:
+            "Consent Request on Dedicated Accounts":
+              $ref: "#/components/examples/consentsExample_DedicatedAccounts"
+            "Consent on Account List of Available Accounts":
+              $ref: "#/components/examples/consentsExample_AccountList"
+            "Consent Request on Account List or without Indication of dedicated Accounts":
+              $ref: "#/components/examples/consentsExample_without_Accounts"
+
+  headers:
+  #####################################################
+  # Reusable Response Header Elements
+  #####################################################
+
+    X-Request-ID:
+      description: ID of the request, unique to the call, as determined by the initiating party.
+      required: true
+      example: "99391c7e-ad88-49ec-a2ad-99ddcb1f7721"
+      schema:
+        type: string
+        format: uuid
+
+    ASPSP-SCA-Approach:
+      description: |
+        This data element must be contained, if the SCA Approach is already fixed.
+        Possible values are
+          * EMBEDDED
+          * DECOUPLED
+          * REDIRECT
+        The OAuth SCA approach will be subsumed by REDIRECT.
+      schema:
+        type: string
+        enum:
+          - "EMBEDDED"
+          - "DECOUPLED"
+          - "REDIRECT"
+        example: "EMBEDDED"
+      required: false
+
+    Location:
+      description: |
+        Location of the created resource.
+      schema:
+        type: string
+        format: url
+      required: false
+
+  responses:
+  #####################################################
+  # Reusabale Responses
+  #####################################################
+    #####################################################
+    # Positive Responses
+    #####################################################
+
+    CREATED_201_ConsentsConfirmationOfFunds:
+      description: Created
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+        ASPSP-SCA-Approach:
+          $ref: "#/components/headers/ASPSP-SCA-Approach"
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/ConsentsConfirmationOfFundsResponse"
+              - $ref: "#/components/schemas/ConsentsConfirmationOfFundsMultilevelSCAResponse"
+
+
+    OK_200_ConsentConfirmationOfFundsStatus:
+      description: Get consent status
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ConsentConfirmationOfFundsStatusResponse"
+
+
+    OK_200_ConsentConfirmationOfFundsContent:
+      description: Get consent status
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ConsentConfirmationOfFundsContentResponse"
+
+    OK_204_ConsentConfirmationOfFundsDelete:
+      description: Deletes a given consent.
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+    #####################################################
+    # Negative Responses
+    #####################################################
+
+    BAD_REQUEST_400_AIS:
+      description: Bad Request
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error400_NG_AIS"
+
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error400_AIS"
+
+
+    UNAUTHORIZED_401_AIS:
+      description: Unauthorized
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error401_NG_AIS"
+
+        application/problem+json:
+          schema:
+             $ref: "#/components/schemas/Error401_AIS"
+
+    FORBIDDEN_403_AIS:
+      description: Forbidden
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error403_NG_AIS"
+
+        application/problem+json:
+          schema:
+             $ref: "#/components/schemas/Error403_AIS"
+
+    NOT_FOUND_404_AIS:
+      description: Not found
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error404_NG_AIS"
+
+        application/problem+json:
+          schema:
+             $ref: "#/components/schemas/Error404_AIS"
+
+
+    METHOD_NOT_ALLOWED_405_AIS:
+      description: Method Not Allowed
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error405_NG_AIS"
+
+        application/problem+json:
+          schema:
+             $ref: "#/components/schemas/Error405_AIS"
+
+
+    NOT_ACCEPTABLE_406_AIS:
+      description: Not Acceptable
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error406_NG_AIS"
+        application/problem+json:
+          schema:
+             $ref: "#/components/schemas/Error406_AIS"
+
+
+    REQUEST_TIMEOUT_408_AIS:
+      description: Request Timeout
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      #No Response body because there are no valid message codes for AIS in case of HTTP code 408
+
+
+    CONFLICT_409_AIS:
+      description: Conflict
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      content:
+        application/json:
+          schema:
+             $ref: "#/components/schemas/Error409_NG_AIS"
+
+        application/problem+json:
+          schema:
+             $ref: "#/components/schemas/Error409_AIS"
+
+
+    UNSUPPORTED_MEDIA_TYPE_415_AIS:
+      description: Unsupported Media Type
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      #No Response body because there are no valid message codes for AIS in case of HTTP code 415
+
+
+    TOO_MANY_REQUESTS_429_AIS:
+      description: Too Many Requests
+
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error429_NG_AIS"
+        application/problem+json:
+
+          schema:
+             $ref: "#/components/schemas/Error429_AIS"
+
+
+    INTERNAL_SERVER_ERROR_500_AIS:
+      description: Internal Server Error
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      #No Response body because there are no valid message codes for AIS in case of HTTP code 500
+
+
+    SERVICE_UNAVAILABLE_503_AIS:
+      description: Service Unavailable
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+      #No Response body because there are no valid message codes for AIS in case of HTTP code 503
+
+
+  examples:
+  #####################################################
+  # Predefined Examples
+  #####################################################
+
+    consentsExample_DedicatedAccounts:
+      description: Consent request on dedicated accounts
+      value:
+        {
+        "access":
+          {
+            "balances": [
+                { "iban": "DE40100100103307118608" },
+                { "iban": "DE02100100109307118603",
+          "currency": "USD"
+                },
+                { "iban": "DE67100100101306118605" }
+              ],
+            "transactions": [
+                { "iban": "DE40100100103307118608" },
+                { "maskedPan": "123456xxxxxx1234" }
+              ]
+           },
+        "recurringIndicator": "true",
+        "validUntil": "2017-11-01",
+        "frequencyPerDay": "4"
+       }
+
+
+
+    consentsExample_AccountList:
+      description: Consent on Account List of Available Accounts
+      value:
+        {"access":
+          {"availableAccounts": "allAccounts"},
+         "recurringIndicator": "false",
+         "validUntil": "2017-08-06",
+         "frequencyPerDay": "1"
+        }
+
+
+    consentsExample_without_Accounts:
+      description: Consent request on account list or without indication of accounts
+      value:
+        {"access":
+        {
+          "balances": [],
+          "transactions": []
+        },
+        "recurringIndicator": "true",
+        "validUntil": "2017-11-01",
+        "frequencyPerDay": "4"
+        }
+
+security:
+#####################################################
+# Global security options
+#####################################################
+  - {}
+
+
+tags:
+#####################################################
+# Predefined Tags to Group Methods
+#####################################################
+
+  - name: Payment Initiation Service (PIS)
+    description: |
+      The Decription for Payment Initiation Service (PIS) offers the following services:
+        * Initiation and update of a payment request
+        * Status information of a payment
+  - name: Confirmation of Funds Service (PIIS)
+    description: |
+      Confirmation of Funds Service (PIIS) returns a confirmation of funds request at the ASPSP.
+  - name: Account Information Service (AIS)
+    description: |
+      The Account Information Service (AIS) offers the following services
+        * Transaction reports for a given account or card account including balances if applicable.
+        * Balances of a given account or card account ,
+        * A list of available accounts or card account ,
+        * Account details of a given account or card account or of the list of all accessible accounts or card account  relative to a granted consent
+  - name: Signing Baskets Service (SBS)
+    description: |
+      Signing basket methods are used for authorising several transactions and resp. or consents with one SCA operation.
+  - name: Common Services
+    description: |
+      Processes on starting authorisations, update PSU identification or PSU authentication data and explicit
+      authorisation of transactions by using SCA are very similar in PIS and AIS and signing baskets services.
+      The API calls supporting these processes are described in the following independently from the service/endpoint.
+      For reasons of clarity, the endpoints are defined always for the Payment Initiation Service, the Payment Cancellation,
+      the Account Information Service (Consents), and Signing Baskets separately.
+      These processes usually are used following a hyperlink of the ASPSP.
