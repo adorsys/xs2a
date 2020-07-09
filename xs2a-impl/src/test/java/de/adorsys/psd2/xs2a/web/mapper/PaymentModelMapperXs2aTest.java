@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Xs2aObjectMapper.class})
+@ContextConfiguration(classes = {Xs2aObjectMapper.class, MultiPartBoundaryBuilder.class})
 public class PaymentModelMapperXs2aTest {
 
     private static final String CONTENT = "payment content";
@@ -44,6 +44,8 @@ public class PaymentModelMapperXs2aTest {
     private PaymentModelMapperXs2a paymentModelMapper;
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
+    @Autowired
+    private MultiPartBoundaryBuilder multiPartBoundaryBuilder;
 
     private MockHttpServletRequest mockHttpServletRequest;
     private JsonReader jsonReader = new JsonReader();
@@ -52,7 +54,7 @@ public class PaymentModelMapperXs2aTest {
     @BeforeEach
     void setUp() {
         mockHttpServletRequest = new MockHttpServletRequest();
-        paymentModelMapper = new PaymentModelMapperXs2a(mockHttpServletRequest, xs2aObjectMapper);
+        paymentModelMapper = new PaymentModelMapperXs2a(mockHttpServletRequest, xs2aObjectMapper, multiPartBoundaryBuilder);
     }
 
     @Test

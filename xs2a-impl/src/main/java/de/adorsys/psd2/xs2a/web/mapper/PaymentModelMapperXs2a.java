@@ -37,6 +37,7 @@ import static de.adorsys.psd2.xs2a.core.profile.PaymentType.PERIODIC;
 public class PaymentModelMapperXs2a {
     private final HttpServletRequest httpServletRequest;
     private final Xs2aObjectMapper xs2aObjectMapper;
+    private final MultiPartBoundaryBuilder multiPartBoundaryBuilder;
 
     public byte[] mapToXs2aPayment() {
             return buildBinaryBodyData(httpServletRequest);
@@ -44,7 +45,7 @@ public class PaymentModelMapperXs2a {
 
     public byte[] mapToXs2aRawPayment(PaymentInitiationParameters requestParameters, Object xmlSct, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingOrderType) {
         if (requestParameters.getPaymentType() == PERIODIC) {
-            return buildPeriodicBinaryBodyData(xmlSct, jsonStandingOrderType);
+            return buildPeriodicBinaryBodyData(httpServletRequest, xmlSct, jsonStandingOrderType);
         }
 
         return buildBinaryBodyData(httpServletRequest);
@@ -59,7 +60,7 @@ public class PaymentModelMapperXs2a {
         }
     }
 
-    private byte[] buildPeriodicBinaryBodyData(Object xmlPart, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonPart) {
+    private byte[] buildPeriodicBinaryBodyData(HttpServletRequest httpServletRequest, Object xmlPart, PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonPart) {
         String serialisedJsonPart = null;
         try {
             serialisedJsonPart = xs2aObjectMapper.writeValueAsString(jsonPart);
@@ -69,8 +70,7 @@ public class PaymentModelMapperXs2a {
         if (xmlPart == null || serialisedJsonPart == null) {
             throw new IllegalArgumentException("Invalid body of the multipart request!");
         }
-
-        String body = xmlPart + "\n" + serialisedJsonPart;
+        String body = multiPartBoundaryBuilder.getMultiPartContent(httpServletRequest, (String) xmlPart, serialisedJsonPart);
         return body.getBytes(StandardCharsets.UTF_8);
     }
 }
