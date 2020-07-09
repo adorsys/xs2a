@@ -4,6 +4,7 @@
 
 * Change type of address postCode to Max35Text
 * Remove `chosenScaMethod` from response for decouple approach
+* Add boundaries to multipart periodic payment content
 
 == Change type of address postCode to Max35Text
 
@@ -12,3 +13,9 @@ From now on, maximum length of postCode field in Address object was extended to 
 == Remove `chosenScaMethod` from response for decouple approach
 
 From now on, there is no `chosenScaMethod` in response for decouple approach.
+
+== Add boundaries to multipart periodic payment content
+
+From now on, multipart periodic payment uses boundary from request header `Content-Type: multipart/form-data; boundary=gc0p4Jq0M2Yt08jU534c0p`
+or default `--AaaBbbCcc` otherwise when it is stored to CMS database.
+Resource get payment information returns such payment with boundary delemiters.

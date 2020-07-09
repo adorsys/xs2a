@@ -1,0 +1,32 @@
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
+    <CstmrCdtTrfInitn>
+        <GrpHdr>
+            <MsgId>MIPI-123456789RI-123456789</MsgId>
+            <CreDtTm>2017-02-14T20:23: 34.000Z</CreDtTm>
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>123</CtrlSum>
+            <InitgPty>
+                <Nm>PaymentInitiator</Nm>
+                <Id><OrgId><Othr><Id>DE10000000012</Id>
+                    <SchmeNm><Prptry>PISP</Prptry></SchmeNm></Othr></OrgId></Id>
+            </InitgPty>
+        </GrpHdr>
+        <PmtInf>
+            <PmtInfId>BIPI-123456789RI-123456789</PmtInfId>
+            <PmtMtd>TRF</PmtMtd>
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>123</CtrlSum>
+            <PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf>
+            <ReqdExctnDt>2017-02-15</ReqdExctnDt>
+            <Dbtr><Nm>PSU Name</Nm></Dbtr>
+            <DbtrAcct><Id><IBAN>DE87200500001234567890</IBAN></Id></DbtrAcct>
+            <ChrgBr>SLEV</ChrgBr>
+            <CdtTrfTxInf>
+                <PmtId><EndToEndId>RI-123456789</EndToEndId></PmtId>
+                <Amt><InstdAmt Ccy="EUR">123</InstdAmt></Amt>
+                <Cdtr><Nm>Merchant123</Nm></Cdtr> <CdtrAcct><Id><IBAN>DE23100120020123456789</IBAN></Id></CdtrAcct>
+                <RmtInf><Ustrd>Ref Number Merchant-123456</Ustrd></RmtInf>
+            </CdtTrfTxInf>
+        </PmtInf>
+    </CstmrCdtTrfInitn>
+</Document>
