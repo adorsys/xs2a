@@ -3,7 +3,12 @@
 == Table of Contents
 
 * Add instance-id to MDC log
+* Support yaml for Funds Confirmation consent
 
 == Add instance-id to MDC log
 
 From now on, `Instance-ID` header is stored in the MDC under `instance-id` key and is visible in XS2A logs.
+
+== Support yaml for Funds Confirmation consent
+
+From now on, Funds confirmation consent API V2 is available in XS2A.
