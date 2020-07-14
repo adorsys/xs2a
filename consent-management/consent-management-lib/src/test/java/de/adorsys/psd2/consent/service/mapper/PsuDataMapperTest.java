@@ -27,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collections;
 import java.util.List;
 
+import static de.adorsys.psd2.consent.aspsp.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,9 +44,9 @@ class PsuDataMapperTest {
         PsuData expected = jsonReader.getObjectFromFile("json/service/mapper/psu-data.json", PsuData.class);
         List<PsuData> expectedList = Collections.singletonList(expected);
 
-        List<PsuData> psuDataList = psuDataMapper.mapToPsuDataList(Collections.singletonList(psuIdData));
+        List<PsuData> psuDataList = psuDataMapper.mapToPsuDataList(Collections.singletonList(psuIdData), DEFAULT_SERVICE_INSTANCE_ID);
 
-        verify(psuDataMapper, times(1)).mapToPsuData(psuIdData);
+        verify(psuDataMapper, times(1)).mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
         assertEquals(expectedList, psuDataList);
     }
 
@@ -66,7 +67,7 @@ class PsuDataMapperTest {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
         PsuData expected = jsonReader.getObjectFromFile("json/service/mapper/psu-data.json", PsuData.class);
 
-        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
+        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertEquals(expected, psuData);
     }
@@ -86,7 +87,7 @@ class PsuDataMapperTest {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data-with-additional-psu-id-data.json", PsuIdData.class);
         PsuData expected = jsonReader.getObjectFromFile("json/service/mapper/psu-data-with-additional-psu-data.json", PsuData.class);
 
-        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
+        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertEquals(expected, psuData);
     }

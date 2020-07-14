@@ -163,7 +163,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(authorisationEntity));
         when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consentEntity));
-        when(psuDataMapper.mapToPsuData(psuIdData))
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(psuData);
         when(cmsPsuService.definePsuDataForAuthorisation(any(), anyList()))
             .thenReturn(Optional.of(psuData));
@@ -223,7 +223,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(authorisationEntity));
         PsuIdData emptyPsuIdData = new PsuIdData();
         PsuData emptyPsuData = new PsuData();
-        when(psuDataMapper.mapToPsuData(emptyPsuIdData))
+        when(psuDataMapper.mapToPsuData(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(emptyPsuData);
 
         // When
@@ -244,7 +244,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(authorisationEntityWithPsuData));
-        when(psuDataMapper.mapToPsuData(psuIdData))
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(psuData);
         ArgumentCaptor<AuthorisationEntity> authorisationEntityCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
 
@@ -268,7 +268,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(authorisationEntity));
-        when(psuDataMapper.mapToPsuData(psuIdData))
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(psuData);
         when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.empty());
