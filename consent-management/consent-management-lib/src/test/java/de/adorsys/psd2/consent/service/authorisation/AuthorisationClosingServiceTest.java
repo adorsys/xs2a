@@ -34,6 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -72,7 +73,7 @@ class AuthorisationClosingServiceTest {
         previousAisAuthorisation.setPsuData(PSU_DATA);
         when(authService.getAuthorisationsByParentId(PARENT_ID)).thenReturn(Collections.singletonList(previousAisAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         ArgumentCaptor<AuthorisationEntity> authorisationsCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
 
@@ -91,7 +92,7 @@ class AuthorisationClosingServiceTest {
         // Given
         when(authServiceResolver.getAuthService(AUTHORISATION_TYPE)).thenReturn(authService);
         when(authService.getAuthorisationsByParentId(PARENT_ID)).thenReturn(Collections.emptyList());
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, null)).thenReturn(PSU_DATA);
 
         // When
         authorisationClosingService.closePreviousAuthorisationsByParent(PARENT_ID, AUTHORISATION_TYPE, PSU_ID_DATA);
@@ -128,7 +129,7 @@ class AuthorisationClosingServiceTest {
         previousAuthorisation.setPsuData(PSU_DATA);
         when(authService.getAuthorisationsByParentId(PARENT_ID)).thenReturn(Collections.singletonList(previousAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         // When
         authorisationClosingService.closePreviousAuthorisationsByParent(PARENT_ID, AUTHORISATION_TYPE, PSU_ID_DATA);
@@ -147,7 +148,7 @@ class AuthorisationClosingServiceTest {
         previousAuthorisation.setPsuData(WRONG_PSU_DATA);
         when(authService.getAuthorisationsByParentId(PARENT_ID)).thenReturn(Collections.singletonList(previousAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         // When
         authorisationClosingService.closePreviousAuthorisationsByParent(PARENT_ID, AUTHORISATION_TYPE, PSU_ID_DATA);
@@ -166,7 +167,7 @@ class AuthorisationClosingServiceTest {
         when(authService.getAuthorisationsByParentId(PARENT_ID))
             .thenReturn(Arrays.asList(currentAuthorisation, previousAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         ArgumentCaptor<AuthorisationEntity> authorisationsCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
 
@@ -190,7 +191,7 @@ class AuthorisationClosingServiceTest {
         when(authService.getAuthorisationsByParentId(PARENT_ID))
             .thenReturn(Collections.singletonList(currentAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, null)).thenReturn(PSU_DATA);
 
         // When
         authorisationClosingService.closePreviousAuthorisationsByAuthorisation(currentAuthorisation, PSU_ID_DATA);
@@ -233,7 +234,7 @@ class AuthorisationClosingServiceTest {
         when(authService.getAuthorisationsByParentId(PARENT_ID))
             .thenReturn(Arrays.asList(currentAuthorisation, previousAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         // When
         authorisationClosingService.closePreviousAuthorisationsByAuthorisation(currentAuthorisation, PSU_ID_DATA);
@@ -252,7 +253,7 @@ class AuthorisationClosingServiceTest {
         when(authService.getAuthorisationsByParentId(PARENT_ID))
             .thenReturn(Arrays.asList(currentAuthorisation, previousAuthorisation));
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         // When
         authorisationClosingService.closePreviousAuthorisationsByAuthorisation(currentAuthorisation, PSU_ID_DATA);

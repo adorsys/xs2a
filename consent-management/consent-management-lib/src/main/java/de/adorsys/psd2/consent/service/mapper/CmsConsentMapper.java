@@ -83,7 +83,7 @@ public class CmsConsentMapper {
         entity.setRequestDateTime(OffsetDateTime.now());
         entity.setValidUntil(cmsConsent.getValidUntil());
         entity.setExpireDate(cmsConsent.getExpireDate());
-        entity.setPsuDataList(psuDataMapper.mapToPsuDataList(cmsConsent.getPsuIdDataList()));
+        entity.setPsuDataList(psuDataMapper.mapToPsuDataList(cmsConsent.getPsuIdDataList(), cmsConsent.getInstanceId()));
         entity.getPsuDataList().forEach(p -> p.setInstanceId(cmsConsent.getInstanceId()));
         entity.setAuthorisationTemplate(authorisationTemplateMapper.mapToAuthorisationTemplateEntity(cmsConsent.getAuthorisationTemplate()));
         entity.setRecurringIndicator(cmsConsent.isRecurringIndicator());

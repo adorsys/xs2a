@@ -240,7 +240,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     private boolean updatePsuData(AuthorisationEntity authorisation, PsuIdData psuIdData) {
-        PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData);
+        PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData, authorisation.getInstanceId());
         if (newPsuData == null || StringUtils.isBlank(newPsuData.getPsuId())) {
             log.info("Authorisation ID [{}]. Update PSU in payment failed in updatePsuData method, because newPsuData or psuId in newPsuData is empty or null",
                      authorisation.getExternalId());

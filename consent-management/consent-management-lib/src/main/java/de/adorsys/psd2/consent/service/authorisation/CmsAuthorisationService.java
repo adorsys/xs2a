@@ -60,7 +60,7 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
     @Override
     public AuthorisationEntity saveAuthorisation(CreateAuthorisationRequest request, Authorisable authorisationParent) {
         List<PsuData> psuDataList = authorisationParent.getPsuDataList();
-        Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData()), psuDataList);
+        Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData(), authorisationParent.getInstanceId()), psuDataList);
 
         psuDataOptional.ifPresent(psuData -> authorisationParent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, psuDataList)));
         authorisationParent.setPsuDataList(psuDataList);
@@ -74,7 +74,7 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
 
     @Override
     public AuthorisationEntity doUpdateAuthorisation(AuthorisationEntity authorisationEntity, UpdateAuthorisationRequest updateAuthorisationRequest) {
-        PsuData psuRequest = psuDataMapper.mapToPsuData(updateAuthorisationRequest.getPsuData());
+        PsuData psuRequest = psuDataMapper.mapToPsuData(updateAuthorisationRequest.getPsuData(), authorisationEntity.getInstanceId());
         if (ScaStatus.RECEIVED == authorisationEntity.getScaStatus()) {
 
             if (!cmsPsuService.isPsuDataRequestCorrect(psuRequest, authorisationEntity.getPsuData())) {

@@ -41,6 +41,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collections;
 import java.util.Optional;
 
+import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.*;
@@ -92,7 +93,7 @@ class CmsAuthorisationServiceTest {
         CreateAuthorisationRequest request = new CreateAuthorisationRequest();
         request.setPsuData(PSU_ID_DATA);
 
-        when(psuDataMapper.mapToPsuData(request.getPsuData())).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(request.getPsuData(), DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
         when(cmsPsuService.definePsuDataForAuthorisation(PSU_DATA, Collections.singletonList(PSU_DATA)))
             .thenReturn(Optional.of(PSU_DATA));
         when(aspspProfileService.getAspspSettings(authorisationParent.getInstanceId())).thenReturn(aspspSettings);
@@ -125,7 +126,7 @@ class CmsAuthorisationServiceTest {
         assertNotEquals(request.getScaStatus(), entity.getScaStatus());
         assertNotEquals(request.getAuthenticationMethodId(), entity.getAuthenticationMethodId());
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
         when(cmsPsuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(true);
 
         PisCommonPaymentData authorisationParent = new PisCommonPaymentData();
@@ -156,7 +157,7 @@ class CmsAuthorisationServiceTest {
         request.setScaStatus(ScaStatus.PSUIDENTIFIED);
         assertNotEquals(request.getScaStatus(), entity.getScaStatus());
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
         when(cmsPsuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(true);
 
         PisCommonPaymentData authorisationParent = new PisCommonPaymentData();
@@ -177,7 +178,7 @@ class CmsAuthorisationServiceTest {
         UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
         request.setPsuData(PSU_ID_DATA);
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
         when(cmsPsuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(false);
 
         service.doUpdateAuthorisation(entity, request);
@@ -193,7 +194,7 @@ class CmsAuthorisationServiceTest {
         UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
         request.setPsuData(PSU_ID_DATA);
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA)).thenReturn(PSU_DATA);
+        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         service.doUpdateAuthorisation(entity, request);
 

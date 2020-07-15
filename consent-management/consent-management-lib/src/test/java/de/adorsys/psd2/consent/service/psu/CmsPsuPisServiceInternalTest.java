@@ -149,7 +149,7 @@ class CmsPsuPisServiceInternalTest {
     @Test
     void updatePsuInPayment_Success() throws AuthorisationIsExpiredException {
         // Given
-        when(psuDataMapper.mapToPsuData(psuIdData)).thenReturn(psuData);
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(psuData);
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
@@ -203,7 +203,7 @@ class CmsPsuPisServiceInternalTest {
     void updatePsuInPayment_newPsuDataIsEmpty() throws AuthorisationIsExpiredException {
         // Given
         PsuIdData emptyPsuIdData = buildEmptyPsuIdData();
-        when(psuDataMapper.mapToPsuData(emptyPsuIdData)).thenReturn(buildEmptyPsuData());
+        when(psuDataMapper.mapToPsuData(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(buildEmptyPsuData());
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
@@ -221,7 +221,7 @@ class CmsPsuPisServiceInternalTest {
     @Test
     void updatePsuInPayment_authorisationHasNoPsuData_parentHasNotBeenFound() throws AuthorisationIsExpiredException {
         // Given
-        when(psuDataMapper.mapToPsuData(psuIdData)).thenReturn(psuData);
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(psuData);
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         AuthorisationEntity authorisationEntityWithoutPsuData = buildPisAuthorisation();
@@ -243,7 +243,7 @@ class CmsPsuPisServiceInternalTest {
     @Test
     void updatePsuInPayment_authorisationHasNoPsuData_newPsuDataIsNotInPsuDataListOfParent() throws AuthorisationIsExpiredException {
         // Given
-        when(psuDataMapper.mapToPsuData(psuIdData)).thenReturn(psuData);
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(psuData);
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         AuthorisationEntity authorisationEntityWithoutPsuData = buildPisAuthorisation();
@@ -267,7 +267,7 @@ class CmsPsuPisServiceInternalTest {
     @Test
     void updatePsuInPayment_authorisationHasNoPsuData_newPsuDataIsInPsuDataListOfParent() throws AuthorisationIsExpiredException {
         // Given
-        when(psuDataMapper.mapToPsuData(psuIdData)).thenReturn(psuData);
+        when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(psuData);
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         AuthorisationEntity authorisationEntityWithoutPsuData = buildPisAuthorisation();
