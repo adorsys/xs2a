@@ -19,6 +19,10 @@ Current version of the XS2A Interface supports the following types of payments:
 * Bulk payment;
 * Periodic payment.
 
+*Multipart periodic payment* uses boundary from request header Content-Type: multipart/form-data; boundary=gc0p4Jq0M2Yt08jU534c0p
+or default --AaaBbbCcc otherwise when it is stored to CMS database.
+Resource get payment information returns such payment with boundary delemiters.
+
 === Country validation
 According to BG Specification every country can have their local requirements for information included in the Payment Request.
 Payment validation on XS2A side can support different countries.
