@@ -45,7 +45,16 @@ Consent on Dedicated Accounts affects on response body for all account endpoints
 ** Read account details;
 ** Read balance;
 ** Read transaction list;
-** Read transaction details.
+** Read transaction details;
+** Read card accounts list;
+** Read card account details;
+** Read card account balance;
+** Read card account transaction list;
+** Read list of trusted benefeciaries;
+** Read all identifiers of single card;
+** Read detailed information of single card;
+** Read balance of single card;
+** Read transaction list of single card.
 
 When this Consent Request is a request where the “recurringIndicator” equals true, and if it exists already a former consent
 for recurring access on account information for the addressed PSU and potentially addressed corporate identification submitted by this TPP, then the former consent automatically expires as soon as the new consent request is authorised by the PSU.
@@ -227,6 +236,23 @@ Field *lastActionDate* - is containing the date of the last action on the consen
 
 * When consent is created and gets status "Received" - lastActionDate contains date of consent creation.
 * When consent status is changed - lastActionDate also is updated with new date.
+
+=== Card Accounts Service
+
+XS2A supports card accounts service with endpoints described below:
+
+- Read list of card accounts (`GET /v1/card-accounts`)
+- Read card account balances (`GET /v1/card-accounts/{account-id}/balances`)
+- Read card account's transaction list (`GET /v1/card-accounts/{account-id}/transactions`)
+- Read details of a card account (`GET /v1/card-accounts/{account-id}`)
+
+To use card account interface, one should add parameter to ASPSP profile in `supportedAccountReferenceFields` field (`MASKED_PAN` or/and `PAN`).
+For providing access to card accounts standard AIS consent should be used.
+
+=== Single Card Account Service
+
+To use Single Card Account interface, ASPSP profile should contain parameter `supportedAccountReferenceFields` = `MASKED_PAN` or/and `PAN`.
+For providing access to single card account standard AIS consent should be used.
 
 === Account Owner Name Service
 
