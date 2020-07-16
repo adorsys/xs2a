@@ -19,14 +19,27 @@ package de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
+import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Collections;
+import java.util.Currency;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aPiisConsentMapperImpl.class, ConsentDataMapper.class})
@@ -35,6 +48,15 @@ class Xs2aPiisConsentMapperTest {
 
     @Autowired
     private Xs2aPiisConsentMapper xs2aPiisConsentMapper;
+    @MockBean
+    private AspspProfileServiceWrapper aspspProfileService;
+    @MockBean
+    private ValueValidatorService valueValidatorService;
+    @MockBean
+    private RequestProviderService requestProviderService;
+    @MockBean
+    private ConsentModelMapper consentModelMapper;
+
 
     @Test
     void mapToPiisConsent() {
@@ -46,5 +68,28 @@ class Xs2aPiisConsentMapperTest {
         PiisConsent result = xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent);
 
         assertEquals(expectedXs2aConsent, result);
+    }
+
+    @Test
+    void mapToCmsConsent() {
+        //Given
+        AccountReference accountReference = new AccountReference();
+        accountReference.setIban("DE15500105172295759744");
+        accountReference.setCurrency("EUR");
+        de.adorsys.psd2.xs2a.core.profile.AccountReference reference = new de.adorsys.psd2.xs2a.core.profile.AccountReference(null, null, accountReference.getIban(), null, null, null, null, Currency.getInstance(accountReference.getCurrency()));
+        when(consentModelMapper.mapToXs2aAccountReferences(Collections.singletonList(accountReference)))
+            .thenReturn(Collections.singletonList(reference));
+//        PsuIdData psuIdData = new PsuIdData("PSU ID", "PSU ID TYPE", "PSU CORPORATE ID", "PSU CORPORATE ID TYPE", "PSU IP ADDRESS");
+        PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
+
+        int allowedFrequencyPerDay = 0;
+        //When
+
+        ConsentsConfirmationOfFunds consentsConfirmationOfFunds = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/consents-confirmation-of-funds.json", ConsentsConfirmationOfFunds.class);
+        TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
+        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(consentsConfirmationOfFunds, psuIdData, tppInfo, allowedFrequencyPerDay);
+        //Then
+        CmsConsent cmsConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/cms-consent-creation.json", CmsConsent.class);
+        assertEquals(cmsConsentExpected, cmsConsent);
     }
 }

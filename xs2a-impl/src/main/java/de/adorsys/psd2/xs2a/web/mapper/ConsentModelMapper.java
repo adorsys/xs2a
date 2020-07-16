@@ -203,7 +203,7 @@ public class ConsentModelMapper {
                    .orElse(null);
     }
 
-    private List<AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references) {
+    public List<AccountReference> mapToXs2aAccountReferences(List<de.adorsys.psd2.model.AccountReference> references) {
         return mapToXs2aAccountReferencesOrDefault(references, Collections.emptyList());
     }
 

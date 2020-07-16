@@ -41,19 +41,29 @@ public class ConsentHeadersBuilder extends AbstractHeadersBuilder {
      * @return response headers
      */
     public ResponseHeaders buildCreateConsentHeaders(@Nullable String authorisationId, @NotNull String selfLink, @NotNull NotificationModeResponseHeaders notificationHeaders) {
-        ResponseHeaders.ResponseHeadersBuilder responseHeadersBuilder = ResponseHeaders.builder()
-                                                                            .notificationSupport(notificationHeaders.getAspspNotificationSupport())
-                                                                            .notificationContent(notificationHeaders.getAspspNotificationContent());
-        if (authorisationId == null) {
-            return responseHeadersBuilder
-                       .location(selfLink)
-                       .build();
-        }
-
-        ScaApproach scaApproach = scaApproachResolver.getScaApproach(authorisationId);
-        return responseHeadersBuilder
-                   .aspspScaApproach(scaApproach)
-                   .location(selfLink)
-                   .build();
+        ResponseHeaders.ResponseHeadersBuilder responseHeadersBuilder = ResponseHeaders.builder();
+        buildNotificationHeaders(responseHeadersBuilder, notificationHeaders);
+        buildCreateConsentHeaders(responseHeadersBuilder, authorisationId, selfLink);
+        return responseHeadersBuilder.build();
     }
+
+    private void buildNotificationHeaders(ResponseHeaders.ResponseHeadersBuilder builder, @NotNull NotificationModeResponseHeaders notificationHeaders) {
+        builder.notificationSupport(notificationHeaders.getAspspNotificationSupport());
+        builder.notificationContent(notificationHeaders.getAspspNotificationContent());
+    }
+
+    private void buildCreateConsentHeaders(ResponseHeaders.ResponseHeadersBuilder builder, @Nullable String authorisationId, @NotNull String selfLink) {
+        builder.location(selfLink);
+        if (authorisationId != null) {
+            ScaApproach scaApproach = scaApproachResolver.getScaApproach(authorisationId);
+            builder.aspspScaApproach(scaApproach);
+        }
+    }
+
+    public ResponseHeaders buildCreateConsentHeaders(@Nullable String authorisationId, @NotNull String selfLink) {
+        ResponseHeaders.ResponseHeadersBuilder responseHeadersBuilder = ResponseHeaders.builder();
+        buildCreateConsentHeaders(responseHeadersBuilder, authorisationId, selfLink);
+        return responseHeadersBuilder.build();
+    }
+
 }

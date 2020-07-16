@@ -23,11 +23,13 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
+import de.adorsys.psd2.xs2a.web.link.CreatePiisConsentLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -62,6 +64,8 @@ class ConsentAspectServiceTest {
     private CreateConsentAuthorizationResponse createConsentAuthorisationResponse;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse;
 
     @Test
     void invokeCreateAccountConsentAspect_success() {
@@ -221,5 +225,26 @@ class ConsentAspectServiceTest {
         // Then
         assertTrue(actualResponse.hasError());
         assertEquals(CONSENT_UNKNOWN_400, responseObject.getError().getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void createPiisConsentWithResponse_success() {
+        // Given
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
+        ResponseObject<Xs2aConfirmationOfFundsResponse> responseObject = ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
+                                                                   .body(xs2aConfirmationOfFundsResponse)
+                                                                   .build();
+        // When
+        ResponseObject actualResponse = service.createPiisConsentWithResponse(responseObject,true);
+
+        // Then
+        verify(xs2aConfirmationOfFundsResponse, times(1)).setLinks(any(CreatePiisConsentLinks.class));
+
+        assertFalse(actualResponse.hasError());
     }
 }

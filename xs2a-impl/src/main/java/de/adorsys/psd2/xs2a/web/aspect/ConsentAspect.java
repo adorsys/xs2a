@@ -16,13 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.link.ConsentAspectService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -52,5 +50,10 @@ public class ConsentAspect {
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
     public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
         return consentAspectService.invokeUpdateConsentPsuDataAspect(result);
+    }
+
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PiisConsentService.createPiisConsentWithResponse(..)) && args( request, psuData, explicitPreferred)", returning = "result", argNames = "result,request,psuData,explicitPreferred")
+    public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(ResponseObject<Xs2aConfirmationOfFundsResponse> result, ConsentsConfirmationOfFunds request, PsuIdData psuData, boolean explicitPreferred) {
+        return consentAspectService.createPiisConsentWithResponse(result, explicitPreferred);
     }
 }

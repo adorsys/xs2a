@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.core.data.piis.v1;
 
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -39,6 +40,19 @@ class PiisConsentTest {
         AccountReference accountReference = jsonReader.getObjectFromFile("json/data/piis/account-reference.json", AccountReference.class);
 
         assertEquals(accountReference, piisConsent.getAccountReference());
+    }
+
+    @Test
+    void getAccountReference_aspspAccountsEmpty() {
+        //Given
+        PiisConsent piisConsent = jsonReader.getObjectFromFile("json/data/piis/piis-consent.json", PiisConsent.class);
+        piisConsent.setTppAccountAccesses(piisConsent.getAspspAccountAccesses());
+        piisConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
+        AccountReference expectedAccountReference = jsonReader.getObjectFromFile("json/data/piis/account-reference.json", AccountReference.class);
+        //When
+        AccountReference actualAccountReference = piisConsent.getAccountReference();
+        //Then
+        assertEquals(expectedAccountReference, actualAccountReference);
     }
 
     @Test

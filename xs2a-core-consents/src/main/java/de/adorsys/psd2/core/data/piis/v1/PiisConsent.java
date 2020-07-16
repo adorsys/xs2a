@@ -58,6 +58,11 @@ public class PiisConsent extends Consent<PiisConsentData> {
             return accounts.get(0);
         }
 
+        List<AccountReference> tppAccounts = getTppAccountAccesses().getAccounts();
+        if (CollectionUtils.isNotEmpty(tppAccounts)) {
+            return tppAccounts.get(0);
+        }
+
         return null;
     }
 

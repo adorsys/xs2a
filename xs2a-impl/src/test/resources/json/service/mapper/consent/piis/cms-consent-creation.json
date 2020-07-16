@@ -1,0 +1,59 @@
+{
+  "aspspAccountAccesses": {
+    "accounts": [],
+    "balances": [],
+    "transactions": [],
+    "additionalInformationAccess": {
+      "ownerName": [],
+      "trustedBeneficiaries": []
+    }
+  },
+  "tppAccountAccesses": {
+    "accounts": [
+      {
+        "currency": "EUR",
+        "iban": "DE15500105172295759744"
+      }
+    ],
+    "balances": [],
+    "transactions": [],
+    "additionalInformationAccess": {
+      "ownerName": [],
+      "trustedBeneficiaries": []
+    }
+  },
+  "consentData": "eyJjYXJkTnVtYmVyIjoiY2FyZE51bWJlciIsImNhcmRFeHBpcnlEYXRlIjoiMjAzMC0xMC0xMCIsImNhcmRJbmZvcm1hdGlvbiI6ImNhcmRJbmZvcm1hdGlvbiIsInJlZ2lzdHJhdGlvbkluZm9ybWF0aW9uIjoicmVnaXN0cmF0aW9uSW5mb3JtYXRpb24ifQ==",
+  "consentStatus": "RECEIVED",
+  "consentType": "PIIS_TPP",
+  "tppInformation": {
+    "tppRedirectPreferred": false,
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppName": "",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    }
+  },
+  "frequencyPerDay": 0,
+  "psuIdDataList": [
+    {
+      "psuId": "psu Id",
+      "psuIdType": "psuId Type",
+      "psuCorporateId": "psu Corporate Id",
+      "psuCorporateIdType": "psuCorporate Id Type"
+    }
+  ],
+  "recurringIndicator": false,
+  "multilevelScaRequired": false,
+  "authorisationTemplate": {}
+}
