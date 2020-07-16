@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
 import de.adorsys.psd2.xs2a.web.link.CreateAisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
+import de.adorsys.psd2.xs2a.web.link.CreatePiisConsentLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,5 +108,14 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
         return Optional.ofNullable(response.getScaStatus())
                    .map(status -> new UpdateConsentLinks(getHttpUrl(), scaApproachResolver, response))
                    .orElse(null);
+    }
+
+    public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(ResponseObject<Xs2aConfirmationOfFundsResponse> result, boolean explicitPreferred) {
+        if (!result.hasError()) {
+
+            Xs2aConfirmationOfFundsResponse body = result.getBody();
+            body.setLinks(new CreatePiisConsentLinks(getHttpUrl(), body));
+        }
+        return result;
     }
 }

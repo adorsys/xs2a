@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
+import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -43,6 +44,8 @@ class ConsentAspectTest {
     private CreateConsentAuthorizationResponse createConsentAuthorisationResponse;
     @Mock
     private UpdateConsentPsuDataResponse updateConsentPsuDataResponse;
+    @Mock
+    private Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse;
 
     @Test
     void invokeCreateAccountConsentAspect() {
@@ -69,5 +72,14 @@ class ConsentAspectTest {
                                                                           .build();
         aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
         verify(consentAspectService).invokeUpdateConsentPsuDataAspect(responseObject);
+    }
+
+    @Test
+    void createPiisConsentWithResponse() {
+        ResponseObject<Xs2aConfirmationOfFundsResponse> responseObject = ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
+                                                                   .body(xs2aConfirmationOfFundsResponse)
+                                                                   .build();
+        aspect.createPiisConsentWithResponse(responseObject, new ConsentsConfirmationOfFunds(), null, true);
+        verify(consentAspectService).createPiisConsentWithResponse(responseObject, true);
     }
 }

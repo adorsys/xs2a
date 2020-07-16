@@ -117,4 +117,40 @@ class ConsentHeadersBuilderTest {
         HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
         assertEquals(expectedHttpHeaders, actualHttpHeaders);
     }
+
+    @Test
+    void buildCreateConsentHeaders_short_withAuthorisationId_shouldReturnLocationAndScaApproachFromAuthorisation() {
+        // Given
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
+            .thenReturn(SCA_APPROACH);
+
+        HttpHeaders expectedHttpHeaders = new HttpHeaders();
+        expectedHttpHeaders.add(LOCATION_HEADER, SELF_LINK);
+        expectedHttpHeaders.add(ASPSP_SCA_APPROACH_HEADER, SCA_APPROACH.name());
+
+        // When
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildCreateConsentHeaders(AUTHORISATION_ID, SELF_LINK);
+
+        // Then
+        verify(scaApproachResolver, never()).resolveScaApproach();
+
+        HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
+        assertEquals(expectedHttpHeaders, actualHttpHeaders);
+    }
+
+    @Test
+    void buildCreateConsentHeaders_short_withoutAuthorisationId_shouldReturnLocationOnly() {
+        // Given
+        HttpHeaders expectedHttpHeaders = new HttpHeaders();
+        expectedHttpHeaders.add(LOCATION_HEADER, SELF_LINK);
+
+        // When
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildCreateConsentHeaders(null, SELF_LINK);
+
+        // Then
+        verify(scaApproachResolver, never()).getScaApproach(any());
+
+        HttpHeaders actualHttpHeaders = responseHeaders.getHttpHeaders();
+        assertEquals(expectedHttpHeaders, actualHttpHeaders);
+    }
 }

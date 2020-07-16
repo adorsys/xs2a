@@ -4,6 +4,7 @@
 
 * Add instance-id to MDC log
 * Support yaml for Funds Confirmation consent
+* Establish Funds Confirmation Consent
 
 == Add instance-id to MDC log
 
@@ -12,3 +13,24 @@ From now on, `Instance-ID` header is stored in the MDC under `instance-id` key a
 == Support yaml for Funds Confirmation consent
 
 From now on, Funds confirmation consent API V2 is available in XS2A.
+
+== Establish Funds Confirmation Consent
+
+From now on, TPP is able to establish PIIS consent through XS2A by sending request `POST /v2/consents/confirmation-of-funds`.
+
+For example:
+```
+{
+    "account": {
+        "iban": "DE69760700240340283600",
+        "currency": "EUR"
+    },
+    "cardNumber": "cardNumber",
+    "cardExpiryDate": "2030-10-10",
+    "cardInformation": "cardInfo",
+    "registrationInformation": "registrationInfo"
+}
+```
+
+Also TPP can receive content of previously created PIIS consent (`GET v2/consents/confirmation-of-funds/{consent_id}`)
+and retrieve PIIS consent status (`GET v2/consents/confirmation-of-funds/{consent_id}/status`).

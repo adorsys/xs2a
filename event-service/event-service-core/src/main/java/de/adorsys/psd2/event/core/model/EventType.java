@@ -18,6 +18,9 @@ package de.adorsys.psd2.event.core.model;
 
 public enum EventType {
     /* PIIS Funds Confirmation */
+    CREATE_PIIS_CONSENT_REQUEST_RECEIVED,
+    GET_PIIS_CONSENT_REQUEST_RECEIVED,
+    GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED,
     FUNDS_CONFIRMATION_REQUEST_RECEIVED,
     /* AIS Consent */
     CREATE_AIS_CONSENT_REQUEST_RECEIVED,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.spi.domain.consent;
+package de.adorsys.psd2.stub.impl;
 
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import lombok.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
+import org.springframework.stereotype.Service;
 
-@Value
-public class SpiAisConsentStatusResponse {
-    @NotNull
-    private ConsentStatus consentStatus;
-
-    @Nullable
-    private String psuMessage;
+@Service
+public class PiisConsentSpiImpl implements PiisConsentSpi {
 }

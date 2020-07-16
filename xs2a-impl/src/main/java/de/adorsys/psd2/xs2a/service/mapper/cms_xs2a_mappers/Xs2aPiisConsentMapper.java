@@ -17,13 +17,69 @@
 package de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers;
 
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
+import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
 
 @Mapper(componentModel = "spring", uses = ConsentDataMapper.class)
-public interface Xs2aPiisConsentMapper {
+public abstract class Xs2aPiisConsentMapper {
+    @Autowired
+    protected ConsentDataMapper consentDataMapper;
+    @Autowired
+    protected ConsentModelMapper consentModelMapper;
+    @Autowired
+    protected RequestProviderService requestProviderService;
+
     @Mapping(target = "consentTppInformation", source = "tppInformation")
-    PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
+    public abstract PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
+
+    public CmsConsent mapToCmsConsent(ConsentsConfirmationOfFunds request, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay) {
+        PiisConsentData piisConsentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(), request.getCardInformation(), request.getRegistrationInformation());
+        byte[] aisConsentDataBytes = consentDataMapper.getBytesFromConsentData(piisConsentData);
+
+        CmsConsent cmsConsent = new CmsConsent();
+        cmsConsent.setConsentData(aisConsentDataBytes);
+
+        ConsentTppInformation tppInformation = new ConsentTppInformation();
+        tppInformation.setTppInfo(tppInfo);
+        tppInformation.setTppRedirectPreferred(requestProviderService.resolveTppRedirectPreferred().orElse(false));
+        cmsConsent.setTppInformation(tppInformation);
+
+        AuthorisationTemplate authorisationTemplate = new AuthorisationTemplate();
+        String tppRedirectURI = requestProviderService.getTppRedirectURI();
+        if (tppRedirectURI != null) {
+            TppRedirectUri tppRedirectUri = new TppRedirectUri(tppRedirectURI, requestProviderService.getTppNokRedirectURI());
+            authorisationTemplate.setTppRedirectUri(tppRedirectUri);
+        }
+        cmsConsent.setAuthorisationTemplate(authorisationTemplate);
+
+        cmsConsent.setFrequencyPerDay(allowedFrequencyPerDay);
+        cmsConsent.setInternalRequestId(requestProviderService.getInternalRequestIdString());
+        cmsConsent.setPsuIdDataList(Collections.singletonList(psuData));
+        cmsConsent.setConsentType(ConsentType.PIIS_TPP);
+
+        AccountAccess accountAccess = new AccountAccess(consentModelMapper.mapToXs2aAccountReferences(Collections.singletonList(request.getAccount())), Collections.emptyList(), Collections.emptyList(), new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList()));
+        cmsConsent.setTppAccountAccesses(accountAccess);
+        cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
+        cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);
+        cmsConsent.setInstanceId(requestProviderService.getInstanceId());
+        return cmsConsent;
+    }
 }

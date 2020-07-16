@@ -43,6 +43,10 @@ public class UrlHolder {
     public static final String CARD_TRANSACTIONS_URL = "/v1/card-accounts/{accountId}/transactions";
     public static final String CARD_TRANSACTIONS_DOWNLOAD_URL = "/v1/card-accounts/{accountId}/transactions/download/{downloadId}";
 
+    //PIIS CONSENT
+    public static final String PIIS_CONSENT_LINK_URL = "/v2/consents/confirmation-of-funds/{consentId}";
+    public static final String PIIS_CONSENT_STATUS_URL = "/v2/consents/confirmation-of-funds/{consentId}/status";
+
     private UrlHolder() {
     }
 }
