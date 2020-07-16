@@ -20,6 +20,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetails;
@@ -38,8 +39,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AccountReferenceInConsentUpdaterTest {
@@ -58,6 +58,8 @@ class AccountReferenceInConsentUpdaterTest {
     private Xs2aAisConsentService aisConsentService;
     @Mock
     private CardAccountHandler cardAccountHandler;
+    @Mock
+    private Xs2aPiisConsentService xs2aPiisConsentService;
 
     @InjectMocks
     private AccountReferenceInConsentUpdater accountReferenceInConsentUpdater;
@@ -466,6 +468,32 @@ class AccountReferenceInConsentUpdaterTest {
 
         List<AccountReference> transactions = value.getTransactions();
         assertTrue(transactions.isEmpty());
+    }
+
+    @Test
+    void rewriteAccountAccess_AIS() {
+        //Given
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.emptyList(),
+                                                             Collections.emptyList(),
+                                                             Collections.emptyList());
+        //When
+        accountReferenceInConsentUpdater.rewriteAccountAccess(CONSENT_ID, accountAccess, ConsentType.AIS);
+        //Then
+        verify(aisConsentService, atLeastOnce()).updateAspspAccountAccess(CONSENT_ID, accountAccess);
+        verify(xs2aPiisConsentService, never()).updateAspspAccountAccess(CONSENT_ID, accountAccess);
+    }
+
+    @Test
+    void rewriteAccountAccess_PIIS() {
+        //Given
+        AccountAccess accountAccess = buildXs2aAccountAccess(Collections.emptyList(),
+                                                             Collections.emptyList(),
+                                                             Collections.emptyList());
+        //When
+        accountReferenceInConsentUpdater.rewriteAccountAccess(CONSENT_ID, accountAccess, ConsentType.PIIS_TPP);
+        //Then
+        verify(xs2aPiisConsentService, atLeastOnce()).updateAspspAccountAccess(CONSENT_ID, accountAccess);
+        verify(aisConsentService, never()).updateAspspAccountAccess(CONSENT_ID, accountAccess);
     }
 
     private AisConsent buildAisConsent(AccountAccess accountAccess, AccountAccessType globalAccessType) {

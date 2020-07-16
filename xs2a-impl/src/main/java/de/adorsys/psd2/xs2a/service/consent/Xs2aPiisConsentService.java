@@ -16,11 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
+import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -42,6 +45,7 @@ public class Xs2aPiisConsentService {
     private final ConsentServiceEncrypted consentService;
     private final Xs2aPiisConsentMapper xs2aPiisConsentMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
+    private final AisConsentServiceEncrypted aisConsentService;
 
     public Optional<Xs2aCreatePiisConsentResponse> createConsent(ConsentsConfirmationOfFunds request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(Integer.MAX_VALUE);
@@ -86,5 +90,23 @@ public class Xs2aPiisConsentService {
         } catch (WrongChecksumException e) {
             log.info("updateConsentStatus cannot be executed, checksum verification failed");
         }
+    }
+
+    public CmsResponse<PiisConsent> updateAspspAccountAccess(String consentId, AccountAccess accountAccess) {
+        CmsResponse<CmsConsent> response;
+
+        CmsResponse.CmsResponseBuilder<PiisConsent> builder = CmsResponse.builder();
+
+        try {
+            response = aisConsentService.updateAspspAccountAccess(consentId, accountAccess);
+        } catch (WrongChecksumException e) {
+            return builder.error(CmsError.CHECKSUM_ERROR).build();
+        }
+
+        if (response.hasError()) {
+            return builder.error(response.getError()).build();
+        }
+
+        return builder.payload(xs2aPiisConsentMapper.mapToPiisConsent(response.getPayload())).build();
     }
 }
