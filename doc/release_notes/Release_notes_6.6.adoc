@@ -1,3 +1,46 @@
 = Release notes v.6.6
 
 == Table of Contents
+
+* Changed package name for Xs2aPisCommonPaymentMapper
+* Change type of address postCode to Max35Text
+* Remove `chosenScaMethod` from response for decouple approach
+* Add postman tests for raw payments
+* Changed package name for Xs2aPisCommonPaymentMapper
+* Enlarged PSU-Accept to max250
+* Deleted tables with ais prefix
+
+== Changed package name for Xs2aPisCommonPaymentMapper
+
+Changed package name from `de.adorsys.psd2.xs2a.service.mapper.consent` to
+`de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers`.
+
+== Change type of address postCode to Max35Text
+
+From now on, maximum length of postCode field in Address object was extended to 35 symbols.
+
+== Remove `chosenScaMethod` from response for decouple approach
+
+From now on, there is no `chosenScaMethod` in response for decouple approach.
+
+== Add postman tests for raw payments
+
+Added postman tests for raw payments.
+
+== Changed package name for Xs2aPisCommonPaymentMapper
+
+Changed package name from `de.adorsys.psd2.xs2a.service.mapper.consent` to
+`de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers`.
+
+== Enlarged PSU-Accept to max250
+
+From now on, max length of PSU-Accept header is 250 symbols.
+
+== Deleted tables with ais prefix
+
+From now on, next tables with ais prefix are deleted:
+
+* ais_consent_psu_data
+* ais_consent_usage
+* ais_account_access
+* ais_aspsp_account_access
