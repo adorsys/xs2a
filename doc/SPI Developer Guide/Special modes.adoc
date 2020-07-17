@@ -32,6 +32,29 @@ To configure CMS service to properly work with multiple XS2A instances, multiple
 Alternatively, some kind of an interceptor should be implemented in CMS (or in connector application in case of using CMS in embedded mode) to set `instanceId` property before saving records to the database.
 Example of Hibernate interceptor with such functionality can be found in `cms-standalone-service`: in `de.adorsys.psd2.consent.config.ServiceInstanceIdEventListener`, along with the configuration in `de.adorsys.psd2.consent.config.HibernateListenerConfig`.
 
+=== Support multi-tenancy in XS2A
+
+XS2A supports multi-tenancy with 1 database and 1 CMS instances.
+Request header `Instance-ID` defines a current tenant. The header is not mandatory.
+
+Response link `scaRedirect` will include `Instance-ID` parameter if the mentioned header comes with request.
+
+SPI objects `SpiAccountConsent`, `SpiPaymentInfo`, `SpiSinglePayment` and `SpiBulkPayment` were extended for `instanceId` field.
+
+=== Support multi-tenancy in ASPSP Profile
+
+ASPSP Profile supports more than one ASPSP profiles. In this mode ASPSP Profile needs to be configured for each supporting instances separately.
+HTTP header `instance-id` is required for all requests to the profile otherwise error will occur.
+
+To enable multi tenancy in ASPSP Profile in `application.yml` set flag and register config profiles for every tenant:
+
+```
+xs2a.bank_profile.multitenancy.enabled=true
+xs2a.bank_profile.multitenancy.customBankProfiles={bank1:'classpath:bank1_profile.yml', bank2:'classpath:bank2_profile.yml'}
+```
+
+By default, multi-tenancy mode for ASPSP Profile is disabled.
+
 === Configure Event-Service in embedded mode
 
 XS2A is started as a standalone application in embedded mode (*Xs2aStandaloneStarter*).
