@@ -30,8 +30,9 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
@@ -41,9 +42,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,8 +70,8 @@ class PaymentCancellationServiceForAuthorisationTest {
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     @Mock
     private SpiErrorMapper spiErrorMapper;
-    @Mock
-    private SpiPaymentFactory spiPaymentFactory;
+    @Spy
+    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper = new Xs2aToSpiPaymentMapper(new Xs2aToSpiPsuDataMapper());
 
     private JsonReader jsonReader = new JsonReader();
     private PisCommonPaymentResponse pisCommonPaymentResponse;
@@ -97,7 +97,6 @@ class PaymentCancellationServiceForAuthorisationTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.hasError()).isTrue();
-        verify(spiPaymentFactory, never()).getSpiPayment(any());
     }
 
     @Test
@@ -132,7 +131,6 @@ class PaymentCancellationServiceForAuthorisationTest {
 
         when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
-        when(spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse)).thenReturn(Optional.empty());
 
         SpiResponse<Boolean> spiResponse = SpiResponse.<Boolean>builder()
                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
@@ -146,7 +144,6 @@ class PaymentCancellationServiceForAuthorisationTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.hasError()).isTrue();
-        verify(spiPaymentFactory, times(1)).getSpiPayment(any());
         verify(paymentCancellationSpi, times(1)).requestTrustedBeneficiaryFlag(any(), any(), any(), any());
         verify(spiErrorMapper, times(1)).mapToErrorHolder(spiResponse, ServiceType.PIS);
     }
@@ -163,7 +160,6 @@ class PaymentCancellationServiceForAuthorisationTest {
 
         when(paymentCancellationAuthorisationService.getPaymentCancellationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
-        when(spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse)).thenReturn(Optional.empty());
 
         SpiResponse<Boolean> spiResponse = SpiResponse.<Boolean>builder()
                                                .payload(true)
@@ -178,7 +174,6 @@ class PaymentCancellationServiceForAuthorisationTest {
         assertThat(actual.hasError()).isFalse();
         assertThat(actual.getBody()).isEqualTo(expected);
 
-        verify(spiPaymentFactory, times(1)).getSpiPayment(any());
         verify(paymentCancellationSpi, times(1)).requestTrustedBeneficiaryFlag(any(), any(), any(), any());
         verify(spiErrorMapper, never()).mapToErrorHolder(any(), any());
     }

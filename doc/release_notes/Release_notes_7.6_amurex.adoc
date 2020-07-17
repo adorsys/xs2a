@@ -5,6 +5,7 @@
 * Change type of address postCode to Max35Text
 * Remove `chosenScaMethod` from response for decouple approach
 * Add boundaries to multipart periodic payment content
+* Fix reading SCA status for pain payment authorisation
 
 == Change type of address postCode to Max35Text
 
@@ -19,3 +20,9 @@ From now on, there is no `chosenScaMethod` in response for decouple approach.
 From now on, multipart periodic payment uses boundary from request header `Content-Type: multipart/form-data; boundary=gc0p4Jq0M2Yt08jU534c0p`
 or default `--AaaBbbCcc` otherwise when it is stored to CMS database.
 Resource get payment information returns such payment with boundary delemiters.
+
+== Fix reading SCA status for pain payment authorisation
+
+From now on, request `Read SCA status for payment authorisation`
+(GET /v1/{payment_service}/{payment_product}/{payment_id}/authorisations/{{authorisation_id}}) works without errors for pain payments.
+Postman collection for pain payments (SINGLE, PERIODIC, BULK) was added.
