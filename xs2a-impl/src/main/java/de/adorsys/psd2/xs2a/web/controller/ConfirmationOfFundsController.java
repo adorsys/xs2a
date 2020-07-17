@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.v2.ConfirmationOfFundsApi;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
@@ -73,7 +74,8 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
         PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress,
                                           new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
 
-        ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(body, psuData, BooleanUtils.toBoolean(tpPExplicitAuthorisationPreferred));
+        CreatePiisConsentRequest createPiisConsentRequest = piisConsentModelMapper.toCreatePiisConsentRequest(body);
+        ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(createPiisConsentRequest, psuData, BooleanUtils.toBoolean(tpPExplicitAuthorisationPreferred));
         if (xs2aConfirmationOfFundsResponseResponseObject.hasError()) {
             return responseErrorMapper.generateErrorResponse(xs2aConfirmationOfFundsResponseResponseObject.getError());
         }

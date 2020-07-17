@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
@@ -33,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -42,6 +42,9 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountRefe
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.piis.CreatePiisConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -74,9 +77,19 @@ public class PiisConsentService {
     private final SpiErrorMapper spiErrorMapper;
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
+    private final CreatePiisConsentValidator createPiisConsentValidator;
 
-    public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(ConsentsConfirmationOfFunds request, PsuIdData psuData, boolean explicitPreferred) {
+    public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
+
+        ValidationResult validationResult = createPiisConsentValidator.validate(new CreatePiisConsentRequestObject(request, psuData));
+        if (validationResult.isNotValid()) {
+            log.info("Create funds confirmation consent with response - validation failed: {}",
+                     validationResult.getMessageError());
+            return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
 
         TppInfo tppInfo = tppService.getTppInfo();
         Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, psuData, tppInfo);

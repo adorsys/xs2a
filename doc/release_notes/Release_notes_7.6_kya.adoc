@@ -4,6 +4,7 @@
 
 * Enlarged PSU-Accept to max250
 * Deleted tables with ais prefix
+* Created Funds Confirmation validator
 
 === Enlarged PSU-Accept to max250
 
@@ -17,3 +18,7 @@ From now on, next tables with ais prefix are deleted:
 * ais_consent_usage
 * ais_account_access
 * ais_aspsp_account_access
+
+=== Created Funds Confirmation validator
+
+From now on, create funds confirmation request is validated according to specification

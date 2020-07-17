@@ -22,11 +22,11 @@ import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
@@ -40,7 +40,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -70,10 +71,10 @@ class Xs2aPiisConsentServiceTest {
     @Test
     void createConsent_success() throws WrongChecksumException {
         //Given
-        ConsentsConfirmationOfFunds consentsConfirmationOfFunds = new ConsentsConfirmationOfFunds();
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt()))
             .thenReturn(minFrequencyPerDay);
-        when(xs2aPiisConsentMapper.mapToCmsConsent(consentsConfirmationOfFunds, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
+        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
             .thenReturn(cmsConsent);
         CmsResponse<CmsCreateConsentResponse> response = CmsResponse.<CmsCreateConsentResponse>builder().payload(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent)).build();
         when(consentService.createConsent(cmsConsent))
@@ -82,7 +83,7 @@ class Xs2aPiisConsentServiceTest {
             .thenReturn(piisConsent);
 
         //When
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(consentsConfirmationOfFunds, PSU_ID_DATA, tppInfo);
+        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
 
         //Then
         assertTrue(xs2aCreatePiisConsentResponseOptional.isPresent());
@@ -94,16 +95,16 @@ class Xs2aPiisConsentServiceTest {
     @Test
     void createConsent_catchWrongChecksumException() throws WrongChecksumException {
         //Given
-        ConsentsConfirmationOfFunds consentsConfirmationOfFunds = new ConsentsConfirmationOfFunds();
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt()))
             .thenReturn(minFrequencyPerDay);
-        when(xs2aPiisConsentMapper.mapToCmsConsent(consentsConfirmationOfFunds, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
+        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
             .thenReturn(cmsConsent);
         when(consentService.createConsent(cmsConsent))
             .thenThrow(new WrongChecksumException());
 
         //When
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(consentsConfirmationOfFunds, PSU_ID_DATA, tppInfo);
+        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
 
         //Then
         assertTrue(xs2aCreatePiisConsentResponseOptional.isEmpty());
@@ -112,10 +113,10 @@ class Xs2aPiisConsentServiceTest {
     @Test
     void createConsent_withError() throws WrongChecksumException {
         //Given
-        ConsentsConfirmationOfFunds consentsConfirmationOfFunds = new ConsentsConfirmationOfFunds();
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt()))
             .thenReturn(minFrequencyPerDay);
-        when(xs2aPiisConsentMapper.mapToCmsConsent(consentsConfirmationOfFunds, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
+        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
             .thenReturn(cmsConsent);
         when(consentService.createConsent(cmsConsent))
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder()
@@ -123,7 +124,7 @@ class Xs2aPiisConsentServiceTest {
                             .build());
 
         //When
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(consentsConfirmationOfFunds, PSU_ID_DATA, tppInfo);
+        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
 
         //Then
         assertTrue(xs2aCreatePiisConsentResponseOptional.isEmpty());

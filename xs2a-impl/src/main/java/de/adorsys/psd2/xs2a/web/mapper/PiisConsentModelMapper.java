@@ -18,12 +18,10 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
-import de.adorsys.psd2.model.ConsentConfirmationOfFundsContentResponse;
-import de.adorsys.psd2.model.ConsentConfirmationOfFundsStatusResponse;
-import de.adorsys.psd2.model.ConsentStatus;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFundsResponse;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -35,6 +33,20 @@ import java.util.Optional;
 public class PiisConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final AccountModelMapper accountModelMapper;
+    private final ConsentModelMapper consentModelMapper;
+
+    public CreatePiisConsentRequest toCreatePiisConsentRequest(ConsentsConfirmationOfFunds consentsConfirmationOfFunds) {
+        return Optional.ofNullable(consentsConfirmationOfFunds)
+                   .map(c ->
+                            new CreatePiisConsentRequest(
+                                consentModelMapper.mapToAccountReference(consentsConfirmationOfFunds.getAccount()),
+                                consentsConfirmationOfFunds.getCardNumber(),
+                                consentsConfirmationOfFunds.getCardExpiryDate(),
+                                consentsConfirmationOfFunds.getCardInformation(),
+                                consentsConfirmationOfFunds.getRegistrationInformation()
+                            ))
+                   .orElse(null);
+    }
 
     public ConsentsConfirmationOfFundsResponse mapToConsentsConfirmationOfFundsResponse(Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse) {
         return Optional.ofNullable(xs2aConfirmationOfFundsResponse).map(

@@ -18,7 +18,10 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.ConsentConfirmationOfFundsContentResponse;
+import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
+import de.adorsys.psd2.model.ConsentsConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -32,6 +35,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
@@ -136,7 +140,9 @@ class ConfirmationOfFundsControllerTest {
             .thenReturn(PiisConsentSupported.TPP_CONSENT_SUPPORTED);
 
         ConsentsConfirmationOfFunds consentsConfirmationOfFunds = new ConsentsConfirmationOfFunds();
-        when(piisConsentService.createPiisConsentWithResponse(eq(consentsConfirmationOfFunds), eq(PSU_ID_DATA), eq(false)))
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
+        when(piisConsentModelMapper.toCreatePiisConsentRequest(consentsConfirmationOfFunds)).thenReturn(request);
+        when(piisConsentService.createPiisConsentWithResponse(eq(request), eq(PSU_ID_DATA), eq(false)))
             .thenReturn(createConsentsConfirmationOfFunds(CONSENT_ID));
         when(consentHeadersBuilder.buildCreateConsentHeaders(any(), any()))
             .thenReturn(RESPONSE_HEADERS);

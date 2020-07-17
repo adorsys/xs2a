@@ -21,7 +21,6 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
@@ -30,8 +29,8 @@ import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,14 +42,12 @@ public abstract class Xs2aPiisConsentMapper {
     @Autowired
     protected ConsentDataMapper consentDataMapper;
     @Autowired
-    protected ConsentModelMapper consentModelMapper;
-    @Autowired
     protected RequestProviderService requestProviderService;
 
     @Mapping(target = "consentTppInformation", source = "tppInformation")
     public abstract PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
 
-    public CmsConsent mapToCmsConsent(ConsentsConfirmationOfFunds request, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay) {
+    public CmsConsent mapToCmsConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay) {
         PiisConsentData piisConsentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(), request.getCardInformation(), request.getRegistrationInformation());
         byte[] aisConsentDataBytes = consentDataMapper.getBytesFromConsentData(piisConsentData);
 
@@ -75,7 +72,11 @@ public abstract class Xs2aPiisConsentMapper {
         cmsConsent.setPsuIdDataList(Collections.singletonList(psuData));
         cmsConsent.setConsentType(ConsentType.PIIS_TPP);
 
-        AccountAccess accountAccess = new AccountAccess(consentModelMapper.mapToXs2aAccountReferences(Collections.singletonList(request.getAccount())), Collections.emptyList(), Collections.emptyList(), new AdditionalInformationAccess(Collections.emptyList(), Collections.emptyList()));
+        AccountAccess accountAccess = new AccountAccess(Collections.singletonList(request.getAccount()),
+                                                        Collections.emptyList(),
+                                                        Collections.emptyList(),
+                                                        new AdditionalInformationAccess(Collections.emptyList(),
+                                                                                        Collections.emptyList()));
         cmsConsent.setTppAccountAccesses(accountAccess);
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);

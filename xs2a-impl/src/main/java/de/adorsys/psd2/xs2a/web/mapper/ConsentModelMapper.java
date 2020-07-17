@@ -215,7 +215,7 @@ public class ConsentModelMapper {
                    .orElse(defaultValue);
     }
 
-    private AccountReference mapToAccountReference(Object reference) {
+    public AccountReference mapToAccountReference(Object reference) {
         return xs2aObjectMapper.convertValue(reference, AccountReference.class);
     }
 

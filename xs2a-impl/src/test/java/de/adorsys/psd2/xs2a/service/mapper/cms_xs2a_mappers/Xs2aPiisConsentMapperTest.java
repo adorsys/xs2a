@@ -20,9 +20,9 @@ import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.model.AccountReference;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -79,15 +79,14 @@ class Xs2aPiisConsentMapperTest {
         de.adorsys.psd2.xs2a.core.profile.AccountReference reference = new de.adorsys.psd2.xs2a.core.profile.AccountReference(null, null, accountReference.getIban(), null, null, null, null, Currency.getInstance(accountReference.getCurrency()));
         when(consentModelMapper.mapToXs2aAccountReferences(Collections.singletonList(accountReference)))
             .thenReturn(Collections.singletonList(reference));
-//        PsuIdData psuIdData = new PsuIdData("PSU ID", "PSU ID TYPE", "PSU CORPORATE ID", "PSU CORPORATE ID TYPE", "PSU IP ADDRESS");
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
 
         int allowedFrequencyPerDay = 0;
         //When
 
-        ConsentsConfirmationOfFunds consentsConfirmationOfFunds = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/consents-confirmation-of-funds.json", ConsentsConfirmationOfFunds.class);
+        CreatePiisConsentRequest request = jsonReader.getObjectFromFile("json/piis/create-piis-consent.json", CreatePiisConsentRequest.class);
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
-        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(consentsConfirmationOfFunds, psuIdData, tppInfo, allowedFrequencyPerDay);
+        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuIdData, tppInfo, allowedFrequencyPerDay);
         //Then
         CmsConsent cmsConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/cms-consent-creation.json", CmsConsent.class);
         assertEquals(cmsConsentExpected, cmsConsent);
