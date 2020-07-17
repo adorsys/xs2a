@@ -21,6 +21,7 @@ import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -106,7 +107,7 @@ public class PiisConsentService {
 
         SpiAccountReference spiAccountReference = spiInitiatePiisConsentResponse.getSpiAccountReference();
         AccountAccess accountAccess = new AccountAccess(Collections.singletonList(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(spiAccountReference)), Collections.emptyList(), Collections.emptyList(), null);
-        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess);
+        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess, ConsentType.PIIS_TPP);
 
         ConsentStatus consentStatus = piisConsent.getConsentStatus();
         Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(), encryptedConsentId, false, requestProviderService.getInternalRequestIdString());

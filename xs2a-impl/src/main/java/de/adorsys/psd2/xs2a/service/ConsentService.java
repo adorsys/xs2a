@@ -21,6 +21,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -152,7 +153,7 @@ public class ConsentService {
 
         Optional<AccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
         xs2aAccountAccess.ifPresent(accountAccess ->
-                                        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
+                                        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess, ConsentType.AIS));
 
         ConsentStatus consentStatus = aisConsent.getConsentStatus();
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId,

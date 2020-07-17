@@ -21,6 +21,7 @@ import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -138,7 +139,7 @@ class PiisConsentServiceTest {
         //Then
         verify(xs2aEventService, atLeastOnce()).recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
         AccountAccess accountAccess = new AccountAccess(Collections.singletonList(accountReference), Collections.emptyList(), Collections.emptyList(), null);
-        verify(accountReferenceUpdater, atLeastOnce()).rewriteAccountAccess(CONSENT_ID, accountAccess);
+        verify(accountReferenceUpdater, atLeastOnce()).rewriteAccountAccess(CONSENT_ID, accountAccess, ConsentType.PIIS_TPP);
         assertFalse(xs2aConfirmationOfFundsResponseResponseObject.hasError());
         Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = xs2aConfirmationOfFundsResponseResponseObject.getBody();
         assertEquals(CONSENT_ID, xs2aConfirmationOfFundsResponse.getConsentId());

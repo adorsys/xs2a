@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
 public class AccountReferenceInConsentUpdater {
     private final Xs2aAisConsentService aisConsentService;
     private final CardAccountHandler cardAccountHandler;
+    private final Xs2aPiisConsentService xs2aPiisConsentService;
 
     /**
      * Overwrites existing account access with the new one. To be used with caution.
@@ -50,9 +52,14 @@ public class AccountReferenceInConsentUpdater {
      *
      * @param consentId        an external ID of consent, where account access to be stored
      * @param newAccountAccess new object with account accesses
+     * @param consentType      type of the consent
      */
-    public void rewriteAccountAccess(@NotNull String consentId, @NotNull AccountAccess newAccountAccess) {
-        aisConsentService.updateAspspAccountAccess(consentId, newAccountAccess);
+    public void rewriteAccountAccess(@NotNull String consentId, @NotNull AccountAccess newAccountAccess, ConsentType consentType) {
+        if (consentType == ConsentType.AIS) {
+            aisConsentService.updateAspspAccountAccess(consentId, newAccountAccess);
+        } else {
+            xs2aPiisConsentService.updateAspspAccountAccess(consentId, newAccountAccess);
+        }
     }
 
     /**
