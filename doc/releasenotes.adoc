@@ -6,7 +6,8 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 6.x (Stable. Supported minimum till 13.09.2020)
 
-* xref:release_notes/Release_notes_6.6.adoc[Version 6.6  (release date: ?)]
+* xref:release_notes/Release_notes_6.7.adoc[Version 6.7  (release date: ?)]
+* xref:release_notes/Release_notes_6.6.adoc[Version 6.6  (release date: 17.07.2020)]
 * xref:release_notes/Release_notes_6.5.adoc[Version 6.5  (release date: 17.06.2020)]
 * xref:release_notes/Release_notes_6.4.adoc[Version 6.4  (release date: 08.05.2020)]
 * xref:release_notes/Release_notes_6.3.adoc[Version 6.3  (release date: 24.04.2020)]
