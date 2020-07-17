@@ -1,0 +1,86 @@
+= Release notes v.7.6
+
+== Table of Contents
+
+* Migrate to OpenAPI file v. 1.3.6_2020-05-28
+* Support multi-tenancy in XS2A
+* Support multi-tenancy in ASPSP Profile
+* Fix not passing aspspAccountId to SPI
+* Created interface for SpiPaymentFactory
+* Renew certificate in certificate generator
+* Add instance-id to MDC log
+* Support yaml for Funds Confirmation consent
+* Establish Funds Confirmation Consent
+* Enlarged PSU-Accept to max250
+* Deleted tables with ais prefix
+* Created Funds Confirmation validator
+
+== Migrate to OpenAPI file v. 1.3.6_2020-05-28
+
+From now on, XS2A uses version `1.3.6_2020-05-28` of OpenAPI file provided by the Berlin Group.
+
+== Change type of address postCode to Max35Text
+
+From now on, maximum length of postCode field in Address object was extended to 35 symbols.
+
+== Remove `chosenScaMethod` from response for decouple approach
+
+From now on, there is no `chosenScaMethod` in response for decouple approach.
+
+== Add boundaries to multipart periodic payment content
+
+From now on, multipart periodic payment uses boundary from request header `Content-Type: multipart/form-data; boundary=gc0p4Jq0M2Yt08jU534c0p`
+or default `--AaaBbbCcc` otherwise when it is stored to CMS database.
+Resource get payment information returns such payment with boundary delemiters.
+
+== Fix reading SCA status for pain payment authorisation
+
+From now on, request `Read SCA status for payment authorisation`
+(GET /v1/{payment_service}/{payment_product}/{payment_id}/authorisations/{{authorisation_id}}) works without errors for pain payments.
+Postman collection for pain payments (SINGLE, PERIODIC, BULK) was added.
+
+== Add instance-id to MDC log
+
+From now on, `Instance-ID` header is stored in the MDC under `instance-id` key and is visible in XS2A logs.
+
+== Support yaml for Funds Confirmation consent
+
+From now on, Funds confirmation consent API V2 is available in XS2A.
+
+== Establish Funds Confirmation Consent
+
+From now on, TPP is able to establish PIIS consent through XS2A by sending request `POST /v2/consents/confirmation-of-funds`.
+
+For example:
+```
+{
+    "account": {
+        "iban": "DE69760700240340283600",
+        "currency": "EUR"
+    },
+    "cardNumber": "cardNumber",
+    "cardExpiryDate": "2030-10-10",
+    "cardInformation": "cardInfo",
+    "registrationInformation": "registrationInfo"
+}
+```
+
+Also TPP can receive content of previously created PIIS consent (`GET v2/consents/confirmation-of-funds/{consent_id}`)
+and retrieve PIIS consent status (`GET v2/consents/confirmation-of-funds/{consent_id}/status`).
+
+=== Enlarged PSU-Accept to max250
+
+From now on, max length of PSU-Accept header is 250 symbols.
+
+=== Deleted tables with ais prefix
+
+From now on, next tables with ais prefix are deleted:
+
+* ais_consent_psu_data
+* ais_consent_usage
+* ais_account_access
+* ais_aspsp_account_access
+
+=== Created Funds Confirmation validator
+
+From now on, create funds confirmation request is validated according to specification

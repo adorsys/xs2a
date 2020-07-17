@@ -77,7 +77,7 @@ public class PisAuthService extends CmsAuthorisationService<PisCommonPaymentData
                                                                .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                                .filter(p -> EnumSet.of(RCVD, PATC).contains(p.getTransactionStatus()));
 
-        if (!commonPaymentData.isPresent()) {
+        if (commonPaymentData.isEmpty()) {
             commonPaymentData = pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(parentId, Arrays.asList(RCVD, PATC))
                                     .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                     .filter(p -> EnumSet.of(RCVD, PATC).contains(p.getTransactionStatus()));

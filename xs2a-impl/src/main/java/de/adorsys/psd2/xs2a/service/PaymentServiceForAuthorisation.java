@@ -26,8 +26,8 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
-import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -42,7 +42,7 @@ public abstract class PaymentServiceForAuthorisation {
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiErrorMapper spiErrorMapper;
-    private final SpiPaymentFactory spiPaymentFactory;
+    private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -91,8 +91,7 @@ public abstract class PaymentServiceForAuthorisation {
     abstract SpiResponse<Boolean> getTrustedBeneficiaryFlagFromSpi(SpiContextData contextData, SpiPayment spiPayment, String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     private ResponseObject<Boolean> getTrustedBeneficiaryFlag(PsuIdData psuIdData, String paymentId, String authorisationId, PisCommonPaymentResponse pisCommonPaymentResponse) {
-        SpiPayment spiPayment = spiPaymentFactory.getSpiPayment(pisCommonPaymentResponse).orElse(null);
-
+        SpiPayment spiPayment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse);
         SpiResponse<Boolean> spiResponse = getTrustedBeneficiaryFlagFromSpi(spiContextDataProvider.provideWithPsuIdData(psuIdData),
                                                                             spiPayment,
                                                                             authorisationId,

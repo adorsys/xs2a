@@ -117,6 +117,24 @@ class AisConsentMapperTest {
     }
 
     @Test
+    void mapToCmsAisAccountConsent_availableAccountsWithBalance() {
+        ConsentEntity consent = jsonReader
+                                    .getObjectFromFile("json/service/mapper/ais-consent-mapper/consent-entity-all-available-account-with-balance.json",
+                                                       ConsentEntity.class);
+
+        List<AuthorisationEntity> authorisations = Collections.singletonList(buildAisConsentAuthorisation());
+
+        when(aisConsentUsageService.getUsageCounterMap(consent)).thenReturn(USAGE_COUNTER);
+        CmsAisAccountConsent result = aisConsentMapper.mapToCmsAisAccountConsent(consent, authorisations);
+
+        CmsAisAccountConsent expected = jsonReader
+                                            .getObjectFromFile("json/service/mapper/ais-consent-mapper/cms-ais-account-consent-available-account-with-balance.json",
+                                                               CmsAisAccountConsent.class);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
     void mapToCmsAisAccountConsent() {
         ConsentEntity consent = jsonReader
             .getObjectFromFile("json/service/mapper/ais-consent-mapper/consent-entity.json",

@@ -71,7 +71,7 @@ public class SecurityDataService {
                                            .map(raw -> Base64.getUrlEncoder().encodeToString(raw))
                                            .map(this::addVersionToEncryptedId);
 
-        if (!encryptedId.isPresent()) {
+        if (encryptedId.isEmpty()) {
             log.info("ID: [{}]. Couldn't encrypt ID", originalId);
         }
 
@@ -93,7 +93,7 @@ public class SecurityDataService {
         Optional<String> decryptedId = decryptCompositeId(encryptedId)
                                            .map(cmst -> cmst.split(SEPARATOR)[0]);
 
-        if (!decryptedId.isPresent()) {
+        if (decryptedId.isEmpty()) {
             log.info("ID: [{}]. Couldn't decrypt ID", encryptedId);
         }
 

@@ -17,97 +17,43 @@
 package de.adorsys.psd2.xs2a.web.aspect;
 
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.service.RedirectIdService;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-import de.adorsys.psd2.xs2a.web.controller.ConsentController;
-import de.adorsys.psd2.xs2a.web.link.CreateAisAuthorisationLinks;
-import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
-import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.link.ConsentAspectService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Slf4j
 @Aspect
 @Component
-public class ConsentAspect extends AbstractLinkAspect<ConsentController> {
-    private final ScaApproachResolver scaApproachResolver;
-    private final AuthorisationMethodDecider authorisationMethodDecider;
-    private final RedirectLinkBuilder redirectLinkBuilder;
-    private final RedirectIdService redirectIdService;
-    private final RequestProviderService requestProviderService;
+public class ConsentAspect {
+    private ConsentAspectService consentAspectService;
 
-    public ConsentAspect(ScaApproachResolver scaApproachResolver,
-                         AuthorisationMethodDecider authorisationMethodDecider,
-                         RedirectLinkBuilder redirectLinkBuilder,
-                         AspspProfileServiceWrapper aspspProfileServiceWrapper,
-                         RedirectIdService redirectIdService,
-                         RequestProviderService requestProviderService) {
-        super(aspspProfileServiceWrapper);
-        this.scaApproachResolver = scaApproachResolver;
-        this.authorisationMethodDecider = authorisationMethodDecider;
-        this.redirectLinkBuilder = redirectLinkBuilder;
-        this.redirectIdService = redirectIdService;
-        this.requestProviderService = requestProviderService;
+    public ConsentAspect(ConsentAspectService consentAspectService) {
+        this.consentAspectService = consentAspectService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAccountConsentsWithResponse(..)) && args( request, psuData, explicitPreferred)", returning = "result", argNames = "result,request,psuData,explicitPreferred")
     public ResponseObject<CreateConsentResponse> invokeCreateAccountConsentAspect(ResponseObject<CreateConsentResponse> result, CreateConsentReq request, PsuIdData psuData, boolean explicitPreferred) {
-        if (!result.hasError()) {
-
-            CreateConsentResponse body = result.getBody();
-            boolean explicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
-            boolean signingBasketModeActive = authorisationMethodDecider.isSigningBasketModeActive(explicitPreferred);
-
-            body.setLinks(new CreateConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
-                                                 redirectIdService,
-                                                 explicitMethod, signingBasketModeActive,
-                                                 getScaRedirectFlow(),
-                                                 isAuthorisationConfirmationRequestMandated(),
-                                                 requestProviderService.getInstanceId()));
-        }
-        return result;
+        return consentAspectService.invokeCreateAccountConsentAspect(result, explicitPreferred);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.createAisAuthorisation(..)) && args( psuData,  consentId,  password)", returning = "result", argNames = "result, psuData,  consentId,  password")
     public ResponseObject<AuthorisationResponse> invokeCreateConsentPsuDataAspect(ResponseObject<AuthorisationResponse> result, PsuIdData psuData, String consentId, String password) {
-        if (!result.hasError()) {
-            if (result.getBody() instanceof UpdateConsentPsuDataResponse) {
-                UpdateConsentPsuDataResponse body = (UpdateConsentPsuDataResponse) result.getBody();
-                body.setLinks(buildLinksForUpdateConsentResponse(body));
-            } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
-                CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
-                body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder,
-                                                              redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated(),
-                                                              requestProviderService.getInstanceId()));
-            }
-        }
-        return result;
+        return consentAspectService.invokeCreateConsentPsuDataAspect(result);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
     public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
-        if (!result.hasError()) {
-            UpdateConsentPsuDataResponse body = result.getBody();
-            body.setLinks(buildLinksForUpdateConsentResponse(body));
-        }
-        return result;
+        return consentAspectService.invokeUpdateConsentPsuDataAspect(result);
     }
 
-    private Links buildLinksForUpdateConsentResponse(UpdateConsentPsuDataResponse response) {
-        return Optional.ofNullable(response.getScaStatus())
-                   .map(status -> new UpdateConsentLinks(getHttpUrl(), scaApproachResolver, response))
-                   .orElse(null);
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PiisConsentService.createPiisConsentWithResponse(..)) && args( request, psuData, explicitPreferred)", returning = "result", argNames = "result,request,psuData,explicitPreferred")
+    public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(ResponseObject<Xs2aConfirmationOfFundsResponse> result, CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
+        return consentAspectService.createPiisConsentWithResponse(result, explicitPreferred);
     }
 }

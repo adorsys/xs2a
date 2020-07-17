@@ -20,7 +20,7 @@
     <property name="LOGS_HOME" value="logs" />
     <property name="WHITESPACE" value="%1X{key-that-does-not-exist}"/>
     <property name="MDC_PATTERN"
-              value="InR-ID: [%X{internal-request-id}], X-Request-ID: [%X{x-request-id}]${WHITESPACE}"/>
+              value="InR-ID: [%X{internal-request-id}], X-Request-ID: [%X{x-request-id}], Instance-ID: [%X{instance-id}],${WHITESPACE}"/>
     <property name="EMPTY_MDC_VALUES_REGEX" value="[\\w-]+: \\[\\][, ]+"/>
     <property name="LOG_MESSAGE" value="%replace(${MDC_PATTERN}){'${EMPTY_MDC_VALUES_REGEX}', ''}%m"/>
     <property name="LOGS_PATTERN"

@@ -69,7 +69,8 @@ public class AuthorisationClosingService {
     }
 
     private void closePreviousAuthorisationsByPsu(AuthorisationType authorisationType, List<AuthorisationEntity> authorisations, PsuIdData psuIdData) {
-        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData);
+        String instanceId = authorisations.isEmpty() ? null : authorisations.get(0).getInstanceId();
+        PsuData psuData = psuDataMapper.mapToPsuData(psuIdData, instanceId);
 
         List<AuthorisationEntity> authorisationsToBeClosed = authorisations
                                                                  .stream()

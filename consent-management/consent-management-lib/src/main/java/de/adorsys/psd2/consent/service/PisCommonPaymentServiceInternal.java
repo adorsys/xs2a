@@ -204,7 +204,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
     @Transactional
     public CmsResponse<Boolean> updateMultilevelSca(String paymentId, boolean multilevelScaRequired) {
         Optional<PisCommonPaymentData> pisCommonPaymentDataOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
-        if (!pisCommonPaymentDataOptional.isPresent()) {
+        if (pisCommonPaymentDataOptional.isEmpty()) {
             log.info("Payment ID: [{}]. Update multilevel SCA required status failed, because payment is not found",
                      paymentId);
             return CmsResponse.<Boolean>builder()
@@ -252,7 +252,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentId(paymentId)
                                                                .filter(CollectionUtils::isNotEmpty)
                                                                .map(list -> list.get(0).getPaymentData());
-        if (!commonPaymentData.isPresent()) {
+        if (commonPaymentData.isEmpty()) {
             commonPaymentData = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         }
 

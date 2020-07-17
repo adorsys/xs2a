@@ -59,7 +59,7 @@ public class CmsPsuPisController implements CmsPsuPisApi {
         try {
             response = cmsPsuPisService.checkRedirectAndGetPayment(redirectId, instanceId);
 
-            if (!response.isPresent()) {
+            if (response.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 
@@ -81,7 +81,7 @@ public class CmsPsuPisController implements CmsPsuPisApi {
         try {
             response = cmsPsuPisService.checkRedirectAndGetPaymentForCancellation(redirectId, instanceId);
 
-            if (!response.isPresent()) {
+            if (response.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
 

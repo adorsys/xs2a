@@ -30,9 +30,9 @@ import java.util.stream.Collectors;
 
 @Component
 public class PsuDataMapper {
-    public List<PsuData> mapToPsuDataList(List<PsuIdData> psuIdDataList) {
+    public List<PsuData> mapToPsuDataList(List<PsuIdData> psuIdDataList, String instanceId) {
         return psuIdDataList.stream()
-                   .map(this::mapToPsuData)
+                   .map(psu -> mapToPsuData(psu, instanceId))
                    .filter(Objects::nonNull)
                    .collect(Collectors.toList());
     }
@@ -43,7 +43,7 @@ public class PsuDataMapper {
                    .collect(Collectors.toList());
     }
 
-    public PsuData mapToPsuData(PsuIdData psuIdData) {
+    public PsuData mapToPsuData(PsuIdData psuIdData, String instanceId) {
         return Optional.ofNullable(psuIdData)
                    .filter(PsuIdData::isNotEmpty)
                    .map(psu -> new PsuData(
@@ -54,7 +54,15 @@ public class PsuDataMapper {
                        psu.getPsuIpAddress(),
                        mapToAdditionalPsuData(psu.getAdditionalPsuIdData())
                    ))
+                   .map(psu -> setInstanceId(psu, instanceId))
                    .orElse(null);
+    }
+
+    private PsuData setInstanceId(PsuData psuData, String instanceId) {
+        if (psuData != null && instanceId != null) {
+            psuData.setInstanceId(instanceId);
+        }
+        return psuData;
     }
 
     public PsuIdData mapToPsuIdData(PsuData psuData) {

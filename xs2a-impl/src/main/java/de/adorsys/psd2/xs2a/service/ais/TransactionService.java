@@ -36,7 +36,7 @@ import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -109,7 +109,7 @@ public class TransactionService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get transactions report by period failed. Account consent not found by ID",
                      request.getAccountId(), request.getConsentId());
             return ResponseObject.<Xs2aTransactionsReport>builder()
@@ -161,7 +161,7 @@ public class TransactionService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Account-ID [{}], Consent-ID [{}]. Get transaction details failed. Account consent not found by ID",
                      accountId, consentId);
             return ResponseObject.<Transactions>builder()
@@ -204,7 +204,7 @@ public class TransactionService {
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
-        if (!aisConsentOptional.isPresent()) {
+        if (aisConsentOptional.isEmpty()) {
             log.info("Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions failed. Account consent not found by ID",
                      consentId, accountId, downloadId);
             return ResponseObject.<Xs2aTransactionsDownloadResponse>builder()

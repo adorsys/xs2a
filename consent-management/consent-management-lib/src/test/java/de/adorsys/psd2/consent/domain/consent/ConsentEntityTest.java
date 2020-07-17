@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AisConsentUsage;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -130,6 +131,17 @@ class ConsentEntityTest {
         // Then
         assertThrows(IllegalArgumentException.class,
                      () -> aisConsent.getInternalRequestId(AuthorisationType.PIS_CREATION));
+    }
+
+    @Test
+    void shouldConsentBeExpired_PiisTppConsent() {
+        //Given
+        ConsentEntity piisConsent = new ConsentEntity();
+        piisConsent.setConsentType(ConsentType.PIIS_TPP.getName());
+        //When
+        boolean shouldConsentBeExpired = piisConsent.shouldConsentBeExpired();
+        //Then
+        assertFalse(shouldConsentBeExpired);
     }
 
     private ConsentEntity buildConsent(List<PsuData> psuDataList, TppInfoEntity tppInfoEntity, boolean recurringIndicator) {

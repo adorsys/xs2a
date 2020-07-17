@@ -54,7 +54,7 @@ public class BookingStatusQueryParameterParamsValidatorImpl extends AbstractQuer
 
         String bookingStatusValue = getQueryParameterValue(queryParameterMap);
         Optional<BookingStatus> bookingStatusOptional = BookingStatus.getByValue(bookingStatusValue);
-        if (!bookingStatusOptional.isPresent()) {
+        if (bookingStatusOptional.isEmpty()) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_PARAMETER_VALUE, getQueryParameterName()));
         }
 

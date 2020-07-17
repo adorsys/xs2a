@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import de.adorsys.psd2.model.TrustedBeneficiaries;
 import de.adorsys.psd2.model.TrustedBeneficiariesList;
+import de.adorsys.psd2.model.TrustedBeneficiary;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiaries;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiariesList;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
@@ -32,13 +32,15 @@ public abstract class TrustedBeneficiariesModelMapper {
     public TrustedBeneficiariesList mapToTrustedBeneficiariesList(Xs2aTrustedBeneficiariesList xs2ATrustedBeneficiariesList) {
         List<Xs2aTrustedBeneficiaries> trustedBeneficiaries = xs2ATrustedBeneficiariesList.getTrustedBeneficiaries();
 
-        List<TrustedBeneficiaries> beneficiaries = trustedBeneficiaries.stream()
-                                                       .map(this::mapToTrustedBeneficiaries)
-                                                       .collect(Collectors.toList());
+        List<TrustedBeneficiary> beneficiaries = trustedBeneficiaries.stream()
+                                                     .map(this::mapToTrustedBeneficiaries)
+                                                     .collect(Collectors.toList());
 
-        return new TrustedBeneficiariesList().trustedBeneficiaries(beneficiaries);
+        TrustedBeneficiariesList result = new TrustedBeneficiariesList();
+        result.addAll(beneficiaries);
+        return result;
     }
 
-    public abstract TrustedBeneficiaries mapToTrustedBeneficiaries(Xs2aTrustedBeneficiaries trustedBeneficiaries);
+    public abstract TrustedBeneficiary mapToTrustedBeneficiaries(Xs2aTrustedBeneficiaries trustedBeneficiaries);
 }
 

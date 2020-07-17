@@ -1,0 +1,53 @@
+{
+  "instanceId": "bank1",
+  "id": 92,
+  "externalId": "bc258320-70de-48a2-a82f-909d7732c8eb",
+  "consentStatus": "RECEIVED",
+  "consentType": "AIS",
+  "frequencyPerDay": 4,
+  "recurringIndicator": true,
+  "data": "eyJhdmFpbGFibGVBY2NvdW50c1dpdGhCYWxhbmNlIjoiYWxsQWNjb3VudHMiLCJjb21iaW5lZFNlcnZpY2VJbmRpY2F0b3IiOmZhbHNlfQ==",
+  "creationTimestamp": "2020-06-30T13:25:36.030975+03:00",
+  "validUntil": "2021-10-10",
+  "lastActionDate": "2020-06-30",
+  "requestDateTime": "2020-06-30T13:25:36.031202+03:00",
+  "statusChangeTimestamp": "2020-06-30T00:00:00+03:00",
+  "internalRequestId": "4de27b4c-0809-495e-b254-3166e7a579e7",
+  "authorisationTemplate": {
+    "id": 92,
+    "redirectUri": "TPP-Redirect-URI",
+    "nokRedirectUri": "TPP-Nok-Redirect-URI"
+  },
+  "tppInformation": {
+    "id": 92,
+    "tppInfo": {
+      "instanceId": "UNDEFINED",
+      "id": 1,
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppRoles": [],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppFrequencyPerDay": 10,
+    "tppNotificationContentPreferred": []
+  },
+  "psuDataList": [
+    {
+      "instanceId": "bank1",
+      "id": 93,
+      "psuId": "anton.brueckner",
+      "psuIpAddress": "1.1.1.1"
+    }
+  ],
+  "usages": [],
+  "tppAccountAccesses": [],
+  "aspspAccountAccesses": [],
+  "ownerNameType": "NONE",
+  "trustedBeneficiariesType": "NONE",
+  "previousConsentStatus": "RECEIVED"
+}

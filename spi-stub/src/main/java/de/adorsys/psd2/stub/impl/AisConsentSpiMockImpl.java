@@ -60,11 +60,11 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     }
 
     @Override
-    public SpiResponse<SpiAisConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AccountSpi#getConsentStatus: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
 
-        return SpiResponse.<SpiAisConsentStatusResponse>builder()
-                   .payload(new SpiAisConsentStatusResponse(accountConsent.getConsentStatus(), "Mocked PSU message from SPI for this consent"))
+        return SpiResponse.<SpiConsentStatusResponse>builder()
+                   .payload(new SpiConsentStatusResponse(accountConsent.getConsentStatus(), "Mocked PSU message from SPI for this consent"))
                    .build();
     }
 

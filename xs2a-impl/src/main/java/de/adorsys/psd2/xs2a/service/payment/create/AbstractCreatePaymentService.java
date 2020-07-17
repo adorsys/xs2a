@@ -31,8 +31,8 @@ import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aPisCommonPaymentMapper;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aToCmsPisCommonPaymentRequestMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aToCmsPisCommonPaymentRequestMapper;
 import de.adorsys.psd2.xs2a.service.payment.create.spi.PaymentInitiationService;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import lombok.RequiredArgsConstructor;
@@ -103,7 +103,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         if (implicitMethod) {
             PisScaAuthorisationService pisScaAuthorisationService = pisScaAuthorisationServiceResolver.getService();
             Optional<Xs2aCreatePisAuthorisationResponse> consentAuthorisation = pisScaAuthorisationService.createCommonPaymentAuthorisation(externalPaymentId, paymentRequest.getPaymentType(), paymentInitiationParameters.getPsuData());
-            if (!consentAuthorisation.isPresent()) {
+            if (consentAuthorisation.isEmpty()) {
                 return ResponseObject.<PaymentInitiationResponse>builder()
                            .fail(PIS_400, of(PAYMENT_FAILED))
                            .build();

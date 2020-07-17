@@ -16,28 +16,18 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.link.UpdatePisPsuDataLinks;
-import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.jupiter.api.BeforeEach;
+import de.adorsys.psd2.xs2a.service.link.PaymentAuthorisationAspectService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_400;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class UpdatePisPsuDataAspectTest {
@@ -46,47 +36,17 @@ class UpdatePisPsuDataAspectTest {
     private UpdatePisPsuDataAspect aspect;
 
     @Mock
-    private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse updatePisCommonPaymentPsuDataResponse;
+    private PaymentAuthorisationAspectService paymentAuthorisationAspectService;
 
-    private ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject;
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest request;
-
-    @BeforeEach
-    void setUp() {
-        request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+    @Test
+    void updatePisAuthorizationAspect() {
+        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
         request.setPaymentService(SINGLE);
-    }
 
-    @Test
-    void updatePisCancellationAuthorizationAspect_success() {
-        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
-        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
-        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl()).thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
-
-        when(updatePisCommonPaymentPsuDataResponse.getScaStatus()).thenReturn(ScaStatus.PSUAUTHENTICATED);
-
-        responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                             .body(updatePisCommonPaymentPsuDataResponse)
-                             .build();
-        ResponseObject actualResponse = aspect.updatePisAuthorizationAspect(responseObject, request);
-
-        verify(updatePisCommonPaymentPsuDataResponse, times(1)).setLinks(any(UpdatePisPsuDataLinks.class));
-
-        assertFalse(actualResponse.hasError());
-    }
-
-    @Test
-    void updatePisCancellationAuthorizationAspect_withError_shouldAddTextErrorMessage() {
-
-        // When
-        responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
-        ResponseObject actualResponse = aspect.updatePisAuthorizationAspect(responseObject, request);
-
-        // Then
-        assertTrue(actualResponse.hasError());
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+                                                                                       .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse())
+                                                                                       .build();
+        aspect.updatePisAuthorizationAspect(responseObject, request);
+        verify(paymentAuthorisationAspectService).updatePisAuthorizationAspect(responseObject, request);
     }
 }

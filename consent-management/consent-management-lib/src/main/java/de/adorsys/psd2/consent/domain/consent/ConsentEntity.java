@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
@@ -180,6 +181,10 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     }
 
     public boolean shouldConsentBeExpired() {
+        if (ConsentType.getByValue(getConsentType()) == ConsentType.PIIS_TPP) {
+            return false;
+        }
+
         return !this.getConsentStatus().isFinalisedStatus()
                    && (this.isExpiredByDate() || this.isNonReccuringAlreadyUsed());
     }

@@ -21,6 +21,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -40,7 +41,7 @@ import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.mapper.consent.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
@@ -49,7 +50,7 @@ import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAisConsentStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
@@ -152,7 +153,7 @@ public class ConsentService {
 
         Optional<AccountAccess> xs2aAccountAccess = spiToXs2aAccountAccessMapper.mapToAccountAccess(spiResponsePayload.getAccountAccess());
         xs2aAccountAccess.ifPresent(accountAccess ->
-                                        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess));
+                                        accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess, ConsentType.AIS));
 
         ConsentStatus consentStatus = aisConsent.getConsentStatus();
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId,
@@ -218,7 +219,7 @@ public class ConsentService {
                        .build();
         }
 
-        SpiResponse<SpiAisConsentStatusResponse> spiResponse = getConsentStatusFromSpi(validatedAccountConsent, consentId);
+        SpiResponse<SpiConsentStatusResponse> spiResponse = getConsentStatusFromSpi(validatedAccountConsent, consentId);
 
         if (spiResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
@@ -228,7 +229,7 @@ public class ConsentService {
                        .build();
         }
 
-        SpiAisConsentStatusResponse spiPayload = spiResponse.getPayload();
+        SpiConsentStatusResponse spiPayload = spiResponse.getPayload();
         ConsentStatus spiConsentStatus = spiPayload.getConsentStatus();
         aisConsentService.updateConsentStatus(consentId, spiConsentStatus);
         loggingContextService.storeConsentStatus(spiConsentStatus);
@@ -324,7 +325,7 @@ public class ConsentService {
                        .build();
         }
 
-        SpiResponse<SpiAisConsentStatusResponse> spiConsentStatus = getConsentStatusFromSpi(consent, consentId);
+        SpiResponse<SpiConsentStatusResponse> spiConsentStatus = getConsentStatusFromSpi(consent, consentId);
 
         if (spiConsentStatus.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiConsentStatus, ServiceType.AIS);
@@ -429,7 +430,7 @@ public class ConsentService {
     }
 
 
-    private SpiResponse<SpiAisConsentStatusResponse> getConsentStatusFromSpi(AisConsent aisConsent, String consentId) {
+    private SpiResponse<SpiConsentStatusResponse> getConsentStatusFromSpi(AisConsent aisConsent, String consentId) {
         SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(aisConsent);
         SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         return aisConsentSpi.getConsentStatus(spiContextDataProvider.provide(), spiAccountConsent, aspspDataProvider);

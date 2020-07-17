@@ -78,7 +78,7 @@ public class PiisConsentMapper {
         consent.setRequestDateTime(OffsetDateTime.now());
         consent.setValidUntil(request.getValidUntil());
         consent.setLastActionDate(LocalDate.now());
-        consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData));
+        consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData, instanceId));
         consent.getAspspAccountAccesses().add(accessMapper.mapToAspspAccountAccess(request.getAccount()));
         consent.getTppInformation().setTppInfo(tppInfoEntity);
 

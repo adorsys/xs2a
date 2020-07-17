@@ -16,8 +16,6 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
-import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
-
 public class TransactionsReportCardDownloadLinks extends AbstractLinks {
 
     public TransactionsReportCardDownloadLinks(String httpUrl, String accountId, boolean withBalance, String downloadId) {

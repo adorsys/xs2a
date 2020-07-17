@@ -1,0 +1,11 @@
+{BOUNDARY}
+Content-Disposition: form-data; name="xml_sct"
+Content-Type: application/xml
+
+{XML_PART}
+{BOUNDARY}
+Content-Disposition: form-data; name="json_standingorderType"
+Content-Type: application/json
+
+{JSON_PART}
+{BOUNDARY}--

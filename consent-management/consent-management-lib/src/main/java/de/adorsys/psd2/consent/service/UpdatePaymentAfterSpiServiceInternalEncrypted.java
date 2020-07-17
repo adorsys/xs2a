@@ -45,7 +45,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
     public CmsResponse<Boolean> updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
@@ -61,7 +61,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
     public CmsResponse<Boolean> updatePaymentCancellationTppRedirectUri(@NotNull String encryptedPaymentId, @NotNull TppRedirectUri tppRedirectUri) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID [{}]. Update cancellation payment tpp redirect URIs by id failed, couldn't decrypt payment id",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
@@ -77,7 +77,7 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
     public CmsResponse<Boolean> updatePaymentCancellationInternalRequestId(@NotNull String encryptedPaymentId, @NotNull String internalRequestId) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID [{}]. Update cancellation payment internal request ID failed, couldn't decrypt payment id",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()

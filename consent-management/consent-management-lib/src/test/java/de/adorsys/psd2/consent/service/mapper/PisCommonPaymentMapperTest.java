@@ -110,7 +110,7 @@ class PisCommonPaymentMapperTest {
         //Given
         PsuData psuDataEntity = jsonReader.getObjectFromFile("json/service/mapper/psu-data.json", PsuData.class);
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
-        when(psuDataMapper.mapToPsuDataList(Collections.singletonList(psuIdData)))
+        when(psuDataMapper.mapToPsuDataList(Collections.singletonList(psuIdData), null))
             .thenReturn(Collections.singletonList(psuDataEntity));
         TppInfoEntity tppInfoEntity = jsonReader.getObjectFromFile("json/service/mapper/tpp-info-entity.json", TppInfoEntity.class);
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);

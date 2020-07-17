@@ -16,74 +16,38 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.*;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.controller.CardAccountController;
-import de.adorsys.psd2.xs2a.web.link.CardAccountDetailsLinks;
-import de.adorsys.psd2.xs2a.web.link.TransactionsReportCardDownloadLinks;
-import de.adorsys.psd2.xs2a.web.link.TransactionsReportCardLinks;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
+import de.adorsys.psd2.xs2a.service.link.CardAccountAspectService;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
-
 @Aspect
 @Component
-public class CardAccountAspect extends AbstractLinkAspect<CardAccountController> {
+public class CardAccountAspect {
 
-    public CardAccountAspect(AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(aspspProfileServiceWrapper);
+    private CardAccountAspectService cardAccountAspectService;
+
+    public CardAccountAspect(CardAccountAspectService cardAccountAspectService) {
+        this.cardAccountAspectService = cardAccountAspectService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.CardAccountService.getCardAccountList(..))", returning = "result")
     public ResponseObject<Xs2aCardAccountListHolder> getCardAccountList(ResponseObject<Xs2aCardAccountListHolder> result) {
-        if (!result.hasError()) {
-            Xs2aCardAccountListHolder body = result.getBody();
-            List<Xs2aCardAccountDetails> cardAccountDetails = body.getCardAccountDetails();
-            AisConsent aisConsent = body.getAisConsent();
-            if (aisConsent.getAisConsentRequestType() == AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS) {
-                cardAccountDetails.forEach(acc -> acc.setLinks(null));
-            } else {
-                cardAccountDetails.forEach(acc -> setLinksForCardAccountDetails(acc, body.getAisConsent()));
-            }
-        }
-        return result;
+        return cardAccountAspectService.getCardAccountList(result);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.CardAccountService.getCardAccountDetails(..))", returning = "result")
     public ResponseObject<Xs2aCardAccountDetailsHolder> getCardAccountDetails(ResponseObject<Xs2aCardAccountDetailsHolder> result) {
-        if (!result.hasError()) {
-            Xs2aCardAccountDetailsHolder body = result.getBody();
-            setLinksForCardAccountDetails(body.getCardAccountDetails(), body.getAisConsent());
-        }
-        return result;
+        return cardAccountAspectService.getCardAccountDetails(result);
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.CardTransactionService.getCardTransactionsReportByPeriod(..)) && args(request)", returning = "result", argNames = "result,request")
     public ResponseObject<Xs2aCardTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aCardTransactionsReport> result, Xs2aTransactionsReportByPeriodRequest request) {
-        if (!result.hasError()) {
-            Xs2aCardTransactionsReport transactionsReport = result.getBody();
-            boolean isWithBalance = Optional.ofNullable(transactionsReport.getBalances())
-                                        .map(balances -> !balances.isEmpty())
-                                        .orElse(false);
-            transactionsReport.setLinks(new TransactionsReportCardDownloadLinks(getHttpUrl(), request.getAccountId(), isWithBalance, transactionsReport.getDownloadId()));
-            Xs2aCardAccountReport cardAccountReport = transactionsReport.getCardAccountReport();
-            if (cardAccountReport != null) {
-                cardAccountReport.setLinks(new TransactionsReportCardLinks(getHttpUrl(), request.getAccountId(), isWithBalance));
-            }
-        }
-        return result;
-    }
-
-    private void setLinksForCardAccountDetails(Xs2aCardAccountDetails cardAccountDetails, AisConsent aisConsent) {
-        String url = getHttpUrl();
-        String id = cardAccountDetails.getResourceId();
-        CardAccountDetailsLinks cardAccountDetailsLinks = new CardAccountDetailsLinks(url, id, aisConsent);
-        cardAccountDetails.setLinks(cardAccountDetailsLinks);
+        return cardAccountAspectService.getTransactionsReportByPeriod(result, request);
     }
 }

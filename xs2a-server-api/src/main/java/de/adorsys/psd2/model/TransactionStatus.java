@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2020 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,54 +8,54 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum TransactionStatus {
 
-    ACCC("ACCC"),
+  ACCC("ACCC"),
 
-    ACCP("ACCP"),
+  ACCP("ACCP"),
 
-    ACSC("ACSC"),
+  ACSC("ACSC"),
 
-    ACSP("ACSP"),
+  ACSP("ACSP"),
 
-    ACTC("ACTC"),
+  ACTC("ACTC"),
 
-    ACWC("ACWC"),
+  ACWC("ACWC"),
 
-    ACWP("ACWP"),
+  ACWP("ACWP"),
 
-    RCVD("RCVD"),
+  RCVD("RCVD"),
 
-    PDNG("PDNG"),
+  PDNG("PDNG"),
 
-    RJCT("RJCT"),
+  RJCT("RJCT"),
 
-    CANC("CANC"),
+  CANC("CANC"),
 
-    ACFC("ACFC"),
+  ACFC("ACFC"),
 
-    PATC("PATC"),
+  PATC("PATC"),
 
-    PART("PART");
+  PART("PART");
 
-    private String value;
+  private String value;
 
-    TransactionStatus(String value) {
-        this.value = value;
+  TransactionStatus(String value) {
+    this.value = value;
+  }
+
+  @Override
+  @JsonValue
+  public String toString() {
+    return String.valueOf(value);
+  }
+
+  @JsonCreator
+  public static TransactionStatus fromValue(String text) {
+    for (TransactionStatus b : TransactionStatus.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
-
-    @Override
-    @JsonValue
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static TransactionStatus fromValue(String text) {
-        for (TransactionStatus b : TransactionStatus.values()) {
-            if (String.valueOf(b.value).equals(text)) {
-                return b;
-            }
-        }
-        return null;
-    }
+    return null;
+  }
 }
 

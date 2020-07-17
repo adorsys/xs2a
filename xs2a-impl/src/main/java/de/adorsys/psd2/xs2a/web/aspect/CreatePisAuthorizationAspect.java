@@ -19,16 +19,7 @@ package de.adorsys.psd2.xs2a.web.aspect;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.RedirectIdService;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-import de.adorsys.psd2.xs2a.web.controller.PaymentController;
-import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
-import de.adorsys.psd2.xs2a.web.link.UpdatePisAuthorisationLinks;
+import de.adorsys.psd2.xs2a.service.link.PaymentAuthorisationAspectService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,39 +28,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Aspect
 @Component
-public class CreatePisAuthorizationAspect extends AbstractLinkAspect<PaymentController> {
-    private final ScaApproachResolver scaApproachResolver;
-    private final RedirectLinkBuilder redirectLinkBuilder;
-    private final RedirectIdService redirectIdService;
-    private RequestProviderService requestProviderService;
+public class CreatePisAuthorizationAspect {
 
-    public CreatePisAuthorizationAspect(ScaApproachResolver scaApproachResolver,
-                                        AspspProfileServiceWrapper aspspProfileServiceWrapper, RedirectLinkBuilder redirectLinkBuilder,
-                                        RedirectIdService redirectIdService, RequestProviderService requestProviderService) {
-        super(aspspProfileServiceWrapper);
-        this.scaApproachResolver = scaApproachResolver;
-        this.redirectLinkBuilder = redirectLinkBuilder;
-        this.redirectIdService = redirectIdService;
-        this.requestProviderService = requestProviderService;
+    private PaymentAuthorisationAspectService paymentAuthorisationAspectService;
+
+    public CreatePisAuthorizationAspect(PaymentAuthorisationAspectService paymentAuthorisationAspectService) {
+        this.paymentAuthorisationAspectService = paymentAuthorisationAspectService;
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PaymentAuthorisationService.createPisAuthorisation(..)) && args(createRequest)", returning = "result", argNames = "result,createRequest")
     public ResponseObject<AuthorisationResponse> createPisAuthorizationAspect(ResponseObject<AuthorisationResponse> result, Xs2aCreatePisAuthorisationRequest createRequest) {
-        if (!result.hasError()) {
-            if (result.getBody() instanceof Xs2aCreatePisAuthorisationResponse) {
-                Xs2aCreatePisAuthorisationResponse response = (Xs2aCreatePisAuthorisationResponse) result.getBody();
-
-                response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                                  redirectIdService, createRequest, response.getAuthorisationId(),
-                                                                  getScaRedirectFlow(), response.getInternalRequestId(),
-                                                                  isAuthorisationConfirmationRequestMandated(),
-                                                                  requestProviderService.getInstanceId()));
-            } else if (result.getBody() instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
-                Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
-                response.setLinks(new UpdatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, response, createRequest));
-            }
-        }
-        return result;
+        return paymentAuthorisationAspectService.createPisAuthorizationAspect(result, createRequest);
     }
 
 }

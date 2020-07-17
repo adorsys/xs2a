@@ -51,7 +51,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setTransactionStatus(paymentInfo.getTransactionStatus());
         commonPaymentData.setPayment(paymentInfo.getPaymentData());
         commonPaymentData.setTppInfo(tppInfoMapper.mapToTppInfoEntity(paymentInfo.getTppInfo()));
-        commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList()));
+        commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList(), paymentInfo.getInstanceId()));
         commonPaymentData.getPsuDataList().forEach(p -> p.setInstanceId(paymentInfo.getInstanceId()));
         commonPaymentData.setMultilevelScaRequired(paymentInfo.isMultilevelScaRequired());
         commonPaymentData.setAspspAccountId(paymentInfo.getAspspAccountId());

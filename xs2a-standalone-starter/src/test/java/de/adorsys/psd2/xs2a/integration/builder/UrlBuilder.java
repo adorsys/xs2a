@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.integration.builder;
 
-import de.adorsys.psd2.xs2a.web.aspect.UrlHolder;
+import de.adorsys.psd2.xs2a.web.link.UrlHolder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 public class UrlBuilder {

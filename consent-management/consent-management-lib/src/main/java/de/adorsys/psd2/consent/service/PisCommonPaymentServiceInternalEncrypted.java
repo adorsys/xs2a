@@ -55,7 +55,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
         CreatePisCommonPaymentResponse payment = paymentResponse.getPayload();
         Optional<String> encryptIdOptional = securityDataService.encryptId(payment.getPaymentId());
 
-        if (!encryptIdOptional.isPresent()) {
+        if (encryptIdOptional.isEmpty()) {
             log.info("Payment ID: [{}]. Create common payment failed, couldn't encrypt payment id", payment.getPaymentId());
             return CmsResponse.<CreatePisCommonPaymentResponse>builder()
                        .error(TECHNICAL_ERROR)
@@ -72,7 +72,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public CmsResponse<TransactionStatus> getPisCommonPaymentStatusById(String encryptedPaymentId) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID: [{}]. Get common payment status by ID failed, couldn't decrypt consent id",
                      encryptedPaymentId);
             return CmsResponse.<TransactionStatus>builder()
@@ -88,7 +88,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public CmsResponse<PisCommonPaymentResponse> getCommonPaymentById(String encryptedPaymentId) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID: [{}]. Get common payment by ID failed, couldn't decrypt consent id",
                      encryptedPaymentId);
             return CmsResponse.<PisCommonPaymentResponse>builder()
@@ -104,7 +104,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public CmsResponse<Boolean> updateCommonPaymentStatusById(String encryptedPaymentId, TransactionStatus status) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID: [{}]. Get common payment status by ID failed, couldn't decrypt consent id",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
@@ -119,7 +119,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public CmsResponse<String> getDecryptedId(String encryptedId) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID: [{}]. Couldn't decrypt consent id", encryptedId);
             return CmsResponse.<String>builder()
                        .error(TECHNICAL_ERROR)
@@ -135,7 +135,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public CmsResponse<Boolean> updateMultilevelSca(String encryptedPaymentId, boolean multilevelScaRequired) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID: [{}]. Update payment multilevel SCA failed, couldn't decrypt consent id",
                      encryptedPaymentId);
             return CmsResponse.<Boolean>builder()
@@ -150,7 +150,7 @@ public class PisCommonPaymentServiceInternalEncrypted implements PisCommonPaymen
     public CmsResponse<List<PsuIdData>> getPsuDataListByPaymentId(String encryptedPaymentId) {
         Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
 
-        if (!decryptIdOptional.isPresent()) {
+        if (decryptIdOptional.isEmpty()) {
             log.info("Encrypted Payment ID: [{}]. Get PSU data list by payment ID failed, couldn't decrypt consent id",
                      encryptedPaymentId);
             return CmsResponse.<List<PsuIdData>>builder()

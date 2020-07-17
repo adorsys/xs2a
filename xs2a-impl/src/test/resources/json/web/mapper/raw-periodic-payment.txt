@@ -1,2 +1,11 @@
+--AaaBbbCcc
+Content-Disposition: form-data; name="xml_sct"
+Content-Type: application/xml
+
 xml
+--AaaBbbCcc
+Content-Disposition: form-data; name="json_standingorderType"
+Content-Type: application/json
+
 {"startDate":null,"endDate":null,"executionRule":"following","frequency":"Monthly","dayOfExecution":"5"}
+--AaaBbbCcc--

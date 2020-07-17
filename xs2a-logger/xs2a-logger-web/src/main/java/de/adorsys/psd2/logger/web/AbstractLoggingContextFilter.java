@@ -36,13 +36,16 @@ import java.io.IOException;
 public abstract class AbstractLoggingContextFilter extends OncePerRequestFilter {
     private static final String INTERNAL_REQUEST_ID_HEADER_NAME = "X-Internal-Request-ID";
     private static final String X_REQUEST_ID_HEADER_NAME = "X-Request-ID";
+    private static final String INSTANCE_ID_HEADER_NAME = "Instance-ID";
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     private final LoggingContextService loggingContextService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        RequestInfo requestInfo = new RequestInfo(request.getHeader(INTERNAL_REQUEST_ID_HEADER_NAME), request.getHeader(X_REQUEST_ID_HEADER_NAME));
+        RequestInfo requestInfo = new RequestInfo(request.getHeader(INTERNAL_REQUEST_ID_HEADER_NAME),
+                                                  request.getHeader(X_REQUEST_ID_HEADER_NAME),
+                                                  request.getHeader(INSTANCE_ID_HEADER_NAME));
         loggingContextService.storeRequestInformation(requestInfo);
 
         try {

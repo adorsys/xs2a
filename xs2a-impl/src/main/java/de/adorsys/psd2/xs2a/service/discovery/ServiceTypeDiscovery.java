@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
+import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.V2.CONSENTS_V2_PATH;
 import static de.adorsys.psd2.xs2a.core.mapper.ServiceType.*;
 
 @Slf4j
@@ -41,6 +42,7 @@ class ServiceTypeDiscovery {
         pathToServiceType.put(PERIODIC_PAYMENTS_PATH, PIS);
         pathToServiceType.put(BULK_PAYMENTS_PATH, PIS);
         pathToServiceType.put(FUNDS_CONFIRMATION_PATH, PIIS);
+        pathToServiceType.put(CONSENTS_V2_PATH, PIIS);
         pathToServiceType.put(SIGNING_BASKETS_PATH, SB);
     }
 
