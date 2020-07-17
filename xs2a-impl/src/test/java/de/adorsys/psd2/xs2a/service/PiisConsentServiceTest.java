@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
@@ -36,6 +35,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -45,6 +45,9 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountRefe
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.piis.CreatePiisConsentValidator;
+import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
@@ -109,11 +112,13 @@ class PiisConsentServiceTest {
     private AccountReferenceInConsentUpdater accountReferenceUpdater;
     @Mock
     private SpiErrorMapper spiErrorMapper;
+    @Mock
+    private CreatePiisConsentValidator createPiisConsentValidator;
 
     @Test
     void createPiisConsentWithResponse_success() {
         //Given
-        ConsentsConfirmationOfFunds request = new ConsentsConfirmationOfFunds();
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
         Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = new Xs2aCreatePiisConsentResponse(CONSENT_ID, piisConsent);
@@ -134,6 +139,8 @@ class PiisConsentServiceTest {
         accountReference.setCurrency(spiAccountReference.getCurrency());
         when(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(accountReference);
+        when(createPiisConsentValidator.validate(new CreatePiisConsentRequestObject(request, PSU_ID_DATA))).thenReturn(ValidationResult.valid());
+
         //When
         ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(request, PSU_ID_DATA, false);
         //Then
@@ -149,11 +156,12 @@ class PiisConsentServiceTest {
     @Test
     void createPiisConsentWithResponse_createConsentFailed() {
         //Given
-        ConsentsConfirmationOfFunds request = new ConsentsConfirmationOfFunds();
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
         when(xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, TPP_INFO))
             .thenReturn(Optional.empty());
+        when(createPiisConsentValidator.validate(new CreatePiisConsentRequestObject(request, PSU_ID_DATA))).thenReturn(ValidationResult.valid());
         //When
         ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(request, PSU_ID_DATA, false);
         //Then
@@ -164,7 +172,7 @@ class PiisConsentServiceTest {
 
     @Test
     void createPiisConsentWithResponse_initiatePiisConsentInSpiFailed() {
-        ConsentsConfirmationOfFunds request = new ConsentsConfirmationOfFunds();
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(tppService.getTppInfo())
             .thenReturn(TPP_INFO);
         Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = new Xs2aCreatePiisConsentResponse(CONSENT_ID, piisConsent);
@@ -181,6 +189,7 @@ class PiisConsentServiceTest {
             .thenReturn(aspspConsentDataProvider);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIIS))
             .thenReturn(ErrorHolder.builder(ErrorType.PIIS_400).tppMessages(RESOURCE_ERROR.getTppMessage()).build());
+        when(createPiisConsentValidator.validate(new CreatePiisConsentRequestObject(request, PSU_ID_DATA))).thenReturn(ValidationResult.valid());
         //When
         ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(request, PSU_ID_DATA, false);
         //Then

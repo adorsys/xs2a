@@ -1,0 +1,10 @@
+{
+  "account": {
+    "iban": "DE69760700240340283600",
+    "currency": "EUR"
+  },
+  "cardNumber": "cardNumber",
+  "cardExpiryDate": "2030-10-10",
+  "cardInformation": "cardInformation",
+  "registrationInformation": "1J9m7Hcm0Lud9nqX8prXlQSsbQM3E30J7adDYMrIuINK9rb0ZeTnK1UFW1MxeYq9SHjtCvQau4dEtE5y7ER3AIhm5yv4gtxNiv3fx6iSGAdDKifaYzcDLmiZ0HwrS1Dy05FunvJMCOe2S"
+}

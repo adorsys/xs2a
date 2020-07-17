@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.aspect;
 
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.link.ConsentAspectService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,7 +79,8 @@ class ConsentAspectTest {
         ResponseObject<Xs2aConfirmationOfFundsResponse> responseObject = ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
                                                                    .body(xs2aConfirmationOfFundsResponse)
                                                                    .build();
-        aspect.createPiisConsentWithResponse(responseObject, new ConsentsConfirmationOfFunds(), null, true);
+        CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
+        aspect.createPiisConsentWithResponse(responseObject, request, null, true);
         verify(consentAspectService).createPiisConsentWithResponse(responseObject, true);
     }
 }

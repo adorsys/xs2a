@@ -25,11 +25,11 @@ import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,7 @@ public class Xs2aPiisConsentService {
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final AisConsentServiceEncrypted aisConsentService;
 
-    public Optional<Xs2aCreatePiisConsentResponse> createConsent(ConsentsConfirmationOfFunds request, PsuIdData psuData, TppInfo tppInfo) {
+    public Optional<Xs2aCreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(Integer.MAX_VALUE);
         CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuData, tppInfo, allowedFrequencyPerDay);
 
