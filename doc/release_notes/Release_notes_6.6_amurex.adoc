@@ -4,6 +4,7 @@
 
 * Change type of address postCode to Max35Text
 * Remove `chosenScaMethod` from response for decouple approach
+* Add postman tests for raw payments
 
 == Change type of address postCode to Max35Text
 
@@ -12,3 +13,8 @@ From now on, maximum length of postCode field in Address object was extended to 
 == Remove `chosenScaMethod` from response for decouple approach
 
 From now on, there is no `chosenScaMethod` in response for decouple approach.
+
+== Add postman tests for raw payments
+
+Added postman tests for raw payments.
+
