@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.*;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -30,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.UUID;
 
 @Slf4j
@@ -47,6 +50,10 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
         response.setPaymentId(UUID.randomUUID().toString());
         response.setAspspAccountId("11111-11118");
         aspspConsentDataProvider.updateAspspConsentData(TEST_ASPSP_DATA.getBytes());
+
+        response.setCurrencyConversionFee(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1000)));
+        response.setEstimatedTotalAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(2000)));
+        response.setEstimatedInterbankSettlementAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1300)));
 
         return SpiResponse.<SpiSinglePaymentInitiationResponse>builder()
                    .payload(response)

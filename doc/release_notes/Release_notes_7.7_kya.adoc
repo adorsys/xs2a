@@ -1,0 +1,10 @@
+= Release notes v.7.7
+
+== Table of Contents
+
+* Added information about currency conversion to Payment Initiation response
+
+=== Added information about currency conversion to Payment Initiation response
+
+From now on, information about currency conversion is passed through spi level to
+Payment Initiation response.

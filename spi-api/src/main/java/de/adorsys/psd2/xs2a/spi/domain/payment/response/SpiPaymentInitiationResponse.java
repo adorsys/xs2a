@@ -36,4 +36,7 @@ public abstract class SpiPaymentInitiationResponse {
     private String psuMessage;
     private List<String> tppMessages;
     private String aspspAccountId;
+    private SpiAmount currencyConversionFee;
+    private SpiAmount estimatedTotalAmount;
+    private SpiAmount estimatedInterbankSettlementAmount;
 }

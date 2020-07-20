@@ -162,6 +162,9 @@ class PaymentModelMapperPsd2Test {
         when(paymentInitiationResponse.getChallengeData()).thenReturn(new ChallengeData());
         when(paymentInitiationResponse.getLinks()).thenReturn(null);
         when(paymentInitiationResponse.getPsuMessage()).thenReturn("psu message");
+        when(paymentInitiationResponse.getCurrencyConversionFee()).thenReturn(new Xs2aAmount(Currency.getInstance("EUR"), "1200"));
+        when(paymentInitiationResponse.getEstimatedTotalAmount()).thenReturn(new Xs2aAmount(Currency.getInstance("EUR"), "1300"));
+        when(paymentInitiationResponse.getEstimatedInterbankSettlementAmount()).thenReturn(new Xs2aAmount(Currency.getInstance("EUR"), "1500"));
 
 
         PaymentInitationRequestResponse201 expected = jsonReader.getObjectFromFile("json/service/mapper/payment-initiation-response-201.json", PaymentInitationRequestResponse201.class);

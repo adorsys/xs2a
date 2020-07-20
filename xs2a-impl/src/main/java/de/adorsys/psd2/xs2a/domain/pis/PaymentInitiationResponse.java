@@ -58,6 +58,9 @@ public abstract class PaymentInitiationResponse {
     private String internalRequestId;
     private List<NotificationSupportedMode> tppNotificationContentPreferred;
     private Set<TppMessageInformation> tppMessageInformation;
+    private Xs2aAmount currencyConversionFee;
+    private Xs2aAmount estimatedTotalAmount;
+    private Xs2aAmount estimatedInterbankSettlementAmount;
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {
         this.errorHolder = errorHolder;
