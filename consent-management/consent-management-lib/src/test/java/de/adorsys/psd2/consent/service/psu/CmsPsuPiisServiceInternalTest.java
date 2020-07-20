@@ -204,16 +204,11 @@ class CmsPsuPiisServiceInternalTest {
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.of(consentEntity));
         when(psuDataMapper.mapToPsuIdData(psuData)).thenReturn(psuIdData);
-        ArgumentCaptor<ConsentEntity> consentEntityCaptor = ArgumentCaptor.forClass(ConsentEntity.class);
 
         boolean revokeConsent = cmsPsuPiisServiceInternal.revokeConsent(psuIdData, EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         assertTrue(revokeConsent);
         verify(piisConsentEntitySpecification).byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(consentJpaRepository).save(consentEntityCaptor.capture());
-        ConsentEntity capturedConsentEntity = consentEntityCaptor.getValue();
-        assertNotNull(capturedConsentEntity.getLastActionDate());
-        assertEquals(ConsentStatus.REVOKED_BY_PSU, capturedConsentEntity.getConsentStatus());
     }
 
     @Test

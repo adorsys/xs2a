@@ -402,7 +402,6 @@ class CmsPsuPisServiceInternalTest {
         AuthorisationEntity pisAuthorization = buildPisAuthorisation();
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.of(pisAuthorization));
-        when(authorisationRepository.save(pisAuthorization)).thenReturn(pisAuthorization);
 
         // When
         boolean actualResult = cmsPsuPisServiceInternal.updateAuthorisationStatus(PSU_ID_DATA, PAYMENT_ID, AUTHORISATION_ID, ScaStatus.FAILED, DEFAULT_SERVICE_INSTANCE_ID,
@@ -412,7 +411,6 @@ class CmsPsuPisServiceInternalTest {
         assertTrue(actualResult);
         verify(authorisationSpecification, times(1))
             .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(authorisationRepository, times(1)).save(pisAuthorization);
     }
 
     @Test

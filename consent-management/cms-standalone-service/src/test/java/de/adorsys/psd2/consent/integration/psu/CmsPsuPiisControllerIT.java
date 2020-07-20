@@ -141,7 +141,6 @@ public class CmsPsuPiisControllerIT {
             .andExpect(content().string("true"));
 
         verify(piisConsentEntitySpecification).byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID);
-        verify(consentJpaRepository).save(consentEntity);
 
         assertEquals(ConsentStatus.REVOKED_BY_PSU, consentEntity.getConsentStatus());
     }
