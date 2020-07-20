@@ -98,6 +98,9 @@ public class PaymentModelMapperPsd2 {
         response201.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
         response201.setPsuMessage(response.getPsuMessage());
         response201.setTppMessages(mapToTppMessage2XXList(response.getTppMessageInformation()));
+        response201.setCurrencyConversionFee(amountModelMapper.mapToAmount(response.getCurrencyConversionFee()));
+        response201.setEstimatedTotalAmount(amountModelMapper.mapToAmount(response.getEstimatedTotalAmount()));
+        response201.setEstimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(response.getEstimatedInterbankSettlementAmount()));
 
         return response201;
     }

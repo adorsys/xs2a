@@ -10,5 +10,17 @@
     {}
   ],
   "challengeData": {},
-  "psuMessage": "psu message"
+  "psuMessage": "psu message",
+  "currencyConversionFee": {
+    "currency": "EUR",
+    "amount": "1200"
+  },
+  "estimatedTotalAmount": {
+    "currency": "EUR",
+    "amount": "1300"
+  },
+  "estimatedInterbankSettlementAmount": {
+    "currency": "EUR",
+    "amount": "1500"
+  }
 }

@@ -65,6 +65,10 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
 
         aspspConsentDataProvider.updateAspspConsentData(TEST_ASPSP_DATA.getBytes());
 
+        response.setCurrencyConversionFee(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1000)));
+        response.setEstimatedTotalAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(2000)));
+        response.setEstimatedInterbankSettlementAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1300)));
+
         return SpiResponse.<SpiBulkPaymentInitiationResponse>builder()
                    .payload(response)
                    .build();
