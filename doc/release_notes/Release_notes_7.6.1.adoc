@@ -1,4 +1,4 @@
-= Release notes v.7.7
+= Release notes v.7.6.1
 
 == Table of Contents
 
