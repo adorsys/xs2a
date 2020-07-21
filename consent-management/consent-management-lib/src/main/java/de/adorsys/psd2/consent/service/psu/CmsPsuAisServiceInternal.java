@@ -119,7 +119,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             if (!authorisation.isRedirectUrlNotExpired()) {
                 log.info("Authorisation ID [{}]. Check redirect URL and get consent failed, because authorisation is expired",
                          redirectId);
-                updateAuthorisationOnExpiration(authorisation);
+                authorisation.setScaStatus(ScaStatus.FAILED);
 
                 throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
             }
@@ -369,7 +369,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         Optional<PsuData> optionalPsuData = Optional.ofNullable(authorisation.getPsuData());
-        if (optionalPsuData.isPresent()) {
+        boolean isPsuDataPresentInAuthorisation = optionalPsuData.isPresent();
+        if (isPsuDataPresentInAuthorisation) {
             newPsuData.setId(optionalPsuData.get().getId());
         } else {
             log.info("Authorisation ID [{}]. No PSU data available in the authorisation.", authorisation.getExternalId());
@@ -391,9 +392,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                 aisConsent.setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, psuDataList));
             }
         }
-
         authorisation.setPsuData(newPsuData);
-        authorisationRepository.save(authorisation);
+        if (isPsuDataPresentInAuthorisation) { // TODO remove this if block with proper solution of issue https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1309
+            authorisationRepository.save(authorisation);
+        }
         return true;
     }
 
@@ -409,7 +411,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             enrichAuthorisationWithAuthenticationData(authorisation, authenticationDataHolder);
         }
 
-        authorisationRepository.save(authorisation);
         return true;
     }
 
@@ -420,11 +421,6 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         if (authenticationDataHolder.getAuthenticationMethodId() != null) {
             authorisation.setAuthenticationMethodId(authenticationDataHolder.getAuthenticationMethodId());
         }
-    }
-
-    private void updateAuthorisationOnExpiration(AuthorisationEntity authorisation) {
-        authorisation.setScaStatus(ScaStatus.FAILED);
-        authorisationRepository.save(authorisation);
     }
 
     private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAuthorisation(AuthorisationEntity authorisation, String redirectId) {

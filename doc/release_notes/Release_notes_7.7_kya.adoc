@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Added information about currency conversion to Payment Initiation response
+* Fixed Double saving of psu data
 
 === Added information about currency conversion to Payment Initiation response
 
 From now on, information about currency conversion is passed through spi level to
 Payment Initiation response.
+
+=== Fixed Double saving of psu data
+
+From now on, in all cms psu api requests psu data is saved correctly.

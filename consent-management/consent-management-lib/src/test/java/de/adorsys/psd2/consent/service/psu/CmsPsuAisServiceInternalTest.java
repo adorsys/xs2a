@@ -429,8 +429,6 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(authorisationEntity));
-        when(authorisationRepository.save(authorisationEntity))
-            .thenReturn(authorisationEntity);
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
@@ -846,8 +844,6 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(mockAisConsentAuthorization));
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired())
             .thenReturn(false);
-        when(authorisationRepository.save(mockAisConsentAuthorization))
-            .thenReturn(mockAisConsentAuthorization);
 
         // When
         assertThrows(

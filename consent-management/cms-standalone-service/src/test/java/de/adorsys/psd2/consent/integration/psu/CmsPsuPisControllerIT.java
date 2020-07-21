@@ -137,7 +137,6 @@ public class CmsPsuPisControllerIT {
             .andExpect(content().string(""));
 
         verify(authorisationSpecification).byExternalIdAndInstanceId(AUTHORISATION_ID, INSTANCE_ID);
-        verify(authorisationRepository).save(authorisationEntity);
     }
 
     @Test
@@ -226,7 +225,6 @@ public class CmsPsuPisControllerIT {
             .andExpect(content().string(""));
 
         verify(authorisationSpecification).byExternalIdAndInstanceId(REDIRECT_ID, INSTANCE_ID);
-        verify(authorisationRepository, times(1)).save(authorisationEntity);
 
         assertEquals(SMS, authorisationEntity.getAuthenticationMethodId());
         assertEquals(TAN, authorisationEntity.getScaAuthenticationData());
