@@ -18,7 +18,10 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.api.v2.ConfirmationOfFundsApi;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.model.Authorisations;
 import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
+import de.adorsys.psd2.model.ScaStatusResponse;
+import de.adorsys.psd2.model.StartScaprocessResponse;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -109,5 +112,25 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
         return accountConsentsStatusByIdResponse.hasError()
                    ? responseErrorMapper.generateErrorResponse(accountConsentsStatusByIdResponse.getError())
                    : responseMapper.ok(accountConsentsStatusByIdResponse, piisConsentModelMapper::mapToConsentConfirmationOfFundsStatusResponse);
+    }
+
+    @Override
+    public ResponseEntity<Authorisations> getConsentAuthorisation(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<ScaStatusResponse> getConsentScaStatus(String consentId, String authorisationId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<StartScaprocessResponse> startConsentAuthorisation(UUID xRequestID, String consentId, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<Object> updateConsentsPsuData(UUID xRequestID, String consentId, String authorisationId, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        return null;
     }
 }
