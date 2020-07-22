@@ -1,0 +1,17 @@
+= Release notes v.7.7
+
+== Table of Contents
+
+* Add authorisation endpoints to CoF yaml
+
+== Add authorisation endpoints to CoF yaml
+
+Authorisation endpoints were added to Confirmation of Funds yaml and the following methods were generated in `ConfirmationOfFundsController`:
+
+- Start the authorisation process for a consent `POST /v2/consents/confirmation-of-funds/{consentId}/authorisations`
+
+- Get consent authorisation sub-resources request `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations`
+
+- Read the SCA status of the consent authorisation `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
+
+- Update PSU Data for consents `PUT /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
