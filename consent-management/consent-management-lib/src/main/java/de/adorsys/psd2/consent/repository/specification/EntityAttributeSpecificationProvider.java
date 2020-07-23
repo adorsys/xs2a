@@ -20,8 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.Join;
+import java.util.List;
 
 /**
  * This is a class for providing Spring Data Jpa Specification for different entities attributes
@@ -47,6 +49,15 @@ public class EntityAttributeSpecificationProvider {
         };
     }
 
+    public static <T> Specification<T> provideSpecificationForEntityAttributeInList(String attribute, List<String> values) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (CollectionUtils.isEmpty(values)) {
+                return null;
+            }
+            return criteriaBuilder.and(criteriaBuilder.in(root.get(attribute)).value(values));
+        };
+    }
+
     /**
      * Provides specification for the attribute in a joined entity.
      *
@@ -57,7 +68,8 @@ public class EntityAttributeSpecificationProvider {
      * @return resulting specification, or <code>null</code> if the attribute's value was omitted
      */
     public static <T> Specification<T> provideSpecificationForJoinedEntityAttribute(@NotNull Join<T, ?> join,
-                                                                                    @NotNull String attribute,
+                                                                                    @NotNull String
+                                                                                        attribute,
                                                                                     @Nullable String value) {
         return (root, criteriaQuery, criteriaBuilder) -> {
             if (StringUtils.isBlank(value)) {
@@ -77,7 +89,8 @@ public class EntityAttributeSpecificationProvider {
      * @return resulting specification, or <code>null</code> if the attribute's value was omitted
      */
     public static <T> Specification<T> provideSpecificationForJoinedEntityAttribute(@NotNull Join<T, ?> join,
-                                                                                    @NotNull String attribute,
+                                                                                    @NotNull String
+                                                                                        attribute,
                                                                                     @Nullable Object value) {
         return (root, criteriaQuery, criteriaBuilder) -> value == null
                                                              ? criteriaBuilder.and(criteriaBuilder.isNull(join.get(attribute)))

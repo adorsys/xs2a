@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPiisService;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;

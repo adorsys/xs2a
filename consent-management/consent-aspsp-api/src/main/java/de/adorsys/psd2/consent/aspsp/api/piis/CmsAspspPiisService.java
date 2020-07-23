@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.aspsp.api.piis;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
 

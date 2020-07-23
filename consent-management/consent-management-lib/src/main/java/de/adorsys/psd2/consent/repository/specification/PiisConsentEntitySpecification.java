@@ -29,6 +29,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Join;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 
@@ -47,8 +48,8 @@ public class PiisConsentEntitySpecification extends ConsentFilterableSpecificati
     }
 
     @Override
-    public ConsentType getType() {
-        return ConsentType.PIIS_ASPSP;
+    public List<ConsentType> getTypes() {
+        return Collections.singletonList(ConsentType.PIIS_ASPSP);
     }
 
     /**

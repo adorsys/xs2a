@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
