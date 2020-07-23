@@ -26,6 +26,7 @@ import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
@@ -59,6 +60,7 @@ class AspspProfileUpdateServiceImplTest {
     private static final String PIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/confirmation/";
     private static final String PIS_CANCELLATION_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/payment/cancellation/";
     private static final String AIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/view/account/";
+    private static final String PIIS_REDIRECT_LINK = "https://aspsp-mock-integ.cloud.adorsys.de/piis/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -193,7 +195,7 @@ class AspspProfileUpdateServiceImplTest {
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 COUNTRY_VALIDATION_SUPPORTED,
                                                                 SUPPORTED_TRANSACTION_STATUS_FORMATS);
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,

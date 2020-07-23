@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Add authorisation endpoints to CoF yaml
+* Implement implicit authorisation for PIIS consents
 
 == Add authorisation endpoints to CoF yaml
 
@@ -15,3 +16,8 @@ Authorisation endpoints were added to Confirmation of Funds yaml and the followi
 - Read the SCA status of the consent authorisation `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
 
 - Update PSU Data for consents `PUT /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
+
+== Implement implicit authorisation for PIIS consents
+
+From now on, implicit authorisation for PIIS consent is supported in Redirect and Embedded approach.
+To configure redirect url for PIIS consent use `piisRedirectUrlToAspsp` parameter in `redirectLinkToOnlineBanking` block in ASPSP Profile.

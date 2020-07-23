@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.migration.*;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 public class NewProfileConfigurationMapper {
     private static final boolean DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED = true;
     private static final String DEFAULT_OAUTH_CONFIGURATION_URL = "http://localhost:4200/idp/";
+    private static final String DEFAULT_PIIS_REDIRECT_URL = "http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}";
 
     public NewProfileConfiguration mapToNewProfileConfiguration(OldProfileConfiguration oldProfileConfiguration) {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
@@ -67,7 +69,7 @@ public class NewProfileConfigurationMapper {
                                                                               setting.getNotConfirmedPaymentExpirationPeriodMs(),
                                                                               setting.isPaymentCancellationAuthorizationMandated(),
                                                                               pisRedirectLinkToOnlineBanking);
-        PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED : PiisConsentSupported.NOT_SUPPORTED);
+        PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED : PiisConsentSupported.NOT_SUPPORTED, new PiisRedirectLinkBankSetting(DEFAULT_PIIS_REDIRECT_URL));
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(setting.getScaApproaches(),
                                                                                  setting.getScaRedirectFlow(),
                                                                                  DEFAULT_OAUTH_CONFIGURATION_URL,

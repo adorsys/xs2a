@@ -33,6 +33,8 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -78,6 +80,8 @@ public class PiisConsentService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
     private final CreatePiisConsentValidator createPiisConsentValidator;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
+    private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
 
     public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
@@ -124,6 +128,12 @@ public class PiisConsentService {
 
         ConsentStatus consentStatus = piisConsent.getConsentStatus();
         Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(), encryptedConsentId, false, requestProviderService.getInternalRequestIdString());
+
+        boolean multilevelScaRequired = false;
+        if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
+            proceedImplicitCaseForCreateConsent(xs2aConfirmationOfFundsResponse, psuData, encryptedConsentId);
+        }
+
         return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder().body(xs2aConfirmationOfFundsResponse).build();
     }
 
@@ -200,4 +210,12 @@ public class PiisConsentService {
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
         return piisConsentSpi.initiatePiisConsent(contextData, spiPiisConsent, aspspConsentDataProvider);
     }
+
+    private void proceedImplicitCaseForCreateConsent(Xs2aConfirmationOfFundsResponse response, PsuIdData psuData, String consentId) {
+        piisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
+            .ifPresent(a -> {
+                response.setAuthorizationId(a.getAuthorisationId());
+            });
+    }
+
 }

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web;
 
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.UrlHolder;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +45,14 @@ public class RedirectLinkBuilder {
      * @param encryptedConsentId - Encrypted Payment ID provided to TPP
      * @param redirectId         - Redirect ID
      * @param internalRequestId  - Internal Request ID
+     * @param consentType        - type of the Consent
      * @return redirect link
      */
     public String buildConsentScaRedirectLink(String encryptedConsentId, String redirectId, String internalRequestId,
-                                              String instanceId) {
-        String scaRedirectLink = aspspProfileService.getAisRedirectUrlToAspsp()
+                                              String instanceId, ConsentType consentType) {
+        String redirectUrl = getRedirectUrlByConsentType(consentType);
+
+        String scaRedirectLink = redirectUrl
                                      .replace(REDIRECT_URL, redirectId)
                                      .replace(ENCRYPTED_CONSENT_ID, encryptedConsentId)
                                      .replace(INTERNAL_REQUEST_ID, internalRequestId);
@@ -190,5 +194,13 @@ public class RedirectLinkBuilder {
         return link + (StringUtils.isNotBlank(instanceId) ?
                            "?instanceId=" + instanceId :
                            StringUtils.EMPTY);
+    }
+
+    private String getRedirectUrlByConsentType(ConsentType consentType) {
+        switch (consentType) {
+            case AIS: return aspspProfileService.getAisRedirectUrlToAspsp();
+            case PIIS_TPP: return aspspProfileService.getPiisRedirectUrlToAspsp();
+            default: throw new UnsupportedOperationException("Can't find redirect url by consent type " + consentType);
+        }
     }
 }

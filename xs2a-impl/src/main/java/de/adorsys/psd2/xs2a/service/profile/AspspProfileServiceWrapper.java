@@ -83,6 +83,15 @@ public class AspspProfileServiceWrapper {
     }
 
     /**
+     * Reads get PIIS redirect url to aspsp from ASPSP profile service
+     *
+     * @return Url in order to redirect SCA approach
+     */
+    public String getPiisRedirectUrlToAspsp() {
+        return readAspspSettings().getPiis().getRedirectLinkToOnlineBanking().getPiisRedirectUrlToAspsp();
+    }
+
+    /**
      * Retrieves list of supported Xs2aAccountReference fields from ASPSP profile service
      *
      * @return List of supported fields

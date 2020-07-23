@@ -63,7 +63,10 @@
       "tppUriComplianceResponse": "WARNING"
     },
     "piis": {
-      "piisConsentSupported": "NOT_SUPPORTED"
+      "piisConsentSupported": "NOT_SUPPORTED",
+      "redirectLinkToOnlineBanking": {
+        "piisRedirectUrlToAspsp": "http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}"
+      }
     },
     "pis": {
       "maxTransactionValidityDays": 0,
