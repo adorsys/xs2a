@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.aspsp.profile.domain.piis;
 
-import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,17 +23,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PiisAspspProfileBankSetting {
+public class PiisRedirectLinkBankSetting {
 
     /**
-     * Indicates whether ASPSP supports storing PIIS consent in CMS
+     * 	URL to online-banking to authorise consent with redirect approach
      */
-    private PiisConsentSupported piisConsentSupported;
-
-    /**
-     * 	A group of settings to define URL link for redirect approach
-     */
-    private PiisRedirectLinkBankSetting redirectLinkToOnlineBanking;
-
-
+    private String piisRedirectUrlToAspsp;
 }

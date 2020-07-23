@@ -137,6 +137,8 @@ The value for expiration time is counted with formula "current time of authorisa
 - ASPSP_CONSENT_SUPPORTED means that ASPSP stores PIIS consent in CMS and Funds Confirmation request is validated according to this consent
 
 |NOT_SUPPORTED |NOT_SUPPORTED, TPP_CONSENT_SUPPORTED, ASPSP_CONSENT_SUPPORTED
+|*redirectLinkToOnlineBanking:* | | |
+|piisRedirectUrlToAspsp |Link to online-banking to authorise consent with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id} |String
 |*Common:* | | |
 |scaApproachesSupported |This field contains the List of SCA Approach supported by ASPSP ordered by priority - first one with the highest priority. |REDIRECT |	REDIRECT, EMBEDDED, DECOUPLED
 |scaRedirectFlow |This field defines variant of the SCA redirect approach:

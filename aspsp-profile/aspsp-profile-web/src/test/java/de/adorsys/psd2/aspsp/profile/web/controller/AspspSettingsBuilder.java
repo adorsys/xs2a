@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
@@ -38,6 +39,7 @@ public class AspspSettingsBuilder {
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "https://localhost/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://localhost/view/account/";
+    private static final String PIIS_REDIRECT_LINK = "https://localhost/piis/account/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -110,7 +112,7 @@ public class AspspSettingsBuilder {
                                                                 COUNTRY_VALIDATION_SUPPORTED,
                                                                 SUPPORTED_TRANSACTION_STATUS_FORMATS
         );
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,

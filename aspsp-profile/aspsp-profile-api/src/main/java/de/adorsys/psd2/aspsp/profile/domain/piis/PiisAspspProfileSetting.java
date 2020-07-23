@@ -22,4 +22,5 @@ import lombok.Value;
 @Value
 public class PiisAspspProfileSetting {
     private PiisConsentSupported piisConsentSupported;
+    private PiisRedirectLinkSetting redirectLinkToOnlineBanking;
 }

@@ -34,8 +34,12 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.ais.PiisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -114,6 +118,12 @@ class PiisConsentServiceTest {
     private SpiErrorMapper spiErrorMapper;
     @Mock
     private CreatePiisConsentValidator createPiisConsentValidator;
+    @Mock
+    private AuthorisationMethodDecider authorisationMethodDecider;
+    @Mock
+    private PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
+    @Mock
+    private PiisAuthorizationService piisAuthorizationService;
 
     @Test
     void createPiisConsentWithResponse_success() {
@@ -140,6 +150,15 @@ class PiisConsentServiceTest {
         when(spiToXs2aAccountReferenceMapper.mapToXs2aAccountReference(spiAccountReference))
             .thenReturn(accountReference);
         when(createPiisConsentValidator.validate(new CreatePiisConsentRequestObject(request, PSU_ID_DATA))).thenReturn(ValidationResult.valid());
+        when(authorisationMethodDecider.isImplicitMethod(anyBoolean(), anyBoolean()))
+            .thenReturn(true);
+        when(piisScaAuthorisationServiceResolver.getService())
+            .thenReturn(piisAuthorizationService);
+        CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
+        String AUTHORISATION_ID = "4af7bca6-54f8-49ae-83b2-3436f8d99c6f";
+        createConsentAuthorizationResponse.setAuthorisationId(AUTHORISATION_ID);
+        when(piisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
+            .thenReturn(Optional.of(createConsentAuthorizationResponse));
 
         //When
         ResponseObject<Xs2aConfirmationOfFundsResponse> xs2aConfirmationOfFundsResponseResponseObject = piisConsentService.createPiisConsentWithResponse(request, PSU_ID_DATA, false);
@@ -151,6 +170,7 @@ class PiisConsentServiceTest {
         Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = xs2aConfirmationOfFundsResponseResponseObject.getBody();
         assertEquals(CONSENT_ID, xs2aConfirmationOfFundsResponse.getConsentId());
         assertEquals(piisConsent.getConsentStatus().getValue(), xs2aConfirmationOfFundsResponse.getConsentStatus());
+        assertEquals(AUTHORISATION_ID, xs2aConfirmationOfFundsResponse.getAuthorizationId());
     }
 
     @Test
