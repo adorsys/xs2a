@@ -99,6 +99,5 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     private void revokeConsent(ConsentEntity consent) {
         consent.setLastActionDate(LocalDate.now());
         consent.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
-        consentJpaRepository.save(consent);
     }
 }
