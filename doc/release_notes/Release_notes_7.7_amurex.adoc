@@ -1,0 +1,13 @@
+= Release notes v.7.7
+
+== Table of Contents
+
+* Add update authorisation status for confirmation of funds
+
+== Add update authorisation status for confirmation of funds
+
+Added resource to update authorisation status for confirmation of funds (PIIS v2) to `CMS-PSU_API`:
+
+```
+PUT psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}
+```

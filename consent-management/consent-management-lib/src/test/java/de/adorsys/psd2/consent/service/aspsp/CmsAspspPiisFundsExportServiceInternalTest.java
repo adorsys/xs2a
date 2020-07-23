@@ -16,13 +16,13 @@
 
 package de.adorsys.psd2.consent.service.aspsp;
 
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

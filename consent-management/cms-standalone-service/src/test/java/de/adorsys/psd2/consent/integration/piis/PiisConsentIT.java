@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.integration.piis;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;

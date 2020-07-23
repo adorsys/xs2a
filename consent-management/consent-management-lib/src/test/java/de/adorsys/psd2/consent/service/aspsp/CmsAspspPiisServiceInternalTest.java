@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.TypeAccess;
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.AccountReferenceEntity;
 import de.adorsys.psd2.consent.domain.PsuData;

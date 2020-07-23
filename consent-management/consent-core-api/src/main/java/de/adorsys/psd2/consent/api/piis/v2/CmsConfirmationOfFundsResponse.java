@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.psu.api.config;
+package de.adorsys.psd2.consent.api.piis.v2;
 
-public class CmsPsuApiTagName {
-    public static final String ASPSP_CONSENT_DATA = "Aspsp Consent Data";
-    public static final String PSU_AIS_CONSENTS = "PSU AIS Consents";
-    public static final String PSU_PIIS_CONSENTS = "PSU PIIS, Consents";
-    public static final String PSU_PIS_PAYMENT = "PSU PIS Payment";
-    public static final String CONFIRMATION_OF_FUNDS = "Confirmation of Funds API v2";
+import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-    private CmsPsuApiTagName() {
+@Value
+@RequiredArgsConstructor
+public class CmsConfirmationOfFundsResponse {
+    private String authorisationId;
+    private String tppOkRedirectUri;
+    private String tppNokRedirectUri;
+
+    public CmsConfirmationOfFundsResponse(String tppNokRedirectUri) {
+        this(null, null, tppNokRedirectUri);
     }
 }

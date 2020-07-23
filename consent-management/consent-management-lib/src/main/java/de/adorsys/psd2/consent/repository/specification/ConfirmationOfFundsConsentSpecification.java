@@ -20,17 +20,18 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class AisConsentSpecification extends ConsentFilterableSpecification {
-    public AisConsentSpecification(CommonSpecification<ConsentEntity> commonSpecification, ConsentSpecification consentSpecification) {
+public class ConfirmationOfFundsConsentSpecification extends ConsentFilterableSpecification {
+    public ConfirmationOfFundsConsentSpecification(CommonSpecification<ConsentEntity> commonSpecification,
+                                                   ConsentSpecification consentSpecification) {
         super(commonSpecification, consentSpecification);
     }
 
     @Override
     public List<ConsentType> getTypes() {
-        return Collections.singletonList(ConsentType.AIS);
+        return Arrays.asList(ConsentType.PIIS_ASPSP, ConsentType.PIIS_TPP);
     }
 }

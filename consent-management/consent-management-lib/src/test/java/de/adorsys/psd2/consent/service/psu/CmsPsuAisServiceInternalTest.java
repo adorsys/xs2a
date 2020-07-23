@@ -39,6 +39,7 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.repository.specification.AuthorisationSpecification;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
+import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.AccessMapper;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
@@ -130,6 +131,8 @@ class CmsPsuAisServiceInternalTest {
     private AccessMapper accessMapper;
     @Mock
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
+    @Mock
+    private CmsConsentAuthorisationServiceInternal consentAuthorisationService;
 
     private ConsentEntity consentEntity;
     private List<ConsentEntity> consentEntityList;
@@ -423,25 +426,19 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
-            .thenReturn(Optional.ofNullable(consentEntity));
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        //noinspection unchecked
-        when(authorisationRepository.findOne(any(Specification.class)))
-            .thenReturn(Optional.ofNullable(authorisationEntity));
+            .thenReturn(Optional.of(consentEntity));
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
+        when(consentAuthorisationService.getAuthorisationByExternalId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn(Optional.of(authorisationEntity));
+        when(consentAuthorisationService.updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, authorisationEntity, authenticationDataHolder))
+            .thenReturn(true);
 
         // Then
         boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
         // Then
         assertTrue(updateAuthorisationStatus);
-        verify(aisConsentSpecification, times(1))
-            .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(authorisationSpecification, times(1))
-            .byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        assertEquals(ScaStatus.RECEIVED, authorisationEntity.getScaStatus());
     }
 
     @Test
@@ -450,7 +447,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
-            .thenReturn(Optional.ofNullable(consentEntity));
+            .thenReturn(Optional.of(consentEntity));
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
@@ -459,10 +456,6 @@ class CmsPsuAisServiceInternalTest {
 
         // Then
         assertFalse(updateAuthorisationStatus);
-        verify(aisConsentSpecification, times(1))
-            .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(authorisationSpecification, times(1))
-            .byExternalIdAndInstanceId(AUTHORISATION_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test
@@ -482,7 +475,7 @@ class CmsPsuAisServiceInternalTest {
     }
 
     @Test
-    void updateAuthorisationStatus_expiredAuthorisation_shouldThrowException() {
+    void updateAuthorisationStatus_expiredAuthorisation_shouldThrowException() throws AuthorisationIsExpiredException {
         // Given
         when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
@@ -491,47 +484,21 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(consentEntity));
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
-        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
-            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+
         AuthorisationEntity expiredAuthorisationEntity = buildExpiredAuthorisationEntity();
-        //noinspection unchecked
-        when(authorisationRepository.findOne(any(Specification.class)))
+        when(consentAuthorisationService.getAuthorisationByExternalId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(Optional.of(expiredAuthorisationEntity));
+        when(consentAuthorisationService.updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, expiredAuthorisationEntity, authenticationDataHolder))
+            .thenReturn(false);
 
         // When
-        assertThrows(AuthorisationIsExpiredException.class,
-                     () -> cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder));
+        boolean updateAuthorisationStatus = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
 
         // Then
-        verify(authorisationSpecification).byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(authorisationRepository, never()).save(any());
-    }
+        assertFalse(updateAuthorisationStatus);
 
-    @Test
-    void updateAuthorisationStatus_finalisedAuthorisation_shouldNotUpdate() throws AuthorisationIsExpiredException {
-        // When
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        //noinspection unchecked
-        when(consentJpaRepository.findOne(any(Specification.class)))
-            .thenReturn(Optional.ofNullable(consentEntity));
-        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
-            .thenReturn(consentEntity);
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        AuthorisationEntity finalisedAuthorisationEntity = buildFinalisedAuthorisation();
-        //noinspection unchecked
-        when(authorisationRepository.findOne(any(Specification.class)))
-            .thenReturn(Optional.of(finalisedAuthorisationEntity));
-
-        // Then
-        boolean actualResult = cmsPsuAisService.updateAuthorisationStatus(psuIdData, EXTERNAL_CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, DEFAULT_SERVICE_INSTANCE_ID, authenticationDataHolder);
-
-        // Then
-        assertFalse(actualResult);
-        verify(aisConsentSpecification).byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(authorisationRepository, never()).save(any());
-
+        verify(consentAuthorisationService).getAuthorisationByExternalId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        verify(consentAuthorisationService).updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, expiredAuthorisationEntity, authenticationDataHolder);
     }
 
     @Test
@@ -801,8 +768,6 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(consentEntity), Optional.empty());
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(FINALISED_AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
-            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
@@ -811,10 +776,6 @@ class CmsPsuAisServiceInternalTest {
 
         // Then
         assertFalse(result);
-        verify(aisConsentSpecification, times(1))
-            .byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
-        verify(authorisationSpecification, times(1))
-            .byExternalIdAndInstanceId(FINALISED_AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
     }
 
     @Test

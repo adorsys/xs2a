@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
-import de.adorsys.psd2.consent.api.piis.CmsPiisConsent;
+import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;

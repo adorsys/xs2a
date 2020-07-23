@@ -25,16 +25,18 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.CONSENT_TYPE_ATTRIBUTE;
-import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttributeInList;
 
 @RequiredArgsConstructor
 public abstract class ConsentFilterableSpecification {
     private final CommonSpecification<ConsentEntity> commonSpecification;
     private final ConsentSpecification consentSpecification;
 
-    public abstract ConsentType getType();
+    public abstract List<ConsentType> getTypes();
 
     /**
      * Returns specification for ConsentEntity entity for filtering data by consent ID and instance ID.
@@ -98,7 +100,7 @@ public abstract class ConsentFilterableSpecification {
      * @param createDateFrom optional creation date that limits resulting data to AIS consents created after this date(inclusive)
      * @param createDateTo   optional creation date that limits resulting data to AIS consents created before this date(inclusive)
      * @param instanceId     optional instance ID
-     * @return specification for AisCoConsentEntitynsent entity
+     * @return specification for ConsentEntity entity
      */
     public Specification<ConsentEntity> byAspspAccountIdAndCreationPeriodAndInstanceId(@NotNull String aspspAccountId,
                                                                                        @Nullable LocalDate createDateFrom,
@@ -109,7 +111,16 @@ public abstract class ConsentFilterableSpecification {
                    .and(byConsentType());
     }
 
+    /**
+     * Returns specification for ConsentEntity entity for filtering data by consent type list.
+     * Uses predefined method `getTypes` for getting consent types.
+     *
+     * @return specification for ConsentEntity sent entity
+     */
     public Specification<ConsentEntity> byConsentType() {
-        return provideSpecificationForEntityAttribute(CONSENT_TYPE_ATTRIBUTE, getType().name());
+        return provideSpecificationForEntityAttributeInList(CONSENT_TYPE_ATTRIBUTE,
+                                                            getTypes().stream()
+                                                                .map(ConsentType::name)
+                                                                .collect(Collectors.toList()));
     }
 }
