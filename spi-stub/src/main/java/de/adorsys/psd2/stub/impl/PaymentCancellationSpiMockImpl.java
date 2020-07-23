@@ -66,32 +66,11 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
 
     @Override
     @NotNull
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    public SpiResponse<SpiResponse.VoidResponse> verifyScaAuthorisationAndCancelPayment(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("PaymentCancellationSpi#cancelPaymentWithoutSca: contextData {}, spiScaConfirmation {}, payment {}, aspspConsentData {}", contextData, spiScaConfirmation, payment, aspspConsentDataProvider.loadAspspConsentData());
-
-        return SpiResponse.<SpiResponse.VoidResponse>builder()
-                   .payload(SpiResponse.voidResponse())
-                   .build();
-    }
-
-    @Override
-    @NotNull
     public SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndCancelPaymentWithResponse(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentCancellationSpi#cancelPaymentWithoutSca: contextData {}, spiScaConfirmation {}, payment {}, aspspConsentData {}", contextData, spiScaConfirmation, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiPaymentResponse>builder()
                    .payload(new SpiPaymentResponse(SpiAuthorisationStatus.SUCCESS))
-                   .build();
-    }
-
-    @Override
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    public SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("PaymentCancellationSpi#authorisePsu: contextData {}, psuLoginData {}, password {}, businessObject {}, aspspConsentData {}", contextData, psuLoginData, password, businessObject, aspspConsentDataProvider.loadAspspConsentData());
-
-        return SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                   .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
                    .build();
     }
 

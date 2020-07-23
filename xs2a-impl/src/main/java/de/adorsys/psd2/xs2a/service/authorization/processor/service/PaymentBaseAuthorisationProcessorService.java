@@ -194,9 +194,6 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         return getXs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, payment, contextData, aspspConsentDataProvider, psuData, authorisationId);
     }
 
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    abstract void updatePaymentData(String paymentId, SpiResponse<Object> spiResponse);
-
     abstract void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentResponse> spiResponse);
 
     abstract SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(SpiPayment payment, String authenticationMethodId,
@@ -208,11 +205,6 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                                  SpiScaConfirmation spiScaConfirmation,
                                                                  SpiContextData contextData,
                                                                  SpiAspspConsentDataProvider spiAspspConsentDataProvider);
-
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    abstract SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment,
-                                                                   SpiAspspConsentDataProvider aspspConsentDataProvider, SpiPsuData spiPsuData,
-                                                                   SpiContextData contextData);
 
     abstract SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment,
                                                                    SpiAspspConsentDataProvider aspspConsentDataProvider, SpiPsuData spiPsuData,
