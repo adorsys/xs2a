@@ -16,12 +16,18 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
+import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.ConfirmationOfFundsConsentSpecification;
 import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
+import de.adorsys.psd2.consent.service.mapper.AuthorisationTemplateMapperImpl;
+import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapperImpl;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -34,10 +40,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -48,6 +55,8 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
     private static final String INSTANCE_ID = "UNDEFINED";
     private static final String METHOD_ID = "SMS";
     private static final String AUTHENTICATION_DATA = "123456";
+    private static final String TPP_NOK_REDIRECT_URI = "Mock tppNokRedirectUri";
+
     private AuthenticationDataHolder authenticationDataHolder;
 
     @InjectMocks
@@ -60,6 +69,9 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
     @Mock
     private ConsentJpaRepository consentJpaRepository;
 
+    private CmsConfirmationOfFundsMapper confirmationOfFundsMapper;
+
+
     private JsonReader jsonReader = new JsonReader();
     private PsuIdData psuIdData;
     private ConsentEntity consentEntity;
@@ -71,6 +83,10 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
         authenticationDataHolder = new AuthenticationDataHolder(METHOD_ID, AUTHENTICATION_DATA);
         consentEntity = jsonReader.getObjectFromFile("json/consent-entity.json", ConsentEntity.class);
         authorisationEntity = jsonReader.getObjectFromFile("json/authorisation-entity.json", AuthorisationEntity.class);
+
+        confirmationOfFundsMapper = new CmsConfirmationOfFundsMapper(new PsuDataMapper(), new TppInfoMapperImpl(), new AuthorisationTemplateMapperImpl());
+        cmsPsuConfirmationOfFundsServiceInternal = new CmsPsuConfirmationOfFundsServiceInternal(consentJpaRepository, consentAuthorisationService,
+                                                                                                confirmationOfFundsConsentSpecification, confirmationOfFundsMapper);
     }
 
     @Test
@@ -79,7 +95,7 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consentEntity));
-        when(consentAuthorisationService.getAuthorisationByExternalId(AUTHORISATION_ID, INSTANCE_ID))
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
             .thenReturn(Optional.of(authorisationEntity));
         when(consentAuthorisationService.updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, authorisationEntity, authenticationDataHolder))
             .thenReturn(true);
@@ -97,7 +113,7 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consentEntity));
-        when(consentAuthorisationService.getAuthorisationByExternalId(AUTHORISATION_ID, INSTANCE_ID))
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
         // When
@@ -121,7 +137,58 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
                                                                                             INSTANCE_ID, authenticationDataHolder);
 
         assertFalse(result);
-        verify(consentAuthorisationService, never()).getAuthorisationByExternalId(any(), any());
+        verify(consentAuthorisationService, never()).getAuthorisationByAuthorisationId(any(), any());
         verify(consentAuthorisationService, never()).updateScaStatusAndAuthenticationData(any(), any(), any());
     }
+
+    @Test
+    void checkRedirectAndGetConsent_success() throws RedirectUrlIsExpiredException {
+        // Given
+        when(consentAuthorisationService.getAuthorisationByRedirectId(AUTHORISATION_ID, INSTANCE_ID)).thenReturn(Optional.of(authorisationEntity));
+        when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(consentEntity));
+
+        List<AuthorisationEntity> authorisations = Collections.singletonList(authorisationEntity);
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(CONSENT_ID))
+            .thenReturn(authorisations);
+
+        // When
+        Optional<CmsConfirmationOfFundsResponse> consentResponseOptional = cmsPsuConfirmationOfFundsServiceInternal.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
+
+        // Then
+        assertTrue(consentResponseOptional.isPresent());
+
+        CmsConfirmationOfFundsResponse expected = jsonReader.getObjectFromFile("json/service/psu/piis/confirmation-of-funds-response.json", CmsConfirmationOfFundsResponse.class);
+        expected.getConsent().setCreationTimestamp(consentResponseOptional.get().getConsent().getCreationTimestamp());
+        assertEquals(expected, consentResponseOptional.get());
+    }
+
+    @Test
+    void checkRedirectAndGetConsent_authorisationNotFound() throws RedirectUrlIsExpiredException {
+        // Given
+        when(consentAuthorisationService.getAuthorisationByRedirectId(AUTHORISATION_ID, INSTANCE_ID)).thenReturn(Optional.empty());
+
+        // When
+        Optional<CmsConfirmationOfFundsResponse> consentResponseOptional = cmsPsuConfirmationOfFundsServiceInternal.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
+
+        // Then
+        assertTrue(consentResponseOptional.isEmpty());
+
+        verify(consentJpaRepository, never()).findByExternalId(anyString());
+        verify(consentAuthorisationService, never()).getAuthorisationsByParentExternalId(anyString());
+    }
+
+    @Test
+    void checkRedirectAndGetConsent_redirectUrlIsExpired() throws RedirectUrlIsExpiredException {
+        // Given
+        when(consentAuthorisationService.getAuthorisationByRedirectId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenThrow(new RedirectUrlIsExpiredException(TPP_NOK_REDIRECT_URI));
+
+        // When
+        assertThrows(RedirectUrlIsExpiredException.class,
+                     () -> cmsPsuConfirmationOfFundsServiceInternal.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID));
+
+        verify(consentJpaRepository, never()).findByExternalId(anyString());
+        verify(consentAuthorisationService, never()).getAuthorisationsByParentExternalId(anyString());
+    }
+
 }

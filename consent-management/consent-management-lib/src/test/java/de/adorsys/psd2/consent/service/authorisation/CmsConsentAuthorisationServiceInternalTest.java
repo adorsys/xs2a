@@ -17,9 +17,9 @@
 package de.adorsys.psd2.consent.service.authorisation;
 
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
-import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.specification.AuthorisationSpecification;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -37,11 +37,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CmsConsentAuthorisationServiceInternalTest {
 
+    private static final String EXTERNAL_ID = "2384a6a0-8f02-4b79-aeab-00aa7e03a0r2";
     private static final String AUTHORISATION_ID = "9304a6a0-8f02-4b79-aeab-00aa7e03a06d";
     private static final String INSTANCE_ID = "test-instance-id";
 
@@ -54,13 +55,11 @@ class CmsConsentAuthorisationServiceInternalTest {
     private AuthorisationSpecification authorisationSpecification;
 
     private JsonReader jsonReader = new JsonReader();
-    private ConsentEntity consentEntity;
     private AuthorisationEntity authorisationEntity;
     private AuthenticationDataHolder authenticationDataHolder;
 
     @BeforeEach
     void setUp() {
-        consentEntity = jsonReader.getObjectFromFile("json/consent-entity.json", ConsentEntity.class);
         authorisationEntity = jsonReader.getObjectFromFile("json/authorisation-entity.json", AuthorisationEntity.class);
         authenticationDataHolder = jsonReader.getObjectFromFile("json/authentication-data-holder.json", AuthenticationDataHolder.class);
     }
@@ -74,7 +73,7 @@ class CmsConsentAuthorisationServiceInternalTest {
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(authorisationEntity));
 
-        Optional<AuthorisationEntity> actual = cmsConsentAuthorisationServiceInternal.getAuthorisationByExternalId(AUTHORISATION_ID, INSTANCE_ID);
+        Optional<AuthorisationEntity> actual = cmsConsentAuthorisationServiceInternal.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
 
         assertTrue(actual.isPresent());
         assertEquals(authorisationEntity, actual.get());
@@ -86,7 +85,7 @@ class CmsConsentAuthorisationServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(authorisationRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
 
-        Optional<AuthorisationEntity> actual = cmsConsentAuthorisationServiceInternal.getAuthorisationByExternalId(AUTHORISATION_ID, INSTANCE_ID);
+        Optional<AuthorisationEntity> actual = cmsConsentAuthorisationServiceInternal.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
 
         assertTrue(actual.isEmpty());
     }
@@ -101,7 +100,7 @@ class CmsConsentAuthorisationServiceInternalTest {
             .thenReturn(Optional.of(authorisationEntity));
 
         assertThrows(AuthorisationIsExpiredException.class,
-                     () -> cmsConsentAuthorisationServiceInternal.getAuthorisationByExternalId(AUTHORISATION_ID, INSTANCE_ID));
+                     () -> cmsConsentAuthorisationServiceInternal.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID));
     }
 
     @Test
@@ -123,5 +122,11 @@ class CmsConsentAuthorisationServiceInternalTest {
         authorisationEntity.setScaStatus(ScaStatus.FAILED);
         boolean actual = cmsConsentAuthorisationServiceInternal.updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, authorisationEntity, authenticationDataHolder);
         assertFalse(actual);
+    }
+
+    @Test
+    void getAuthorisationsByParentExternalId() {
+        cmsConsentAuthorisationServiceInternal.getAuthorisationsByParentExternalId(EXTERNAL_ID);
+        verify(authorisationRepository, times(1)).findAllByParentExternalIdAndAuthorisationType(EXTERNAL_ID, AuthorisationType.AIS);
     }
 }

@@ -2,12 +2,26 @@
 
 == Table of Contents
 
-* Add update authorisation status for confirmation of funds
+* Add confirmation of funds functionality to `CMS-PSU-API`
 
-== Add update authorisation status for confirmation of funds
+== Add confirmation of funds functionality to `CMS-PSU-API`
 
-Added resource to update authorisation status for confirmation of funds (PIIS v2) to `CMS-PSU_API`:
+From now on, `CMS-PSU-API` is extended for confirmation of funds functionality:
 
-```
-PUT psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}
-```
+* Update authorisation status for confirmation of funds consent:
+
+----
+PUT /psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}
+----
+
+* Get confirmation of funds consent by redirectId:
+
+----
+ GET /psu-api/v2/piis/consent/redirect/{redirect-id}
+----
+
+* Get confirmation of funds consent by consentId:
+
+----
+GET /psu-api/v2/piis/consent/{consent-id}
+----

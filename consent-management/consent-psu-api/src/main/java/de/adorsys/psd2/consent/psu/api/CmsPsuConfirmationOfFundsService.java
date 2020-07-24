@@ -16,11 +16,15 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public interface CmsPsuConfirmationOfFundsService {
 
@@ -39,4 +43,14 @@ public interface CmsPsuConfirmationOfFundsService {
     boolean updateAuthorisationStatus(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String authorisationId,
                                       @NotNull ScaStatus status, @NotNull String instanceId,
                                       AuthenticationDataHolder authenticationDataHolder) throws AuthorisationIsExpiredException;
+
+    /**
+     * Returns CMS confirmation of funds consent identifier by redirect ID if redirect ID has not expired
+     *
+     * @param redirectId ID of redirect
+     * @param instanceId optional ID of particular service instance
+     * @return CMS confirmation of funds consent identifier if it has been found
+     * @throws RedirectUrlIsExpiredException if redirect urls are expired
+     */
+    Optional<CmsConfirmationOfFundsResponse> checkRedirectAndGetConsent(String redirectId, String instanceId) throws RedirectUrlIsExpiredException;
 }

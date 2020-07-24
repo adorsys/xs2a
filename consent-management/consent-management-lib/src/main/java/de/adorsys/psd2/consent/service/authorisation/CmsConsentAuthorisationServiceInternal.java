@@ -19,7 +19,9 @@ package de.adorsys.psd2.consent.service.authorisation;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.specification.AuthorisationSpecification;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -36,12 +39,24 @@ public class CmsConsentAuthorisationServiceInternal {
     private final AuthorisationRepository authorisationRepository;
     private final AuthorisationSpecification authorisationSpecification;
 
-    public Optional<AuthorisationEntity> getAuthorisationByExternalId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
+    public Optional<AuthorisationEntity> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
         Optional<AuthorisationEntity> authorisation = authorisationRepository.findOne(authorisationSpecification.byExternalIdAndInstanceId(authorisationId, instanceId));
 
         if (authorisation.isPresent() && !authorisation.get().isAuthorisationNotExpired()) {
             log.info("Authorisation ID [{}], Instance ID: [{}]. Authorisation is expired", authorisationId, instanceId);
             throw new AuthorisationIsExpiredException(authorisation.get().getTppNokRedirectUri());
+        }
+        return authorisation;
+    }
+
+    public Optional<AuthorisationEntity> getAuthorisationByRedirectId(String redirectId, String instanceId) throws RedirectUrlIsExpiredException {
+        Optional<AuthorisationEntity> authorisation = authorisationRepository.findOne(authorisationSpecification.byExternalIdAndInstanceId(redirectId, instanceId));
+
+        if (authorisation.isPresent() && !authorisation.get().isRedirectUrlNotExpired()) {
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation is expired",
+                     redirectId, instanceId);
+            authorisation.get().setScaStatus(ScaStatus.FAILED);
+            throw new RedirectUrlIsExpiredException(authorisation.get().getTppNokRedirectUri());
         }
         return authorisation;
     }
@@ -59,6 +74,11 @@ public class CmsConsentAuthorisationServiceInternal {
         }
 
         return true;
+    }
+
+    public List<AuthorisationEntity> getAuthorisationsByParentExternalId(String externalId) {
+        // ToDo: consider replacing AIS with general consent value https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1210
+        return authorisationRepository.findAllByParentExternalIdAndAuthorisationType(externalId, AuthorisationType.AIS);
     }
 
     private void enrichAuthorisationWithAuthenticationData(AuthorisationEntity authorisation, AuthenticationDataHolder authenticationDataHolder) {

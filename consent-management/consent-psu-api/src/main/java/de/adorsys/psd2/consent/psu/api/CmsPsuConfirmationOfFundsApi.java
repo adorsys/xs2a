@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
@@ -59,4 +60,14 @@ public interface CmsPsuConfirmationOfFundsApi {
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody(required = false) AuthenticationDataHolder authenticationDataHolder);
 
+    @GetMapping(path = "/redirect/{redirect-id}")
+    @ApiOperation(value = "Gets consent response by redirect ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CmsAisConsentResponse.class),
+        @ApiResponse(code = 404, message = "Not Found"),
+        @ApiResponse(code = 408, message = "Request Timeout", response = CmsAisConsentResponse.class)})
+    ResponseEntity<CmsConfirmationOfFundsResponse> getConsentIdByRedirectId(
+        @ApiParam(name = CmsConstant.PATH.REDIRECT_ID, value = "The redirect identification assigned to the created consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
+        @PathVariable(CmsConstant.PATH.REDIRECT_ID) String redirectId,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 }

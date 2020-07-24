@@ -4,7 +4,7 @@
   "psuData": {
     "psuId": "PSU id"
   },
-  "parentExternalId": "parent id",
+  "parentExternalId": "4b112130-6a96-4941-a220-2da8a4af2c65",
   "scaStatus": "RECEIVED",
   "authenticationMethodId": "method id",
   "scaAuthenticationData": "authentication data",

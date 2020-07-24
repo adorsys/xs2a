@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6c253d00-0b82-4be8-930c-e1de2a49602c",
+		"_postman_id": "0a0385f7-2c1a-418d-aba0-2c9c0f884c65",
 		"name": "CMS PSU API requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -17,7 +17,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "65e2823c-db28-4d83-bdf9-80e1eff578f2",
+										"id": "d1a49782-51e4-41c2-ac3a-a0c8a56d1424",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -65,7 +65,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f0e7c4e6-a093-4697-b283-658d92bdf274",
+										"id": "22acb1b7-d707-4492-b3e1-48f329c2c876",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -118,7 +118,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0e372cd1-9ae4-47d1-bd4b-f333c825e70b",
+										"id": "ba234d94-2dc7-4b9c-a879-56eb9bf3d622",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -149,7 +149,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8d74c8fb-d0fe-4cb4-ba79-6f207400645e",
+										"id": "14fe663a-c686-460c-a8eb-4aea0e2c1908",
 										"exec": [
 											"pm.globals.unset(\"redirect_id\");"
 										],
@@ -215,7 +215,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "52a6243d-c8ee-4941-b54f-46105eaeeffc",
+										"id": "1f2c91b5-944d-45f2-ae62-fb992f3073f4",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -235,7 +235,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "f92bc5a8-6584-4aa1-8ec7-13fcef9273fe",
+										"id": "bf06b6f3-6a5b-4395-8d62-395ca81fccbe",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -277,7 +277,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "bba54f05-be12-463e-b33b-72f5597f3ffd",
+										"id": "11a3753b-be93-4abb-ac15-1bf677709188",
 										"exec": [
 											"var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
 											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
@@ -290,7 +290,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3329fe05-cf0b-47ac-8c3e-bcd4d9e695ac",
+										"id": "fd0b671e-9118-43f7-85a5-539eec7dd0dd",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -335,7 +335,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "99413a46-1eed-4ab5-a13b-ba3b3ef8f968",
+										"id": "78490eaf-2086-4167-add5-94df9abbbe1c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -383,7 +383,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "25486ba7-b838-4ec0-aa6f-49888c8a403b",
+										"id": "7a567c15-0d55-4b1b-a999-931155545968",
 										"exec": [
 											"var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
 											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
@@ -396,7 +396,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1d2c5c9a-9fcd-40a5-9bf1-d17bf73d8bf5",
+										"id": "c26834b2-cb32-4943-8526-aa9ef686a33e",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -441,7 +441,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "1b1ae270-a920-478e-aab4-c37e30067d1a",
+										"id": "07c17cea-abb1-4b7c-82e3-91ccfeb2c0bd",
 										"exec": [
 											"pm.test(\"Status code is 204\", () => {",
 											"    pm.response.to.have.status(204);",
@@ -485,7 +485,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "1914ca50-d4e7-4b2c-b29c-8d941ba41177",
+										"id": "7a17d96f-be93-447d-9099-771e82c52b4b",
 										"exec": [
 											"var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
 											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
@@ -498,7 +498,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d02ba79a-18be-4edc-93da-18fcda0a437e",
+										"id": "35456a83-a141-4221-b815-c2beb29ad9d9",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -543,7 +543,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "dc6c47e7-587b-49b1-adec-3c408ee9537f",
+										"id": "6c4bcb30-4141-47c6-9d08-81626e2bd304",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -581,7 +581,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d98f435a-7c34-4432-900c-043c9d93ded6",
+										"id": "0c07ab1e-1f40-41f4-a2d1-c365daba60b5",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -619,7 +619,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fcea7f5d-c925-41cc-8d47-b4946f5149f8",
+										"id": "d60a4d9a-edbc-4a97-b3c4-0d97dff352ed",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -656,7 +656,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9bfbafd6-cea0-4976-9bd1-9d1181a628d5",
+										"id": "373e7f6c-cffa-456c-836b-52fc87d9cd2d",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -706,7 +706,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c221ad93-0342-4229-93ca-18aa503460cc",
+										"id": "b6c9a176-6cde-4422-9019-dbb1e1417066",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -718,7 +718,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "791e8762-52ab-4cfa-a451-c02cf68ae838",
+										"id": "6fd575e1-fcb2-48a5-b447-81767491c7d5",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -754,7 +754,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9a6f03cf-063e-40e1-9aeb-8617c9b8da5a",
+										"id": "38124329-1bdb-4670-a6db-4aed58728b82",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -804,7 +804,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2f717f09-00ed-4df1-bd15-971d21b8e3f9",
+										"id": "cdfe6040-64bb-44f9-b26c-2cd2937b4223",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -865,7 +865,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a46f6c3e-7a9f-421d-bcf7-6a9222fe72c3",
+										"id": "9a0cce0b-40ae-414f-8ec1-7c620b200850",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -918,7 +918,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b78f1077-fe0a-480a-b5fc-879c42f1adb6",
+										"id": "aba17d4e-fff0-47fd-b382-d900367cefd3",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -971,7 +971,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d15d9dd6-bcfe-4ce7-b03a-9e74b66feaaf",
+										"id": "cb61f8fd-19d8-44aa-bbec-72d16a21dbfd",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -1008,7 +1008,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6e0e6866-4611-49bc-b6fd-f491d5fea312",
+										"id": "8737f025-fae7-4bf0-814a-72c79bcd6db2",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -1061,7 +1061,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c4909927-947f-4063-8c06-e4232259c734",
+										"id": "ddec525d-f4cf-4ffd-bcaf-a7d58f3aa661",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1114,7 +1114,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "75ebb044-4b4c-490a-897b-5d8befefdb3e",
+										"id": "f5055139-9c48-493e-9f1f-24d3f4f29ed2",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -1152,7 +1152,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f9a1ce01-3ecd-4a1a-bcab-6703f5890065",
+										"id": "8b07bd80-9bc6-48dc-a947-9d807ecfab17",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1205,7 +1205,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "579d6cf3-fa9b-49d5-acde-5ed008e08257",
+										"id": "506d58af-9bff-415a-a8d7-8434cd17b9b9",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -1255,7 +1255,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "4349bc7b-51b7-45f6-82e1-c444dfbfae04",
+												"id": "f14bc5a5-f723-4845-8ac1-f1a21ba7234a",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1303,7 +1303,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a6337223-df75-4e79-ae35-5547ecb2fb8a",
+												"id": "1bd41d7f-2984-464a-8600-462f525a1f2f",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1356,7 +1356,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "9b9471dd-4b4b-46d9-9eec-1eaa3f351252",
+												"id": "590b8c63-9196-4ce7-99e9-246bb7337810",
 												"exec": [
 													"pm.globals.unset(\"consent_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -1367,7 +1367,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "39278fef-bc88-4289-9593-3ba87452f1db",
+												"id": "6099436b-c78b-4a1d-a711-5838ec49aacb",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -1472,7 +1472,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "f19ea031-29c8-4e48-81de-e2f2c25b05f4",
+												"id": "37446edd-ba0c-4b93-b7b6-1418538c7a41",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1507,7 +1507,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "6ae724ed-89f8-4b90-9bcd-7a2fedae5d57",
+												"id": "5a1546e1-7841-4289-a7c2-2337c4f0264b",
 												"exec": [
 													"pm.globals.unset(\"internal_consent_id\");",
 													"pm.globals.unset(\"authorisation_id\");"
@@ -1543,7 +1543,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "5ed5403a-6e7c-4abd-b46a-defee263d727",
+												"id": "b8782ecd-f2ff-4325-a691-ec142585a210",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1593,7 +1593,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ba506f13-386c-4ef9-b376-18be5332f688",
+												"id": "45af29f2-048a-459f-b0b7-21dc1d23cf6c",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1654,7 +1654,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "8290ccaa-e3cc-4bfa-b704-4657a05518b4",
+												"id": "7bc8b1a7-41a5-48ab-bc96-92c64801bd84",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1707,7 +1707,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "63bad8cc-166f-4d6d-a082-0f25940a6fa0",
+												"id": "23f43ac4-f3b4-41fd-8e65-d1561dd543d3",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1750,7 +1750,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "db968946-b457-4fdb-a32d-1c52ca48c1ba",
+												"id": "b5134564-6e69-4ae9-a840-616fe8d5eb66",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1803,7 +1803,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "61d8e54b-7232-491d-b3f2-d8e527218daf",
+												"id": "f04040bc-648c-47ab-82cf-4fc2dae82bc9",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1846,7 +1846,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "0981c031-64cb-49bd-93d8-9f1167033ca5",
+												"id": "fe1d8767-bc2c-41ea-9b13-28c042cacd22",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1895,7 +1895,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "924d9d10-267a-4cfb-96d6-a920409533cd",
+												"id": "622722a5-7705-4bf8-b035-b31c10ccf9a8",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1948,7 +1948,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "3f72bf12-09c0-4548-815d-3eda9f7ea812",
+												"id": "46c11773-cdd3-4c92-9bef-3ad47f9b28d5",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2001,7 +2001,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "71071103-3b99-4a28-8220-beef83291df4",
+												"id": "2785137c-f171-4bac-8de8-93fe13780afa",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2051,7 +2051,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "f628f11c-7930-467a-8537-2c54c2666b0f",
+												"id": "33f22d83-fe0d-4e92-ab6c-798609d2b58a",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2099,7 +2099,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ada8c341-6a92-44a5-9286-d283397814a2",
+												"id": "781ae3a3-b4a5-4a24-b622-efee6b9d0c44",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2142,7 +2142,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "42d06624-8716-4ac2-b919-02d99dd91d16",
+										"id": "e20ef354-bf46-4137-9491-519e51afca4e",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -2152,7 +2152,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "77ca2bb6-94b5-4161-be2f-2ea0d3a1c373",
+										"id": "f0fbc7c6-86b3-49e5-b075-6d271c3e77b5",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -2172,7 +2172,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "45ae76ad-299a-46e8-b5fd-929cce3a4b95",
+												"id": "26e19975-ef6d-4a3a-a9a8-23d76e2fa6d6",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2220,7 +2220,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "5757015d-1346-48b7-bb43-97e8bd012311",
+												"id": "d3fdd3cf-c735-4723-9d25-03c559c301c5",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2273,7 +2273,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "67ff5b15-6294-4d80-8738-46d3cace6827",
+												"id": "4511bd49-070b-4972-8ba4-791c666c4bc6",
 												"exec": [
 													"pm.globals.unset(\"consent_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -2284,7 +2284,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "726ad9a0-5329-4291-84e1-070fb3de85f8",
+												"id": "49bc7795-6b47-4125-a7a5-84dfefe82e48",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -2389,7 +2389,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "38ed8c3c-e389-4ffc-86a4-96e3eed0905f",
+												"id": "166fb12c-d597-4ce0-9fc7-33985c0a1f44",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2424,7 +2424,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "80137084-eca6-420e-9c0d-1aab57b9eb55",
+												"id": "e58f4046-8e3a-4984-a08d-0c6daa82c893",
 												"exec": [
 													"pm.globals.unset(\"internal_consent_id\");",
 													"pm.globals.unset(\"authorisation_id\");"
@@ -2460,7 +2460,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "746ab275-8c05-4a00-9daa-c90ac8e916da",
+												"id": "f7c658ac-78e4-4127-aec7-e09eaee98eb7",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2510,7 +2510,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "994a89e8-7081-4839-904f-8ed040b8640a",
+												"id": "f2894491-b811-4ab7-b85a-39fe281e4175",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2571,7 +2571,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "9b19b8fa-306f-4202-9858-94a08b1a407a",
+												"id": "f6fb93f0-a250-455b-9ce0-aeff788c2635",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2624,7 +2624,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d1f0a129-cc33-49f2-9d23-20f40826640a",
+												"id": "c8741b0e-b930-4b83-ae26-0fb749dad142",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2667,7 +2667,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d3b701db-f028-4065-9ab8-9ec1e5832e2c",
+												"id": "39f67a09-0f65-426d-a507-29b47fda1b5c",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2720,7 +2720,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a8d786f6-e9cc-4db8-a947-69cad7583528",
+												"id": "020f3578-02f3-4498-823c-08200f317817",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2763,7 +2763,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a5e90b19-be56-4e7e-af68-26fbb09fecc1",
+												"id": "6a050287-673b-44eb-bebf-c5e7aad86834",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2811,7 +2811,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d23ca3a3-2687-40ee-a1cb-ac4942cf80b6",
+												"id": "65a71f6c-ffd0-4e4d-966f-e04de927bc04",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2864,7 +2864,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "b3b5b4ce-c84d-47e0-a6f6-b531e10adc9f",
+												"id": "7d8e65e4-46f8-4432-a59f-a2f58128ba93",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2917,7 +2917,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "6cb0b694-bb2d-40cf-981b-a2eeb113439b",
+												"id": "62c27784-54af-4b2a-8fa0-faa82da54dea",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2968,7 +2968,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "8ef0c06f-a717-49f2-a901-92d531a5bd54",
+												"id": "5f899484-9a92-43b7-8370-0b54b70c8a42",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3011,7 +3011,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "610d8648-38e7-4b94-bf47-6caff46cc8a1",
+										"id": "a45faa30-8dc4-42fd-beb6-3348ea19a3e5",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -3021,7 +3021,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "21380c21-e00a-4e17-ab52-70b26acc4b2e",
+										"id": "40cfc7da-689c-49b1-bf79-59d9301412b0",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -3051,7 +3051,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3dc94094-2712-4f96-bc41-81f5da92ffdc",
+										"id": "b1cb6098-0920-4f31-b090-ddd547cb6f53",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -3063,7 +3063,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "045e8241-97e4-4daf-a7b7-e3575235f99c",
+										"id": "43d4b03e-6afe-4269-8110-29facbf1a831",
 										"exec": [
 											"pm.globals.set(\"wrong_id\", \"kljghdgflkhjf5w67437698gyuvg97fcr6ditof6r\");"
 										],
@@ -3097,7 +3097,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3fe8e7e9-e8ed-4757-9721-2ce5122af531",
+										"id": "630e1b2b-7fde-45d0-818d-60b477947347",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -3110,7 +3110,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "6d4887cd-7558-48a8-884d-e70bfbdc2a31",
+										"id": "31f7a0eb-2bc2-419b-b63d-ab81a72b7493",
 										"exec": [
 											""
 										],
@@ -3152,7 +3152,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9a926d6c-015b-4149-aa9b-4e688809633f",
+										"id": "f8d92cb3-e39a-47ab-a08e-6f996ee38f66",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -3213,7 +3213,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "659294b8-0ed8-438b-bfbb-51f0ebb1ba0d",
+										"id": "a414afda-1dd5-412a-bfce-d95c9e5e6b2a",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -3249,7 +3249,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "51bb7b3e-0fcb-4979-aa3b-b0ddbfdd5e86",
+										"id": "0211acbe-f430-4a02-8825-8cc52cf25d07",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -3312,7 +3312,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "aff679cd-0cb7-454c-923b-1de650720fe8",
+										"id": "0f1ab196-45bd-4d5c-979b-70c157811cb9",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -3324,7 +3324,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "803df352-244d-410f-b6d9-e96c3a3c7cef",
+										"id": "c0836364-8e05-4c09-aa73-5139ba3731d4",
 										"exec": [
 											""
 										],
@@ -3378,7 +3378,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "cc673f0c-3bc8-4d0c-8c50-af19397fd5f1",
+										"id": "b736b3c0-4903-4c9e-a6ef-f42db92b35d4",
 										"exec": [
 											""
 										],
@@ -3388,7 +3388,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f28a427b-6d9c-440c-babc-d44174a91c4c",
+										"id": "d4aa0080-0fb9-45f2-acb1-76ac69d993c1",
 										"exec": [
 											"pm.test('Status code is 400', () => {",
 											"   pm.response.to.have.status(400);",
@@ -3439,7 +3439,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d14729fd-d787-4d27-8703-fc78b0c9e4dc",
+										"id": "d0450717-534d-4dce-9a11-c30ae32897e0",
 										"exec": [
 											"pm.test(\"Status code is 400\", () => {",
 											"    pm.response.to.have.status(400);",
@@ -3494,7 +3494,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9b89d31d-e51a-4b68-9b8a-b8b63f347c10",
+										"id": "b8aef05f-3333-4b54-8c17-3b1bb02a9e87",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3542,7 +3542,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a1327aef-edf3-4b13-9e91-b65866bc63d8",
+										"id": "b155368b-ca20-4f9e-b401-5265973bf273",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3595,7 +3595,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a6f2f79f-2229-4371-a1e8-b042cd937292",
+										"id": "72441fac-6965-4a35-8427-bc24cb50434d",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -3626,7 +3626,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "6329cc96-7de8-441b-8fc1-52681cd6866e",
+										"id": "f963f6d4-375f-4ecb-ac33-966f5af0f73d",
 										"exec": [
 											"pm.globals.unset(\"redirect_id\");"
 										],
@@ -3692,7 +3692,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "79537cc8-20b5-4f40-88fe-02cf8b9e4988",
+										"id": "5c56845e-4727-4914-b8ae-b26d2020ebe7",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3712,7 +3712,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "4d6503aa-b289-47cb-974e-b4ff149f8fef",
+										"id": "74d0126e-7a6e-476e-ab42-67161ca7f09e",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -3754,7 +3754,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fd1e7cb2-b244-41b0-b49e-9f3d27f16199",
+										"id": "913367c1-68d8-4121-acb8-fb38de6b7f05",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3820,7 +3820,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "80dd6b3e-3f36-4049-9b3f-7b4ac86382a6",
+										"id": "329e9085-6a6f-4590-8f3a-52894746831b",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3863,7 +3863,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "185edfa2-ff44-418c-adb8-938a8222b39a",
+										"id": "187fd6e1-c520-4a49-92f4-0f3d845fe5a6",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3930,7 +3930,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "00c56943-a741-40a5-bf9b-e1a7b918ab45",
+										"id": "f7a51d92-a38b-47ae-aa18-abbac3b6761b",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3976,7 +3976,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d326948c-ec9f-4533-bd04-ef4b00aa7fad",
+										"id": "c0b6f77e-5b2c-4677-a085-0d91c640bdf4",
 										"exec": [
 											"pm.test(\"Status code is 404\", () => {",
 											"    pm.response.to.have.status(404);",
@@ -4014,7 +4014,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "96d7fd16-fb8b-439c-bb76-f9f3dd93bfff",
+										"id": "c55340d8-7a5b-43a5-8918-0170a2adaa48",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4026,7 +4026,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "d1659d78-bb45-484f-af4d-613f40a5287d",
+										"id": "95bd4329-dd69-43ad-afe2-56a3f3c34646",
 										"exec": [
 											""
 										],
@@ -4079,7 +4079,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "013714f7-c69a-4bc1-baef-1b4243edd71f",
+										"id": "a466de40-cef2-4475-a637-f033302c3436",
 										"exec": [
 											""
 										],
@@ -4089,7 +4089,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "22ab4715-46e4-42d4-aafb-fa0e7777a306",
+										"id": "bb0722a3-4b39-4ceb-b291-246b35afe729",
 										"exec": [
 											"pm.test('Status code is 200', () => {",
 											"   pm.response.to.have.status(200);",
@@ -4140,7 +4140,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ca1abce8-734b-4386-9439-5625a1ba6933",
+										"id": "213055c0-1025-451d-acfc-7598f4114beb",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4195,7 +4195,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8ac99648-b1ae-4713-bbbc-d362d4b03cd6",
+										"id": "c1ea3b04-420c-4da3-9a54-e71c050f4555",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4243,7 +4243,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "95540054-94d0-47ca-8f06-d3d7bcdc232e",
+										"id": "805861d4-e091-4f6f-a969-ef043801240f",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4296,7 +4296,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e5e61895-97bf-4925-94b8-134ff9eed6a9",
+										"id": "043b5561-e2cc-4284-bc2a-9a06d8c7e9c0",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -4328,7 +4328,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "4b9574aa-eb1e-438f-98b6-1c1bb4de043b",
+										"id": "df14eadb-606d-439b-b12d-4f6378b0dbfd",
 										"exec": [
 											"pm.globals.unset(\"redirect_id\");"
 										],
@@ -4394,7 +4394,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "11042cdd-4257-457f-b10f-088ec36e8c1e",
+										"id": "f2065037-b402-40c6-a83f-719c5bacee9c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4414,7 +4414,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "25d124af-5385-436b-9735-ac5a8a607f1d",
+										"id": "585c84b5-45d0-4098-8800-cb910c5b7ab8",
 										"exec": [
 											""
 										],
@@ -4455,7 +4455,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "1fd6f364-d751-4cf6-9aed-933640ae0e1e",
+										"id": "a00c1382-872c-452d-b8a6-3d14e202ca35",
 										"exec": [
 											""
 										],
@@ -4465,7 +4465,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0043d9cf-e0ea-4210-bf6a-6584c97e1939",
+										"id": "509f5a52-1b12-432d-a0a1-fedd4e75b23b",
 										"exec": [
 											"pm.test('Status code is 200', () => {",
 											"   pm.response.to.have.status(200);",
@@ -4516,7 +4516,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d83ab354-0b6b-4cb1-92bc-6028bc09d586",
+										"id": "785daeb3-ba1b-4f79-ba30-c0a7dca94e2f",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4528,7 +4528,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "abe678d4-565f-43c7-a0fb-1bb48b9ffc75",
+										"id": "e297ae0e-0630-44aa-9a10-c445ac9dcd64",
 										"exec": [
 											""
 										],
@@ -4581,7 +4581,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e6404849-16f1-4547-b2ab-de0532edf5ca",
+										"id": "1162fe8f-9881-4e05-a0b2-6b1ac69623a3",
 										"exec": [
 											"pm.test(\"Status code is 202\", () => {",
 											"    pm.response.to.have.status(202);",
@@ -4612,7 +4612,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "05b913b0-188d-478f-92bb-3340995b6e87",
+										"id": "d01ff4a2-5506-454e-905b-6d76d6d1fb5e",
 										"exec": [
 											""
 										],
@@ -4679,7 +4679,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2e93163b-a509-4b49-b324-f8b6ff5fc644",
+										"id": "d9e3d454-dc0d-4b58-b6aa-f8c54aa0c75f",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4693,7 +4693,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "36d49471-f799-4409-b8f8-8d1d29c8adf4",
+										"id": "83cac11a-915e-490a-90e9-216d08f936f0",
 										"exec": [
 											""
 										],
@@ -4740,614 +4740,1154 @@
 			"name": "PSU PIIS, Consents",
 			"item": [
 				{
-					"name": "Errorful cases",
+					"name": "v1",
 					"item": [
 						{
-							"name": "1. Get PIIS Consent object by its ID NOT_FOUND",
-							"event": [
+							"name": "Errorful cases",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"id": "f693a8e2-9ac8-48dd-910f-112a4a1f278e",
-										"exec": [
-											"pm.test(\"Status code is 404\", () => {",
-											"    pm.response.to.have.status(404);",
-											"});",
-											""
+									"name": "1. Get PIIS Consent object by its ID NOT_FOUND",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "33d435e9-c954-4cf0-959f-f30550462756",
+												"exec": [
+													"pm.test(\"Status code is 404\", () => {",
+													"    pm.response.to.have.status(404);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											}
 										],
-										"type": "text/javascript"
-									}
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{internal_consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"piis",
+												"consents",
+												"{{internal_consent_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Revokes PIIS Consent object by its ID. FALSE",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "8d0dd7bb-169c-4d93-b099-b7753b0b6ac1",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status not changed\", () => {",
+													"        pm.expect(jsonData).to.eql(false);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "psu-id",
+												"value": "marion.mueller",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-id-type",
+												"value": "psu id type",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-corporate-id",
+												"value": "psu corporate id",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-corporate-id-type",
+												"value": "psu corporate id type",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}/revoke-consent",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"piis",
+												"consents",
+												"{{consent_id}}",
+												"revoke-consent"
+											]
+										}
+									},
+									"response": []
 								}
 							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{internal_consent_id}}",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"piis",
-										"consents",
-										"{{internal_consent_id}}"
-									]
-								}
-							},
-							"response": []
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
 						},
 						{
-							"name": "2. Revokes PIIS Consent object by its ID. FALSE",
-							"event": [
+							"name": "Successful cases",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"id": "b8c1ed56-c9f1-413c-8407-a3ab22d9fdf0",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Consent status not changed\", () => {",
-											"        pm.expect(jsonData).to.eql(false);",
-											"});"
+									"name": "1. Set redirect SCA approach",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "a943768a-68cd-4f29-8eee-687b155d98d1",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
 										],
-										"type": "text/javascript"
-									}
+										"body": {
+											"mode": "raw",
+											"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"sca-approaches"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "2. Set ASPSP properties",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "cc64caf7-4347-44e1-9e71-ba29bb42b909",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"NOT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "3. Create PIIS consent",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "8652b2fe-6ab1-47b6-ad9b-c50ef735db30",
+												"exec": [
+													"pm.globals.unset(\"consent_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "efa4b66f-f096-4a50-ab7c-b53b7a340e85",
+												"exec": [
+													"pm.test(\"Status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"const consentId = jsonData.consentId;",
+													"pm.globals.set(\"consent_id\", consentId);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"type": "text",
+												"value": "{{psu_id_none}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2021-10-10\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"aspsp-api",
+												"v1",
+												"piis",
+												"consents",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4. Get PIIS Consent object by its ID",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "47dc6ac4-0e77-4021-8579-5a9d44404a77",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status is VALID\", () => {",
+													"        pm.expect(jsonData.consentStatus).to.eql(\"VALID\");",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"piis",
+												"consents",
+												"{{consent_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5. Create another PIIS consent with same PSU and TPP",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "5b22633d-f5bd-4f80-8c77-d2715a0bea3c",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "2f9aa822-6824-4a20-837e-7c37e9e4fac9",
+												"exec": [
+													"pm.test(\"Status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"const consentId = jsonData.consentId;",
+													"",
+													"pm.test(\"Consent ID is present\", () => {",
+													"    pm.expect(consentId).not.eql(undefined);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											},
+											{
+												"key": "PSU-ID",
+												"type": "text",
+												"value": "{{psu_id_none}}"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2021-10-10\"\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"aspsp-api",
+												"v1",
+												"piis",
+												"consents",
+												""
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "6.  Get a list of PIIS Consent objects by PSU ID",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "f75263ee-9b90-490a-a4db-9468f22ceb05",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent psu id\", () => {",
+													"    _.each(jsonData, (arrItem) => {",
+													"        pm.expect(arrItem.psuData.psuId).to.eql(pm.variables.get(\"psu_id_none\"));",
+													"    })",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID-Type",
+												"value": "some type",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "PSU-Corporate-ID",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "PSU-Corporate-ID-Type",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "Start-Date",
+												"value": "2019-01-01",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "End-Date",
+												"value": "2019-01-16",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "Instance-ID",
+												"value": "UNDEFINED",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"piis",
+												"consents"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7. Revokes PIIS Consent object by its ID. Consent gets status Revoked by PSU.",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "0e67ad42-b414-4fa5-9b5b-1d6e9fb7938a",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status changed\", () => {",
+													"        pm.expect(jsonData).to.eql(true);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "psu-id",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											},
+											{
+												"key": "psu-id-type",
+												"value": "psu id type",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-corporate-id",
+												"value": "psu corporate id",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-corporate-id-type",
+												"value": "psu corporate id type",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}/revoke-consent",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"piis",
+												"consents",
+												"{{consent_id}}",
+												"revoke-consent"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Get PIIS Consent object by its ID with status \"REVOKED\"",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "ba5d2476-a3b9-44d7-b75e-4963fdae2582",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status is REVOKED_BY_PSU\", () => {",
+													"        pm.expect(jsonData.consentStatus).to.eql(\"REVOKED_BY_PSU\");",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v1",
+												"piis",
+												"consents",
+												"{{consent_id}}"
+											]
+										}
+									},
+									"response": []
 								}
 							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "psu-id",
-										"value": "marion.mueller",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "psu-id-type",
-										"value": "psu id type",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "psu-corporate-id",
-										"value": "psu corporate id",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "psu-corporate-id-type",
-										"value": "psu corporate id type",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}/revoke-consent",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"piis",
-										"consents",
-										"{{consent_id}}",
-										"revoke-consent"
-									]
-								}
-							},
-							"response": []
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
 						}
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Successful cases",
+					"name": "v2",
 					"item": [
 						{
-							"name": "1. Set redirect SCA approach",
-							"event": [
+							"name": "Successful cases",
+							"item": [
 								{
-									"listen": "test",
-									"script": {
-										"id": "51d889ae-195a-4c0c-9cf1-b8f7edbbfa8e",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_aspsp_profile}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"aspsp-profile",
-										"for-debug",
-										"sca-approaches"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "2. Set ASPSP properties",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "eaccea1a-93de-47f0-bdf5-c685813342e9",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"both\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"NOT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ],\n       \t\"authorisationConfirmationRequestMandated\": false,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n    \t\"checkUriComplianceToDomainSupported\": false \n   }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"name": "1. Set redirect SCA approach",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "7ed1ed04-f2d9-4e1b-8f8c-939afc9ce1a3",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
 										}
-									}
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_aspsp_profile}}"
 									],
-									"path": [
-										"api",
-										"v1",
-										"aspsp-profile",
-										"for-debug",
-										"aspsp-settings"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "3. Create PIIS consent",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "d5773b70-4dfb-46ab-b8d8-48d1a37e40eb",
-										"exec": [
-											"pm.globals.unset(\"consent_id\");"
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
 										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"id": "e83c3a16-013e-4bac-9e3e-a29d5405b88a",
-										"exec": [
-											"pm.test(\"Status code is 201\", () => {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"const consentId = jsonData.consentId;",
-											"pm.globals.set(\"consent_id\", consentId);",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
+										"body": {
+											"mode": "raw",
+											"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"sca-approaches"
+											]
+										}
 									},
-									{
-										"key": "PSU-ID",
-										"type": "text",
-										"value": "{{psu_id_none}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"account\": \n    {\n      \"currency\": \"EUR\",\n      \"iban\": \"LU280019400644750000\",\n      \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n  \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n  \"validUntil\": \"2021-10-10\"\n}"
-								},
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"aspsp-api",
-										"v1",
-										"piis",
-										"consents",
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "4. Get PIIS Consent object by its ID",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "f15f8588-280d-4b68-9c58-7706b3feb659",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Consent status is VALID\", () => {",
-											"        pm.expect(jsonData.consentStatus).to.eql(\"VALID\");",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"piis",
-										"consents",
-										"{{consent_id}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "5. Create another PIIS consent with same PSU and TPP",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"id": "f1780e56-4882-4b48-b7af-71d7ccb4fec4",
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
+									"response": []
 								},
 								{
-									"listen": "test",
-									"script": {
-										"id": "93f73983-9992-4b4c-846f-43deab942b55",
-										"exec": [
-											"pm.test(\"Status code is 201\", () => {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"const consentId = jsonData.consentId;",
-											"",
-											"pm.test(\"Consent ID is present\", () => {",
-											"    pm.expect(consentId).not.eql(undefined);",
-											"});"
+									"name": "2. Enable PIIS consent support in ASPSP profile",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "4bd284a8-d098-4466-bc7e-db55b724b3d1",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"type": "text",
+												"value": "application/json"
+											}
 										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        }\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"TPP_CONSENT_SUPPORTED\",\n        \"redirectLinkToOnlineBanking\": {\n            \"piisRedirectUrlToAspsp\": \"http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}\"\n        }\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"implicit\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_aspsp_profile}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"aspsp-profile",
+												"for-debug",
+												"aspsp-settings"
+											]
+										}
 									},
-									{
-										"key": "PSU-ID",
-										"type": "text",
-										"value": "{{psu_id_none}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"account\": {\n        \"currency\": \"EUR\",\n        \"iban\": \"{{iban_none}}\",\n        \"aspspAccountId\": \"{{aspsp_account_id}}\"\n    },\n    \"tppAuthorisationNumber\": \"{{tpp_id}}\",\n    \"validUntil\": \"2021-10-10\"\n}"
+									"response": []
 								},
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"aspsp-api",
-										"v1",
-										"piis",
-										"consents",
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "6.  Get a list of PIIS Consent objects by PSU ID",
-							"event": [
 								{
-									"listen": "test",
-									"script": {
-										"id": "60e85666-2742-41ff-bc8f-63117de74413",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Consent psu id\", () => {",
-											"    _.each(jsonData, (arrItem) => {",
-											"        pm.expect(arrItem.psuData.psuId).to.eql(pm.variables.get(\"psu_id_none\"));",
-											"    })",
-											"});"
+									"name": "3. Create PIIS consent",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "29e45f14-c35b-4463-a39f-da355c89a4cf",
+												"exec": [
+													"pm.globals.unset(\"consent_id\");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "ae2425df-3fff-48c3-9bfb-ce8e9b4d790e",
+												"exec": [
+													"pm.test(\"Status code is 201\", () => {",
+													"    pm.response.to.have.status(201);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"PIIS consent ID exists\", () => {",
+													"   pm.expect(jsonData).to.have.property('consentId');",
+													"});",
+													"",
+													"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
+													"",
+													"const scaRedirectLink = jsonData._links.scaRedirect.href;",
+													"",
+													"if (scaRedirectLink !== undefined) {",
+													"    var a = scaRedirectLink.split('/');",
+													"    a.pop();",
+													"    const authorisationId = a.pop();",
+													"    pm.globals.set(\"authorisation_id\", authorisationId);",
+													"}",
+													"",
+													"const scaStatusParts = jsonData._links.scaStatus.href.split('/');",
+													"const redirectId = scaStatusParts.pop() || scaStatusParts.pop();",
+													"pm.globals.set(\"redirect_id\", redirectId);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											},
+											{
+												"key": "X-Request-ID",
+												"value": "{{x_request_id}}",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"value": "TPP-Redirect-URI",
+												"type": "text"
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"value": "TPP-Nok-Redirect-URI",
+												"type": "text"
+											}
 										],
-										"type": "text/javascript"
-									}
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}"
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_xs2a}}"
+											],
+											"path": [
+												"v2",
+												"consents",
+												"confirmation-of-funds"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4. Get PIIS Consent object by its ID",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "26ab2088-90df-4adb-ba04-351421c7da24",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status is VALID\", () => {",
+													"        pm.expect(jsonData.consentStatus).to.eql(\"VALID\");",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}//psu-api/v2/piis/consent/{{piis_consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"",
+												"psu-api",
+												"v2",
+												"piis",
+												"consent",
+												"{{piis_consent_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "5. Get consent response object by redirect id",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "14cf90dc-b74b-4474-bcdd-f6aaba36b6d3",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Authorisation id is present\", () => {",
+													"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
+													"});",
+													"",
+													"pm.test(\"Redirect URLs are present\", () => {",
+													"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
+													"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
+													"});",
+													"",
+													"const authorisationId = jsonData.authorisationId;",
+													"pm.test(\"Authorisation id is correct\", () => {",
+													"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
+													"});",
+													"",
+													"pm.test(\"Consent id is present\", () => {",
+													"    pm.expect(jsonData.consent).to.have.property(\"id\");",
+													"});",
+													"",
+													"pm.globals.set(\"internal_consent_id\", jsonData.consent.id);",
+													"pm.globals.set(\"authorisation_id\", authorisationId);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "789941e2-9b09-4388-b525-6592710d5207",
+												"exec": [
+													"pm.globals.unset(\"internal_consent_id\");",
+													"pm.globals.unset(\"authorisation_id\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consent/redirect/{{redirect_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v2",
+												"piis",
+												"consent",
+												"redirect",
+												"{{redirect_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "6.  Get a list of PIIS Consent objects by PSU ID",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "3f5fa2ed-68f7-4468-9478-0277eeddfffd",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent psu id\", () => {",
+													"    _.each(jsonData, (arrItem) => {",
+													"        pm.expect(arrItem.psuData.psuId).to.eql(pm.variables.get(\"psu_id_none\"));",
+													"    })",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											},
+											{
+												"key": "PSU-ID-Type",
+												"value": "some type",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "PSU-Corporate-ID",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "PSU-Corporate-ID-Type",
+												"value": "",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "Start-Date",
+												"value": "2019-01-01",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "End-Date",
+												"value": "2019-01-16",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "Instance-ID",
+												"value": "UNDEFINED",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consents",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v2",
+												"piis",
+												"consents"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "7. Revokes PIIS Consent object by its ID. Consent gets status Revoked by PSU.",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "1a802405-c3e1-4bbd-bdcb-3f70259a2939",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status changed\", () => {",
+													"        pm.expect(jsonData).to.eql(true);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "psu-id",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											},
+											{
+												"key": "psu-id-type",
+												"value": "psu id type",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-corporate-id",
+												"value": "psu corporate id",
+												"type": "text",
+												"disabled": true
+											},
+											{
+												"key": "psu-corporate-id-type",
+												"value": "psu corporate id type",
+												"type": "text",
+												"disabled": true
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consents/{{piis_consent_id}}/revoke-consent",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v2",
+												"piis",
+												"consents",
+												"{{piis_consent_id}}",
+												"revoke-consent"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Get PIIS Consent object by its ID with status \"REVOKED\"",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "bc088a49-2c07-4030-99bc-7534080aa350",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"Consent status is REVOKED_BY_PSU\", () => {",
+													"        pm.expect(jsonData.consentStatus).to.eql(\"REVOKED_BY_PSU\");",
+													"});",
+													"",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_none}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consents/{{piis_consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_cms}}"
+											],
+											"path": [
+												"psu-api",
+												"v2",
+												"piis",
+												"consents",
+												"{{piis_consent_id}}"
+											]
+										}
+									},
+									"response": []
 								}
 							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
-										"type": "text"
-									},
-									{
-										"key": "PSU-ID-Type",
-										"value": "some type",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "PSU-Corporate-ID",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "PSU-Corporate-ID-Type",
-										"value": "",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "Start-Date",
-										"value": "2019-01-01",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "End-Date",
-										"value": "2019-01-16",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "Instance-ID",
-										"value": "UNDEFINED",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"piis",
-										"consents"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "7. Revokes PIIS Consent object by its ID. Consent gets status Revoked by PSU.",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "a44cc721-3b82-4fe4-abfe-c42220f66822",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Consent status changed\", () => {",
-											"        pm.expect(jsonData).to.eql(true);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "psu-id",
-										"value": "{{psu_id_none}}",
-										"type": "text"
-									},
-									{
-										"key": "psu-id-type",
-										"value": "psu id type",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "psu-corporate-id",
-										"value": "psu corporate id",
-										"type": "text",
-										"disabled": true
-									},
-									{
-										"key": "psu-corporate-id-type",
-										"value": "psu corporate id type",
-										"type": "text",
-										"disabled": true
-									}
-								],
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}/revoke-consent",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"piis",
-										"consents",
-										"{{consent_id}}",
-										"revoke-consent"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "8. Get PIIS Consent object by its ID with status \"REVOKED\"",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "91752f73-da3f-420b-a389-5d7dc3bbff3f",
-										"exec": [
-											"pm.test(\"Status code is 200\", () => {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"const jsonData = pm.response.json();",
-											"",
-											"pm.test(\"Consent status is REVOKED_BY_PSU\", () => {",
-											"        pm.expect(jsonData.consentStatus).to.eql(\"REVOKED_BY_PSU\");",
-											"});",
-											"",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "PSU-ID",
-										"value": "{{psu_id_none}}",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/piis/consents/{{consent_id}}",
-									"protocol": "{{protocol}}",
-									"host": [
-										"{{url_cms}}"
-									],
-									"path": [
-										"psu-api",
-										"v1",
-										"piis",
-										"consents",
-										"{{consent_id}}"
-									]
-								}
-							},
-							"response": []
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
 						}
 					],
 					"protocolProfileBehavior": {},
