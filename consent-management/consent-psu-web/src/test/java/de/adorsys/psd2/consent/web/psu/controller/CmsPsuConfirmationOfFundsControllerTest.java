@@ -16,10 +16,12 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -36,9 +38,12 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -164,6 +169,57 @@ class CmsPsuConfirmationOfFundsControllerTest {
 
         // Then
         verify(cmsPsuConfirmationOfFundsService).updateAuthorisationStatus(psuIdData, CONSENT_ID, AUTHORISATION_ID, ScaStatus.RECEIVED, INSTANCE_ID, authenticationDataHolder);
+    }
+
+    @Test
+    void getConsentIdByRedirectId() throws Exception {
+        // Given
+        String cmsConfirmationOfFundsResponseJson = jsonReader.getStringFromFile("json/piis/response/confirmation-of-funds-response.json");
+        CmsConfirmationOfFundsResponse cmsConfirmationOfFundsResponse = jsonReader.getObjectFromString(cmsConfirmationOfFundsResponseJson, CmsConfirmationOfFundsResponse.class);
+        when(cmsPsuConfirmationOfFundsService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(cmsConfirmationOfFundsResponse));
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/redirect/{redirect-id}", AUTHORISATION_ID)
+                            .headers(INSTANCE_ID_HEADERS))
+            .andExpect(status().isOk())
+            .andExpect(content().json(cmsConfirmationOfFundsResponseJson));
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
+    }
+
+    @Test
+    void getConsentIdByRedirectId_redirectUrlIsExpired_requestTimeout() throws Exception {
+        // Given
+        when(cmsPsuConfirmationOfFundsService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
+            .thenThrow(new RedirectUrlIsExpiredException(NOK_REDIRECT_URI));
+        String timeoutResponse = jsonReader.getStringFromFile("json/piis/response/piis-consent-timeout.json");
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/redirect/{redirect-id}", AUTHORISATION_ID)
+                            .headers(INSTANCE_ID_HEADERS))
+            .andExpect(status().isRequestTimeout())
+            .andExpect(content().json(timeoutResponse));
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
+    }
+
+    @Test
+    void getConsentIdByRedirectId_notFound() throws Exception {
+        // Given
+        when(cmsPsuConfirmationOfFundsService.checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/redirect/{redirect-id}", AUTHORISATION_ID)
+                            .headers(INSTANCE_ID_HEADERS))
+            .andExpect(status().isNotFound())
+            .andExpect(content().bytes(EMPTY_BODY));
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
     }
 
     private static HttpHeaders buildInstanceIdHeaders() {

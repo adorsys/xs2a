@@ -16,18 +16,13 @@
 
 package de.adorsys.psd2.consent.api.piis.v2;
 
-import lombok.RequiredArgsConstructor;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
 
 @Value
-@RequiredArgsConstructor
-public class CmsConfirmationOfFundsResponse {
-    private CmsConfirmationOfFundsConsent consent;
-    private String authorisationId;
-    private String tppOkRedirectUri;
-    private String tppNokRedirectUri;
-
-    public CmsConfirmationOfFundsResponse(String tppNokRedirectUri) {
-        this(null, null, null, tppNokRedirectUri);
-    }
+public class CmsConfirmationOfFundsAuthorisation {
+    private String id;
+    private PsuIdData psuIdData;
+    private ScaStatus scaStatus;
 }

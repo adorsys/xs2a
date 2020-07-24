@@ -288,7 +288,7 @@ class CmsPsuAisServiceInternalTest {
     void getConsent() {
         // Given
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(aisAccountConsent);
@@ -339,7 +339,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(aisConsentTerminatedByTpp));
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(aisConsentTerminatedByTpp, authorisations))
             .thenReturn(mockCmsAisAccountConsent);
@@ -372,7 +372,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(consentToBeExpired);
         when(aisConsentConfirmationExpirationService.expireConsent(consentToBeExpired)).thenReturn(expiredConsent);
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(expiredConsent, authorisations))
             .thenReturn(mockCmsAisAccountConsent);
@@ -429,7 +429,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(consentEntity));
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
-        when(consentAuthorisationService.getAuthorisationByExternalId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(Optional.of(authorisationEntity));
         when(consentAuthorisationService.updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, authorisationEntity, authenticationDataHolder))
             .thenReturn(true);
@@ -486,7 +486,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(consentEntity);
 
         AuthorisationEntity expiredAuthorisationEntity = buildExpiredAuthorisationEntity();
-        when(consentAuthorisationService.getAuthorisationByExternalId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(Optional.of(expiredAuthorisationEntity));
         when(consentAuthorisationService.updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, expiredAuthorisationEntity, authenticationDataHolder))
             .thenReturn(false);
@@ -497,7 +497,7 @@ class CmsPsuAisServiceInternalTest {
         // Then
         assertFalse(updateAuthorisationStatus);
 
-        verify(consentAuthorisationService).getAuthorisationByExternalId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        verify(consentAuthorisationService).getAuthorisationByAuthorisationId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
         verify(consentAuthorisationService).updateScaStatusAndAuthenticationData(ScaStatus.RECEIVED, expiredAuthorisationEntity, authenticationDataHolder);
     }
 
@@ -510,7 +510,7 @@ class CmsPsuAisServiceInternalTest {
         when(consentJpaRepository.findAll(any(Specification.class)))
             .thenReturn(consentEntityList);
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(aisAccountConsent);
@@ -848,7 +848,7 @@ class CmsPsuAisServiceInternalTest {
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired())
             .thenReturn(true);
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(EXTERNAL_CONSENT_ID))
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(mockCmsAisAccountConsent);

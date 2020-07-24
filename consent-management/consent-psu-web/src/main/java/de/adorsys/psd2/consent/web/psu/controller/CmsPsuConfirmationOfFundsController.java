@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsApi;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -27,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,6 +50,23 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
                        ? ResponseEntity.ok().build()
                        : ResponseEntity.badRequest().build();
         } catch (AuthorisationIsExpiredException e) {
+            return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
+        }
+    }
+
+    @Override
+    public ResponseEntity<CmsConfirmationOfFundsResponse> getConsentIdByRedirectId(String redirectId, String instanceId) {
+        Optional<CmsConfirmationOfFundsResponse> response;
+        try {
+            response = cmsPsuConfirmationOfFundsService.checkRedirectAndGetConsent(redirectId, instanceId);
+
+            if (response.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+            CmsConfirmationOfFundsResponse cmsConfirmationOfFundsResponse = response.get();
+            return new ResponseEntity<>(cmsConfirmationOfFundsResponse, HttpStatus.OK);
+        } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }

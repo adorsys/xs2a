@@ -1,0 +1,47 @@
+{
+  "instanceId": "UNDEFINED",
+  "externalId": "ed1d8022-1c38-49ae-898e-78f29234557c",
+  "internalRequestId": "643e4ea3-0401-4bc8-b9bc-a9df51ec848e",
+  "consentStatus": "VALID",
+  "frequencyPerDay": 7,
+  "recurringIndicator": true,
+  "multilevelScaRequired": true,
+  "creationTimestamp": "2020-04-08T14:09:27.496839+03:00",
+  "validUntil": "2025-12-31",
+  "expireDate": "2030-12-31",
+  "lastActionDate": "2020-04-08",
+  "statusChangeTimestamp": "2020-04-08T14:09:27.496839+03:00",
+  "authorisationTemplate": {
+    "id": 1,
+    "redirectUri": "redirect uri",
+    "nokRedirectUri": "non redirect uri",
+    "cancelRedirectUri": "cancel redirect uri",
+    "cancelNokRedirectUri": "cancel nok redirect uri"
+  },
+  "tppInformation": {
+    "tppRedirectPreferred": true,
+    "tppInfo": {
+      "instanceId": "UNDEFINED",
+      "authorisationNumber": "TPP_AUTHORISATION_NUMBER",
+      "tppRoles": [
+        "AISP",
+        "ASPSP",
+        "PIISP",
+        "PISP"
+      ],
+      "authorityId": "TPP_AUTHORITY_ID"
+    },
+    "tppFrequencyPerDay": 7,
+    "tppBrandLoggingInformation": "tppBrandLoggingInformation"
+  },
+  "psuDataList": [
+    {
+      "instanceId": "UNDEFINED",
+      "psuId": "PSU_ID",
+      "psuIdType": "PSU_ID_TYPE",
+      "psuCorporateId": "PSU_CORPORATE_ID",
+      "psuCorporateIdType": "PSU_CORPORATE_ID_TYPE",
+      "psuIpAddress": "PSU_IP_ADDRESS"
+    }
+  ]
+}
