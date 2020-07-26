@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.ais.CmsAisConsentResponse;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsApi;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
@@ -68,6 +69,17 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
             return new ResponseEntity<>(cmsConfirmationOfFundsResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
             return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> updatePsuDataInConsent(String consentId, String authorisationId, String instanceId, PsuIdData psuIdData) {
+        try {
+            return cmsPsuConfirmationOfFundsService.updatePsuDataInConsent(psuIdData, authorisationId, instanceId)
+                       ? ResponseEntity.ok().build()
+                       : ResponseEntity.badRequest().build();
+        } catch (AuthorisationIsExpiredException e) {
+            return new ResponseEntity<>(new CmsAisConsentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
 }

@@ -53,4 +53,16 @@ public interface CmsPsuConfirmationOfFundsService {
      * @throws RedirectUrlIsExpiredException if redirect urls are expired
      */
     Optional<CmsConfirmationOfFundsResponse> checkRedirectAndGetConsent(String redirectId, String instanceId) throws RedirectUrlIsExpiredException;
+
+
+    /**
+     * Updates PSU Data in Confirmation of Funds Consent, based on the trusted information about PSU known to ASPSP (i.e. after authorisation)
+     *
+     * @param psuIdData       PSU credentials data to put. If some fields are nullable, the existing values will be overwritten.
+     * @param authorisationId ID of authorisation
+     * @param instanceId      optional ID of particular service instance
+     * @return <code>true</code> if consent was found and data was updated. <code>false</code> otherwise.
+     * @throws AuthorisationIsExpiredException if authorisation is expired
+     */
+    boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException;
 }

@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.ConfirmationOfFundsConsentSpecification;
 import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -48,6 +49,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
     private final CmsConsentAuthorisationServiceInternal consentAuthorisationService;
     private final ConfirmationOfFundsConsentSpecification confirmationOfFundsConsentSpecification;
     private final CmsConfirmationOfFundsMapper consentMapper;
+    private final CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
 
     @Override
     @Transactional
@@ -65,6 +67,18 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
                    .map(authorisation -> consentAuthorisationService.updateScaStatusAndAuthenticationData(status, authorisation, authenticationDataHolder))
                    .orElseGet(() -> {
                        log.info("Authorisation ID [{}], Instance ID: [{}]. Update authorisation status failed, because authorisation not found",
+                                authorisationId, instanceId);
+                       return false;
+                   });
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
+        return consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
+                   .map(auth -> cmsPsuConsentServiceInternal.updatePsuData(auth, psuIdData, ConsentType.PIIS_ASPSP))
+                   .orElseGet(() -> {
+                       log.info("Authorisation ID [{}], Instance ID: [{}]. Update PSU  in consent failed, because authorisation not found",
                                 authorisationId, instanceId);
                        return false;
                    });
