@@ -4,6 +4,7 @@
 
 * Add authorisation endpoints to CoF yaml
 * Implement implicit authorisation for PIIS consents
+* Add update PSU for confirmation of funds consent to CMS-PSU-API
 
 == Add authorisation endpoints to CoF yaml
 
@@ -21,3 +22,11 @@ Authorisation endpoints were added to Confirmation of Funds yaml and the followi
 
 From now on, implicit authorisation for PIIS consent is supported in Redirect and Embedded approach.
 To configure redirect url for PIIS consent use `piisRedirectUrlToAspsp` parameter in `redirectLinkToOnlineBanking` block in ASPSP Profile.
+
+== Add update PSU in confirmation of funds consent to CMS-PSU-API
+
+Added resource to update PSU for confirmation of funds (PIIS v2) to `CMS-PSU_API`:
+
+```
+PUT psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/psu-data
+```

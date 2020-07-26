@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.service.mapper.AuthorisationTemplateMapperImpl;
 import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.mapper.TppInfoMapperImpl;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -67,6 +68,8 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
     @Mock
     private ConfirmationOfFundsConsentSpecification confirmationOfFundsConsentSpecification;
     @Mock
+    private CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
+    @Mock
     private ConsentJpaRepository consentJpaRepository;
 
     private CmsConfirmationOfFundsMapper confirmationOfFundsMapper;
@@ -86,7 +89,7 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
 
         confirmationOfFundsMapper = new CmsConfirmationOfFundsMapper(new PsuDataMapper(), new TppInfoMapperImpl(), new AuthorisationTemplateMapperImpl());
         cmsPsuConfirmationOfFundsServiceInternal = new CmsPsuConfirmationOfFundsServiceInternal(consentJpaRepository, consentAuthorisationService,
-                                                                                                confirmationOfFundsConsentSpecification, confirmationOfFundsMapper);
+                                                                                                confirmationOfFundsConsentSpecification, confirmationOfFundsMapper, cmsPsuConsentServiceInternal);
     }
 
     @Test
@@ -189,6 +192,43 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
 
         verify(consentJpaRepository, never()).findByExternalId(anyString());
         verify(consentAuthorisationService, never()).getAuthorisationsByParentExternalId(anyString());
+    }
+
+    @Test
+    void updatePsuDataInConsent_success() throws AuthorisationIsExpiredException {
+        //Given
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(authorisationEntity));
+        when(cmsPsuConsentServiceInternal.updatePsuData(authorisationEntity, psuIdData, ConsentType.PIIS_ASPSP))
+            .thenReturn(true);
+        //When
+        boolean updatePsuDataInConsent = cmsPsuConfirmationOfFundsServiceInternal.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, INSTANCE_ID);
+        //Then
+        assertTrue(updatePsuDataInConsent);
+    }
+
+    @Test
+    void updatePsuDataInConsent_authorisationNotFound() throws AuthorisationIsExpiredException {
+        //Given
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+        //When
+        boolean updatePsuDataInConsent = cmsPsuConfirmationOfFundsServiceInternal.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, INSTANCE_ID);
+        //Then
+        assertFalse(updatePsuDataInConsent);
+    }
+
+    @Test
+    void updatePsuDataInConsent_updateFailed() throws AuthorisationIsExpiredException {
+        //Given
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(authorisationEntity));
+        when(cmsPsuConsentServiceInternal.updatePsuData(authorisationEntity, psuIdData, ConsentType.PIIS_ASPSP))
+            .thenReturn(false);
+        //When
+        boolean updatePsuDataInConsent = cmsPsuConfirmationOfFundsServiceInternal.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, INSTANCE_ID);
+        //Then
+        assertFalse(updatePsuDataInConsent);
     }
 
 }
