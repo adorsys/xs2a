@@ -43,23 +43,6 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
     private final SpiPaymentMapper spiPaymentMapper;
 
     @Override
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(SpiContextData contextData, SpiScaConfirmation spiScaConfirmation, SpiPayment payment, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
-        if (standardPaymentProductsResolver.isRawPaymentProduct(payment.getPaymentProduct())) {
-            return verifyScaAndExecutePayment(commonPaymentSpi, (SpiPaymentInfo) payment, spiScaConfirmation, contextData, spiAspspConsentDataProvider);
-        }
-
-        PaymentType paymentType = payment.getPaymentType();
-        if (PaymentType.SINGLE == paymentType) {
-            return verifyScaAndExecutePayment(singlePaymentSpi, spiPaymentMapper.mapToSpiSinglePayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
-        } else if (PaymentType.PERIODIC == paymentType) {
-            return verifyScaAndExecutePayment(periodicPaymentSpi, spiPaymentMapper.mapToSpiPeriodicPayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
-        } else {
-            return verifyScaAndExecutePayment(bulkPaymentSpi, spiPaymentMapper.mapToSpiBulkPayment(payment), spiScaConfirmation, contextData, spiAspspConsentDataProvider);
-        }
-    }
-
-    @Override
     public SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData contextData,
                                                                                                       SpiScaConfirmation spiScaConfirmation,
                                                                                                       SpiPayment payment,
@@ -100,15 +83,6 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
                                                                                               SpiContextData contextData,
                                                                                               SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentSpi.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
-    }
-
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    private <T extends SpiPayment> SpiResponse<SpiPaymentExecutionResponse> verifyScaAndExecutePayment(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
-                                                                                              T payment,
-                                                                                              SpiScaConfirmation spiScaConfirmation,
-                                                                                              SpiContextData contextData,
-                                                                                              SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
-        return paymentSpi.verifyScaAuthorisationAndExecutePayment(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
     }
 
     private <T extends SpiPayment> SpiResponse<SpiPaymentExecutionResponse> executeWithoutSca(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
