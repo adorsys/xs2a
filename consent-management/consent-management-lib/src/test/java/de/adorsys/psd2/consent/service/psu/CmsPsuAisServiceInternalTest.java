@@ -39,10 +39,7 @@ import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.repository.specification.AuthorisationSpecification;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.consent.service.AisConsentUsageService;
-import de.adorsys.psd2.consent.service.mapper.AccessMapper;
-import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
-import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.*;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
@@ -130,6 +127,8 @@ class CmsPsuAisServiceInternalTest {
     private AccessMapper accessMapper;
     @Mock
     private AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
+    @Mock
+    private PsuDataUpdater psuDataUpdater;
 
     private ConsentEntity consentEntity;
     private List<ConsentEntity> consentEntityList;
@@ -246,18 +245,15 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(authorisationEntityWithPsuData));
         when(psuDataMapper.mapToPsuData(psuIdData))
             .thenReturn(psuData);
-        ArgumentCaptor<AuthorisationEntity> authorisationEntityCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
+        PsuData psuDataFromAuth = new PsuData();
+        psuDataFromAuth.setId(psuDataId);
+        when(psuDataUpdater.updatePsuDataEntity(psuDataFromAuth, psuData)).thenReturn(psuData);
 
         // When
         boolean updatePsuDataInConsent = cmsPsuAisService.updatePsuDataInConsent(psuIdData, AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(updatePsuDataInConsent);
-        verify(authorisationRepository).save(authorisationEntityCaptor.capture());
-        AuthorisationEntity capturedAuthorisationEntity = authorisationEntityCaptor.getValue();
-        PsuData savedPsuData = capturedAuthorisationEntity.getPsuData();
-        PsuData expectedPsuData = buildPsuDataWithId(psuDataId, savedPsuData);
-        assertEquals(expectedPsuData, savedPsuData);
     }
 
     @Test
@@ -429,8 +425,6 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(authorisationEntity));
-        when(authorisationRepository.save(authorisationEntity))
-            .thenReturn(authorisationEntity);
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
 
@@ -846,8 +840,6 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.of(mockAisConsentAuthorization));
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired())
             .thenReturn(false);
-        when(authorisationRepository.save(mockAisConsentAuthorization))
-            .thenReturn(mockAisConsentAuthorization);
 
         // When
         assertThrows(

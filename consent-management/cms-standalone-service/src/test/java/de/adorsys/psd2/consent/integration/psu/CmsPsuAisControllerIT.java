@@ -168,7 +168,6 @@ public class CmsPsuAisControllerIT {
 
         verify(aisConsentSpecification).byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID);
         verify(authorisationSpecification).byExternalIdAndInstanceId(AUTHORISATION_ID, INSTANCE_ID);
-        verify(authorisationRepository, times(1)).save(authorisationEntity);
 
         assertEquals(SMS, authorisationEntity.getAuthenticationMethodId());
         assertEquals(TAN, authorisationEntity.getScaAuthenticationData());
