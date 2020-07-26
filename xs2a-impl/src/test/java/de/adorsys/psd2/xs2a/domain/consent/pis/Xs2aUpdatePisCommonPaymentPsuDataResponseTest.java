@@ -28,7 +28,8 @@ class Xs2aUpdatePisCommonPaymentPsuDataResponseTest {
     void getAuthorisationResponseType_shouldReturnUPDATE() {
         // Given
         PsuIdData psuData = new PsuIdData(null, null, null, null, null);
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED, "some payment id", "some cancellation id", psuData);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                 .buildWithCurrencyConversionInfo(ScaStatus.RECEIVED, "some payment id", "some cancellation id", psuData, null);
 
         // When
         AuthorisationResponseType actual = response.getAuthorisationResponseType();

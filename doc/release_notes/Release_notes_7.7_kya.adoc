@@ -4,6 +4,7 @@
 
 * Added information about currency conversion to Payment Initiation response
 * Fixed Double saving of psu data
+* Added currency conversion related information to Update PSU Data response
 
 === Added information about currency conversion to Payment Initiation response
 
@@ -13,3 +14,8 @@ Payment Initiation response.
 === Fixed Double saving of psu data
 
 From now on, in all cms psu api requests psu data is saved correctly.
+
+=== Added currency conversion related information to Update PSU Data response
+
+From now on, information about currency conversion related information is added
+into update psu data response.

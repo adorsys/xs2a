@@ -43,18 +43,18 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -63,6 +63,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
@@ -119,6 +120,10 @@ class PisAuthorisationProcessorServiceImplTest {
     private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
     @Mock
     private PisExecutePaymentService pisExecutePaymentService;
+    @Mock
+    private CurrencyConversionInfoSpi currencyConversionInfoSpi;
+    @Mock
+    private SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
 
     @Test
     void updateAuthorisation_success() {
@@ -129,7 +134,7 @@ class PisAuthorisationProcessorServiceImplTest {
 
         when(embeddedPisScaAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
 
-        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(services, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService = new PisAuthorisationProcessorServiceImpl(services, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
         //When
         pisAuthorisationProcessorService.updateAuthorisation(buildAuthorisationProcessorRequest(), buildAuthorisationProcessorResponse());
@@ -150,6 +155,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
@@ -184,6 +195,13 @@ class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(buildSpiAuthorizationCodeResult())
                                                                                                           .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
+
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -209,6 +227,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildMultipleScaMethodsResponse())
                                                                                                      .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -274,7 +298,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -362,7 +391,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -489,7 +523,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildAuthorisationProcessorRequest());
 
@@ -539,6 +578,13 @@ class PisAuthorisationProcessorServiceImplTest {
 
     @Test
     void doScaReceived_identification_success() {
+        // Given
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaReceived(buildIdentificationAuthorisationProcessorRequest());
 
@@ -578,7 +624,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -612,6 +663,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(buildSpiAuthorizationCodeResult())
                                                                                                           .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -637,6 +694,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildMultipleScaMethodsResponse())
                                                                                                      .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -702,6 +765,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -790,6 +859,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
@@ -916,7 +991,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), any(), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                     .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                     .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildAuthorisationProcessorRequest());
 
@@ -966,6 +1046,13 @@ class PisAuthorisationProcessorServiceImplTest {
 
     @Test
     void doScaPsuIdentified_identification_success() {
+        // Given
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuIdentified(buildIdentificationAuthorisationProcessorRequest());
 
@@ -1006,6 +1093,18 @@ class PisAuthorisationProcessorServiceImplTest {
         when(paymentAuthorisationSpi.requestAuthorisationCode(any(), any(), any(), any())).thenReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                                                                                                           .payload(buildSpiAuthorizationCodeResult())
                                                                                                           .build());
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentResponse));
+        SpiSinglePayment spiPayment = new SpiSinglePayment("sepa-credit-transfers");
+        spiPayment.setPaymentId(TEST_PAYMENT_ID);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse)).thenReturn(spiPayment);
+
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(processorRequest);
 
@@ -1097,7 +1196,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                                           .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                                                                           .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
 
@@ -1156,7 +1260,12 @@ class PisAuthorisationProcessorServiceImplTest {
         when(pisExecutePaymentService.executePaymentWithoutSca(any(), eq(TEST_SPI_SINGLE_PAYMENT), any())).thenReturn(SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                                                                           .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_MULTILEVEL_SCA))
                                                                                                                           .build());
-
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaPsuAuthenticated(buildAuthorisationProcessorRequest());
 
@@ -1179,6 +1288,17 @@ class PisAuthorisationProcessorServiceImplTest {
                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                    .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentResponse));
+        SpiSinglePayment spiPayment = new SpiSinglePayment("sepa-credit-transfers");
+        spiPayment.setPaymentId(TEST_PAYMENT_ID);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse)).thenReturn(spiPayment);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaMethodSelected(buildAuthorisationProcessorRequest());
@@ -1201,6 +1321,18 @@ class PisAuthorisationProcessorServiceImplTest {
                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_MULTILEVEL_SCA))
                                                                    .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
+
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
+        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentResponse));
+        SpiSinglePayment spiPayment = new SpiSinglePayment("sepa-credit-transfers");
+        spiPayment.setPaymentId(TEST_PAYMENT_ID);
+        when(xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse)).thenReturn(spiPayment);
 
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaMethodSelected(buildAuthorisationProcessorRequest());
@@ -1264,6 +1396,13 @@ class PisAuthorisationProcessorServiceImplTest {
 
     @Test
     void doScaExempted_success() {
+        // Given
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaExempted(buildAuthorisationProcessorRequest());
 
@@ -1285,6 +1424,13 @@ class PisAuthorisationProcessorServiceImplTest {
 
     @Test
     void doScaFinalised_success() {
+        // Given
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(any(), any(), any(), any()))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
         // When
         AuthorisationProcessorResponse actual = pisAuthorisationProcessorService.doScaFinalised(buildAuthorisationProcessorRequest());
 

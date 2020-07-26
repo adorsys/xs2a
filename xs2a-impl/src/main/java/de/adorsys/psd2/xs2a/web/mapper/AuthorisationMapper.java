@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -25,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +42,7 @@ public class AuthorisationMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
     private final AuthorisationModelMapper authorisationModelMapper;
+    private final AmountModelMapper amountModelMapper;
 
     public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResources xs2AAuthorisationSubResources) {
         Authorisations authorisations = new Authorisations();
@@ -95,12 +98,7 @@ public class AuthorisationMapper {
 
     public UpdatePsuAuthenticationResponse mapToPisUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {
         return Optional.ofNullable(response)
-                   .map(r -> buildUpdatePsuAuthenticationResponse(r.getLinks(),
-                                                                  r.getAvailableScaMethods(),
-                                                                  r.getChosenScaMethod(),
-                                                                  r.getPsuMessage(),
-                                                                  r.getChallengeData(),
-                                                                  r.getScaStatus()))
+                   .map(r -> buildUpdatePsuAuthenticationResponseWithCurrencyInfo(response))
                    .orElse(null);
     }
 
@@ -131,6 +129,29 @@ public class AuthorisationMapper {
                    .map(o -> (LinkedHashMap<String, String>) o)
                    .map(psuDataMap -> psuDataMap.get("password"))
                    .orElse(null);
+    }
+
+    private UpdatePsuAuthenticationResponse buildUpdatePsuAuthenticationResponseWithCurrencyInfo(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {
+        UpdatePsuAuthenticationResponse psuResponse =  new UpdatePsuAuthenticationResponse()
+                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
+                   .scaMethods(scaMethodsMapper.mapToScaMethods(response.getAvailableScaMethods()))
+                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                   .psuMessage(response.getPsuMessage())
+                   .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
+                   .scaStatus(
+                       Optional.ofNullable(response.getScaStatus())
+                           .map(s -> de.adorsys.psd2.model.ScaStatus.valueOf(s.name()))
+                           .orElse(null)
+                   );
+        Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = response.getXs2aCurrencyConversionInfo();
+        if (xs2aCurrencyConversionInfo != null) {
+            psuResponse
+                .transactionFees(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getTransactionFees()))
+                   .currencyConversionFees(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getCurrencyConversionFees()))
+                   .estimatedTotalAmount(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getEstimatedTotalAmount()))
+                   .estimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getEstimatedInterbankSettlementAmount()));
+        }
+        return psuResponse;
     }
 
     private UpdatePsuAuthenticationResponse buildUpdatePsuAuthenticationResponse(Links links, List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> availableScaMethods,

@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -44,9 +45,12 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCurrencyConversionInfo;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -54,6 +58,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.util.Currency;
 
 import static de.adorsys.psd2.consent.api.CmsError.TECHNICAL_ERROR;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
@@ -67,7 +74,6 @@ class PisAuthorisationConfirmationServiceTest {
     private static final String CONFIRMATION_CODE = "123456";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final SpiSinglePayment SPI_SINGLE_PAYMENT = new SpiSinglePayment(PAYMENT_PRODUCT);
-
     private final static JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
@@ -94,6 +100,10 @@ class PisAuthorisationConfirmationServiceTest {
     private Xs2aUpdatePaymentAfterSpiService xs2aUpdatePaymentAfterSpiService;
     @Mock
     private PisCommonPaymentServiceEncrypted pisCommonPaymentServiceEncrypted;
+    @Mock
+    private CurrencyConversionInfoSpi currencyConversionInfoSpi;
+    @Mock
+    private SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
 
     @Test
     void processAuthorisationConfirmation_success_checkOnSpi() {
@@ -101,7 +111,8 @@ class PisAuthorisationConfirmationServiceTest {
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
         TransactionStatus transactionStatus = TransactionStatus.ACSP;
-        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                       .buildWithCurrencyConversionInfo(ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
 
         SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest = new SpiCheckConfirmationCodeRequest(request.getConfirmationCode(), AUTHORISATION_ID);
@@ -129,6 +140,13 @@ class PisAuthorisationConfirmationServiceTest {
                             .payload(new SpiPaymentConfirmationCodeValidationResponse(ScaStatus.FINALISED, transactionStatus))
                             .build());
 
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(contextData, SPI_SINGLE_PAYMENT, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
+
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
 
@@ -142,7 +160,8 @@ class PisAuthorisationConfirmationServiceTest {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
-        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                       .buildWithCurrencyConversionInfo(ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);
@@ -163,6 +182,12 @@ class PisAuthorisationConfirmationServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
         when(pisCheckAuthorisationConfirmationService.notifyConfirmationCodeValidation(contextData, true, SPI_SINGLE_PAYMENT, false, aspspConsentDataProvider)).thenReturn(spiResponse);
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(contextData, SPI_SINGLE_PAYMENT, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);
@@ -254,6 +279,12 @@ class PisAuthorisationConfirmationServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID)).thenReturn(aspspConsentDataProvider);
         when(spiContextDataProvider.provideWithPsuIdData(psuIdData)).thenReturn(contextData);
         when(pisCheckAuthorisationConfirmationService.notifyConfirmationCodeValidation(contextData, false, SPI_SINGLE_PAYMENT, false, aspspConsentDataProvider)).thenReturn(spiResponse);
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(contextData, SPI_SINGLE_PAYMENT, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // when
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResult = pisAuthorisationConfirmationService.processAuthorisationConfirmation(request);

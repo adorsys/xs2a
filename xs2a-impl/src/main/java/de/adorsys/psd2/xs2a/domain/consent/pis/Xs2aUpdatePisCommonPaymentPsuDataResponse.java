@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.consent.pis;
 
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
@@ -33,6 +34,17 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Xs2aUpdatePisCommonPaymentPsuDataResponse extends AuthorisationProcessorResponse implements CancellationAuthorisationResponse {
+    private Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo;
+
+    public static Xs2aUpdatePisCommonPaymentPsuDataResponse buildWithCurrencyConversionInfo(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData, Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(scaStatus, paymentId, authorisationId, psuData, xs2aCurrencyConversionInfo);
+    }
+
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData, Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
+        this(scaStatus, paymentId, authorisationId, psuData);
+        this.xs2aCurrencyConversionInfo = xs2aCurrencyConversionInfo;
+    }
+
     public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData) {
         this.scaStatus = scaStatus;
         this.paymentId = paymentId;
