@@ -984,7 +984,8 @@ class PaymentControllerTest {
             .thenReturn(request);
 
         ResponseObject<CancellationAuthorisationResponse> serviceResponse = ResponseObject.<CancellationAuthorisationResponse>builder()
-                                                                                .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData))
+                                                                                .body(Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                                          .buildWithCurrencyConversionInfo(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData, null))
                                                                                 .build();
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request))
             .thenReturn(serviceResponse);
@@ -1088,7 +1089,8 @@ class PaymentControllerTest {
             .thenReturn(request);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                                                                                        .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData))
+                                                                                        .body(Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                                                  .buildWithCurrencyConversionInfo(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData, null))
                                                                                         .build();
 
         when(paymentCancellationAuthorisationService.updatePisCancellationPsuData(request))
@@ -1192,7 +1194,8 @@ class PaymentControllerTest {
             .thenReturn(request);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
-                                                                                        .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, AUTHORISATION_ID, psuIdData))
+                                                                                        .body(Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                                                  .buildWithCurrencyConversionInfo(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, AUTHORISATION_ID, psuIdData, null))
                                                                                         .build();
 
         when(paymentAuthorisationService.updatePisCommonPaymentPsuData(request))

@@ -27,12 +27,16 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCurrencyConversionInfo;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
@@ -42,6 +46,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.util.Currency;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,6 +88,10 @@ class PisCommonDecoupledServiceTest {
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     @Mock
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @Mock
+    private CurrencyConversionInfoSpi currencyConversionInfoSpi;
+    @Mock
+    private SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
 
     @BeforeEach
     void init() {
@@ -94,6 +105,13 @@ class PisCommonDecoupledServiceTest {
         // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
+
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
@@ -110,6 +128,12 @@ class PisCommonDecoupledServiceTest {
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
             .thenReturn(EXPECTED_ERROR);
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
@@ -124,6 +148,12 @@ class PisCommonDecoupledServiceTest {
         // Given
         when(paymentAuthorisationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
             .thenReturn(AUTH_DECOUPLED_RESPONSE);
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
@@ -140,6 +170,12 @@ class PisCommonDecoupledServiceTest {
             .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
         when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
             .thenReturn(EXPECTED_ERROR);
+        SpiAmount spiAmount = new SpiAmount(Currency.getInstance("EUR"), BigDecimal.valueOf(34));
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = new SpiCurrencyConversionInfo(spiAmount, spiAmount, spiAmount, spiAmount);
+        when(currencyConversionInfoSpi.getCurrencyConversionInfo(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiCurrencyConversionInfo>builder()
+                            .payload(spiCurrencyConversionInfo)
+                            .build());
 
         // When
         Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID, SPI_SINGLE_PAYMENT, AUTHENTICATION_METHOD_ID);
@@ -236,7 +272,8 @@ class PisCommonDecoupledServiceTest {
     }
 
     private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                 .buildWithCurrencyConversionInfo(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA, null);
         response.setPsuMessage(AUTH_DECOUPLED_RESPONSE.getPayload().getPsuMessage());
         return response;
     }

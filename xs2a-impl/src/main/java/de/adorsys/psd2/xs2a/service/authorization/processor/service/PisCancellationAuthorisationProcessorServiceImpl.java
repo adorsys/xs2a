@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aCurrencyConversionInfoMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
@@ -53,6 +54,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.springframework.stereotype.Service;
@@ -78,10 +80,14 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
                                                             Xs2aAuthorisationService xs2aAuthorisationService,
                                                             Xs2aPisCommonPaymentService xs2aPisCommonPaymentService,
                                                             PisCommonDecoupledService pisCommonDecoupledService,
-                                                            PisPsuDataService pisPsuDataService, Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper) {
+                                                            PisPsuDataService pisPsuDataService,
+                                                            Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper,
+                                                            CurrencyConversionInfoSpi currencyConversionInfoSpi,
+                                                            SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper) {
         super(services, xs2aAuthorisationService, xs2aPisCommonPaymentService, xs2aToSpiPaymentMapper,
               spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper,
-              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper);
+              pisAspspDataService, xs2aPisCommonPaymentMapper, xs2aToSpiPsuDataMapper,
+              currencyConversionInfoSpi, spiToXs2aCurrencyConversionInfoMapper);
         this.paymentCancellationSpi = paymentCancellationSpi;
         this.spiErrorMapper = spiErrorMapper;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -150,7 +156,8 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
         updatePaymentAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.CANC);
 
-        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.FINALISED, paymentId, authorisationId, psuData);
+        return Xs2aUpdatePisCommonPaymentPsuDataResponse
+                   .buildWithCurrencyConversionInfo(ScaStatus.FINALISED, paymentId, authorisationId, psuData, null);
     }
 
     @Override
@@ -196,6 +203,13 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     @Override
     Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledApproach(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
         return pisCommonDecoupledService.proceedDecoupledCancellation(request, payment, authenticationMethodId);
+    }
+
+    @Override
+    Xs2aUpdatePisCommonPaymentPsuDataResponse getXs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, SpiPayment payment, SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider, PsuIdData psuData, String authorisationId) {
+
+
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(scaStatus, payment.getPaymentId(), authorisationId, psuData);
     }
 
     private boolean isPsuDataCorrect(String paymentId, PsuIdData psuData) {
