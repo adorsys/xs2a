@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsConsent;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsApi;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
@@ -56,7 +57,7 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
     }
 
     @Override
-    public ResponseEntity<CmsConfirmationOfFundsResponse> getConsentIdByRedirectId(String redirectId, String instanceId) {
+    public ResponseEntity<CmsConfirmationOfFundsResponse> getConsentByRedirectId(String redirectId, String instanceId) {
         Optional<CmsConfirmationOfFundsResponse> response;
         try {
             response = cmsPsuConfirmationOfFundsService.checkRedirectAndGetConsent(redirectId, instanceId);
@@ -106,5 +107,15 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
         return cmsPsuConfirmationOfFundsService.updateConsentStatus(consentId, consentStatus, instanceId)
                    ? ResponseEntity.ok().build()
                    : ResponseEntity.badRequest().build();
+    }
+
+    @Override
+    public ResponseEntity<CmsConfirmationOfFundsConsent> getConsentByConsentId(String consentId, String psuId, String psuIdType,
+                                                                               String psuCorporateId, String psuCorporateIdType,
+                                                                               String instanceId) {
+        PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
+        return cmsPsuConfirmationOfFundsService.getConsent(psuIdData, consentId, instanceId)
+                   .map(consent -> new ResponseEntity<>(consent, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

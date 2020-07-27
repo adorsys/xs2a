@@ -40,7 +40,6 @@ class CmsConfirmationOfFundsMapperTest {
 
     @Autowired
     private CmsConfirmationOfFundsMapper mapper;
-
     private JsonReader jsonReader = new JsonReader();
 
     @Test

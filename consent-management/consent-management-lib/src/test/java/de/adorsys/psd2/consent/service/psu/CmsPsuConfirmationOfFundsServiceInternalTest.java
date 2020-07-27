@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu;
 
+import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsConsent;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
@@ -293,5 +294,40 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
         //Then
         assertFalse(result);
         assertNotEquals(consentStatus, consentEntity.getConsentStatus());
+    }
+    @Test
+    void getConsent() {
+        when(confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(consentJpaRepository.findOne(any(Specification.class)))
+            .thenReturn(Optional.of(consentEntity));
+
+        List<AuthorisationEntity> authorisations = Collections.singletonList(authorisationEntity);
+        when(consentAuthorisationService.getAuthorisationsByParentExternalId(CONSENT_ID))
+            .thenReturn(authorisations);
+
+        Optional<CmsConfirmationOfFundsConsent> actual = cmsPsuConfirmationOfFundsServiceInternal.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+
+        assertTrue(actual.isPresent());
+
+        CmsConfirmationOfFundsConsent expected = jsonReader.getObjectFromFile("json/service/psu/piis/confirmation-of-funds-consent.json",
+                                                                              CmsConfirmationOfFundsConsent.class);
+
+        expected.setCreationTimestamp(actual.get().getCreationTimestamp());
+        assertEquals(expected, actual.get());
+    }
+
+    @Test
+    void getConsent_consentIsNotFound() {
+        when(confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(consentJpaRepository.findOne(any(Specification.class)))
+            .thenReturn(Optional.empty());
+
+        Optional<CmsConfirmationOfFundsConsent> actual = cmsPsuConfirmationOfFundsServiceInternal.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+
+        assertTrue(actual.isEmpty());
+
+        verify(consentAuthorisationService, never()).getAuthorisationsByParentExternalId(anyString());
     }
 }

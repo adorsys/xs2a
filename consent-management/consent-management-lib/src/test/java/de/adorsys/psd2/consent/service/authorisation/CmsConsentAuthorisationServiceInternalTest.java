@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.specification.AuthorisationSpecification;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
+import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -128,5 +129,35 @@ class CmsConsentAuthorisationServiceInternalTest {
     void getAuthorisationsByParentExternalId() {
         cmsConsentAuthorisationServiceInternal.getAuthorisationsByParentExternalId(EXTERNAL_ID);
         verify(authorisationRepository, times(1)).findAllByParentExternalIdAndAuthorisationType(EXTERNAL_ID, AuthorisationType.AIS);
+    }
+
+    @Test
+    void getAuthorisationByRedirectId_success() throws RedirectUrlIsExpiredException {
+        authorisationEntity.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plusDays(1));
+
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(authorisationRepository.findOne(any(Specification.class)))
+            .thenReturn(Optional.of(authorisationEntity));
+
+        Optional<AuthorisationEntity> actual = cmsConsentAuthorisationServiceInternal.getAuthorisationByRedirectId(AUTHORISATION_ID, INSTANCE_ID);
+
+        assertTrue(actual.isPresent());
+        assertEquals(authorisationEntity, actual.get());
+    }
+
+    @Test
+    void getAuthorisationByRedirectId_redirectUrlIsExpired() {
+        authorisationEntity.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().minusDays(1));
+
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(authorisationRepository.findOne(any(Specification.class)))
+            .thenReturn(Optional.of(authorisationEntity));
+
+        assertThrows(RedirectUrlIsExpiredException.class,
+                     () -> cmsConsentAuthorisationServiceInternal.getAuthorisationByRedirectId(AUTHORISATION_ID, INSTANCE_ID));
+
+        assertEquals(ScaStatus.FAILED, authorisationEntity.getScaStatus());
     }
 }
