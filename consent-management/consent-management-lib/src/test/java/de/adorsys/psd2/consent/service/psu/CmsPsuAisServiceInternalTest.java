@@ -45,6 +45,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
@@ -136,6 +137,8 @@ class CmsPsuAisServiceInternalTest {
     private CmsConsentAuthorisationServiceInternal consentAuthorisationService;
     @Mock
     private CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
+    @Mock
+    private PsuDataUpdater psuDataUpdater;
 
     private ConsentEntity consentEntity;
     private List<ConsentEntity> consentEntityList;
@@ -244,6 +247,8 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(authorisationEntityWithPsuData));
+        PsuData psuDataFromAuth = new PsuData();
+        psuDataFromAuth.setId(psuDataId);
         when(cmsPsuConsentServiceInternal.updatePsuData(authorisationEntityWithPsuData, psuIdData, ConsentType.AIS))
             .thenReturn(true);
 
@@ -268,6 +273,7 @@ class CmsPsuAisServiceInternalTest {
 
         // Then
         assertFalse(updatePsuDataInConsent);
+        verify(authorisationRepository, never()).save(any());
     }
 
     @Test
