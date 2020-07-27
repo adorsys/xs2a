@@ -19,13 +19,11 @@ package de.adorsys.psd2.consent.service.psu;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsAuthorisation;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.ConfirmationOfFundsConsentSpecification;
 import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
-import de.adorsys.psd2.consent.service.mapper.AuthorisationTemplateMapperImpl;
-import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.mapper.TppInfoMapperImpl;
+import de.adorsys.psd2.consent.service.mapper.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
@@ -71,6 +69,10 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
     private CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
     @Mock
     private ConsentJpaRepository consentJpaRepository;
+    @Mock
+    private CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
+    @Mock
+    private CmsPsuConfirmationOfFundsAuthorisation cmsPsuConfirmationOfFundsAuthorisation;
 
     private CmsConfirmationOfFundsMapper confirmationOfFundsMapper;
 
@@ -89,7 +91,8 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
 
         confirmationOfFundsMapper = new CmsConfirmationOfFundsMapper(new PsuDataMapper(), new TppInfoMapperImpl(), new AuthorisationTemplateMapperImpl());
         cmsPsuConfirmationOfFundsServiceInternal = new CmsPsuConfirmationOfFundsServiceInternal(consentJpaRepository, consentAuthorisationService,
-                                                                                                confirmationOfFundsConsentSpecification, confirmationOfFundsMapper, cmsPsuConsentServiceInternal);
+                                                                                                confirmationOfFundsConsentSpecification, confirmationOfFundsMapper,
+                                                                                                cmsPsuConsentServiceInternal, cmsPsuAuthorisationMapper);
     }
 
     @Test
@@ -231,4 +234,28 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
         assertFalse(updatePsuDataInConsent);
     }
 
+    @Test
+    void getAuthorisationByAuthorisationId()  throws AuthorisationIsExpiredException {
+        //Given
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(authorisationEntity));
+        when(cmsPsuAuthorisationMapper.mapToCmsPsuConfirmationOfFundsAuthorisation(authorisationEntity))
+            .thenReturn(cmsPsuConfirmationOfFundsAuthorisation);
+        //When
+        Optional<CmsPsuConfirmationOfFundsAuthorisation> authorisationByAuthorisationId = cmsPsuConfirmationOfFundsServiceInternal.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
+        //Then
+        assertTrue(authorisationByAuthorisationId.isPresent());
+        assertEquals(cmsPsuConfirmationOfFundsAuthorisation, authorisationByAuthorisationId.get());
+    }
+
+    @Test
+    void getAuthorisationByAuthorisationId_authorisationNotFound()  throws AuthorisationIsExpiredException {
+        //Given
+        when(consentAuthorisationService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+        //When
+        Optional<CmsPsuConfirmationOfFundsAuthorisation> authorisationByAuthorisationId = cmsPsuConfirmationOfFundsServiceInternal.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
+        //Then
+        assertTrue(authorisationByAuthorisationId.isEmpty());
+    }
 }

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
+import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
@@ -220,6 +221,59 @@ class CmsPsuConfirmationOfFundsControllerTest {
 
         // Then
         verify(cmsPsuConfirmationOfFundsService).checkRedirectAndGetConsent(AUTHORISATION_ID, INSTANCE_ID);
+    }
+
+    @Test
+    void getAuthorisationByAuthorisationId_shouldReturnOk() throws Exception {
+        // Given
+        String fileName = "json/piis/response/cms-psu-authorisation-piis.json";
+        CmsPsuConfirmationOfFundsAuthorisation cmsPsuConfirmationOfFundsAuthorisation = jsonReader.getObjectFromFile(fileName, CmsPsuConfirmationOfFundsAuthorisation.class);
+        String content = jsonReader.getStringFromFile(fileName);
+        when(cmsPsuConfirmationOfFundsService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(cmsPsuConfirmationOfFundsAuthorisation));
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/authorisation/{authorisation-id}", AUTHORISATION_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .headers(PSU_HEADERS)
+                            .content(content))
+            .andExpect(status().isOk());
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
+    }
+
+    @Test
+    void getAuthorisationByAuthorisationId_shouldReturnBadRequest() throws Exception {
+        when(cmsPsuConfirmationOfFundsService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/authorisation/{authorisation-id}", AUTHORISATION_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .headers(PSU_HEADERS))
+            .andExpect(status().isBadRequest());
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
+    }
+
+    @Test
+    void getAuthorisationByAuthorisationId_onExpiredAuthorisationException_shouldReturnRequestTimeout() throws Exception {
+        // Given
+        when(cmsPsuConfirmationOfFundsService.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID))
+            .thenThrow(new AuthorisationIsExpiredException(NOK_REDIRECT_URI));
+        String timeoutResponse = jsonReader.getStringFromFile("json/ais/response/ais-consent-timeout.json");
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/authorisation/{authorisation-id}", AUTHORISATION_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .headers(PSU_HEADERS))
+            .andExpect(status().isRequestTimeout())
+            .andExpect(content().json(timeoutResponse));
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
     }
 
     private static HttpHeaders buildInstanceIdHeaders() {

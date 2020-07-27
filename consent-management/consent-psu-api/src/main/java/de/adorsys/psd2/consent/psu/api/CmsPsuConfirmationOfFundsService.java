@@ -65,4 +65,14 @@ public interface CmsPsuConfirmationOfFundsService {
      * @throws AuthorisationIsExpiredException if authorisation is expired
      */
     boolean updatePsuDataInConsent(@NotNull PsuIdData psuIdData, @NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException;
+
+    /**
+     * Returns Authorisation object by its ID
+     *
+     * @param authorisationId ID of authorisation
+     * @param instanceId      optional ID of particular service instance
+     * @return Authorisation object if it was found
+     */
+    @NotNull
+    Optional<CmsPsuConfirmationOfFundsAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException;
 }

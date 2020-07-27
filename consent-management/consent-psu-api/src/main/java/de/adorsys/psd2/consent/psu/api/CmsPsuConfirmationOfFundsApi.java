@@ -88,4 +88,18 @@ public interface CmsPsuConfirmationOfFundsApi {
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
         @RequestBody PsuIdData psuIdData);
 
+
+    @GetMapping(path = "authorisation/{authorisation-id}")
+    @ApiOperation(value = "Get Confirmation of Funds Consent Authorisation by its ID")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK", response = CmsPsuAuthorisation.class),
+        @ApiResponse(code = 400, message = "Bad request")})
+    ResponseEntity<CmsPsuConfirmationOfFundsAuthorisation> getAuthorisationByAuthorisationId(
+        @ApiParam(name = CmsConstant.PATH.AUTHORISATION_ID,
+            value = "The authorisation identification.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
+        @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
+        @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+
 }
