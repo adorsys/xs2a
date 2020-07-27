@@ -18,13 +18,20 @@ package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
+import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsAuthorisation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {PsuDataMapper.class})
 public interface CmsPsuAuthorisationMapper {
     @Mapping(target = "psuId", source = "psuData.psuId")
     @Mapping(target = "authorisationId", source = "externalId")
     @Mapping(target = "type", source = "authorisationType")
     CmsPsuAuthorisation mapToCmsPsuAuthorisation(AuthorisationEntity authorisationEntity);
+
+    @Mapping(target = "psuIdData", source = "psuData")
+    @Mapping(target = "piisConsentId", source = "parentExternalId")
+    @Mapping(target = "authorisationId", source = "externalId")
+    @Mapping(target = "type", source = "authorisationType")
+    CmsPsuConfirmationOfFundsAuthorisation mapToCmsPsuConfirmationOfFundsAuthorisation(AuthorisationEntity authorisationEntity);
 }

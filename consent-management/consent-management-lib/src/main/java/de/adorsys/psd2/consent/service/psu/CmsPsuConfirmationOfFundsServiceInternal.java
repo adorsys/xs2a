@@ -20,11 +20,13 @@ import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsConsent;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.ConfirmationOfFundsConsentSpecification;
 import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
+import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
@@ -50,6 +52,7 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
     private final ConfirmationOfFundsConsentSpecification confirmationOfFundsConsentSpecification;
     private final CmsConfirmationOfFundsMapper consentMapper;
     private final CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
+    private final CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
 
     @Override
     @Transactional
@@ -97,6 +100,17 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
         log.info("Authorisation ID [{}]. Check redirect URL and get consent failed, because authorisation not found or has finalised status",
                  redirectId);
         return Optional.empty();
+    }
+
+    @Override
+    public @NotNull Optional<CmsPsuConfirmationOfFundsAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException {
+        Optional<CmsPsuConfirmationOfFundsAuthorisation> cmsPsuConfirmationOfFundsAuthorisation = consentAuthorisationService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
+                                                                                                      .map(cmsPsuAuthorisationMapper::mapToCmsPsuConfirmationOfFundsAuthorisation);
+        if (cmsPsuConfirmationOfFundsAuthorisation.isEmpty()) {
+            log.info("Authorisation ID [{}], Instance ID: [{}]. Get authorisation failed, because authorisation not found", authorisationId, instanceId);
+        }
+
+        return cmsPsuConfirmationOfFundsAuthorisation;
     }
 
     private Optional<ConsentEntity> getActualConsent(String consentId, String instanceId) {

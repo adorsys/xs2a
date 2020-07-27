@@ -5,6 +5,7 @@
 * Add authorisation endpoints to CoF yaml
 * Implement implicit authorisation for PIIS consents
 * Add update PSU for confirmation of funds consent to CMS-PSU-API
+* Add get authorisation of confirmation of funds to CMS-PSU-API
 
 == Add authorisation endpoints to CoF yaml
 
@@ -29,4 +30,12 @@ Added resource to update PSU for confirmation of funds (PIIS v2) to `CMS-PSU_API
 
 ```
 PUT psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/psu-data
+```
+
+== Add get authorisation of confirmation of funds to CMS-PSU-API
+
+Added resource to get authorisation of confirmation of funds (PIIS v2) to `CMS-PSU_API`:
+
+```
+GET psu-api/v2/piis/consent/authorisation/{authorisation-id}
 ```

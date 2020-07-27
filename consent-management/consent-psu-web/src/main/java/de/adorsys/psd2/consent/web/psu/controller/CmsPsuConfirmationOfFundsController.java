@@ -82,4 +82,15 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
             return new ResponseEntity<>(new CmsAisConsentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
+
+    @Override
+    public ResponseEntity getAuthorisationByAuthorisationId(String authorisationId, String instanceId) {
+        try {
+        return cmsPsuConfirmationOfFundsService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
+                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
+                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        } catch (AuthorisationIsExpiredException e) {
+            return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
+        }
+    }
 }
