@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsConsent;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuConfirmationOfFundsService;
@@ -323,6 +324,42 @@ class CmsPsuConfirmationOfFundsControllerTest {
             .andExpect(status().isBadRequest());
         // Then
         verify(cmsPsuConfirmationOfFundsService).updateConsentStatus(CONSENT_ID, consentStatus, INSTANCE_ID);
+    }
+
+    @Test
+    void getConsentByConsentId() throws Exception {
+        // Given
+        String cmsConfirmationOfFundsConsentJson = jsonReader.getStringFromFile("json/piis/response/cms-confirmation-of-funds-consent.json");
+        CmsConfirmationOfFundsConsent cmsConfirmationOfFundsConsent = jsonReader.getObjectFromString(cmsConfirmationOfFundsConsentJson, CmsConfirmationOfFundsConsent.class);
+        when(cmsPsuConfirmationOfFundsService.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+            .thenReturn(Optional.of(cmsConfirmationOfFundsConsent));
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/{consent-id}", CONSENT_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .headers(PSU_HEADERS))
+            .andExpect(status().isOk())
+            .andExpect(content().json(cmsConfirmationOfFundsConsentJson));
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).getConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
+    }
+
+    @Test
+    void getConsentByConsentId_consentIsNotFound() throws Exception {
+        // Given
+        when(cmsPsuConfirmationOfFundsService.getConsent(psuIdData, CONSENT_ID, INSTANCE_ID))
+            .thenReturn(Optional.empty());
+
+        // When
+        mockMvc.perform(get("/psu-api/v2/piis/consent/{consent-id}", CONSENT_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .headers(PSU_HEADERS))
+            .andExpect(status().isNotFound())
+            .andExpect(content().bytes(EMPTY_BODY));
+
+        // Then
+        verify(cmsPsuConfirmationOfFundsService).getConsent(psuIdData, CONSENT_ID, INSTANCE_ID);
     }
 
     private static HttpHeaders buildInstanceIdHeaders() {

@@ -90,6 +90,15 @@ public class CmsPsuConfirmationOfFundsServiceInternal implements CmsPsuConfirmat
 
     @Override
     @Transactional
+    public @NotNull Optional<CmsConfirmationOfFundsConsent> getConsent(@NotNull PsuIdData psuIdData,
+                                                                       @NotNull String consentId,
+                                                                       @NotNull String instanceId) {
+        return consentJpaRepository.findOne(confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(consentId, instanceId))
+                   .map(this::mapToCmsConsentWithAuthorisations);
+    }
+
+    @Override
+    @Transactional
     public Optional<CmsConfirmationOfFundsResponse> checkRedirectAndGetConsent(String redirectId, String instanceId) throws RedirectUrlIsExpiredException {
         Optional<AuthorisationEntity> optionalAuthorisation = consentAuthorisationService.getAuthorisationByRedirectId(redirectId, instanceId);
 

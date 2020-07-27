@@ -36,8 +36,7 @@ public class CmsConfirmationOfFundsMapper {
     private final TppInfoMapper tppInfoMapper;
     private final AuthorisationTemplateMapper authorisationTemplateMapper;
 
-    public CmsConfirmationOfFundsConsent mapToCmsConfirmationOfFundsConsent(ConsentEntity consent,
-                                                                            List<AuthorisationEntity> authorisations) {
+    public CmsConfirmationOfFundsConsent mapToCmsConfirmationOfFundsConsent(ConsentEntity consent, List<AuthorisationEntity> authorisations) {
         ConsentTppInformationEntity tppInformation = consent.getTppInformation();
 
         return new CmsConfirmationOfFundsConsent(

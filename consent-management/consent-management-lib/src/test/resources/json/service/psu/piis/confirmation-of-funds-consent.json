@@ -1,0 +1,30 @@
+{
+  "id": "4b112130-6a96-4941-a220-2da8a4af2c65",
+  "consentStatus": "RECEIVED",
+  "tppRedirectPreferred": false,
+  "psuIdDataList": [
+    {
+      "psuId": "987654321",
+      "psuIdType": "",
+      "psuCorporateId": "",
+      "psuCorporateIdType": ""
+    }
+  ],
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "Mock tppOkRedirectUri",
+      "nokUri": "Mock tppNokRedirectUri"
+    }
+  },
+  "multilevelScaRequired": false,
+  "creationTimestamp": "2020-07-22T16:33:51.260128+03:00",
+  "authorisations": [
+    {
+      "id": "bdb36439-0e07-4037-a8a1-171c969fb0d7",
+      "psuIdData": {
+        "psuId": "PSU id"
+      },
+      "scaStatus": "RECEIVED"
+    }
+  ]
+}
