@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -75,4 +76,14 @@ public interface CmsPsuConfirmationOfFundsService {
      */
     @NotNull
     Optional<CmsPsuConfirmationOfFundsAuthorisation> getAuthorisationByAuthorisationId(@NotNull String authorisationId, @NotNull String instanceId) throws AuthorisationIsExpiredException;
+
+    /**
+     * Updates a Status of Confirmation of Funds Consent by its ID
+     *
+     * @param consentId  ID of Consent
+     * @param status     Status of Confirmation of Funds Consent
+     * @param instanceId optional ID of particular service instance
+     * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
+     */
+    boolean updateConsentStatus(@NotNull String consentId, @NotNull ConsentStatus status, @NotNull String instanceId);
 }

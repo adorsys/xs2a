@@ -25,6 +25,11 @@ import de.adorsys.psd2.consent.repository.specification.ConfirmationOfFundsConse
 import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.consent.service.mapper.AuthorisationTemplateMapperImpl;
+import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
+import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.mapper.TppInfoMapperImpl;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -257,5 +262,36 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
         Optional<CmsPsuConfirmationOfFundsAuthorisation> authorisationByAuthorisationId = cmsPsuConfirmationOfFundsServiceInternal.getAuthorisationByAuthorisationId(AUTHORISATION_ID, INSTANCE_ID);
         //Then
         assertTrue(authorisationByAuthorisationId.isEmpty());
+    }
+
+    @Test
+    void updateConsentStatus() {
+        //Given
+        when(confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(consentJpaRepository.findOne(any(Specification.class)))
+            .thenReturn(Optional.of(consentEntity));
+
+        ConsentStatus consentStatus = ConsentStatus.VALID;
+        //When
+        boolean result = cmsPsuConfirmationOfFundsServiceInternal.updateConsentStatus(CONSENT_ID, consentStatus, INSTANCE_ID);
+        //Then
+        assertTrue(result);
+        assertEquals(consentStatus, consentEntity.getConsentStatus());
+    }
+
+    @Test
+    void updateConsentStatus_getActualConsent_empty() {
+        //Given
+        when(confirmationOfFundsConsentSpecification.byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(consentJpaRepository.findOne(any(Specification.class)))
+            .thenReturn(Optional.empty());
+        ConsentStatus consentStatus = ConsentStatus.VALID;
+        //When
+        boolean result = cmsPsuConfirmationOfFundsServiceInternal.updateConsentStatus(CONSENT_ID, consentStatus, INSTANCE_ID);
+        //Then
+        assertFalse(result);
+        assertNotEquals(consentStatus, consentEntity.getConsentStatus());
     }
 }
