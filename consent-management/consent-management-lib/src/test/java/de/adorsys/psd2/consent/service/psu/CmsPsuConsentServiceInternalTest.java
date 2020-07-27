@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
@@ -69,6 +70,8 @@ class CmsPsuConsentServiceInternalTest {
     private AuthorisationRepository authorisationRepository;
     @Mock
     private AisConsentLazyMigrationService aisConsentLazyMigrationService;
+    @Mock
+    private PsuDataUpdater psuDataUpdater;
 
     private ConsentEntity consentEntity;
     private PsuIdData psuIdData;
@@ -131,11 +134,11 @@ class CmsPsuConsentServiceInternalTest {
         PsuData psuData = new PsuData(CORRECT_PSU_ID, "", "", "", "", buildAdditionalPsuData(5L));
         psuData.setId(7L);
         AuthorisationEntity authorisation = buildAisConsentAuthorisation(psuData);
+        when(psuDataUpdater.updatePsuDataEntity(psuData, psuDataRequest)).thenReturn(psuData);
         //When
         boolean updatePsuData = cmsPsuConsentServiceInternal.updatePsuData(authorisation, psuIdData, ConsentType.AIS);
         //Then
         assertTrue(updatePsuData);
-        verify(authorisationRepository, atLeastOnce()).save(authorisation);
         verify(aisConsentLazyMigrationService, never()).migrateIfNeeded(consentEntity);
         assertEquals(psuData, authorisation.getPsuData());
     }

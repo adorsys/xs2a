@@ -19,10 +19,10 @@ package de.adorsys.psd2.consent.service.psu;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
-import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +40,8 @@ class CmsPsuConsentServiceInternal {
     private final PsuDataMapper psuDataMapper;
     private final ConsentJpaRepository consentJpaRepository;
     private final CmsPsuService cmsPsuService;
-    private final AuthorisationRepository authorisationRepository;
     private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
+    private final PsuDataUpdater psuDataUpdater;
 
     boolean updatePsuData(AuthorisationEntity authorisation, PsuIdData psuIdData, ConsentType consentType) {
         PsuData newPsuData = psuDataMapper.mapToPsuData(psuIdData, authorisation.getInstanceId());
@@ -53,10 +53,8 @@ class CmsPsuConsentServiceInternal {
         }
 
         Optional<PsuData> optionalPsuData = Optional.ofNullable(authorisation.getPsuData());
-        boolean isPsuDataPresentInAuthorisation = optionalPsuData.isPresent();
-        if (isPsuDataPresentInAuthorisation) {
-            PsuData psuDataInAuthorisation = optionalPsuData.get();
-            updatePsuFromAuthorisation(newPsuData, psuDataInAuthorisation);
+        if (optionalPsuData.isPresent()) {
+            newPsuData = psuDataUpdater.updatePsuDataEntity(optionalPsuData.get(), newPsuData);
         } else {
             log.info("Authorisation ID [{}]. No PSU data available in the authorisation.", authorisation.getExternalId());
 
@@ -80,16 +78,6 @@ class CmsPsuConsentServiceInternal {
             }
         }
         authorisation.setPsuData(newPsuData);
-        if (isPsuDataPresentInAuthorisation) { // TODO remove this if block with proper solution of issue https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1309
-            authorisationRepository.save(authorisation);
-        }
         return true;
-    }
-
-    private void updatePsuFromAuthorisation(PsuData newPsuData, PsuData psuDataInAuthorisation) {
-        newPsuData.setId(psuDataInAuthorisation.getId());
-        if (psuDataInAuthorisation.getAdditionalPsuData() != null && newPsuData.getAdditionalPsuData() != null) {
-            newPsuData.getAdditionalPsuData().setId(psuDataInAuthorisation.getAdditionalPsuData().getId());
-        }
     }
 }

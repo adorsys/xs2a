@@ -38,6 +38,7 @@ import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
@@ -105,6 +106,8 @@ class CmsPsuPisServiceInternalTest {
     private CmsPsuService cmsPsuService;
     @Mock
     private CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
+    @Mock
+    private PsuDataUpdater psuDataUpdater;
 
     private AuthenticationDataHolder authenticationDataHolder;
     private PsuData psuData;

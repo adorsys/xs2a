@@ -43,6 +43,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
@@ -86,11 +87,13 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final ConsentService aisConsentService;
     private final PsuDataMapper psuDataMapper;
     private final AisConsentUsageService aisConsentUsageService;
+    private final CmsPsuService cmsPsuService;
     private final CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final ConsentDataMapper consentDataMapper;
     private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
     private final AccessMapper accessMapper;
+    private final PsuDataUpdater psuDataUpdater;
     private final CmsConsentAuthorisationServiceInternal consentAuthorisationService;
     private final CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
 

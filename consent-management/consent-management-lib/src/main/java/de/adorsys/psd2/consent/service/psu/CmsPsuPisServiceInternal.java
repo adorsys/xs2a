@@ -38,6 +38,7 @@ import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
@@ -75,6 +76,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final CmsPsuService cmsPsuService;
     private final CmsPsuAuthorisationMapper cmsPsuPisAuthorisationMapper;
     private final CorePaymentsConvertService corePaymentsConvertService;
+    private final PsuDataUpdater psuDataUpdater;
 
     @Override
     @Transactional
@@ -246,9 +248,8 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         }
 
         Optional<PsuData> optionalPsuData = Optional.ofNullable(authorisation.getPsuData());
-        boolean isPsuDataPresentInAuthorisation = optionalPsuData.isPresent();
-        if (isPsuDataPresentInAuthorisation) {
-            newPsuData.setId(optionalPsuData.get().getId());
+        if (optionalPsuData.isPresent()) {
+            newPsuData = psuDataUpdater.updatePsuDataEntity(optionalPsuData.get(), newPsuData);
         } else {
             Optional<PisCommonPaymentData> commonPaymentOptional = pisCommonPaymentDataRepository.findByPaymentId(authorisation.getParentExternalId());
 
@@ -272,9 +273,6 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
         }
 
         authorisation.setPsuData(newPsuData);
-        if (isPsuDataPresentInAuthorisation) { // TODO remove this if block with proper solution of issue https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1309
-            authorisationRepository.save(authorisation);
-        }
         return true;
     }
 
