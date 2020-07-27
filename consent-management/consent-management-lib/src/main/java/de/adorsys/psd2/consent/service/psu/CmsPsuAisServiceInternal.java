@@ -118,8 +118,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             AuthorisationEntity authorisation = optionalAuthorisation.get();
 
             if (!authorisation.isRedirectUrlNotExpired()) {
-                log.info("Authorisation ID [{}]. Check redirect URL and get consent failed, because authorisation is expired",
-                         redirectId);
+                log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation is expired",
+                         redirectId, instanceId);
                 authorisation.setScaStatus(ScaStatus.FAILED);
 
                 throw new RedirectUrlIsExpiredException(authorisation.getTppNokRedirectUri());
@@ -127,8 +127,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return createCmsAisConsentResponseFromAuthorisation(authorisation, redirectId);
         }
 
-        log.info("Authorisation ID [{}]. Check redirect URL and get consent failed, because authorisation not found or has finalised status",
-                 redirectId);
+        log.info("Authorisation ID [{}], Instance ID: [{}]. Check redirect URL and get consent failed, because authorisation not found or has finalised status",
+                 redirectId, instanceId);
         return Optional.empty();
     }
 
@@ -166,7 +166,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         Optional<ConsentEntity> actualAisConsent = getActualAisConsent(consentId, instanceId);
 
         if (actualAisConsent.isEmpty()) {
-            log.info("Consent ID: [{}]. Update of authorisation status failed, because consent either has finalised status or not found", consentId);
+            log.info("Consent ID: [{}], Instance ID: [{}]. Update of authorisation status failed, because consent either has finalised status or not found", consentId, instanceId);
             return false;
         }
 
@@ -186,8 +186,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
             return true;
         }
-        log.info("Consent ID [{}]. Confirmation of consent failed because consent has finalised status or not found",
-                 consentId);
+        log.info("Consent ID [{}], Instance ID: [{}]. Confirmation of consent failed because consent has finalised status or not found",
+                 consentId, instanceId);
         return false;
     }
 
@@ -229,8 +229,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         if (aisConsentOptional.isPresent()) {
             return updateAccountAccessInConsent(aisConsentOptional.get(), accountAccessRequest);
         }
-        log.info("Consent ID [{}]. Update account access in consent failed, because consent not found or has finalised status",
-                 consentId);
+        log.info("Consent ID [{}], Instance ID: [{}]. Update account access in consent failed, because consent not found or has finalised status",
+                 consentId, instanceId);
         return false;
     }
 
