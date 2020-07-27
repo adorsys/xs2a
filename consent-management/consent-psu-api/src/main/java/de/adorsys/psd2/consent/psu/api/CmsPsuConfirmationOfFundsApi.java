@@ -102,4 +102,21 @@ public interface CmsPsuConfirmationOfFundsApi {
         @PathVariable(CmsConstant.PATH.AUTHORISATION_ID) String authorisationId,
         @RequestHeader(value = CmsConstant.HEADERS.INSTANCE_ID, required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
 
+    @PutMapping(path = "/{consent-id}/status/{status}")
+    @ApiOperation(value = "Updates a status of Confirmation of Funds Consent")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not found")})
+    ResponseEntity<Void> updateConsentStatus(
+        @ApiParam(name = CmsConstant.PATH.CONSENT_ID,
+            value = "The confirmation of funds consent identification assigned to the created confirmation of funds consent.",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
+        @PathVariable(CmsConstant.PATH.CONSENT_ID) String consentId,
+        @ApiParam(value = "The following code values are permitted 'RECEIVED', 'REJECTED', 'VALID', 'REVOKED_BY_PSU', 'EXPIRED', 'TERMINATED_BY_TPP', 'TERMINATED_BY_ASPSP', 'PARTIALLY_AUTHORISED'. These values might be extended by ASPSP by more values.",
+            allowableValues = "RECEIVED, REJECTED, VALID, REVOKED_BY_PSU, EXPIRED, TERMINATED_BY_TPP, TERMINATED_BY_ASPSP, PARTIALLY_AUTHORISED",
+            required = true)
+        @PathVariable(CmsConstant.PATH.STATUS) String status,
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+
 }
