@@ -71,6 +71,7 @@ class ConfirmationOfFundsControllerTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, buildEmptyAdditionalPsuIdData());
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
     private static final MessageError MESSAGE_ERROR_PIIS_404 = new MessageError(ErrorType.PIIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
+    private static final MessageError MESSAGE_ERROR_PIIS_403 = new MessageError(ErrorType.PIIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403));
 
 
     @InjectMocks
@@ -235,6 +236,38 @@ class ConfirmationOfFundsControllerTest {
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(ConsentStatus.RECEIVED);
+    }
+
+    @Test
+    void deleteConsentConfirmationOfFunds_Success() {
+        //Given
+        when(piisConsentService.deleteAccountConsentsById(CONSENT_ID))
+            .thenReturn(ResponseObject.<Void>builder().build());
+        doReturn(new ResponseEntity<>(HttpStatus.OK))
+            .when(responseMapper).delete(any());
+        //When
+        ResponseEntity responseEntity = confirmationOfFundsController.deleteConsentConfirmationOfFunds(CONSENT_ID, null, null, null, null,
+                                                                                                       null, null, null, null,
+                                                                                                       null, null, null, null, null, null);
+        //Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void deleteConsentConfirmationOfFunds_Failure() {
+        //Given
+        when(piisConsentService.deleteAccountConsentsById(CONSENT_ID))
+            .thenReturn(ResponseObject.<Void>builder()
+                            .fail(MESSAGE_ERROR_PIIS_403)
+                            .build());
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_PIIS_403))
+            .thenReturn(new ResponseEntity<>(HttpStatus.FORBIDDEN));
+        //When
+        ResponseEntity responseEntity = confirmationOfFundsController.deleteConsentConfirmationOfFunds(CONSENT_ID, null, null, null, null,
+                                                                                                       null, null, null, null,
+                                                                                                       null, null, null, null, null, null);
+        //Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     private ResponseObject<ConsentConfirmationOfFundsContentResponse> getConsentConfirmationOfFundsContentResponse() {
