@@ -94,8 +94,11 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
     }
 
     @Override
-    public ResponseEntity<Void> deleteConsentConfirmationOfFunds(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null;
+    public ResponseEntity deleteConsentConfirmationOfFunds(String consentId, UUID xRequestID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+        ResponseObject<Void> response = piisConsentService.deleteAccountConsentsById(consentId);
+        return response.hasError()
+                   ? responseErrorMapper.generateErrorResponse(response.getError())
+                   : responseMapper.delete(response);
     }
 
     @Override

@@ -7,6 +7,7 @@
 * Add update PSU for confirmation of funds consent to CMS-PSU-API
 * Add get authorisation of confirmation of funds to CMS-PSU-API
 * Add update status of confirmation of funds consent in CMS-PSU-API
+* Revoke Funds Confirmation Consent
 
 == Add authorisation endpoints to CoF yaml
 
@@ -48,3 +49,8 @@ Added resource to update status of confirmation of funds (PIIS v2) to `CMS-PSU_A
 ```
 PUT psu-api/v2/piis/consent/{consent-id}/status/{status}
 ```
+
+== Revoke Funds Confirmation Consent
+
+From now on, TPP is able to revoke Confirmation of Funds Consent by sending request `DELETE /v2/consents/confirmation-of-funds/{consentId}`
+If Confirmation of Funds Consent has `RECEIVED` status, then status of revoked consent will be `REJECTED`, otherwise `TERMINATED_BY_TPP`.
