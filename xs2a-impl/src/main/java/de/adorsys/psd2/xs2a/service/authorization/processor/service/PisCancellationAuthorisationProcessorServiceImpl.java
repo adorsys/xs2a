@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -61,6 +62,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUAUTHENTICATED;
+
 @Service
 public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisationProcessorService {
 
@@ -70,6 +73,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     private final Xs2aUpdatePaymentAfterSpiService updatePaymentAfterSpiService;
     private final PisCommonDecoupledService pisCommonDecoupledService;
     private final PisPsuDataService pisPsuDataService;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
 
     public PisCancellationAuthorisationProcessorServiceImpl(List<PisScaAuthorisationService> services,
                                                             Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper, PaymentCancellationSpi paymentCancellationSpi,
@@ -94,6 +98,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
         this.updatePaymentAfterSpiService = updatePaymentAfterSpiService;
         this.pisCommonDecoupledService = pisCommonDecoupledService;
         this.pisPsuDataService = pisPsuDataService;
+        this.xs2aAuthorisationService = xs2aAuthorisationService;
     }
 
     @Override
@@ -113,8 +118,8 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
     @Override
     SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
-                                                                                  SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
-                                                                                  SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                            SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
+                                                                            SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentCancellationSpi.verifyScaAuthorisationAndCancelPaymentWithResponse(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
     }
 
@@ -198,6 +203,24 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
 
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(scaStatus, payment.getPaymentId(), authorisationId, psuData);
+    }
+
+    @Override
+    Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdateResponseWhenScaMethodsAreMultiple(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
+                                                                                           PsuIdData psuData,
+                                                                                           List<AuthenticationObject> spiScaMethods,
+                                                                                           SpiPayment payment,
+                                                                                           SpiAspspConsentDataProvider aspspConsentDataProvider,
+                                                                                           SpiContextData contextData) {
+        xs2aAuthorisationService.saveAuthenticationMethods(request.getAuthorisationId(), spiScaMethods);
+
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse
+                                                                 (PSUAUTHENTICATED,
+                                                                  request.getPaymentId(),
+                                                                  request.getAuthorisationId(),
+                                                                  psuData);
+        response.setAvailableScaMethods(spiScaMethods);
+        return response;
     }
 
     private boolean isPsuDataCorrect(String paymentId, PsuIdData psuData) {
