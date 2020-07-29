@@ -75,12 +75,12 @@ class AuthorisationControllerTest {
     @Test
     void createConsentAuthorisation() throws Exception {
         CreateAuthorisationRequest request = jsonReader.getObjectFromFile("json/controller/create-authorisation-request.json", CreateAuthorisationRequest.class);
-        when(authorisationServiceEncrypted.createAuthorisation(new AuthorisationParentHolder(AuthorisationType.AIS, PARENT_ID), request))
+        when(authorisationServiceEncrypted.createAuthorisation(new AuthorisationParentHolder(AuthorisationType.CONSENT, PARENT_ID), request))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, null, null, null)).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/AIS/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
-                                                        .buildAndExpand(AuthorisationType.AIS.name().toLowerCase(), AUTHORISATION_ID)
+        mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/CONSENT/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
+                                                        .buildAndExpand(AuthorisationType.CONSENT.name().toLowerCase(), AUTHORISATION_ID)
                                                         .toUriString())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/create-authorisation-request.json")))
@@ -90,12 +90,12 @@ class AuthorisationControllerTest {
     @Test
     void createConsentAuthorisation_hasError_notFoundHttpStatus() throws Exception {
         CreateAuthorisationRequest request = jsonReader.getObjectFromFile("json/controller/create-authorisation-request.json", CreateAuthorisationRequest.class);
-        when(authorisationServiceEncrypted.createAuthorisation(new AuthorisationParentHolder(AuthorisationType.AIS, PARENT_ID), request))
+        when(authorisationServiceEncrypted.createAuthorisation(new AuthorisationParentHolder(AuthorisationType.CONSENT, PARENT_ID), request))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder()
                             .error(CmsError.TECHNICAL_ERROR).build());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/AIS/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
-                                                        .buildAndExpand(AuthorisationType.AIS, AUTHORISATION_ID)
+        mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/CONSENT/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
+                                                        .buildAndExpand(AuthorisationType.CONSENT, AUTHORISATION_ID)
                                                         .toUriString())
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(jsonReader.getStringFromFile("json/controller/create-authorisation-request.json")))

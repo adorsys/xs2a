@@ -224,7 +224,7 @@ public class ConsentModelMapper {
         updatePsuData.setPsuData(psuData);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthorizationId(authorizationId);
-        updatePsuData.setAuthorisationType(AuthorisationType.AIS);
+        updatePsuData.setAuthorisationType(AuthorisationType.CONSENT);
         if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
                 .map(o -> (LinkedHashMap<String, String>) o)

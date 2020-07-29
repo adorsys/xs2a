@@ -67,7 +67,7 @@ public class AisAuthService extends CmsAuthorisationService<ConsentEntity> {
 
     @Override
     AuthorisationType getAuthorisationType() {
-        return AuthorisationType.AIS;
+        return AuthorisationType.CONSENT;
     }
 
     @Override

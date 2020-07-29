@@ -18,5 +18,6 @@
       "authenticationMethodId": "some sca method"
     }
   ],
-  "authorisationType": "AIS"
+  "authorisationType": "CONSENT",
+  "type": "CONSENT"
 }

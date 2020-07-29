@@ -154,7 +154,7 @@ class ConsentUpdateAuthorisationIT {
         PsuIdData psuIdDataAuthorisation = buildPsuIdDataAuthorisation(psuIdAuthorisation);
         HttpHeadersMock httpHeaders = buildHttpHeaders(psuIdHeader);
 
-        Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdDataAuthorisation, CONSENT_ID, AuthorisationType.AIS, ScaStatus.RECEIVED);
+        Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdDataAuthorisation, CONSENT_ID, AuthorisationType.CONSENT, ScaStatus.RECEIVED);
         CmsConsent cmsConsent = CmsConsentBuilder.buildCmsConsent(CONSENT_PATH, scaApproach, CONSENT_ID, xs2aObjectMapper, authorisation);
 
 

@@ -79,9 +79,15 @@ public class AuthorisationEntity extends InstanceDependableEntity {
     @CollectionTable(name = "auth_available_sca_method", joinColumns = @JoinColumn(name = "authorisation_id"))
     private List<ScaMethod> availableScaMethods = new ArrayList<>();
 
+    // TODO remove in 8.0 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1320
+    @Deprecated
     @Column(name = "authorisation_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthorisationType authorisationType;
+
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthorisationType type;
 
     public boolean isRedirectUrlNotExpired() {
         return redirectUrlExpirationTimestamp.isAfter(OffsetDateTime.now());

@@ -29,12 +29,12 @@ public interface AuthorisationRepository extends CrudRepository<AuthorisationEnt
 
     Optional<AuthorisationEntity> findByExternalId(String externalId);
 
-    Optional<AuthorisationEntity> findByExternalIdAndAuthorisationType(String externalId,
-                                                                       AuthorisationType authorisationType);
+    Optional<AuthorisationEntity> findByExternalIdAndType(String externalId,
+                                                          AuthorisationType authorisationType);
 
-    List<AuthorisationEntity> findAllByParentExternalIdAndAuthorisationType(String parentExternalId,
-                                                                            AuthorisationType authorisationType);
+    List<AuthorisationEntity> findAllByParentExternalIdAndType(String parentExternalId,
+                                                               AuthorisationType authorisationType);
 
-    List<AuthorisationEntity> findAllByParentExternalIdAndAuthorisationTypeIn(String parentExternalId,
-                                                                              Set<AuthorisationType> authorisationTypes);
+    List<AuthorisationEntity> findAllByParentExternalIdAndTypeIn(String parentExternalId,
+                                                                 Set<AuthorisationType> authorisationTypes);
 }

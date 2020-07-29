@@ -119,7 +119,7 @@ class CmsPsuAuthorisationMapperTest {
 
     private AuthorisationEntity buildPiisAuthorisation() {
         AuthorisationEntity piisAuthorization = new AuthorisationEntity();
-        piisAuthorization.setAuthorisationType(AuthorisationType.AIS);
+        piisAuthorization.setType(AuthorisationType.CONSENT);
         piisAuthorization.setExternalId(EXTERNAL_ID);
         piisAuthorization.setParentExternalId(PARENT_ID);
         piisAuthorization.setScaStatus(ScaStatus.RECEIVED);
@@ -135,7 +135,7 @@ class CmsPsuAuthorisationMapperTest {
     @NotNull
     private AuthorisationEntity buildPisAuthorisation() {
         AuthorisationEntity pisAuthorization = new AuthorisationEntity();
-        pisAuthorization.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        pisAuthorization.setType(AuthorisationType.PIS_CREATION);
         pisAuthorization.setExternalId(EXTERNAL_ID);
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
         pisAuthorization.setPsuData(new PsuData(PSU_ID, PSU_ID_TYPE, "", "", ""));
@@ -149,7 +149,7 @@ class CmsPsuAuthorisationMapperTest {
     @NotNull
     private AuthorisationEntity buildPisCancellationAuthorisation() {
         AuthorisationEntity pisAuthorization = new AuthorisationEntity();
-        pisAuthorization.setAuthorisationType(AuthorisationType.PIS_CANCELLATION);
+        pisAuthorization.setType(AuthorisationType.PIS_CANCELLATION);
         pisAuthorization.setExternalId(EXTERNAL_ID);
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
         pisAuthorization.setPsuData(new PsuData(PSU_ID, PSU_ID_TYPE, "", "", ""));
@@ -163,7 +163,7 @@ class CmsPsuAuthorisationMapperTest {
     @NotNull
     private AuthorisationEntity buildAisConsentAuthorisation() {
         AuthorisationEntity authorization = new AuthorisationEntity();
-        authorization.setAuthorisationType(AuthorisationType.AIS);
+        authorization.setType(AuthorisationType.CONSENT);
         authorization.setExternalId(EXTERNAL_ID);
         authorization.setScaStatus(ScaStatus.RECEIVED);
         authorization.setPsuData(new PsuData("PSU ID", "PSU ID type", "", "", ""));

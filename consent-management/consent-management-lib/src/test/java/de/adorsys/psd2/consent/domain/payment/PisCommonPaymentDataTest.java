@@ -59,6 +59,6 @@ class PisCommonPaymentDataTest {
 
         // Then
         assertThrows(IllegalArgumentException.class,
-                     () -> pisCommonPaymentData.getInternalRequestId(AuthorisationType.AIS));
+                     () -> pisCommonPaymentData.getInternalRequestId(AuthorisationType.CONSENT));
     }
 }

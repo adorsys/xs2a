@@ -50,7 +50,7 @@ class AuthorisationServiceInternalEncryptedTest {
     private static final String ENCRYPTED_PARENT_ID = "Uv0juhXijIas3D1bKucTox9U0XMzd5S4V4YoVF0JQTr8YXQK5v1TT2IFXDJ8ScfQZmgpuZAiXHmZbsJp852YydWFnjze07vwpAgFM45MlQk=_=_psGLvQpt9Q";
     private static final String MALFORMED_ENCRYPTED_PARENT_ID = "wrong_id";
     private static final String DECRYPTED_PARENT_ID = "d7cb0df1-72d8-43b3-8dc4-569598802d07";
-    private static final AuthorisationType AUTHORISATION_TYPE = AuthorisationType.AIS;
+    private static final AuthorisationType AUTHORISATION_TYPE = AuthorisationType.CONSENT;
     private static final String AUTHORISATION_ID = "6963bceb-01d8-4961-977e-2424ce60fc7b";
     public static final String AUTHENTICATION_METHOD_ID = "SMS";
 

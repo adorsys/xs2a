@@ -224,7 +224,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     @Override
     public Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId) {
         return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
-                   .map(p -> authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+                   .map(p -> authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
                    .map(this::getPsuDataAuthorisations);
     }
 
@@ -235,7 +235,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .map(auth -> new CmsPisPsuDataAuthorisation(psuDataMapper.mapToPsuIdData(auth.getPsuData()),
                                                                auth.getExternalId(),
                                                                auth.getScaStatus(),
-                                                               auth.getAuthorisationType()))
+                                                               auth.getType()))
                    .collect(Collectors.toList());
     }
 
@@ -264,7 +264,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(newPsuData, paymentPsuList);
             if (psuDataOptional.isPresent()) {
                 newPsuData = psuDataOptional.get();
-                if (AuthorisationType.PIS_CANCELLATION != authorisation.getAuthorisationType()) {
+                if (AuthorisationType.PIS_CANCELLATION != authorisation.getType()) {
                     commonPayment.setPsuDataList(cmsPsuService.enrichPsuData(newPsuData, paymentPsuList));
                 }
             }

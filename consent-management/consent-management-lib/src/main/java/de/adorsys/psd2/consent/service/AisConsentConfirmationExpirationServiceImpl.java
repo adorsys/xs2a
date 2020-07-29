@@ -88,7 +88,7 @@ public class AisConsentConfirmationExpirationServiceImpl implements AisConsentCo
 
     private ConsentEntity obsoleteConsent(ConsentEntity consent) {
         consent.setConsentStatus(ConsentStatus.REJECTED);
-        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consent.getExternalId(), AuthorisationType.AIS);
+        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndType(consent.getExternalId(), AuthorisationType.CONSENT);
         authorisations.forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
         authorisationRepository.saveAll(authorisations);
         consent.setLastActionDate(LocalDate.now());

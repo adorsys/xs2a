@@ -20,6 +20,6 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 
 public class AisAuthorisationParentHolder extends AuthorisationParentHolder {
     public AisAuthorisationParentHolder(String parentId) {
-        super(AuthorisationType.AIS, parentId);
+        super(AuthorisationType.CONSENT, parentId);
     }
 }

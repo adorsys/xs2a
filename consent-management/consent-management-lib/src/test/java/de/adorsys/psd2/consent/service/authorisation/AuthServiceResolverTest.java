@@ -40,7 +40,7 @@ class AuthServiceResolverTest {
 
     @Test
     void getAuthService() {
-        assertEquals(aisAuthService.getClass(), authServiceResolver.getAuthService(AuthorisationType.AIS).getClass());
+        assertEquals(aisAuthService.getClass(), authServiceResolver.getAuthService(AuthorisationType.CONSENT).getClass());
         assertEquals(pisAuthService.getClass(), authServiceResolver.getAuthService(AuthorisationType.PIS_CREATION).getClass());
         assertEquals(pisCancellationAuthService.getClass(), authServiceResolver.getAuthService(AuthorisationType.PIS_CANCELLATION).getClass());
     }

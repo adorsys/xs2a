@@ -91,7 +91,7 @@ public class Xs2aAisConsentMapper {
                                                          .orElse(null));
                        req.setScaAuthenticationData(request.getScaAuthenticationData());
                        req.setScaStatus(data.getScaStatus());
-                       req.setAuthorisationType(AuthorisationType.AIS);
+                       req.setAuthorisationType(AuthorisationType.CONSENT);
                        return req;
                    })
                    .orElse(null);

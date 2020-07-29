@@ -537,7 +537,7 @@ class CmsPsuPisServiceInternalTest {
         // Given
         when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(Optional.of(buildPisCommonPaymentData()));
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+        when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
             .thenReturn(Collections.singletonList(buildPisAuthorisation()));
 
         // When
@@ -770,7 +770,7 @@ class CmsPsuPisServiceInternalTest {
 
     private AuthorisationEntity buildPisAuthorisation() {
         AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
-        pisAuthorisation.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        pisAuthorisation.setType(AuthorisationType.PIS_CREATION);
         pisAuthorisation.setScaStatus(ScaStatus.PSUAUTHENTICATED);
         pisAuthorisation.setParentExternalId(PAYMENT_ID);
         pisAuthorisation.setExternalId(AUTHORISATION_ID);
@@ -900,7 +900,7 @@ class CmsPsuPisServiceInternalTest {
 
     private AuthorisationEntity buildExpiredAuthorisation() {
         AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
-        pisAuthorisation.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        pisAuthorisation.setType(AuthorisationType.PIS_CREATION);
         pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
         pisAuthorisation.setExternalId(EXPIRED_AUTHORISATION_ID);
         pisAuthorisation.setPsuData(buildPsuData());

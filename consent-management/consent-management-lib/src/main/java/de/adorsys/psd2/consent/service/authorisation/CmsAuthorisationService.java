@@ -49,12 +49,12 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
 
     @Override
     public List<AuthorisationEntity> getAuthorisationsByParentId(String parentId) {
-        return authorisationRepository.findAllByParentExternalIdAndAuthorisationType(parentId, getAuthorisationType());
+        return authorisationRepository.findAllByParentExternalIdAndType(parentId, getAuthorisationType());
     }
 
     @Override
     public Optional<AuthorisationEntity> getAuthorisationById(String authorisationId) {
-        return authorisationRepository.findByExternalIdAndAuthorisationType(authorisationId, getAuthorisationType());
+        return authorisationRepository.findByExternalIdAndType(authorisationId, getAuthorisationType());
     }
 
     @Override

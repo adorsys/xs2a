@@ -135,7 +135,7 @@ class ConsentServiceInternalTest {
             .thenReturn(Optional.of(consentEntity));
         when(aisConsentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(consentEntity))
             .thenReturn(consentEntity);
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisationEntities);
 
         // When
@@ -157,7 +157,7 @@ class ConsentServiceInternalTest {
             .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, authorisationEntities, Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisationEntities);
 
         // When
@@ -178,7 +178,7 @@ class ConsentServiceInternalTest {
             .thenReturn(consentEntity);
         when(cmsConsentMapper.mapToCmsConsent(consentEntity, authorisationEntities, Collections.emptyMap()))
             .thenReturn(buildCmsConsent());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisationEntities);
 
         // When
@@ -203,7 +203,7 @@ class ConsentServiceInternalTest {
             .thenReturn(consent);
         when(aisConsentConfirmationExpirationService.expireConsent(consent)).thenReturn(consent);
 
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisationEntities);
 
         // When

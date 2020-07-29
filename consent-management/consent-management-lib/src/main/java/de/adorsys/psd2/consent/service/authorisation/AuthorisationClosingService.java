@@ -49,12 +49,12 @@ public class AuthorisationClosingService {
         }
 
         String parentId = authorisation.getParentExternalId();
-        List<AuthorisationEntity> parentAuthorisations = authServiceResolver.getAuthService(authorisation.getAuthorisationType()).getAuthorisationsByParentId(parentId);
+        List<AuthorisationEntity> parentAuthorisations = authServiceResolver.getAuthService(authorisation.getType()).getAuthorisationsByParentId(parentId);
         List<AuthorisationEntity> previousAuthorisations = parentAuthorisations.stream()
                                                                .filter(a -> !a.getExternalId().equals(authorisation.getExternalId()))
                                                                .collect(Collectors.toList());
 
-        closePreviousAuthorisationsByPsu(authorisation.getAuthorisationType(), previousAuthorisations, psuIdData);
+        closePreviousAuthorisationsByPsu(authorisation.getType(), previousAuthorisations, psuIdData);
     }
 
     @Transactional
@@ -74,7 +74,7 @@ public class AuthorisationClosingService {
 
         List<AuthorisationEntity> authorisationsToBeClosed = authorisations
                                                                  .stream()
-                                                                 .filter(auth -> auth.getAuthorisationType().equals(authorisationType))
+                                                                 .filter(auth -> auth.getType().equals(authorisationType))
                                                                  .filter(auth -> Objects.nonNull(auth.getPsuData()) && auth.getPsuData().contentEquals(psuData))
                                                                  .collect(Collectors.toList());
 

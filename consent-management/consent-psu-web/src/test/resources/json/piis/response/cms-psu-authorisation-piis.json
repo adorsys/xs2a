@@ -6,7 +6,7 @@
   "authorisationId": "123",
   "piisConsentId": "22d0a277-56c4-4c22-a582-9a9790ed9ddd",
   "scaStatus": "RECEIVED",
-  "type": "AIS",
+  "type": "CONSENT",
   "scaApproach": "EMBEDDED",
   "tppOkRedirectUri": "OK redirect",
   "tppNokRedirectUri": "Not OK redirect"

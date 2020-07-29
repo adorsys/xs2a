@@ -77,8 +77,7 @@ public class CmsConsentAuthorisationServiceInternal {
     }
 
     public List<AuthorisationEntity> getAuthorisationsByParentExternalId(String externalId) {
-        // ToDo: consider replacing AIS with general consent value https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1210
-        return authorisationRepository.findAllByParentExternalIdAndAuthorisationType(externalId, AuthorisationType.AIS);
+        return authorisationRepository.findAllByParentExternalIdAndType(externalId, AuthorisationType.CONSENT);
     }
 
     private void enrichAuthorisationWithAuthenticationData(AuthorisationEntity authorisation, AuthenticationDataHolder authenticationDataHolder) {

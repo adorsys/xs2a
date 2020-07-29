@@ -128,7 +128,7 @@ class CmsConsentAuthorisationServiceInternalTest {
     @Test
     void getAuthorisationsByParentExternalId() {
         cmsConsentAuthorisationServiceInternal.getAuthorisationsByParentExternalId(EXTERNAL_ID);
-        verify(authorisationRepository, times(1)).findAllByParentExternalIdAndAuthorisationType(EXTERNAL_ID, AuthorisationType.AIS);
+        verify(authorisationRepository, times(1)).findAllByParentExternalIdAndType(EXTERNAL_ID, AuthorisationType.CONSENT);
     }
 
     @Test

@@ -43,18 +43,18 @@ class AuthorisationStatusCheckerTest {
     @Test
     void isFinalised() {
         authorisations.add(createAuthorisation(PSU_ID_DATA, AuthorisationType.PIS_CREATION, ScaStatus.RECEIVED));
-        assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.AIS));
+        assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.CONSENT));
 
-        authorisations.add(createAuthorisation(PSU_ID_DATA, AuthorisationType.AIS, ScaStatus.RECEIVED));
-        assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.AIS));
+        authorisations.add(createAuthorisation(PSU_ID_DATA, AuthorisationType.CONSENT, ScaStatus.RECEIVED));
+        assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.CONSENT));
 
-        authorisations.add(createAuthorisation(PSU_ID_DATA, AuthorisationType.AIS, ScaStatus.FINALISED));
-        assertTrue(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.AIS));
+        authorisations.add(createAuthorisation(PSU_ID_DATA, AuthorisationType.CONSENT, ScaStatus.FINALISED));
+        assertTrue(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.CONSENT));
     }
 
     @Test
     void isFinalised_emptyList() {
-        assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.AIS));
+        assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.CONSENT));
         assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.PIS_CREATION));
         assertFalse(checker.isFinalised(PSU_ID_DATA, authorisations, AuthorisationType.PIS_CANCELLATION));
     }
