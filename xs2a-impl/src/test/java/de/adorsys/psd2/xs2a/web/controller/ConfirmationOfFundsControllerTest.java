@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.controller;
 
+import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.ConsentConfirmationOfFundsContentResponse;
 import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;

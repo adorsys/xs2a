@@ -17,7 +17,7 @@
 package de.adorsys.psd2.core.mapper;
 
 import de.adorsys.psd2.core.data.ais.AisConsentData;
-import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
+import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
