@@ -27,12 +27,14 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOfFundsApi {
@@ -43,6 +45,7 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
         ScaStatus scaStatus = ScaStatus.fromValue(status);
 
         if (scaStatus == null) {
+            log.info("Consent ID [{}], Authorisation ID [{}], Instance ID: [{}]. Bad request: SCA status [{}] incorrect.", consentId, authorisationId, instanceId, status);
             return ResponseEntity.badRequest().build();
         }
 
@@ -52,6 +55,7 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
                        ? ResponseEntity.ok().build()
                        : ResponseEntity.badRequest().build();
         } catch (AuthorisationIsExpiredException e) {
+            log.debug("Consent ID [{}], Authorisation ID [{}], Instance ID: [{}]. Update authorisation status request timeout (authorisation is expired): NOK redirect url [{}]", consentId, authorisationId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
@@ -69,6 +73,7 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
             CmsConfirmationOfFundsResponse cmsConfirmationOfFundsResponse = response.get();
             return new ResponseEntity<>(cmsConfirmationOfFundsResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
+            log.debug("Redirect ID [{}], Instance ID: [{}]. Get consent ID by redirect ID request timeout (redirect url is expired): NOK redirect url [{}]", redirectId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
@@ -80,6 +85,7 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
                        ? ResponseEntity.ok().build()
                        : ResponseEntity.badRequest().build();
         } catch (AuthorisationIsExpiredException e) {
+            log.debug("Consent ID [{}], Authorisation ID [{}], Instance ID: [{}]. Update PSU data request timeout (authorisation is expired): NOK redirect url [{}]", consentId, authorisationId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
@@ -87,10 +93,11 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
     @Override
     public ResponseEntity getAuthorisationByAuthorisationId(String authorisationId, String instanceId) {
         try {
-        return cmsPsuConfirmationOfFundsService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
-                   .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
-                   .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+            return cmsPsuConfirmationOfFundsService.getAuthorisationByAuthorisationId(authorisationId, instanceId)
+                       .map(authorisation -> new ResponseEntity<>(authorisation, HttpStatus.OK))
+                       .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
         } catch (AuthorisationIsExpiredException e) {
+            log.debug("Authorisation ID [{}], Instance ID: [{}]. Get authorisation by authorisation ID request timeout (authorisation is expired): NOK redirect url [{}]", authorisationId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsConfirmationOfFundsResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
@@ -101,6 +108,7 @@ public class CmsPsuConfirmationOfFundsController implements CmsPsuConfirmationOf
         try {
             consentStatus = ConsentStatus.valueOf(status);
         } catch (IllegalArgumentException exception) {
+            log.info("Consent ID [{}], Instance ID: [{}]. Bad request: SCA status [{}] incorrect.", consentId, instanceId, status);
             return ResponseEntity.badRequest().build();
         }
 
