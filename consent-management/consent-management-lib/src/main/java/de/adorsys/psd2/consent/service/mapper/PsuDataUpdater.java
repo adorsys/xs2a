@@ -24,5 +24,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface PsuDataUpdater {
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "additionalPsuData.id", ignore = true)
     PsuData updatePsuDataEntity(@MappingTarget PsuData psuData, PsuData other);
 }
