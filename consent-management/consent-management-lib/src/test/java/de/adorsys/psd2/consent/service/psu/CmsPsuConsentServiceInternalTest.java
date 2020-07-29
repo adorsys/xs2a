@@ -176,7 +176,7 @@ class CmsPsuConsentServiceInternalTest {
 
     private AuthorisationEntity buildAisConsentAuthorisation(PsuData psuData) {
         AuthorisationEntity aisConsentAuthorization = new AuthorisationEntity();
-        aisConsentAuthorization.setAuthorisationType(AuthorisationType.AIS);
+        aisConsentAuthorization.setType(AuthorisationType.CONSENT);
         aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
         aisConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
         aisConsentAuthorization.setParentExternalId(EXTERNAL_CONSENT_ID);

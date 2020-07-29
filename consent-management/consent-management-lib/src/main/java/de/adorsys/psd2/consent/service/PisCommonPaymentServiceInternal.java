@@ -127,7 +127,7 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         Optional<PisCommonPaymentData> paymentOptional = pisCommonPaymentDataRepository.findByPaymentId(paymentId);
         if (paymentOptional.isPresent()) {
             List<AuthorisationEntity> authorisations =
-                authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
+                authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
             Optional<PisCommonPaymentResponse> responseOptional = paymentOptional
                                                                       .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                                       .flatMap(p -> pisCommonPaymentMapper.mapToPisCommonPaymentResponse(p, authorisations));

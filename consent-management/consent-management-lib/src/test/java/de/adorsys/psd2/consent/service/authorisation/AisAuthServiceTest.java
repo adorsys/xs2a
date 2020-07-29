@@ -152,6 +152,6 @@ class AisAuthServiceTest {
 
     @Test
     void getAuthorisationType() {
-        assertEquals(AuthorisationType.AIS, service.getAuthorisationType());
+        assertEquals(AuthorisationType.CONSENT, service.getAuthorisationType());
     }
 }

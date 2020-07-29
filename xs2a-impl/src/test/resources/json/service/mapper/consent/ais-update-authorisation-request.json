@@ -1,5 +1,5 @@
 {
-  "authorisationType": "AIS",
+  "authorisationType": "CONSENT",
   "psuData": {
     "psuId": "psu Id",
     "psuIdType": "psuId Type",

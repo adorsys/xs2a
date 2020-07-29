@@ -179,7 +179,7 @@ public class Xs2aAisConsentService {
         String tppRedirectURI = requestProviderService.getTppRedirectURI();
         String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
         CreateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
-        return authorisationService.createAuthorisation(request, consentId, AuthorisationType.AIS);
+        return authorisationService.createAuthorisation(request, consentId, AuthorisationType.CONSENT);
     }
 
     /**
@@ -228,7 +228,7 @@ public class Xs2aAisConsentService {
      * @return list of consent authorisation IDs
      */
     public Optional<List<String>> getAuthorisationSubResources(String consentId) {
-        return authorisationService.getAuthorisationSubResources(consentId, AuthorisationType.AIS);
+        return authorisationService.getAuthorisationSubResources(consentId, AuthorisationType.CONSENT);
     }
 
     /**
@@ -239,7 +239,7 @@ public class Xs2aAisConsentService {
      * @return SCA status of the authorisation
      */
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return authorisationService.getAuthorisationScaStatus(authorisationId, consentId, AuthorisationType.AIS);
+        return authorisationService.getAuthorisationScaStatus(authorisationId, consentId, AuthorisationType.CONSENT);
     }
 
     /**

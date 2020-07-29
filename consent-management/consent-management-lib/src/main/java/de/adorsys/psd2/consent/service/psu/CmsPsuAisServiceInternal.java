@@ -245,8 +245,8 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             return Optional.empty();
         }
 
-        List<AuthorisationEntity> consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(aisConsentOptional.get().getExternalId(),
-                                                                                                                                AuthorisationType.AIS);
+        List<AuthorisationEntity> consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndType(aisConsentOptional.get().getExternalId(),
+                                                                                                                   AuthorisationType.CONSENT);
         return Optional.of(getPsuDataAuthorisations(consentAuthorisations));
     }
 

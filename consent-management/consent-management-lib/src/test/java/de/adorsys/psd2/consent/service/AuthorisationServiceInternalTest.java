@@ -92,7 +92,7 @@ class AuthorisationServiceInternalTest {
     void createAuthorisation() {
         // Given
         String parentId = "parent id";
-        AuthorisationType authorisationType = AuthorisationType.AIS;
+        AuthorisationType authorisationType = AuthorisationType.CONSENT;
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(authorisationType, parentId);
         CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest(PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
         CreateAuthorisationResponse expectedResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, PSU_ID_DATA);
@@ -122,10 +122,10 @@ class AuthorisationServiceInternalTest {
     void createAuthorisation_wrongParentId() {
         // Given
         String parentId = "parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
         CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest(PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
         when(authService.getNotFinalisedAuthorisationParent(parentId)).thenReturn(Optional.empty());
 
         // When
@@ -170,15 +170,15 @@ class AuthorisationServiceInternalTest {
     void updateAuthorisation() {
         // Given
         AuthorisationEntity authorisationEntity = new AuthorisationEntity();
-        authorisationEntity.setAuthorisationType(AuthorisationType.AIS);
+        authorisationEntity.setType(AuthorisationType.CONSENT);
         authorisationEntity.setScaStatus(ScaStatus.RECEIVED);
         when(authorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(authorisationEntity));
 
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
-        updateAuthorisationRequest.setAuthorisationType(AuthorisationType.AIS);
+        updateAuthorisationRequest.setAuthorisationType(AuthorisationType.CONSENT);
         updateAuthorisationRequest.setPsuData(PSU_ID_DATA);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         AuthorisationEntity updatedAuthorisationEntity = jsonReader.getObjectFromFile("json/service/authorisation-entity.json", AuthorisationEntity.class);
         when(authService.doUpdateAuthorisation(authorisationEntity, updateAuthorisationRequest)).thenReturn(updatedAuthorisationEntity);
@@ -205,7 +205,7 @@ class AuthorisationServiceInternalTest {
         when(authorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.empty());
 
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
-        updateAuthorisationRequest.setAuthorisationType(AuthorisationType.AIS);
+        updateAuthorisationRequest.setAuthorisationType(AuthorisationType.CONSENT);
 
         // When
         CmsResponse<Authorisation> actualResponse = authorisationServiceInternal.updateAuthorisation(AUTHORISATION_ID, updateAuthorisationRequest);
@@ -219,12 +219,12 @@ class AuthorisationServiceInternalTest {
     void updateAuthorisation_finalisedStatus() {
         // Given
         AuthorisationEntity authorisationEntity = new AuthorisationEntity();
-        authorisationEntity.setAuthorisationType(AuthorisationType.AIS);
+        authorisationEntity.setType(AuthorisationType.CONSENT);
         authorisationEntity.setScaStatus(ScaStatus.FINALISED);
         when(authorisationRepository.findByExternalId(AUTHORISATION_ID)).thenReturn(Optional.of(authorisationEntity));
 
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
-        updateAuthorisationRequest.setAuthorisationType(AuthorisationType.AIS);
+        updateAuthorisationRequest.setAuthorisationType(AuthorisationType.CONSENT);
 
         // When
         CmsResponse<Authorisation> actualResponse = authorisationServiceInternal.updateAuthorisation(AUTHORISATION_ID, updateAuthorisationRequest);
@@ -275,10 +275,10 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationsByParentId() {
         // Given
         String parentId = "parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
         List<String> expectedAuthorisations = Collections.singletonList(AUTHORISATION_ID);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(parentId);
@@ -302,9 +302,9 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationsByParentId_wrongId() {
         // Given
         String parentId = "wrong id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         when(authService.getAuthorisationParent(parentId)).thenReturn(Optional.empty());
 
@@ -320,9 +320,9 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationScaStatus() {
         // Given
         String parentId = "parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(parentId);
@@ -345,9 +345,9 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationScaStatus_wrongParentId() {
         // Given
         String parentId = "wrong parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         when(authService.getAuthorisationParent(parentId)).thenReturn(Optional.empty());
 
@@ -363,9 +363,9 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationScaStatus_expiredParent() {
         // Given
         String parentId = "parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(parentId);
@@ -385,9 +385,9 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationScaStatus_wrongAuthorisationId() {
         // Given
         String parentId = "parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(parentId);
@@ -407,9 +407,9 @@ class AuthorisationServiceInternalTest {
     void getAuthorisationScaStatus_authorisationWithWrongParentId() {
         // Given
         String parentId = "parent id";
-        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.AIS, parentId);
+        AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
 
-        when(authServiceResolver.getAuthService(AuthorisationType.AIS)).thenReturn(authService);
+        when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
 
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setExternalId(parentId);

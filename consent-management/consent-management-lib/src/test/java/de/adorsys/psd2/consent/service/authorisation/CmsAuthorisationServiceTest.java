@@ -77,13 +77,13 @@ class CmsAuthorisationServiceTest {
     @Test
     void getAuthorisationsByParentId() {
         service.getAuthorisationsByParentId(PARENT_ID);
-        verify(authorisationRepository, times(1)).findAllByParentExternalIdAndAuthorisationType(PARENT_ID, AuthorisationType.PIS_CREATION);
+        verify(authorisationRepository, times(1)).findAllByParentExternalIdAndType(PARENT_ID, AuthorisationType.PIS_CREATION);
     }
 
     @Test
     void getAuthorisationById() {
         service.getAuthorisationById(AUTHORISATION_ID);
-        verify(authorisationRepository, times(1)).findByExternalIdAndAuthorisationType(AUTHORISATION_ID, AuthorisationType.PIS_CREATION);
+        verify(authorisationRepository, times(1)).findByExternalIdAndType(AUTHORISATION_ID, AuthorisationType.PIS_CREATION);
     }
 
     @Test

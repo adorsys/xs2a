@@ -1015,7 +1015,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consent));
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Collections.singletonList(buildFinalisedAuthorisation()));
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
@@ -1167,7 +1167,7 @@ class CmsPsuAisServiceInternalTest {
 
     private AuthorisationEntity buildAisConsentAuthorisation() {
         AuthorisationEntity aisConsentAuthorization = new AuthorisationEntity();
-        aisConsentAuthorization.setAuthorisationType(AuthorisationType.AIS);
+        aisConsentAuthorization.setType(AuthorisationType.CONSENT);
         aisConsentAuthorization.setExternalId(AUTHORISATION_ID);
         aisConsentAuthorization.setScaStatus(ScaStatus.RECEIVED);
         aisConsentAuthorization.setParentExternalId(EXTERNAL_CONSENT_ID);
@@ -1194,11 +1194,11 @@ class CmsPsuAisServiceInternalTest {
 
     private AuthorisationEntity buildFinalisedAuthorisation() {
         AuthorisationEntity authorisationEntity = new AuthorisationEntity();
-        authorisationEntity.setAuthorisationType(AuthorisationType.AIS);
+        authorisationEntity.setType(AuthorisationType.CONSENT);
         authorisationEntity.setExternalId(FINALISED_AUTHORISATION_ID);
         authorisationEntity.setScaStatus(ScaStatus.FINALISED);
         authorisationEntity.setPsuData(psuData);
-        authorisationEntity.setAuthorisationType(AuthorisationType.AIS);
+        authorisationEntity.setType(AuthorisationType.CONSENT);
         authorisationEntity.setAuthorisationExpirationTimestamp(OffsetDateTime.now().plusDays(1));
 
         return authorisationEntity;

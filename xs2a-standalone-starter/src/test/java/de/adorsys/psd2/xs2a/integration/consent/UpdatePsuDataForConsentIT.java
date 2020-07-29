@@ -240,7 +240,7 @@ class UpdatePsuDataForConsentIT {
         AisConsentData aisConsentData = AisConsentData.buildDefaultAisConsentData();
         byte[] bytes = consentDataMapper.getBytesFromConsentData(aisConsentData);
         PsuIdData psuIdData = new PsuIdData(PSU_ID, null, null, null, null);
-        Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdData, ENCRYPTED_CONSENT_ID, AuthorisationType.AIS, ScaStatus.PSUIDENTIFIED);
+        Authorisation authorisation = new Authorisation(AUTHORISATION_ID, psuIdData, ENCRYPTED_CONSENT_ID, AuthorisationType.CONSENT, ScaStatus.PSUIDENTIFIED);
         ConsentTppInformation consentTppInformation = new ConsentTppInformation();
         consentTppInformation.setTppInfo(TPP_INFO);
 

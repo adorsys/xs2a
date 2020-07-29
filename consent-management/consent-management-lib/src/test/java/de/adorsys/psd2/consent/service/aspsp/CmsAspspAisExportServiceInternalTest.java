@@ -101,7 +101,7 @@ class CmsAspspAisExportServiceInternalTest {
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisations);
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);
@@ -163,7 +163,7 @@ class CmsAspspAisExportServiceInternalTest {
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisations);
         when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
             .thenReturn(buildAisAccountConsent());
@@ -235,7 +235,7 @@ class CmsAspspAisExportServiceInternalTest {
         when(consentJpaRepository.findAll(any()))
             .thenReturn(Collections.singletonList(consentEntity));
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(EXTERNAL_CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisations);
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
             .thenReturn(consentEntity);

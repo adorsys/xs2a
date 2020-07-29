@@ -5,6 +5,7 @@
 * Added information about currency conversion to Payment Initiation response
 * Fixed Double saving of psu data
 * Added currency conversion related information to Update PSU Data response
+* Replaced AIS authorisation type with general consent type
 
 === Added information about currency conversion to Payment Initiation response
 
@@ -19,3 +20,8 @@ From now on, in all cms psu api requests psu data is saved correctly.
 
 From now on, information about currency conversion related information is added
 into update psu data response.
+
+=== Replaced AIS authorisation type with general consent type
+
+From now on, AIS authorisation type is deprecated, and will be removed in 8.0 version,
+use CONSENT authorisation type instead.

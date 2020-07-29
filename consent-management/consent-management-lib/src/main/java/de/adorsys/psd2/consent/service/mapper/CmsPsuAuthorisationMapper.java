@@ -26,12 +26,12 @@ import org.mapstruct.Mapping;
 public interface CmsPsuAuthorisationMapper {
     @Mapping(target = "psuId", source = "psuData.psuId")
     @Mapping(target = "authorisationId", source = "externalId")
-    @Mapping(target = "type", source = "authorisationType")
+    @Mapping(target = "type", source = "type")
     CmsPsuAuthorisation mapToCmsPsuAuthorisation(AuthorisationEntity authorisationEntity);
 
     @Mapping(target = "psuIdData", source = "psuData")
     @Mapping(target = "piisConsentId", source = "parentExternalId")
     @Mapping(target = "authorisationId", source = "externalId")
-    @Mapping(target = "type", source = "authorisationType")
+    @Mapping(target = "type", source = "type")
     CmsPsuConfirmationOfFundsAuthorisation mapToCmsPsuConfirmationOfFundsAuthorisation(AuthorisationEntity authorisationEntity);
 }

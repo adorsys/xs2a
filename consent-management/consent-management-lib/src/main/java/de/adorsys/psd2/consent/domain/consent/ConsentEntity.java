@@ -206,7 +206,7 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
 
     @Override
     public String getInternalRequestId(AuthorisationType authorisationType) {
-        if (authorisationType == AuthorisationType.AIS) {
+        if (authorisationType == AuthorisationType.CONSENT) {
             return internalRequestId;
         }
 

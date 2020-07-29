@@ -67,7 +67,7 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
 
         AuthorisationEntity pisAuthorisation = new AuthorisationEntity();
         pisAuthorisation.setScaStatus(ScaStatus.RECEIVED);
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+        when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
             .thenReturn(Collections.singletonList(pisAuthorisation));
 
         when(aspspProfileService.getAspspSettings(pisAuthorisation.getInstanceId())).thenReturn(aspspSettings);
@@ -141,7 +141,7 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
         AuthorisationEntity pisAuthorization = new AuthorisationEntity();
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
 
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+        when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
             .thenReturn(Collections.singletonList(pisAuthorization));
 
         service.updateOnConfirmationExpiration(pisCommonPaymentData);
@@ -161,7 +161,7 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
         AuthorisationEntity pisAuthorization = new AuthorisationEntity();
         pisAuthorization.setScaStatus(ScaStatus.RECEIVED);
 
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+        when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
             .thenReturn(Collections.singletonList(pisAuthorization));
 
         service.updatePaymentDataListOnConfirmationExpiration(Collections.singletonList(pisCommonPaymentData));

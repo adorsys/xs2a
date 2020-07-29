@@ -2,7 +2,7 @@
   "psuId": "marion.mueller",
   "authorisationId": "70baa209-6a2f-4cc1-8834-d8a819bf5e9f",
   "scaStatus": "received",
-  "type": "AIS",
+  "type": "CONSENT",
   "redirectUrlExpirationTimestamp": "2020-03-05T00:00:00Z",
   "authorisationExpirationTimestamp": "2020-03-06T00:00:00Z",
   "scaApproach": "REDIRECT",

@@ -75,10 +75,10 @@ public class CreateConsentAuthorisationValidator extends AbstractConsentTppValid
                                                  .map(auth -> new Authorisation(auth.getId(),
                                                                                 auth.getPsuIdData(),
                                                                                 auth.getConsentId(),
-                                                                                AuthorisationType.AIS,
+                                                                                AuthorisationType.CONSENT,
                                                                                 auth.getScaStatus()))
                                                  .collect(Collectors.toList());
-        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, authorisations, AuthorisationType.AIS);
+        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, authorisations, AuthorisationType.CONSENT);
 
         if (isFinalised) {
             return ValidationResult.invalid(AIS_409, STATUS_INVALID);
