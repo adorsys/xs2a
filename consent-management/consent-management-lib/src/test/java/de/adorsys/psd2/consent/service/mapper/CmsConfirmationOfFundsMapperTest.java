@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.api.piis.v2.CmsConfirmationOfFundsConsent;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
     TppInfoMapperImpl.class, AuthorisationTemplateMapperImpl.class, PsuDataMapper.class,
-    ConsentTppInformationMapperImpl.class, CmsConfirmationOfFundsMapper.class
+    ConsentTppInformationMapperImpl.class, CmsConfirmationOfFundsMapper.class, ConsentDataMapper.class
 })
 class CmsConfirmationOfFundsMapperTest {
 

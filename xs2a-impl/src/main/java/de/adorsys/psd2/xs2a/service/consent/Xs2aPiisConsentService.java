@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
-import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,12 +43,10 @@ import java.util.Optional;
 public class Xs2aPiisConsentService {
     private final ConsentServiceEncrypted consentService;
     private final Xs2aPiisConsentMapper xs2aPiisConsentMapper;
-    private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final AisConsentServiceEncrypted aisConsentService;
 
     public Optional<Xs2aCreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
-        int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(Integer.MAX_VALUE);
-        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuData, tppInfo, allowedFrequencyPerDay);
+        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuData, tppInfo);
 
         CmsResponse<CmsCreateConsentResponse> response;
         try {

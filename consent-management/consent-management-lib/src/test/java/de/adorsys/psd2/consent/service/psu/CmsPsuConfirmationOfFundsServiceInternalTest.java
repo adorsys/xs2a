@@ -25,12 +25,9 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.ConfirmationOfFundsConsentSpecification;
 import de.adorsys.psd2.consent.service.authorisation.CmsConsentAuthorisationServiceInternal;
 import de.adorsys.psd2.consent.service.mapper.*;
-import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.consent.service.mapper.AuthorisationTemplateMapperImpl;
-import de.adorsys.psd2.consent.service.mapper.CmsConfirmationOfFundsMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.mapper.TppInfoMapperImpl;
+import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -95,7 +92,9 @@ class CmsPsuConfirmationOfFundsServiceInternalTest {
         consentEntity = jsonReader.getObjectFromFile("json/consent-entity.json", ConsentEntity.class);
         authorisationEntity = jsonReader.getObjectFromFile("json/authorisation-entity.json", AuthorisationEntity.class);
 
-        confirmationOfFundsMapper = new CmsConfirmationOfFundsMapper(new PsuDataMapper(), new TppInfoMapperImpl(), new AuthorisationTemplateMapperImpl());
+        confirmationOfFundsMapper = new CmsConfirmationOfFundsMapper(new PsuDataMapper(), new TppInfoMapperImpl(),
+                                                                     new AuthorisationTemplateMapperImpl(),
+                                                                     new ConsentDataMapper());
         cmsPsuConfirmationOfFundsServiceInternal = new CmsPsuConfirmationOfFundsServiceInternal(consentJpaRepository, consentAuthorisationService,
                                                                                                 confirmationOfFundsConsentSpecification, confirmationOfFundsMapper,
                                                                                                 cmsPsuConsentServiceInternal, cmsPsuAuthorisationMapper);

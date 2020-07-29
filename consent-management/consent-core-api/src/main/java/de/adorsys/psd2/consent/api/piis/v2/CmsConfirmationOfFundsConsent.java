@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.piis.v2;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CmsConfirmationOfFundsConsent {
     private String id;
+    private AccountReference account;
     private LocalDate validUntil;
     private LocalDate expireDate;
     private LocalDate lastActionDate;
@@ -45,4 +47,8 @@ public class CmsConfirmationOfFundsConsent {
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;
     private List<CmsConfirmationOfFundsAuthorisation> authorisations;
+    private String cardNumber;
+    private LocalDate cardExpiryDate;
+    private String cardInformation;
+    private String registrationInformation;
 }

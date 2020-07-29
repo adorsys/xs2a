@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.core.data.piis.v1;
+package de.adorsys.psd2.core.data.piis;
 
 import lombok.Value;
 

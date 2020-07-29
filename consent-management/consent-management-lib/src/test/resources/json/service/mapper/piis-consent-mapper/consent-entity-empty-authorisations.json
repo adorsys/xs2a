@@ -18,6 +18,7 @@
     "cancelRedirectUri": "cancel redirect uri",
     "cancelNokRedirectUri": "cancel nok redirect uri"
   },
+  "data": "ewogICJjYXJkTnVtYmVyIjogImNhcmROdW1iZXIiLAogICJjYXJkRXhwaXJ5RGF0ZSI6ICIyMDMwLTEwLTEwIiwKICAiY2FyZEluZm9ybWF0aW9uIjogImNhcmRJbmZvcm1hdGlvbiIsCiAgInJlZ2lzdHJhdGlvbkluZm9ybWF0aW9uIjogInJlZ2lzdHJhdGlvbkluZm9ybWF0aW9uIgp9Cg==",
   "tppInformation": {
     "tppRedirectPreferred": true,
     "tppInfo": {
@@ -42,6 +43,14 @@
       "psuCorporateId": "PSU_CORPORATE_ID",
       "psuCorporateIdType": "PSU_CORPORATE_ID_TYPE",
       "psuIpAddress": "PSU_IP_ADDRESS"
+    }
+  ],
+  "tppAccountAccesses": [
+    {
+      "typeAccess": "ACCOUNT",
+      "currency": "EUR",
+      "accountReferenceType": "iban",
+      "accountIdentifier": "DE89876442804656108109"
     }
   ]
 }

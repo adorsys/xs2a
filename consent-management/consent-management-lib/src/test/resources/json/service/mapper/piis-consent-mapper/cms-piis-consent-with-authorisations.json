@@ -1,5 +1,9 @@
 {
   "id": "ed1d8022-1c38-49ae-898e-78f29234557c",
+  "account": {
+    "iban": "DE89876442804656108109",
+    "currency": "EUR"
+  },
   "consentStatus": "VALID",
   "multilevelScaRequired": true,
   "creationTimestamp": "2020-04-08T14:09:27.496839+03:00",
@@ -49,5 +53,9 @@
       },
       "scaStatus": "received"
     }
-  ]
+  ],
+  "cardNumber": "cardNumber",
+  "cardExpiryDate": "2030-10-10",
+  "cardInformation": "cardInformation",
+  "registrationInformation": "registrationInformation"
 }

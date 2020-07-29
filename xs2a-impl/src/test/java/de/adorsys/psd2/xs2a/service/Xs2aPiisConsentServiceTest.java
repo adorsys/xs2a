@@ -29,8 +29,6 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
-import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
-import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,23 +40,19 @@ import java.util.Optional;
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class Xs2aPiisConsentServiceTest {
-    private static String CORRECT_PSU_ID = "marion.mueller";
-    private static String CONSENT_ID = "consent ID";
-    private static int minFrequencyPerDay = 7;
-    private static  PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
-    private TppInfo tppInfo = buildTppInfo();
+    private static final String CORRECT_PSU_ID = "marion.mueller";
+    private static final String CONSENT_ID = "consent ID";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+    private final TppInfo tppInfo = buildTppInfo();
 
     @InjectMocks
     private Xs2aPiisConsentService xs2aPiisConsentService;
     @Mock
     private Xs2aPiisConsentMapper xs2aPiisConsentMapper;
-    @Mock
-    private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     @Mock
     private CmsConsent cmsConsent;
     @Mock
@@ -66,15 +60,11 @@ class Xs2aPiisConsentServiceTest {
     @Mock
     private ConsentServiceEncrypted consentService;
 
-    private JsonReader jsonReader = new JsonReader();
-
     @Test
     void createConsent_success() throws WrongChecksumException {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
-        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt()))
-            .thenReturn(minFrequencyPerDay);
-        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
+        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
         CmsResponse<CmsCreateConsentResponse> response = CmsResponse.<CmsCreateConsentResponse>builder().payload(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent)).build();
         when(consentService.createConsent(cmsConsent))
@@ -96,9 +86,7 @@ class Xs2aPiisConsentServiceTest {
     void createConsent_catchWrongChecksumException() throws WrongChecksumException {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
-        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt()))
-            .thenReturn(minFrequencyPerDay);
-        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
+        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
         when(consentService.createConsent(cmsConsent))
             .thenThrow(new WrongChecksumException());
@@ -114,9 +102,7 @@ class Xs2aPiisConsentServiceTest {
     void createConsent_withError() throws WrongChecksumException {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
-        when(frequencyPerDateCalculationService.getMinFrequencyPerDay(anyInt()))
-            .thenReturn(minFrequencyPerDay);
-        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo, minFrequencyPerDay))
+        when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
         when(consentService.createConsent(cmsConsent))
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder()
