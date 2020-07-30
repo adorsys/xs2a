@@ -56,4 +56,9 @@ public class ConsentAspect {
     public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(ResponseObject<Xs2aConfirmationOfFundsResponse> result, CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         return consentAspectService.createPiisConsentWithResponse(result, explicitPreferred);
     }
+
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PiisConsentService.createPiisAuthorisation(..)) && args( psuData,  consentId,  password)", returning = "result", argNames = "result, psuData,  consentId,  password")
+    public ResponseObject<AuthorisationResponse> createPiisAuthorisationAspect(ResponseObject<AuthorisationResponse> result, PsuIdData psuData, String consentId, String password) {
+        return consentAspectService.invokeCreatePiisAuthorisationAspect(result);
+    }
 }

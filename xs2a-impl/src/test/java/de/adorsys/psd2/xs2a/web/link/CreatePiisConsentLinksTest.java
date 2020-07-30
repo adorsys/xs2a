@@ -272,7 +272,7 @@ class CreatePiisConsentLinksTest {
         when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID), eq(""), eq(ConsentType.PIIS_TPP))).thenReturn(REDIRECT_LINK);
-        when(redirectLinkBuilder.buildAisConfirmationLink(eq(CONSENT_ID), eq(AUTHORISATION_ID))).thenReturn(CONFIRMATION_LINK);
+        when(redirectLinkBuilder.buildConfirmationLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(ConsentType.PIIS_TPP))).thenReturn(CONFIRMATION_LINK);
 
         // When
         links = new CreatePiisConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, false, false, ScaRedirectFlow.REDIRECT, true, "");

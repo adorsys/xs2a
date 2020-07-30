@@ -184,10 +184,19 @@ public class RedirectLinkBuilder {
      * @param redirectId - Redirect ID
      * @return confirmation link
      */
-    public String buildAisConfirmationLink(String consentId, String redirectId) {
-        return UrlHolder.AIS_AUTHORISATION_URL
+    public String buildConfirmationLink(String consentId, String redirectId, ConsentType consentType) {
+        String authorisationUrl = getAuthorisationUrlByConsentType(consentType);
+        return authorisationUrl
                    .replace(CONSENT_ID, consentId)
                    .replace(AUTHORISATION_ID, redirectId);
+    }
+
+    private String getAuthorisationUrlByConsentType(ConsentType consentType) {
+        switch (consentType) {
+            case AIS: return UrlHolder.AIS_AUTHORISATION_URL;
+            case PIIS_TPP: return UrlHolder.PIIS_AUTHORISATION_URL;
+            default: throw new UnsupportedOperationException("Can't find authorisation url by consent type " + consentType);
+        }
     }
 
     private String enrichByInstanceId(String link, String instanceId) {

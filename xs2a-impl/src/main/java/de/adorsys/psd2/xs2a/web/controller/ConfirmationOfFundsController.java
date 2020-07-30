@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
@@ -39,6 +40,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
+import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PiisConsentModelMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -61,6 +64,7 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
     private final ResponseMapper responseMapper;
     private final AspspProfileServiceWrapper profileService;
     private final ConsentHeadersBuilder consentHeadersBuilder;
+    private final AuthorisationMapper authorisationMapper;
 
     @Override
     public ResponseEntity createConsentConfirmationOfFunds(UUID xRequestID, ConsentsConfirmationOfFunds body, String digest, String signature, byte[] tpPSignatureCertificate,
@@ -129,7 +133,25 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
 
     @Override
     public ResponseEntity<StartScaprocessResponse> startConsentAuthorisation(UUID xRequestID, String consentId, Object body, String digest, String signature, byte[] tpPSignatureCertificate, String PSU_ID, String psUIDType, String psUCorporateID, String psUCorporateIDType, String tpPRedirectPreferred, String tpPRedirectURI, String tpPNokRedirectURI, String tpPNotificationURI, String tpPNotificationContentPreferred, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        return null;
+
+        AdditionalPsuIdData additionalPsuIdData = new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID);
+        PsuIdData psuData = new PsuIdData(PSU_ID, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, additionalPsuIdData);
+
+        String password = authorisationMapper.mapToPasswordFromBody((Map) body);
+
+        ResponseObject<AuthorisationResponse> createResponse = piisConsentService.createPiisAuthorisation(psuData, consentId, password);
+
+        if (createResponse.hasError()) {
+            return responseErrorMapper.generateErrorResponse(createResponse.getError());
+        }
+
+        AuthorisationResponse authorisationResponse = createResponse.getBody();
+        ResponseHeaders responseHeaders = consentHeadersBuilder.buildStartAuthorisationHeaders(authorisationResponse.getAuthorisationId());
+
+        return responseMapper.created(ResponseObject.builder()
+                                          .body(authorisationMapper.mapToConsentCreateOrUpdateAuthorisationResponse(createResponse))
+                                          .build(),
+                                      responseHeaders);
     }
 
     @Override

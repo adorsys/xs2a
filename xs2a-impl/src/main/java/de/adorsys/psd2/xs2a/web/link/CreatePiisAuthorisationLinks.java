@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,35 +25,35 @@ import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
-public class CreateAisAuthorisationLinks extends AbstractLinks {
+public class CreatePiisAuthorisationLinks extends AbstractLinks {
 
-    public CreateAisAuthorisationLinks(String httpUrl, CreateConsentAuthorizationResponse response,
-                                       ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                       RedirectIdService redirectIdService, ScaRedirectFlow scaRedirectFlow,
-                                       boolean authorisationConfirmationRequestMandated,
-                                       String instanceId) {
+    public CreatePiisAuthorisationLinks(String httpUrl, CreateConsentAuthorizationResponse response,
+                                        ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
+                                        RedirectIdService redirectIdService, ScaRedirectFlow scaRedirectFlow,
+                                        boolean authorisationConfirmationRequestMandated,
+                                        String instanceId) {
         super(httpUrl);
 
         String consentId = response.getConsentId();
         String authorisationId = response.getAuthorisationId();
 
-        setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
+        setScaStatus(buildPath(UrlHolder.PIIS_AUTHORISATION_URL, consentId, authorisationId));
 
         if (scaApproachResolver.getScaApproach(authorisationId) == REDIRECT) {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
             String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                           ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
-                                          : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.AIS);
+                                          : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.PIIS_TPP);
 
             setScaRedirectOAuthLink(scaRedirectFlow, consentOauthLink);
 
             if (authorisationConfirmationRequestMandated) {
-                setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.AIS)));
+                setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.PIIS_TPP)));
             }
 
         } else {
-            setUpdatePsuAuthentication(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
+            setUpdatePsuAuthentication(buildPath(UrlHolder.PIIS_AUTHORISATION_URL, consentId, authorisationId));
         }
     }
 }

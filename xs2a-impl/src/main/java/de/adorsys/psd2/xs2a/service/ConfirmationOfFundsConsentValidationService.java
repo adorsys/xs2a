@@ -19,7 +19,9 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.piis.CommonConfirmationOfFundsConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.piis.CreatePiisConsentAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.piis.DeleteConfirmationOfFundsConsentByIdValidator;
+import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentAuthorisationObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +29,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConfirmationOfFundsConsentValidationService {
     private final DeleteConfirmationOfFundsConsentByIdValidator deleteConfirmationOfFundsConsentByIdValidator;
+    private final CreatePiisConsentAuthorisationValidator createPiisConsentAuthorisationValidator;
 
     public ValidationResult validateConsentOnDelete(PiisConsent consent) {
         return deleteConfirmationOfFundsConsentByIdValidator.validate(new CommonConfirmationOfFundsConsentObject(consent));
+    }
+
+    public ValidationResult validateConsentAuthorisationOnCreate(CreatePiisConsentAuthorisationObject createPiisConsentAuthorisationObject) {
+        return createPiisConsentAuthorisationValidator.validate(createPiisConsentAuthorisationObject);
     }
 }

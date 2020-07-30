@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "2fd9668f-deb0-41d3-8dfa-1ddffcd0ffe2",
+		"_postman_id": "02c24d56-f95d-4d57-8c1f-2c492aa7eb94",
 		"name": "PIIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -20,7 +20,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "b2775009-eb33-4a9f-a4e3-80e1ffb543b3",
+												"id": "0a0f8c02-c823-4de9-b470-58d79a02d347",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -73,7 +73,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "89ad8d19-5852-4ea6-99a6-adbacd1f117f",
+												"id": "aa9dd849-dcac-492a-a714-f503a7dfe0ad",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"",
@@ -93,7 +93,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "884f4f23-dd89-467d-9367-690e41a56ffd",
+												"id": "3330d2bc-50f5-4228-94a6-ade894d1b85a",
 												"exec": [
 													"pm.globals.unset(\"payment_id\");"
 												],
@@ -173,7 +173,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "0f094baf-9502-4143-aaae-22486e78b965",
+												"id": "0a106b3a-6ccb-4ceb-9f45-4189ebfdc9a2",
 												"exec": [
 													"pm.test('Status code is 400', () => {",
 													"   pm.response.to.have.status(400);",
@@ -265,7 +265,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "52bc39c3-120c-4c9c-96ea-d3673708111b",
+												"id": "448aa8b7-6bef-4eb0-88d8-a2f350deeee8",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -318,7 +318,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "1bd99f3b-c745-4b4f-ac16-af26973a8c34",
+												"id": "3e89444b-d8dc-4245-8854-6fc5d5bcda8a",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -388,7 +388,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "05885021-9a84-41d2-b820-41931b8f34ec",
+												"id": "0265c34a-ee49-49ed-8777-282f94aafe4d",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -446,7 +446,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ba95a7b1-c8fc-43c9-ac76-21fa263efba2",
+												"id": "7a92fcc1-ebf8-4d89-acd9-3a42c83b5ecd",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -507,7 +507,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "84abbed7-3ad8-4f26-8e5a-6b60854dfb37",
+												"id": "46ec6433-60ca-4c8e-ab3c-825fb38d4037",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -569,7 +569,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "c67fe6e1-474c-4561-b6a7-c8ee1bc125ff",
+												"id": "33f7234d-e2c3-4074-85b7-b531975eb2fe",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -582,7 +582,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "3ec167c4-934a-48a7-a5f4-7cf540062261",
+												"id": "28ef2b9a-f1db-4a25-9fcd-3307179dfca9",
 												"exec": [
 													"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -630,7 +630,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "5d575516-3672-43c1-ab57-db265c35ac5d",
+												"id": "c1988144-abe1-4c07-9a02-65843057e038",
 												"exec": [
 													"pm.test(\"Status code is 200\", function () {",
 													"    pm.response.to.have.status(200);",
@@ -698,7 +698,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d78446aa-3b60-4ed2-b0c5-11fd3f5344ea",
+												"id": "0f6edf49-5abd-48c6-822a-b847d52abc81",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -759,7 +759,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "af5c5d53-9590-440a-a728-c991b28a5bf3",
+												"id": "2941823d-4350-4308-b741-0cb1cae49b7e",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -821,7 +821,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "b4fc7dbb-4559-4ce8-bffa-99dd0edb5743",
+												"id": "a08d958e-5837-4fda-ad56-3f1fd5b68e43",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -834,7 +834,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "737402ba-f4fc-4768-9b3f-d7e5d7dccd7f",
+												"id": "72502bae-4720-44b3-a947-4a17b95142fc",
 												"exec": [
 													"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -882,7 +882,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "eb187af9-376c-4e2b-a4a2-9e3c04fa843d",
+												"id": "61845b71-57b3-4e8e-bba7-1511f3487c7a",
 												"exec": [
 													"pm.test(\"Status code is 200\", function () {",
 													"    pm.response.to.have.status(200);",
@@ -954,7 +954,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "05d6fd09-eb59-4714-a71f-713f9f0a7f1f",
+										"id": "68eaf98c-6e77-466d-a3f6-dfff0ed51a6d",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1007,7 +1007,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "346ced73-4152-4950-b1d7-d3118b807671",
+										"id": "bed3f864-6ce1-4269-ba8a-78e6ef5ea366",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -1073,7 +1073,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6feb46fa-ef33-40c5-9338-1b4fa3bcf595",
+										"id": "19b0bfeb-262f-43a1-b116-db168d41c215",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1143,7 +1143,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cdeb5d74-cb7c-482b-91db-4b87b5845251",
+										"id": "b29f1194-90e1-4642-a32d-290c32f6bca1",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1194,7 +1194,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a494667a-db67-4d32-bee9-9e0d68da4747",
+										"id": "2c7d58ca-5ea0-4847-acbb-94355fbf1765",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1256,7 +1256,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "364652d9-c271-4e08-9676-ea2f1165bc14",
+										"id": "ec5dc23b-6f37-4d28-9f23-a09fe75fd2ee",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1269,7 +1269,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "1e2487d3-2d35-410c-9ea9-5e56302f78b8",
+										"id": "ed3fc721-dcd0-4b7a-a5d5-55fd96c3ee2e",
 										"exec": [
 											"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -1322,7 +1322,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "375b4eaf-65e4-4db5-8471-7700d61a9a2c",
+										"id": "9731bc30-ea0a-4863-9576-e41af3d08973",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1390,7 +1390,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "52bb739c-c266-41cb-bf74-8920603bc0b4",
+								"id": "436f3b72-aac1-4967-83b2-f1e80ea428e4",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1443,7 +1443,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "09573963-5ead-4950-9c42-a629afb280a4",
+								"id": "24feb551-505f-4cb4-b8cb-82c7a025f91c",
 								"exec": [
 									"pm.test(\"Status code is 201\", () => {",
 									"    pm.response.to.have.status(201);",
@@ -1504,7 +1504,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9705fba9-c7a9-4a99-b22a-07026f88fb93",
+								"id": "524e6a07-423d-4090-b4f5-5d1b30bb66ab",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1574,7 +1574,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "87aafa23-0073-465b-a422-f5c539e61145",
+								"id": "f34add1c-0938-463a-b497-a71f8c033b54",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1625,7 +1625,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5aad481c-9316-4315-95f6-99830d1f703c",
+								"id": "66d031cf-6fcf-4f94-a640-dad84cdd4bba",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1687,7 +1687,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "15c3f38a-9e96-4278-a1f8-cdf1154ff2ec",
+								"id": "c2f8dfc0-a68c-4186-9881-fa822145e80b",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1700,7 +1700,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "1149b9be-5243-47c9-b42f-86929c292bf7",
+								"id": "7faf3a3a-1be9-485f-ac76-a80e9f3cda50",
 								"exec": [
 									"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 									"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -1748,7 +1748,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1cf18a89-55fa-40a3-b28b-e2e5d55b2683",
+								"id": "18c27c60-419a-452d-8982-61770963f010",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1816,7 +1816,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "008bcc8a-4f80-4781-af93-ee3d7e90ad83",
+												"id": "cd9bcab6-2e49-47f1-90f0-8e332898f3f4",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1869,7 +1869,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "d7200a7a-579c-4006-89e7-aa1d9e5c6913",
+												"id": "5b86c10d-8c50-4172-899e-ecafb0172cf2",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -1950,7 +1950,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "cdf3eb20-2173-4d7c-8865-9f76d39d7215",
+												"id": "58e3ba3c-4afb-41e2-8616-185716e625b2",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -2031,7 +2031,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "10116703-4512-47c9-8e4f-e41b364aa701",
+												"id": "07eb4f2b-4a1d-406b-b6b0-a0cbc5f9c84d",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -2112,7 +2112,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "034b8087-5e89-4dc1-b1d3-89308f84b0a1",
+												"id": "16f9338d-93f4-499f-b608-2087cf5998d6",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -2193,7 +2193,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "f9ba1cc1-566a-494b-9a32-eb8e1e77d14b",
+												"id": "5007621e-8d3f-40b5-8446-b5e3d30b0609",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -2274,7 +2274,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ab72ab80-97bc-4161-a7a0-91dfe6e9fdb2",
+												"id": "dcce18b0-ef8e-4d5b-9ace-d3f2d69a77b0",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -2355,7 +2355,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "3fdcbb8c-4f65-453d-913c-0f3eeefc6bc8",
+												"id": "bf05a40b-d9b6-49d7-81b1-ff6373734c53",
 												"exec": [
 													"pm.test(\"Status code is 400\", () => {",
 													"    pm.response.to.have.status(400);",
@@ -2440,7 +2440,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "63e7fdc3-58de-48c8-bf25-43f2fbe58801",
+										"id": "1b2e0a22-45d5-4dfd-994e-3f083f714a2f",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2493,7 +2493,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "14c57894-fdf9-4c4a-bd71-1ba1f3cd0bf6",
+										"id": "3c3d01ed-fe9c-4ca3-b334-43861862e6f4",
 										"exec": [
 											"pm.test(\"Status code is 405\", () => {",
 											"    pm.response.to.have.status(405);",
@@ -2587,7 +2587,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "1ef80c5e-4330-4784-b37c-835ca1b0320e",
+														"id": "2b0f5452-d149-4395-a7b4-c2f9f6d7454b",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -2635,7 +2635,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "37f9dc9a-ef42-4765-a3b3-c900a79eced5",
+														"id": "aa6db0a1-2599-4f98-9db8-43ea0253f786",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -2688,7 +2688,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "0eb739a1-0a28-4da9-9b16-8fb82240d9cd",
+														"id": "df5ca6f6-afa9-4981-bf30-512491f553f6",
 														"exec": [
 															"pm.test(\"Status code is 201\", () => {",
 															"    pm.response.to.have.status(201);",
@@ -2781,7 +2781,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "ad5629ed-e36f-4b7f-b9b9-e213b5cd50d3",
+														"id": "23460dbf-3c54-4049-a4df-ec74e94139c4",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -2838,7 +2838,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "1027e5da-8c45-4020-b876-febf064f2bea",
+														"id": "14462a3a-ce64-416c-8429-dd39901a8825",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -2897,11 +2897,36 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "52778a69-d496-4365-9c20-6aa763babf3a",
+														"id": "a2d2dc15-e413-4fa7-b4a7-fa90a490d91c",
 														"exec": [
-															"pm.test(\"Status code is 200\", () => {",
-															"    pm.response.to.have.status(200);",
-															"});"
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Sca status is psuIdentified\", () => {",
+															"    pm.expect(jsonData.scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"scaRedirect link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    pm.expect(_links).to.have.property('scaRedirect');",
+															"});",
+															"",
+															"// splits string link by '/' to array and gets the last element - authorisationId",
+															"// e.g. \"http://localhost:8080/v1/consents/d917f39f-6308-4f81-9b51-bfbd8bc934c6/authorisations/554fda7d-bc70-44da-8670-15e299f817a6\"",
+															"      // needs to get 554fda7d-bc70-44da-8670-15e299f817a6 value",
+															"",
+															"    var a = jsonData._links.scaRedirect.href.split('/');",
+															"    a.pop();",
+															"    const authorisationId = a.pop();",
+															"",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"pm.globals.set(\"redirect_id\", authorisationId);",
+															""
 														],
 														"type": "text/javascript"
 													}
@@ -2909,7 +2934,7 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "6fecca41-1e24-4f34-9c00-c4e688b93aa6",
+														"id": "c53f537d-8619-4bf7-92a4-8b9b01e3086e",
 														"exec": [
 															""
 														],
@@ -2930,7 +2955,7 @@
 													},
 													{
 														"key": "PSU-ID",
-														"value": "{{psu_id_single}}"
+														"value": "{{psu_id_none}}"
 													},
 													{
 														"key": "X-Request-ID",
@@ -2942,7 +2967,7 @@
 													"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{consent_id}}/authorisations",
+													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{piis_consent_id}}/authorisations",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_xs2a}}"
@@ -2951,7 +2976,7 @@
 														"v2",
 														"consents",
 														"confirmation-of-funds",
-														"{{consent_id}}",
+														"{{piis_consent_id}}",
 														"authorisations"
 													]
 												},
@@ -2965,7 +2990,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "602e068b-b696-4ee9-a97b-1f228cb9b4f5",
+														"id": "1d9d121e-dd7e-44e3-b864-ec60dd9013a9",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -3012,7 +3037,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "4612d87f-a003-4ada-b21b-2b6a60eafa97",
+														"id": "2a77a05d-cdb6-4be7-9bbe-1bc5fa7922aa",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -3059,7 +3084,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "d31c7ce0-51a1-44da-8c44-21b587055e9a",
+														"id": "4538a9e5-f78e-4d56-b4e8-b6c95e8644b5",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -3094,7 +3119,7 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "35649d05-e807-42b8-a490-a69267d9b9a4",
+														"id": "5e099221-0088-42ca-817f-ee44070d6715",
 														"exec": [
 															"pm.globals.unset(\"internal_consent_id\");",
 															"pm.globals.unset(\"authorisation_id\");"
@@ -3130,7 +3155,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "de46b783-3797-43c7-9ece-27055c3e401f",
+														"id": "7082fad8-09bd-4217-b8af-c770819fe3e3",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -3188,6 +3213,302 @@
 									"_postman_isSubFolder": true
 								},
 								{
+									"name": "Explicit",
+									"item": [
+										{
+											"name": "1. Set redirect SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "510d2b09-b630-4e1b-9a4d-8e91e18c6922",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Enable PIIS consent support in ASPSP profile",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "218017cc-183f-45c1-868d-9e61b15faa31",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        }\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"TPP_CONSENT_SUPPORTED\",\n        \"redirectLinkToOnlineBanking\": {\n            \"piisRedirectUrlToAspsp\": \"http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}\"\n        }\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": true,\n        \"aspspNotificationsSupported\": [\n        ]\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create PIIS consent in XS2A",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "53e7446f-9878-4956-9790-af280c293234",
+														"exec": [
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"PIIS consent ID exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
+															"",
+															"pm.test(\"startAuthorisation link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var startAuthorisation = _links.startAuthorisation.href;",
+															"",
+															"    if (startAuthorisation === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "psu-id",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Explicit-Authorisation-Preferred",
+														"value": "true",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Redirect-URI",
+														"value": "TPP-Redirect-URI",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Nok-Redirect-URI",
+														"value": "TPP-Nok-Redirect-URI",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}",
+													"options": {
+														"raw": {}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v2",
+														"consents",
+														"confirmation-of-funds"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for a consent",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "24eab0ba-4b2f-4308-9cd8-e6a591b76892",
+														"exec": [
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Sca status is psuIdentified\", () => {",
+															"    pm.expect(jsonData.scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"scaRedirect link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    pm.expect(_links).to.have.property('scaRedirect');",
+															"});",
+															"",
+															"// splits string link by '/' to array and gets the last element - authorisationId",
+															"// e.g. \"http://localhost:8080/v1/consents/d917f39f-6308-4f81-9b51-bfbd8bc934c6/authorisations/554fda7d-bc70-44da-8670-15e299f817a6\"",
+															"      // needs to get 554fda7d-bc70-44da-8670-15e299f817a6 value",
+															"",
+															"    var a = jsonData._links.scaRedirect.href.split('/');",
+															"    a.pop();",
+															"    const authorisationId = a.pop();",
+															"",
+															"pm.globals.set(\"authorisation_id\", authorisationId);",
+															"pm.globals.set(\"redirect_id\", authorisationId);",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "de85371c-e796-4399-96a9-753be2a7ff45",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{piis_consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v2",
+														"consents",
+														"confirmation-of-funds",
+														"{{piis_consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process of a consent.  The message might in addition transmit authentication and authorisation related data.  his method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the consent.  The ASPSP might make the usage of this access method unnecessary,  since the related authorisation resource will be automatically created by  the ASPSP after the submission of the consent data with the first POST consents call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
 									"name": "Delete PIIS Consent",
 									"item": [
 										{
@@ -3199,7 +3520,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "873910ba-7db9-43ae-a982-68481745fce0",
+																"id": "29b9b3c9-56b4-4551-b32e-e15eef717a78",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3247,7 +3568,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "159c8aa2-a57f-4328-9b41-bbb92ca02907",
+																"id": "7b5bd20b-a502-40eb-aeae-965f707ec796",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3300,7 +3621,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "b0ecfc99-3e43-4699-91c5-a1d3b1255ee0",
+																"id": "e2d8d61a-4392-444e-8338-c0bd751a9aed",
 																"exec": [
 																	"pm.test(\"Status code is 201\", () => {",
 																	"    pm.response.to.have.status(201);",
@@ -3399,7 +3720,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "24bd10c7-306b-4ec3-b17c-9172dcd21cfb",
+																"id": "7b80cf4b-06d5-4910-b470-6133b859f27a",
 																"exec": [
 																	"pm.test(\"Status code is 403\", function () {",
 																	"    pm.response.to.have.status(403);",
@@ -3478,7 +3799,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "746b93a5-f79a-470d-9237-1f624267de2e",
+																"id": "9ae9efbf-87d7-4511-8b4a-e5293ecba71a",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3526,7 +3847,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "6f2a80a5-7601-4a92-87a4-745f5069c99c",
+																"id": "b9147945-60a6-44b3-be04-12e5432c736d",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3579,7 +3900,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "d2e68697-c39c-468c-a90e-ecac401d6996",
+																"id": "140c1744-b393-4f95-a590-366473a4f25d",
 																"exec": [
 																	"pm.test(\"Status code is 201\", () => {",
 																	"    pm.response.to.have.status(201);",
@@ -3672,7 +3993,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "07aef522-f89e-4d42-8f11-4e8b59372295",
+																"id": "0562a851-c3c8-44dc-9f3b-302c951202e6",
 																"exec": [
 																	"pm.test(\"Status code is 204\", function () {",
 																	"    pm.response.to.have.status(204);",
@@ -3721,7 +4042,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "054824ab-71ec-49e0-9431-af8a7ae85552",
+																"id": "b2d1bbdf-1041-48c4-825a-20b95416dddd",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3788,7 +4109,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "2293c5eb-688a-4c8c-b3e1-776d93fd9c1d",
+																"id": "aa1f473b-6b34-4799-bb44-0ba42b417c35",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3836,7 +4157,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "ed4ed17d-ce16-4613-a097-e68b668c5f81",
+																"id": "014d78d1-f38d-45d6-b273-9a79db4a1ab3",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -3889,7 +4210,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "a23237ee-dce2-4b8d-84bf-87ee66fcb42d",
+																"id": "d469af80-2541-4e6e-a3a8-58ec98c47af2",
 																"exec": [
 																	"pm.test(\"Status code is 201\", () => {",
 																	"    pm.response.to.have.status(201);",
@@ -3982,7 +4303,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "bf2657eb-0415-46df-a85e-9a9e4ac3122f",
+																"id": "2780d6f9-f384-434e-91d1-9a6d8f29a204",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -4017,7 +4338,7 @@
 														{
 															"listen": "prerequest",
 															"script": {
-																"id": "e92a9b33-9087-4a16-a7c8-1ad084a62453",
+																"id": "71e9cfae-966f-48c7-bbdc-0d5e9c4623a6",
 																"exec": [
 																	"pm.globals.unset(\"internal_consent_id\");",
 																	"pm.globals.unset(\"authorisation_id\");"
@@ -4053,7 +4374,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "ef23a791-d106-4da4-9ada-b3db561e0760",
+																"id": "d4c81c4c-d438-46ac-a0cf-ae2a490fa497",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -4084,13 +4405,12 @@
 															"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 														},
 														"url": {
-															"raw": "{{protocol}}://{{url_cms}}//psu-api/v2/piis/consent/{{internal_consent_id}}/status/VALID",
+															"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consent/{{internal_consent_id}}/status/VALID",
 															"protocol": "{{protocol}}",
 															"host": [
 																"{{url_cms}}"
 															],
 															"path": [
-																"",
 																"psu-api",
 																"v2",
 																"piis",
@@ -4110,7 +4430,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "461c3426-3b8f-4f9c-860b-3c85982ad417",
+																"id": "3e618cba-0791-4d18-bc7d-9fceda9c99ad",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -4170,7 +4490,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "28fa7faf-b455-4faa-8831-88f70ace83a3",
+																"id": "a3c0be08-3acf-47b5-9ec1-65a30e2f3839",
 																"exec": [
 																	"pm.test(\"Status code is 204\", function () {",
 																	"    pm.response.to.have.status(204);",
@@ -4219,7 +4539,7 @@
 														{
 															"listen": "test",
 															"script": {
-																"id": "d064f580-1e1e-4501-afd9-11605b21f741",
+																"id": "ffb5c1f0-aa73-427b-a093-9c3213e758f9",
 																"exec": [
 																	"pm.test(\"Status code is 200\", () => {",
 																	"    pm.response.to.have.status(200);",
@@ -4297,7 +4617,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "a4d575c3-8111-44bc-a44a-a460e6355537",
+														"id": "414ac22a-46bc-4207-ad99-f8f526ed5a70",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4345,7 +4665,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "122c77bb-48f5-4e25-bb71-0215c0b0f1fa",
+														"id": "72865906-3dd5-4e8f-8d01-cd9d48e2e46c",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4398,7 +4718,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "fd47e666-3840-4839-95f3-7218c5487951",
+														"id": "715197b2-1b0b-43dd-80c4-81fb8c2c1b0a",
 														"exec": [
 															"pm.test(\"Status code is 201\", () => {",
 															"    pm.response.to.have.status(201);",
@@ -4482,7 +4802,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "5a5576d6-0e2d-420c-8e31-cb0e6cee6d97",
+														"id": "3a944b81-8447-4d40-871d-ae568de7e3a8",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4539,7 +4859,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "9af88731-cb44-4905-a3e8-f65f02b04b8d",
+														"id": "c7aba306-f93b-4765-832b-a25ac75ad402",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4598,11 +4918,27 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "8a3e32a7-5323-4839-95bf-d35926dbb5bb",
+														"id": "ba363db8-6167-4c71-ac88-1a9b6698f65b",
 														"exec": [
-															"pm.test(\"Status code is 200\", () => {",
-															"    pm.response.to.have.status(200);",
-															"});"
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Sca status is psuIdentified\", () => {",
+															"    pm.expect(jsonData.scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"updatePsuAuthentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"});",
+															"",
+															"pm.globals.set(\"authorisation_id\", jsonData.authorisationId);",
+															""
 														],
 														"type": "text/javascript"
 													}
@@ -4610,7 +4946,7 @@
 												{
 													"listen": "prerequest",
 													"script": {
-														"id": "ef8c4792-e9f0-4bb0-a278-67fa8127a3e5",
+														"id": "37d86f23-047c-449b-95ef-a0ec2685ea88",
 														"exec": [
 															""
 														],
@@ -4631,7 +4967,7 @@
 													},
 													{
 														"key": "PSU-ID",
-														"value": "{{psu_id_single}}"
+														"value": "{{psu_id_none}}"
 													},
 													{
 														"key": "X-Request-ID",
@@ -4643,7 +4979,7 @@
 													"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
 												},
 												"url": {
-													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{consent_id}}/authorisations",
+													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{piis_consent_id}}/authorisations",
 													"protocol": "{{protocol}}",
 													"host": [
 														"{{url_xs2a}}"
@@ -4652,7 +4988,7 @@
 														"v2",
 														"consents",
 														"confirmation-of-funds",
-														"{{consent_id}}",
+														"{{piis_consent_id}}",
 														"authorisations"
 													]
 												},
@@ -4666,7 +5002,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "96f067c2-b4da-41bf-b6cf-329ce49c31a9",
+														"id": "848752dc-4961-4f81-bc82-092ab69382cb",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4713,7 +5049,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "099a85d1-3c69-4651-b8c9-c70ed1337826",
+														"id": "e16705cf-1f33-4f3d-9a6f-29a40ef42729",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4760,7 +5096,7 @@
 												{
 													"listen": "test",
 													"script": {
-														"id": "83255db3-f445-4115-9a8c-2e739a43e077",
+														"id": "4faed58e-f925-4129-9eeb-e021376cad81",
 														"exec": [
 															"pm.test(\"Status code is 200\", () => {",
 															"    pm.response.to.have.status(200);",
@@ -4816,6 +5152,293 @@
 									],
 									"protocolProfileBehavior": {},
 									"_postman_isSubFolder": true
+								},
+								{
+									"name": "Explicit",
+									"item": [
+										{
+											"name": "1. Set embedded SCA approach",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "0810267b-9f7d-4a01-b3ad-11869f5dd7f9",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "[\n  \"EMBEDDED\",\n  \"REDIRECT\",\n  \"DECOUPLED\"\n]"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"sca-approaches"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "2. Enable PIIS consent support in ASPSP profile",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "48281f31-6abb-4fe4-9b65-623adebc257f",
+														"exec": [
+															"pm.test(\"Status code is 200\", () => {",
+															"    pm.response.to.have.status(200);",
+															"});",
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"name": "Content-Type",
+														"type": "text",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        }\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"TPP_CONSENT_SUPPORTED\",\n        \"redirectLinkToOnlineBanking\": {\n            \"piisRedirectUrlToAspsp\": \"http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}\"\n        }\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": true,\n        \"aspspNotificationsSupported\": [\n        ]\n    }\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_aspsp_profile}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"aspsp-profile",
+														"for-debug",
+														"aspsp-settings"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "3. Create PIIS consent in XS2A",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "67054a63-47d6-4afb-804f-a960569fec5b",
+														"exec": [
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"PIIS consent ID exists\", () => {",
+															"   pm.expect(jsonData).to.have.property('consentId');",
+															"});",
+															"",
+															"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
+															"",
+															"pm.test(\"startAuthorisation link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    var startAuthorisation = _links.startAuthorisation.href;",
+															"",
+															"    if (startAuthorisation === undefined) {",
+															"       pm.expect().fail();",
+															"    }",
+															"});",
+															"",
+															"pm.test(\"Consent status is received\", () => {",
+															"    pm.expect(jsonData.consentStatus).to.eql('received');",
+															"});"
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "psu-id",
+														"value": "{{psu_id_none}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Explicit-Authorisation-Preferred",
+														"value": "true",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Redirect-URI",
+														"value": "TPP-Redirect-URI",
+														"type": "text"
+													},
+													{
+														"key": "TPP-Nok-Redirect-URI",
+														"value": "TPP-Nok-Redirect-URI",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}",
+													"options": {
+														"raw": {}
+													}
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v2",
+														"consents",
+														"confirmation-of-funds"
+													]
+												}
+											},
+											"response": []
+										},
+										{
+											"name": "4. Start the authorisation process for a consent",
+											"event": [
+												{
+													"listen": "test",
+													"script": {
+														"id": "f2d652c9-81e3-4461-af70-057e3f52b7d2",
+														"exec": [
+															"pm.test(\"Status code is 201\", () => {",
+															"    pm.response.to.have.status(201);",
+															"});",
+															"",
+															"const jsonData = pm.response.json();",
+															"",
+															"pm.test(\"Sca status is psuIdentified\", () => {",
+															"    pm.expect(jsonData.scaStatus).to.eql('psuIdentified');",
+															"});",
+															"",
+															"pm.test(\"updatePsuAuthentication link exists\", () => {",
+															"    pm.expect(jsonData).to.have.property('_links');",
+															"    const _links = jsonData._links;",
+															"    ",
+															"    pm.expect(_links).to.have.property('updatePsuAuthentication');",
+															"});",
+															"",
+															"pm.globals.set(\"authorisation_id\", jsonData.authorisationId);",
+															""
+														],
+														"type": "text/javascript"
+													}
+												},
+												{
+													"listen": "prerequest",
+													"script": {
+														"id": "f184771b-3d35-4d36-82d3-1ef4a8f01df0",
+														"exec": [
+															""
+														],
+														"type": "text/javascript"
+													}
+												}
+											],
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "PSU-ID",
+														"value": "{{psu_id_none}}"
+													},
+													{
+														"key": "X-Request-ID",
+														"value": "{{x_request_id}}"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n\t\"psuData\": {\n\t\t\"password\": \"{{psu_id_password}}\"\n\t}\n}"
+												},
+												"url": {
+													"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{piis_consent_id}}/authorisations",
+													"protocol": "{{protocol}}",
+													"host": [
+														"{{url_xs2a}}"
+													],
+													"path": [
+														"v2",
+														"consents",
+														"confirmation-of-funds",
+														"{{piis_consent_id}}",
+														"authorisations"
+													]
+												},
+												"description": "Create an authorisation sub-resource and start the authorisation process of a consent.  The message might in addition transmit authentication and authorisation related data.  his method is iterated n times for a n times SCA authorisation in a  corporate context, each creating an own authorisation sub-endpoint for  the corresponding PSU authorising the consent.  The ASPSP might make the usage of this access method unnecessary,  since the related authorisation resource will be automatically created by  the ASPSP after the submission of the consent data with the first POST consents call.  The start authorisation process is a process which is needed for creating a new authorisation  or cancellation sub-resource.   This applies in the following scenarios:    * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment      Initiation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be      uploaded by using the extended forms.     * 'startAuthorisationWithPsuIdentfication',      * 'startAuthorisationWithPsuAuthentication'     * 'startAuthorisationWithAuthentciationMethodSelection'    * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.   * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding      Payment Cancellation Response that an explicit start of the authorisation process is needed by the TPP.      The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded      by using the extended forms as indicated above.   * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for      executing the cancellation.   * The signing basket needs to be authorised yet. "
+											},
+											"response": []
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
 								}
 							],
 							"protocolProfileBehavior": {},
@@ -4833,7 +5456,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "36f7a6d1-1304-4249-84fd-35618442a72f",
+				"id": "059b4847-0bd4-4d8a-9bf3-ad7fe3b68914",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -4843,7 +5466,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "5c34d41f-4609-4a54-ba04-39fc36a6e764",
+				"id": "82539e97-27fd-4c46-b541-dff4f53bb6de",
 				"type": "text/javascript",
 				"exec": [
 					""
