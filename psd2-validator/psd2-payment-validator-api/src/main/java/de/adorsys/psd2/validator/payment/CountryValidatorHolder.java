@@ -39,4 +39,14 @@ public interface CountryValidatorHolder {
      * @return business validator
      */
     PaymentBusinessValidator getPaymentBusinessValidator();
+
+    /**
+     * Defines either country validation holder is custom or not.
+     * Needs to override default configurations on xs2a connector.
+     *
+     * @return true for custom holders (default value), false - for predefined holders.
+     */
+    default boolean isCustom() {
+        return true;
+    }
 }

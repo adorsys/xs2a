@@ -83,6 +83,9 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
         if (areDatesInvalidInPeriodicPayment(periodicPayment)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(PERIOD_INVALID_WRONG_ORDER));
         }
+        if (validationConfig.getDayOfExecution().isRequired() && periodicPayment.getDayOfExecution() == null) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "dayOfExecution"));
+        }
     }
 
     private void validateStartDate(LocalDate startDate, MessageError messageError) {
