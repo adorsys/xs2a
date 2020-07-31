@@ -62,7 +62,7 @@ public class PisCommonPaymentConfirmationExpirationServiceImpl implements PisCom
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
         String paymentId = pisCommonPaymentData.getExternalId();
         List<AuthorisationEntity> authorisations =
-            authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
+            authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
         authorisations.forEach(auth -> auth.setScaStatus(ScaStatus.FAILED));
         authorisationRepository.saveAll(authorisations);
         return pisCommonPaymentData;
@@ -93,7 +93,7 @@ public class PisCommonPaymentConfirmationExpirationServiceImpl implements PisCom
         pisCommonPaymentData.setTransactionStatus(TransactionStatus.RJCT);
         String paymentId = pisCommonPaymentData.getExternalId();
         List<AuthorisationEntity> authorisations =
-            authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
+            authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION));
         authorisations.forEach(this::failAuthorisation);
         authorisationRepository.saveAll(authorisations);
         return pisCommonPaymentDataRepository.save(pisCommonPaymentData);

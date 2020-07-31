@@ -104,7 +104,7 @@ public class CmsAspspAisExportControllerIT {
         consentEntity.setData(jsonReader.getBytesFromFile("json/consent/integration/ais/ais-consent-data.json"));
 
         given(consentJpaRepository.findAll(any(Specification.class))).willReturn(Collections.singletonList(consentEntity));
-        given(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consentEntity.getExternalId(), AuthorisationType.AIS))
+        given(authorisationRepository.findAllByParentExternalIdAndType(consentEntity.getExternalId(), AuthorisationType.CONSENT))
             .willReturn(Collections.emptyList());
         given(aisConsentUsageRepository.findReadByConsentAndUsageDate(eq(consentEntity), any(LocalDate.class)))
             .willReturn(Collections.emptyList());

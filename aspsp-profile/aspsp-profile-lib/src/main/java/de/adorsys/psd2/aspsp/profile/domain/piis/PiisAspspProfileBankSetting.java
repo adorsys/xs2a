@@ -30,4 +30,11 @@ public class PiisAspspProfileBankSetting {
      * Indicates whether ASPSP supports storing PIIS consent in CMS
      */
     private PiisConsentSupported piisConsentSupported;
+
+    /**
+     * 	A group of settings to define URL link for redirect approach
+     */
+    private PiisRedirectLinkBankSetting redirectLinkToOnlineBanking;
+
+
 }

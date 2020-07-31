@@ -117,7 +117,7 @@ class ConsentEntityTest {
         aisConsent.setInternalRequestId(expectedInternalRequestId);
 
         // When
-        String actualInternalRequestId = aisConsent.getInternalRequestId(AuthorisationType.AIS);
+        String actualInternalRequestId = aisConsent.getInternalRequestId(AuthorisationType.CONSENT);
 
         // Then
         assertEquals(expectedInternalRequestId, actualInternalRequestId);

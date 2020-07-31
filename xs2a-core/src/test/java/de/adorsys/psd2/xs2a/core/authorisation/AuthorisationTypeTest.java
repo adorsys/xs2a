@@ -24,8 +24,8 @@ class AuthorisationTypeTest {
 
     @Test
     void fromValue() {
-        assertEquals(AuthorisationType.AIS, AuthorisationType.fromValue("ais"));
-        assertEquals(AuthorisationType.AIS, AuthorisationType.fromValue("AIS"));
+        assertEquals(AuthorisationType.CONSENT, AuthorisationType.fromValue("consent"));
+        assertEquals(AuthorisationType.CONSENT, AuthorisationType.fromValue("CONSENT"));
 
         assertEquals(AuthorisationType.PIS_CANCELLATION, AuthorisationType.fromValue("pis_cancellation"));
         assertEquals(AuthorisationType.PIS_CANCELLATION, AuthorisationType.fromValue("PIS_CANCELLATION"));

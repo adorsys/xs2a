@@ -161,7 +161,7 @@ public class AisConsentServiceInternal implements AisConsentService {
     }
 
     private CmsConsent mapToCmsConsent(ConsentEntity consent) {
-        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consent.getExternalId(), AuthorisationType.AIS);
+        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndType(consent.getExternalId(), AuthorisationType.CONSENT);
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(consent);
         return cmsConsentMapper.mapToCmsConsent(consent, authorisations, usageCounterMap);
     }

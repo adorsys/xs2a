@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AuthorisationServiceRemoteTest {
     private static final String URL = "http://some.url";
-    private static final AuthorisationType AUTHORISATION_TYPE = AuthorisationType.AIS;
+    private static final AuthorisationType AUTHORISATION_TYPE = AuthorisationType.CONSENT;
     private static final String PARENT_ID = "parent id";
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String AUTHENTICATION_METHOD_ID = "authentication method id";

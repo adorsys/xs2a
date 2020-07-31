@@ -33,6 +33,8 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -78,6 +80,9 @@ public class PiisConsentService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiToXs2aAccountReferenceMapper spiToXs2aAccountReferenceMapper;
     private final CreatePiisConsentValidator createPiisConsentValidator;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
+    private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
+    private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
 
     public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
@@ -124,6 +129,12 @@ public class PiisConsentService {
 
         ConsentStatus consentStatus = piisConsent.getConsentStatus();
         Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(), encryptedConsentId, false, requestProviderService.getInternalRequestIdString());
+
+        boolean multilevelScaRequired = false;
+        if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
+            proceedImplicitCaseForCreateConsent(xs2aConfirmationOfFundsResponse, psuData, encryptedConsentId);
+        }
+
         return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder().body(xs2aConfirmationOfFundsResponse).build();
     }
 
@@ -188,6 +199,56 @@ public class PiisConsentService {
                    .build();
     }
 
+    public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
+        xs2aEventService.recordAisTppRequest(consentId, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        ResponseObject.ResponseBuilder<Void> responseBuilder = ResponseObject.builder();
+        Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
+
+        if (piisConsentById.isEmpty()) {
+            log.info("Consent-ID: [{}]. Delete PIIS consent failed: initial consent not found by id", consentId);
+            return responseBuilder
+                       .fail(ErrorType.PIIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
+                       .build();
+        }
+
+        PiisConsent piisConsent = piisConsentById.get();
+
+        ValidationResult validationResult = confirmationOfFundsConsentValidationService.validateConsentOnDelete(piisConsent);
+        if (validationResult.isNotValid()) {
+            log.info("Consent-ID: [{}]. Delete Confirmation of Funds Consent - validation failed: {}", piisConsent.getId(), validationResult.getMessageError());
+            return ResponseObject.<Void>builder()
+                       .fail(validationResult.getMessageError())
+                       .build();
+        }
+
+        SpiContextData contextData = getSpiContextData();
+
+        SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
+        SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent);
+        SpiResponse<SpiResponse.VoidResponse> revokePiisConsentResponse = piisConsentSpi.revokePiisConsent(contextData, spiPiisConsent, aspspDataProvider);
+
+        if (revokePiisConsentResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(revokePiisConsentResponse, ServiceType.PIIS);
+            log.info("Consent-ID: [{}]. Delete Confirmation of Funds Consent failed: Couldn't revoke PIIS consent at SPI level: {}", piisConsent.getId(), errorHolder);
+            return ResponseObject.<Void>builder()
+                       .fail(new MessageError(errorHolder))
+                       .build();
+        }
+
+        ConsentStatus newConsentStatus = piisConsent.getConsentStatus() == ConsentStatus.RECEIVED
+                                             ? ConsentStatus.REJECTED
+                                             : ConsentStatus.TERMINATED_BY_TPP;
+
+        xs2aPiisConsentService.updateConsentStatus(consentId, newConsentStatus);
+        return ResponseObject.<Void>builder().build();
+    }
+
+    private SpiContextData getSpiContextData() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
+        return spiContextDataProvider.provideWithPsuIdData(psuIdData);
+    }
+
     private SpiResponse<SpiConsentStatusResponse> getConsentStatusFromSpi(PiisConsent piisConsent, String consentId) {
         SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent);
         SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
@@ -199,5 +260,12 @@ public class PiisConsentService {
         SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent);
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
         return piisConsentSpi.initiatePiisConsent(contextData, spiPiisConsent, aspspConsentDataProvider);
+    }
+
+    private void proceedImplicitCaseForCreateConsent(Xs2aConfirmationOfFundsResponse response, PsuIdData psuData, String consentId) {
+        piisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
+            .ifPresent(a -> {
+                response.setAuthorizationId(a.getAuthorisationId());
+            });
     }
 }

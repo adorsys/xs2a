@@ -129,7 +129,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
 
     private CmsAisAccountConsent mapToCmsAisAccountConsentWithAuthorisations(ConsentEntity aisConsentEntity) {
         List<AuthorisationEntity> authorisations =
-            authorisationRepository.findAllByParentExternalIdAndAuthorisationType(aisConsentEntity.getExternalId(), AuthorisationType.AIS);
+            authorisationRepository.findAllByParentExternalIdAndType(aisConsentEntity.getExternalId(), AuthorisationType.CONSENT);
         return aisConsentMapper.mapToCmsAisAccountConsent(aisConsentEntity, authorisations);
     }
 }

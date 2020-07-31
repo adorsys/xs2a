@@ -90,7 +90,7 @@ public class CmsConsentBuilder {
                             cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);
                             cmsConsent.setPsuIdDataList(Collections.singletonList(PSU_DATA));
                             cmsConsent.setAuthorisationTemplate(AUTHORISATION_TEMPLATE);
-                            cmsConsent.setAuthorisations(Collections.singletonList(authorisation != null ? authorisation : new Authorisation(AUTHORISATION_ID, PSU_DATA, consentId, AuthorisationType.AIS, ScaStatus.RECEIVED)));
+                            cmsConsent.setAuthorisations(Collections.singletonList(authorisation != null ? authorisation : new Authorisation(AUTHORISATION_ID, PSU_DATA, consentId, AuthorisationType.CONSENT, ScaStatus.RECEIVED)));
                             cmsConsent.setUsages(Collections.emptyMap());
                             cmsConsent.setCreationTimestamp(now);
                             cmsConsent.setStatusChangeTimestamp(now);

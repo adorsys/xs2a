@@ -19,7 +19,7 @@ package de.adorsys.psd2.core.mapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
-import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
+import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

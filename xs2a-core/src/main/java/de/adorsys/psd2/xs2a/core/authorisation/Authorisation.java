@@ -38,7 +38,7 @@ public class Authorisation {
     @ApiModelProperty(value = "An identification of the created account consent", required = true, example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7")
     private String parentId;
 
-    @ApiModelProperty(value = "Authorisation type 'AIS', 'PIS_CREATION', 'PIS_CANCELLATION'.", required = true, example = "AIS")
+    @ApiModelProperty(value = "Authorisation type 'CONSENT', 'PIS_CREATION', 'PIS_CANCELLATION'.", required = true, example = "AIS")
     private AuthorisationType authorisationType;
 
     @ApiModelProperty(value = "The following code values are permitted 'received', 'psuIdentified', 'psuAuthenticated', 'scaMethodSelected', 'started', 'finalised' 'failed' 'exempted'.", required = true, example = "STARTED")

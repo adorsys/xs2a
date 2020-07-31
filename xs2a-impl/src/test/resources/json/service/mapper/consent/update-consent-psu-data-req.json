@@ -10,6 +10,6 @@
   "authorizationId": "5476159a-27ad-46db-8491-71e629d8234q",
   "scaStatus": "received",
   "authenticationMethodId": "card",
-  "authorisationType": "AIS",
+  "authorisationType": "CONSENT",
   "scaAuthenticationData": "scaAuthenticationData"
 }

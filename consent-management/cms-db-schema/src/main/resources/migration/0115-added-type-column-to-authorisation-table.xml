@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2018-2020 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="kya@adorsys.com.ua" id="2020-07-24-1">
+        <comment>
+            Add column type to authorisation table.
+        </comment>
+
+        <addColumn tableName="authorisation">
+            <column name="type" type="${column.type}"/>
+        </addColumn>
+
+    </changeSet>
+
+    <changeSet author="kya@adorsys.com.ua" id="2020-07-24-2">
+        <comment>
+            Add value to column type in authorisation table.
+        </comment>
+
+        <sql>
+            UPDATE authorisation
+            SET type = authorisation_type
+        </sql>
+
+    </changeSet>
+
+    <changeSet author="kya@adorsys.com.ua" id="2020-07-24-3">
+        <comment>
+            Replace AIS value with CONSENT for type column in authorisation table.
+        </comment>
+
+        <sql>
+            UPDATE authorisation
+            SET type = 'CONSENT' WHERE type = 'AIS'
+        </sql>
+
+    </changeSet>
+
+</databaseChangeLog>

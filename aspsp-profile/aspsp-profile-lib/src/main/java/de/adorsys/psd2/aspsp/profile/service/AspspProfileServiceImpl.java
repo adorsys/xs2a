@@ -23,6 +23,8 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
@@ -32,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +78,11 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 pisBankSetting.getCountryValidationSupported(),
                                                                 pisBankSetting.getSupportedTransactionStatusFormats());
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().getPiisConsentSupported());
+
+        PiisRedirectLinkSetting piisRedirectLinkSetting = new PiisRedirectLinkSetting(Optional.ofNullable(setting.getPiis().getRedirectLinkToOnlineBanking())
+                                                                                          .map(PiisRedirectLinkBankSetting::getPiisRedirectUrlToAspsp)
+                                                                                          .orElse(null));
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().getPiisConsentSupported(), piisRedirectLinkSetting);
 
         CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),

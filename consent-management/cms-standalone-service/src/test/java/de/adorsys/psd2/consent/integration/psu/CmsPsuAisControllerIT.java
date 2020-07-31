@@ -60,7 +60,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -168,7 +167,6 @@ public class CmsPsuAisControllerIT {
 
         verify(aisConsentSpecification).byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID);
         verify(authorisationSpecification).byExternalIdAndInstanceId(AUTHORISATION_ID, INSTANCE_ID);
-        verify(authorisationRepository, times(1)).save(authorisationEntity);
 
         assertEquals(SMS, authorisationEntity.getAuthenticationMethodId());
         assertEquals(TAN, authorisationEntity.getScaAuthenticationData());
@@ -337,7 +335,7 @@ public class CmsPsuAisControllerIT {
     @Test
     void psuDataAuthorisations() throws Exception {
         given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
-        given(authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consentEntity.getExternalId(), AuthorisationType.AIS))
+        given(authorisationRepository.findAllByParentExternalIdAndType(consentEntity.getExternalId(), AuthorisationType.CONSENT))
             .willReturn(Collections.singletonList(authorisationEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.psuDataAuthorisationsUrl(CONSENT_ID));

@@ -35,14 +35,6 @@ public class PisExecutePaymentServiceCommonImpl implements PisExecutePaymentServ
     private final CommonPaymentSpi commonPaymentSpi;
 
     @Override
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(SpiContextData contextData, SpiScaConfirmation spiScaConfirmation, SpiPayment payment, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
-        return commonPaymentSpi.verifyScaAuthorisationAndExecutePayment(contextData, spiScaConfirmation,
-                                                                        (SpiPaymentInfo) payment,
-                                                                        spiAspspConsentDataProvider);
-    }
-
-    @Override
     public SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData contextData,
                                                                                                       SpiScaConfirmation spiScaConfirmation,
                                                                                                       SpiPayment payment,

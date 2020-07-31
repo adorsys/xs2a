@@ -182,7 +182,7 @@ public class ConsentServiceInternal implements ConsentService {
         ConsentEntity consentEntity = consentEntityOptional.get();
         consentEntity = aisConsentLazyMigrationService.migrateIfNeeded(consentEntity);
 
-        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndAuthorisationType(consentEntity.getExternalId(), AuthorisationType.AIS);
+        List<AuthorisationEntity> authorisations = authorisationRepository.findAllByParentExternalIdAndType(consentEntity.getExternalId(), AuthorisationType.CONSENT);
         CmsConsent cmsConsent = cmsConsentMapper.mapToCmsConsent(consentEntity, authorisations, aisConsentUsageService.getUsageCounterMap(consentEntity));
 
         return CmsResponse.<CmsConsent>builder()

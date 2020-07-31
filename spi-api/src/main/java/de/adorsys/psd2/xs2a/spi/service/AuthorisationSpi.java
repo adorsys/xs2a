@@ -41,20 +41,6 @@ interface AuthorisationSpi<T> {
      * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.
      *
      * @param contextData              holder of call's context data (e.g. about PSU and TPP)
-     * @param psuLoginData             ASPSP identifier(s) of the psu, provided by TPP within this request.
-     * @param password                 Psu's password
-     * @param businessObject           generic consent/payment object
-     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
-     * @return Returns an object, containing the status of the authorisation and an indicator whether the SCA should be exempted
-     * @deprecated since 6.4, use {@link AuthorisationSpi#authorisePsu(SpiContextData, String, SpiPsuData, String, Object, SpiAspspConsentDataProvider)} instead
-     */
-    @Deprecated // TODO remove deprecated method in 6.7 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1270
-    SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull SpiPsuData psuLoginData, String password, T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
-
-    /**
-     * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.
-     *
-     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
      * @param authorisationId          a unique identifier of authorisation process
      * @param psuLoginData             ASPSP identifier(s) of the psu, provided by TPP within this request.
      * @param password                 Psu's password

@@ -1,0 +1,103 @@
+= Release notes v.7.7
+
+== Table of Contents
+
+* Add confirmation of funds functionality to `CMS-PSU-API`
+* Add authorisation endpoints to CoF yaml
+* Implement implicit authorisation for PIIS consents
+* Revoke Funds Confirmation Consent
+* Added information about currency conversion to Payment Initiation response
+* Fixed Double saving of psu data
+* Added currency conversion related information to Update PSU Data response
+* Replaced AIS authorisation type with general consent type
+* Removed deprecated methods from AuthorisationSpi
+
+== Add confirmation of funds functionality to `CMS-PSU-API`
+
+From now on, `CMS-PSU-API` is extended for confirmation of funds functionality:
+
+* Update authorisation status for confirmation of funds consent:
+
+----
+PUT /psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/status/{status}
+----
+
+* Get confirmation of funds consent by redirectId:
+
+----
+ GET /psu-api/v2/piis/consent/redirect/{redirect-id}
+----
+
+* Get confirmation of funds consent by consentId:
+
+----
+GET /psu-api/v2/piis/consent/{consent-id}
+----
+
+* Update PSU for confirmation of funds:
+
+----
+PUT psu-api/v2/piis/consent/{consent-id}/authorisation/{authorisation-id}/psu-data
+----
+
+* Get authorisation of confirmation of funds:
+
+----
+GET psu-api/v2/piis/consent/authorisation/{authorisation-id}
+----
+
+* Update status of confirmation of funds:
+
+----
+PUT psu-api/v2/piis/consent/{consent-id}/status/{status}
+----
+
+== Add authorisation endpoints to CoF yaml
+
+Authorisation endpoints were added to Confirmation of Funds yaml and the following methods were generated in `ConfirmationOfFundsController`:
+
+- Start the authorisation process for a consent `POST /v2/consents/confirmation-of-funds/{consentId}/authorisations`
+
+- Get consent authorisation sub-resources request `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations`
+
+- Read the SCA status of the consent authorisation `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
+
+- Update PSU Data for consents `PUT /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
+
+== Implement implicit authorisation for PIIS consents
+
+From now on, implicit authorisation for PIIS consent is supported in Redirect and Embedded approach.
+To configure redirect url for PIIS consent use `piisRedirectUrlToAspsp` parameter in `redirectLinkToOnlineBanking` block in ASPSP Profile.
+
+== Revoke Funds Confirmation Consent
+
+From now on, TPP is able to revoke Confirmation of Funds Consent by sending request `DELETE /v2/consents/confirmation-of-funds/{consentId}`
+If Confirmation of Funds Consent has `RECEIVED` status, then status of revoked consent will be `REJECTED`, otherwise `TERMINATED_BY_TPP`.
+
+== Added information about currency conversion to Payment Initiation response
+
+From now on, information about currency conversion is passed through spi level to
+Payment Initiation response.
+
+== Fixed Double saving of psu data
+
+From now on, in all cms psu api requests psu data is saved correctly.
+
+== Added currency conversion related information to Update PSU Data response
+
+From now on, information about currency conversion related information is added
+into update psu data response.
+
+== Replaced AIS authorisation type with general consent type
+
+From now on, AIS authorisation type is deprecated, and will be removed in 8.0 version,
+use CONSENT authorisation type instead.
+
+== Removed deprecated methods from AuthorisationSpi
+
+- AuthorisationSpi#authorisePsu
+- PaymentCancellationSpi#verifyScaAuthorisationAndCancelPayment
+- PaymentSpi#verifyScaAuthorisationAndExecutePayment
+- PisExecutePaymentService#verifyScaAuthorisationAndExecutePayment
+- PaymentBaseAuthorisationProcessorService#updatePaymentData
+- PaymentBaseAuthorisationProcessorService#authorisePsu

@@ -331,7 +331,7 @@ class PaymentAuthorisationServiceTest {
             .thenReturn(ValidationResult.valid());
 
         when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
-            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus.RECEIVED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
+            .thenReturn(Xs2aUpdatePisCommonPaymentPsuDataResponse.buildWithCurrencyConversionInfo(ScaStatus.RECEIVED, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA, null));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
 
@@ -358,7 +358,8 @@ class PaymentAuthorisationServiceTest {
             .thenReturn(ValidationResult.valid());
 
         when(pisScaAuthorisationService.updateCommonPaymentPsuData(any()))
-            .thenReturn(new Xs2aUpdatePisCommonPaymentPsuDataResponse(SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
+            .thenReturn(Xs2aUpdatePisCommonPaymentPsuDataResponse
+                            .buildWithCurrencyConversionInfo(SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA, null));
 
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse();
 

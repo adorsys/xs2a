@@ -40,6 +40,8 @@ setting:
       - application/json
   piis:
     piisConsentSupported: NOT_SUPPORTED
+    redirectLinkToOnlineBanking:
+      piisRedirectUrlToAspsp: http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}
   common:
     scaApproachesSupported:
     - REDIRECT

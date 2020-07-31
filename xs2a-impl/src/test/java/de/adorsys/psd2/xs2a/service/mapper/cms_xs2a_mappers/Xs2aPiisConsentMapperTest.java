@@ -86,7 +86,7 @@ class Xs2aPiisConsentMapperTest {
 
         CreatePiisConsentRequest request = jsonReader.getObjectFromFile("json/piis/create-piis-consent.json", CreatePiisConsentRequest.class);
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
-        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuIdData, tppInfo, allowedFrequencyPerDay);
+        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuIdData, tppInfo);
         //Then
         CmsConsent cmsConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/cms-consent-creation.json", CmsConsent.class);
         assertEquals(cmsConsentExpected, cmsConsent);

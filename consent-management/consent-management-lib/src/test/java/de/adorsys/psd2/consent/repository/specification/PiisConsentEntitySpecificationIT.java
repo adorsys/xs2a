@@ -60,7 +60,6 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
     @Autowired
     private TppInfoRepository tppInfoRepository;
 
-    private ConsentEntity consent;
     private AccountReference accountReference;
 
     @BeforeEach
@@ -73,7 +72,7 @@ class PiisConsentEntitySpecificationIT extends BaseTest {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
         consentEntity.setConsentType(ConsentType.PIIS_ASPSP.getName());
         consentEntity.getTppInformation().setTppInfo(tppInfo);
-        consent = consentJpaRepository.save(consentEntity);
+        consentJpaRepository.save(consentEntity);
 
         accountReference = new AccountReference();
         accountReference.setIban("DE15500105172295759744");

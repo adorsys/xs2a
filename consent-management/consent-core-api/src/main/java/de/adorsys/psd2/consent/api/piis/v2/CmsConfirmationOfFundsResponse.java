@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.core.data.piis.v1;
+package de.adorsys.psd2.consent.api.piis.v2;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
-import java.time.LocalDate;
-
 @Value
-public class PiisConsentData {
-    private String cardNumber;
-    private LocalDate cardExpiryDate;
-    private String cardInformation;
-    private String registrationInformation;
+@RequiredArgsConstructor
+public class CmsConfirmationOfFundsResponse {
+    private CmsConfirmationOfFundsConsent consent;
+    private String authorisationId;
+    private String tppOkRedirectUri;
+    private String tppNokRedirectUri;
 
-    public static PiisConsentData buildDefaultConsentData() {
-        return new PiisConsentData(null, null, null, null);
+    public CmsConfirmationOfFundsResponse(String tppNokRedirectUri) {
+        this(null, null, null, tppNokRedirectUri);
     }
 }

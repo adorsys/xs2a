@@ -139,7 +139,7 @@ class CreateConsentAuthorisationValidatorTest {
         // Given
         AisConsent accountConsent = buildAccountConsentWithPsuIdDataAndAuthorisation();
         CreateConsentAuthorisationObject createPisAuthorisationPO = new CreateConsentAuthorisationObject(accountConsent, PSU_DATA);
-        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.AIS))).thenReturn(true);
+        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.CONSENT))).thenReturn(true);
 
         when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 

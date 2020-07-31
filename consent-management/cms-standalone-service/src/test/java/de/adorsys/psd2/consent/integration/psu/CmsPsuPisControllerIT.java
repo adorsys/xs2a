@@ -58,7 +58,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -137,7 +136,6 @@ public class CmsPsuPisControllerIT {
             .andExpect(content().string(""));
 
         verify(authorisationSpecification).byExternalIdAndInstanceId(AUTHORISATION_ID, INSTANCE_ID);
-        verify(authorisationRepository).save(authorisationEntity);
     }
 
     @Test
@@ -226,7 +224,6 @@ public class CmsPsuPisControllerIT {
             .andExpect(content().string(""));
 
         verify(authorisationSpecification).byExternalIdAndInstanceId(REDIRECT_ID, INSTANCE_ID);
-        verify(authorisationRepository, times(1)).save(authorisationEntity);
 
         assertEquals(SMS, authorisationEntity.getAuthenticationMethodId());
         assertEquals(TAN, authorisationEntity.getScaAuthenticationData());
@@ -252,7 +249,7 @@ public class CmsPsuPisControllerIT {
     @Test
     void psuAuthorisationStatuses() throws Exception {
         given(pisCommonPaymentDataRepository.findOne(any(Specification.class))).willReturn(Optional.of(pisCommonPaymentData));
-        given(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+        given(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
             .willReturn(Collections.singletonList(authorisationEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.psuAuthorisationStatusesUrl(PAYMENT_ID));

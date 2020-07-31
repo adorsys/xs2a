@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers;
 
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.core.data.piis.v1.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -39,6 +39,8 @@ import java.util.Collections;
 
 @Mapper(componentModel = "spring", uses = ConsentDataMapper.class)
 public abstract class Xs2aPiisConsentMapper {
+    private static final Integer PIIS_FREQUENCY_PER_DAY = 0;
+
     @Autowired
     protected ConsentDataMapper consentDataMapper;
     @Autowired
@@ -47,12 +49,12 @@ public abstract class Xs2aPiisConsentMapper {
     @Mapping(target = "consentTppInformation", source = "tppInformation")
     public abstract PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
 
-    public CmsConsent mapToCmsConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo, int allowedFrequencyPerDay) {
+    public CmsConsent mapToCmsConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
         PiisConsentData piisConsentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(), request.getCardInformation(), request.getRegistrationInformation());
-        byte[] aisConsentDataBytes = consentDataMapper.getBytesFromConsentData(piisConsentData);
+        byte[] consentDataInBytes = consentDataMapper.getBytesFromConsentData(piisConsentData);
 
         CmsConsent cmsConsent = new CmsConsent();
-        cmsConsent.setConsentData(aisConsentDataBytes);
+        cmsConsent.setConsentData(consentDataInBytes);
 
         ConsentTppInformation tppInformation = new ConsentTppInformation();
         tppInformation.setTppInfo(tppInfo);
@@ -67,7 +69,7 @@ public abstract class Xs2aPiisConsentMapper {
         }
         cmsConsent.setAuthorisationTemplate(authorisationTemplate);
 
-        cmsConsent.setFrequencyPerDay(allowedFrequencyPerDay);
+        cmsConsent.setFrequencyPerDay(PIIS_FREQUENCY_PER_DAY);
         cmsConsent.setInternalRequestId(requestProviderService.getInternalRequestIdString());
         cmsConsent.setPsuIdDataList(Collections.singletonList(psuData));
         cmsConsent.setConsentType(ConsentType.PIIS_TPP);

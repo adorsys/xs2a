@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.SupportedAccountReferenceField;
 import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
@@ -38,6 +39,7 @@ public class AspspSettingsBuilder {
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
     private static final String PIS_REDIRECT_LINK = "http://localhost:4200/pis/{redirect-id}/";
     private static final String AIS_REDIRECT_LINK = "http://localhost:4200/ais/{redirect-id}/";
+    private static final String PIIS_REDIRECT_LINK = "http://localhost:4200/piis/{redirect-id}/";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -128,7 +130,7 @@ public class AspspSettingsBuilder {
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 COUNTRY_VALIDATION_SUPPORTED, SUPPORTED_TRANSACTION_STATUS_FORMATS);
-        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED);
+        PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(scaRedirectFlow == null ? SCA_REDIRECT_FLOW : scaRedirectFlow,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          startAuthorisationMode == null ? START_AUTHORISATION_MODE : startAuthorisationMode,

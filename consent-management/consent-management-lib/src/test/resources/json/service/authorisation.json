@@ -8,5 +8,5 @@
   "authenticationMethodId": "method id",
   "scaAuthenticationData": "authentication data",
   "chosenScaApproach": "REDIRECT",
-  "authorisationType": "AIS"
+  "authorisationType": "CONSENT"
 }

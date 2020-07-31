@@ -31,7 +31,7 @@ public class AuthServiceResolver {
     @NotNull
     public AuthService getAuthService(AuthorisationType authorisationType) {
         switch (authorisationType) {
-            case AIS:
+            case CONSENT:
                 return aisAuthService;
             case PIS_CREATION:
                 return pisAuthService;

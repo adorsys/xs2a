@@ -45,6 +45,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
@@ -119,6 +120,10 @@ class UpdatePsuDataForPaymentCancellationIT {
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
     @MockBean
     private PaymentCancellationSpi paymentCancellationSpi;
+    @MockBean
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
+    @MockBean
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -141,6 +146,8 @@ class UpdatePsuDataForPaymentCancellationIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
+        given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPT_PAYMENT_ID)).willReturn(spiAspspConsentDataProvider);
+        given(spiAspspConsentDataProvider.loadAspspConsentData()).willReturn("data".getBytes());
     }
 
     @Test

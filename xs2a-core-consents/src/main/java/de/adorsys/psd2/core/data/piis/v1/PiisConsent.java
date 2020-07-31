@@ -18,6 +18,7 @@ package de.adorsys.psd2.core.data.piis.v1;
 
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.Consent;
+import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;

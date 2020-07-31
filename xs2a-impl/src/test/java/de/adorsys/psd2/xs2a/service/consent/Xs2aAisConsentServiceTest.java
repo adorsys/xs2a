@@ -232,7 +232,7 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(SCA_APPROACH);
         when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
             .thenReturn(AIS_CONSENT_AUTHORISATION_REQUEST);
-        when(authorisationService.createAuthorisation(AIS_CONSENT_AUTHORISATION_REQUEST, CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationService.createAuthorisation(AIS_CONSENT_AUTHORISATION_REQUEST, CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(REDIRECT_URI);
@@ -257,7 +257,7 @@ class Xs2aAisConsentServiceTest {
         CreateAuthorisationRequest request = new CreateAuthorisationRequest();
         when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, "ok.uri", "nok.uri"))
             .thenReturn(request);
-        when(authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.AIS))
+        when(authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Optional.empty());
 
         // When
@@ -417,13 +417,13 @@ class Xs2aAisConsentServiceTest {
     @Test
     void getAuthorisationScaStatus() {
         xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-        verify(authorisationService, times(1)).getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.AIS);
+        verify(authorisationService, times(1)).getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.CONSENT);
     }
 
     @Test
     void getAuthorisationSubResources() {
         xs2aAisConsentService.getAuthorisationSubResources(CONSENT_ID);
-        verify(authorisationService, times(1)).getAuthorisationSubResources(CONSENT_ID, AuthorisationType.AIS);
+        verify(authorisationService, times(1)).getAuthorisationSubResources(CONSENT_ID, AuthorisationType.CONSENT);
     }
 
     @Test

@@ -14,36 +14,41 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.piis;
+package de.adorsys.psd2.consent.api.piis.v2;
 
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class CmsPiisConsent {
+@NoArgsConstructor
+public class CmsConfirmationOfFundsConsent {
     private String id;
-    private boolean recurringIndicator;
-    private OffsetDateTime requestDateTime;
-    private LocalDate lastActionDate;
-    private LocalDate expireDate;
-    private PsuIdData psuData;
-    private ConsentStatus consentStatus;
     private AccountReference account;
+    private LocalDate validUntil;
+    private LocalDate expireDate;
+    private LocalDate lastActionDate;
+    private ConsentStatus consentStatus;
+    private boolean tppRedirectPreferred;
+    private List<PsuIdData> psuIdDataList;
+    private TppInfo tppInfo;
+    private AuthorisationTemplate authorisationTemplate;
+    private boolean multilevelScaRequired;
     private OffsetDateTime creationTimestamp;
-    private String instanceId;
+    private OffsetDateTime statusChangeTimestamp;
+    private List<CmsConfirmationOfFundsAuthorisation> authorisations;
     private String cardNumber;
     private LocalDate cardExpiryDate;
     private String cardInformation;
     private String registrationInformation;
-    private OffsetDateTime statusChangeTimestamp;
-    private String tppAuthorisationNumber;
 }

@@ -143,7 +143,7 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
 
     private AisConsent mapToAisConsent(ConsentEntity entity) {
         List<AuthorisationEntity> authorisationEntityList =
-            authorisationRepository.findAllByParentExternalIdAndAuthorisationType(entity.getExternalId(), AuthorisationType.AIS);
+            authorisationRepository.findAllByParentExternalIdAndType(entity.getExternalId(), AuthorisationType.CONSENT);
 
         return aisConsentMapper.mapToAisConsent(entity, authorisationEntityList);
     }

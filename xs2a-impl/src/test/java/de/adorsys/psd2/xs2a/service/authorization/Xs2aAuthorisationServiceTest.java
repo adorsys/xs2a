@@ -73,7 +73,7 @@ class Xs2aAuthorisationServiceTest {
         when(authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(CONSENT_ID), request))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(response).build());
 
-        Optional<CreateAuthorisationResponse> actual = authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.AIS);
+        Optional<CreateAuthorisationResponse> actual = authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.CONSENT);
 
         assertTrue(actual.isPresent());
         assertEquals(response, actual.get());
@@ -86,7 +86,7 @@ class Xs2aAuthorisationServiceTest {
         when(authorisationServiceEncrypted.createAuthorisation(new AisAuthorisationParentHolder(CONSENT_ID), request))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
-        Optional<CreateAuthorisationResponse> actual = authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.AIS);
+        Optional<CreateAuthorisationResponse> actual = authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.CONSENT);
 
         assertTrue(actual.isEmpty());
     }
@@ -191,7 +191,7 @@ class Xs2aAuthorisationServiceTest {
         when(authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(CONSENT_ID)))
             .thenReturn(CmsResponse.<List<String>>builder().payload(subResources).build());
 
-        Optional<List<String>> actual = authorisationService.getAuthorisationSubResources(CONSENT_ID, AuthorisationType.AIS);
+        Optional<List<String>> actual = authorisationService.getAuthorisationSubResources(CONSENT_ID, AuthorisationType.CONSENT);
 
         assertTrue(actual.isPresent());
         assertEquals(subResources, actual.get());
@@ -202,7 +202,7 @@ class Xs2aAuthorisationServiceTest {
         when(authorisationServiceEncrypted.getAuthorisationsByParentId(new AisAuthorisationParentHolder(CONSENT_ID)))
             .thenReturn(CmsResponse.<List<String>>builder().error(CmsError.TECHNICAL_ERROR).build());
 
-        Optional<List<String>> actual = authorisationService.getAuthorisationSubResources(CONSENT_ID, AuthorisationType.AIS);
+        Optional<List<String>> actual = authorisationService.getAuthorisationSubResources(CONSENT_ID, AuthorisationType.CONSENT);
 
         assertTrue(actual.isEmpty());
     }
@@ -219,7 +219,7 @@ class Xs2aAuthorisationServiceTest {
         when(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new AisAuthorisationParentHolder(CONSENT_ID)))
             .thenReturn(CmsResponse.<ScaStatus>builder().payload(ScaStatus.PSUIDENTIFIED).build());
 
-        Optional<ScaStatus> actual = authorisationService.getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.AIS);
+        Optional<ScaStatus> actual = authorisationService.getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.CONSENT);
 
         assertTrue(actual.isPresent());
         assertEquals(ScaStatus.PSUIDENTIFIED, actual.get());
@@ -230,7 +230,7 @@ class Xs2aAuthorisationServiceTest {
         when(authorisationServiceEncrypted.getAuthorisationScaStatus(AUTHORISATION_ID, new AisAuthorisationParentHolder(CONSENT_ID)))
             .thenReturn(CmsResponse.<ScaStatus>builder().error(CmsError.TECHNICAL_ERROR).build());
 
-        Optional<ScaStatus> actual = authorisationService.getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.AIS);
+        Optional<ScaStatus> actual = authorisationService.getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.CONSENT);
 
         assertTrue(actual.isEmpty());
     }

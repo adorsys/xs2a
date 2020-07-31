@@ -114,7 +114,15 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
         if (!result.hasError()) {
 
             Xs2aConfirmationOfFundsResponse body = result.getBody();
-            body.setLinks(new CreatePiisConsentLinks(getHttpUrl(), body));
+            boolean explicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
+            boolean signingBasketModeActive = authorisationMethodDecider.isSigningBasketModeActive(explicitPreferred);
+
+            body.setLinks(new CreatePiisConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
+                                                     redirectIdService,
+                                                     explicitMethod, signingBasketModeActive,
+                                                     getScaRedirectFlow(),
+                                                     isAuthorisationConfirmationRequestMandated(),
+                                                     requestProviderService.getInstanceId()));
         }
         return result;
     }

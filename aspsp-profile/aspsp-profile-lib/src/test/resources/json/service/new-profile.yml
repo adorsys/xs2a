@@ -54,6 +54,8 @@ setting:
     xs2aBaseLinksUrl: http://myhost.com/
   piis:
     piisConsentSupported: NOT_SUPPORTED
+    redirectLinkToOnlineBanking:
+      piisRedirectUrlToAspsp: http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}
   pis:
     maxTransactionValidityDays: 0
     notConfirmedPaymentExpirationTimeMs: 86400000

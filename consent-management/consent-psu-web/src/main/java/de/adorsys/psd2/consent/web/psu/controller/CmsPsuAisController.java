@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CmsPsuAisController implements CmsPsuAisApi {
@@ -58,6 +60,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
         ScaStatus scaStatus = ScaStatus.fromValue(status);
 
         if (scaStatus == null) {
+            log.info("Consent ID [{}], Authorisation ID [{}], Instance ID: [{}]. Bad request: SCA status [{}] incorrect.", consentId, authorisationId, instanceId, status);
             return ResponseEntity.badRequest().build();
         }
 
@@ -68,6 +71,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.badRequest().build();
         } catch (AuthorisationIsExpiredException e) {
+            log.debug("Consent ID [{}], Authorisation ID [{}], Instance ID: [{}]. Update authorisation status request timeout (authorisation is expired): NOK redirect url [{}]", consentId, authorisationId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsAisConsentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }
@@ -77,6 +81,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
         try {
             return new ResponseEntity<>(cmsPsuAisService.confirmConsent(consentId, instanceId), HttpStatus.OK);
         } catch (WrongChecksumException e) {
+            log.info("Consent ID [{}], Instance ID: [{}]. Confirm AIS consent failed due to wrong checksum.", consentId, instanceId);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -86,6 +91,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
         try {
             return new ResponseEntity<>(cmsPsuAisService.rejectConsent(consentId, instanceId), HttpStatus.OK);
         } catch (WrongChecksumException e) {
+            log.info("Consent ID [{}], Instance ID: [{}]. Reject AIS consent failed due to wrong checksum.", consentId, instanceId);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -101,6 +107,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
         try {
             return new ResponseEntity<>(cmsPsuAisService.revokeConsent(consentId, instanceId), HttpStatus.OK);
         } catch (WrongChecksumException e) {
+            log.info("Consent ID [{}], Instance ID: [{}]. Revoke AIS consent failed due to wrong checksum.", consentId, instanceId);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -110,6 +117,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
         try {
             return new ResponseEntity<>(cmsPsuAisService.authorisePartiallyConsent(consentId, instanceId), HttpStatus.OK);
         } catch (WrongChecksumException e) {
+            log.info("Consent ID [{}], Instance ID: [{}]. Authorise partially AIS consent failed due to wrong checksum.", consentId, instanceId);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -127,6 +135,7 @@ public class CmsPsuAisController implements CmsPsuAisApi {
             CmsAisConsentResponse cmsAisConsentResponse = response.get();
             return new ResponseEntity<>(cmsAisConsentResponse, HttpStatus.OK);
         } catch (RedirectUrlIsExpiredException e) {
+            log.debug("Redirect ID [{}], Instance ID: [{}]. Get consent ID by redirect ID request timeout (redirect url is expired): NOK redirect url [{}]", redirectId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsAisConsentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
     }

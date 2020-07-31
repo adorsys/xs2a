@@ -177,7 +177,7 @@ class PisCommonPaymentServiceInternalTest {
         PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
 
         List<AuthorisationEntity> authorisations = buildAuthorisations();
-        when(authorisationRepository.findAllByParentExternalIdAndAuthorisationTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+        when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
             .thenReturn(authorisations);
 
         when(pisCommonPaymentMapper.mapToPisCommonPaymentResponse(pisCommonPaymentData, authorisations))
@@ -307,7 +307,7 @@ class PisCommonPaymentServiceInternalTest {
 
     private List<AuthorisationEntity> buildAuthorisations() {
         AuthorisationEntity pisAuthorization = new AuthorisationEntity();
-        pisAuthorization.setAuthorisationType(AuthorisationType.PIS_CREATION);
+        pisAuthorization.setType(AuthorisationType.PIS_CREATION);
         return Collections.singletonList(pisAuthorization);
     }
 }
