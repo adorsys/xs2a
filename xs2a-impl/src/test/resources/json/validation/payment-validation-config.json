@@ -49,5 +49,8 @@
   },
   "creditorId": {
     "use": "NONE"
+  },
+  "dayOfExecution": {
+    "maxLength": 2
   }
 }

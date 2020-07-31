@@ -16,6 +16,9 @@
 
 package de.adorsys.psd2.xs2a.validator.payment;
 
+import de.adorsys.psd2.validator.payment.CountryValidatorHolder;
+import de.adorsys.psd2.validator.payment.PaymentBodyFieldsValidator;
+import de.adorsys.psd2.validator.payment.PaymentBusinessValidator;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,5 +76,36 @@ class CountryPaymentValidatorResolverTest {
     void getValidationConfig_AT() {
         when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("At");
         assertTrue(resolver.getCountryValidatorHolder() instanceof AustriaPaymentValidatorHolder);
+    }
+
+    @Test
+    void customHoldersOverridePredefinedOnes() {
+        DefaultPaymentValidatorHolder defaultPaymentValidatorHolder = new DefaultPaymentValidatorHolder(null, null);
+        AustriaPaymentValidatorHolder austriaPaymentValidatorHolder = new AustriaPaymentValidatorHolder(null, null);
+        CountryValidatorHolder customCountryValidatorHolder = new CountryValidatorHolder() {
+            @Override
+            public String getCountryIdentifier() {
+                return defaultPaymentValidatorHolder.getCountryIdentifier();
+            }
+
+            @Override
+            public PaymentBodyFieldsValidator getPaymentBodyFieldsValidator() {
+                return defaultPaymentValidatorHolder.getPaymentBodyFieldsValidator();
+            }
+
+            @Override
+            public PaymentBusinessValidator getPaymentBusinessValidator() {
+                return defaultPaymentValidatorHolder.getPaymentBusinessValidator();
+            }
+        };
+        resolver = new CountryPaymentValidatorResolver(aspspProfileServiceWrapper,
+                                                       Arrays.asList(customCountryValidatorHolder, defaultPaymentValidatorHolder, austriaPaymentValidatorHolder));
+
+        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("de");
+        assertEquals(customCountryValidatorHolder, resolver.getCountryValidatorHolder());
+        reset(aspspProfileServiceWrapper);
+
+        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("at");
+        assertEquals(austriaPaymentValidatorHolder, resolver.getCountryValidatorHolder());
     }
 }

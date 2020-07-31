@@ -45,4 +45,9 @@ public class AustriaPaymentValidatorHolder implements CountryValidatorHolder {
     public PaymentBusinessValidator getPaymentBusinessValidator() {
         return defaultPaymentBusinessValidator;
     }
+
+    @Override
+    public boolean isCustom() {
+        return false;
+    }
 }
