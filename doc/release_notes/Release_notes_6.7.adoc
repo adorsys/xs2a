@@ -1,3 +1,19 @@
 = Release notes v.6.7
 
 == Table of Contents
+
+* Fixed Double saving of psu data
+* Removed deprecated methods from AuthorisationSpi
+
+== Fixed Double saving of psu data
+
+From now on, in all cms psu api requests psu data is saved correctly.
+
+== Removed deprecated methods from AuthorisationSpi
+
+- AuthorisationSpi#authorisePsu
+- PaymentCancellationSpi#verifyScaAuthorisationAndCancelPayment
+- PaymentSpi#verifyScaAuthorisationAndExecutePayment
+- PisExecutePaymentService#verifyScaAuthorisationAndExecutePayment
+- PaymentBaseAuthorisationProcessorService#updatePaymentData
+- PaymentBaseAuthorisationProcessorService#authorisePsu
