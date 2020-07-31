@@ -45,5 +45,6 @@ public interface PaymentValidationConfig{
 
     ValidationObject getExecutionRule();
     ValidationObject getCreditorId();
+    ValidationObject getDayOfExecution();
 
 }

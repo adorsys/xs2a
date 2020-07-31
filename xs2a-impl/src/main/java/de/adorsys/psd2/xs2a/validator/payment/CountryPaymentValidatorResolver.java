@@ -31,7 +31,7 @@ import java.util.Map;
 @Component
 public class CountryPaymentValidatorResolver {
 
-    private static final String DE = "DE"; // Germany and default
+    private static final String DEFAULT = "DE"; // Germany and default
     private final Map<String, CountryValidatorHolder> countryValidators = new HashMap<>();
 
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
@@ -56,10 +56,14 @@ public class CountryPaymentValidatorResolver {
     CountryValidatorHolder getCountryValidatorHolder() {
         String supportedPaymentCountryCode = aspspProfileServiceWrapper.getSupportedPaymentCountryValidation();
         return countryValidators.getOrDefault(StringUtils.upperCase(supportedPaymentCountryCode),
-                                              countryValidators.get(DE));
+                                              countryValidators.get(DEFAULT));
     }
 
     private void initContext() {
-        countryValidatorHolders.forEach(m -> countryValidators.put(m.getCountryIdentifier(), m));
+        countryValidatorHolders.forEach(m -> {
+            if (m.isCustom() || !countryValidators.containsKey(m.getCountryIdentifier())) {
+                countryValidators.put(m.getCountryIdentifier(), m);
+            }
+        });
     }
 }

@@ -47,4 +47,5 @@ public class DefaultPaymentValidationConfigImpl implements PaymentValidationConf
 
     protected ValidationObject executionRule = new ValidationObject(Occurrence.REQUIRED, 140);
     protected ValidationObject creditorId = new ValidationObject(Occurrence.NONE, 0);
+    protected ValidationObject dayOfExecution = new ValidationObject(2);
 }

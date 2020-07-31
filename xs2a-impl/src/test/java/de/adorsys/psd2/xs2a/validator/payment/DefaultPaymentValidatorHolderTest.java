@@ -21,8 +21,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.DefaultPaymentBod
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultPaymentValidatorHolderTest {
 
@@ -47,5 +46,10 @@ class DefaultPaymentValidatorHolderTest {
     @Test
     void getPaymentBusinessValidator() {
         assertTrue(holder.getPaymentBusinessValidator() instanceof DefaultPaymentBusinessValidatorImpl);
+    }
+
+    @Test
+    void isCustom() {
+        assertFalse(holder.isCustom());
     }
 }
