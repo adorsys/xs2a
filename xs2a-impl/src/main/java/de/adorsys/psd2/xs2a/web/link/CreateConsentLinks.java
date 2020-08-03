@@ -62,7 +62,7 @@ public class CreateConsentLinks extends AbstractLinks {
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
 
                 if (authorisationConfirmationRequestMandated) {
-                    setConfirmation(buildPath(redirectLinkBuilder.buildAisConfirmationLink(consentId, redirectId)));
+                    setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.AIS)));
                 }
             }
         }

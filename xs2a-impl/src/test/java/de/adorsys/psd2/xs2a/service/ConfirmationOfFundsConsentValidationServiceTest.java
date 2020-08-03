@@ -17,9 +17,12 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.piis.CommonConfirmationOfFundsConsentObject;
+import de.adorsys.psd2.xs2a.service.validator.piis.CreatePiisConsentAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.piis.DeleteConfirmationOfFundsConsentByIdValidator;
+import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentAuthorisationObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,10 +37,15 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConfirmationOfFundsConsentValidationServiceTest {
+    private static final String CORRECT_PSU_ID = "marion.mueller";
+    private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+
     @InjectMocks
     private ConfirmationOfFundsConsentValidationService service;
     @Mock
     private DeleteConfirmationOfFundsConsentByIdValidator deleteConfirmationOfFundsConsentByIdValidator;
+    @Mock
+    private CreatePiisConsentAuthorisationValidator createPiisConsentAuthorisationValidator;
     @Mock
     private PiisConsent piisConsent;
 
@@ -53,5 +61,17 @@ class ConfirmationOfFundsConsentValidationServiceTest {
         assertEquals(piisConsent, argumentCaptor.getValue().getPiisConsent());
     }
 
+    @Test
+    void validateConsentAuthorisationOnCreate() {
+        //Given
+        CreatePiisConsentAuthorisationObject createPiisConsentAuthorisationObject = new CreatePiisConsentAuthorisationObject(piisConsent, PSU_ID_DATA);
+        ArgumentCaptor<CreatePiisConsentAuthorisationObject> argumentCaptor = ArgumentCaptor.forClass(CreatePiisConsentAuthorisationObject.class);
+        when(createPiisConsentAuthorisationValidator.validate(argumentCaptor.capture())).thenReturn(ValidationResult.valid());
+        //When
+        service.validateConsentAuthorisationOnCreate(createPiisConsentAuthorisationObject);
+        //Then
+        verify(createPiisConsentAuthorisationValidator).validate(any(CreatePiisConsentAuthorisationObject.class));
+        assertEquals(createPiisConsentAuthorisationObject, argumentCaptor.getValue());
+    }
 
 }

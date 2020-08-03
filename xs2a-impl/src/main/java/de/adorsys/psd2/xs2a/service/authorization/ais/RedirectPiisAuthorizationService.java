@@ -55,7 +55,7 @@ public class RedirectPiisAuthorizationService implements PiisAuthorizationServic
                        resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
                        resp.setPsuIdData(psuData);
-
+                       resp.setInternalRequestId(auth.getInternalRequestId());
                        return resp;
                    });
     }

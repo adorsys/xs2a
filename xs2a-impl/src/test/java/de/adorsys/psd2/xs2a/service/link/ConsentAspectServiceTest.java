@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
+import de.adorsys.psd2.xs2a.web.link.CreatePiisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.CreatePiisConsentLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -66,6 +67,8 @@ class ConsentAspectServiceTest {
     private RequestProviderService requestProviderService;
     @Mock
     private Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse;
+    @Mock
+    private CreateConsentAuthorizationResponse createConsentAuthorizationResponse;
 
     @Test
     void invokeCreateAccountConsentAspect_success() {
@@ -246,5 +249,22 @@ class ConsentAspectServiceTest {
         verify(xs2aConfirmationOfFundsResponse, times(1)).setLinks(any(CreatePiisConsentLinks.class));
 
         assertFalse(actualResponse.hasError());
+    }
+
+    @Test
+    void invokeCreatePiisAuthorisationAspect() {
+        //Given
+        AspspSettings aspspSettings = new JsonReader().getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
+        when(aspspProfileServiceWrapper.isForceXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().isForceXs2aBaseLinksUrl());
+        when(aspspProfileServiceWrapper.getXs2aBaseLinksUrl())
+            .thenReturn(aspspSettings.getCommon().getXs2aBaseLinksUrl());
+
+        ResponseObject<AuthorisationResponse> authorisationResponseResponseObject = ResponseObject.<AuthorisationResponse>builder().body(createConsentAuthorizationResponse).build();
+        //When
+        ResponseObject<AuthorisationResponse> authorisationResponseResponseObjectWithLinks = service.invokeCreatePiisAuthorisationAspect(authorisationResponseResponseObject);
+        //Then
+        verify(createConsentAuthorizationResponse, times(1)).setLinks(any(CreatePiisAuthorisationLinks.class));
+        assertFalse(authorisationResponseResponseObjectWithLinks.hasError());
     }
 }

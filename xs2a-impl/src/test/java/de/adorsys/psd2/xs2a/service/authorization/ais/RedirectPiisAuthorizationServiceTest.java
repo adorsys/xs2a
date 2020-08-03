@@ -45,6 +45,7 @@ class RedirectPiisAuthorizationServiceTest {
     private static final String CONSENT_ID = "Test consentId";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "Test authorisationId";
+    private static final String INTERNAL_REQUEST_ID = "Internal request id";
 
     @InjectMocks
     private RedirectPiisAuthorizationService authorizationService;
@@ -85,6 +86,7 @@ class RedirectPiisAuthorizationServiceTest {
         assertThat(actualResponse.getAuthorisationId()).isEqualTo(AUTHORISATION_ID);
         assertThat(actualResponse.getScaStatus()).isEqualTo(STARTED_SCA_STATUS);
         assertThat(actualResponse.getPsuIdData()).isEqualTo(PSU_DATA);
+        assertThat(actualResponse.getInternalRequestId()).isEqualTo(INTERNAL_REQUEST_ID);
     }
 
     @Test
@@ -93,6 +95,6 @@ class RedirectPiisAuthorizationServiceTest {
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, "", null);
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, INTERNAL_REQUEST_ID, null);
     }
 }

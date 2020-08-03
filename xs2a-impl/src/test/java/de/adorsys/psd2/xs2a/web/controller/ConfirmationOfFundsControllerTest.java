@@ -18,10 +18,7 @@ package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.model.AccountReference;
-import de.adorsys.psd2.model.ConsentConfirmationOfFundsContentResponse;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
-import de.adorsys.psd2.model.ConsentsConfirmationOfFundsResponse;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -30,10 +27,13 @@ import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.PiisConsentService;
@@ -42,6 +42,7 @@ import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
+import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PiisConsentModelMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.function.Function;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
@@ -68,8 +71,12 @@ class ConfirmationOfFundsControllerTest {
     private static final String WRONG_CONSENT_ID = "YYYY-YYYY-YYYY-YYYY";
     private static final String PSU_MESSAGE_RESPONSE = "test psu message";
     private static final String CORRECT_PSU_ID = "ID 777";
+    private static final String AUTHORISATION_ID = "2400de4c-1c74-4ca0-941d-8f56b828f31d";
+    private static final String PASSWORD = "password";
+    private static final Map BODY = Collections.singletonMap("psuData", Collections.singletonMap("password", PASSWORD));
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, buildEmptyAdditionalPsuIdData());
     private static final ResponseHeaders RESPONSE_HEADERS = ResponseHeaders.builder().aspspScaApproach(ScaApproach.REDIRECT).build();
+    private static final MessageError MESSAGE_ERROR_PIIS_400 = new MessageError(ErrorType.PIIS_400, of(MessageErrorCode.CONSENT_UNKNOWN_400));
     private static final MessageError MESSAGE_ERROR_PIIS_404 = new MessageError(ErrorType.PIIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final MessageError MESSAGE_ERROR_PIIS_403 = new MessageError(ErrorType.PIIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403));
 
@@ -88,6 +95,8 @@ class ConfirmationOfFundsControllerTest {
     private ResponseMapper responseMapper;
     @Mock
     private PiisConsentModelMapper piisConsentModelMapper;
+    @Mock
+    private AuthorisationMapper authorisationMapper;
 
 
     private JsonReader jsonReader = new JsonReader();
@@ -268,6 +277,68 @@ class ConfirmationOfFundsControllerTest {
                                                                                                        null, null, null, null, null, null);
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void startConsentAuthorisation_Success() {
+        // Given
+        ResponseHeaders responseHeaders = ResponseHeaders.builder().build();
+
+        CreateConsentAuthorizationResponse expectedResponse = getCreateConsentAuthorizationResponse();
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                   .body(expectedResponse)
+                                                                   .build();
+        doReturn(new ResponseEntity<>(getCreateConsentAuthorizationResponse(), HttpStatus.CREATED))
+            .when(responseMapper).created(any(), eq(responseHeaders));
+        when(authorisationMapper.mapToPasswordFromBody(BODY))
+            .thenReturn(PASSWORD);
+        when(authorisationMapper.mapToConsentCreateOrUpdateAuthorisationResponse(responseObject))
+            .thenReturn(new StartScaprocessResponse());
+        when(piisConsentService.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD))
+            .thenReturn(responseObject);
+        when(consentHeadersBuilder.buildStartAuthorisationHeaders(any()))
+            .thenReturn(responseHeaders);
+
+        // When
+        ResponseEntity responseEntity = confirmationOfFundsController.startConsentAuthorisation(null, CONSENT_ID,
+                                                                                    BODY, null, null, null, CORRECT_PSU_ID, null, null,
+                                                                                    null, null, null, null, null,
+                                                                                    null, null, null, null, null,
+                                                                                    null, null, null, null, null, null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(responseEntity.getBody()).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void startConsentAuthorisation_Failure() {
+        when(authorisationMapper.mapToPasswordFromBody(BODY))
+            .thenReturn(PASSWORD);
+        when(piisConsentService.createPiisAuthorisation(PSU_ID_DATA, WRONG_CONSENT_ID, PASSWORD))
+            .thenReturn(ResponseObject.<AuthorisationResponse>builder()
+                            .fail(MESSAGE_ERROR_PIIS_400)
+                            .build());
+        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_PIIS_400))
+            .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+
+        // When
+        ResponseEntity responseEntity = confirmationOfFundsController.startConsentAuthorisation(null, WRONG_CONSENT_ID,
+                                                                                    BODY, null, null, null, CORRECT_PSU_ID, null,
+                                                                                    null, null, null, null, null,
+                                                                                    null, null, null, null, null,
+                                                                                    null, null, null, null, null, null, null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse() {
+        CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
+        response.setConsentId(CONSENT_ID);
+        response.setAuthorisationId(AUTHORISATION_ID);
+        response.setScaStatus(ScaStatus.RECEIVED);
+        return response;
     }
 
     private ResponseObject<ConsentConfirmationOfFundsContentResponse> getConsentConfirmationOfFundsContentResponse() {

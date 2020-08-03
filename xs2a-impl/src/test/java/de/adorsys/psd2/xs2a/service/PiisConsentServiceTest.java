@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
@@ -80,6 +81,7 @@ import static org.mockito.Mockito.*;
 class PiisConsentServiceTest {
     private static String CORRECT_PSU_ID = "marion.mueller";
     private static String CONSENT_ID = "consent ID";
+    private static String PASSWORD = "password";
     private static PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
     private static SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().psuId(CORRECT_PSU_ID).build();
     private static TppInfo TPP_INFO = buildTppInfo();
@@ -128,6 +130,10 @@ class PiisConsentServiceTest {
     private PiisAuthorizationService piisAuthorizationService;
     @Mock
     private ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
+    @Mock
+    private PiisConsentAuthorisationService piisConsentAuthorisationService;
+    @Mock
+    private CreateConsentAuthorizationResponse createConsentAuthorizationResponse;
 
     @Test
     void createPiisConsentWithResponse_success() {
@@ -452,6 +458,18 @@ class PiisConsentServiceTest {
         assertFalse(responseObject.hasError());
         verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         verify(xs2aPiisConsentService, atLeastOnce()).updateConsentStatus(CONSENT_ID, ConsentStatus.TERMINATED_BY_TPP);
+    }
+
+    @Test
+    void createPiisAuthorisation() {
+        //Given
+        ResponseObject<AuthorisationResponse> authorisationResponseResponseObject = ResponseObject.<AuthorisationResponse>builder().body(createConsentAuthorizationResponse).build();
+        when(piisConsentAuthorisationService.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD))
+            .thenReturn(authorisationResponseResponseObject);
+        //When
+        ResponseObject<AuthorisationResponse> actualResponse = piisConsentService.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
+        //Then
+        assertEquals(authorisationResponseResponseObject.getBody(), actualResponse.getBody());
     }
 
     private PiisConsent buildPiisConsent(ConsentStatus consentStatus) {
