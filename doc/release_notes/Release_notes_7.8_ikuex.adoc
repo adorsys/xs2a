@@ -3,8 +3,15 @@
 == Table of Contents
 
 * Implement explicit authorisation for PIIS consents
+* Implement multilevel for PIIS consents
 
 == Implement explicit authorisation for PIIS consents
 
 From now on, explicit authorisation for PIIS consent is supported in Redirect and Embedded approach.
 To configure redirect url for PIIS consent use `piisRedirectUrlToAspsp` parameter in `redirectLinkToOnlineBanking` block in ASPSP Profile.
+
+== Implement multilevel SCA for PIIS consents
+
+For account with multiple PSUs, now it is possible to execute multilevel SCA for each PSU.
+Piis Consent response from spi `SpiInitiatePiisConsentResponse` contains boolean field `multilevelScaRequired` to inform XS2A
+that this PIIS Consent requires multilevel SCA and there should be always explicit authorisation approach used.

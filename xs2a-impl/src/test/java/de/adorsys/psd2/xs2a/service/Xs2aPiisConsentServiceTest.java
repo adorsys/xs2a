@@ -38,8 +38,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -148,6 +147,25 @@ class Xs2aPiisConsentServiceTest {
         xs2aPiisConsentService.updateConsentStatus(CONSENT_ID, ConsentStatus.PARTIALLY_AUTHORISED);
         //Then
         verify(consentService, atLeastOnce()).updateConsentStatusById(CONSENT_ID, ConsentStatus.PARTIALLY_AUTHORISED);
+    }
+
+    @Test
+    void updateMultilevelScaRequired() throws WrongChecksumException {
+        //Given
+        //When
+        xs2aPiisConsentService.updateMultilevelScaRequired(CONSENT_ID, true);
+        //Then
+        verify(consentService, atLeastOnce()).updateMultilevelScaRequired(CONSENT_ID, true);
+    }
+
+    @Test
+    void updateMultilevelScaRequired_throwWrongChecksumException() throws WrongChecksumException {
+        //Given
+        doThrow(new WrongChecksumException()).when(consentService).updateMultilevelScaRequired(CONSENT_ID, true);
+        //When
+        xs2aPiisConsentService.updateMultilevelScaRequired(CONSENT_ID, true);
+        //Then
+        verify(consentService, atLeastOnce()).updateMultilevelScaRequired(CONSENT_ID, true);
     }
 
     private TppInfo buildTppInfo() {

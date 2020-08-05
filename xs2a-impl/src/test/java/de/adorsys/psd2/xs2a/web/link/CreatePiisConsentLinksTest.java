@@ -66,7 +66,7 @@ class CreatePiisConsentLinksTest {
     void setUp() {
         expectedLinks = new Links();
 
-        response = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), CONSENT_ID, false,INTERNAL_REQUEST_ID);
+        response = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), CONSENT_ID, false,INTERNAL_REQUEST_ID, null);
         response.setAuthorizationId(AUTHORISATION_ID);
     }
 

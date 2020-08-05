@@ -16,10 +16,8 @@
 
 package de.adorsys.psd2.xs2a.spi.service;
 
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
@@ -40,13 +38,7 @@ public interface PiisConsentSpi {
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Returns account access with Account's reference IDs. If Accounts/ReferenceIDs not know, returns empty Response object
      */
-    default SpiResponse<SpiInitiatePiisConsentResponse> initiatePiisConsent(@NotNull SpiContextData contextData, SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        AccountReference account = spiPiisConsent.getAccount();
-        SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse();
-        SpiAccountReference spiAccountReference = new SpiAccountReference(null, account.getIban(), account.getBban(), account.getPan(), account.getMaskedPan(), account.getMsisdn(), account.getCurrency());
-        spiInitiatePiisConsentResponse.setSpiAccountReference(spiAccountReference);
-        return SpiResponse.<SpiInitiatePiisConsentResponse>builder().payload(spiInitiatePiisConsentResponse).build();
-    }
+    SpiResponse<SpiInitiatePiisConsentResponse> initiatePiisConsent(@NotNull SpiContextData contextData, SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * This call is invoked inside of Get Consent request to give the bank ability to provide consent status, if it was not saved in CMS before.
@@ -57,11 +49,7 @@ public interface PiisConsentSpi {
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return Consent Status to be saved in CMS and provided back to TPP, PSU message if added by ASPSP.
      */
-    default SpiResponse<SpiConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<SpiConsentStatusResponse>builder()
-                   .payload(new SpiConsentStatusResponse(spiPiisConsent.getConsentStatus(), null))
-                   .build();
-    }
+    SpiResponse<SpiConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Revokes PIIS consent
@@ -71,8 +59,6 @@ public interface PiisConsentSpi {
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
      * @return void response
      */
-    default SpiResponse<VoidResponse> revokePiisConsent(@NotNull SpiContextData contextData, SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<VoidResponse>builder().payload(SpiResponse.voidResponse()).build();
-    }
+    SpiResponse<VoidResponse> revokePiisConsent(@NotNull SpiContextData contextData, SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
 }
