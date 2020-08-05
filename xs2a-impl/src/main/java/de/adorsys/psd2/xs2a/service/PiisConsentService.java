@@ -130,9 +130,15 @@ public class PiisConsentService {
         accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess, ConsentType.PIIS_TPP);
 
         ConsentStatus consentStatus = piisConsent.getConsentStatus();
-        Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(), encryptedConsentId, false, requestProviderService.getInternalRequestIdString());
+        boolean multilevelScaRequired = spiInitiatePiisConsentResponse.isMultilevelScaRequired();
 
-        boolean multilevelScaRequired = false;
+        updateMultilevelSca(encryptedConsentId, multilevelScaRequired);
+        Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(),
+                                                                                                              encryptedConsentId,
+                                                                                                              multilevelScaRequired,
+                                                                                                              requestProviderService.getInternalRequestIdString(),
+                                                                                                              spiInitiatePiisConsentResponse.getPsuMessage());
+
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
             proceedImplicitCaseForCreateConsent(xs2aConfirmationOfFundsResponse, psuData, encryptedConsentId);
         }
@@ -247,6 +253,13 @@ public class PiisConsentService {
 
     public ResponseObject<AuthorisationResponse> createPiisAuthorisation(PsuIdData psuData, String consentId, String password) {
         return piisConsentAuthorisationService.createPiisAuthorisation(psuData, consentId, password);
+    }
+
+    private void updateMultilevelSca(String consentId, boolean multilevelScaRequired) {
+        // default value is false, so we do the call only for non-default (true) case
+        if (multilevelScaRequired) {
+            xs2aPiisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        }
     }
 
     private SpiContextData getSpiContextData() {

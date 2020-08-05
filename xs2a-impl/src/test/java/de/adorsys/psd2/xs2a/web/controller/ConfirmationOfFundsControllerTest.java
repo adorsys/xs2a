@@ -385,7 +385,7 @@ class ConfirmationOfFundsControllerTest {
     }
 
     private ResponseObject<Xs2aConfirmationOfFundsResponse> createConsentsConfirmationOfFunds(String consentId) {
-        Xs2aConfirmationOfFundsResponse consentResponse = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), consentId, false, null);
+        Xs2aConfirmationOfFundsResponse consentResponse = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), consentId, false, null, PSU_MESSAGE_RESPONSE);
         Links links = new Links();
         links.setSelf(new HrefType("type"));
         consentResponse.setLinks(links);

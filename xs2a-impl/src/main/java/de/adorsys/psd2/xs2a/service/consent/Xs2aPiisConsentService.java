@@ -106,4 +106,18 @@ public class Xs2aPiisConsentService {
 
         return builder.payload(xs2aPiisConsentMapper.mapToPiisConsent(response.getPayload())).build();
     }
+
+    /**
+     * Updates multilevel SCA required field
+     *
+     * @param consentId             String representation of the consent identifier
+     * @param multilevelScaRequired multilevel SCA required indicator
+     */
+    public void updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) {
+        try {
+            consentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        } catch (WrongChecksumException e) {
+            log.info("updateMultilevelScaRequired cannot be executed, checksum verification failed");
+        }
+    }
 }

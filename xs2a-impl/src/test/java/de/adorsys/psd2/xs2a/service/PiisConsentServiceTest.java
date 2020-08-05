@@ -82,6 +82,7 @@ class PiisConsentServiceTest {
     private static String CORRECT_PSU_ID = "marion.mueller";
     private static String CONSENT_ID = "consent ID";
     private static String PASSWORD = "password";
+    private static String PSU_MESSAGE = "psu message";
     private static PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
     private static SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().psuId(CORRECT_PSU_ID).build();
     private static TppInfo TPP_INFO = buildTppInfo();
@@ -145,7 +146,7 @@ class PiisConsentServiceTest {
         when(xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, TPP_INFO))
             .thenReturn(Optional.of(xs2aCreatePiisConsentResponse));
         SpiAccountReference spiAccountReference = new SpiAccountReference(null, "DE15500105172295759744", null, null, null, null, Currency.getInstance("EUR"));
-        SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse(spiAccountReference, false, "");
+        SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse(spiAccountReference, true, PSU_MESSAGE);
         when(piisConsentSpi.initiatePiisConsent(SPI_CONTEXT_DATA, spiPiisConsent, aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiInitiatePiisConsentResponse>builder().payload(spiInitiatePiisConsentResponse).build());
         when(spiContextDataProvider.provide(PSU_ID_DATA, TPP_INFO))
@@ -181,6 +182,9 @@ class PiisConsentServiceTest {
         assertEquals(CONSENT_ID, xs2aConfirmationOfFundsResponse.getConsentId());
         assertEquals(piisConsent.getConsentStatus().getValue(), xs2aConfirmationOfFundsResponse.getConsentStatus());
         assertEquals(AUTHORISATION_ID, xs2aConfirmationOfFundsResponse.getAuthorizationId());
+        assertEquals(PSU_MESSAGE, xs2aConfirmationOfFundsResponse.getPsuMessage());
+        assertTrue(xs2aConfirmationOfFundsResponse.isMultilevelScaRequired());
+        verify(xs2aPiisConsentService, atLeastOnce()).updateMultilevelScaRequired(CONSENT_ID, true);
     }
 
     @Test

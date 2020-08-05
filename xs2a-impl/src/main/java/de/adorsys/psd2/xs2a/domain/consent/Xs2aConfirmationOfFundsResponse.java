@@ -34,4 +34,6 @@ public class Xs2aConfirmationOfFundsResponse {
 
     @JsonProperty("_links")
     private Links links = new Links();
+
+    private final String psuMessage;
 }

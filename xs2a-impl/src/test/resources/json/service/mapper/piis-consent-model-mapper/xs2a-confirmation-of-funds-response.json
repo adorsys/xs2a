@@ -1,0 +1,11 @@
+{
+  "consentStatus": "received",
+  "consentId": "S7tlYXaar8j7l5IMK89iNJB8SkG5ricoOaEYHyku_AO9BF6MIP29SN_tXtDvaQb3c8b_NsohCWlFlYN0ds8u89WFnjze07vwpAgFM45MlQk=_=_psGLvQpt9Q",
+  "_links": {
+    "self": {
+      "href": "http://localhost"
+    }
+  },
+  "psuMessage": "This test message is created in ASPSP and directed to PSU",
+  "multilevelScaRequired": true
+}

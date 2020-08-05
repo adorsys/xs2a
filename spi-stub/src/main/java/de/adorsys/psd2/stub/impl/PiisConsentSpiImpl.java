@@ -16,9 +16,39 @@
 
 package de.adorsys.psd2.stub.impl;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
+import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PiisConsentSpiImpl implements PiisConsentSpi {
+
+    @Override
+    public SpiResponse<SpiInitiatePiisConsentResponse> initiatePiisConsent(@NotNull SpiContextData contextData, SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        AccountReference account = spiPiisConsent.getAccount();
+        SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse();
+        SpiAccountReference spiAccountReference = new SpiAccountReference(null, account.getIban(), account.getBban(), account.getPan(), account.getMaskedPan(), account.getMsisdn(), account.getCurrency());
+        spiInitiatePiisConsentResponse.setSpiAccountReference(spiAccountReference);
+        return SpiResponse.<SpiInitiatePiisConsentResponse>builder().payload(spiInitiatePiisConsentResponse).build();
+    }
+
+    @Override
+    public SpiResponse<SpiConsentStatusResponse> getConsentStatus(@NotNull SpiContextData contextData, @NotNull SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiConsentStatusResponse>builder()
+                   .payload(new SpiConsentStatusResponse(spiPiisConsent.getConsentStatus(), null))
+                   .build();
+    }
+
+    @Override
+    public SpiResponse<SpiResponse.VoidResponse> revokePiisConsent(@NotNull SpiContextData contextData, SpiPiisConsent spiPiisConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiResponse.VoidResponse>builder().payload(SpiResponse.voidResponse()).build();
+    }
 }
