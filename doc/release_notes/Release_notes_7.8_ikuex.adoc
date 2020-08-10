@@ -4,6 +4,7 @@
 
 * Implement explicit authorisation for PIIS consents
 * Implement multilevel for PIIS consents
+* Incorrect consent type in PIIS Consent
 
 == Implement explicit authorisation for PIIS consents
 
@@ -15,3 +16,7 @@ To configure redirect url for PIIS consent use `piisRedirectUrlToAspsp` paramete
 For account with multiple PSUs, now it is possible to execute multilevel SCA for each PSU.
 Piis Consent response from spi `SpiInitiatePiisConsentResponse` contains boolean field `multilevelScaRequired` to inform XS2A
 that this PIIS Consent requires multilevel SCA and there should be always explicit authorisation approach used.
+
+== Incorrect consent type in PIIS Consent
+
+From now on, PIIS Consent type can have any of following values either `PIIS_ASPSP` or `PIIS_TPP`.

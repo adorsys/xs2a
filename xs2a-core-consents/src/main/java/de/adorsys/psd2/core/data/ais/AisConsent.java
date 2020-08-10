@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 public class AisConsent extends Consent<AisConsentData> {
 
     public AisConsent() {
+        setConsentType(ConsentType.AIS);
     }
 
     public AisConsent(AisConsentData consentData, String id, String internalRequestId, ConsentStatus consentStatus, Integer frequencyPerDay, boolean recurringIndicator, boolean multilevelScaRequired,
@@ -47,12 +48,7 @@ public class AisConsent extends Consent<AisConsentData> {
 
         super(consentData, id, internalRequestId, consentStatus, frequencyPerDay, recurringIndicator, multilevelScaRequired,
               validUntil, expireDate, lastActionDate, creationTimestamp, statusChangeTimestamp, consentTppInformation,
-              authorisationTemplate, psuIdDataList, authorisations, usages, tppAccountAccess, aspspAccountAccess, instanceId);
-    }
-
-    @Override
-    public ConsentType getConsentType() {
-        return ConsentType.AIS;
+              authorisationTemplate, psuIdDataList, authorisations, usages, tppAccountAccess, aspspAccountAccess, instanceId, ConsentType.AIS);
     }
 
     @JsonIgnore

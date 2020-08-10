@@ -22,6 +22,8 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -29,9 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class PiisConsentTest {
     private JsonReader jsonReader = new JsonReader();
 
-    @Test
-    void getConsentType() {
-        assertEquals(ConsentType.PIIS_ASPSP, new PiisConsent().getConsentType());
+    @ParameterizedTest
+    @EnumSource(ConsentType.class)
+    void getConsentType(ConsentType consentType) {
+        assertEquals(consentType, new PiisConsent(consentType).getConsentType());
     }
 
     @Test
@@ -55,9 +58,10 @@ class PiisConsentTest {
         assertEquals(expectedAccountReference, actualAccountReference);
     }
 
-    @Test
-    void getAccountReference_emptyCollection() {
-        assertNull(new PiisConsent().getAccountReference());
+    @ParameterizedTest
+    @EnumSource(ConsentType.class)
+    void getAccountReference_emptyCollection(ConsentType consentType) {
+        assertNull(new PiisConsent(consentType).getAccountReference());
     }
 
     @Test
@@ -68,8 +72,9 @@ class PiisConsentTest {
         assertEquals(psuIdData, piisConsent.getPsuIdData());
     }
 
-    @Test
-    void getPsuIdData_emptyCollection() {
-        assertNull(new PiisConsent().getPsuIdData());
+    @ParameterizedTest
+    @EnumSource(ConsentType.class)
+    void getPsuIdData_emptyCollection(ConsentType consentType) {
+        assertNull(new PiisConsent(consentType).getPsuIdData());
     }
 }

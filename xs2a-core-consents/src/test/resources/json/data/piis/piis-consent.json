@@ -8,6 +8,7 @@
   },
   "internalRequestId": "1234-5678-9012-3456",
   "consentStatus": "VALID",
+  "consentType": "PIIS_TPP",
   "frequencyPerDay": 0,
   "recurringIndicator": true,
   "multilevelScaRequired": false,

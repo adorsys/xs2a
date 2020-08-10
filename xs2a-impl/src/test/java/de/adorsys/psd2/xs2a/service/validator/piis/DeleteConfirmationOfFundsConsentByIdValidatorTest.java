@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -87,7 +88,7 @@ public class DeleteConfirmationOfFundsConsentByIdValidatorTest {
     }
 
     private PiisConsent buildPiisConsent(TppInfo tppInfo) {
-        PiisConsent piisConsent = new PiisConsent();
+        PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);
         ConsentTppInformation consentTppInfo = new ConsentTppInformation();
         consentTppInfo.setTppInfo(tppInfo);
         piisConsent.setConsentTppInformation(consentTppInfo);

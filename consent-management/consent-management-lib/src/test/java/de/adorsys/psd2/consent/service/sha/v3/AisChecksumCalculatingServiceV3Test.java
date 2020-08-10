@@ -265,9 +265,9 @@ class AisChecksumCalculatingServiceV3Test {
     }
 
     private class TestObject extends Consent {
-        @Override
-        public ConsentType getConsentType() {
-            return null;
+        TestObject() {
+            //For these tests any consent type different from `AIS` is suitable
+            setConsentType(ConsentType.PIIS_ASPSP);
         }
     }
 

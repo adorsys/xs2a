@@ -76,8 +76,8 @@ public abstract class Consent<T> {
     private AccountAccess aspspAccountAccesses = AccountAccess.EMPTY_ACCESS;
     @Nullable
     private String instanceId;
-
-    public abstract ConsentType getConsentType();
+    @NotNull
+    private ConsentType consentType;
 
     public TppInfo getTppInfo() {
         return Optional.ofNullable(consentTppInformation)
