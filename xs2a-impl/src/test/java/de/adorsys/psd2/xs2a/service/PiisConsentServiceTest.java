@@ -477,7 +477,7 @@ class PiisConsentServiceTest {
     }
 
     private PiisConsent buildPiisConsent(ConsentStatus consentStatus) {
-        PiisConsent piisConsent = new PiisConsent();
+        PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);
         piisConsent.setConsentStatus(consentStatus);
         return piisConsent;
     }

@@ -3,6 +3,7 @@
   "id": "ed1d8022-1c38-49ae-898e-78f29234557c",
   "internalRequestId": "643e4ea3-0401-4bc8-b9bc-a9df51ec848e",
   "consentStatus": "VALID",
+  "consentType": "AIS",
   "frequencyPerDay": 7,
   "recurringIndicator": true,
   "multilevelScaRequired": true,

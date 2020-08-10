@@ -20,6 +20,7 @@ import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -178,7 +179,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
     }
 
     private PiisConsent buildPiisConsent(TppInfo tppInfo) {
-        PiisConsent piisConsent = new PiisConsent();
+        PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);
         ConsentTppInformation consentTppInformation = new ConsentTppInformation();
         consentTppInformation.setTppInfo(tppInfo);
         piisConsent.setConsentTppInformation(consentTppInformation);
@@ -187,7 +188,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
     }
 
     private PiisConsent buildPiisConsentWithPsuIdData(boolean isMultilevelSca) {
-        PiisConsent piisConsent = new PiisConsent();
+        PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);
         ConsentTppInformation consentTppInformation = new ConsentTppInformation();
         consentTppInformation.setTppInfo(CreatePiisConsentAuthorisationValidatorTest.TPP_INFO);
         piisConsent.setConsentTppInformation(consentTppInformation);
@@ -204,7 +205,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
         AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
         authorisation.setScaStatus(ScaStatus.FINALISED);
         authorisation.setPsuIdData(PSU_DATA);
-        PiisConsent piisConsent = new PiisConsent();
+        PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);
         piisConsent.setAuthorisations(Collections.singletonList(authorisation));
         piisConsent.setPsuIdDataList(Collections.singletonList(PSU_DATA));
 

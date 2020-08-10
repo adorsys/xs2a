@@ -37,19 +37,18 @@ public class PiisConsent extends Consent<PiisConsentData> {
     public PiisConsent() {
     }
 
+    public PiisConsent(ConsentType consentType) {
+        setConsentType(consentType);
+    }
+
     public PiisConsent(PiisConsentData consentData, String id, String internalRequestId, ConsentStatus consentStatus, boolean recurringIndicator,
                        LocalDate expireDate, LocalDate lastActionDate, OffsetDateTime creationTimestamp, ConsentTppInformation consentTppInformation,
-                       List<PsuIdData> psuIdDataList, AccountAccess aspspAccountAccess, String instanceId) {
+                       List<PsuIdData> psuIdDataList, AccountAccess aspspAccountAccess, String instanceId, ConsentType consentType) {
 
         super(consentData, id, internalRequestId, consentStatus, 0, recurringIndicator, false,
               null, expireDate, lastActionDate, creationTimestamp, null, consentTppInformation,
               new AuthorisationTemplate(), psuIdDataList, Collections.emptyList(), Collections.emptyMap(),
-              AccountAccess.EMPTY_ACCESS, aspspAccountAccess, instanceId);
-    }
-
-    @Override
-    public ConsentType getConsentType() {
-        return ConsentType.PIIS_ASPSP;
+              AccountAccess.EMPTY_ACCESS, aspspAccountAccess, instanceId, consentType);
     }
 
     public AccountReference getAccountReference() {

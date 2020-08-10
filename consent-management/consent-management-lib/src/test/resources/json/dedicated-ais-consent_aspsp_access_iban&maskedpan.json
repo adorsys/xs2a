@@ -104,6 +104,7 @@
     }
   },
   "consentStatus": "VALID",
+  "consentType": "AIS",
   "frequencyPerDay": 4,
   "usages": {},
   "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
