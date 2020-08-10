@@ -11,31 +11,15 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 6.x is guaranteed. Will be released as Stable version 8.x on 11.09.2020
 
-[cols="3*.<"]
+[cols="5*.<"]
 |===
-|release date|version 6.x (Stable)|version 7.x (Development)
+|release date|version 6.x (Stable)|version 7.x (Development)|version 8.x (Stable)|version 9.x (Development)
 
-|31.07.2020|6.7|7.7
-
-a|
+|14.08.2020|6.8|7.8| | 
 
 a|
 
-a|* All fixes and updates from v.6.7
-
-* New feature: Add information about currency conversion to Payment Initiation response
-
-* New feature: Add currency conversion related information to Update PSU Data response
-
-* New feature: Add authorisation endpoints to CoF yaml
-
-* New feature: Create interfaces in cms-psu-api for FundsConfirmationConsent
-
-|14.08.2020|6.8|7.8
-
-a|
-
-a|
+a|* Add validator for accept-header
 
 a|* All fixes and updates from v.6.8
 
@@ -43,7 +27,19 @@ a|* All fixes and updates from v.6.8
 
 * New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
 
-|28.08.2020|6.9|7.9
+* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
+
+* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
+
+* New feature: Get SCA Status request for FundsConfirmationConsent 
+
+* Adjust CoF request with consent created by TPP
+
+a|
+
+a|
+
+|28.08.2020|6.9|7.9| |
 
 a|
 
@@ -51,21 +47,27 @@ a|
 
 a|* All fixes and updates from v.6.9
 
-* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
-
 * New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
 
-* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
-
-* New feature: Get SCA Status request for FundsConfirmationConsent 
-
-|Further development| |
+* Fix all ToDos in code
 
 a|
 
 a|
 
-a|* New feature: Implement Read Card List
+|11.09.2020| | |8.0|9.0
+
+a|
+
+a|
+
+a|
+
+a|* Remove deprecated authorisation type AIS
+
+a|* All fixes and updates from v.8.0
+
+* New feature: Implement Read Card List
 
 * New feature: Implement Read Card Details
 
@@ -73,38 +75,124 @@ a|* New feature: Implement Read Card List
 
 * New feature: Implement Read Card Transaction List
 
-* New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
+* Adjust Create AIS consent request for Single card service
 
-* Move authorisation-related methods out of Xs2aAisConsentService and Xs2aPisCommonPaymentService
+* Adjust Read AIS consent response links for Single card service
+
+|25.09.2020| | |8.1|9.1
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.8.1
+
+* Create Signing Basket in CMS 
+
+* Implement Establish Signing Basket request
+
+* Implement Cancellation of Signing Baskets
+
+|09.10.2020| | |8.2|9.2
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.8.2
+
+* Create interfaces in cms-psu-api for Signing Basket
+
+|23.10.2020| | |8.3|9.3
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.8.3
+
+* Support Signing Basket in Redirect approach with multilevel SCA
+
+|06.11.2020| | |8.4|9.4
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.8.4
+
+* Support Signing Basket in Embedded approach with multilevel SCA
+
+|20.11.2020| | |8.5|9.5
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.8.5
+
+* Implement Get Authorisation Sub-resources for Signing Baskets
+
+* Implement Get Signing Basket Status Request
+
+* Implement Get Signing Basket Request 
+
+* Implement Get SCA Status request for Signing Baskets
+
+|04.12.2020| | |8.6|9.6
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* All fixes and updates from v.8.6
+
+* Support Signing Basket in Decoupled approach with multilevel SCA
+
+* Add calls to SPI for Signing Basket
+
+|Further development| | | |
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|* New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
 
 * New feature: Extension of possibility returning several camt.05x files in one zip file
 
 * New feature: Create Resource Notification Push Service
 
-* _Support of Signing Basket:_
+* Support URL-encoded QWAC certificate in header
 
-- Create Signing Basket in CMS 
-
-- Implement Establish Signing Basket request
-
-- Implement Cancellation of Signing Baskets
-
-- Support Signing Basket in Embedded approach with multilevel SCA
-
-- Support Signing Basket in Decoupled approach with multilevel SCA
-
-- Support Signing Basket in Redirect approach with multilevel SCA
-
-- Implement Get Authorisation Sub-resources for Signing Baskets
-
-- Create interfaces in cms-psu-api for Signing Basket
-
-- Implement Get Signing Basket Status Request
-
-- Implement Get Signing Basket Request 
-
-- Implement Get SCA Status request for Signing Baskets
-
-- Add calls to SPI for Signing Basket
+* Extend the event table with all types of Update PSU Data requests
 
 |===
