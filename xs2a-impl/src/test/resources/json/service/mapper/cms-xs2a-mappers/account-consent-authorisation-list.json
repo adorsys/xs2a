@@ -1,0 +1,26 @@
+[
+  {
+    "id": "a8fc1f02-3639-4528-bd19-3eacf1c67038",
+    "consentId": "8c46547a-18f3-447c-8002-369b17d52575",
+    "scaStatus": "received",
+    "password": "***",
+    "chosenScaApproach": "EMBEDDED",
+    "authenticationMethodId": "sms",
+    "scaAuthenticationData": "authentication data",
+    "psuIdData": {
+      "psuId": "marion.mueller"
+    }
+  },
+  {
+    "id": "cc789a2a-0432-4bad-8343-f5ca94dac88c",
+    "consentId": "cd6357e6-72cf-482d-b5e4-f0ed8c6a9c08",
+    "scaStatus": "psuIdentified",
+    "password": "***",
+    "chosenScaApproach": "EMBEDDED",
+    "authenticationMethodId": "sms",
+    "scaAuthenticationData": "authentication data",
+    "psuIdData": {
+      "psuId": "anton.brueckner"
+    }
+  }
+]

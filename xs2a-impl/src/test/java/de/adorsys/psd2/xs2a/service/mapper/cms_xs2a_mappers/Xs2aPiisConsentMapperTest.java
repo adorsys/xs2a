@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Xs2aPiisConsentMapperImpl.class, ConsentDataMapper.class})
+@ContextConfiguration(classes = {Xs2aPiisConsentMapperImpl.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 class Xs2aPiisConsentMapperTest {
     private JsonReader jsonReader = new JsonReader();
 

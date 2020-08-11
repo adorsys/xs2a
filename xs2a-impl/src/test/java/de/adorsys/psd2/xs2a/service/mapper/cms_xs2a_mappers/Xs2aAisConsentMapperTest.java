@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aAisConsentMapper.class, Xs2aToSpiPsuDataMapper.class, Xs2aToSpiAccountAccessMapper.class,
-    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class})
+    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";

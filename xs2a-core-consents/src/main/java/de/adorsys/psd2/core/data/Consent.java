@@ -85,4 +85,10 @@ public abstract class Consent<T> {
                    .orElse(null);
     }
 
+    public Optional<AccountConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
+        return getAuthorisations().stream()
+                   .filter(auth -> auth.getId().equals(authorisationId))
+                   .findFirst();
+    }
+
 }

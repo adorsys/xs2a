@@ -17,6 +17,7 @@
 package de.adorsys.psd2.core.data.piis.v1;
 
 import de.adorsys.psd2.core.data.AccountAccess;
+import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -25,10 +26,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class PiisConsentTest {
+    private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private JsonReader jsonReader = new JsonReader();
 
     @ParameterizedTest
@@ -76,5 +80,25 @@ class PiisConsentTest {
     @EnumSource(ConsentType.class)
     void getPsuIdData_emptyCollection(ConsentType consentType) {
         assertNull(new PiisConsent(consentType).getPsuIdData());
+    }
+
+    @Test
+    void findAuthorisationInConsent_success() {
+        //Given
+        PiisConsent piisConsent = jsonReader.getObjectFromFile("json/data/piis/piis-consent.json", PiisConsent.class);
+        //When
+        Optional<AccountConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent(AUTHORISATION_ID);
+        //Then
+        assert(authorisationInConsent).isPresent();
+    }
+
+    @Test
+    void findAuthorisationInConsent_failed() {
+        //Given
+        PiisConsent piisConsent = jsonReader.getObjectFromFile("json/data/piis/piis-consent.json", PiisConsent.class);
+        //When
+        Optional<AccountConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent("wrong authorisation id");
+        //Then
+        assert(authorisationInConsent).isEmpty();
     }
 }

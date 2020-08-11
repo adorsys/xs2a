@@ -31,8 +31,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
@@ -83,6 +82,7 @@ public class PiisConsentService {
     private final CreatePiisConsentValidator createPiisConsentValidator;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
+    private final ConsentAuthorisationService consentAuthorisationService;
     private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     private final PiisConsentAuthorisationService piisConsentAuthorisationService;
 
@@ -147,7 +147,7 @@ public class PiisConsentService {
     }
 
     public ResponseObject<PiisConsent> getPiisConsentById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
 
         if (piisConsentById.isEmpty()) {
@@ -175,7 +175,7 @@ public class PiisConsentService {
     }
 
     public ResponseObject<ConsentStatusResponse> getPiisConsentStatusById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
         ResponseObject.ResponseBuilder<ConsentStatusResponse> responseBuilder = ResponseObject.builder();
 
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
@@ -207,8 +207,28 @@ public class PiisConsentService {
                    .build();
     }
 
+    public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
+        return piisConsentAuthorisationService.getConsentInitiationAuthorisations(consentId);
+    }
+
+    public ResponseObject<Xs2aScaStatusResponse> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
+        ResponseObject<ConfirmationOfFundsConsentScaStatus> consentScaStatusResponse = piisConsentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        if (consentScaStatusResponse.hasError()) {
+            return ResponseObject.<Xs2aScaStatusResponse>builder()
+                       .fail(consentScaStatusResponse.getError())
+                       .build();
+        }
+
+        ConfirmationOfFundsConsentScaStatus consentScaStatus = consentScaStatusResponse.getBody();
+        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(consentScaStatus.getScaStatus(), null);
+
+        return ResponseObject.<Xs2aScaStatusResponse>builder()
+                   .body(response)
+                   .build();
+    }
+
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         ResponseObject.ResponseBuilder<Void> responseBuilder = ResponseObject.builder();
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
 

@@ -93,7 +93,7 @@ public class CardTransactionService {
      * @return CardTransactionsReport filled with appropriate card transaction arrays Booked and Pending.
      */
     public ResponseObject<Xs2aCardTransactionsReport> getCardTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request) {
-        xs2aEventService.recordAisTppRequest(request.getConsentId(), EventType.READ_CARD_TRANSACTION_LIST_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(request.getConsentId(), EventType.READ_CARD_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
 

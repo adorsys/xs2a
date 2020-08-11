@@ -83,7 +83,7 @@ public class BalanceService {
      * @return Balances Report based on consentId and accountId
      */
     public ResponseObject<Xs2aBalancesReport> getBalancesReport(String consentId, String accountId, String requestUri) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.READ_BALANCE_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.READ_BALANCE_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
