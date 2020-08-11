@@ -93,12 +93,6 @@ public class AisConsent extends Consent<AisConsentData> {
         return getConsentRequestType() == AisConsentRequestType.DEDICATED_ACCOUNTS;
     }
 
-    public Optional<AccountConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
-        return getAuthorisations().stream()
-                   .filter(auth -> auth.getId().equals(authorisationId))
-                   .findFirst();
-    }
-
     public boolean isConsentWithNotIbanAccount() {
         AccountAccess access = getAccess();
         if (access == null) {

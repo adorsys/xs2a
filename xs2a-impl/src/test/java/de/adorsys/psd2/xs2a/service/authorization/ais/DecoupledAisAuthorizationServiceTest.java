@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -64,6 +65,8 @@ class DecoupledAisAuthorizationServiceTest {
     @Mock
     private Xs2aAisConsentService aisConsentService;
     @Mock
+    private Xs2aConsentService consentService;
+    @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
     @Mock
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
@@ -73,7 +76,7 @@ class DecoupledAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(buildConsent(CONSENT_ID)));
-        when(aisConsentService.createAisConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA))
+        when(consentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
 
         // When
@@ -153,7 +156,7 @@ class DecoupledAisAuthorizationServiceTest {
     @Test
     void getAuthorisationScaStatus_success() {
         // Given
-        when(aisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+        when(consentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(Optional.of(SCA_STATUS));
 
         // When
@@ -167,7 +170,7 @@ class DecoupledAisAuthorizationServiceTest {
     @Test
     void getAuthorisationScaStatus_wrongIds_fail() {
         // Given
-        when(aisConsentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
+        when(consentService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When

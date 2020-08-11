@@ -37,7 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 
-@Mapper(componentModel = "spring", uses = ConsentDataMapper.class)
+@Mapper(componentModel = "spring", uses = {ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 public abstract class Xs2aPiisConsentMapper {
     private static final Integer PIIS_FREQUENCY_PER_DAY = 0;
 

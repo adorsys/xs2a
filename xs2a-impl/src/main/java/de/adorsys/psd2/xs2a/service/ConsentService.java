@@ -189,7 +189,7 @@ public class ConsentService {
      * @return ConsentStatus
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_STATUS_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_AIS_CONSENT_STATUS_REQUEST_RECEIVED);
         ResponseObject.ResponseBuilder<ConsentStatusResponse> responseBuilder = ResponseObject.builder();
 
         Optional<AisConsent> validatedAisConsentOptional = aisConsentService.getAccountConsentById(consentId);
@@ -246,7 +246,7 @@ public class ConsentService {
      * @return VOID
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.DELETE_AIS_CONSENT_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.DELETE_AIS_CONSENT_REQUEST_RECEIVED);
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
         if (aisConsentOptional.isPresent()) {
@@ -296,7 +296,7 @@ public class ConsentService {
      * @return AccountConsent requested by consentId
      */
     public ResponseObject<AisConsent> getAccountConsentById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
 
         Optional<AisConsent> consentOptional = aisConsentService.getAccountConsentById(consentId);
 

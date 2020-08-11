@@ -87,7 +87,7 @@ class Xs2aEventServiceTest {
         // Given
 
         // When
-        xs2aEventService.recordAisTppRequest(CONSENT_ID, EVENT_TYPE, "body");
+        xs2aEventService.recordConsentTppRequest(CONSENT_ID, EVENT_TYPE, "body");
 
         // Then
         verify(eventService, times(1)).recordEvent(any(EventBO.class));
@@ -108,7 +108,7 @@ class Xs2aEventServiceTest {
         // Given
 
         // When
-        xs2aEventService.recordAisTppRequest(CONSENT_ID, EVENT_TYPE);
+        xs2aEventService.recordConsentTppRequest(CONSENT_ID, EVENT_TYPE);
 
         // Then
         verify(eventService, times(1)).recordEvent(any(EventBO.class));

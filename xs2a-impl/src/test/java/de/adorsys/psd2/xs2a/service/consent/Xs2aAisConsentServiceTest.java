@@ -44,10 +44,8 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentAuthorisationMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -95,13 +93,9 @@ class Xs2aAisConsentServiceTest {
     @Mock
     private Xs2aAisConsentMapper aisConsentMapper;
     @Mock
-    private Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
+    private Xs2aConsentAuthorisationMapper aisConsentAuthorisationMapper;
     @Mock
     private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
-    @Mock
-    private ScaApproachResolver scaApproachResolver;
-    @Mock
-    private RequestProviderService requestProviderService;
     @Mock
     private LoggingContextService loggingContextService;
 
@@ -223,48 +217,6 @@ class Xs2aAisConsentServiceTest {
 
         // Then
         assertThat(actualResponse).isFalse();
-    }
-
-    @Test
-    void createAisConsentAuthorization_success() {
-        // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
-        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
-            .thenReturn(AIS_CONSENT_AUTHORISATION_REQUEST);
-        when(authorisationService.createAuthorisation(AIS_CONSENT_AUTHORISATION_REQUEST, CONSENT_ID, AuthorisationType.CONSENT))
-            .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
-        when(requestProviderService.getTppRedirectURI())
-            .thenReturn(REDIRECT_URI);
-        when(requestProviderService.getTppNokRedirectURI())
-            .thenReturn(NOK_REDIRECT_URI);
-
-        // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(buildCreateAisConsentAuthorizationResponse());
-    }
-
-    @Test
-    void createAisConsentAuthorization_false() {
-        // Given
-        when(requestProviderService.getTppRedirectURI()).thenReturn("ok.uri");
-        when(requestProviderService.getTppNokRedirectURI()).thenReturn("nok.uri");
-
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(SCA_APPROACH);
-        CreateAuthorisationRequest request = new CreateAuthorisationRequest();
-        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, "ok.uri", "nok.uri"))
-            .thenReturn(request);
-        when(authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.CONSENT))
-            .thenReturn(Optional.empty());
-
-        // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aAisConsentService.createAisConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
-
-        // Then
-        assertThat(actualResponse.isPresent()).isFalse();
     }
 
     @Test
@@ -412,12 +364,6 @@ class Xs2aAisConsentServiceTest {
         // Then
         xs2aAisConsentService.updateMultilevelScaRequired(CONSENT_ID, true);
         verify(consentServiceEncrypted, times(1)).updateMultilevelScaRequired(CONSENT_ID, true);
-    }
-
-    @Test
-    void getAuthorisationScaStatus() {
-        xs2aAisConsentService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-        verify(authorisationService, times(1)).getAuthorisationScaStatus(AUTHORISATION_ID, CONSENT_ID, AuthorisationType.CONSENT);
     }
 
     @Test

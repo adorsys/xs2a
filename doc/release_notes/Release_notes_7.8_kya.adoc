@@ -1,0 +1,16 @@
+= Release notes v.7.8
+
+== Table of Contents
+
+* Implemented Get Authorisation Sub-resource request for Funds Confirmation Consent
+* Implemented Get SCA Status request for Funds Confirmation Consent
+
+=== Implemented Get Authorisation Sub-resource request for Funds Confirmation Consent
+
+From now on, endpoint `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations` is implemented
+and gives response with authorisation identifications list.
+
+=== Implemented Get SCA Status request for Funds Confirmation Consent
+
+From now on, endpoint `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
+is implemented and gives response with sca status of piis consent authorisation.

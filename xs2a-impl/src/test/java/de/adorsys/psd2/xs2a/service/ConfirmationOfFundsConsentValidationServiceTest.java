@@ -19,9 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.validator.piis.CommonConfirmationOfFundsConsentObject;
-import de.adorsys.psd2.xs2a.service.validator.piis.CreatePiisConsentAuthorisationValidator;
-import de.adorsys.psd2.xs2a.service.validator.piis.DeleteConfirmationOfFundsConsentByIdValidator;
+import de.adorsys.psd2.xs2a.service.validator.piis.*;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentAuthorisationObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +36,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ConfirmationOfFundsConsentValidationServiceTest {
     private static final String CORRECT_PSU_ID = "marion.mueller";
+    private static final String AUTHORISATION_ID = "authorisation ud";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
 
     @InjectMocks
@@ -46,6 +45,10 @@ class ConfirmationOfFundsConsentValidationServiceTest {
     private DeleteConfirmationOfFundsConsentByIdValidator deleteConfirmationOfFundsConsentByIdValidator;
     @Mock
     private CreatePiisConsentAuthorisationValidator createPiisConsentAuthorisationValidator;
+    @Mock
+    private GetConfirmationOfFundsConsentAuthorisationsValidator getConfirmationOfFundsConsentAuthorisationsValidator;
+    @Mock
+    private GetConfirmationOfFundsConsentAuthorisationScaStatusValidator getConfirmationOfFundsConsentAuthorisationScaStatusValidator;
     @Mock
     private PiisConsent piisConsent;
 
@@ -72,6 +75,31 @@ class ConfirmationOfFundsConsentValidationServiceTest {
         //Then
         verify(createPiisConsentAuthorisationValidator).validate(any(CreatePiisConsentAuthorisationObject.class));
         assertEquals(createPiisConsentAuthorisationObject, argumentCaptor.getValue());
+    }
+
+    @Test
+    void validateConsentAuthorisationOnGettingById() {
+        //Given
+        ArgumentCaptor<CommonConfirmationOfFundsConsentObject> argumentCaptor = ArgumentCaptor.forClass(CommonConfirmationOfFundsConsentObject.class);
+        when(getConfirmationOfFundsConsentAuthorisationsValidator.validate(argumentCaptor.capture())).thenReturn(ValidationResult.valid());
+        //When
+        service.validateConsentAuthorisationOnGettingById(piisConsent);
+        //Then
+        verify(getConfirmationOfFundsConsentAuthorisationsValidator).validate(any(CommonConfirmationOfFundsConsentObject.class));
+        assertEquals(piisConsent, argumentCaptor.getValue().getPiisConsent());
+    }
+
+    @Test
+    void validateConsentAuthorisationScaStatus() {
+        //Given
+        ArgumentCaptor<GetConfirmationOfFundsConsentAuthorisationScaStatusPO> argumentCaptor = ArgumentCaptor.forClass(GetConfirmationOfFundsConsentAuthorisationScaStatusPO.class);
+        when(getConfirmationOfFundsConsentAuthorisationScaStatusValidator.validate(argumentCaptor.capture())).thenReturn(ValidationResult.valid());
+        //When
+        service.validateConsentAuthorisationScaStatus(piisConsent, AUTHORISATION_ID);
+        //Then
+        verify(getConfirmationOfFundsConsentAuthorisationScaStatusValidator).validate(any(GetConfirmationOfFundsConsentAuthorisationScaStatusPO.class));
+        assertEquals(piisConsent, argumentCaptor.getValue().getPiisConsent());
+        assertEquals(AUTHORISATION_ID, argumentCaptor.getValue().getAuthorisationId());
     }
 
 }

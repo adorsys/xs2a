@@ -79,7 +79,7 @@ public class TrustedBeneficiariesService {
     public ResponseObject<Xs2aTrustedBeneficiariesList> getTrustedBeneficiaries(String consentId,
                                                                                 String accountId,
                                                                                 String requestUri) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRUSTED_BENEFICIARIES_LIST_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.READ_TRUSTED_BENEFICIARIES_LIST_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 

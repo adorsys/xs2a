@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +42,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmbeddedAisAuthorizationService implements AisAuthorizationService {
     private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aConsentService consentService;
     private final Xs2aAuthorisationService authorisationService;
     private final Xs2aAisConsentMapper aisConsentMapper;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
-     * See {@link Xs2aAisConsentService#createAisConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
+     * See {@link Xs2aConsentService#createConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
      *
      * @param psuData   PsuIdData container of authorisation data about PSU
      * @param consentId String identification of consent
@@ -60,7 +62,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             return Optional.empty();
         }
 
-        return aisConsentService.createAisConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
+        return consentService.createConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -106,7 +108,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+        return consentService.getAuthorisationScaStatus(consentId, authorisationId);
     }
 
     @Override

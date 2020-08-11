@@ -91,7 +91,7 @@ public class CardAccountService {
      * @return response with {@link Xs2aCardAccountListHolder} containing the List of CardAccountDetails with Balances and granted by consent
      */
     public ResponseObject<Xs2aCardAccountListHolder> getCardAccountList(String consentId, String requestUri) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.READ_CARD_ACCOUNT_LIST_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.READ_CARD_ACCOUNT_LIST_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
@@ -159,7 +159,7 @@ public class CardAccountService {
      * @return response with {@link Xs2aCardAccountDetailsHolder} containing Xs2aCardAccountDetails object instance
      */
     public ResponseObject<Xs2aCardAccountDetailsHolder> getCardAccountDetails(String consentId, String accountId, String requestUri) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.READ_CARD_ACCOUNT_DETAILS_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.READ_CARD_ACCOUNT_DETAILS_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 

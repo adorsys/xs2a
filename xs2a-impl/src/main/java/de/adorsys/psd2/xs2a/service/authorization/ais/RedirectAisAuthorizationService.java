@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +36,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RedirectAisAuthorizationService implements AisAuthorizationService {
-    private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aConsentService consentService;
     private final Xs2aAuthorisationService authorisationService;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
-     * See {@link Xs2aAisConsentService#createAisConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
+     * See {@link Xs2aConsentService#createConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
      *
      * @param psuData   PsuIdData container of authorisation data about PSU
      * @param consentId String identification of consent
@@ -49,7 +49,7 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        return aisConsentService.createAisConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
+        return consentService.createConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -81,7 +81,7 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
      */
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return aisConsentService.getAuthorisationScaStatus(consentId, authorisationId);
+        return consentService.getAuthorisationScaStatus(consentId, authorisationId);
     }
 
     @Override
