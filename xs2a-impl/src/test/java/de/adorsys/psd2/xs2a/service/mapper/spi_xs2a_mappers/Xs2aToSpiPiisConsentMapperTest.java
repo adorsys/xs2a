@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = Xs2aToSpiPiisConsentMapperImpl.class)
+@ContextConfiguration(classes = {Xs2aToSpiPiisConsentMapperImpl.class, Xs2aToSpiPsuDataMapper.class})
 class Xs2aToSpiPiisConsentMapperTest {
     private JsonReader jsonReader = new JsonReader();
 

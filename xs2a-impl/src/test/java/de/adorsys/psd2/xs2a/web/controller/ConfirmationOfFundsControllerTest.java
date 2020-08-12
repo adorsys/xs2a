@@ -20,6 +20,7 @@ import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
@@ -32,10 +33,7 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -44,6 +42,7 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.header.ConsentHeadersBuilder;
 import de.adorsys.psd2.xs2a.web.header.ResponseHeaders;
 import de.adorsys.psd2.xs2a.web.mapper.AuthorisationMapper;
+import de.adorsys.psd2.xs2a.web.mapper.ConsentModelMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PiisConsentModelMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -51,10 +50,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.autoconfigure.session.NonUniqueSessionRepositoryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -98,7 +99,8 @@ class ConfirmationOfFundsControllerTest {
     private PiisConsentModelMapper piisConsentModelMapper;
     @Mock
     private AuthorisationMapper authorisationMapper;
-
+    @Mock
+    private ConsentModelMapper consentModelMapper;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -374,6 +376,68 @@ class ConfirmationOfFundsControllerTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    @Test
+    void updateConsentsPsuData_success() {
+        // Given
+        Map body = new HashMap();
+        PsuIdData psuIdData = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, null);
+
+        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+
+        when(consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, body)).thenReturn(updateConsentPsuDataReq);
+
+        UpdateConsentPsuDataResponse updateConsentPsuDataResponse = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, psuIdData);
+
+        ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataServiceResponse = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                                        .body(updateConsentPsuDataResponse)
+                                                                                        .build();
+
+        when(piisConsentService.updateConsentPsuData(updateConsentPsuDataReq)).thenReturn(updateConsentPsuDataServiceResponse);
+
+        ResponseHeaders responseHeaders = buildScaApproachHeader();
+        when(consentHeadersBuilder.buildUpdatePsuDataHeaders(AUTHORISATION_ID)).thenReturn(responseHeaders);
+
+        doReturn(new ResponseEntity<>(updateConsentPsuDataServiceResponse.getBody(), HttpStatus.OK))
+            .when(responseMapper).ok(any(), any(), any());
+
+        // When
+        ResponseEntity responseEntity = confirmationOfFundsController.updateConsentsPsuData(null, CONSENT_ID, AUTHORISATION_ID, body, null, null, null, CORRECT_PSU_ID,
+                                                                                            null, null, null, null, null, null, null,
+                                                                                            null, null, null, null, null, null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isEqualTo(updateConsentPsuDataResponse);
+    }
+
+    @Test
+    void updateConsentsPsuData_failure() {
+        // Given
+        Map body = new HashMap();
+        PsuIdData psuIdData = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, null);
+
+        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+
+        when(consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, body)).thenReturn(updateConsentPsuDataReq);
+
+        MessageError messageError = new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
+        ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataServiceResponse = ResponseObject.<UpdateConsentPsuDataResponse>builder()
+                                                                                               .fail(messageError)
+                                                                                               .build();
+
+        when(piisConsentService.updateConsentPsuData(updateConsentPsuDataReq)).thenReturn(updateConsentPsuDataServiceResponse);
+        when(responseErrorMapper.generateErrorResponse(messageError))
+            .thenReturn(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+
+        // When
+        ResponseEntity responseEntity = confirmationOfFundsController.updateConsentsPsuData(null, CONSENT_ID, AUTHORISATION_ID, body, null, null, null, CORRECT_PSU_ID,
+                                                                                            null, null, null, null, null, null, null,
+                                                                                            null, null, null, null, null, null);
+
+        // Then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
     private CreateConsentAuthorizationResponse getCreateConsentAuthorizationResponse() {
         CreateConsentAuthorizationResponse response = new CreateConsentAuthorizationResponse();
         response.setConsentId(CONSENT_ID);
@@ -435,5 +499,11 @@ class ConfirmationOfFundsControllerTest {
 
     private static AdditionalPsuIdData buildEmptyAdditionalPsuIdData() {
         return new AdditionalPsuIdData(null, null, null, null, null, null, null, null, null);
+    }
+
+    private ResponseHeaders buildScaApproachHeader() {
+        return ResponseHeaders.builder()
+                   .aspspScaApproach(ScaApproach.EMBEDDED)
+                   .build();
     }
 }

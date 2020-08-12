@@ -17,14 +17,15 @@
 package de.adorsys.psd2.xs2a.spi.domain.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -35,9 +36,9 @@ public class SpiPiisConsent {
     private OffsetDateTime requestDateTime;
     private LocalDate lastActionDate;
     private LocalDate expireDate;
-    private PsuIdData psuData;
+    private List<SpiPsuData> psuData;
     private ConsentStatus consentStatus;
-    private AccountReference account;
+    private SpiAccountReference account;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
     private String cardNumber;

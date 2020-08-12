@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 
-public class UpdateConsentLinks extends AbstractLinks {
+public abstract class UpdateConsentLinks extends AbstractLinks {
 
     public UpdateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataResponse response) {
         super(httpUrl);
@@ -31,7 +31,7 @@ public class UpdateConsentLinks extends AbstractLinks {
         String authorisationId = response.getAuthorisationId();
         ScaStatus scaStatus = response.getScaStatus();
 
-        HrefType authorisationLink = buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId);
+        HrefType authorisationLink = buildPath(getPath(), consentId, authorisationId);
         setScaStatus(authorisationLink);
 
         if (scaStatus == ScaStatus.PSUAUTHENTICATED) {
@@ -45,4 +45,6 @@ public class UpdateConsentLinks extends AbstractLinks {
             setUpdatePsuAuthentication(authorisationLink);
         }
     }
+
+    abstract String getPath();
 }

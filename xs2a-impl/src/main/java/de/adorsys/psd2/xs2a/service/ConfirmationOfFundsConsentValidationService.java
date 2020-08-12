@@ -17,9 +17,11 @@
 package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.piis.*;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentAuthorisationObject;
+import de.adorsys.psd2.xs2a.service.validator.piis.dto.UpdatePiisConsentPsuDataRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 public class ConfirmationOfFundsConsentValidationService {
     private final DeleteConfirmationOfFundsConsentByIdValidator deleteConfirmationOfFundsConsentByIdValidator;
     private final CreatePiisConsentAuthorisationValidator createPiisConsentAuthorisationValidator;
+    private final UpdatePiisConsentPsuDataValidator updatePiisConsentPsuDataValidator;
     private final GetConfirmationOfFundsConsentAuthorisationsValidator getCofConsentAuthorisationsValidator;
     private final GetConfirmationOfFundsConsentAuthorisationScaStatusValidator getCofConsentScaStatusValidator;
 
@@ -37,6 +40,10 @@ public class ConfirmationOfFundsConsentValidationService {
 
     public ValidationResult validateConsentAuthorisationOnCreate(CreatePiisConsentAuthorisationObject createPiisConsentAuthorisationObject) {
         return createPiisConsentAuthorisationValidator.validate(createPiisConsentAuthorisationObject);
+    }
+
+    public ValidationResult validateConsentPsuDataOnUpdate(PiisConsent consent, UpdateConsentPsuDataReq request) {
+        return updatePiisConsentPsuDataValidator.validate(new UpdatePiisConsentPsuDataRequestObject(consent, request));
     }
 
     public ValidationResult validateConsentAuthorisationOnGettingById(PiisConsent consent) {

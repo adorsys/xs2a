@@ -20,19 +20,25 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
+import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -44,6 +50,9 @@ public class Xs2aPiisConsentService {
     private final ConsentServiceEncrypted consentService;
     private final Xs2aPiisConsentMapper xs2aPiisConsentMapper;
     private final AisConsentServiceEncrypted aisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
+    private final Xs2aConsentAuthorisationMapper consentAuthorisationMapper;
+    private final LoggingContextService loggingContextService;
 
     public Optional<Xs2aCreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
         CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuData, tppInfo);
@@ -82,10 +91,16 @@ public class Xs2aPiisConsentService {
     }
 
     public void updateConsentStatus(String consentId, ConsentStatus consentStatus) {
+        CmsResponse<Boolean> statusUpdated;
         try {
-            consentService.updateConsentStatusById(consentId, consentStatus);
+            statusUpdated = consentService.updateConsentStatusById(consentId, consentStatus);
         } catch (WrongChecksumException e) {
             log.info("updateConsentStatus cannot be executed, checksum verification failed");
+            return;
+        }
+
+        if (statusUpdated.isSuccessful() && BooleanUtils.isTrue(statusUpdated.getPayload())) {
+            loggingContextService.storeConsentStatus(consentStatus);
         }
     }
 
@@ -105,6 +120,20 @@ public class Xs2aPiisConsentService {
         }
 
         return builder.payload(xs2aPiisConsentMapper.mapToPiisConsent(response.getPayload())).build();
+    }
+
+    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
+        CmsResponse<Boolean> response = consentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
+        return response.isSuccessful() && response.getPayload();
+    }
+
+    public void updateConsentAuthorisation(UpdateConsentPsuDataReq updatePsuData) {
+        Optional.ofNullable(updatePsuData)
+            .ifPresent(req -> {
+                final UpdateAuthorisationRequest request = consentAuthorisationMapper.mapToAuthorisationRequest(req);
+
+                authorisationService.updateAuthorisation(request, req.getAuthorizationId());
+            });
     }
 
     /**

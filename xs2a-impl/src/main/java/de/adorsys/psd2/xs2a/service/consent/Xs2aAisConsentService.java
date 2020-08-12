@@ -37,8 +37,8 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +56,7 @@ public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
     private final Xs2aAuthorisationService authorisationService;
     private final Xs2aAisConsentMapper aisConsentMapper;
-    private final Xs2aConsentAuthorisationMapper aisConsentAuthorisationMapper;
+    private final Xs2aConsentAuthorisationMapper consentAuthorisationMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final LoggingContextService loggingContextService;
 
@@ -168,7 +168,7 @@ public class Xs2aAisConsentService {
     public void updateConsentAuthorisation(UpdateConsentPsuDataReq updatePsuData) {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
-                final UpdateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(req);
+                final UpdateAuthorisationRequest request = consentAuthorisationMapper.mapToAuthorisationRequest(req);
 
                 authorisationService.updateAuthorisation(request, req.getAuthorizationId());
             });
@@ -222,5 +222,4 @@ public class Xs2aAisConsentService {
             log.info("updateMultilevelScaRequired cannot be executed, checksum verification failed");
         }
     }
-
 }

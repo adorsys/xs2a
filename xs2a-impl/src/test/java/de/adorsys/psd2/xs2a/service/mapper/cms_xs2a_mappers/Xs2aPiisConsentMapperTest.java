@@ -81,7 +81,6 @@ class Xs2aPiisConsentMapperTest {
             .thenReturn(Collections.singletonList(reference));
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
 
-        int allowedFrequencyPerDay = 0;
         //When
 
         CreatePiisConsentRequest request = jsonReader.getObjectFromFile("json/piis/create-piis-consent.json", CreatePiisConsentRequest.class);

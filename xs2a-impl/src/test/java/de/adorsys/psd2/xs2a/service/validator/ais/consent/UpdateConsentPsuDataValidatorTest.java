@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -260,8 +260,8 @@ class UpdateConsentPsuDataValidatorTest {
         //Given
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-received-status.json", AisConsent.class);
 
-        List<AccountConsentAuthorization> consentAuthorization = aisConsent.getAuthorisations();
-        AccountConsentAuthorization authorization = consentAuthorization.get(0);
+        List<ConsentAuthorization> consentAuthorization = aisConsent.getAuthorisations();
+        ConsentAuthorization authorization = consentAuthorization.get(0);
         authorization.setPsuIdData(PSU_ID_DATA_2);
 
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent))

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.core.data.ais.AisConsent;
@@ -70,7 +70,7 @@ public class CreateConsentAuthorisationValidator extends AbstractConsentTppValid
         }
 
         // If the authorisation for this consent ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
-        List<AccountConsentAuthorization> accountConsentAuthorisations = aisConsent.getAuthorisations();
+        List<ConsentAuthorization> accountConsentAuthorisations = aisConsent.getAuthorisations();
         List<Authorisation> authorisations = accountConsentAuthorisations.stream()
                                                  .map(auth -> new Authorisation(auth.getId(),
                                                                                 auth.getPsuIdData(),

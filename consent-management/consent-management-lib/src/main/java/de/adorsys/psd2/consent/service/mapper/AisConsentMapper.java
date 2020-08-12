@@ -28,7 +28,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -170,7 +170,7 @@ public class AisConsentMapper {
                    .collect(Collectors.toList());
     }
 
-    private List<AccountConsentAuthorization> mapToAccountConsentAuthorisations(List<AuthorisationEntity> aisConsentAuthorisations) {
+    private List<ConsentAuthorization> mapToAccountConsentAuthorisations(List<AuthorisationEntity> aisConsentAuthorisations) {
         if (CollectionUtils.isEmpty(aisConsentAuthorisations)) {
             return Collections.emptyList();
         }
@@ -188,10 +188,10 @@ public class AisConsentMapper {
                    .orElse(null);
     }
 
-    private AccountConsentAuthorization mapToAccountConsentAuthorisation(AuthorisationEntity aisConsentAuthorisation) {
+    private ConsentAuthorization mapToAccountConsentAuthorisation(AuthorisationEntity aisConsentAuthorisation) {
         return Optional.ofNullable(aisConsentAuthorisation)
                    .map(auth -> {
-                       AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
+                       ConsentAuthorization authorisation = new ConsentAuthorization();
 
                        authorisation.setId(auth.getExternalId());
                        authorisation.setConsentId(auth.getParentExternalId());

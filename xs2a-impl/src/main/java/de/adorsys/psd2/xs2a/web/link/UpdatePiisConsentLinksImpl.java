@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.web.link;
 
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.ScaServiceResolver;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+public class UpdatePiisConsentLinksImpl extends UpdateConsentLinks {
+    public UpdatePiisConsentLinksImpl(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataResponse response) {
+        super(httpUrl, scaApproachResolver, response);
+    }
 
-@Service
-public class PiisScaAuthorisationServiceResolver extends ScaServiceResolver<PiisAuthorizationService> {
-
-    public PiisScaAuthorisationServiceResolver(List<PiisAuthorizationService> services, ScaApproachResolver scaApproachResolver) {
-        super(services, scaApproachResolver);
+    @Override
+    String getPath() {
+        return UrlHolder.PIIS_AUTHORISATION_URL;
     }
 }

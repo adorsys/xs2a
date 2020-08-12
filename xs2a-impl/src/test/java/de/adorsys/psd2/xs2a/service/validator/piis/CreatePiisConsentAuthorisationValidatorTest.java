@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
@@ -202,7 +202,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
     }
 
     private PiisConsent buildPiisConsentWithPsuIdDataAndAuthorisation() {
-        AccountConsentAuthorization authorisation = new AccountConsentAuthorization();
+        ConsentAuthorization authorisation = new ConsentAuthorization();
         authorisation.setScaStatus(ScaStatus.FINALISED);
         authorisation.setPsuIdData(PSU_DATA);
         PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);

@@ -39,7 +39,7 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
+import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -88,7 +88,7 @@ class ConsentAuthorisationServiceTest {
     @Mock
     private AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     @Mock
-    private AisEndpointAccessCheckerService endpointAccessCheckerService;
+    private ConsentEndpointAccessCheckerService endpointAccessCheckerService;
     @Mock
     private Xs2aEventService xs2aEventService;
     @Mock

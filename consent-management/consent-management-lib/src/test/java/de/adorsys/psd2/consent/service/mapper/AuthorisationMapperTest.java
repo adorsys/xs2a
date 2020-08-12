@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,19 @@ class AuthorisationMapperTest {
         expected.setRedirectUrlExpirationTimestamp(actual.getRedirectUrlExpirationTimestamp());
         expected.setAuthorisationExpirationTimestamp(actual.getAuthorisationExpirationTimestamp());
 
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToAuthorisation() {
+        // Given
+        AuthorisationEntity input = jsonReader.getObjectFromFile("json/service/mapper/authorisation-entity.json", AuthorisationEntity.class);
+
+        // When
+        Authorisation actual = mapper.mapToAuthorisation(input);
+
+        // Then
+        Authorisation expected = jsonReader.getObjectFromFile("json/service/mapper/authorisation-expected.json", Authorisation.class);
         assertEquals(expected, actual);
     }
 }

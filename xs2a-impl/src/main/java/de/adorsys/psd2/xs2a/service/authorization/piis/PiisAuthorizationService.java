@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -31,7 +31,7 @@ public interface PiisAuthorizationService extends ScaApproachServiceTypeProvider
 
     AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
 
-    Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId);
+    Optional<Authorisation> getPiisConsentAuthorizationById(String authorizationId);
 
     Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 }

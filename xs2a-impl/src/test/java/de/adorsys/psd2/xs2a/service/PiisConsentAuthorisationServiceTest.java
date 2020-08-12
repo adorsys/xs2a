@@ -19,6 +19,8 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -31,10 +33,15 @@ import de.adorsys.psd2.xs2a.domain.consent.ConfirmationOfFundsConsentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
-import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectPiisAuthorizationService;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
+import de.adorsys.psd2.xs2a.service.authorization.piis.RedirectPiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentAuthorisationObject;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -92,6 +99,14 @@ public class PiisConsentAuthorisationServiceTest {
     private Xs2aAuthorisationService xs2aAuthorisationService;
     @Mock
     private PsuIdDataAuthorisationService psuIdDataAuthorisationService;
+    @Mock
+    private ConsentEndpointAccessCheckerService endpointAccessCheckerService;
+    @Mock
+    private LoggingContextService loggingContextService;
+    @Mock
+    private PiisAuthorizationService piisAuthorizationService;
+    @Mock
+    private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
 
     private JsonReader jsonReader = new JsonReader();
     private PiisConsent piisConsent;
@@ -151,17 +166,24 @@ public class PiisConsentAuthorisationServiceTest {
         when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(piisConsent));
         when(confirmationOfFundsConsentValidationService.validateConsentAuthorisationOnCreate(any(CreatePiisConsentAuthorisationObject.class)))
             .thenReturn(ValidationResult.valid());
-        when(piisScaAuthorisationServiceResolver.getService())
-            .thenReturn(redirectPiisAuthorizationService);
+
+        when(piisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(piisAuthorizationService);
+        when(piisScaAuthorisationServiceResolver.getService()).thenReturn(piisAuthorizationService);
+
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = buildCreateConsentAuthorizationResponse();
-        when(redirectPiisAuthorizationService.createConsentAuthorization(any(), anyString()))
+        when(piisAuthorizationService.createConsentAuthorization(any(), anyString()))
             .thenReturn(Optional.of(createConsentAuthorizationResponse));
+
+        when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, false)).thenReturn(true);
+        when(confirmationOfFundsConsentValidationService.validateConsentPsuDataOnUpdate(piisConsent, buildUpdateConsentPsuDataReq())).thenReturn(ValidationResult.valid());
+        when(piisAuthorizationService.getPiisConsentAuthorizationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildAuthorisation()));
+        when(authorisationChainResponsibilityService.apply(any())).thenReturn(buildUpdateConsentPsuDataResponse());
         // When
         ResponseObject<AuthorisationResponse> actualResponse = service.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
         // Then
-        verify(xs2aPiisConsentService, times(1)).getPiisConsentById(CONSENT_ID);
+        verify(xs2aPiisConsentService, times(2)).getPiisConsentById(CONSENT_ID);
         verify(confirmationOfFundsConsentValidationService, times(1)).validateConsentAuthorisationOnCreate(createPiisConsentAuthorisationObject);
-        assertEquals(createConsentAuthorizationResponse, actualResponse.getBody());
+        assertEquals(buildUpdateConsentPsuDataResponse(), actualResponse.getBody());
     }
 
     @Test
@@ -288,5 +310,22 @@ public class PiisConsentAuthorisationServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.hasError()).isTrue();
         assertThat(response.getError()).isEqualTo(messageError);
+    }
+
+    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {
+        UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
+        updatePsuData.setPsuData(PSU_ID_DATA);
+        updatePsuData.setConsentId(CONSENT_ID);
+        updatePsuData.setAuthorizationId(AUTHORISATION_ID);
+        updatePsuData.setPassword(PASSWORD);
+        return updatePsuData;
+    }
+
+    private Authorisation buildAuthorisation() {
+        return jsonReader.getObjectFromFile("json/consent-authorisation.json", Authorisation.class);
+    }
+
+    private UpdateConsentPsuDataResponse buildUpdateConsentPsuDataResponse() {
+        return new UpdateConsentPsuDataResponse(ScaStatus.RECEIVED, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
     }
 }

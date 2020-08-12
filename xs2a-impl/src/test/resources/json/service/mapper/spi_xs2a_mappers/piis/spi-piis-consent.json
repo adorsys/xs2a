@@ -3,13 +3,15 @@
   "recurringIndicator": true,
   "lastActionDate": "2019-12-31",
   "expireDate": "2025-12-31",
-  "psuData": {
+  "psuData": [
+    {
     "psuId": "marion.mueller",
     "psuIdType": "PSU ID TYPE",
     "psuCorporateId": "PSU CORPORATE ID",
     "psuCorporateIdType": "PSU CORPORATE ID TYPE",
     "psuIpAddress": "PSU IP ADDRESS"
-  },
+  }
+  ],
   "consentStatus": "VALID",
   "account": {
     "currency": "EUR",
