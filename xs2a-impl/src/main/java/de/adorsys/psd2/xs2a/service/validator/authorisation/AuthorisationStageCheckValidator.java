@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_400;
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
-import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.AIS;
 
 /**
  * Checks whether the incoming request authorisation data matches the current authorisation stage
@@ -55,6 +54,13 @@ public class AuthorisationStageCheckValidator {
     }
 
     private ErrorType resolveErrorType(AuthorisationServiceType authType) {
-        return authType == AIS ? ErrorType.AIS_400 : ErrorType.PIS_400;
+        switch (authType) {
+            case AIS:
+                return ErrorType.AIS_400;
+            case PIIS:
+                return ErrorType.PIIS_400;
+            default:
+                return ErrorType.PIS_400;
+        }
     }
 }

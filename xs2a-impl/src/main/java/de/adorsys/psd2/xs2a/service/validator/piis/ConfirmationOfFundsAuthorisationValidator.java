@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class ConfirmationOfFundsAuthorisationValidator {
 
     @NotNull
     public ValidationResult validate(@NotNull String authorisationId, @NotNull PiisConsent consent) {
-        Optional<AccountConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
+        Optional<ConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
         if (authorisationOptional.isEmpty()) {
             log.info("Consent ID: [{}], Authorisation ID: [{}]. Authorisation validation has failed: couldn't find authorisation with given authorisationId for consent",
                      consent.getId(), authorisationId);

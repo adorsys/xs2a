@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.core.data.AccountAccess;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -70,7 +70,7 @@ public class AccountConsent {
 
     private final boolean multilevelScaRequired;
 
-    private final List<AccountConsentAuthorization> authorisations;
+    private final List<ConsentAuthorization> authorisations;
 
     private final OffsetDateTime statusChangeTimestamp;
 
@@ -104,7 +104,7 @@ public class AccountConsent {
         return getAisConsentRequestType() == AisConsentRequestType.DEDICATED_ACCOUNTS;
     }
 
-    public Optional<AccountConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
+    public Optional<ConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
         return authorisations.stream()
                    .filter(auth -> auth.getId().equals(authorisationId))
                    .findFirst();

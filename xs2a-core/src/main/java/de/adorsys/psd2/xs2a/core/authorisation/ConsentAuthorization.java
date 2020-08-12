@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 
 @Data
-public class AccountConsentAuthorization {
+public class ConsentAuthorization {
     private String id;
 
     private String consentId;

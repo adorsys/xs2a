@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 
@@ -33,11 +33,10 @@ class Xs2aAccountConsentAuthorizationMapperTest {
     void mapToAccountConsentAuthorisation() {
         //Given
         List<Authorisation> authorisations = jsonReader.getListFromFile("json/service/mapper/cms-xs2a-mappers/authorisation-list.json", Authorisation.class);
-        List<AccountConsentAuthorization> expected = jsonReader.getListFromFile("json/service/mapper/cms-xs2a-mappers/account-consent-authorisation-list.json", AccountConsentAuthorization.class);
+        List<ConsentAuthorization> expected = jsonReader.getListFromFile("json/service/mapper/cms-xs2a-mappers/account-consent-authorisation-list.json", ConsentAuthorization.class);
         //When
-        List<AccountConsentAuthorization> actual = xs2aAccountConsentAuthorizationMapper.mapToAccountConsentAuthorisation(authorisations);
+        List<ConsentAuthorization> actual = xs2aAccountConsentAuthorizationMapper.mapToAccountConsentAuthorisation(authorisations);
         //Then
         assertEquals(expected, actual);
-
     }
 }

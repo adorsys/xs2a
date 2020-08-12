@@ -4,6 +4,7 @@
 
 * Implemented Get Authorisation Sub-resource request for Funds Confirmation Consent
 * Implemented Get SCA Status request for Funds Confirmation Consent
+* Support Funds Confirmation Consent in Embedded approach with multilevel sca
 
 === Implemented Get Authorisation Sub-resource request for Funds Confirmation Consent
 
@@ -14,3 +15,10 @@ and gives response with authorisation identifications list.
 
 From now on, endpoint `GET /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}`
 is implemented and gives response with sca status of piis consent authorisation.
+
+== Support Funds Confirmation Consent in Embedded approach with multilevel sca
+
+From now on, Funds Confirmation Consent in Embedded approach is supported by xs2a.
+
+Also type of field `account` in `SpiPiisConsent` was changed from `AccountReference` to `SpiAccountReference`.
+And type of `psuData` field was changed from `SpiPsuData` to `List<SpiPsuData> psuData`.

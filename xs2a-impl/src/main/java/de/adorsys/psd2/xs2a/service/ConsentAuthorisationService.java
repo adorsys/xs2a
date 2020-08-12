@@ -35,7 +35,7 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
+import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public class ConsentAuthorisationService {
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final Xs2aAisConsentService aisConsentService;
     private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
-    private final AisEndpointAccessCheckerService endpointAccessCheckerService;
+    private final ConsentEndpointAccessCheckerService endpointAccessCheckerService;
     private final Xs2aEventService xs2aEventService;
     private final ConsentValidationService consentValidationService;
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;

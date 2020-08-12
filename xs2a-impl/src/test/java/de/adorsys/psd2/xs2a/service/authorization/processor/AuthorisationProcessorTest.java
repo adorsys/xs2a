@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AisAuthorisationProcessorServiceImpl;
+import de.adorsys.psd2.xs2a.service.authorization.processor.service.PiisAuthorisationProcessorServiceImpl;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisAuthorisationProcessorServiceImpl;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisCancellationAuthorisationProcessorServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,8 @@ class AuthorisationProcessorTest {
     private AuthorisationProcessor nextProcessor;
     @Mock
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorServiceImpl;
+    @Mock
+    private PiisAuthorisationProcessorServiceImpl piisAuthorisationProcessorService;
     @Mock
     private PisAuthorisationProcessorServiceImpl pisAuthorisationProcessorService;
     @Mock
@@ -104,6 +107,16 @@ class AuthorisationProcessorTest {
         authorisationProcessor.getProcessorService(request);
 
         verify(applicationContext, times(1)).getBean(AisAuthorisationProcessorServiceImpl.class);
+    }
+
+    @Test
+    void getProcessorService_PIIS() {
+        request.setServiceType(ServiceType.PIIS);
+        when(applicationContext.getBean(PiisAuthorisationProcessorServiceImpl.class)).thenReturn(piisAuthorisationProcessorService);
+
+        authorisationProcessor.getProcessorService(request);
+
+        verify(applicationContext, times(1)).getBean(PiisAuthorisationProcessorServiceImpl.class);
     }
 
     @Test

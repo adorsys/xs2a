@@ -61,4 +61,9 @@ public class ConsentAspect {
     public ResponseObject<AuthorisationResponse> createPiisAuthorisationAspect(ResponseObject<AuthorisationResponse> result, PsuIdData psuData, String consentId, String password) {
         return consentAspectService.invokeCreatePiisAuthorisationAspect(result);
     }
+
+    @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PiisConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
+    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdatePiisConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
+        return consentAspectService.invokeUpdatePiisConsentPsuDataAspect(result);
+    }
 }

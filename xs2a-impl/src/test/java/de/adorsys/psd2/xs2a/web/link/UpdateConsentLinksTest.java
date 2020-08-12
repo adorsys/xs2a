@@ -34,7 +34,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateConsentLinksTest {
+class UpdateAisConsentLinksImplTest {
     private static final String HTTP_URL = "http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCiu4GLwd6mq";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
@@ -42,7 +42,7 @@ class UpdateConsentLinksTest {
     @Mock
     private ScaApproachResolver scaApproachResolver;
 
-    private UpdateConsentLinks links;
+    private UpdateAisConsentLinksImpl links;
 
     private Links expectedLinks;
 
@@ -54,7 +54,7 @@ class UpdateConsentLinksTest {
     @Test
     void isScaStatusMethodAuthenticated() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.PSUAUTHENTICATED);
-        links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
+        links = new UpdateAisConsentLinksImpl(HTTP_URL, scaApproachResolver, response);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setSelectAuthenticationMethod(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -64,7 +64,7 @@ class UpdateConsentLinksTest {
     @Test
     void isAnotherScaStatus_failed() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.FAILED);
-        links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
+        links = new UpdateAisConsentLinksImpl(HTTP_URL, scaApproachResolver, response);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
@@ -75,7 +75,7 @@ class UpdateConsentLinksTest {
         when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
 
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED);
-        links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
+        links = new UpdateAisConsentLinksImpl(HTTP_URL, scaApproachResolver, response);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
@@ -86,7 +86,7 @@ class UpdateConsentLinksTest {
         when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
 
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED);
-        links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
+        links = new UpdateAisConsentLinksImpl(HTTP_URL, scaApproachResolver, response);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setAuthoriseTransaction(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -96,7 +96,7 @@ class UpdateConsentLinksTest {
     @Test
     void isScaStatusFinalised() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.FINALISED);
-        links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
+        links = new UpdateAisConsentLinksImpl(HTTP_URL, scaApproachResolver, response);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
@@ -105,7 +105,7 @@ class UpdateConsentLinksTest {
     @Test
     void isScaStatusMethodIdentified() {
         UpdateConsentPsuDataResponse response = buildUpdateConsentPsuDataResponse(ScaStatus.PSUIDENTIFIED);
-        links = new UpdateConsentLinks(HTTP_URL, scaApproachResolver, response);
+        links = new UpdateAisConsentLinksImpl(HTTP_URL, scaApproachResolver, response);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCiu4GLwd6mq/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));

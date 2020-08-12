@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AisEndpointAccessCheckerServiceTest {
+class ConsentEndpointAccessCheckerServiceTest {
 
     private static final String AUTHORISATION_ID = "11111111";
 
     @InjectMocks
-    private AisEndpointAccessCheckerService aisEndpointAccessCheckerService;
+    private ConsentEndpointAccessCheckerService consentEndpointAccessCheckerService;
 
     @Mock
     private Xs2aAuthorisationService authorisationService;
@@ -56,7 +56,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.RECEIVED, ScaApproach.REDIRECT)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
+        boolean actual = consentEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertFalse(actual);
     }
@@ -70,7 +70,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.REDIRECT)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
+        boolean actual = consentEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertTrue(actual);
     }
@@ -84,7 +84,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.DECOUPLED)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
+        boolean actual = consentEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertTrue(actual);
     }
@@ -98,7 +98,7 @@ class AisEndpointAccessCheckerServiceTest {
         when(authorisationService.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(buildAccountConsentAuthorization(ScaStatus.UNCONFIRMED, ScaApproach.EMBEDDED)));
 
-        boolean actual = aisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
+        boolean actual = consentEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
         assertTrue(actual);
     }

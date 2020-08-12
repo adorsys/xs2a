@@ -41,10 +41,12 @@ class AuthorisationStageCheckValidatorTest {
     private static final ScaStatus FINALISED_STATUS = ScaStatus.FINALISED;
     private static final ScaStatus EXEMPTED_STATUS = ScaStatus.EXEMPTED;
     private static final AuthorisationServiceType AIS_AUTHORISATION = AuthorisationServiceType.AIS;
+    private static final AuthorisationServiceType PIIS_AUTHORISATION = AuthorisationServiceType.PIIS;
     private static final AuthorisationServiceType PIS_AUTHORISATION = AuthorisationServiceType.PIS;
     private static final AuthorisationServiceType PIS_CANCELLATION_AUTHORISATION = AuthorisationServiceType.PIS_CANCELLATION;
     private static final MessageErrorCode SERVICE_INVALID = SERVICE_INVALID_400;
     private static final ErrorType AIS_400_ERROR = ErrorType.AIS_400;
+    private static final ErrorType PIIS_400_ERROR = ErrorType.PIIS_400;
     private static final ErrorType PIS_400_ERROR = ErrorType.PIS_400;
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final PsuIdData NON_EMPTY_PSU_DATA = new PsuIdData("Test", null, null, null, null);
@@ -81,6 +83,21 @@ class AuthorisationStageCheckValidatorTest {
         //Then
         assertTrue(validationResult.isNotValid());
         assertEquals(AIS_400_ERROR, validationResult.getMessageError().getErrorType());
+        assertEquals(SERVICE_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void test_received_failure_emptyPsuData_piis() {
+        //Given
+        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        updateRequest.setPsuData(EMPTY_PSU_DATA);
+
+        //When
+        ValidationResult validationResult = checkValidator.validate(updateRequest, RECEIVED_STATUS, PIIS_AUTHORISATION);
+
+        //Then
+        assertTrue(validationResult.isNotValid());
+        assertEquals(PIIS_400_ERROR, validationResult.getMessageError().getErrorType());
         assertEquals(SERVICE_INVALID, validationResult.getMessageError().getTppMessage().getMessageErrorCode());
     }
 

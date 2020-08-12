@@ -57,9 +57,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
     }
 
     void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
-        String businessObjectName = request.getServiceType() == ServiceType.AIS
-                                        ? "Consent-ID"
-                                        : "Payment-ID";
+        String businessObjectName = resolveBusinessObjectName(request.getServiceType());
         String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", businessObjectName, message);
         log.info(messageToLog,
                  request.getUpdateAuthorisationRequest().getBusinessObjectId(),
@@ -70,9 +68,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
     }
 
     void writeInfoLog(AuthorisationProcessorRequest request, PsuIdData psuData, String message) {
-        String businessObjectName = request.getServiceType() == ServiceType.AIS
-                                        ? "Consent-ID"
-                                        : "Payment-ID";
+        String businessObjectName = resolveBusinessObjectName(request.getServiceType());
         String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", businessObjectName, message);
         log.info(messageToLog,
                  request.getUpdateAuthorisationRequest().getBusinessObjectId(),
@@ -100,5 +96,9 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
                                Authorisation authorisation) {
         PsuIdData psuDataInRequest = request.getPsuData();
         return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisation.getPsuIdData();
+    }
+
+    private String resolveBusinessObjectName(ServiceType serviceType) {
+        return serviceType == ServiceType.AIS || serviceType == ServiceType.PIIS ? "Consent-ID" : "Payment-ID";
     }
 }

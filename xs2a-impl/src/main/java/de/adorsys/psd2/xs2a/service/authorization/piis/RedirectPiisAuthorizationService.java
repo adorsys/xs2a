@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
@@ -37,6 +38,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RedirectPiisAuthorizationService implements PiisAuthorizationService {
     private final Xs2aPiisConsentService xs2aPiisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
     private final Xs2aConsentService consentService;
 
     @Override
@@ -66,8 +68,8 @@ public class RedirectPiisAuthorizationService implements PiisAuthorizationServic
     }
 
     @Override
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
-        return Optional.empty();
+    public Optional<Authorisation> getPiisConsentAuthorizationById(String authorizationId) {
+        return authorisationService.getAuthorisationById(authorizationId);
     }
 
     @Override

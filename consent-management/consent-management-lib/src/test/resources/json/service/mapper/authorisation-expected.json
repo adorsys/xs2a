@@ -1,0 +1,14 @@
+{
+  "authorisationId": "a23b979a-ca16-4ef8-a008-046a46067b0b",
+  "psuIdData": {
+    "psuId": "PSU ID",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+    "psuIpAddress": "PSU IP ADDRESS"
+  },
+  "parentId": "329d04d9-cb42-4fb5-8265-de58fa00366d",
+  "scaStatus": "PSUIDENTIFIED",
+  "chosenScaApproach": "EMBEDDED",
+  "authorisationType": "PIS_CREATION"
+}

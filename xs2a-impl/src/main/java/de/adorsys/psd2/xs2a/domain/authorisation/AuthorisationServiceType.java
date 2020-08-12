@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.domain.authorisation;
 
 public enum AuthorisationServiceType {
     AIS,
+    PIIS,
     PIS,
     PIS_CANCELLATION
 }

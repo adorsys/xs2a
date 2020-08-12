@@ -16,20 +16,13 @@
 
 package de.adorsys.psd2.core.data.piis.v1;
 
-import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.Consent;
 import de.adorsys.psd2.core.data.piis.PiisConsentData;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
 
 public class PiisConsent extends Consent<PiisConsentData> {
@@ -39,16 +32,6 @@ public class PiisConsent extends Consent<PiisConsentData> {
 
     public PiisConsent(ConsentType consentType) {
         setConsentType(consentType);
-    }
-
-    public PiisConsent(PiisConsentData consentData, String id, String internalRequestId, ConsentStatus consentStatus, boolean recurringIndicator,
-                       LocalDate expireDate, LocalDate lastActionDate, OffsetDateTime creationTimestamp, ConsentTppInformation consentTppInformation,
-                       List<PsuIdData> psuIdDataList, AccountAccess aspspAccountAccess, String instanceId, ConsentType consentType) {
-
-        super(consentData, id, internalRequestId, consentStatus, 0, recurringIndicator, false,
-              null, expireDate, lastActionDate, creationTimestamp, null, consentTppInformation,
-              new AuthorisationTemplate(), psuIdDataList, Collections.emptyList(), Collections.emptyMap(),
-              AccountAccess.EMPTY_ACCESS, aspspAccountAccess, instanceId, consentType);
     }
 
     public AccountReference getAccountReference() {

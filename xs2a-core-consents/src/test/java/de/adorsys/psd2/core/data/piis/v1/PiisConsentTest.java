@@ -17,7 +17,7 @@
 package de.adorsys.psd2.core.data.piis.v1;
 
 import de.adorsys.psd2.core.data.AccountAccess;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -87,7 +87,7 @@ class PiisConsentTest {
         //Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/data/piis/piis-consent.json", PiisConsent.class);
         //When
-        Optional<AccountConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent(AUTHORISATION_ID);
+        Optional<ConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent(AUTHORISATION_ID);
         //Then
         assert(authorisationInConsent).isPresent();
     }
@@ -97,7 +97,7 @@ class PiisConsentTest {
         //Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/data/piis/piis-consent.json", PiisConsent.class);
         //When
-        Optional<AccountConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent("wrong authorisation id");
+        Optional<ConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent("wrong authorisation id");
         //Then
         assert(authorisationInConsent).isEmpty();
     }

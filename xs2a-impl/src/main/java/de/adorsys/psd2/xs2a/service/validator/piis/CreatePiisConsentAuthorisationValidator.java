@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -70,7 +70,7 @@ public class CreatePiisConsentAuthorisationValidator extends AbstractConfirmatio
         }
 
         // If the authorisation for this consent ID and for this PSU ID has status FINALISED or EXEMPTED - return error.
-        List<AccountConsentAuthorization> accountConsentAuthorisations = piisConsent.getAuthorisations();
+        List<ConsentAuthorization> accountConsentAuthorisations = piisConsent.getAuthorisations();
         List<Authorisation> authorisations = accountConsentAuthorisations.stream()
                                                  .map(auth -> new Authorisation(auth.getId(),
                                                                                 auth.getPsuIdData(),

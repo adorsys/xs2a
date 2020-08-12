@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Component
 public class Xs2aAccountConsentAuthorizationMapper {
 
-    List<AccountConsentAuthorization> mapToAccountConsentAuthorisation(List<Authorisation> authorisations) {
+    List<ConsentAuthorization> mapToAccountConsentAuthorisation(List<Authorisation> authorisations) {
         if (CollectionUtils.isEmpty(authorisations)) {
             return Collections.emptyList();
         }
@@ -38,10 +38,10 @@ public class Xs2aAccountConsentAuthorizationMapper {
                    .collect(Collectors.toList());
     }
 
-    private AccountConsentAuthorization mapToAccountConsentAuthorisation(Authorisation authorisation) {
+    private ConsentAuthorization mapToAccountConsentAuthorisation(Authorisation authorisation) {
         return Optional.ofNullable(authorisation)
                    .map(auth -> {
-                       AccountConsentAuthorization accountConsentAuthorisation = new AccountConsentAuthorization();
+                       ConsentAuthorization accountConsentAuthorisation = new ConsentAuthorization();
                        accountConsentAuthorisation.setId(auth.getAuthorisationId());
                        accountConsentAuthorisation.setConsentId(auth.getParentId());
                        accountConsentAuthorisation.setPsuIdData(auth.getPsuIdData());
