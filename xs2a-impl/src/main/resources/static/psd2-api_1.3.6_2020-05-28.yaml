@@ -8064,6 +8064,10 @@ components:
             description: Message codes defined for PIIS for HTTP Error code 405 (METHOD NOT ALLOWED).
             type: string
 
+        MessageCode406_PIIS:
+            description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
+            type: string
+
         MessageCode405_SBS:
             description: Message codes defined for SBS for HTTP Error code 405 (METHOD NOT ALLOWED).
             type: string
@@ -8502,6 +8506,20 @@ components:
                 text:
                     $ref: "#/components/schemas/tppMessageText"
 
+        tppMessage406_PIIS:
+            type: object
+            required:
+                - category
+                - code
+            properties:
+                category:
+                    $ref: "#/components/schemas/tppMessageCategory"
+                code:
+                    $ref: "#/components/schemas/MessageCode406_PIIS"
+                path:
+                    type: string
+                text:
+                    $ref: "#/components/schemas/tppMessageText"
 
         tppMessage405_SBS:
             type: object
@@ -10778,6 +10796,18 @@ components:
                     type: array
                     items:
                         $ref: "#/components/schemas/tppMessage405_PIIS"
+                _links:
+                    $ref: "#/components/schemas/_linksAll"
+
+        Error406_NG_PIIS:
+            description: |
+                NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406.
+            type: object
+            properties:
+                tppMessages:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/tppMessage406_PIIS"
                 _links:
                     $ref: "#/components/schemas/_linksAll"
 

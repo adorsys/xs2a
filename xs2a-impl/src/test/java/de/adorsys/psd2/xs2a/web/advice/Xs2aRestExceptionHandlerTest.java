@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405_METHOD_NOT_SUPPORTED;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -105,7 +105,7 @@ class Xs2aRestExceptionHandlerTest {
     @Test
     void handleHttpMediaTypeNotAcceptable() throws IOException {
         // Given
-        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, CONSENT_INVALID);
+        TppErrorMessage tppErrorMessage = new TppErrorMessage(ERROR, REQUESTED_FORMATS_INVALID);
 
         // When
         exceptionHandler.handleHttpMediaTypeNotAcceptable(mediaTypeNotAcceptableException, request, response, handler);

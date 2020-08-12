@@ -39,6 +39,7 @@ public enum ErrorType {
     PIIS_403(ServiceType.PIIS, 403),
     PIIS_404(ServiceType.PIIS, 404),
     PIIS_405(ServiceType.PIIS, 405),
+    PIIS_406(ServiceType.PIIS, 406),
     PIIS_409(ServiceType.PIIS, 409),
     PIIS_415(ServiceType.PIIS, 415),
     PIIS_429(ServiceType.PIIS, 429),
