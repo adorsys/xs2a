@@ -5,6 +5,7 @@
 * Implement explicit authorisation for PIIS consents
 * Implement multilevel for PIIS consents
 * Incorrect consent type in PIIS Consent
+* Adjust CoF request with consent created by TPP
 
 == Implement explicit authorisation for PIIS consents
 
@@ -20,3 +21,8 @@ that this PIIS Consent requires multilevel SCA and there should be always explic
 == Incorrect consent type in PIIS Consent
 
 From now on, PIIS Consent type can have any of following values either `PIIS_ASPSP` or `PIIS_TPP`.
+
+== Adjust CoF request with consent created by TPP
+
+From now on, TPP is able to make Confirmation of Funds request `POST /v1/funds-confirmations` with TPP consent by providing id of the consent in `Consent-Id` header.
+In this case Confirmation of Funds Consent will be retrieved from CMS and will be passed to the SPI level.

@@ -23,7 +23,9 @@ import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceSelector;
@@ -33,6 +35,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
 import de.adorsys.psd2.xs2a.domain.fund.PiisConsentValidationResult;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
@@ -51,14 +54,17 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR;
 
@@ -79,6 +85,7 @@ public class FundsConfirmationService {
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final Xs2aPiisConsentMapper xs2aPiisConsentMapper;
     private final Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper;
+    private final Xs2aPiisConsentService xs2aPiisConsentService;
 
     /**
      * Checks if the account balance is sufficient for requested operation
@@ -90,7 +97,8 @@ public class FundsConfirmationService {
         xs2aEventService.recordTppRequest(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED, request);
 
         PiisConsent consent = null;
-        if (profileService.getPiisConsentSupported() == PiisConsentSupported.ASPSP_CONSENT_SUPPORTED) {
+        PiisConsentSupported piisConsentSupported = profileService.getPiisConsentSupported();
+        if (piisConsentSupported == PiisConsentSupported.ASPSP_CONSENT_SUPPORTED) {
             AccountReference accountReference = request.getPsuAccount();
             PiisConsentValidationResult validationResult = validateAccountReference(accountReference);
 
@@ -103,6 +111,20 @@ public class FundsConfirmationService {
             }
 
             consent = validationResult.getConsent();
+        } else if (piisConsentSupported == PiisConsentSupported.TPP_CONSENT_SUPPORTED) {
+            String consentId = request.getConsentId();
+            if (StringUtils.isNotEmpty(consentId)) {
+                Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
+
+                if (piisConsentOptional.isEmpty()) {
+                    log.info("Consent-ID: [{}]. Get PIIS consent failed: initial consent not found by id", consentId);
+                    return ResponseObject.<FundsConfirmationResponse>builder()
+                               .fail(ErrorType.PIIS_403, of(MessageErrorCode.CONSENT_UNKNOWN_403))
+                               .build();
+                }
+
+                consent = piisConsentOptional.get();
+            }
         }
 
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
