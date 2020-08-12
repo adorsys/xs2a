@@ -1,0 +1,13 @@
+{
+  "cardNumber" : "cardNumber",
+  "psuAccount" : {
+    "iban" : "DE69760700240340283600",
+    "currency" : "EUR"
+  },
+  "payee" : "payee",
+  "instructedAmount" : {
+    "currency" : "EUR",
+    "amount" : "10.00"
+  },
+  "consentId" : "233108c8-8f67-4866-b4b7-66a0df044342"
+}

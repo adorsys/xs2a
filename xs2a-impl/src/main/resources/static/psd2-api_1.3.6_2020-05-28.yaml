@@ -3041,6 +3041,7 @@ paths:
                 #header
                 #common header parameter
                 - $ref: "#/components/parameters/X-Request-ID"
+                - $ref: "#/components/parameters/piisConsentId_HEADER_optional"
                 - $ref: "#/components/parameters/Authorization"
                     #method specific header elements
                     #- $ref: "#/components/parameters/consentId_HEADER_optional" # Consent-Id for usage of extended services
@@ -11074,6 +11075,15 @@ components:
             description: |
                 This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service.
                 This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation.
+            required: false
+            schema:
+                $ref: "#/components/schemas/consentId"
+
+        piisConsentId_HEADER_optional:
+            name: Consent-ID
+            in: header
+            description: |
+                ID of the corresponding consent object as returned by confirmation of funds consent request.
             required: false
             schema:
                 $ref: "#/components/schemas/consentId"

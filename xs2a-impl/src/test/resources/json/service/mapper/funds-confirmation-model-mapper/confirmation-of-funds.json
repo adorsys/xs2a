@@ -1,0 +1,12 @@
+{
+  "cardNumber" : "cardNumber",
+  "account" : {
+    "iban" : "DE69760700240340283600",
+    "currency" : "EUR"
+  },
+  "payee" : "payee",
+  "instructedAmount" : {
+    "currency" : "EUR",
+    "amount" : "10.00"
+  }
+}

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -28,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.domain.fund.FundsConfirmationResponse;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -35,9 +37,12 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aFundsConfir
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiFundsConfirmationRequestMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationRequest;
 import de.adorsys.psd2.xs2a.spi.domain.fund.SpiFundsConfirmationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.FundsConfirmationSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
@@ -48,6 +53,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_400;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -56,6 +63,7 @@ import static org.mockito.Mockito.*;
 class FundsConfirmationServiceTest {
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null, null);
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
+    private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
@@ -75,6 +83,16 @@ class FundsConfirmationServiceTest {
     private RequestProviderService requestProviderService;
     @Mock
     private Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper;
+    @Mock
+    private Xs2aPiisConsentService xs2aPiisConsentService;
+    @Mock
+    private PiisConsent piisConsent;
+    @Mock
+    private SpiPiisConsent spiPiisConsent;
+    @Mock
+    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    @Mock
+    private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
 
     @InjectMocks
     private FundsConfirmationService fundsConfirmationService;
@@ -106,6 +124,53 @@ class FundsConfirmationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordTppRequest(argumentCaptor.capture(), any());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.FUNDS_CONFIRMATION_REQUEST_RECEIVED);
+    }
+
+    @Test
+    void fundsConfirmation_tppConsentSupported_withConsent() {
+        //Given
+        when(requestProviderService.getPsuIdData())
+            .thenReturn(PSU_ID_DATA);
+        when(fundsConfirmationSpi.performFundsSufficientCheck(any(), eq(spiPiisConsent), any(), any()))
+            .thenReturn(buildSuccessSpiResponse());
+        when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
+            .thenReturn(buildFundsConfirmationResponse());
+        when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(piisConsent.getId()))
+            .thenReturn(spiAspspConsentDataProvider);
+        when(aspspProfileServiceWrapper.getPiisConsentSupported())
+            .thenReturn(PiisConsentSupported.TPP_CONSENT_SUPPORTED);
+        FundsConfirmationRequest request = buildFundsConfirmationRequest();
+        request.setConsentId(CONSENT_ID);
+        when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(piisConsent));
+        when(xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent))
+            .thenReturn(spiPiisConsent);
+
+        //When
+        fundsConfirmationService.fundsConfirmation(request);
+        //Then
+        verify(xs2aPiisConsentService, atLeastOnce()).getPiisConsentById(CONSENT_ID);
+        verify(fundsConfirmationSpi, atLeastOnce()).performFundsSufficientCheck(any(), eq(spiPiisConsent), any(), any());
+    }
+
+    @Test
+    void fundsConfirmation_tppConsentSupported_withoutConsent() {
+        //Given
+        when(requestProviderService.getPsuIdData())
+            .thenReturn(PSU_ID_DATA);
+        when(fundsConfirmationSpi.performFundsSufficientCheck(any(), any(), any(), any()))
+            .thenReturn(buildSuccessSpiResponse());
+        when(spiToXs2aFundsConfirmationMapper.mapToFundsConfirmationResponse(buildSpiFundsConfirmationResponse()))
+            .thenReturn(buildFundsConfirmationResponse());
+        when(aspspProfileServiceWrapper.getPiisConsentSupported())
+            .thenReturn(PiisConsentSupported.TPP_CONSENT_SUPPORTED);
+        FundsConfirmationRequest request = buildFundsConfirmationRequest();
+
+        //When
+        fundsConfirmationService.fundsConfirmation(request);
+        //Then
+        verify(xs2aPiisConsentService, never()).getPiisConsentById(CONSENT_ID);
+        verify(fundsConfirmationSpi, atLeastOnce()).performFundsSufficientCheck(any(), eq(null), any(), any());
     }
 
     @Test
