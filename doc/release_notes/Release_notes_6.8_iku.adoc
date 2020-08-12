@@ -1,0 +1,9 @@
+= Release notes v.6.8
+
+== Table of Contents
+
+* Add validator for accept-header
+
+== Add validator for accept-header
+
+If `Accept` header contains wrong format, `REQUESTED_FORMATS_INVALID` error with status code `406` will be returned in the response to the TPP.

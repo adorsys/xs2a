@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static de.adorsys.psd2.xs2a.core.domain.MessageCategory.ERROR;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.REQUESTED_FORMATS_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405_METHOD_NOT_SUPPORTED;
 
 @Slf4j
@@ -58,7 +58,7 @@ public class Xs2aRestExceptionHandler extends DefaultHandlerExceptionResolver {
 
     @Override
     protected ModelAndView handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, CONSENT_INVALID));
+        tppErrorMessageWriter.writeError(response, new TppErrorMessage(ERROR, REQUESTED_FORMATS_INVALID));
         return new ModelAndView();
     }
 }
