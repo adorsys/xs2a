@@ -91,7 +91,7 @@ public class DecoupledAisAuthorizationService implements AisAuthorizationService
      * @return AccountConsentAuthorization instance
      */
     @Override
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorisationId) {
+    public Optional<Authorisation> getConsentAuthorizationById(String authorisationId) {
         return authorisationService.getAuthorisationById(authorisationId);
     }
 

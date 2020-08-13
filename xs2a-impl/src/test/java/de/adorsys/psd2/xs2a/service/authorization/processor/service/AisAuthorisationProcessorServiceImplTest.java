@@ -119,10 +119,10 @@ class AisAuthorisationProcessorServiceImplTest {
         AisAuthorizationService decoupledAisAuthorisationService = Mockito.mock(AisAuthorizationService.class);
         List<AisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, embeddedAisAuthorisationService);
 
-        aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(services, xs2aAuthorisationService, xs2aAisConsentService,
-                                                                                    aisConsentSpi, xs2aAisConsentMapper, spiContextDataProvider,
-                                                                                    spiAspspConsentDataProviderFactory, spiErrorMapper,
-                                                                                    commonDecoupledAisService, aisScaAuthorisationService, xs2aToSpiPsuDataMapper);
+        aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(xs2aAuthorisationService, spiContextDataProvider, spiAspspConsentDataProviderFactory,
+                                                                                    spiErrorMapper, xs2aToSpiPsuDataMapper, services,
+                                                                                    xs2aAisConsentService, aisConsentSpi, xs2aAisConsentMapper,
+                                                                                    commonDecoupledAisService, aisScaAuthorisationService);
     }
 
     @Test

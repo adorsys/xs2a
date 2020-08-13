@@ -96,7 +96,7 @@ class EmbeddedAisAuthorizationServiceTest {
             .thenReturn(Optional.of(authorisation));
 
         // When
-        Optional<Authorisation> actualResponse = authorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = authorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -110,7 +110,7 @@ class EmbeddedAisAuthorizationServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Authorisation> actualResponse = authorizationService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = authorizationService.getConsentAuthorizationById(WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();

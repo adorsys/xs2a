@@ -14,43 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-public class OauthAisAuthorizationService implements AisAuthorizationService {
-    @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        return Optional.empty();
-    }
+public interface ConsentAuthorizationService extends ScaApproachServiceTypeProvider {
+    Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId);
 
-    @Override
-    public AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
-        return null;
-    }
+    AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
 
-    @Override
-    public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
-        return Optional.empty();
-    }
+    Optional<Authorisation> getConsentAuthorizationById(String authorizationId);
 
-    @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public ScaApproach getScaApproachServiceType() {
-        return ScaApproach.OAUTH;
-    }
+    Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId);
 }

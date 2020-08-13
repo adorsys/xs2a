@@ -18,9 +18,9 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -29,13 +29,9 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConfirmationOfFundsConsentScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.piis.RedirectPiisAuthorizationService;
@@ -68,12 +64,8 @@ public class PiisConsentAuthorisationServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
-    private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final String CORRECT_PSU_ID = "marion.mueller";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
-    private static final PsuIdData PSU_ID_DATA_EMPTY = new PsuIdData(null, null, null, null, null);
-    private static final boolean CONFIRMATION_CODE_RECEIVED_FALSE = false;
-    private static final String SCA_AUTHENTICATION_DATA = "some_confirmation_code";
 
     private static final MessageError CONSENT_INVALID_401_ERROR =
         new MessageError(ErrorType.PIIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
@@ -176,7 +168,7 @@ public class PiisConsentAuthorisationServiceTest {
 
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, false)).thenReturn(true);
         when(confirmationOfFundsConsentValidationService.validateConsentPsuDataOnUpdate(piisConsent, buildUpdateConsentPsuDataReq())).thenReturn(ValidationResult.valid());
-        when(piisAuthorizationService.getPiisConsentAuthorizationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildAuthorisation()));
+        when(piisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID)).thenReturn(Optional.of(buildAuthorisation()));
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(buildUpdateConsentPsuDataResponse());
         // When
         ResponseObject<AuthorisationResponse> actualResponse = service.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);

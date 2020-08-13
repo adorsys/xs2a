@@ -68,7 +68,7 @@ public class RedirectAisAuthorizationService implements AisAuthorizationService 
     }
 
     @Override
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
+    public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
         return authorisationService.getAuthorisationById(authorizationId);
     }
 

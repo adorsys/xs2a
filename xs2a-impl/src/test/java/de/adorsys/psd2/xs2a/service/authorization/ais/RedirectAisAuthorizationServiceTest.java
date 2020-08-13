@@ -94,7 +94,7 @@ class RedirectAisAuthorizationServiceTest {
     @Test
     void getAccountConsentAuthorizationById_success() {
         // When
-        Optional<Authorisation> actualResponse = redirectAisAuthorisationService.getAccountConsentAuthorizationById(AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = redirectAisAuthorisationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();

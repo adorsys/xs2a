@@ -51,7 +51,7 @@ class OauthAisAuthorizationServiceTest {
     @Test
     void getAccountConsentAuthorizationById_success() {
         //When
-        Optional<Authorisation> actualResponse = oauthAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = oauthAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         //Then
         assertThat(actualResponse.isPresent()).isFalse();
