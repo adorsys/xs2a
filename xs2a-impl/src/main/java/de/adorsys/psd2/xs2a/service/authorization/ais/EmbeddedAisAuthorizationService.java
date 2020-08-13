@@ -83,7 +83,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
      * @return AccountConsentAuthorization instance
      */
     @Override
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
+    public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
         return authorisationService.getAuthorisationById(authorizationId);
     }
 

@@ -126,7 +126,7 @@ public class PiisConsentAuthorisationService {
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData) {
         PiisAuthorizationService service = piisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
 
-        Optional<Authorisation> authorizationOptional = service.getPiisConsentAuthorizationById(updatePsuData.getAuthorizationId());
+        Optional<Authorisation> authorizationOptional = service.getConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
         if (authorizationOptional.isEmpty()) {
             log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",

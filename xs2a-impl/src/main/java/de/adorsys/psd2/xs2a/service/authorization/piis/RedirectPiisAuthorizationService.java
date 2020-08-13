@@ -68,7 +68,7 @@ public class RedirectPiisAuthorizationService implements PiisAuthorizationServic
     }
 
     @Override
-    public Optional<Authorisation> getPiisConsentAuthorizationById(String authorizationId) {
+    public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
         return authorisationService.getAuthorisationById(authorizationId);
     }
 

@@ -133,7 +133,7 @@ class DecoupledAisAuthorizationServiceTest {
             .thenReturn(Optional.of(ACCOUNT_CONSENT_AUTHORIZATION));
 
         // When
-        Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -147,7 +147,7 @@ class DecoupledAisAuthorizationServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getAccountConsentAuthorizationById(WRONG_AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getConsentAuthorizationById(WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();

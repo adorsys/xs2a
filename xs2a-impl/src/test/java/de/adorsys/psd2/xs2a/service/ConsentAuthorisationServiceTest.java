@@ -376,7 +376,7 @@ class ConsentAuthorisationServiceTest {
         when(consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updateConsentPsuDataReq)).thenReturn(ValidationResult.valid());
 
         Authorisation authorisation = new Authorisation();
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(authorisation));
 
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(new UpdateConsentPsuDataResponse(ScaStatus.RECEIVED, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
@@ -405,7 +405,7 @@ class ConsentAuthorisationServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updateConsentPsuDataReq)).thenReturn(ValidationResult.valid());
 
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When
@@ -516,7 +516,7 @@ class ConsentAuthorisationServiceTest {
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
         when(aisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(new Authorisation()));
 
         UpdateConsentPsuDataReq updatePsuData = buildUpdateConsentPsuDataReq(CONSENT_ID);
@@ -612,7 +612,7 @@ class ConsentAuthorisationServiceTest {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
         when(aisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(authorisation));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updateConsentPsuDataReq)).thenReturn(ValidationResult.valid());
