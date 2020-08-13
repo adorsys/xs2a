@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator;
 
 import de.adorsys.psd2.xs2a.web.validator.body.piis.v2.ConfirmationOfFundsConsentBodyValidator;
-import de.adorsys.psd2.xs2a.web.validator.header.FundsConfirmationHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.header.CreateConsentConfirmationOfFundsHeaderValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class ConfirmationOfFundsConsentMethodValidationImpl extends AbstractMeth
 
     private static final String METHOD_NAME = "_createConsentConfirmationOfFunds";
 
-    public ConfirmationOfFundsConsentMethodValidationImpl(List<FundsConfirmationHeaderValidator> headerValidators, List<ConfirmationOfFundsConsentBodyValidator> bodyValidators) {
+    public ConfirmationOfFundsConsentMethodValidationImpl(List<CreateConsentConfirmationOfFundsHeaderValidator> headerValidators, List<ConfirmationOfFundsConsentBodyValidator> bodyValidators) {
         super(ValidatorWrapper.builder()
                   .headerValidators(headerValidators)
                   .bodyValidators(bodyValidators)
