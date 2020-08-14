@@ -15,39 +15,19 @@ No backward compatibility with 6.x is guaranteed. Will be released as Stable ver
 |===
 |release date|version 6.x (Stable)|version 7.x (Development)|version 8.x (Stable)|version 9.x (Development)
 
-|14.08.2020|6.8|7.8| | 
-
-a|
-
-a|* Add validator for accept-header
-
-a|* All fixes and updates from v.6.8
-
-* New feature: Revoke FundsConfirmationConsent
-
-* New feature: FundsConfirmationConsent in Redirect approach with multilevel SCA
-
-* New feature: FundsConfirmationConsent in Embedded approach with multilevel SCA
-
-* New feature: Get Authorisation Sub-resource request for FundsConfirmationConsent
-
-* New feature: Get SCA Status request for FundsConfirmationConsent 
-
-* Adjust CoF request with consent created by TPP
-
-a|
-
-a|
-
 |28.08.2020|6.9|7.9| |
 
 a|
 
-a|
+a|* Code refactoring
 
 a|* All fixes and updates from v.6.9
 
 * New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
+
+* Support URL-encoded QWAC certificate in header
+
+* Extend the event table with all types of Update PSU Data requests
 
 * Fix all ToDos in code
 
