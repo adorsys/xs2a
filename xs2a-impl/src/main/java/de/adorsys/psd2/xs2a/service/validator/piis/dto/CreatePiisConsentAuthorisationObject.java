@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.stub.impl;
+package de.adorsys.psd2.xs2a.service.validator.piis.dto;
 
-import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
+import lombok.Value;
 
-@Service
-public class PiisConsentSpiImpl implements PiisConsentSpi {
+@Value
+public class CreatePiisConsentAuthorisationObject implements TppInfoProvider {
+
+    private PiisConsent piisConsent;
+    private PsuIdData psuIdDataFromRequest;
+
+    @Override
+    public TppInfo getTppInfo() {
+        return piisConsent.getTppInfo();
+    }
+
 }

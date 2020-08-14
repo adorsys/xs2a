@@ -71,7 +71,7 @@ public class AuthorisationMapper {
         }
     }
 
-    public Object mapToAisCreateOrUpdateAuthorisationResponse(ResponseObject<AuthorisationResponse> responseObject) {
+    public Object mapToConsentCreateOrUpdateAuthorisationResponse(ResponseObject<AuthorisationResponse> responseObject) {
         AuthorisationResponse body = responseObject.getBody();
         if (Objects.isNull(body)) {
             return null;
@@ -81,7 +81,7 @@ public class AuthorisationMapper {
             return authorisationModelMapper.mapToStartScaProcessResponse((CreateConsentAuthorizationResponse) body);
         } else if (body instanceof UpdateConsentPsuDataResponse) {
 
-            UpdatePsuAuthenticationResponse resp = mapToAisUpdatePsuAuthenticationResponse((UpdateConsentPsuDataResponse) body);
+            UpdatePsuAuthenticationResponse resp = mapToConsentUpdatePsuAuthenticationResponse((UpdateConsentPsuDataResponse) body);
             resp.setAuthorisationId(body.getAuthorisationId());
             return resp;
 
@@ -102,7 +102,7 @@ public class AuthorisationMapper {
                    .orElse(null);
     }
 
-    public UpdatePsuAuthenticationResponse mapToAisUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
+    public UpdatePsuAuthenticationResponse mapToConsentUpdatePsuAuthenticationResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response)
                    .map(r -> buildUpdatePsuAuthenticationResponse(r.getLinks(),
                                                                   r.getAvailableScaMethods(),

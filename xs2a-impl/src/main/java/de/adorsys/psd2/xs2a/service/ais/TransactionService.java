@@ -105,7 +105,7 @@ public class TransactionService {
      * sections is added
      */
     public ResponseObject<Xs2aTransactionsReport> getTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request) {
-        xs2aEventService.recordAisTppRequest(request.getConsentId(), EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(request.getConsentId(), EventType.READ_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
 
@@ -157,7 +157,7 @@ public class TransactionService {
      * @return Transactions based on transaction ID.
      */
     public ResponseObject<Transactions> getTransactionDetails(String consentId, String accountId, String transactionId, String requestUri) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.READ_TRANSACTION_DETAILS_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 
@@ -200,7 +200,7 @@ public class TransactionService {
      * @return Response with transaction list stream.
      */
     public ResponseObject<Xs2aTransactionsDownloadResponse> downloadTransactions(String consentId, String accountId, String downloadId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.DOWNLOAD_TRANSACTION_LIST_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.DOWNLOAD_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 

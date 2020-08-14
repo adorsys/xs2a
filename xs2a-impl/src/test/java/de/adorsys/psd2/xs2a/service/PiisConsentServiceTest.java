@@ -30,16 +30,16 @@ import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.ais.PiisAuthorizationService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
+import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -66,10 +66,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.Currency;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_UNKNOWN_403_INCORRECT_CERTIFICATE;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
@@ -80,6 +77,9 @@ import static org.mockito.Mockito.*;
 class PiisConsentServiceTest {
     private static String CORRECT_PSU_ID = "marion.mueller";
     private static String CONSENT_ID = "consent ID";
+    private static String AUTHORISATION_ID = "1b61a80e-e1f1-4752-bf71-a7af0955a47b";
+    private static String PASSWORD = "password";
+    private static String PSU_MESSAGE = "psu message";
     private static PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
     private static SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().psuId(CORRECT_PSU_ID).build();
     private static TppInfo TPP_INFO = buildTppInfo();
@@ -128,6 +128,10 @@ class PiisConsentServiceTest {
     private PiisAuthorizationService piisAuthorizationService;
     @Mock
     private ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
+    @Mock
+    private PiisConsentAuthorisationService piisConsentAuthorisationService;
+    @Mock
+    private CreateConsentAuthorizationResponse createConsentAuthorizationResponse;
 
     @Test
     void createPiisConsentWithResponse_success() {
@@ -139,7 +143,7 @@ class PiisConsentServiceTest {
         when(xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, TPP_INFO))
             .thenReturn(Optional.of(xs2aCreatePiisConsentResponse));
         SpiAccountReference spiAccountReference = new SpiAccountReference(null, "DE15500105172295759744", null, null, null, null, Currency.getInstance("EUR"));
-        SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse(spiAccountReference, false, "");
+        SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse(spiAccountReference, true, PSU_MESSAGE);
         when(piisConsentSpi.initiatePiisConsent(SPI_CONTEXT_DATA, spiPiisConsent, aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiInitiatePiisConsentResponse>builder().payload(spiInitiatePiisConsentResponse).build());
         when(spiContextDataProvider.provide(PSU_ID_DATA, TPP_INFO))
@@ -175,6 +179,9 @@ class PiisConsentServiceTest {
         assertEquals(CONSENT_ID, xs2aConfirmationOfFundsResponse.getConsentId());
         assertEquals(piisConsent.getConsentStatus().getValue(), xs2aConfirmationOfFundsResponse.getConsentStatus());
         assertEquals(AUTHORISATION_ID, xs2aConfirmationOfFundsResponse.getAuthorizationId());
+        assertEquals(PSU_MESSAGE, xs2aConfirmationOfFundsResponse.getPsuMessage());
+        assertTrue(xs2aConfirmationOfFundsResponse.isMultilevelScaRequired());
+        verify(xs2aPiisConsentService, atLeastOnce()).updateMultilevelScaRequired(CONSENT_ID, true);
     }
 
     @Test
@@ -239,7 +246,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<PiisConsent> piisConsentResponseObject = piisConsentService.getPiisConsentById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
         verify(xs2aPiisConsentService, atLeastOnce()).updateConsentStatus(CONSENT_ID, spiConsentStatusResponse.getConsentStatus());
         assertFalse(piisConsentResponseObject.hasError());
         PiisConsent piisConsent = piisConsentResponseObject.getBody();
@@ -254,7 +261,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<PiisConsent> piisConsentResponseObject = piisConsentService.getPiisConsentById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
         assertTrue(piisConsentResponseObject.hasError());
         assertEquals(CONSENT_UNKNOWN_ERROR, piisConsentResponseObject.getError());
     }
@@ -278,7 +285,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<PiisConsent> piisConsentResponseObject = piisConsentService.getPiisConsentById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
         assertTrue(piisConsentResponseObject.hasError());
         assertEquals(CONSENT_UNKNOWN_ERROR, piisConsentResponseObject.getError());
     }
@@ -300,7 +307,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<ConsentStatusResponse> piisConsentResponseObject = piisConsentService.getPiisConsentStatusById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
         verify(xs2aPiisConsentService, atLeastOnce()).updateConsentStatus(CONSENT_ID, spiConsentStatusResponse.getConsentStatus());
         assertFalse(piisConsentResponseObject.hasError());
     }
@@ -313,7 +320,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<ConsentStatusResponse> piisConsentResponseObject = piisConsentService.getPiisConsentStatusById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
         assertTrue(piisConsentResponseObject.hasError());
         assertEquals(CONSENT_UNKNOWN_ERROR, piisConsentResponseObject.getError());
     }
@@ -337,7 +344,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<ConsentStatusResponse> piisConsentResponseObject = piisConsentService.getPiisConsentStatusById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
         assertTrue(piisConsentResponseObject.hasError());
         assertEquals(CONSENT_UNKNOWN_ERROR, piisConsentResponseObject.getError());
     }
@@ -350,7 +357,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<Void> responseObject = piisConsentService.deleteAccountConsentsById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         assertTrue(responseObject.hasError());
         assertEquals(CONSENT_UNKNOWN_ERROR, responseObject.getError());
     }
@@ -365,7 +372,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<Void> responseObject = piisConsentService.deleteAccountConsentsById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         assertTrue(responseObject.hasError());
         assertEquals(INCORRECT_CERTIFICATE_ERROR, responseObject.getError());
     }
@@ -393,7 +400,7 @@ class PiisConsentServiceTest {
         //When
         ResponseObject<Void> responseObject = piisConsentService.deleteAccountConsentsById(CONSENT_ID);
         //Then
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         assertTrue(responseObject.hasError());
         assertEquals(CONSENT_UNKNOWN_ERROR, responseObject.getError());
     }
@@ -422,7 +429,7 @@ class PiisConsentServiceTest {
         ResponseObject<Void> responseObject = piisConsentService.deleteAccountConsentsById(CONSENT_ID);
         //Then
         assertFalse(responseObject.hasError());
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         verify(xs2aPiisConsentService, atLeastOnce()).updateConsentStatus(CONSENT_ID, ConsentStatus.REJECTED);
     }
 
@@ -450,12 +457,64 @@ class PiisConsentServiceTest {
         ResponseObject<Void> responseObject = piisConsentService.deleteAccountConsentsById(CONSENT_ID);
         //Then
         assertFalse(responseObject.hasError());
-        verify(xs2aEventService, atLeastOnce()).recordAisTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        verify(xs2aEventService, atLeastOnce()).recordConsentTppRequest(CONSENT_ID, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         verify(xs2aPiisConsentService, atLeastOnce()).updateConsentStatus(CONSENT_ID, ConsentStatus.TERMINATED_BY_TPP);
     }
 
+    @Test
+    void createPiisAuthorisation() {
+        //Given
+        ResponseObject<AuthorisationResponse> authorisationResponseResponseObject = ResponseObject.<AuthorisationResponse>builder().body(createConsentAuthorizationResponse).build();
+        when(piisConsentAuthorisationService.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD))
+            .thenReturn(authorisationResponseResponseObject);
+        //When
+        ResponseObject<AuthorisationResponse> actualResponse = piisConsentService.createPiisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
+        //Then
+        assertEquals(authorisationResponseResponseObject.getBody(), actualResponse.getBody());
+    }
+
+    @Test
+    void getConsentInitiationAuthorisations_Success() {
+        //Given
+        List<String> authorisations = Collections.singletonList("1b61a80e-e1f1-4752-bf71-a7af0955a47b");
+        Xs2aAuthorisationSubResources response = new Xs2aAuthorisationSubResources(authorisations);
+        when(piisConsentAuthorisationService.getConsentInitiationAuthorisations(CONSENT_ID))
+            .thenReturn(ResponseObject.<Xs2aAuthorisationSubResources>builder().body(response).build());
+        //When
+        ResponseObject<Xs2aAuthorisationSubResources> xs2aAuthorisationSubResourcesResponseObject = piisConsentService.getConsentInitiationAuthorisations(CONSENT_ID);
+        //Then
+        assertEquals(response, xs2aAuthorisationSubResourcesResponseObject.getBody());
+        verify(piisConsentAuthorisationService, atLeastOnce()).getConsentInitiationAuthorisations(CONSENT_ID);
+    }
+
+    @Test
+    void getConsentAuthorisationScaStatus_Success() {
+        //Given
+        ConfirmationOfFundsConsentScaStatus confirmationOfFundsConsentScaStatus = new ConfirmationOfFundsConsentScaStatus(PSU_ID_DATA, piisConsent, ScaStatus.RECEIVED);
+        when(piisConsentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(ResponseObject.<ConfirmationOfFundsConsentScaStatus>builder().body(confirmationOfFundsConsentScaStatus).build());
+        //When
+        ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = piisConsentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+        //Then
+        assertEquals(confirmationOfFundsConsentScaStatus.getScaStatus(), xs2aScaStatusResponseResponseObject.getBody().getScaStatus());
+        verify(piisConsentAuthorisationService, atLeastOnce()).getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+    }
+
+    @Test
+    void getConsentAuthorisationScaStatus_Failed() {
+        //Given
+        when(piisConsentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
+            .thenReturn(ResponseObject.<ConfirmationOfFundsConsentScaStatus>builder().fail(CONSENT_UNKNOWN_ERROR).build());
+        //When
+        ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = piisConsentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+        //Then
+        assertTrue(xs2aScaStatusResponseResponseObject.hasError());
+        assertEquals(CONSENT_UNKNOWN_ERROR, xs2aScaStatusResponseResponseObject.getError());
+        verify(piisConsentAuthorisationService, atLeastOnce()).getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+    }
+
     private PiisConsent buildPiisConsent(ConsentStatus consentStatus) {
-        PiisConsent piisConsent = new PiisConsent();
+        PiisConsent piisConsent = new PiisConsent(ConsentType.PIIS_TPP);
         piisConsent.setConsentStatus(consentStatus);
         return piisConsent;
     }

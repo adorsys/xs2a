@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AisEndpointAccessCheckerService extends EndpointAccessChecker {
+public class ConsentEndpointAccessCheckerService extends EndpointAccessChecker {
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final AspspProfileServiceWrapper aspspProfileService;
 

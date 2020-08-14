@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.core.authorisation;
+package de.adorsys.psd2.xs2a.web.link;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import lombok.Data;
+import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 
-@Data
-public class AccountConsentAuthorization {
-    private String id;
+public class UpdatePiisConsentLinksImpl extends UpdateConsentLinks {
+    public UpdatePiisConsentLinksImpl(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataResponse response) {
+        super(httpUrl, scaApproachResolver, response);
+    }
 
-    private String consentId;
-
-    private PsuIdData psuIdData;
-    private ScaStatus scaStatus;
-    private String password;
-    private ScaApproach chosenScaApproach;
-
-    private String authenticationMethodId;
-    private String scaAuthenticationData;
+    @Override
+    String getPath() {
+        return UrlHolder.PIIS_AUTHORISATION_URL;
+    }
 }

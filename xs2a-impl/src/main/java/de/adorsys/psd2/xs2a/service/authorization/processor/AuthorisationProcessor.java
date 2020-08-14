@@ -21,10 +21,7 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.authorization.processor.service.AisAuthorisationProcessorServiceImpl;
-import de.adorsys.psd2.xs2a.service.authorization.processor.service.AuthorisationProcessorService;
-import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisAuthorisationProcessorServiceImpl;
-import de.adorsys.psd2.xs2a.service.authorization.processor.service.PisCancellationAuthorisationProcessorServiceImpl;
+import de.adorsys.psd2.xs2a.service.authorization.processor.service.*;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AuthorisationProcessor {
@@ -73,6 +70,8 @@ public abstract class AuthorisationProcessor {
         } else if (request.getServiceType() == ServiceType.PIS &&
                        request.getAuthorisation().getAuthorisationType() == AuthorisationType.PIS_CANCELLATION) {
             return applicationContext.getBean(PisCancellationAuthorisationProcessorServiceImpl.class);
+        } else if (request.getServiceType() == ServiceType.PIIS) {
+            return applicationContext.getBean(PiisAuthorisationProcessorServiceImpl.class);
         }
         throw new IllegalArgumentException("Authorisation processor service is unknown: " + request);
     }

@@ -22,8 +22,6 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
-import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -34,16 +32,13 @@ import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,10 +56,8 @@ public class Xs2aAisConsentService {
     private final AisConsentServiceEncrypted aisConsentService;
     private final Xs2aAuthorisationService authorisationService;
     private final Xs2aAisConsentMapper aisConsentMapper;
-    private final Xs2aAisConsentAuthorisationMapper aisConsentAuthorisationMapper;
+    private final Xs2aConsentAuthorisationMapper consentAuthorisationMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
-    private final ScaApproachResolver scaApproachResolver;
-    private final RequestProviderService requestProviderService;
     private final LoggingContextService loggingContextService;
 
     /**
@@ -168,21 +161,6 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Sends a POST request to CMS to store created consent authorisation
-     *
-     * @param consentId String representation of identifier of stored consent
-     * @param scaStatus Enum for status of the SCA method applied
-     * @param psuData   authorisation data about PSU
-     * @return CreateAisConsentAuthorizationResponse object with authorisation ID and scaStatus
-     */
-    public Optional<CreateAuthorisationResponse> createAisConsentAuthorisation(String consentId, ScaStatus scaStatus, PsuIdData psuData) {
-        String tppRedirectURI = requestProviderService.getTppRedirectURI();
-        String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
-        CreateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(scaStatus, psuData, scaApproachResolver.resolveScaApproach(), tppRedirectURI, tppNOKRedirectURI);
-        return authorisationService.createAuthorisation(request, consentId, AuthorisationType.CONSENT);
-    }
-
-    /**
      * Sends a PUT request to CMS to update created AIS consent authorisation
      *
      * @param updatePsuData Consent PSU data
@@ -190,7 +168,7 @@ public class Xs2aAisConsentService {
     public void updateConsentAuthorisation(UpdateConsentPsuDataReq updatePsuData) {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
-                final UpdateAuthorisationRequest request = aisConsentAuthorisationMapper.mapToAuthorisationRequest(req);
+                final UpdateAuthorisationRequest request = consentAuthorisationMapper.mapToAuthorisationRequest(req);
 
                 authorisationService.updateAuthorisation(request, req.getAuthorizationId());
             });
@@ -232,17 +210,6 @@ public class Xs2aAisConsentService {
     }
 
     /**
-     * Requests CMS to retrieve SCA status of AIS consent authorisation
-     *
-     * @param consentId       String representation of consent identifier
-     * @param authorisationId String representation of authorisation identifier
-     * @return SCA status of the authorisation
-     */
-    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return authorisationService.getAuthorisationScaStatus(authorisationId, consentId, AuthorisationType.CONSENT);
-    }
-
-    /**
      * Updates multilevel SCA required field
      *
      * @param consentId             String representation of the consent identifier
@@ -255,5 +222,4 @@ public class Xs2aAisConsentService {
             log.info("updateMultilevelScaRequired cannot be executed, checksum verification failed");
         }
     }
-
 }

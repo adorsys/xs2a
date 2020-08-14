@@ -226,7 +226,7 @@ class ConsentControllerTest {
             .when(responseMapper).created(any(), eq(responseHeaders));
         when(authorisationMapper.mapToPasswordFromBody(BODY))
             .thenReturn(PASSWORD);
-        when(authorisationMapper.mapToAisCreateOrUpdateAuthorisationResponse(responseObject))
+        when(authorisationMapper.mapToConsentCreateOrUpdateAuthorisationResponse(responseObject))
             .thenReturn(new StartScaprocessResponse());
         when(consentService.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD))
             .thenReturn(responseObject);

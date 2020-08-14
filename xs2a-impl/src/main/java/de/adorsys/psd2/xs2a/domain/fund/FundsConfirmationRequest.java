@@ -36,5 +36,7 @@ public class FundsConfirmationRequest {
 
     @NotNull
     private Xs2aAmount instructedAmount;
+
+    private String consentId;
 }
 

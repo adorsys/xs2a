@@ -19,7 +19,7 @@ package de.adorsys.psd2.consent.service.mapper;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.Mapper;
@@ -43,7 +43,7 @@ public abstract class CmsAisConsentMapper {
     @Mapping(target = "authorisations", expression = "java(mapToAccountConsentAuthorisation(cmsConsent.getAuthorisations()))")
     public abstract AisConsent mapToAisConsent(CmsConsent cmsConsent);
 
-    List<AccountConsentAuthorization> mapToAccountConsentAuthorisation(List<Authorisation> authorisations) {
+    List<ConsentAuthorization> mapToAccountConsentAuthorisation(List<Authorisation> authorisations) {
         if (CollectionUtils.isEmpty(authorisations)) {
             return Collections.emptyList();
         }
@@ -52,10 +52,10 @@ public abstract class CmsAisConsentMapper {
                    .collect(Collectors.toList());
     }
 
-    AccountConsentAuthorization mapToAccountConsentAuthorisation(Authorisation authorisation) {
+    ConsentAuthorization mapToAccountConsentAuthorisation(Authorisation authorisation) {
         return Optional.ofNullable(authorisation)
                    .map(auth -> {
-                       AccountConsentAuthorization accountConsentAuthorisation = new AccountConsentAuthorization();
+                       ConsentAuthorization accountConsentAuthorisation = new ConsentAuthorization();
                        accountConsentAuthorisation.setId(auth.getAuthorisationId());
                        accountConsentAuthorisation.setPsuIdData(auth.getPsuIdData());
                        accountConsentAuthorisation.setScaStatus(auth.getScaStatus());

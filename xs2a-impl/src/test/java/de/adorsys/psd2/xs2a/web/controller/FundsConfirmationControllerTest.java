@@ -39,12 +39,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class FundsConfirmationControllerTest {
     private final Charset UTF_8 = StandardCharsets.UTF_8;
+    private static final String CONSENT_ID = "233108c8-8f67-4866-b4b7-66a0df044342";
 
     @InjectMocks
     private FundsConfirmationController fundsConfirmationController;
@@ -69,12 +69,13 @@ class FundsConfirmationControllerTest {
         HttpStatus expectedStatusCode = HttpStatus.OK;
 
         //When:
-        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(confirmationOfFunds, null, null, null, null, null);
+        ResponseEntity<?> actualResult = fundsConfirmationController.checkAvailabilityOfFunds(confirmationOfFunds, null, CONSENT_ID, null, null, null, null);
         InlineResponse2003 fundsConfirmationResponse = (InlineResponse2003) actualResult.getBody();
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
         assertThat(fundsConfirmationResponse.getFundsAvailable()).isEqualTo(true);
+        verify(fundsConfirmationModelMapper, atLeastOnce()).mapToFundsConfirmationRequest(confirmationOfFunds, CONSENT_ID);
     }
 
     private ResponseObject<FundsConfirmationResponse> readResponseObject() {

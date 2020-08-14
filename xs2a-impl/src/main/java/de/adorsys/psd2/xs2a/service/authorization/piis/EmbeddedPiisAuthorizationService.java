@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -23,9 +23,11 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,18 +38,20 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class EmbeddedPiisAuthorizationService implements PiisAuthorizationService {
-    private final Xs2aPiisConsentService xs2aPiisConsentService;
-    private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aConsentService consentService;
+    private final Xs2aPiisConsentService piisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
+    private final Xs2aPiisConsentMapper piisConsentMapper;
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
-        Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
+        Optional<PiisConsent> piisConsentOptional = piisConsentService.getPiisConsentById(consentId);
         if (piisConsentOptional.isEmpty()) {
             log.info("Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.", consentId);
             return Optional.empty();
         }
 
-        return aisConsentService.createAisConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
+        return consentService.createConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -62,17 +66,24 @@ public class EmbeddedPiisAuthorizationService implements PiisAuthorizationServic
 
     @Override
     public AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
-        return null;
+        if (response.hasError()) {
+            log.info("Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
+                     request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
+        } else {
+            piisConsentService.updateConsentAuthorisation(piisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
+        }
+
+        return response;
     }
 
     @Override
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
-        return Optional.empty();
+    public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
+        return authorisationService.getAuthorisationById(authorizationId);
     }
 
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return Optional.empty();
+        return consentService.getAuthorisationScaStatus(consentId, authorisationId);
     }
 
     @Override

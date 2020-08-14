@@ -20,7 +20,7 @@ import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aAisConsentMapper.class, Xs2aToSpiPsuDataMapper.class, Xs2aToSpiAccountAccessMapper.class,
-    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class})
+    Xs2aToSpiAccountReferenceMapper.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 class Xs2aAisConsentMapperTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
@@ -205,12 +205,12 @@ class Xs2aAisConsentMapperTest {
         assertEquals(aisConsent.getConsentTppInformation(), cmsConsent.getTppInformation());
         assertEquals(aisConsent.isMultilevelScaRequired(), cmsConsent.isMultilevelScaRequired());
         for (int i = 0; i < aisConsent.getAuthorisations().size(); i++) {
-            AccountConsentAuthorization accountConsentAuthorization = aisConsent.getAuthorisations().get(i);
+            ConsentAuthorization consentAuthorization = aisConsent.getAuthorisations().get(i);
             Authorisation authorisation = cmsConsent.getAuthorisations().get(i);
 
-            assertEquals(accountConsentAuthorization.getId(), authorisation.getAuthorisationId());
-            assertEquals(accountConsentAuthorization.getPsuIdData(), authorisation.getPsuIdData());
-            assertEquals(accountConsentAuthorization.getScaStatus(), authorisation.getScaStatus());
+            assertEquals(consentAuthorization.getId(), authorisation.getAuthorisationId());
+            assertEquals(consentAuthorization.getPsuIdData(), authorisation.getPsuIdData());
+            assertEquals(consentAuthorization.getScaStatus(), authorisation.getScaStatus());
         }
         assertEquals(aisConsent.getStatusChangeTimestamp(), cmsConsent.getStatusChangeTimestamp());
         assertEquals(aisConsent.getUsages(), cmsConsent.getUsages());

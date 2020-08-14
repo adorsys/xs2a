@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -23,8 +23,9 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RedirectPiisAuthorizationService implements PiisAuthorizationService {
     private final Xs2aPiisConsentService xs2aPiisConsentService;
-    private final Xs2aAisConsentService aisConsentService;
+    private final Xs2aAuthorisationService authorisationService;
+    private final Xs2aConsentService consentService;
 
     @Override
     public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
@@ -47,7 +49,7 @@ public class RedirectPiisAuthorizationService implements PiisAuthorizationServic
             return Optional.empty();
         }
 
-        return aisConsentService.createAisConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
+        return consentService.createConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -55,7 +57,7 @@ public class RedirectPiisAuthorizationService implements PiisAuthorizationServic
                        resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
                        resp.setPsuIdData(psuData);
-
+                       resp.setInternalRequestId(auth.getInternalRequestId());
                        return resp;
                    });
     }
@@ -66,13 +68,13 @@ public class RedirectPiisAuthorizationService implements PiisAuthorizationServic
     }
 
     @Override
-    public Optional<Authorisation> getAccountConsentAuthorizationById(String authorizationId) {
-        return Optional.empty();
+    public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
+        return authorisationService.getAuthorisationById(authorizationId);
     }
 
     @Override
     public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
-        return Optional.empty();
+        return consentService.getAuthorisationScaStatus(consentId, authorisationId);
     }
 
     @Override

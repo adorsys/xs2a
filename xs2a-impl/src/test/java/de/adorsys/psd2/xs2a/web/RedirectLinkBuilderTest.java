@@ -162,9 +162,16 @@ class RedirectLinkBuilderTest {
 
     @Test
     public void buildAisConfirmationLink() {
-        String confirmationLink = redirectLinkBuilder.buildAisConfirmationLink("consentID", "redirectID");
+        String confirmationLink = redirectLinkBuilder.buildConfirmationLink("consentID", "redirectID", ConsentType.AIS);
 
         assertEquals("/v1/consents/consentID/authorisations/redirectID", confirmationLink);
+    }
+
+    @Test
+    public void buildPiisConfirmationLink() {
+        String confirmationLink = redirectLinkBuilder.buildConfirmationLink("consentID", "redirectID", ConsentType.PIIS_TPP);
+
+        assertEquals("/v2/consents/confirmation-of-funds/consentID/authorisations/redirectID", confirmationLink);
     }
 
 

@@ -1,0 +1,14 @@
+{
+  "psuData": {
+    "psuId": "psu Id",
+    "psuIdType": "psuId Type",
+    "psuCorporateId": "psu Corporate Id",
+    "psuCorporateIdType": "psuCorporate Id Type"
+  },
+  "consentId": "S7tlYXaar8j7l5IMK89iNJB8SkG5ricoOaEYHyku_AO9BF6MIP29SN_tXtDvaQb3c8b_NsohCWlFlYN0ds8u89WFnjze07vwpAgFM45MlQk=_=_psGLvQpt9Q",
+  "authorizationId": "a8fc1f02-3639-4528-bd19-3eacf1c67038",
+  "updatePsuIdentification": "false",
+  "authorisationType": "CONSENT",
+  "password": "12345",
+  "scaStatus": "RECEIVED"
+}

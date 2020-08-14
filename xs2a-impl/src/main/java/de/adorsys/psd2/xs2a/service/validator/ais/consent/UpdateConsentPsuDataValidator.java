@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -63,13 +63,13 @@ public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<U
             return authorisationValidationResult;
         }
 
-        Optional<AccountConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
+        Optional<ConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
 
         if (authorisationOptional.isEmpty()) {
             return ValidationResult.invalid(ErrorType.AIS_403, RESOURCE_UNKNOWN_403);
         }
 
-        AccountConsentAuthorization authorisation = authorisationOptional.get();
+        ConsentAuthorization authorisation = authorisationOptional.get();
 
         ValidationResult validationResult = aisPsuDataUpdateAuthorisationCheckerValidator.validate(updatePsuData.getPsuData(), authorisation.getPsuIdData());
 

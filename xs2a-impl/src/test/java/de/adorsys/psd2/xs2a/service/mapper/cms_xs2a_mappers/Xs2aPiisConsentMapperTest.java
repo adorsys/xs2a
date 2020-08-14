@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Xs2aPiisConsentMapperImpl.class, ConsentDataMapper.class})
+@ContextConfiguration(classes = {Xs2aPiisConsentMapperImpl.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 class Xs2aPiisConsentMapperTest {
     private JsonReader jsonReader = new JsonReader();
 
@@ -81,7 +81,6 @@ class Xs2aPiisConsentMapperTest {
             .thenReturn(Collections.singletonList(reference));
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
 
-        int allowedFrequencyPerDay = 0;
         //When
 
         CreatePiisConsentRequest request = jsonReader.getObjectFromFile("json/piis/create-piis-consent.json", CreatePiisConsentRequest.class);

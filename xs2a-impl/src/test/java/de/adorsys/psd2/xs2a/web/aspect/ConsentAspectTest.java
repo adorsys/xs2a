@@ -46,6 +46,8 @@ class ConsentAspectTest {
     private UpdateConsentPsuDataResponse updateConsentPsuDataResponse;
     @Mock
     private Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse;
+    @Mock
+    private AuthorisationResponse authorisationResponse;
 
     @Test
     void invokeCreateAccountConsentAspect() {
@@ -82,5 +84,14 @@ class ConsentAspectTest {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         aspect.createPiisConsentWithResponse(responseObject, request, null, true);
         verify(consentAspectService).createPiisConsentWithResponse(responseObject, true);
+    }
+
+    @Test
+    void createPiisAuthorisationAspect() {
+        ResponseObject<AuthorisationResponse> responseObject = ResponseObject.<AuthorisationResponse>builder()
+                                                                             .body(authorisationResponse)
+                                                                             .build();
+        aspect.createPiisAuthorisationAspect(responseObject, null, null, null);
+        verify(consentAspectService).invokeCreatePiisAuthorisationAspect(responseObject);
     }
 }

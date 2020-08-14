@@ -33,7 +33,7 @@ public class FundsConfirmationModelMapper {
     private final Xs2aObjectMapper xs2aObjectMapper;
     private final AmountModelMapper amountModelMapper;
 
-    public FundsConfirmationRequest mapToFundsConfirmationRequest(ConfirmationOfFunds confirmationOfFunds) {
+    public FundsConfirmationRequest mapToFundsConfirmationRequest(ConfirmationOfFunds confirmationOfFunds, String consentId) {
         return Optional.ofNullable(confirmationOfFunds)
                    .map(conf -> {
                        FundsConfirmationRequest fundsConfirmationRequest = new FundsConfirmationRequest();
@@ -41,6 +41,7 @@ public class FundsConfirmationModelMapper {
                        fundsConfirmationRequest.setPayee(conf.getPayee());
                        fundsConfirmationRequest.setPsuAccount(mapToAccountReferenceInner(conf.getAccount()));
                        fundsConfirmationRequest.setInstructedAmount(amountModelMapper.mapToXs2aAmount(conf.getInstructedAmount()));
+                       fundsConfirmationRequest.setConsentId(consentId);
                        return fundsConfirmationRequest;
                    })
                    .orElse(null);

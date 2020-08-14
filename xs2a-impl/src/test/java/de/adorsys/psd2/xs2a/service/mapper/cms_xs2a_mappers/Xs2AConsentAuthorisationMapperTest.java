@@ -34,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Xs2aAisConsentAuthorisationMapper.class, TppRedirectUriMapper.class})
-class Xs2aAisConsentAuthorisationMapperTest {
+@ContextConfiguration(classes = {Xs2aConsentAuthorisationMapper.class, TppRedirectUriMapper.class})
+class Xs2AConsentAuthorisationMapperTest {
 
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu Id", "psuId Type", "psu Corporate Id", "psuCorporate Id Type", "psuIp Address");
 
 
     @Autowired
-    private Xs2aAisConsentAuthorisationMapper mapper;
+    private Xs2aConsentAuthorisationMapper mapper;
 
     private JsonReader jsonReader = new JsonReader();
 

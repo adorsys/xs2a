@@ -30,11 +30,11 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
-import de.adorsys.psd2.xs2a.service.authorization.ais.PiisScaAuthorisationServiceResolver;
+import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -82,7 +82,9 @@ public class PiisConsentService {
     private final CreatePiisConsentValidator createPiisConsentValidator;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
+    private final ConsentAuthorisationService consentAuthorisationService;
     private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
+    private final PiisConsentAuthorisationService piisConsentAuthorisationService;
 
     public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
@@ -109,7 +111,11 @@ public class PiisConsentService {
         PiisConsent piisConsent = xs2aCreatePiisConsentResponse.getPiisConsent();
         String encryptedConsentId = xs2aCreatePiisConsentResponse.getConsentId();
 
-        SpiResponse<SpiInitiatePiisConsentResponse> spiInitiatePiisConsentResponseSpiResponse = initiatePiisConsent(psuData, tppInfo, piisConsent);
+        SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
+        SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent);
+        InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
+        SpiResponse<SpiInitiatePiisConsentResponse> spiInitiatePiisConsentResponseSpiResponse = piisConsentSpi.initiatePiisConsent(contextData, spiPiisConsent, aspspConsentDataProvider);
+        aspspConsentDataProvider.saveWith(encryptedConsentId);
 
         if (spiInitiatePiisConsentResponseSpiResponse.hasError()) {
             xs2aPiisConsentService.updateConsentStatus(encryptedConsentId, ConsentStatus.REJECTED);
@@ -128,9 +134,15 @@ public class PiisConsentService {
         accountReferenceUpdater.rewriteAccountAccess(encryptedConsentId, accountAccess, ConsentType.PIIS_TPP);
 
         ConsentStatus consentStatus = piisConsent.getConsentStatus();
-        Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(), encryptedConsentId, false, requestProviderService.getInternalRequestIdString());
+        boolean multilevelScaRequired = spiInitiatePiisConsentResponse.isMultilevelScaRequired();
 
-        boolean multilevelScaRequired = false;
+        updateMultilevelSca(encryptedConsentId, multilevelScaRequired);
+        Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse = new Xs2aConfirmationOfFundsResponse(consentStatus.getValue(),
+                                                                                                              encryptedConsentId,
+                                                                                                              multilevelScaRequired,
+                                                                                                              requestProviderService.getInternalRequestIdString(),
+                                                                                                              spiInitiatePiisConsentResponse.getPsuMessage());
+
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
             proceedImplicitCaseForCreateConsent(xs2aConfirmationOfFundsResponse, psuData, encryptedConsentId);
         }
@@ -139,7 +151,7 @@ public class PiisConsentService {
     }
 
     public ResponseObject<PiisConsent> getPiisConsentById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_PIIS_CONSENT_REQUEST_RECEIVED);
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
 
         if (piisConsentById.isEmpty()) {
@@ -167,7 +179,7 @@ public class PiisConsentService {
     }
 
     public ResponseObject<ConsentStatusResponse> getPiisConsentStatusById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_PIIS_CONSENT_STATUS_REQUEST_RECEIVED);
         ResponseObject.ResponseBuilder<ConsentStatusResponse> responseBuilder = ResponseObject.builder();
 
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
@@ -199,8 +211,28 @@ public class PiisConsentService {
                    .build();
     }
 
+    public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
+        return piisConsentAuthorisationService.getConsentInitiationAuthorisations(consentId);
+    }
+
+    public ResponseObject<Xs2aScaStatusResponse> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
+        ResponseObject<ConfirmationOfFundsConsentScaStatus> consentScaStatusResponse = piisConsentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        if (consentScaStatusResponse.hasError()) {
+            return ResponseObject.<Xs2aScaStatusResponse>builder()
+                       .fail(consentScaStatusResponse.getError())
+                       .build();
+        }
+
+        ConfirmationOfFundsConsentScaStatus consentScaStatus = consentScaStatusResponse.getBody();
+        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(consentScaStatus.getScaStatus(), null);
+
+        return ResponseObject.<Xs2aScaStatusResponse>builder()
+                   .body(response)
+                   .build();
+    }
+
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.DELETE_PIIS_CONSENT_REQUEST_RECEIVED);
         ResponseObject.ResponseBuilder<Void> responseBuilder = ResponseObject.builder();
         Optional<PiisConsent> piisConsentById = xs2aPiisConsentService.getPiisConsentById(consentId);
 
@@ -243,6 +275,21 @@ public class PiisConsentService {
         return ResponseObject.<Void>builder().build();
     }
 
+    public ResponseObject<AuthorisationResponse> createPiisAuthorisation(PsuIdData psuData, String consentId, String password) {
+        return piisConsentAuthorisationService.createPiisAuthorisation(psuData, consentId, password);
+    }
+
+    private void updateMultilevelSca(String consentId, boolean multilevelScaRequired) {
+        // default value is false, so we do the call only for non-default (true) case
+        if (multilevelScaRequired) {
+            xs2aPiisConsentService.updateMultilevelScaRequired(consentId, multilevelScaRequired);
+        }
+    }
+
+    public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
+        return piisConsentAuthorisationService.updateConsentPsuData(updatePsuData);
+    }
+
     private SpiContextData getSpiContextData() {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
         log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
@@ -253,13 +300,6 @@ public class PiisConsentService {
         SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent);
         SpiAspspConsentDataProvider aspspDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         return piisConsentSpi.getConsentStatus(spiContextDataProvider.provide(), spiPiisConsent, aspspDataProvider);
-    }
-
-    private SpiResponse<SpiInitiatePiisConsentResponse> initiatePiisConsent(PsuIdData psuData, TppInfo tppInfo, PiisConsent piisConsent) {
-        SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
-        SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent);
-        InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
-        return piisConsentSpi.initiatePiisConsent(contextData, spiPiisConsent, aspspConsentDataProvider);
     }
 
     private void proceedImplicitCaseForCreateConsent(Xs2aConfirmationOfFundsResponse response, PsuIdData psuData, String consentId) {

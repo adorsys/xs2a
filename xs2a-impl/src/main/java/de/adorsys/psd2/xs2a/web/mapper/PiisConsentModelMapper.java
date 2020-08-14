@@ -55,6 +55,7 @@ public class PiisConsentModelMapper {
                 consentsConfirmationOfFundsResponse.setConsentId(response.getConsentId());
                 consentsConfirmationOfFundsResponse.setConsentStatus(ConsentStatus.fromValue(response.getConsentStatus()));
                 consentsConfirmationOfFundsResponse.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
+                consentsConfirmationOfFundsResponse.setPsuMessage(response.getPsuMessage());
                 return consentsConfirmationOfFundsResponse;
             }
         ).orElse(null);

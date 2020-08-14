@@ -30,10 +30,7 @@ import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.ConsentController;
-import de.adorsys.psd2.xs2a.web.link.CreateAisAuthorisationLinks;
-import de.adorsys.psd2.xs2a.web.link.CreateConsentLinks;
-import de.adorsys.psd2.xs2a.web.link.CreatePiisConsentLinks;
-import de.adorsys.psd2.xs2a.web.link.UpdateConsentLinks;
+import de.adorsys.psd2.xs2a.web.link.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -106,7 +103,21 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
 
     private Links buildLinksForUpdateConsentResponse(UpdateConsentPsuDataResponse response) {
         return Optional.ofNullable(response.getScaStatus())
-                   .map(status -> new UpdateConsentLinks(getHttpUrl(), scaApproachResolver, response))
+                   .map(status -> new UpdateAisConsentLinksImpl(getHttpUrl(), scaApproachResolver, response))
+                   .orElse(null);
+    }
+
+    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdatePiisConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result) {
+        if (!result.hasError()) {
+            UpdateConsentPsuDataResponse body = result.getBody();
+            body.setLinks(buildLinksForUpdatePiisConsentResponse(body));
+        }
+        return result;
+    }
+
+    private Links buildLinksForUpdatePiisConsentResponse(UpdateConsentPsuDataResponse response) {
+        return Optional.ofNullable(response.getScaStatus())
+                   .map(status -> new UpdatePiisConsentLinksImpl(getHttpUrl(), scaApproachResolver, response))
                    .orElse(null);
     }
 
@@ -123,6 +134,21 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
                                                      getScaRedirectFlow(),
                                                      isAuthorisationConfirmationRequestMandated(),
                                                      requestProviderService.getInstanceId()));
+        }
+        return result;
+    }
+
+    public ResponseObject<AuthorisationResponse> invokeCreatePiisAuthorisationAspect(ResponseObject<AuthorisationResponse> result) {
+        if (!result.hasError()) {
+            if (result.getBody() instanceof UpdateConsentPsuDataResponse) {
+                UpdateConsentPsuDataResponse body = (UpdateConsentPsuDataResponse) result.getBody();
+                body.setLinks(buildLinksForUpdateConsentResponse(body));
+            } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
+                CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
+                body.setLinks(new CreatePiisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder,
+                                                               redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated(),
+                                                               requestProviderService.getInstanceId()));
+            }
         }
         return result;
     }

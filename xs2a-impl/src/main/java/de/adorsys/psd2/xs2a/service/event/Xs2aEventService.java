@@ -48,8 +48,8 @@ public class Xs2aEventService {
      * @param consentId Consent id that will be recorded along with the event
      * @param eventType Type of the event
      */
-    public void recordAisTppRequest(@NotNull String consentId, @NotNull EventType eventType) {
-        recordAisTppRequest(consentId, eventType, null);
+    public void recordConsentTppRequest(@NotNull String consentId, @NotNull EventType eventType) {
+        recordConsentTppRequest(consentId, eventType, null);
     }
 
     /**
@@ -59,7 +59,7 @@ public class Xs2aEventService {
      * @param eventType Type of the event
      * @param body      Body of the request
      */
-    public void recordAisTppRequest(@NotNull String consentId, @NotNull EventType eventType, @Nullable Object body) {
+    public void recordConsentTppRequest(@NotNull String consentId, @NotNull EventType eventType, @Nullable Object body) {
         EventBO event = buildTppEvent(eventType, body);
         event.setConsentId(consentId);
 

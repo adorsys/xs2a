@@ -162,7 +162,7 @@ class AuthorisationMapperTest {
                                                                    .build();
         // When
         StartScaprocessResponse actualStartScaProcessResponse =
-            (StartScaprocessResponse) mapper.mapToAisCreateOrUpdateAuthorisationResponse(responseObject);
+            (StartScaprocessResponse) mapper.mapToConsentCreateOrUpdateAuthorisationResponse(responseObject);
 
         // Then
         assertEquals(expected, actualStartScaProcessResponse);

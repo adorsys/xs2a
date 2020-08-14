@@ -49,7 +49,7 @@ public class CreateAisAuthorisationLinks extends AbstractLinks {
             setScaRedirectOAuthLink(scaRedirectFlow, consentOauthLink);
 
             if (authorisationConfirmationRequestMandated) {
-                setConfirmation(buildPath(redirectLinkBuilder.buildAisConfirmationLink(consentId, redirectId)));
+                setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.AIS)));
             }
 
         } else {

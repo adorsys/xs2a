@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.ScaServiceResolver;
-import org.springframework.stereotype.Service;
+import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 
-import java.util.List;
-
-@Service
-public class PiisScaAuthorisationServiceResolver extends ScaServiceResolver<PiisAuthorizationService> {
-
-    public PiisScaAuthorisationServiceResolver(List<PiisAuthorizationService> services, ScaApproachResolver scaApproachResolver) {
-        super(services, scaApproachResolver);
-    }
+public interface PiisAuthorizationService extends ConsentAuthorizationService {
 }

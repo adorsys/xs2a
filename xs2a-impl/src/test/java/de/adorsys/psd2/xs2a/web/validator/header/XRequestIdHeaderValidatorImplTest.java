@@ -19,12 +19,15 @@ package de.adorsys.psd2.xs2a.web.validator.header;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListDownloadHeaderValidator;
+import de.adorsys.psd2.xs2a.web.validator.header.account.TransactionListHeaderValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -83,5 +86,14 @@ class XRequestIdHeaderValidatorImplTest {
         validator.validate(headers, messageError);
 
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_HEADER, messageError.getTppMessage().getMessageErrorCode());
+    }
+
+    @Test
+    void checkInterfaces() {
+        assertTrue(
+            Stream.of(ConsentHeaderValidator.class, PaymentHeaderValidator.class, TransactionListHeaderValidator.class, FundsConfirmationHeaderValidator.class,
+                      CancelPaymentHeaderValidator.class, TransactionListDownloadHeaderValidator.class, CreateConsentConfirmationOfFundsHeaderValidator.class)
+                .allMatch(interfaceClass -> interfaceClass.isInstance(validator))
+        );
     }
 }

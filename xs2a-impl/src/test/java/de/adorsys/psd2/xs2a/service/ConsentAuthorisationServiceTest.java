@@ -39,7 +39,7 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
+import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -88,7 +88,7 @@ class ConsentAuthorisationServiceTest {
     @Mock
     private AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
     @Mock
-    private AisEndpointAccessCheckerService endpointAccessCheckerService;
+    private ConsentEndpointAccessCheckerService endpointAccessCheckerService;
     @Mock
     private Xs2aEventService xs2aEventService;
     @Mock
@@ -186,7 +186,7 @@ class ConsentAuthorisationServiceTest {
         service.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
-        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        verify(xs2aEventService, times(1)).recordConsentTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
     }
 
@@ -324,7 +324,7 @@ class ConsentAuthorisationServiceTest {
         service.updateConsentPsuData(updateConsentPsuDataReq);
 
         // Then
-        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture(), any());
+        verify(xs2aEventService, times(1)).recordConsentTppRequest(eq(CONSENT_ID), argumentCaptor.capture(), any());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED);
     }
 
@@ -334,7 +334,7 @@ class ConsentAuthorisationServiceTest {
         UpdateConsentPsuDataReq updateConsentPsuDataReq = buildUpdateConsentPsuDataReq(CONSENT_ID);
 
         doNothing()
-            .when(xs2aEventService).recordAisTppRequest(CONSENT_ID, EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updateConsentPsuDataReq);
+            .when(xs2aEventService).recordConsentTppRequest(CONSENT_ID, EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updateConsentPsuDataReq);
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
 
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONFIRMATION_CODE_RECEIVED_FALSE))
@@ -376,7 +376,7 @@ class ConsentAuthorisationServiceTest {
         when(consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updateConsentPsuDataReq)).thenReturn(ValidationResult.valid());
 
         Authorisation authorisation = new Authorisation();
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(authorisation));
 
         when(authorisationChainResponsibilityService.apply(any())).thenReturn(new UpdateConsentPsuDataResponse(ScaStatus.RECEIVED, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA));
@@ -405,7 +405,7 @@ class ConsentAuthorisationServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updateConsentPsuDataReq)).thenReturn(ValidationResult.valid());
 
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.empty());
 
         // When
@@ -445,7 +445,7 @@ class ConsentAuthorisationServiceTest {
         service.createAisAuthorisation(PSU_ID_DATA, CONSENT_ID, PASSWORD);
 
         // Then
-        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        verify(xs2aEventService, times(1)).recordConsentTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
     }
 
@@ -458,7 +458,7 @@ class ConsentAuthorisationServiceTest {
         service.createAisAuthorisation(PSU_ID_DATA_EMPTY, CONSENT_ID, PASSWORD);
 
         // Then
-        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        verify(xs2aEventService, times(1)).recordConsentTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
     }
 
@@ -516,7 +516,7 @@ class ConsentAuthorisationServiceTest {
         when(endpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
         when(aisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(new Authorisation()));
 
         UpdateConsentPsuDataReq updatePsuData = buildUpdateConsentPsuDataReq(CONSENT_ID);
@@ -612,7 +612,7 @@ class ConsentAuthorisationServiceTest {
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, PSU_ID_DATA);
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
         when(aisScaAuthorisationServiceResolver.getService(AUTHORISATION_ID)).thenReturn(redirectAisAuthorizationService);
-        when(redirectAisAuthorizationService.getAccountConsentAuthorizationById(AUTHORISATION_ID))
+        when(redirectAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID))
             .thenReturn(Optional.of(authorisation));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentPsuDataOnUpdate(aisConsent, updateConsentPsuDataReq)).thenReturn(ValidationResult.valid());
@@ -626,7 +626,7 @@ class ConsentAuthorisationServiceTest {
         ResponseObject<UpdateConsentPsuDataResponse> actualResult = service.updateConsentPsuData(updateConsentPsuDataReq);
 
         // Then
-        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture(), any());
+        verify(xs2aEventService, times(1)).recordConsentTppRequest(eq(CONSENT_ID), argumentCaptor.capture(), any());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED);
         assertThat(actualResult).isEqualTo(expectedResult);
     }
@@ -645,7 +645,7 @@ class ConsentAuthorisationServiceTest {
         ResponseObject<Xs2aAuthorisationSubResources> paymentInitiationAuthorisation = service.getConsentInitiationAuthorisations(CONSENT_ID);
 
         // Then
-        verify(xs2aEventService, times(1)).recordAisTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
+        verify(xs2aEventService, times(1)).recordConsentTppRequest(eq(CONSENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
         assertThat(paymentInitiationAuthorisation.getBody()).isNotNull();

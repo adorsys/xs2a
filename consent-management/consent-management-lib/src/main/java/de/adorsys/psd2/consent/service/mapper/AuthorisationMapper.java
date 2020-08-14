@@ -42,6 +42,7 @@ public interface AuthorisationMapper {
     @Mapping(target = "authorisationId", source = "externalId")
     @Mapping(target = "parentId", source = "parentExternalId")
     @Mapping(target = "chosenScaApproach", source = "scaApproach")
+    @Mapping(target = "authorisationType", source = "type")
     Authorisation mapToAuthorisation(AuthorisationEntity authorisationEntity);
 
     List<Authorisation> mapToAuthorisations(List<AuthorisationEntity> authorisationEntityList);

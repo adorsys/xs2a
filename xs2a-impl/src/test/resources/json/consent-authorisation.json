@@ -1,0 +1,12 @@
+{
+  "authorisationId": "authorisation id",
+  "psuIdData": {
+    "psuId": "PSU id"
+  },
+  "parentId": "parent id",
+  "scaStatus": "RECEIVED",
+  "authenticationMethodId": "method id",
+  "scaAuthenticationData": "authentication data",
+  "chosenScaApproach": "EMBEDDED",
+  "authorisationType": "CONSENT"
+}

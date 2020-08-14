@@ -35,7 +35,7 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.validator.AisEndpointAccessCheckerService;
+import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentAuthorisationObject;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public class ConsentAuthorisationService {
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final Xs2aAisConsentService aisConsentService;
     private final AisScaAuthorisationServiceResolver aisScaAuthorisationServiceResolver;
-    private final AisEndpointAccessCheckerService endpointAccessCheckerService;
+    private final ConsentEndpointAccessCheckerService endpointAccessCheckerService;
     private final Xs2aEventService xs2aEventService;
     private final ConsentValidationService consentValidationService;
     private final AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
@@ -104,7 +104,7 @@ public class ConsentAuthorisationService {
     }
 
     public ResponseObject<Xs2aAuthorisationSubResources> getConsentInitiationAuthorisations(String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (aisConsentOptional.isEmpty()) {
@@ -138,7 +138,7 @@ public class ConsentAuthorisationService {
     }
 
     public ResponseObject<ConsentScaStatus> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_CONSENT_SCA_STATUS_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
         if (aisConsentOptional.isEmpty()) {
@@ -184,7 +184,7 @@ public class ConsentAuthorisationService {
     }
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
-        xs2aEventService.recordAisTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
+        xs2aEventService.recordConsentTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
 
         String consentId = updatePsuData.getConsentId();
 
@@ -239,7 +239,7 @@ public class ConsentAuthorisationService {
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(UpdateConsentPsuDataReq updatePsuData) {
         AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
 
-        Optional<Authorisation> authorizationOptional = service.getAccountConsentAuthorizationById(updatePsuData.getAuthorizationId());
+        Optional<Authorisation> authorizationOptional = service.getConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
         if (authorizationOptional.isEmpty()) {
             log.info("Authorisation-ID: [{}]. Update consent PSU data failed: authorisation not found by id",
@@ -273,7 +273,7 @@ public class ConsentAuthorisationService {
     }
 
     private ResponseObject<CreateConsentAuthorizationResponse> createConsentAuthorizationWithResponse(PsuIdData psuDataFromRequest, String consentId) {
-        xs2aEventService.recordAisTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
+        xs2aEventService.recordConsentTppRequest(consentId, EventType.START_AIS_CONSENT_AUTHORISATION_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(consentId);
 

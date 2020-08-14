@@ -16,8 +16,9 @@
 
 package de.adorsys.psd2.core.data;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AccountConsentAuthorization;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
@@ -67,7 +68,7 @@ public abstract class Consent<T> {
     @NotNull
     private List<PsuIdData> psuIdDataList;
     @NotNull
-    private List<AccountConsentAuthorization> authorisations;
+    private List<ConsentAuthorization> authorisations;
     @NotNull
     private Map<String, Integer> usages;
     @NotNull
@@ -76,8 +77,8 @@ public abstract class Consent<T> {
     private AccountAccess aspspAccountAccesses = AccountAccess.EMPTY_ACCESS;
     @Nullable
     private String instanceId;
-
-    public abstract ConsentType getConsentType();
+    @NotNull
+    private ConsentType consentType;
 
     public TppInfo getTppInfo() {
         return Optional.ofNullable(consentTppInformation)
@@ -85,4 +86,14 @@ public abstract class Consent<T> {
                    .orElse(null);
     }
 
+    public Optional<ConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
+        return getAuthorisations().stream()
+                   .filter(auth -> auth.getId().equals(authorisationId))
+                   .findFirst();
+    }
+
+    @JsonIgnore
+    public boolean isExpired() {
+        return getConsentStatus() == ConsentStatus.EXPIRED;
+    }
 }

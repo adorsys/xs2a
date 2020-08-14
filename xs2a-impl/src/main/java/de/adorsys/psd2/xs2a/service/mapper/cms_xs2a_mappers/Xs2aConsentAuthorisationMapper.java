@@ -31,7 +31,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class Xs2aAisConsentAuthorisationMapper {
+public class Xs2aConsentAuthorisationMapper {
     private final TppRedirectUriMapper tppRedirectUriMapper;
 
     public CreateAuthorisationRequest mapToAuthorisationRequest(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {

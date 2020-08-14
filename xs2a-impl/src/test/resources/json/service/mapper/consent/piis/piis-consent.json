@@ -7,6 +7,7 @@
     "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank."
   },
   "consentStatus": "VALID",
+  "consentType": "PIIS_ASPSP",
   "frequencyPerDay": 0,
   "recurringIndicator": true,
   "multilevelScaRequired": false,
