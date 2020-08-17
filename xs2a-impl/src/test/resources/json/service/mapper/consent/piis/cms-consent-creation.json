@@ -16,11 +16,7 @@
       }
     ],
     "balances": [],
-    "transactions": [],
-    "additionalInformationAccess": {
-      "ownerName": [],
-      "trustedBeneficiaries": []
-    }
+    "transactions": []
   },
   "consentData": "eyJjYXJkTnVtYmVyIjoiY2FyZE51bWJlciIsImNhcmRFeHBpcnlEYXRlIjoiMjAzMC0xMC0xMCIsImNhcmRJbmZvcm1hdGlvbiI6ImNhcmRJbmZvcm1hdGlvbiIsInJlZ2lzdHJhdGlvbkluZm9ybWF0aW9uIjoicmVnaXN0cmF0aW9uSW5mb3JtYXRpb24ifQ==",
   "consentStatus": "RECEIVED",
