@@ -63,8 +63,6 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
                                                       return entity;
                                                   });
         entityToBeBlocked.block(lockPeriod);
-
-        stopListRepository.save(entityToBeBlocked);
         return true;
     }
 
@@ -76,8 +74,6 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
         if (stopListEntityOptional.isPresent()) {
             TppStopListEntity entityToBeUnblocked = stopListEntityOptional.get();
             entityToBeUnblocked.unblock();
-
-            stopListRepository.save(entityToBeUnblocked);
         }
         return true;
     }

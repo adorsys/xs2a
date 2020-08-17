@@ -111,7 +111,6 @@ public class CmsAspspPsuConsentManagementControllerIT {
             .andExpect(content().string("true"));
 
         verify(consentSpecification).byPsuIdDataAndAspspAccountIdAndInstanceId(psuIdData, ACCOUNT_ID, INSTANCE_ID);
-        verify(consentJpaRepository).save(consentEntity);
 
         assertEquals(ConsentStatus.REVOKED_BY_PSU, consentEntity.getConsentStatus());
     }

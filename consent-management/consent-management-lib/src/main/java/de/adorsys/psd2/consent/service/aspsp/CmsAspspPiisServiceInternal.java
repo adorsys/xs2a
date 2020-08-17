@@ -109,8 +109,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         ConsentEntity entity = entityOptional.get();
         changeStatusAndLastActionDate(entity, TERMINATED_BY_ASPSP);
 
-        entity = piisConsentLazyMigrationService.migrateIfNeeded(entity);
-        consentJpaRepository.save(entity);
+        piisConsentLazyMigrationService.migrateIfNeeded(entity);
 
         return true;
     }

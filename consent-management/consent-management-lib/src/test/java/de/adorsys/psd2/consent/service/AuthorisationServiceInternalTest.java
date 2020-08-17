@@ -42,7 +42,6 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -249,12 +248,6 @@ class AuthorisationServiceInternalTest {
         // Then
         assertTrue(actualResponse.isSuccessful());
         assertTrue(actualResponse.getPayload());
-
-        ArgumentCaptor<AuthorisationEntity> authorisationCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
-        verify(authorisationRepository).save(authorisationCaptor.capture());
-
-        AuthorisationEntity capturedAuthorisation = authorisationCaptor.getValue();
-        assertEquals(newScaStatus, capturedAuthorisation.getScaStatus());
     }
 
     @Test
@@ -513,12 +506,6 @@ class AuthorisationServiceInternalTest {
         // Then
         assertTrue(actualResponse.isSuccessful());
         assertTrue(actualResponse.getPayload());
-
-        ArgumentCaptor<AuthorisationEntity> authorisationCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
-        verify(authorisationRepository).save(authorisationCaptor.capture());
-
-        AuthorisationEntity capturedAuthorisation = authorisationCaptor.getValue();
-        assertEquals(Collections.singletonList(scaMethod), capturedAuthorisation.getAvailableScaMethods());
     }
 
     @Test
@@ -551,12 +538,6 @@ class AuthorisationServiceInternalTest {
         // Then
         assertTrue(actualResponse.isSuccessful());
         assertTrue(actualResponse.getPayload());
-
-        ArgumentCaptor<AuthorisationEntity> authorisationCaptor = ArgumentCaptor.forClass(AuthorisationEntity.class);
-        verify(authorisationRepository).save(authorisationCaptor.capture());
-
-        AuthorisationEntity capturedAuthorisation = authorisationCaptor.getValue();
-        assertEquals(SCA_APPROACH, capturedAuthorisation.getScaApproach());
     }
 
     @Test

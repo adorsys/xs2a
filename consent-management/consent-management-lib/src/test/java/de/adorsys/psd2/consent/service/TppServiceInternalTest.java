@@ -21,7 +21,6 @@ import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,10 +80,6 @@ class TppServiceInternalTest {
         assertTrue(updateTppInfo.isSuccessful());
 
         assertTrue(updateTppInfo.getPayload());
-
-        verify(tppInfoRepository).save(argument.capture());
-        TppInfoEntity saved = argument.getValue();
-        assertTrue(CollectionUtils.isEqualCollection(tppInfo.getTppRoles(), saved.getTppRoles()));
     }
 
     @Test
