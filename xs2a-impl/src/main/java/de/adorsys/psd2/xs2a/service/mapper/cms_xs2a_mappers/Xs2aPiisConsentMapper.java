@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -102,8 +101,7 @@ public abstract class Xs2aPiisConsentMapper {
         AccountAccess accountAccess = new AccountAccess(Collections.singletonList(request.getAccount()),
                                                         Collections.emptyList(),
                                                         Collections.emptyList(),
-                                                        new AdditionalInformationAccess(Collections.emptyList(),
-                                                                                        Collections.emptyList()));
+                                                        null);
         cmsConsent.setTppAccountAccesses(accountAccess);
         cmsConsent.setAspspAccountAccesses(AccountAccess.EMPTY_ACCESS);
         cmsConsent.setConsentStatus(ConsentStatus.RECEIVED);
