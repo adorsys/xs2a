@@ -143,6 +143,8 @@ class PaymentControllerTest {
     private PaymentCancellationServiceForAuthorisationImpl paymentCancellationServiceForAuthorisation;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private PisPaymentCancellationRequest pisPaymentCancellationRequest;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -170,14 +172,16 @@ class PaymentControllerTest {
 
     @Test
     void getPaymentById_Failure() {
-        when(responseErrorMapper.generateErrorResponse(createMessageError(PIS_404, RESOURCE_UNKNOWN_404))).thenReturn(ResponseEntity.status(FORBIDDEN).build());
-
+        //Given
+        MessageError messageError = createMessageError(PIS_404, RESOURCE_UNKNOWN_404);
+        when(xs2aPaymentService.getPaymentById(eq(SINGLE), eq(PRODUCT), eq(WRONG_PAYMENT_ID)))
+            .thenReturn(ResponseObject.<CommonPayment>builder().fail(messageError).build());
+        when(responseErrorMapper.generateErrorResponse(messageError)).thenReturn(ResponseEntity.status(FORBIDDEN).build());
         // When
-        ResponseEntity<?> response = paymentController.getPaymentInformation(CORRECT_PAYMENT_SERVICE, WRONG_PAYMENT_ID,
-                                                                             null, null, null, null, null, null,
+        ResponseEntity<?> response = paymentController.getPaymentInformation(CORRECT_PAYMENT_SERVICE, PRODUCT,
+                                                                             WRONG_PAYMENT_ID, null, null, null, null, null,
                                                                              null, null, null, null, null,
                                                                              null, null, null, null);
-
         // Then
         assertThat(response.getStatusCode()).isEqualTo(FORBIDDEN);
     }
@@ -326,9 +330,11 @@ class PaymentControllerTest {
     public void cancelPayment_WithoutAuthorisation_Fail_FinalisedStatus() {
         ResponseObject<CancelPaymentResponse> cancelPaymentResponse = getErrorOnPaymentCancellation404();
         ResponseEntity<?> expectedResult = ResponseEntity.status(NOT_FOUND).build();
-
+        when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, CORRECT_PAYMENT_SERVICE, CORRECT_PAYMENT_ID, EXPLICIT_PREFERRED_FALSE, null, null))
+            .thenReturn(pisPaymentCancellationRequest);
         when(responseErrorMapper.generateErrorResponse(cancelPaymentResponse.getError())).thenReturn(expectedResult);
-
+        when(xs2aPaymentService.cancelPayment(pisPaymentCancellationRequest))
+            .thenReturn(ResponseObject.<CancelPaymentResponse>builder().fail(cancelPaymentResponse.getError()).build());
         // Given
         ResponseEntity<?> actualResult = paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                          CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
@@ -336,7 +342,6 @@ class PaymentControllerTest {
                                                                          null, null, null,
                                                                          null, null, null,
                                                                          null, null, null);
-
         // Then
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
     }
@@ -395,27 +400,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    void getPaymentInitiationScaStatus_IncorrectPaymentType() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.getPaymentInitiationScaStatus(WRONG_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
-                                                                                   AUTHORISATION_ID, REQUEST_ID,
-                                                                                   null, null,
-                                                                                   null, null,
-                                                                                   null, null,
-                                                                                   null, null,
-                                                                                   null, null,
-                                                                                   null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
-    }
-
-    @Test
     void getPaymentInitiationScaStatus_failure() {
         // Given
         when(paymentServiceForAuthorisation.getAuthorisationScaStatus(WRONG_PAYMENT_ID, AUTHORISATION_ID, SINGLE, PRODUCT))
@@ -467,27 +451,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    void getPaymentCancellationScaStatus_IncorrectPaymentPaymentType() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.getPaymentCancellationScaStatus(WRONG_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
-                                                                                     CANCELLATION_AUTHORISATION_ID, REQUEST_ID,
-                                                                                     null, null,
-                                                                                     null, null,
-                                                                                     null, null,
-                                                                                     null, null,
-                                                                                     null, null,
-                                                                                     null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
-    }
-
-    @Test
     void getPaymentCancellationScaStatus_failure() {
         // Given
         when(paymentCancellationServiceForAuthorisation.getAuthorisationScaStatus(WRONG_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, SINGLE, PRODUCT))
@@ -532,27 +495,6 @@ class PaymentControllerTest {
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(OK);
         assertTrue(actual.getBody() instanceof Authorisations);
-    }
-
-    @Test
-    void getPaymentInitiationCancellationAuthorisationInformationClassCheck_IncorrectPaymentType() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.getPaymentInitiationCancellationAuthorisationInformation(WRONG_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
-                                                                                                              null, null,
-                                                                                                              null, null,
-                                                                                                              null, null,
-                                                                                                              null, null,
-                                                                                                              null, null,
-                                                                                                              null, null,
-                                                                                                              null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
     }
 
     @Test
@@ -688,23 +630,6 @@ class PaymentControllerTest {
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(FORBIDDEN);
-    }
-
-    @Test
-    void initiatePayment_Failure_PaymentServiceIsNotPresent() {
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.initiatePayment(null, REQUEST_ID, null, WRONG_PAYMENT_SERVICE, PRODUCT,
-                                                                     null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
-                                                                     null, null, null, null, null, null,
-                                                                     null, null, null, null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
     }
 
     @Test
@@ -845,43 +770,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    void initiatePayment_IncorrectPaymentPaymentType() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        Object jsonRequestObject = new Object();
-
-        // When
-        ResponseEntity<?> actual = paymentController.initiatePayment(jsonRequestObject, REQUEST_ID, null, WRONG_PAYMENT_SERVICE, PRODUCT,
-                                                                     null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
-                                                                     null, null, null, null, null, null,
-                                                                     null, null, null, null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
-    }
-
-    @Test
-    void initiatePayment_XML_Failure_PaymentServiceIsNotPresent() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.initiatePayment(REQUEST_ID, null, WRONG_PAYMENT_SERVICE, PRODUCT,
-                                                                     XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
-                                                                     null, null, null, null, null, null,
-                                                                     null, null, null, null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-    }
-
-    @Test
     void initiatePayment_XML_Failure_CreatePaymentHasError() {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
@@ -1015,26 +903,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    void startPaymentInitiationCancellationAuthorisation_IncorrectPaymentType() {
-        // Given
-        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
-        });
-
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, WRONG_PAYMENT_SERVICE, PRODUCT,
-                                                                                                     CORRECT_PAYMENT_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                                                     TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
-                                                                                                     null, null, null, null, null, null,
-                                                                                                     null, null, null);
-
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
-    }
-
-    @Test
     void startPaymentInitiationCancellationAuthorisation_withServiceError_shouldReturnError() {
         // Given
         String password = "some password";
@@ -1117,26 +985,6 @@ class PaymentControllerTest {
         verify(paymentCancellationHeadersBuilder).buildUpdatePsuDataHeaders(CANCELLATION_AUTHORISATION_ID);
 
         verify(responseErrorMapper, never()).generateErrorResponse(any());
-    }
-
-    @Test
-    void updatePaymentCancellationPsuData_IncorrectPaymentType() {
-        // Given
-        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
-        });
-
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.updatePaymentCancellationPsuData(REQUEST_ID, WRONG_PAYMENT_SERVICE, PRODUCT,
-                                                                                      CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                                      null, null, null, null,
-                                                                                      null, null, null, null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
     }
 
     @Test
@@ -1226,26 +1074,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    void updatePaymentPsuData_IncorrectPaymentType() {
-        // Given
-        Map<String, Map<String, String>> body = jsonReader.getObjectFromFile(PSU_DATA_PASSWORD_JSON_PATH, new TypeReference<Map<String, Map<String, String>>>() {
-        });
-
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.updatePaymentPsuData(REQUEST_ID, WRONG_PAYMENT_SERVICE, PRODUCT,
-                                                                          CORRECT_PAYMENT_ID, AUTHORISATION_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                          null, null, null, null,
-                                                                          null, null, null, null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
-    }
-
-    @Test
     void updatePaymentPsuData_withServiceError_shouldReturnError() {
         // Given
         MessageError serviceError = new MessageError(PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
@@ -1285,25 +1113,6 @@ class PaymentControllerTest {
 
         verify(paymentInitiationHeadersBuilder, never()).buildUpdatePsuDataHeaders(anyString());
         verify(responseMapper, never()).created(any(), any(), any());
-    }
-
-    @Test
-    void getPaymentInitiationAuthorisation_IncorrectPaymentType() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        // When
-        ResponseEntity<?> actual = paymentController.getPaymentInitiationAuthorisation(WRONG_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID,
-                                                                                       REQUEST_ID, null, null,
-                                                                                       null, null,
-                                                                                       null, null, null,
-                                                                                       null, null, null,
-                                                                                       null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
     }
 
     @Test
@@ -1347,26 +1156,6 @@ class PaymentControllerTest {
                                                                                        null, null, null,
                                                                                        null, null, null,
                                                                                        null, null, null);
-
-        // Then
-        assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);
-        assertThat(actual.getBody()).isEqualTo(PIS_404_MESSAGE_ERROR);
-    }
-
-    @Test
-    void startPaymentAuthorisation_IncorrectPaymentType() {
-        // Given
-        when(responseErrorMapper.generateErrorResponse(PIS_404_MESSAGE_ERROR))
-            .thenReturn(new ResponseEntity<>(PIS_404_MESSAGE_ERROR, HttpStatus.NOT_FOUND));
-
-        Object jsonRequestObject = new Object();
-
-        // When
-        ResponseEntity<?> actual = paymentController.startPaymentAuthorisation(REQUEST_ID, WRONG_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, jsonRequestObject,
-                                                                               PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, TPP_REDIRECT_PREFERRED_TRUE,
-                                                                               REDIRECT_LINK, null, null, null, null, null, null,
-                                                                               null, null, null, null, null, null, null, null,
-                                                                               null, null);
 
         // Then
         assertThat(actual.getStatusCode()).isEqualTo(NOT_FOUND);

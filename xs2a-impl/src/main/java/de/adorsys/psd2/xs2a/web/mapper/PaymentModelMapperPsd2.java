@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.exception.WrongPaymentTypeException;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import lombok.RequiredArgsConstructor;
@@ -109,7 +110,7 @@ public class PaymentModelMapperPsd2 {
                                                                      String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData,
                                                                      TppNotificationData tppNotificationData, String tppBrandLoggingInformation, String instanceId) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
-        parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")));
+        parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new WrongPaymentTypeException(paymentService)));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
         parameters.setQwacCertificate(new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8));
         parameters.setTppRedirectUri(tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI));
@@ -126,7 +127,7 @@ public class PaymentModelMapperPsd2 {
                                                                          Boolean tppExplicitAuthorisationPreferred,
                                                                          String tpPRedirectURI, String tpPNokRedirectURI) {
         return new PisPaymentCancellationRequest(
-            PaymentType.getByValue(paymentService).orElseThrow(() -> new IllegalArgumentException("Unsupported payment service")),
+            PaymentType.getByValue(paymentService).orElseThrow(() -> new WrongPaymentTypeException(paymentService)),
             Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")),
             paymentId,
             BooleanUtils.isTrue(tppExplicitAuthorisationPreferred),
