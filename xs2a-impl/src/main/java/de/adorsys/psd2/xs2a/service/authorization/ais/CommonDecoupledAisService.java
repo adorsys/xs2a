@@ -16,58 +16,44 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
-import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.CommonDecoupledConsentService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-@Slf4j
-@RequiredArgsConstructor
-public class CommonDecoupledAisService {
+public class CommonDecoupledAisService extends CommonDecoupledConsentService<SpiAccountConsent> {
     private final AisConsentSpi aisConsentSpi;
-    private final SpiErrorMapper spiErrorMapper;
-    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private final SpiContextDataProvider spiContextDataProvider;
-    private final Xs2aAuthorisationService authorisationService;
 
-    public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, SpiAccountConsent spiAccountConsent, PsuIdData psuData) {
-        return proceedDecoupledApproach(consentId, authorisationId, spiAccountConsent, null, psuData);
+    public CommonDecoupledAisService(SpiErrorMapper spiErrorMapper,
+                                     SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
+                                     SpiContextDataProvider spiContextDataProvider,
+                                     Xs2aAuthorisationService authorisationService,
+                                     AisConsentSpi aisConsentSpi) {
+        super(spiErrorMapper, aspspConsentDataProviderFactory, spiContextDataProvider, authorisationService);
+        this.aisConsentSpi = aisConsentSpi;
     }
 
-    public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, SpiAccountConsent spiAccountConsent,
-                                                                 String authenticationMethodId, PsuIdData psuData) {
-        SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse = aisConsentSpi.startScaDecoupled(spiContextDataProvider.provideWithPsuIdData(psuData), authorisationId, authenticationMethodId, spiAccountConsent, aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+    @Override
+    protected ServiceType getServiceType() {
+        return ServiceType.AIS;
+    }
 
-        if (spiResponse.hasError()) {
-            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS);
-            log.info("Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], Authentication-Method-ID [{}]. Notifies a decoupled app about starting SCA when proceed decoupled approach has failed. Error msg: {}.",
-                     consentId, authorisationId, psuData.getPsuId(), authenticationMethodId, errorHolder);
-
-            Optional<MessageErrorCode> first = errorHolder.getFirstErrorCode();
-            if (first.isPresent() && first.get() == MessageErrorCode.PSU_CREDENTIALS_INVALID) {
-                authorisationService.updateAuthorisationStatus(authorisationId, ScaStatus.FAILED);
-            }
-            return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuData);
-        }
-
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, consentId, authorisationId, psuData);
-        response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
-        return response;
+    @Override
+    protected SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(SpiContextData spiContextData,
+                                                                                  String authorisationId,
+                                                                                  String authenticationMethodId,
+                                                                                  SpiAccountConsent spiConsent,
+                                                                                  SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+        return aisConsentSpi.startScaDecoupled(spiContextData, authorisationId, authenticationMethodId, spiConsent, spiAspspConsentDataProvider);
     }
 }

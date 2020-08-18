@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.domain.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.spi.domain.SpiConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.AllArgsConstructor;
@@ -30,7 +31,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SpiPiisConsent {
+public class SpiPiisConsent implements SpiConsent {
     private String id;
     private boolean recurringIndicator;
     private OffsetDateTime requestDateTime;

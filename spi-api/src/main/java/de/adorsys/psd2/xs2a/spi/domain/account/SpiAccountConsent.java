@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.spi.domain.account;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.spi.domain.SpiConsent;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SpiAccountConsent {
+public class SpiAccountConsent implements SpiConsent {
     private String id;
     private SpiAccountAccess access;
     private boolean recurringIndicator;
