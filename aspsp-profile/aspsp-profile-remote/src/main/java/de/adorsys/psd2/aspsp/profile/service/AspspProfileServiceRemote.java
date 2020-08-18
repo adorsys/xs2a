@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.config.AspspProfileRemoteUrls;
 import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -57,6 +58,6 @@ public class AspspProfileServiceRemote implements AspspProfileService {
 
     @Override
     public boolean isMultitenancyEnabled() {
-        return aspspProfileRestTemplate.getForObject(aspspProfileRemoteUrls.isMultitenancyEnabled(), Boolean.class);
+        return BooleanUtils.isTrue(aspspProfileRestTemplate.getForObject(aspspProfileRemoteUrls.isMultitenancyEnabled(), Boolean.class));
     }
 }
