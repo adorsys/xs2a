@@ -1,0 +1,9 @@
+= Release notes v.7.9
+
+== Table of Contents
+
+* Payment Controller refactoring
+
+== Payment Controller refactoring
+
+Payment controller was refactored in terms of wrong payment type.

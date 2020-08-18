@@ -144,6 +144,15 @@ public class GlobalExceptionHandlerController {
         return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
+    @ExceptionHandler(value = WrongPaymentTypeException.class)
+    public ResponseEntity wrongPaymentTypeException(WrongPaymentTypeException ex,
+                                                              HandlerMethod handlerMethod) {
+        log.warn("WrongPaymentTypeException handled in service: {}, message: {}",
+                 handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
+        MessageError messageError = new MessageError(ErrorType.PIS_400, of(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, ex.getPaymentType()));
+        return responseErrorMapper.generateErrorResponse(messageError);
+    }
+
     private MessageError createMessageError(MessageErrorCode messageErrorCode) {
         return new MessageError(getErrorType(messageErrorCode.getCode()), of(messageErrorCode));
     }
