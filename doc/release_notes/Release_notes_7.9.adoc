@@ -1,3 +1,9 @@
 = Release notes v.7.9
 
 == Table of Contents
+
+* Supported Funds Confirmation Consent in Decoupled approach with multilevel sca
+
+== Supported Funds Confirmation Consent in Decoupled approach with multilevel sca
+
+From now on, funds confirmation consent decoupled flow is supported by xs2a.

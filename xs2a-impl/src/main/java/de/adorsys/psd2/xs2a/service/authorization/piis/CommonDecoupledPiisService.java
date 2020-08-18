@@ -16,27 +16,40 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.piis;
 
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.service.authorization.CommonDecoupledConsentService;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
+import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
+import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.PiisConsentSpi;
 import org.springframework.stereotype.Service;
 
 @Service
-@Slf4j
-@RequiredArgsConstructor
-public class CommonDecoupledPiisService {
+public class CommonDecoupledPiisService extends CommonDecoupledConsentService<SpiPiisConsent> {
+    private final PiisConsentSpi piisConsentSpi;
 
-    public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, SpiPiisConsent spiPiisConsent, PsuIdData psuData) {
-        return proceedDecoupledApproach(consentId, authorisationId, spiPiisConsent, null, psuData);
+    public CommonDecoupledPiisService(SpiErrorMapper spiErrorMapper,
+                                      SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
+                                      SpiContextDataProvider spiContextDataProvider,
+                                      Xs2aAuthorisationService authorisationService,
+                                      PiisConsentSpi piisConsentSpi) {
+        super(spiErrorMapper, aspspConsentDataProviderFactory, spiContextDataProvider, authorisationService);
+        this.piisConsentSpi = piisConsentSpi;
     }
 
-    public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId,
-                                                                 SpiPiisConsent spiPiisConsent,
-                                                                 String authenticationMethodId,
-                                                                 PsuIdData psuData) {
-        //TODO realisation in https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/953
-        return null;
+    @Override
+    protected ServiceType getServiceType() {
+        return ServiceType.PIIS;
+    }
+
+    @Override
+    protected SpiResponse<SpiAuthorisationDecoupledScaResponse> startScaDecoupled(SpiContextData spiContextData, String authorisationId, String authenticationMethodId, SpiPiisConsent spiConsent, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+        return piisConsentSpi.startScaDecoupled(spiContextData, authorisationId, authenticationMethodId, spiConsent, spiAspspConsentDataProvider);
     }
 }

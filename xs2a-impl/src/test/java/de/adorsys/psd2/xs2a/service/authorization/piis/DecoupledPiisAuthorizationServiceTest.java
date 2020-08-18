@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
-import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -29,9 +28,9 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,10 +41,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DecoupledAisAuthorizationServiceTest {
+class DecoupledPiisAuthorizationServiceTest {
     private static final String CONSENT_ID = "f2c43cad-6811-4cb6-bfce-31050095ed5d";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
@@ -57,29 +57,27 @@ class DecoupledAisAuthorizationServiceTest {
     private static final CreateConsentAuthorizationResponse CREATE_CONSENT_AUTHORIZATION_RESPONSE = buildCreateConsentAuthorizationResponse();
 
     @InjectMocks
-    private DecoupledAisAuthorizationService decoupledAisAuthorizationService;
+    private DecoupledPiisAuthorizationService decoupledPiisAuthorizationService;
 
     @Mock
     private Xs2aAuthorisationService authorisationService;
     @Mock
-    private Xs2aAisConsentService aisConsentService;
+    private Xs2aPiisConsentService piisConsentService;
     @Mock
     private Xs2aConsentService consentService;
     @Mock
-    private Xs2aAisConsentMapper aisConsentMapper;
-    @Mock
-    private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
+    private Xs2aPiisConsentMapper piisConsentMapper;
 
     @Test
     void createConsentAuthorization_success() {
         // Given
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+        when(piisConsentService.getPiisConsentById(CONSENT_ID))
             .thenReturn(Optional.of(buildConsent(CONSENT_ID)));
         when(consentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
 
         // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledPiisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -89,11 +87,11 @@ class DecoupledAisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_wrongConsentId_fail() {
         // Given
-        when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
+        when(piisConsentService.getPiisConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledPiisAuthorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -105,13 +103,13 @@ class DecoupledAisAuthorizationServiceTest {
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
         UpdateConsentPsuDataReq mappedUpdatePsuDataRequest = new UpdateConsentPsuDataReq();
-        when(aisConsentMapper.mapToUpdateConsentPsuDataReq(authorisationRequest, processorResponse))
+        when(piisConsentMapper.mapToUpdateConsentPsuDataReq(authorisationRequest, processorResponse))
             .thenReturn(mappedUpdatePsuDataRequest);
 
-        AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
+        AuthorisationProcessorResponse actualResponse = decoupledPiisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
 
         assertEquals(processorResponse, actualResponse);
-        verify(aisConsentService).updateConsentAuthorisation(mappedUpdatePsuDataRequest);
+        verify(piisConsentService).updateConsentAuthorisation(mappedUpdatePsuDataRequest);
     }
 
     @Test
@@ -119,10 +117,10 @@ class DecoupledAisAuthorizationServiceTest {
         UpdateConsentPsuDataReq authorisationRequest = buildUpdateConsentPsuDataReq();
         AuthorisationProcessorResponse processorResponse = buildAuthorisationProcessorResponseWithError();
 
-        AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
+        AuthorisationProcessorResponse actualResponse = decoupledPiisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
 
         assertEquals(processorResponse, actualResponse);
-        verify(aisConsentService, never()).updateConsentAuthorisation(any());
+        verify(piisConsentService, never()).updateConsentAuthorisation(any());
     }
 
     @Test
@@ -132,7 +130,7 @@ class DecoupledAisAuthorizationServiceTest {
             .thenReturn(Optional.of(ACCOUNT_CONSENT_AUTHORIZATION));
 
         // When
-        Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = decoupledPiisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -146,7 +144,7 @@ class DecoupledAisAuthorizationServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getConsentAuthorizationById(WRONG_AUTHORISATION_ID);
+        Optional<Authorisation> actualResponse = decoupledPiisAuthorizationService.getConsentAuthorizationById(WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -159,7 +157,7 @@ class DecoupledAisAuthorizationServiceTest {
             .thenReturn(Optional.of(SCA_STATUS));
 
         // When
-        Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
+        Optional<ScaStatus> actualResponse = decoupledPiisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isTrue();
@@ -173,7 +171,7 @@ class DecoupledAisAuthorizationServiceTest {
             .thenReturn(Optional.empty());
 
         // When
-        Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
+        Optional<ScaStatus> actualResponse = decoupledPiisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
         assertThat(actualResponse.isPresent()).isFalse();
@@ -182,7 +180,7 @@ class DecoupledAisAuthorizationServiceTest {
     @Test
     void getScaApproachServiceType_success() {
         // When
-        ScaApproach actualResponse = decoupledAisAuthorizationService.getScaApproachServiceType();
+        ScaApproach actualResponse = decoupledPiisAuthorizationService.getScaApproachServiceType();
 
         // Then
         assertThat(actualResponse).isEqualTo(SCA_APPROACH);
@@ -203,8 +201,8 @@ class DecoupledAisAuthorizationServiceTest {
         return authorisation;
     }
 
-    private static AisConsent buildConsent(String id) {
-        AisConsent aisConsent = new AisConsent();
+    private static PiisConsent buildConsent(String id) {
+        PiisConsent aisConsent = new PiisConsent();
         aisConsent.setId(id);
         return aisConsent;
     }
