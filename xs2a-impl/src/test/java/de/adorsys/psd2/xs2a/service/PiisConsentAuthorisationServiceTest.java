@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.piis.RedirectPiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -99,6 +100,8 @@ public class PiisConsentAuthorisationServiceTest {
     private PiisAuthorizationService piisAuthorizationService;
     @Mock
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    @Mock
+    private EventTypeService eventTypeService;
 
     private JsonReader jsonReader = new JsonReader();
     private PiisConsent piisConsent;

@@ -36,6 +36,8 @@ import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.PisPsuDataService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.event.EventAuthorisationType;
+import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
@@ -68,6 +70,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
     private final PisPsuDataService pisPsuDataService;
     private final LoggingContextService loggingContextService;
     private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
+    private final EventTypeService eventTypeService;
 
     /**
      * Creates pis authorisation for payment. In case when psu data and password came then second step will be update psu data in created authorisation
@@ -119,7 +122,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
      */
     @Override
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        xs2aEventService.recordPisTppRequest(request.getPaymentId(), EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_REQUEST_RECEIVED, request);
+        xs2aEventService.recordPisTppRequest(request.getPaymentId(), eventTypeService.getEventType(request, EventAuthorisationType.PIS), request);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponse = pisCommonPaymentService.getPisCommonPaymentById(request.getPaymentId());
         if (pisCommonPaymentResponse.isEmpty()) {
