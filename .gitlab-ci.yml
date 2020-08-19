@@ -1,4 +1,3 @@
-
 ---
 # yamllint disable rule:line-length
 # ------------------------------------------------------------------
@@ -260,8 +259,6 @@ Test:Javadoc_Java11:
 
 Test:Unit_Tests_XS2A_Java11:
   stage: "Test"
-  except:
-    - schedules
   except:
     - schedules
   <<: *java_tests
