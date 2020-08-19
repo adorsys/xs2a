@@ -320,7 +320,7 @@ Notify Slack channel (develop):
   stage: "Notification"
   cache: {}
   only:
-    -  develop
+    - develop
   variables:
     HELM_RELEASE: dev-psd2
     ENV_JSON_FILE: scripts/notifications/psd2-dev.json
@@ -390,7 +390,7 @@ Notify Slack channel (Integ):
   stage: "Notification"
   cache: {}
   only:
-    -  schedules
+    - schedules
   variables:
     HELM_RELEASE: integ-psd2
     ENV_JSON_FILE: scripts/notifications/psd2-integ.json
