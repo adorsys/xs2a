@@ -34,13 +34,14 @@ public class AbstractContainerDatabaseTest {
     private HikariDataSource dataSource;
 
     void performQuery(JdbcDatabaseContainer container, String sql) {
-        Connection connection = null;
+        Connection con;
         try {
-            connection = getConnection(container);
+            con = getConnection(container);
         } catch (SQLException e) {
             fail("Connection creation failed: " + e.getMessage());
+            return;
         }
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.executeUpdate();
         } catch (SQLException e) {
             fail("Execution of sql statement failed: " + e.getMessage());
@@ -65,7 +66,7 @@ public class AbstractContainerDatabaseTest {
         if (connection != null && !connection.isClosed()) {
             return connection;
         }
-        connection = getDataSource(container).getConnection();
+        connection = getDataSource(container).getConnection();    //NOSONAR
         return connection;
     }
 
