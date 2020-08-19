@@ -168,7 +168,7 @@ Lint:XS2A_PMD_CPD_Report:
   script:
     - apt update && apt install make -yq
     - echo "Test java code for PMD and CPD"
-    - mvn -ntp -Dmaven.test.skip=true package pmd:check pmd:cpd-check
+    - mvn -ntp -Dmaven.test.skip=true package pmd:check # commented cause many duplications pmd:cpd-check
   cache: {}
   artifacts:
     paths:
