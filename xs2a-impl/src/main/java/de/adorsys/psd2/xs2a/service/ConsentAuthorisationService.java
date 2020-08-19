@@ -34,6 +34,8 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
+import de.adorsys.psd2.xs2a.service.event.EventAuthorisationType;
+import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -65,6 +67,7 @@ public class ConsentAuthorisationService {
     private final LoggingContextService loggingContextService;
     private final AisAuthorisationConfirmationService aisAuthorisationConfirmationService;
     private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
+    private final EventTypeService eventTypeService;
 
     public ResponseObject<AuthorisationResponse> createAisAuthorisation(PsuIdData psuData, String consentId, String password) {
         ResponseObject<CreateConsentAuthorizationResponse> createAisAuthorizationResponse = createConsentAuthorizationWithResponse(psuData, consentId);
@@ -184,7 +187,7 @@ public class ConsentAuthorisationService {
     }
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
-        xs2aEventService.recordConsentTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_AIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
+        xs2aEventService.recordConsentTppRequest(updatePsuData.getConsentId(), eventTypeService.getEventType(updatePsuData, EventAuthorisationType.AIS), updatePsuData);
 
         String consentId = updatePsuData.getConsentId();
 
