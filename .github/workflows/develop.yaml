@@ -116,7 +116,7 @@ jobs:
 
       - name: build project before test
         run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
-        
+
       - name: Run UI tests 
         run: mvn -ntp -DskipITs --fail-at-end clean install
 
@@ -204,7 +204,7 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      
+
       - name: Publish to Maven Central
         run: |
           gpg --version
