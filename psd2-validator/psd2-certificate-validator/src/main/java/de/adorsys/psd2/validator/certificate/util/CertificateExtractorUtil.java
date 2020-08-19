@@ -51,8 +51,11 @@ public class CertificateExtractorUtil {
     }
 
     public static TppCertificateData extract(String encodedCert) throws CertificateValidationException {
-
         X509Certificate cert = X509CertUtils.parse(encodedCert);
+        if (cert == null) {
+            byte[] encodedCertData = encodedCert.getBytes();
+            cert = X509CertUtils.parse(URLDecodingUtil.decode(encodedCertData));
+        }
 
         if (cert == null) {
             log.debug("Error reading certificate ");
@@ -98,27 +101,26 @@ public class CertificateExtractorUtil {
     }
 
     private static String getValueFromX500Name(X500Name x500Name, ASN1ObjectIdentifier asn1ObjectIdentifier) {
-        boolean exist = ArrayUtils.contains( x500Name.getAttributeTypes(), asn1ObjectIdentifier );
-        return  exist ? IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue()) : null;
+        boolean exist = ArrayUtils.contains(x500Name.getAttributeTypes(), asn1ObjectIdentifier);
+        return exist ? IETFUtils.valueToString(x500Name.getRDNs(asn1ObjectIdentifier)[0].getFirst().getValue()) : null;
     }
 
     private static String extractIssuerCNFromIssuerDN(Principal issuerDN) {
         List<Rdn> rdns = getRdns(issuerDN);
-        return rdns
-            .stream()
-            .filter(rdn ->  LDAP_COMMON_NAME.equalsIgnoreCase(rdn.getType()))
-            .findFirst()
-            .filter(rdn -> rdn.getValue() instanceof String)
-            .map(rdn -> (String) rdn.getValue())
-            .orElse(null);
+        return rdns.stream()
+                   .filter(rdn -> LDAP_COMMON_NAME.equalsIgnoreCase(rdn.getType()))
+                   .findFirst()
+                   .filter(rdn -> rdn.getValue() instanceof String)
+                   .map(rdn -> (String) rdn.getValue())
+                   .orElse(null);
     }
 
     private static List<Rdn> getRdns(Principal issuerDN) {
         return Optional.ofNullable(issuerDN)
-            .map(Principal::getName)
-            .map(CertificateExtractorUtil::getLdapName)
-            .map(LdapName::getRdns)
-            .orElseGet(Collections::emptyList);
+                   .map(Principal::getName)
+                   .map(CertificateExtractorUtil::getLdapName)
+                   .map(LdapName::getRdns)
+                   .orElseGet(Collections::emptyList);
     }
 
     private static LdapName getLdapName(String dn) {

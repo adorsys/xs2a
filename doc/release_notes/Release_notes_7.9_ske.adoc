@@ -1,0 +1,12 @@
+= Release notes v.7.9
+
+== Table of Contents
+
+* Added possibility to accept URL encoded certificates
+
+== Added possibility to accept URL encoded certificates
+From now on, the header `tpp-qwac-certificate` can be URL encoded and will still be
+interpreted correctly.
+
+This may be useful if the used gateway, which forwards the requests to the XS2A-Service, performs a URL
+encoding on the sent certificate.
