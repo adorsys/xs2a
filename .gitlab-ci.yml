@@ -117,7 +117,7 @@ variables:
 # lint
 #-------------------------------------------------------------------
 
-Docker_compose:
+Lint:Docker_compose:
   image: maven:3.6-jdk-11-slim
   stage: "Lint"
   except:
@@ -129,7 +129,7 @@ Docker_compose:
     - echo "Run Docker compose lint"
     - docker-compose -f docker-compose.yml config  -q
 
-Ci_file:
+Lint:Ci_file:
   image: debian:stretch-slim
   stage: "Lint"
   except:
@@ -141,7 +141,7 @@ Ci_file:
     - echo "Run Gitlab ci file lint"
     - yamllint -d relaxed .gitlab-ci.yml
 
-XS2A_yaml_json_xml:
+Lint:XS2A_yaml_json_xml:
   image: debian:stretch-slim
   stage: "Lint"
   except:
@@ -158,7 +158,7 @@ XS2A_yaml_json_xml:
 # commented cause get error Unsupported version '1.1'
 #	  - find ./ -type f \( -iname "*.xml" ! -iname pom.xml \) -exec xmllint --noout {} \;
 
-XS2A_PMD_CPD_Report:
+Lint:XS2A_PMD_CPD_Report:
   image: maven:3.6-jdk-11-slim
   stage: "Lint"
   except:
@@ -198,7 +198,7 @@ Lint:XS2A_core_dockerfiles:
 # Compile
 #-------------------------------------------------------------------
 
-XS2A_Java11:
+Build:XS2A_Java11:
   stage: "Compile"
   variables:
     JAVA_VERSION: "system@1.11"
@@ -220,12 +220,10 @@ XS2A_Java11:
 # Test
 #-------------------
 
-IT_Java11:
+Test:IT_Java11:
   stage: "Test"
   except:
     - schedules
-  dependencies:
-    - "Compile Java11"
   script:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
@@ -235,7 +233,7 @@ IT_Java11:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
-DOCKER_test_image_build:
+Test:DOCKER_test_image_build:
   stage: "Test"
   except:
     - schedules
@@ -247,7 +245,7 @@ DOCKER_test_image_build:
   variables:
     DOCKER_TAG: develop
 
-Javadoc_Java11:
+Test:Javadoc_Java11:
   stage: "Test"
   except:
     - schedules
@@ -260,7 +258,7 @@ Javadoc_Java11:
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
 
-Unit_Tests_XS2A_Java11:
+Test:Unit_Tests_XS2A_Java11:
   stage: "Test"
   except:
     - schedules
@@ -271,7 +269,7 @@ Unit_Tests_XS2A_Java11:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
 
-Sonarcube:
+Test:Sonarcube:
   stage: "Test"
   needs: []
   except:
@@ -284,7 +282,7 @@ Sonarcube:
     - mvn -ntp --fail-at-end clean install
     - mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
 
-AsciiDoc:
+Test:AsciiDoc:
   stage: "Test"
   except:
     - schedules
