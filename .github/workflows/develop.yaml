@@ -16,7 +16,7 @@ env:
   SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
 jobs:
-  build:
+  build_and_test:
     name: Build XS2A (openjdk 1.11)
     runs-on: ubuntu-latest
     steps:
@@ -36,120 +36,18 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build Ledgers 
-        run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
-
-  javaDoc:
-    needs: build
-    name: Generate Javadocs
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone XS2A develop repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 11 for x64
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
-          architecture: x64
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Compile before generate Javadocs
-        run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
-
-      - name: Generate javadocs 
-        run: mvn -ntp javadoc:javadoc 
-
-  pmdCheck:
-    needs: build
-    name: Run code analyser PMD
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone XS2A develop repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 11 for x64
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
-          architecture: x64
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      
-      - name: build project before check
+      - name: Build XS2A
         run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
 
       - name: Check pmd  
         run: mvn -ntp pmd:check
 
-  UItests:
-    needs: build
-    name: Run UI tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone XS2A develop repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 11 for x64
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
-          architecture: x64
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: build project before test
-        run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
-
-      - name: Run UI tests 
-        run: mvn -ntp -DskipITs --fail-at-end clean install
-
-  ITtests:
-    needs: build
-    name: Run IT tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone XS2A develop repository
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 11 for x64
-        uses: actions/setup-java@v1
-        with:
-          java-version: 1.11
-          architecture: x64
-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: build project before test
-        run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
-
-      - name: Run IT tests 
-        run: mvn -ntp failsafe:integration-test failsafe:verify 
+      - name: Generate javadocs 
+        run: mvn -ntp javadoc:javadoc 
 
   sonar:
     name: Publish code coverage to Sonar Cloud
-    needs: build
+    needs: build_and_test
     runs-on: ubuntu-latest
     steps:
       - name: Clone XS2A develop repository
@@ -186,7 +84,7 @@ jobs:
 
   deployMavenCentral:
     name: Publish XS2A artifacts to Maven Central
-    needs: [build, UItests, ITtests]
+    needs: [build_and_test, sonar]
     runs-on: ubuntu-latest
     steps:
       - name: Clone ledgers develop repository
