@@ -160,7 +160,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         byte[] paymentData = corePaymentsConvertService.buildPaymentData(pisPayments, pisCommonPaymentData.getPaymentType());
         if (paymentData != null) {
             pisCommonPaymentData.setPayment(paymentData);
-            pisCommonPaymentDataRepository.save(pisCommonPaymentData);
             pisCommonPaymentResponse.setPaymentData(paymentData);
         }
     }
@@ -213,7 +212,6 @@ public class PisCommonPaymentServiceInternal implements PisCommonPaymentService 
         }
         PisCommonPaymentData payment = pisCommonPaymentDataOptional.get();
         payment.setMultilevelScaRequired(multilevelScaRequired);
-        pisCommonPaymentDataRepository.save(payment);
 
         return CmsResponse.<Boolean>builder()
                    .payload(true)

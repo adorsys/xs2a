@@ -56,7 +56,6 @@ public class CmsAspspPsuAccountServiceInternal implements CmsAspspPsuAccountServ
         filteredConsents.forEach(cst -> {
             cst.setLastActionDate(LocalDate.now());
             cst.setConsentStatus(ConsentStatus.REVOKED_BY_PSU);
-            consentJpaRepository.save(cst);
         });
 
         return true;

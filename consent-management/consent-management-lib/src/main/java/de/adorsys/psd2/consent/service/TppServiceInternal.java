@@ -55,7 +55,6 @@ public class TppServiceInternal implements TppService {
         TppInfoEntity tppInfoEntity = tppInfoEntityOptional.get();
         if (isRolesChanged(tppInfoEntity.getTppRoles(), tppInfo.getTppRoles())) {
             tppInfoEntity.setTppRoles(tppInfo.getTppRoles());
-            tppInfoRepository.save(tppInfoEntity);
         }
         return CmsResponse.<Boolean>builder()
                    .payload(true)

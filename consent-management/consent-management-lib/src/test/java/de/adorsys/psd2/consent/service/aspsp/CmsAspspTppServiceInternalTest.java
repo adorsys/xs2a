@@ -96,13 +96,9 @@ class CmsAspspTppServiceInternalTest {
         doNothing()
             .when(tppStopListEntity).block(BLOCKING_DURATION);
 
-        when(stopListRepository.save(tppStopListEntity))
-            .thenReturn(tppStopListEntity);
-
         boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER, INSTANCE_ID, BLOCKING_DURATION);
 
         assertTrue(isBlocked);
-        verify(stopListRepository).save(tppStopListEntity);
     }
 
     @Test
@@ -110,15 +106,9 @@ class CmsAspspTppServiceInternalTest {
         when(stopListRepository.findByTppAuthorisationNumberAndInstanceId(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID))
             .thenReturn(Optional.empty());
 
-        TppStopListEntity entityToBeBlocked = buildBlockedTppStopListEntity(AUTHORISATION_NUMBER_NOT_EXISTING, null);
-
-        when(stopListRepository.save(entityToBeBlocked))
-            .thenReturn(entityToBeBlocked);
-
         boolean isBlocked = cmsAspspTppService.blockTpp(AUTHORISATION_NUMBER_NOT_EXISTING, INSTANCE_ID, null);
 
         assertTrue(isBlocked);
-        verify(stopListRepository).save(entityToBeBlocked);
     }
 
     @Test
@@ -140,13 +130,9 @@ class CmsAspspTppServiceInternalTest {
         doNothing()
             .when(tppStopListEntity).unblock();
 
-        when(stopListRepository.save(tppStopListEntity))
-            .thenReturn(tppStopListEntity);
-
         boolean isUnblocked = cmsAspspTppService.unblockTpp(AUTHORISATION_NUMBER, INSTANCE_ID);
 
         assertTrue(isUnblocked);
-        verify(stopListRepository).save(tppStopListEntity);
     }
 
     @Test
@@ -171,12 +157,5 @@ class CmsAspspTppServiceInternalTest {
 
         assertTrue(result.isPresent());
         assertEquals(tppInfo, result.get());
-    }
-
-    private TppStopListEntity buildBlockedTppStopListEntity(String authorisationNumber, Duration blockingDuration) {
-        TppStopListEntity entity = new TppStopListEntity();
-        entity.setTppAuthorisationNumber(authorisationNumber);
-        entity.block(blockingDuration);
-        return entity;
     }
 }

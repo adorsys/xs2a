@@ -115,7 +115,6 @@ class PisCommonPaymentServiceInternalTest {
     void updateMultilevelSca_ShouldReturnTrue() {
         // Given
         when(pisCommonPaymentDataRepository.findByPaymentId(PAYMENT_ID)).thenReturn(Optional.of(pisCommonPaymentData));
-        when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
 
         // When
         CmsResponse<Boolean> actualResponse = pisCommonPaymentService.updateMultilevelSca(PAYMENT_ID, true);
@@ -288,7 +287,6 @@ class PisCommonPaymentServiceInternalTest {
         byte[] bytes = "content".getBytes();
         when(corePaymentsConvertService.buildPaymentData(Collections.singletonList(pisPayment), pisCommonPaymentData.getPaymentType()))
             .thenReturn(bytes);
-        when(pisCommonPaymentDataRepository.save(pisCommonPaymentData)).thenReturn(pisCommonPaymentData);
 
         pisCommonPaymentService.transferCorePaymentToCommonPayment(pisCommonPaymentResponse, pisCommonPaymentData);
 
@@ -296,7 +294,6 @@ class PisCommonPaymentServiceInternalTest {
 
         verify(pisCommonPaymentMapper, times(1)).mapToPisPayment(pisPaymentData);
         verify(corePaymentsConvertService, times(1)).buildPaymentData(Collections.singletonList(pisPayment), pisCommonPaymentData.getPaymentType());
-        verify(pisCommonPaymentDataRepository, times(1)).save(pisCommonPaymentData);
     }
 
     private PisCommonPaymentData buildPisCommonPaymentData() {
