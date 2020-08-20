@@ -24,3 +24,9 @@ jobs:
 
       - name: install Make plantuml asciidoctor
         run: sudo apt-get update && sudo apt-get install make asciidoctor plantuml -y
+
+      - name: prepare pages 
+        run: make pages
+
+      - name: check pages
+        run: ls -lh pages/html
