@@ -1,0 +1,26 @@
+name: Develop CI
+
+on: 
+  push:
+    branches:
+      - KOA_add_github_pages_to_actions
+
+env:
+  SONAR_PRJ_KEY: adorsys_xs2a
+  SONAR_ORG: adorsys
+  SONAR_HOST: https://sonarcloud.io
+  GPG_EXECUTABLE: ${{ secrets.GPG_EXECUTABLE }}
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+  SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+jobs:
+  test_github_actions:
+    name: create github pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone XS2A develop repository
+        uses: actions/checkout@v2
+
+      - name: install Make plantuml asciidoctor
+        run: sudo apt-get update && sudo apt-get install make asciidoctor plantuml -y
