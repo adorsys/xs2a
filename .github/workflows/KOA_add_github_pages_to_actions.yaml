@@ -26,7 +26,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install make plantuml -y
 
       - name: prepare pages 
-        run: make prepare_pages
+        run: make prepare_pages && ls -lh pages
       
       - name: Prepare Diagrams
         run: cd pages/doc && plantuml **/*.puml -DPLANTUML_LIMIT_SIZE=8192
