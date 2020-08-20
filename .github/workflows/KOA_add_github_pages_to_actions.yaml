@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: install Make plantuml asciidoctor
-        run: sudo apt-get update && sudo apt-get install make plantuml -y
+        run: sudo apt-get update && sudo apt-get install make plantuml rsync -y
 
       - name: prepare pages 
         run: make prepare_pages && ls -lh pages
