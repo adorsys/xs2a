@@ -48,3 +48,9 @@ jobs:
 
       - name: check pages html tree
         run: cd pages && rm -rf doc && tree html && ls -lh .
+
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./pages/html
