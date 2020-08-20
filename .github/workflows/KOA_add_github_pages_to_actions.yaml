@@ -23,10 +23,27 @@ jobs:
         uses: actions/checkout@v2
 
       - name: install Make plantuml asciidoctor
-        run: sudo apt-get update && sudo apt-get install make asciidoctor plantuml -y
+        run: sudo apt-get update && sudo apt-get install make plantuml -y
 
       - name: prepare pages 
-        run: make pages
+        run: make prepare_pages
+      
+      - name:
+        run: make prepare_diagrams
 
-      - name: check pages
-        run: ls -lh pages/html
+      - name:  Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+
+      - name: Install AsciiDoctor
+        uses: reitzig/actions-asciidoctor@v1.0.0
+
+      - name: Convert adoc to html
+        run: cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
+
+      - name: Rsync diagrams and pictures
+        run: cd doc && rsync -amR --include="*/" --include="*.png" --exclude="*" . ../html
+
+      - name: check pages html tree
+        run: cd .. && rm -rf doc && tree html && ls -lh .
