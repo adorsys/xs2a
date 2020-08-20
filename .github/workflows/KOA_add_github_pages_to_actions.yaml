@@ -41,7 +41,7 @@ jobs:
         uses: reitzig/actions-asciidoctor@v1.0.0
 
       - name: Convert adoc to html
-        run: ls -lh && cd ../ && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
+        run: ls -lh && cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
 
       - name: Rsync diagrams and pictures
         run: cd doc && rsync -amvR --include="*/" --include="*.png" --exclude="*" . ../html
