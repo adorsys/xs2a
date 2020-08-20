@@ -44,7 +44,7 @@ jobs:
         run: ls -lh && cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
 
       - name: Rsync diagrams and pictures
-        run: cd doc && rsync -amvR --include="*/" --include="*.png" --exclude="*" . ../html
+        run: cd  pages/doc && rsync -amvR --include="*/" --include="*.png" --exclude="*" . ../html
 
       - name: check pages html tree
-        run: cd ../ && rm -rf doc && tree html && ls -lh .
+        run: cd pages && rm -rf doc && tree html && ls -lh .
