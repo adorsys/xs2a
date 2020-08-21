@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - support-6.x
-      -  6.x/KOA_install_github_actions
 
 env:
   SONAR_PRJ_KEY: adorsys_xs2a
