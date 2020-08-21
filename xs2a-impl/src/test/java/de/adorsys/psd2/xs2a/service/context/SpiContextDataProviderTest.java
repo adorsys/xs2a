@@ -90,6 +90,7 @@ class SpiContextDataProviderTest {
         when(requestProviderService.getInternalRequestId()).thenReturn(INTERNAL_REQUEST_ID);
         when(requestProviderService.getOAuth2Token()).thenReturn(AUTHORISATION);
         when(requestProviderService.getTppBrandLoggingInformationHeader()).thenReturn(TPP_BRAND_LOGGING_INFORMATION);
+        when(requestProviderService.getTppRejectionNoFundsPreferred()).thenReturn(null);
     }
 
     @Test
@@ -158,6 +159,6 @@ class SpiContextDataProviderTest {
     }
 
     private static SpiContextData buildSpiContextData(SpiPsuData spiPsuData) {
-        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION);
+        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION, null);
     }
 }

@@ -39,4 +39,6 @@ public class SpiContextData {
     private String oAuth2Token;
     @Nullable
     private String tppBrandLoggingInformation;
+    @Nullable
+    private Boolean tppRejectionNoFundsPreferred;
 }
