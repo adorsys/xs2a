@@ -283,8 +283,6 @@ Test:AsciiDoc:
   stage: "Test"
   except:
     - schedules
-  only:
-    - develop
   image: adorsys/arc42-tools
   variables:
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
