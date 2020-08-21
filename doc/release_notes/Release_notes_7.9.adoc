@@ -4,6 +4,7 @@
 
 * Supported Funds Confirmation Consent in Decoupled approach with multilevel sca
 * Fixed incorrect saving of owner_name_type and trusted_beneficiaries_type in consent table for piis consent
+* Added a new optional header TPP-Rejection-NoFunds-Preferred
 
 == Supported Funds Confirmation Consent in Decoupled approach with multilevel sca
 
@@ -13,3 +14,7 @@ From now on, funds confirmation consent decoupled flow is supported by xs2a.
 
 From now on, piis consent is saving with correct 'NONE' value of owner_name_type and trusted_beneficiaries_type
 columns in consent table. All old incorrect 'ALL_AVAILABLE_ACCOUNTS' value were replaced with 'NONE'.
+
+== Added a new optional header TPP-Rejection-NoFunds-Preferred
+
+From now on, `TPP-Rejection-NoFunds-Preferred` is passed to spi level inside `SpiContextData`

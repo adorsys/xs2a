@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,6 +60,7 @@ public class RequestProviderService {
     private static final String ACCEPT_HEADER = "accept";
     static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
+    private static final String TPP_REJECTION_NO_FUNDS_PREFERRED = "tpp-rejection-nofunds-preferred";
     static final String INSTANCE_ID = "instance-id";
 
     private final HttpServletRequest httpServletRequest;
@@ -105,7 +107,7 @@ public class RequestProviderService {
     }
 
     @Nullable
-    public String getInstanceId(){
+    public String getInstanceId() {
         return getHeader(INSTANCE_ID);
     }
 
@@ -179,6 +181,12 @@ public class RequestProviderService {
 
     public String getTppBrandLoggingInformationHeader() {
         return getHeader(TPP_BRAND_LOGGING_INFORMATION);
+    }
+
+    public Boolean getTppRejectionNoFundsPreferred() {
+        return Optional.ofNullable(getHeader(TPP_REJECTION_NO_FUNDS_PREFERRED))
+                   .map(BooleanUtils::toBoolean)
+                   .orElse(null);
     }
 
     private String getHeader(String headerName) {
