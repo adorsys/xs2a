@@ -33,6 +33,124 @@ When writing custom filters it's recommended to extend `GlobalAbstractExceptionF
 
 === Embedding XS2A Library
 
+In order to start Connector with embedded XS2A Library, one should use following annotations in SpringBootApplication:
+
+`@EnableXs2aSwagger`
+
+`@EnableXs2aInterface`
+
+Also one needs following dependencies:
+
+https://github.com/adorsys/xs2a/releases[Choose your version of XS2A]
+[source]
+----
+<properties>
+    <xs2a.version>7.9</xs2a.version>
+</properties>
+----
+
+XS2A implementation
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>xs2a-impl</artifactId>
+    <version>${xs2a.version}</version>
+</dependency>
+----
+
+https://github.com/adorsys/xs2a/blob/develop/doc/SPI%20Developer%20Guide/Configuring%20XS2A%20Service.adoc#configuring-mapping-of-type-specific-payments-for-spi[Configuring mapping of type-specific payments for SPI]
+
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>xs2a-payment-common-impl</artifactId>
+    <version>${xs2a.version}</version>
+</dependency>
+----
+
+In Connector you have to implement https://github.com/adorsys/xs2a/blob/develop/doc/SPI%20Developer%20Guide/Implementing%20SPI-API.adoc#implementing-spi-api[SPI-API]
+
+But for testing purposes you can use SPI-STUB
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>spi-stub</artifactId>
+    <version>${xs2a.version}</version>
+</dependency>
+----
+
+If you've chosen spi-stub, don't forget add next annotation to app
+
+`@ComponentScan(basePackages = {"de.adorsys.psd2.stub"})`
+
+
+https://github.com/adorsys/xs2a/blob/develop/doc/architecture/08_concepts.adoc#event-api-structure[Saving events in CMS database]
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>event-service-rest-client</artifactId>
+    <version>${xs2a.version}</version>
+</dependency>
+----
+
+Working with ASPSP Profile remotely
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>aspsp-profile-remote</artifactId>
+    <version>${xs2a.version}</version>
+</dependency>
+----
+
+Working with CMS remotely
+[source]
+----
+<dependency>
+    <groupId>de.adorsys.psd2</groupId>
+    <artifactId>consent-xs2a-client</artifactId>
+    <version>${xs2a.version}</version>
+</dependency>
+----
+
+Also to start project as web application add
+[source]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+----
+
+Add following properties and change it when necessary:
+[source]
+----
+xs2a:
+    endpoints:
+        cors:
+            # Whether credentials are supported. When not set, credentials are not supported.
+            allow-credentials: false
+            # Comma-separated list of origins to allow. '*' allows all origins. When not set, CORS support is disabled.
+            allowed-origins: '*'
+            # Comma-separated list of headers to include in a response.
+            allowed-headers: '*'
+            # Comma-separated list of methods to allow. '*' allows all methods. When not set, defaults to GET.
+            allowed-methods: DELETE,GET,OPTIONS,PATCH,POST,PUT
+            # How long, in seconds, the response from a pre-flight request can be cached by clients
+            max-age: 3600
+            # number of characters in a json string
+    application:
+        ais:
+            transaction:
+                max-length: 1000
+----
+
+For testing purposes without real QWAC certificate, you can start application with `mock-qwac` profile.
+
 === Embedding CMS Library
 
 In order to start xs2a service with embedded CMS Library, one should use following annotations:
