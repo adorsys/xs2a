@@ -10,7 +10,7 @@ usage :
 .PHONY : prepare_pages
 prepare_pages:
 	mkdir -p pages/html/doc
-	rsync -armR --include="*/" --include="*."{adoc,puml,png} --exclude="*" doc/ pages
+	bash -c "rsync -armR --include="*/" --include="*."{adoc,puml,png} --exclude="*" doc/ pages"
 
 .PHONY : prepare_diagrams
 prepare_diagrams: prepare_pages
