@@ -1,4 +1,4 @@
-name: Release CI
+name: Release support-6.x CI
 
 on: 
   push:
