@@ -54,11 +54,13 @@ public class OauthModeFilter extends AbstractXs2aFilter {
         OAUTH2_ENDPOINTS_WITH_METHODS.put("/v1/bulk-payments", Arrays.asList("POST", "DELETE"));
         OAUTH2_ENDPOINTS_WITH_METHODS.put("/v1/periodic-payments", Arrays.asList("POST", "DELETE"));
         OAUTH2_ENDPOINTS_WITH_METHODS.put("/v1/consents", Collections.singletonList("POST"));
+        OAUTH2_ENDPOINTS_WITH_METHODS.put("/v2/consents/confirmation-of-funds", Collections.singletonList("POST"));
 
         OAUTH2_GET_ENDPOINTS_WITH_METHODS.add("/v1/payments");
         OAUTH2_GET_ENDPOINTS_WITH_METHODS.add("/v1/bulk-payments");
         OAUTH2_GET_ENDPOINTS_WITH_METHODS.add("/v1/periodic-payments");
         OAUTH2_GET_ENDPOINTS_WITH_METHODS.add("/v1/consents");
+        OAUTH2_GET_ENDPOINTS_WITH_METHODS.add("/v2/consents/confirmation-of-funds");
     }
 
     private final AspspProfileServiceWrapper aspspProfileService;
