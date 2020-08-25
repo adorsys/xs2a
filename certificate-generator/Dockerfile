@@ -1,4 +1,5 @@
 FROM adorsys/java:11
+
 LABEL maintainer="https://github.com/adorsys/xs2a"
 
 ENV SERVER_PORT 8092
@@ -10,5 +11,5 @@ WORKDIR /opt/certificate-generator
 COPY ./target/certificate-generator*jar /opt/certificate-generator/certificate-generator.jar
 
 EXPOSE 8092 8000
-
+# hadolint ignore=DL3025
 CMD exec $JAVA_HOME/bin/java $JAVA_OPTS -jar /opt/certificate-generator/certificate-generator.jar
