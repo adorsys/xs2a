@@ -35,4 +35,74 @@ When writing custom filters it's recommended to extend `GlobalAbstractExceptionF
 
 === Embedding CMS Library
 
+In order to start xs2a service with embedded CMS Library, one should use following annotations:
+
+- `@EnableTransactionManagement`
+- `@EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"})`
+- `@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event"})`
+- `@ComponentScan(basePackages = {"de.adorsys.psd2.report"})`
+
+Also one needs following dependencies:
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-lib</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-payment-support-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-psu-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-aspsp-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-aspsp-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-scheduler-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>event-service-persist-db-impl</artifactId>
+        </dependency>
+
+And following properties:
+
+- Datasource settings:
+
+* `spring.datasource.url`
+* `spring.datasource.username`
+* `spring.datasource.password`
+
+- JPA settings:
+
+* `spring.jpa.properties.hibernate.default_schema`
+
+*WARNING:*  `For encryption\decryption of aspsp data we use secret server key ('server_key') which is read from Environment variables.
+So, before starting project you need to create environment variables and set value, as example:  'server_key=12345678' or run app with this parameter`
+
 === Embedding Profile library
