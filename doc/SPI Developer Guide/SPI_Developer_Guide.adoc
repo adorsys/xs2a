@@ -23,3 +23,5 @@ include::Upgrading XS2A instances version on the same server.adoc[Upgrading XS2A
 include::Special modes.adoc[Special modes]
 
 include::Certificate generator.adoc[Certificate generator]
+
+include::Multilevel Sca.adoc[Multilevel Sca]
