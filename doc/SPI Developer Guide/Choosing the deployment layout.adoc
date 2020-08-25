@@ -29,7 +29,7 @@ When XS2A services are deployed as microservices there is risk of getting error 
 In this case the request should be protected against unavailability of remote services by catching `ResourceAccessException` error.
 When writing custom filters it's recommended to extend `GlobalAbstractExceptionFilter` class and write code in `doFilterInternalCustom` method that handles this error.
 
-=== Embedded Deployment
+== Embedded Deployment
 
 === Embedding XS2A Library
 
@@ -224,3 +224,31 @@ And following properties:
 So, before starting project you need to create environment variables and set value, as example:  'server_key=12345678' or run app with this parameter`
 
 === Embedding Profile library
+
+In order to start xs2a service with embedded APSPS Profile Library, one should add following dependencies:
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+Also it's required to add into `org.springframework.boot` plugin in pom file execution block:
+
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+
+Also, one needs to define property `xs2a.license.url`.
+
+And if one have separate CMS service, that also communicates with ASPSP Profile, then one need to define property
+`xs2a.cms.aspsp-profile.baseurl`.
