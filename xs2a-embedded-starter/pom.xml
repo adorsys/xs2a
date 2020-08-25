@@ -34,6 +34,7 @@
 
     <properties>
         <ruleset.basedir>..</ruleset.basedir>
+        <ci.build.number>&#8203;</ci.build.number>
     </properties>
 
     <dependencies>
@@ -42,6 +43,12 @@
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>aspsp-profile-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-web</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -186,6 +193,20 @@
                     <classifier>exec</classifier>
                 </configuration>
                 <executions>
+
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                        <configuration>
+                            <additionalProperties>
+                                <java.version>${java.version}</java.version>
+                                <build.number>${ci.build.number}</build.number>
+                            </additionalProperties>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <goals>
                             <goal>repackage</goal>
