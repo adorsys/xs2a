@@ -1,0 +1,21 @@
+== Multilevel Sca
+
+On initiation payment request (*PaymentSpi.initiatePayment(...)) or create consent request (AisConsentSpi.initiateAisConsent(...)) in SPI level
+ASPSP is able to provide `multilevelScaRequired` flag.
+When this flag is true, then XS2A doesn't start creation of authorisation implicitly for consent or payment. In this case XS2A provides to TPP additional
+link `startAuthorisation` for starting authorisation process for several PSUs.
+Then different PSUs, that are involved in payment or consent authorisation process, are able to create authorisation using this link.
+
+When the authorisation from first PSU is finalised and second PSU is in progress, ASPSP is able to change status of payment or consent, to indicate that status is partially authorised.
+
+For payment status should be *TransactionStatus.PATC*, for consent *ConsentStatus.PARTIALLY_AUTHORISED*.
+
+In EMBEDDED approach this could be done in next SPI methods:
+
+- for payment in `PaymentSpi.executePaymentWithoutSca(...)` or `verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(...)`
+- for consent in `AisConsentSpi.verifyScaAuthorisation(...)`
+
+In Redirect approach this could be done using CMS-PSU-API:
+
+- for payment use `CmsPsuPisService.updatePaymentStatus(...)` or `PUT /psu-api/v1/payment/{payment-id}/status/{status}` endpoint
+- for consent use `CmsPsuAisService.authorisePartiallyConsent(...)` method or `PUT /psu-api/v1/ais/consent/{consent-id}/authorise-partially-consent` endpoint
