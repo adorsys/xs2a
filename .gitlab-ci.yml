@@ -51,7 +51,7 @@ variables:
   # Build variables         #
   ###########################
 
-  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
+  JAVA_TOOL_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:MaxRAM=3G -XX:MaxRAMFraction=3"
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
 
 # ------------------------------------------------------------------
@@ -292,7 +292,7 @@ Test:Javadoc_Java8:
     - mvn -ntp -Dmaven.test.skip=true -Pjavadoc verify javadoc:javadoc
   artifacts:
     paths:
-    - "**/target/site/*"
+      - "**/target/site/*"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-javadoc"
     expire_in: "10 day"
 
@@ -314,7 +314,7 @@ Test:Unit_Tests_Java8:
     JAVA_VERSION: "system@1.8"
   artifacts:
     paths:
-    - "**/target/surefire-reports/*"
+      - "**/target/surefire-reports/*"
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-*"
     expire_in: "10 day"
 
@@ -345,9 +345,9 @@ Test:AsciiDoc:
   script:
     - make pages
 
-###########
+##############
 # support6.x #
-###########    
+##############
 #Build Support-6.x images and deploy to support-6.x
 
 Push to DockerHub (support-6.x):
@@ -375,7 +375,7 @@ Notify Slack channel (support-6.x):
   stage: "Notification"
   cache: {}
   only:
-    -  support-6.x
+    - support-6.x
   variables:
     HELM_RELEASE: support6x-psd2
     ENV_JSON_FILE: scripts/notifications/psd2-support6x.json
