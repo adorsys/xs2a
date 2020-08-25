@@ -246,7 +246,7 @@ Build:XS2A_Java11:
 Test:IT_Java8:
   stage: "Test"
   dependencies:
-    - "Compile Java8"
+    - "Build:XS2A_Java8"
   script:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
@@ -258,7 +258,7 @@ Test:IT_Java8:
 Test:IT_Java11:
   stage: "Test"
   dependencies:
-    - "Compile Java11"
+    - "Build:XS2A_Java11"
   script:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
