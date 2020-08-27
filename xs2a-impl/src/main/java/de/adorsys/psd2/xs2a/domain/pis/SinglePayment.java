@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.domain.pis;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -74,9 +73,9 @@ public class SinglePayment extends CommonPayment implements AccountReferenceColl
     private String remittanceInformationUnstructured;
 
     @Valid
-    private Remittance remittanceInformationStructured;
+    private String remittanceInformationStructured;
 
-    private List<Remittance> remittanceInformationStructuredArray;
+    private List<String> remittanceInformationStructuredArray;
 
     private LocalDate requestedExecutionDate;
 

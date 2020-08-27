@@ -1,20 +1,23 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.HrefType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Map;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined extensions):  * &#39;scaRedirect&#39;:    In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the PSU browser. * &#39;scaOAuth&#39;:    In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation   Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. * &#39;confirmation&#39;:    Might be added by the ASPSP if either the \&quot;scaRedirect\&quot; or \&quot;scaOAuth\&quot; hyperlink is returned    in the same response message.    This hyperlink defines the URL to the resource which needs to be updated with      * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or     * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.  * &#39;startAuthorisation&#39;:    In case, where an explicit start of the transaction authorisation is needed, but no more data needs to be updated    (no authentication method to be selected, no PSU identification nor PSU authentication data to be uploaded). * &#39;startAuthorisationWithPsuIdentification&#39;:    The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    uploading the PSU identification data. * &#39;startAuthorisationWithPsuAuthentication&#39;:    The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    uploading the PSU authentication data.   * &#39;startAuthorisationWithEncryptedPsuAuthentication&#39;:     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on      application layer in uploading. * &#39;startAuthorisationWithAuthenticationMethodSelection&#39;:    The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    selecting the authentication method.    This link is contained under exactly the same conditions as the data element \&quot;scaMethods\&quot; * &#39;startAuthorisationWithTransactionAuthorisation&#39;:   The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    authorising the transaction e.g. by uploading an OTP received by SMS. * &#39;self&#39;:    The link to the payment initiation resource created by this request.   This link can be used to retrieve the resource data. * &#39;status&#39;:    The link to retrieve the transaction status of the payment initiation. * &#39;scaStatus&#39;:    The link to retrieve the scaStatus of the corresponding authorisation sub-resource.    This link is only contained, if an authorisation sub-resource has been already created.
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined extensions):  * 'scaRedirect':    In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to redirect the PSU browser. * 'scaOAuth':    In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation   Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. * 'confirmation':    Might be added by the ASPSP if either the \"scaRedirect\" or \"scaOAuth\" hyperlink is returned    in the same response message.    This hyperlink defines the URL to the resource which needs to be updated with      * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or     * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.  * 'startAuthorisation':    In case, where an explicit start of the transaction authorisation is needed, but no more data needs to be updated    (no authentication method to be selected, no PSU identification nor PSU authentication data to be uploaded). * 'startAuthorisationWithPsuIdentification':    The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    uploading the PSU identification data. * 'startAuthorisationWithPsuAuthentication':    The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    uploading the PSU authentication data.   * 'startAuthorisationWithEncryptedPsuAuthentication':     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on      application layer in uploading. * 'startAuthorisationWithAuthenticationMethodSelection':    The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    selecting the authentication method.    This link is contained under exactly the same conditions as the data element \"scaMethods\" * 'startAuthorisationWithTransactionAuthorisation':   The link to the authorisation end-point, where the authorisation sub-resource has to be generated while    authorising the transaction e.g. by uploading an OTP received by SMS. * 'self':    The link to the payment initiation resource created by this request.   This link can be used to retrieve the resource data. * 'status':    The link to retrieve the transaction status of the payment initiation. * 'scaStatus':    The link to retrieve the scaStatus of the corresponding authorisation sub-resource.    This link is only contained, if an authorisation sub-resource has been already created. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class LinksPaymentInitiation extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -331,27 +334,29 @@ public class LinksPaymentInitiation extends HashMap<String, HrefType>  {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksPaymentInitiation _linksPaymentInitiation = (LinksPaymentInitiation) o;
     return Objects.equals(this.scaRedirect, _linksPaymentInitiation.scaRedirect) &&
-        Objects.equals(this.scaOAuth, _linksPaymentInitiation.scaOAuth) &&
-        Objects.equals(this.confirmation, _linksPaymentInitiation.confirmation) &&
-        Objects.equals(this.startAuthorisation, _linksPaymentInitiation.startAuthorisation) &&
-        Objects.equals(this.startAuthorisationWithPsuIdentification, _linksPaymentInitiation.startAuthorisationWithPsuIdentification) &&
-        Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksPaymentInitiation.startAuthorisationWithPsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksPaymentInitiation.startAuthorisationWithEncryptedPsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksPaymentInitiation.startAuthorisationWithAuthenticationMethodSelection) &&
-        Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksPaymentInitiation.startAuthorisationWithTransactionAuthorisation) &&
-        Objects.equals(this.self, _linksPaymentInitiation.self) &&
-        Objects.equals(this.status, _linksPaymentInitiation.status) &&
-        Objects.equals(this.scaStatus, _linksPaymentInitiation.scaStatus) &&
-        super.equals(o);
+    Objects.equals(this.scaOAuth, _linksPaymentInitiation.scaOAuth) &&
+    Objects.equals(this.confirmation, _linksPaymentInitiation.confirmation) &&
+    Objects.equals(this.startAuthorisation, _linksPaymentInitiation.startAuthorisation) &&
+    Objects.equals(this.startAuthorisationWithPsuIdentification, _linksPaymentInitiation.startAuthorisationWithPsuIdentification) &&
+    Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksPaymentInitiation.startAuthorisationWithPsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksPaymentInitiation.startAuthorisationWithEncryptedPsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithAuthenticationMethodSelection, _linksPaymentInitiation.startAuthorisationWithAuthenticationMethodSelection) &&
+    Objects.equals(this.startAuthorisationWithTransactionAuthorisation, _linksPaymentInitiation.startAuthorisationWithTransactionAuthorisation) &&
+    Objects.equals(this.self, _linksPaymentInitiation.self) &&
+    Objects.equals(this.status, _linksPaymentInitiation.status) &&
+    Objects.equals(this.scaStatus, _linksPaymentInitiation.scaStatus);
   }
 
   @Override
@@ -384,7 +389,7 @@ public class LinksPaymentInitiation extends HashMap<String, HrefType>  {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

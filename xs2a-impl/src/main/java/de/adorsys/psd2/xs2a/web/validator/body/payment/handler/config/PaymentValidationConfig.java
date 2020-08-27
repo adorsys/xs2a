@@ -47,4 +47,5 @@ public interface PaymentValidationConfig{
     ValidationObject getCreditorId();
     ValidationObject getDayOfExecution();
 
+    ValidationObject getRemittanceInformationStructured();
 }

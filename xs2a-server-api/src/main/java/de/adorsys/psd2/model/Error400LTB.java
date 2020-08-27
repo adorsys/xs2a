@@ -1,24 +1,24 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.Error400LTBAdditionalErrors;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 400 for Trusted Beneficiaries.
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 400 for Trusted Beneficiaries. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class Error400LTB   {
   @JsonProperty("type")
@@ -186,20 +186,19 @@ public class Error400LTB   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error400LTB error400LTB = (Error400LTB) o;
+}    Error400LTB error400LTB = (Error400LTB) o;
     return Objects.equals(this.type, error400LTB.type) &&
-        Objects.equals(this.title, error400LTB.title) &&
-        Objects.equals(this.detail, error400LTB.detail) &&
-        Objects.equals(this.code, error400LTB.code) &&
-        Objects.equals(this.additionalErrors, error400LTB.additionalErrors) &&
-        Objects.equals(this._links, error400LTB._links);
+    Objects.equals(this.title, error400LTB.title) &&
+    Objects.equals(this.detail, error400LTB.detail) &&
+    Objects.equals(this.code, error400LTB.code) &&
+    Objects.equals(this.additionalErrors, error400LTB.additionalErrors) &&
+    Objects.equals(this._links, error400LTB._links);
   }
 
   @Override
@@ -226,7 +225,7 @@ public class Error400LTB   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

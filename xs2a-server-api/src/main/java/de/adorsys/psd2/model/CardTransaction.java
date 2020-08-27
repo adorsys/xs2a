@@ -1,24 +1,25 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.Address;
+import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.ReportExchangeRateList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Card transaction information.
  */
 @ApiModel(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class CardTransaction   {
   @JsonProperty("cardTransactionId")
@@ -482,32 +483,31 @@ public class CardTransaction   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    CardTransaction cardTransaction = (CardTransaction) o;
+}    CardTransaction cardTransaction = (CardTransaction) o;
     return Objects.equals(this.cardTransactionId, cardTransaction.cardTransactionId) &&
-        Objects.equals(this.terminalId, cardTransaction.terminalId) &&
-        Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
-        Objects.equals(this.acceptorTransactionDateTime, cardTransaction.acceptorTransactionDateTime) &&
-        Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
-        Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
-        Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
-        Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
-        Objects.equals(this.markupFee, cardTransaction.markupFee) &&
-        Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
-        Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
-        Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
-        Objects.equals(this.cardAcceptorPhone, cardTransaction.cardAcceptorPhone) &&
-        Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
-        Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
-        Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
-        Objects.equals(this.invoiced, cardTransaction.invoiced) &&
-        Objects.equals(this.proprietaryBankTransactionCode, cardTransaction.proprietaryBankTransactionCode);
+    Objects.equals(this.terminalId, cardTransaction.terminalId) &&
+    Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
+    Objects.equals(this.acceptorTransactionDateTime, cardTransaction.acceptorTransactionDateTime) &&
+    Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
+    Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
+    Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
+    Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
+    Objects.equals(this.markupFee, cardTransaction.markupFee) &&
+    Objects.equals(this.markupFeePercentage, cardTransaction.markupFeePercentage) &&
+    Objects.equals(this.cardAcceptorId, cardTransaction.cardAcceptorId) &&
+    Objects.equals(this.cardAcceptorAddress, cardTransaction.cardAcceptorAddress) &&
+    Objects.equals(this.cardAcceptorPhone, cardTransaction.cardAcceptorPhone) &&
+    Objects.equals(this.merchantCategoryCode, cardTransaction.merchantCategoryCode) &&
+    Objects.equals(this.maskedPAN, cardTransaction.maskedPAN) &&
+    Objects.equals(this.transactionDetails, cardTransaction.transactionDetails) &&
+    Objects.equals(this.invoiced, cardTransaction.invoiced) &&
+    Objects.equals(this.proprietaryBankTransactionCode, cardTransaction.proprietaryBankTransactionCode);
   }
 
   @Override
@@ -546,7 +546,7 @@ public class CardTransaction   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

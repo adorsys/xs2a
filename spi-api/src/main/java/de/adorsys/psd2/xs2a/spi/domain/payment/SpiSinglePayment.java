@@ -51,8 +51,8 @@ public class SpiSinglePayment implements SpiPayment {
     private String ultimateDebtor;
     private String ultimateCreditor;
     private PurposeCode purposeCode;
-    private SpiRemittance remittanceInformationStructured;
-    private List<SpiRemittance> remittanceInformationStructuredArray;
+    private String remittanceInformationStructured;
+    private List<String> remittanceInformationStructuredArray;
     private OffsetDateTime creationTimestamp;
     private String contentType;
     private String debtorName;

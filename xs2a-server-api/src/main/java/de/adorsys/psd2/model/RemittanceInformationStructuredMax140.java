@@ -1,22 +1,19 @@
 package de.adorsys.psd2.model;
 
 import java.util.Objects;
-import de.adorsys.psd2.model.TransactionDetails;
 import io.swagger.annotations.ApiModel;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
 /**
- * Array of transaction details.
+ * Structured remittance information Max
  */
-@ApiModel(description = "Array of transaction details.")
+@ApiModel(description = "Structured remittance information Max ")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
-public class TransactionList extends ArrayList<TransactionDetails>  {
+public class RemittanceInformationStructuredMax140   {
 
   @Override
   public boolean equals(Object o) {
@@ -26,23 +23,19 @@ public class TransactionList extends ArrayList<TransactionDetails>  {
     if (o == null || getClass() != o.getClass()) {
       return false;
 }
-    if (!super.equals(o)) {
-    return false;
-    }
-
     return true;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode());
+    return Objects.hash();
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TransactionList {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("class RemittanceInformationStructuredMax140 {\n");
+
     sb.append("}");
     return sb.toString();
   }

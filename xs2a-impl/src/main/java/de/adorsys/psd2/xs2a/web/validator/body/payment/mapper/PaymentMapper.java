@@ -22,20 +22,16 @@ import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
-import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
@@ -46,13 +42,11 @@ public class PaymentMapper {
 
     private Xs2aObjectMapper xs2aObjectMapper;
     private PurposeCodeMapper purposeCodeMapper;
-    private RemittanceMapper remittanceMapper;
 
     @Autowired
-    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper, RemittanceMapper remittanceMapper) {
+    public PaymentMapper(Xs2aObjectMapper xs2aObjectMapper, PurposeCodeMapper purposeCodeMapper) {
         this.xs2aObjectMapper = xs2aObjectMapper;
         this.purposeCodeMapper = purposeCodeMapper;
-        this.remittanceMapper = remittanceMapper;
     }
 
     public SinglePayment mapToSinglePayment(Object body) {
@@ -87,8 +81,8 @@ public class PaymentMapper {
         payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
-        payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(paymentRequest.getRemittanceInformationStructured()));
-        payment.setRemittanceInformationStructuredArray(mapToRemittanceList(paymentRequest.getRemittanceInformationStructuredArray()));
+        payment.setRemittanceInformationStructured(paymentRequest.getRemittanceInformationStructured());
+        payment.setRemittanceInformationStructuredArray(paymentRequest.getRemittanceInformationStructuredArray());
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
 
@@ -116,8 +110,8 @@ public class PaymentMapper {
         payment.setUltimateDebtor(paymentRequest.getUltimateDebtor());
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
-        payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(paymentRequest.getRemittanceInformationStructured()));
-        payment.setRemittanceInformationStructuredArray(mapToRemittanceList(paymentRequest.getRemittanceInformationStructuredArray()));
+        payment.setRemittanceInformationStructured(paymentRequest.getRemittanceInformationStructured());
+        payment.setRemittanceInformationStructuredArray(paymentRequest.getRemittanceInformationStructuredArray());
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
 
@@ -126,16 +120,6 @@ public class PaymentMapper {
 
     private AccountReference mapToXs2aAccountReference(Object accountReference) {
         return xs2aObjectMapper.convertValue(accountReference, AccountReference.class);
-    }
-
-    private List<Remittance> mapToRemittanceList(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
-        if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
-            return Collections.emptyList();
-        }
-
-        return remittanceInformationStructuredArray.stream()
-                   .map(remittanceMapper::mapToRemittance)
-                   .collect(Collectors.toList());
     }
 
     private Optional<PisExecutionRule> mapToPisExecutionRule(ExecutionRule rule) {
@@ -218,8 +202,8 @@ public class PaymentMapper {
                        payment.setUltimateDebtor(p.getUltimateDebtor());
                        payment.setUltimateCreditor(p.getUltimateCreditor());
                        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
-                       payment.setRemittanceInformationStructured(remittanceMapper.mapToRemittance(p.getRemittanceInformationStructured()));
-                       payment.setRemittanceInformationStructuredArray(mapToRemittanceList(p.getRemittanceInformationStructuredArray()));
+                       payment.setRemittanceInformationStructured(p.getRemittanceInformationStructured());
+                       payment.setRemittanceInformationStructuredArray(p.getRemittanceInformationStructuredArray());
                        payment.setInstructionIdentification(p.getInstructionIdentification());
                        payment.setDebtorName(p.getDebtorName());
 

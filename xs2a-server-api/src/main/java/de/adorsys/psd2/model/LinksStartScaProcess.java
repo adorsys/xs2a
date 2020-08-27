@@ -1,20 +1,23 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.HrefType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Map;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the  response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):  - &#39;scaRedirect&#39;:    In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to    redirect the PSU browser. - &#39;scaOAuth&#39;:    In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. * &#39;confirmation&#39;:    Might be added by the ASPSP if either the \&quot;scaRedirect\&quot; or \&quot;scaOAuth\&quot; hyperlink is returned    in the same response message.    This hyperlink defines the URL to the resource which needs to be updated with      * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or     * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server. - &#39;updatePsuIdentification&#39;:    The link to the authorisation or cancellation authorisation sub-resource,    where PSU identification data needs to be uploaded. - &#39;startAuthorisationWithPsuAuthentication&#39;:   The link to the authorisation or cancellation authorisation sub-resource,    where PSU authentication data needs to be uploaded. - &#39;startAuthorisationWithEncryptedPsuAuthentication&#39;:     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on      application layer in uploading. - &#39;selectAuthenticationMethod&#39;:   The link to the authorisation or cancellation authorisation sub-resource,    where the selected authentication method needs to be uploaded.    This link is contained under exactly the same conditions as the data element &#39;scaMethods&#39;. - &#39;authoriseTransaction&#39;:   The link to the authorisation or cancellation authorisation sub-resource,    where the authorisation data has to be uploaded, e.g. the TOP received by SMS.  - &#39;scaStatus&#39;:    The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
  */
 @ApiModel(description = "A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the  response depend on the dynamical decisions of the ASPSP when processing the request.  **Remark:** All links can be relative or full links, to be decided by the ASPSP.  Type of links admitted in this response, (further links might be added for ASPSP defined  extensions):  - 'scaRedirect':    In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to    redirect the PSU browser. - 'scaOAuth':    In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification. * 'confirmation':    Might be added by the ASPSP if either the \"scaRedirect\" or \"scaOAuth\" hyperlink is returned    in the same response message.    This hyperlink defines the URL to the resource which needs to be updated with      * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or     * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server. - 'updatePsuIdentification':    The link to the authorisation or cancellation authorisation sub-resource,    where PSU identification data needs to be uploaded. - 'startAuthorisationWithPsuAuthentication':   The link to the authorisation or cancellation authorisation sub-resource,    where PSU authentication data needs to be uploaded. - 'startAuthorisationWithEncryptedPsuAuthentication':     Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on      application layer in uploading. - 'selectAuthenticationMethod':   The link to the authorisation or cancellation authorisation sub-resource,    where the selected authentication method needs to be uploaded.    This link is contained under exactly the same conditions as the data element 'scaMethods'. - 'authoriseTransaction':   The link to the authorisation or cancellation authorisation sub-resource,    where the authorisation data has to be uploaded, e.g. the TOP received by SMS.  - 'scaStatus':    The link to retrieve the scaStatus of the corresponding authorisation sub-resource.  ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class LinksStartScaProcess extends HashMap<String, HrefType>  {
   @JsonProperty("scaRedirect")
@@ -253,24 +256,26 @@ public class LinksStartScaProcess extends HashMap<String, HrefType>  {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
+}
+    if (!super.equals(o)) {
+    return false;
     }
     LinksStartScaProcess _linksStartScaProcess = (LinksStartScaProcess) o;
     return Objects.equals(this.scaRedirect, _linksStartScaProcess.scaRedirect) &&
-        Objects.equals(this.scaOAuth, _linksStartScaProcess.scaOAuth) &&
-        Objects.equals(this.confirmation, _linksStartScaProcess.confirmation) &&
-        Objects.equals(this.updatePsuIdentification, _linksStartScaProcess.updatePsuIdentification) &&
-        Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksStartScaProcess.startAuthorisationWithPsuAuthentication) &&
-        Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksStartScaProcess.startAuthorisationWithEncryptedPsuAuthentication) &&
-        Objects.equals(this.selectAuthenticationMethod, _linksStartScaProcess.selectAuthenticationMethod) &&
-        Objects.equals(this.authoriseTransaction, _linksStartScaProcess.authoriseTransaction) &&
-        Objects.equals(this.scaStatus, _linksStartScaProcess.scaStatus) &&
-        super.equals(o);
+    Objects.equals(this.scaOAuth, _linksStartScaProcess.scaOAuth) &&
+    Objects.equals(this.confirmation, _linksStartScaProcess.confirmation) &&
+    Objects.equals(this.updatePsuIdentification, _linksStartScaProcess.updatePsuIdentification) &&
+    Objects.equals(this.startAuthorisationWithPsuAuthentication, _linksStartScaProcess.startAuthorisationWithPsuAuthentication) &&
+    Objects.equals(this.startAuthorisationWithEncryptedPsuAuthentication, _linksStartScaProcess.startAuthorisationWithEncryptedPsuAuthentication) &&
+    Objects.equals(this.selectAuthenticationMethod, _linksStartScaProcess.selectAuthenticationMethod) &&
+    Objects.equals(this.authoriseTransaction, _linksStartScaProcess.authoriseTransaction) &&
+    Objects.equals(this.scaStatus, _linksStartScaProcess.scaStatus);
   }
 
   @Override
@@ -300,7 +305,7 @@ public class LinksStartScaProcess extends HashMap<String, HrefType>  {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

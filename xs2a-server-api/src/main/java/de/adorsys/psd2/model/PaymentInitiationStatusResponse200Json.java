@@ -1,21 +1,21 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * Body of the response for a successful payment initiation status request in case of an JSON based endpoint.
  */
 @ApiModel(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class PaymentInitiationStatusResponse200Json   {
   @JsonProperty("transactionStatus")
@@ -97,17 +97,16 @@ public class PaymentInitiationStatusResponse200Json   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PaymentInitiationStatusResponse200Json paymentInitiationStatusResponse200Json = (PaymentInitiationStatusResponse200Json) o;
+}    PaymentInitiationStatusResponse200Json paymentInitiationStatusResponse200Json = (PaymentInitiationStatusResponse200Json) o;
     return Objects.equals(this.transactionStatus, paymentInitiationStatusResponse200Json.transactionStatus) &&
-        Objects.equals(this.fundsAvailable, paymentInitiationStatusResponse200Json.fundsAvailable) &&
-        Objects.equals(this.psuMessage, paymentInitiationStatusResponse200Json.psuMessage);
+    Objects.equals(this.fundsAvailable, paymentInitiationStatusResponse200Json.fundsAvailable) &&
+    Objects.equals(this.psuMessage, paymentInitiationStatusResponse200Json.psuMessage);
   }
 
   @Override
@@ -131,7 +130,7 @@ public class PaymentInitiationStatusResponse200Json   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

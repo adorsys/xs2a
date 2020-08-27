@@ -1,20 +1,24 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.BalanceList;
+import de.adorsys.psd2.model.CardAccountReport;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters.
  */
 @ApiModel(description = "Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class CardAccountsTransactionsResponse200   {
   @JsonProperty("cardAccount")
@@ -123,18 +127,17 @@ public class CardAccountsTransactionsResponse200   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    CardAccountsTransactionsResponse200 cardAccountsTransactionsResponse200 = (CardAccountsTransactionsResponse200) o;
+}    CardAccountsTransactionsResponse200 cardAccountsTransactionsResponse200 = (CardAccountsTransactionsResponse200) o;
     return Objects.equals(this.cardAccount, cardAccountsTransactionsResponse200.cardAccount) &&
-        Objects.equals(this.cardTransactions, cardAccountsTransactionsResponse200.cardTransactions) &&
-        Objects.equals(this.balances, cardAccountsTransactionsResponse200.balances) &&
-        Objects.equals(this._links, cardAccountsTransactionsResponse200._links);
+    Objects.equals(this.cardTransactions, cardAccountsTransactionsResponse200.cardTransactions) &&
+    Objects.equals(this.balances, cardAccountsTransactionsResponse200.balances) &&
+    Objects.equals(this._links, cardAccountsTransactionsResponse200._links);
   }
 
   @Override
@@ -159,7 +162,7 @@ public class CardAccountsTransactionsResponse200   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

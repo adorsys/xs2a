@@ -1,24 +1,24 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.Error406PISAdditionalErrors;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 406 for PIS.
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 406 for PIS. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class Error406PIS   {
   @JsonProperty("type")
@@ -186,20 +186,19 @@ public class Error406PIS   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error406PIS error406PIS = (Error406PIS) o;
+}    Error406PIS error406PIS = (Error406PIS) o;
     return Objects.equals(this.type, error406PIS.type) &&
-        Objects.equals(this.title, error406PIS.title) &&
-        Objects.equals(this.detail, error406PIS.detail) &&
-        Objects.equals(this.code, error406PIS.code) &&
-        Objects.equals(this.additionalErrors, error406PIS.additionalErrors) &&
-        Objects.equals(this._links, error406PIS._links);
+    Objects.equals(this.title, error406PIS.title) &&
+    Objects.equals(this.detail, error406PIS.detail) &&
+    Objects.equals(this.code, error406PIS.code) &&
+    Objects.equals(this.additionalErrors, error406PIS.additionalErrors) &&
+    Objects.equals(this._links, error406PIS._links);
   }
 
   @Override
@@ -226,7 +225,7 @@ public class Error406PIS   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

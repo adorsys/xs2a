@@ -1,19 +1,20 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.TppMessageCategory;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * TppMessage401AIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class TppMessage401AIS   {
   @JsonProperty("category")
@@ -121,18 +122,17 @@ public class TppMessage401AIS   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    TppMessage401AIS tppMessage401AIS = (TppMessage401AIS) o;
+}    TppMessage401AIS tppMessage401AIS = (TppMessage401AIS) o;
     return Objects.equals(this.category, tppMessage401AIS.category) &&
-        Objects.equals(this.code, tppMessage401AIS.code) &&
-        Objects.equals(this.path, tppMessage401AIS.path) &&
-        Objects.equals(this.text, tppMessage401AIS.text);
+    Objects.equals(this.code, tppMessage401AIS.code) &&
+    Objects.equals(this.path, tppMessage401AIS.path) &&
+    Objects.equals(this.text, tppMessage401AIS.text);
   }
 
   @Override
@@ -157,7 +157,7 @@ public class TppMessage401AIS   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

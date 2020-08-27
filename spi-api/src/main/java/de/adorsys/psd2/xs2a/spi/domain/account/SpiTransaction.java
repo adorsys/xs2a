@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +46,8 @@ public class SpiTransaction {
     private final String ultimateDebtor;
     private final String remittanceInformationUnstructured;
     private final List<String> remittanceInformationUnstructuredArray;
-    private final Remittance remittanceInformationStructured;
-    private final List<Remittance> remittanceInformationStructuredArray;
+    private final String remittanceInformationStructured;
+    private final List<String> remittanceInformationStructuredArray;
     private final String purposeCode;
     private final String bankTransactionCodeCode;
     private final String proprietaryBankTransactionCode;

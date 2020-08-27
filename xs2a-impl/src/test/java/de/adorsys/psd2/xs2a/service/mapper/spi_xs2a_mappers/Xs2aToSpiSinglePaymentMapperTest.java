@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
@@ -31,7 +30,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
-import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,11 +79,10 @@ class Xs2aToSpiSinglePaymentMapperTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
                                                                                     LocalTime.NOON,
                                                                                     ZoneOffset.UTC);
-    private static final JsonReader jsonReader = new JsonReader();
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final Remittance REMITTANCE = jsonReader.getObjectFromFile("json/service/mapper/remittance.json", Remittance.class);
+    private static final String REMITTANCE = "reference";
 
     @InjectMocks
     private Xs2aToSpiSinglePaymentMapper xs2aToSpiSinglePaymentMapper;
@@ -142,8 +139,8 @@ class Xs2aToSpiSinglePaymentMapperTest {
         assertEquals(ULTIMATE_DEBTOR, spiSinglePayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, spiSinglePayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiSinglePayment.getPurposeCode());
-        assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiSinglePayment.getRemittanceInformationStructured());
-        assertEquals(Collections.singletonList(remittanceMapper.mapToSpiRemittance(REMITTANCE)), spiSinglePayment.getRemittanceInformationStructuredArray());
+        assertEquals(REMITTANCE, spiSinglePayment.getRemittanceInformationStructured());
+        assertEquals(Collections.singletonList(REMITTANCE), spiSinglePayment.getRemittanceInformationStructuredArray());
         assertEquals(singlePayment.getCreationTimestamp(), spiSinglePayment.getCreationTimestamp());
         assertEquals(singlePayment.getContentType(), spiSinglePayment.getContentType());
     }

@@ -38,7 +38,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-03-16T10:36:37.343418+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-26T18:08:11.227757+03:00[Europe/Kiev]")
 
 @Api(value = "ConfirmationOfFundsServicePiis", description = "the ConfirmationOfFundsServicePiis API")
 public interface FundsConfirmationApi {
@@ -57,7 +57,7 @@ public interface FundsConfirmationApi {
         return getRequest().map(r -> r.getHeader("Accept"));
     }
 
-    @ApiOperation(value = "Confirmation of funds request", nickname = "checkAvailabilityOfFunds", notes = "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively. If the related extended services are used a conditional Consent-ID is contained in the header. This field is contained but commented out in this specification.", response = InlineResponse2003.class, tags = {})
+    @ApiOperation(value = "Confirmation of funds request", nickname = "checkAvailabilityOfFunds", notes = "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively. If the related extended services are used a conditional Consent-ID is contained in the header. This field is contained but commented out in this specification.", response = InlineResponse2003.class, tags={  })
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = InlineResponse2003.class),
         @ApiResponse(code = 400, message = "Bad Request", response = Error400NGAIS.class),
@@ -71,18 +71,18 @@ public interface FundsConfirmationApi {
         @ApiResponse(code = 415, message = "Unsupported Media Type"),
         @ApiResponse(code = 429, message = "Too Many Requests"),
         @ApiResponse(code = 500, message = "Internal Server Error"),
-        @ApiResponse(code = 503, message = "Service Unavailable")})
+        @ApiResponse(code = 503, message = "Service Unavailable") })
     @RequestMapping(value = "/v1/funds-confirmations",
-        produces = {"application/json", "application/problem+json"},
-        consumes = {"application/json"},
+        produces = { "application/json", "application/problem+json" },
+        consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. ", required = true) @Valid @RequestBody ConfirmationOfFunds body, @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID, @ApiParam(value = "ID of the corresponding consent object as returned by confirmation of funds consent request. ") @RequestHeader(value = "Consent-ID", required = false) String consentID, @ApiParam(value = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol, facilitated by the TPP. ") @RequestHeader(value = "Authorization", required = false) String authorization, @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest, @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature, @ApiParam(value = "The certificate used for signing the request, in base64 encoding. Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
+    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. ", required = true) @Valid @RequestBody ConfirmationOfFunds body, @ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party.", required = true) @RequestHeader(value = "X-Request-ID", required = true) UUID xRequestID, @ApiParam(value = "ID of the corresponding consent object as returned by confirmation of funds consent request. ") @RequestHeader(value = "Consent-ID", required = false) String consentID, @ApiParam(value = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. ") @RequestHeader(value = "Authorization", required = false) String authorization, @ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request.") @RequestHeader(value = "Digest", required = false) String digest, @ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. ") @RequestHeader(value = "Signature", required = false) String signature, @ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. ") @RequestHeader(value = "TPP-Signature-Certificate", required = false) byte[] tpPSignatureCertificate) {
         return checkAvailabilityOfFunds(body, xRequestID, consentID, authorization, digest, signature, tpPSignatureCertificate);
     }
 
     // Override this method
     default ResponseEntity<InlineResponse2003> checkAvailabilityOfFunds(ConfirmationOfFunds body, UUID xRequestID, String consentID, String authorization, String digest, String signature, byte[] tpPSignatureCertificate) {
-        if (getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
+        if(getObjectMapper().isPresent() && getAcceptHeader().isPresent()) {
         } else {
             log.warn("ObjectMapper or HttpServletRequest not configured in default ConfirmationOfFundsServicePiisApi interface so no example is generated");
         }

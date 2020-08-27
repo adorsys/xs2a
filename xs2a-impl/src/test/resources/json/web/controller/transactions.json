@@ -12,9 +12,7 @@
     "iban": "DE371234599997",
     "currency": "EUR"
   },
-  "remittanceInformationStructured": {
-    "reference": "Ref Number Merchant"
-  },
+  "remittanceInformationStructured": "Ref Number Merchant",
   "remittanceInformationUnstructured": "Ref Number Merchant",
   "purposeCode": "BKDF",
   "bankTransactionCodeCode": {
