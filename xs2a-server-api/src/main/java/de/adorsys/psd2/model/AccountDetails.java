@@ -1,25 +1,24 @@
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.adorsys.psd2.model.AccountStatus;
+import de.adorsys.psd2.model.BalanceList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \&quot;currency\&quot; is set to \&quot;XXX\&quot;.
  */
 @ApiModel(description = "The ASPSP shall give at least one of the account reference identifiers:   - iban   - bban   - pan   - maskedPan   - msisdn If the account is a multicurrency account currency code in \"currency\" is set to \"XXX\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class AccountDetails   {
   @JsonProperty("resourceId")
@@ -484,31 +483,30 @@ public class AccountDetails   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountDetails accountDetails = (AccountDetails) o;
+}    AccountDetails accountDetails = (AccountDetails) o;
     return Objects.equals(this.resourceId, accountDetails.resourceId) &&
-        Objects.equals(this.iban, accountDetails.iban) &&
-        Objects.equals(this.bban, accountDetails.bban) &&
-        Objects.equals(this.msisdn, accountDetails.msisdn) &&
-        Objects.equals(this.currency, accountDetails.currency) &&
-        Objects.equals(this.name, accountDetails.name) &&
-        Objects.equals(this.displayName, accountDetails.displayName) &&
-        Objects.equals(this.product, accountDetails.product) &&
-        Objects.equals(this.cashAccountType, accountDetails.cashAccountType) &&
-        Objects.equals(this.status, accountDetails.status) &&
-        Objects.equals(this.bic, accountDetails.bic) &&
-        Objects.equals(this.linkedAccounts, accountDetails.linkedAccounts) &&
-        Objects.equals(this.usage, accountDetails.usage) &&
-        Objects.equals(this.details, accountDetails.details) &&
-        Objects.equals(this.balances, accountDetails.balances) &&
-        Objects.equals(this._links, accountDetails._links) &&
-        Objects.equals(this.ownerName, accountDetails.ownerName);
+    Objects.equals(this.iban, accountDetails.iban) &&
+    Objects.equals(this.bban, accountDetails.bban) &&
+    Objects.equals(this.msisdn, accountDetails.msisdn) &&
+    Objects.equals(this.currency, accountDetails.currency) &&
+    Objects.equals(this.name, accountDetails.name) &&
+    Objects.equals(this.displayName, accountDetails.displayName) &&
+    Objects.equals(this.product, accountDetails.product) &&
+    Objects.equals(this.cashAccountType, accountDetails.cashAccountType) &&
+    Objects.equals(this.status, accountDetails.status) &&
+    Objects.equals(this.bic, accountDetails.bic) &&
+    Objects.equals(this.linkedAccounts, accountDetails.linkedAccounts) &&
+    Objects.equals(this.usage, accountDetails.usage) &&
+    Objects.equals(this.details, accountDetails.details) &&
+    Objects.equals(this.balances, accountDetails.balances) &&
+    Objects.equals(this._links, accountDetails._links) &&
+    Objects.equals(this.ownerName, accountDetails.ownerName);
   }
 
   @Override
@@ -546,7 +544,7 @@ public class AccountDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

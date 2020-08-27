@@ -1,23 +1,23 @@
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * It is contained in addition to the data element &#39;chosenScaMethod&#39; if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the &#39;startAuthorisationWithPsuAuthentication&#39; link.
  */
 @ApiModel(description = "It is contained in addition to the data element 'chosenScaMethod' if challenge data is needed for SCA. In rare cases this attribute is also used in the context of the 'startAuthorisationWithPsuAuthentication' link. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class ChallengeData   {
   @JsonProperty("image")
@@ -212,20 +212,19 @@ public class ChallengeData   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ChallengeData challengeData = (ChallengeData) o;
+}    ChallengeData challengeData = (ChallengeData) o;
     return Objects.equals(this.image, challengeData.image) &&
-        Objects.equals(this.data, challengeData.data) &&
-        Objects.equals(this.imageLink, challengeData.imageLink) &&
-        Objects.equals(this.otpMaxLength, challengeData.otpMaxLength) &&
-        Objects.equals(this.otpFormat, challengeData.otpFormat) &&
-        Objects.equals(this.additionalInformation, challengeData.additionalInformation);
+    Objects.equals(this.data, challengeData.data) &&
+    Objects.equals(this.imageLink, challengeData.imageLink) &&
+    Objects.equals(this.otpMaxLength, challengeData.otpMaxLength) &&
+    Objects.equals(this.otpFormat, challengeData.otpFormat) &&
+    Objects.equals(this.additionalInformation, challengeData.additionalInformation);
   }
 
   @Override
@@ -252,7 +251,7 @@ public class ChallengeData   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

@@ -16,15 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
-import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -33,7 +28,6 @@ public class Xs2aToSpiSinglePaymentMapper {
     private final Xs2aToSpiAddressMapper xs2aToSpiAddressMapper;
     private final Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
-    private final RemittanceMapper remittanceMapper;
 
     public SpiSinglePayment mapToSpiSinglePayment(SinglePayment payment, String paymentProduct) {
         SpiSinglePayment single = new SpiSinglePayment(paymentProduct);
@@ -57,12 +51,8 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setUltimateDebtor(payment.getUltimateDebtor());
         single.setUltimateCreditor(payment.getUltimateCreditor());
         single.setPurposeCode(payment.getPurposeCode());
-        single.setRemittanceInformationStructured(remittanceMapper.mapToSpiRemittance(payment.getRemittanceInformationStructured()));
-
-        List<Remittance> remittanceInformationStructuredArray = payment.getRemittanceInformationStructuredArray();
-        if (remittanceInformationStructuredArray != null) {
-            single.setRemittanceInformationStructuredArray(remittanceInformationStructuredArray.stream().map(remittanceMapper::mapToSpiRemittance).collect(Collectors.toList()));
-        }
+        single.setRemittanceInformationStructured(payment.getRemittanceInformationStructured());
+        single.setRemittanceInformationStructuredArray(payment.getRemittanceInformationStructuredArray());
         single.setCreationTimestamp(payment.getCreationTimestamp());
         single.setContentType(payment.getContentType());
         single.setDebtorName(payment.getDebtorName());

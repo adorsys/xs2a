@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiRemittance;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapperImpl;
@@ -129,11 +128,7 @@ class SpiToXs2aBulkPaymentMapperTest {
         payment.setEndToEndIdentification("RI-123456789");
         payment.setInstructedAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal("1000.00")));
         payment.setRemittanceInformationUnstructured("Ref. Number TELEKOM-1222");
-        SpiRemittance remittanceInformationStructured = new SpiRemittance();
-        remittanceInformationStructured.setReference("reference");
-        remittanceInformationStructured.setReferenceType("referenceType");
-        remittanceInformationStructured.setReferenceIssuer("referenceIssuer");
-        payment.setRemittanceInformationStructured(remittanceInformationStructured);
+        payment.setRemittanceInformationStructured("Ref Number Merchant");
         payment.setRequestedExecutionDate(OFFSET_DATE_TIME.toLocalDate());
         payment.setRequestedExecutionTime(OFFSET_DATE_TIME);
         payment.setPsuDataList(Collections.singletonList(SpiPsuData.builder()

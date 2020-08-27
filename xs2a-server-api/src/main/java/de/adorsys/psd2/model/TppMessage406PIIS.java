@@ -1,19 +1,20 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.TppMessageCategory;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * TppMessage406PIIS
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-12T11:00:16.745364+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class TppMessage406PIIS   {
   @JsonProperty("category")
@@ -127,12 +128,11 @@ public class TppMessage406PIIS   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    TppMessage406PIIS tppMessage406PIIS = (TppMessage406PIIS) o;
+}    TppMessage406PIIS tppMessage406PIIS = (TppMessage406PIIS) o;
     return Objects.equals(this.category, tppMessage406PIIS.category) &&
-        Objects.equals(this.code, tppMessage406PIIS.code) &&
-        Objects.equals(this.path, tppMessage406PIIS.path) &&
-        Objects.equals(this.text, tppMessage406PIIS.text);
+    Objects.equals(this.code, tppMessage406PIIS.code) &&
+    Objects.equals(this.path, tppMessage406PIIS.path) &&
+    Objects.equals(this.text, tppMessage406PIIS.text);
   }
 
   @Override

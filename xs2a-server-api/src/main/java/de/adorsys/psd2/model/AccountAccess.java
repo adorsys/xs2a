@@ -1,23 +1,25 @@
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.AdditionalInformationAccess;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Requested access services for a consent.
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -321,21 +323,20 @@ public class AccountAccess   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountAccess accountAccess = (AccountAccess) o;
+}    AccountAccess accountAccess = (AccountAccess) o;
     return Objects.equals(this.accounts, accountAccess.accounts) &&
-        Objects.equals(this.balances, accountAccess.balances) &&
-        Objects.equals(this.transactions, accountAccess.transactions) &&
-        Objects.equals(this.additionalInformation, accountAccess.additionalInformation) &&
-        Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
-        Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
-        Objects.equals(this.allPsd2, accountAccess.allPsd2);
+    Objects.equals(this.balances, accountAccess.balances) &&
+    Objects.equals(this.transactions, accountAccess.transactions) &&
+    Objects.equals(this.additionalInformation, accountAccess.additionalInformation) &&
+    Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
+    Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
+    Objects.equals(this.allPsd2, accountAccess.allPsd2);
   }
 
   @Override
@@ -363,7 +364,7 @@ public class AccountAccess   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

@@ -1,24 +1,28 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.ChallengeData;
+import de.adorsys.psd2.model.ChosenScaMethod;
+import de.adorsys.psd2.model.ConsentStatus;
+import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.TppMessage2XX;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Body of the JSON response for a successful consent request.
  */
 @ApiModel(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class ConsentsResponse201   {
   @JsonProperty("consentStatus")
@@ -241,22 +245,21 @@ public class ConsentsResponse201   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
+}    ConsentsResponse201 consentsResponse201 = (ConsentsResponse201) o;
     return Objects.equals(this.consentStatus, consentsResponse201.consentStatus) &&
-        Objects.equals(this.consentId, consentsResponse201.consentId) &&
-        Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
-        Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
-        Objects.equals(this._links, consentsResponse201._links) &&
-        Objects.equals(this.psuMessage, consentsResponse201.psuMessage) &&
-        Objects.equals(this.tppMessages, consentsResponse201.tppMessages);
+    Objects.equals(this.consentId, consentsResponse201.consentId) &&
+    Objects.equals(this.scaMethods, consentsResponse201.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, consentsResponse201.chosenScaMethod) &&
+    Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
+    Objects.equals(this._links, consentsResponse201._links) &&
+    Objects.equals(this.psuMessage, consentsResponse201.psuMessage) &&
+    Objects.equals(this.tppMessages, consentsResponse201.tppMessages);
   }
 
   @Override
@@ -285,7 +288,7 @@ public class ConsentsResponse201   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

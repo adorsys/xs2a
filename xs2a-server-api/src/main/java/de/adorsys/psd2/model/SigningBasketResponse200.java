@@ -1,20 +1,24 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.ConsentIdList;
+import de.adorsys.psd2.model.LinksSigningBasket;
+import de.adorsys.psd2.model.PaymentIdList;
+import de.adorsys.psd2.model.TransactionStatusSBS;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * Body of the JSON response for a successful get signing basket request.    * &#39;payments&#39;: payment initiations which shall be authorised through this signing basket.   * &#39;consents&#39;: consent objects which shall be authorised through this signing basket.   * &#39;transactionStatus&#39;: Only the codes RCVD, ACTC, RJCT are used.   * &#39;_links&#39;: The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken.
  */
 @ApiModel(description = "Body of the JSON response for a successful get signing basket request.    * 'payments': payment initiations which shall be authorised through this signing basket.   * 'consents': consent objects which shall be authorised through this signing basket.   * 'transactionStatus': Only the codes RCVD, ACTC, RJCT are used.   * '_links': The ASPSP might integrate hyperlinks to indicate next (authorisation) steps to be taken. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class SigningBasketResponse200   {
   @JsonProperty("payments")
@@ -124,18 +128,17 @@ public class SigningBasketResponse200   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    SigningBasketResponse200 signingBasketResponse200 = (SigningBasketResponse200) o;
+}    SigningBasketResponse200 signingBasketResponse200 = (SigningBasketResponse200) o;
     return Objects.equals(this.payments, signingBasketResponse200.payments) &&
-        Objects.equals(this.consents, signingBasketResponse200.consents) &&
-        Objects.equals(this.transactionStatus, signingBasketResponse200.transactionStatus) &&
-        Objects.equals(this._links, signingBasketResponse200._links);
+    Objects.equals(this.consents, signingBasketResponse200.consents) &&
+    Objects.equals(this.transactionStatus, signingBasketResponse200.transactionStatus) &&
+    Objects.equals(this._links, signingBasketResponse200._links);
   }
 
   @Override
@@ -160,7 +163,7 @@ public class SigningBasketResponse200   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

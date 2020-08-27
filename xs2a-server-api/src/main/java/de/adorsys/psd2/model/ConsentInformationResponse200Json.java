@@ -1,22 +1,24 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.AccountAccess;
+import de.adorsys.psd2.model.ConsentStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Body of the JSON response for a successfull get consent request.
  */
 @ApiModel(description = "Body of the JSON response for a successfull get consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class ConsentInformationResponse200Json   {
   @JsonProperty("access")
@@ -207,21 +209,20 @@ public class ConsentInformationResponse200Json   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
+}    ConsentInformationResponse200Json consentInformationResponse200Json = (ConsentInformationResponse200Json) o;
     return Objects.equals(this.access, consentInformationResponse200Json.access) &&
-        Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
-        Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
-        Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
-        Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
-        Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
-        Objects.equals(this._links, consentInformationResponse200Json._links);
+    Objects.equals(this.recurringIndicator, consentInformationResponse200Json.recurringIndicator) &&
+    Objects.equals(this.validUntil, consentInformationResponse200Json.validUntil) &&
+    Objects.equals(this.frequencyPerDay, consentInformationResponse200Json.frequencyPerDay) &&
+    Objects.equals(this.lastActionDate, consentInformationResponse200Json.lastActionDate) &&
+    Objects.equals(this.consentStatus, consentInformationResponse200Json.consentStatus) &&
+    Objects.equals(this._links, consentInformationResponse200Json._links);
   }
 
   @Override
@@ -249,7 +250,7 @@ public class ConsentInformationResponse200Json   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

@@ -20,10 +20,10 @@ import de.adorsys.psd2.xs2a.core.pis.*;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
-import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
+import de.adorsys.psd2.xs2a.service.payment.support.mapper.RawToXs2aPaymentMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.*;
@@ -227,11 +227,7 @@ class SpiPaymentMapperTest {
         bulkPaymentPart.setUltimateDebtor("ultimateDebtor");
         bulkPaymentPart.setUltimateCreditor("ultimateCreditor");
         bulkPaymentPart.setPurposeCode(PurposeCode.CDQC);
-        SpiRemittance spiRemittance = new SpiRemittance();
-        spiRemittance.setReference("reference");
-        spiRemittance.setReferenceType("referenceType");
-        spiRemittance.setReferenceIssuer("referenceIssuer");
-        bulkPaymentPart.setRemittanceInformationStructured(spiRemittance);
+        bulkPaymentPart.setRemittanceInformationStructured("reference");
 
         bulkPayment.setPayments(Collections.singletonList(bulkPaymentPart));
         return bulkPayment;

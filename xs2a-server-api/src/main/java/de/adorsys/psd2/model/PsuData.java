@@ -1,18 +1,20 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
- * PSU data for update PSU authentication.
+ * PSU Data for Update PSU authentication.
  */
-@ApiModel(description = "PSU data for update PSU authentication.")
+@ApiModel(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class PsuData   {
   @JsonProperty("password")
@@ -117,18 +119,17 @@ public class PsuData   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    PsuData psuData = (PsuData) o;
+}    PsuData psuData = (PsuData) o;
     return Objects.equals(this.password, psuData.password) &&
-        Objects.equals(this.encryptedPassword, psuData.encryptedPassword) &&
-        Objects.equals(this.additionalPassword, psuData.additionalPassword) &&
-        Objects.equals(this.additionalEncryptedPassword, psuData.additionalEncryptedPassword);
+    Objects.equals(this.encryptedPassword, psuData.encryptedPassword) &&
+    Objects.equals(this.additionalPassword, psuData.additionalPassword) &&
+    Objects.equals(this.additionalEncryptedPassword, psuData.additionalEncryptedPassword);
   }
 
   @Override
@@ -153,7 +154,7 @@ public class PsuData   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

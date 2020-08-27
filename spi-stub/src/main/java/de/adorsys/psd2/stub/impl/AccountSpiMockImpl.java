@@ -20,7 +20,6 @@ import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.pis.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.*;
@@ -48,6 +47,7 @@ public class AccountSpiMockImpl implements AccountSpi {
     private static final String TRUSTED_BENEFICIARIES_ID = "874aa308-78af-11ea-bc55-0242ac130003";
     private static final String IBAN = "DE52500105173911841934";
     private static final String NAME = "Müller";
+    private static final String REMITTANCE = "PMNT-ICDT-STDO";
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -166,12 +166,11 @@ public class AccountSpiMockImpl implements AccountSpi {
     }
 
     private SpiTransaction buildSpiTransactionById(String transactionId) {
-        Remittance remittanceInformationStructured = buildRemittance();
         return new SpiTransaction(transactionId, "", "", "", "", "aspsp", LocalDate.of(2019, Month.JANUARY, 4),
                                   LocalDate.of(2019, Month.JANUARY, 4), new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)), Collections.emptyList(),
                                   NAME, buildSpiAccountReference(), NAME, NAME, NAME, buildSpiAccountReference(),
                                   NAME, NAME, "", Collections.singletonList("remittance information unstructured"),
-                                  remittanceInformationStructured, Collections.singletonList(remittanceInformationStructured), "", "",
+                                  REMITTANCE, Collections.singletonList(REMITTANCE), "", "",
                                   "some additional information", null, null, buildSpiAccountBalance());
     }
 
@@ -182,21 +181,14 @@ public class AccountSpiMockImpl implements AccountSpi {
                                                                                    FrequencyCode.MONTHLY, null, null, PisDayOfExecution._24, null);
 
         SpiAdditionalInformationStructured additionalInformationStructured = new SpiAdditionalInformationStructured(standingOrderDetails);
-        Remittance remittanceInformationStructured = buildRemittance();
         return new SpiTransaction(null, null, null, null, null,
                                   null, null, null, null, null,
                                   "John Miles", buildSpiAccountReference(), null, null,
                                   null, null, null,
                                   "", null, null,
-                                  remittanceInformationStructured, Collections.singletonList(remittanceInformationStructured),
+                                  REMITTANCE, Collections.singletonList(REMITTANCE),
                                   null, null, null,
                                   null, additionalInformationStructured, buildSpiAccountBalance());
-    }
-
-    private Remittance buildRemittance() {
-        Remittance remittance = new Remittance();
-        remittance.setReference("PMNT-ICDT-STDO");
-        return remittance;
     }
 
     private SpiAccountReference buildSpiAccountReference() {

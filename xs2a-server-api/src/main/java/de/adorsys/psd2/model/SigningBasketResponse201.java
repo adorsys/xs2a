@@ -1,23 +1,28 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.ChallengeData;
+import de.adorsys.psd2.model.ChosenScaMethod;
+import de.adorsys.psd2.model.LinksSigningBasket;
+import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.TppMessage2XX;
+import de.adorsys.psd2.model.TransactionStatusSBS;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Body of the JSON response for a successful create signing basket request.
  */
 @ApiModel(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class SigningBasketResponse201   {
   @JsonProperty("transactionStatus")
@@ -240,22 +245,21 @@ public class SigningBasketResponse201   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    SigningBasketResponse201 signingBasketResponse201 = (SigningBasketResponse201) o;
+}    SigningBasketResponse201 signingBasketResponse201 = (SigningBasketResponse201) o;
     return Objects.equals(this.transactionStatus, signingBasketResponse201.transactionStatus) &&
-        Objects.equals(this.basketId, signingBasketResponse201.basketId) &&
-        Objects.equals(this.scaMethods, signingBasketResponse201.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, signingBasketResponse201.chosenScaMethod) &&
-        Objects.equals(this.challengeData, signingBasketResponse201.challengeData) &&
-        Objects.equals(this._links, signingBasketResponse201._links) &&
-        Objects.equals(this.psuMessage, signingBasketResponse201.psuMessage) &&
-        Objects.equals(this.tppMessages, signingBasketResponse201.tppMessages);
+    Objects.equals(this.basketId, signingBasketResponse201.basketId) &&
+    Objects.equals(this.scaMethods, signingBasketResponse201.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, signingBasketResponse201.chosenScaMethod) &&
+    Objects.equals(this.challengeData, signingBasketResponse201.challengeData) &&
+    Objects.equals(this._links, signingBasketResponse201._links) &&
+    Objects.equals(this.psuMessage, signingBasketResponse201.psuMessage) &&
+    Objects.equals(this.tppMessages, signingBasketResponse201.tppMessages);
   }
 
   @Override
@@ -284,7 +288,7 @@ public class SigningBasketResponse201   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

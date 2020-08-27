@@ -1,22 +1,22 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.Address;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.constraints.*;
 
 /**
  * Trusted Beneficiary
  */
 @ApiModel(description = "Trusted Beneficiary")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class TrustedBeneficiary   {
   @JsonProperty("trustedBeneficiaryId")
@@ -227,22 +227,21 @@ public class TrustedBeneficiary   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    TrustedBeneficiary trustedBeneficiary = (TrustedBeneficiary) o;
+}    TrustedBeneficiary trustedBeneficiary = (TrustedBeneficiary) o;
     return Objects.equals(this.trustedBeneficiaryId, trustedBeneficiary.trustedBeneficiaryId) &&
-        Objects.equals(this.debtorAccount, trustedBeneficiary.debtorAccount) &&
-        Objects.equals(this.creditorAccount, trustedBeneficiary.creditorAccount) &&
-        Objects.equals(this.creditorAgent, trustedBeneficiary.creditorAgent) &&
-        Objects.equals(this.creditorName, trustedBeneficiary.creditorName) &&
-        Objects.equals(this.creditorAlias, trustedBeneficiary.creditorAlias) &&
-        Objects.equals(this.creditorId, trustedBeneficiary.creditorId) &&
-        Objects.equals(this.creditorAddress, trustedBeneficiary.creditorAddress);
+    Objects.equals(this.debtorAccount, trustedBeneficiary.debtorAccount) &&
+    Objects.equals(this.creditorAccount, trustedBeneficiary.creditorAccount) &&
+    Objects.equals(this.creditorAgent, trustedBeneficiary.creditorAgent) &&
+    Objects.equals(this.creditorName, trustedBeneficiary.creditorName) &&
+    Objects.equals(this.creditorAlias, trustedBeneficiary.creditorAlias) &&
+    Objects.equals(this.creditorId, trustedBeneficiary.creditorId) &&
+    Objects.equals(this.creditorAddress, trustedBeneficiary.creditorAddress);
   }
 
   @Override
@@ -271,7 +270,7 @@ public class TrustedBeneficiary   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

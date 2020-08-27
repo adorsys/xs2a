@@ -1,19 +1,20 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * This is a data element to support the declaration of additional errors in the context of [RFC7807].
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
 
 public class Error400SBSAdditionalErrors   {
   @JsonProperty("title")
@@ -93,17 +94,16 @@ public class Error400SBSAdditionalErrors   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    Error400SBSAdditionalErrors error400SBSAdditionalErrors = (Error400SBSAdditionalErrors) o;
+}    Error400SBSAdditionalErrors error400SBSAdditionalErrors = (Error400SBSAdditionalErrors) o;
     return Objects.equals(this.title, error400SBSAdditionalErrors.title) &&
-        Objects.equals(this.detail, error400SBSAdditionalErrors.detail) &&
-        Objects.equals(this.code, error400SBSAdditionalErrors.code);
+    Objects.equals(this.detail, error400SBSAdditionalErrors.detail) &&
+    Objects.equals(this.code, error400SBSAdditionalErrors.code);
   }
 
   @Override
@@ -127,7 +127,7 @@ public class Error400SBSAdditionalErrors   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
