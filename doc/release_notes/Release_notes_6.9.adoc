@@ -1,3 +1,14 @@
 = Release notes v.6.9
 
 == Table of Contents
+
+* Payment Controller refactoring
+* Completed documentation for `Choosing the deployment layout`
+
+== Payment Controller refactoring
+
+Payment controller was refactored in terms of wrong payment type.
+
+== Completed documentation for `Choosing the deployment layout`
+
+From now on, documentation file `Choosing the deployment layout` is completed.
