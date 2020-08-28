@@ -2,44 +2,20 @@
 
 Starting 1st of March 2020 XS2A-core Team is providing development within two branches:
 
-*Stable branch 6.x*
+*Stable branch 8.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.6. Will be supported till 28.08.2020
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.6. Will be supported till 05.03.2021
 
-*Development branch 7.x*
+*Development branch 9.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 6.x is guaranteed. Will be released as Stable version 8.x on 11.09.2020
+No backward compatibility with 8.x is guaranteed. Will be released as Stable version 10.x on 19.03.2021
 
-[cols="5*.<"]
+[cols="3*.<"]
 |===
-|release date|version 6.x (Stable)|version 7.x (Development)|version 8.x (Stable)|version 9.x (Development)
+|release date|version 8.x (Stable)|version 9.x (Development)
 
-|28.08.2020|6.9|7.9| |
-
-a|
-
-a|* Code refactoring
-
-a|* All fixes and updates from v.6.9
-
-* New feature: FundsConfirmationConsent in Decoupled approach with multilevel SCA
-
-* Support URL-encoded QWAC certificate in header
-
-* Extend the event table with all types of Update PSU Data requests
-
-* Fix all ToDos in code
-
-a|
-
-a|
-
-|11.09.2020| | |8.0|9.0
-
-a|
-
-a|
+|11.09.2020|8.0|9.0
 
 a|
 
@@ -47,23 +23,11 @@ a|* Remove deprecated authorisation type AIS
 
 a|* All fixes and updates from v.8.0
 
-* New feature: Implement Read Card List
+* Create Signing Basket in CMS 
 
-* New feature: Implement Read Card Details
+* Implement Establish Signing Basket request
 
-* New feature: Implement Read Card Balances
-
-* New feature: Implement Read Card Transaction List
-
-* Adjust Create AIS consent request for Single card service
-
-* Adjust Read AIS consent response links for Single card service
-
-|25.09.2020| | |8.1|9.1
-
-a|
-
-a|
+|25.09.2020|8.1|9.1
 
 a|
 
@@ -71,17 +35,9 @@ a|
 
 a|* All fixes and updates from v.8.1
 
-* Create Signing Basket in CMS 
-
-* Implement Establish Signing Basket request
-
 * Implement Cancellation of Signing Baskets
 
-|09.10.2020| | |8.2|9.2
-
-a|
-
-a|
+|09.10.2020|8.2|9.2
 
 a|
 
@@ -91,11 +47,7 @@ a|* All fixes and updates from v.8.2
 
 * Create interfaces in cms-psu-api for Signing Basket
 
-|23.10.2020| | |8.3|9.3
-
-a|
-
-a|
+|23.10.2020|8.3|9.3
 
 a|
 
@@ -105,11 +57,7 @@ a|* All fixes and updates from v.8.3
 
 * Support Signing Basket in Redirect approach with multilevel SCA
 
-|06.11.2020| | |8.4|9.4
-
-a|
-
-a|
+|06.11.2020|8.4|9.4
 
 a|
 
@@ -119,11 +67,7 @@ a|* All fixes and updates from v.8.4
 
 * Support Signing Basket in Embedded approach with multilevel SCA
 
-|20.11.2020| | |8.5|9.5
-
-a|
-
-a|
+|20.11.2020|8.5|9.5
 
 a|
 
@@ -139,11 +83,7 @@ a|* All fixes and updates from v.8.5
 
 * Implement Get SCA Status request for Signing Baskets
 
-|04.12.2020| | |8.6|9.6
-
-a|
-
-a|
+|04.12.2020|8.6|9.6
 
 a|
 
@@ -155,24 +95,24 @@ a|* All fixes and updates from v.8.6
 
 * Add calls to SPI for Signing Basket
 
-|Further development| | | |
+|Further development| |
 
 a|
 
 a|
 
-a|
+a|* New feature: Implement Read Card List
 
-a|
+* New feature: Implement Read Card Details
 
-a|* New feature: Add a new optional header TPP-Rejection-NoFunds-Preferred
+* New feature: Implement Read Card Balances
 
-* New feature: Extension of possibility returning several camt.05x files in one zip file
+* New feature: Implement Read Card Transaction List
+
+* Adjust Create AIS consent request for Single card service
+
+* Adjust Read AIS consent response links for Single card service
 
 * New feature: Create Resource Notification Push Service
-
-* Support URL-encoded QWAC certificate in header
-
-* Extend the event table with all types of Update PSU Data requests
 
 |===
