@@ -16,17 +16,17 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "JSON based account report. This account report contains transactions resulting from the query parameters.  'information' is used if and only if the bookingStatus entry equals \"information\". Every active standing order related to the dedicated payment account result into one entry.  'booked' shall be contained if bookingStatus parameter is set to \"booked\" or \"both\".  'pending' is not contained if the bookingStatus parameter is set to \"booked\". ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-25T18:03:04.675305+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
 
 public class AccountReport   {
   @JsonProperty("booked")
   private TransactionList booked = null;
 
-  @JsonProperty("information")
-  private TransactionList information = null;
-
   @JsonProperty("pending")
   private TransactionList pending = null;
+
+  @JsonProperty("information")
+  private TransactionList information = null;
 
   @JsonProperty("_links")
   private Map _links = null;
@@ -54,29 +54,6 @@ public class AccountReport   {
     this.booked = booked;
   }
 
-  public AccountReport information(TransactionList information) {
-    this.information = information;
-    return this;
-  }
-
-  /**
-   * Get information
-   * @return information
-  **/
-  @ApiModelProperty(value = "")
-
-  @Valid
-
-
-  @JsonProperty("information")
-  public TransactionList getInformation() {
-    return information;
-  }
-
-  public void setInformation(TransactionList information) {
-    this.information = information;
-  }
-
   public AccountReport pending(TransactionList pending) {
     this.pending = pending;
     return this;
@@ -98,6 +75,29 @@ public class AccountReport   {
 
   public void setPending(TransactionList pending) {
     this.pending = pending;
+  }
+
+  public AccountReport information(TransactionList information) {
+    this.information = information;
+    return this;
+  }
+
+  /**
+   * Get information
+   * @return information
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("information")
+  public TransactionList getInformation() {
+    return information;
+  }
+
+  public void setInformation(TransactionList information) {
+    this.information = information;
   }
 
   public AccountReport _links(Map _links) {
@@ -134,14 +134,14 @@ public class AccountReport   {
       return false;
 }    AccountReport accountReport = (AccountReport) o;
     return Objects.equals(this.booked, accountReport.booked) &&
-    Objects.equals(this.information, accountReport.information) &&
     Objects.equals(this.pending, accountReport.pending) &&
+    Objects.equals(this.information, accountReport.information) &&
     Objects.equals(this._links, accountReport._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(booked, information, pending, _links);
+    return Objects.hash(booked, pending, information, _links);
   }
 
   @Override
@@ -150,8 +150,8 @@ public class AccountReport   {
     sb.append("class AccountReport {\n");
 
     sb.append("    booked: ").append(toIndentedString(booked)).append("\n");
-    sb.append("    information: ").append(toIndentedString(information)).append("\n");
     sb.append("    pending: ").append(toIndentedString(pending)).append("\n");
+    sb.append("    information: ").append(toIndentedString(information)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();
