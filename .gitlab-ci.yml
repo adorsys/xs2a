@@ -333,4 +333,3 @@ Push to DockerHub (release):
   variables:
     DOCKER_TAG: ${CI_COMMIT_TAG}
   <<: *build_dockerhub_image
-  
