@@ -42,11 +42,7 @@ variables:
   # Private Openshift Images #
   ############################
 
-  OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
-
-  OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
-  OPENSHIFT_NAMESPACE_INTEG: "adorsys-psd2-integ"
-  OPENSHIFT_NAMESPACE_DEMO: "adorsys-psd2-demo"
+  OPENSHIFT_NAMESPACE_SUPPORT8X: "adorsys-psd2-support8x"
 
   ###########################
   # Build variables         #
@@ -289,138 +285,47 @@ Test:AsciiDoc:
   script:
     - make pages
 
-###########
-# develop #
-###########
+###############
+# support8.x  #
+###############
+#Build Support-8.x images and deploy to support-8.x
 
-Push to DockerHub (develop):
+Push to DockerHub (Support-8.x):
   stage: "Package"
   only:
-    - develop
+    - support-8.x
   variables:
-    DOCKER_TAG: develop
+    DOCKER_TAG: support8x
   <<: *build_dockerhub_image
 
-Deploy to Openshift (develop):
+Deploy to Openshift (Support-8.x):
   stage: "Deploy"
   cache: {}
   dependencies: []
   only:
-    - develop
+    - support-8.x
   variables:
     GIT_STRATEGY: none
-    DOCKER_TAG: develop # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEV} # Openshift target namespace
+    DOCKER_TAG: support8x # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT8X} # Openshift target namespace
   <<: *deploy_openshift
 
-Notify Slack channel (develop):
+Notify Slack channel (Support):
   image: "bash:4"
   stage: "Notification"
   cache: {}
   only:
-    - develop
+    - support-8.x
   variables:
-    HELM_RELEASE: dev-psd2
-    ENV_JSON_FILE: scripts/notifications/psd2-dev.json
-    SLACK_CHANNEL: ${SLACK_PSD2_DEVELOP_CHANNEL}
+    HELM_RELEASE: support8x-psd2
+    ENV_JSON_FILE: scripts/notifications/psd2-support8x.json
+    SLACK_CHANNEL: ${SLACK_PSD2_SUPPORT_CHANNEL}
   script:
     - apk update && apk add jq curl
     - sleep 60
     - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
 
-# Build SUPPORT image and deploy to SUPPORT
-
-Push to DockerHub (support):
-  stage: "Package"
-  only:
-    - support-2.x
-  script:
-    - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support" xs2a-standalone-starter
-    - docker login -u ${DOCKER_HUB_LOGIN} -p ${DOCKER_HUB_PASS}
-    - docker push "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
-    - docker logout
-
-Deploy to Openshift (support):
-  stage: "Deploy"
-  only:
-    - support-2.x
-  script:
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:support"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_XS2A}:latest"
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:support"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_CNT_MGMNT}:latest"
-    - >-
-      skopeo copy
-      --dest-creds=openshift:${OPENSHIFT_TOKEN}
-      "docker://${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:support"
-      "docker://${OPENSHIFT_REGISTRY}/${OPENSHIFT_NAMESPACE_SUPPORT}/${DOCKER_IMAGE_NAME_ASPSP_PROFILE}:latest"
-
-# Build NIGHTLY image and deploy (scheduled) to INTEG
-
-Push to DockerHub (nightly):
-  stage: "Package"
-  only:
-    - schedules
-  variables:
-    DOCKER_TAG: nightly
-  <<: *build_dockerhub_image
-
-Deploy to Openshift (nightly):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - schedules
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: nightly # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_INTEG} # Openshift target namespace
-  <<: *deploy_openshift
-
-Notify Slack channel (Integ):
-  image: "bash:4"
-  stage: "Notification"
-  cache: {}
-  only:
-    - schedules
-  variables:
-    HELM_RELEASE: integ-psd2
-    ENV_JSON_FILE: scripts/notifications/psd2-integ.json
-    SLACK_CHANNEL: ${SLACK_PSD2_INTEG_CHANNEL}
-  script:
-    - apk update && apk add jq curl
-    - sleep 60
-    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
-# Build MASTER image and deploy to DEMO
-
-Push to DockerHub (master):
-  stage: "Package"
-  only:
-    - master
-  variables:
-    DOCKER_TAG: latest
-  <<: *build_dockerhub_image
-
-Deploy to Openshift (master):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - master
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: latest # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
-  <<: *deploy_openshift
-
-# Build RELEASE image and deploy (manual) to DEMO
-
+# Build RELEASE image support8.x
 Push to DockerHub (release):
   stage: "Package"
   only:
@@ -428,16 +333,3 @@ Push to DockerHub (release):
   variables:
     DOCKER_TAG: ${CI_COMMIT_TAG}
   <<: *build_dockerhub_image
-
-Deploy to Openshift (release):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - tags
-  when: manual
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
-  <<: *deploy_openshift
