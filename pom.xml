@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>7.8</version>
+    <version>7.9</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -871,6 +871,12 @@ Use it manually to generate javadocs. Don't commit it
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+								<configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>                           
                             </execution>
                         </executions>
                     </plugin>

@@ -39,4 +39,6 @@ public interface UpdateAuthorisationRequest {
     String getScaAuthenticationData();
 
     String getPassword();
+
+    String getConfirmationCode();
 }

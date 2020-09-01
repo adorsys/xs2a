@@ -35,6 +35,8 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.event.EventAuthorisationType;
+import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
@@ -65,6 +67,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     private final GetPaymentCancellationAuthorisationScaStatusValidator getPaymentAuthorisationScaStatusValidator;
     private final LoggingContextService loggingContextService;
     private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
+    private final EventTypeService eventTypeService;
 
     /**
      * Creates authorisation for payment cancellation request if given psu data is valid
@@ -109,7 +112,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
     @Override
     public ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> updatePisCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
         String paymentId = request.getPaymentId();
-        xs2aEventService.recordPisTppRequest(paymentId, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED, request);
+        xs2aEventService.recordPisTppRequest(paymentId, eventTypeService.getEventType(request, EventAuthorisationType.PIS_CANCELLATION), request);
 
         Optional<PisCommonPaymentResponse> pisCommonPaymentResponseOptional = xs2aPisCommonPaymentService.getPisCommonPaymentById(paymentId);
         if (pisCommonPaymentResponseOptional.isEmpty()) {

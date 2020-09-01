@@ -155,7 +155,6 @@ public class CmsAspspPiisControllerIT {
             .andExpect(content().string("true"));
 
         verify(piisConsentEntitySpecification).byConsentIdAndInstanceId(CONSENT_ID, INSTANCE_ID);
-        verify(consentJpaRepository).save(consentEntity);
         assertEquals(TERMINATED_BY_ASPSP, consentEntity.getConsentStatus());
     }
 }

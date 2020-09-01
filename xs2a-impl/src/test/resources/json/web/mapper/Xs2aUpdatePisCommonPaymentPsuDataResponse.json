@@ -13,7 +13,7 @@
     }
   ],
   "chosenScaMethod": {
-    "authenticationType": "chosen type",
+    "authenticationType": "SMS_OTP",
     "authenticationVersion": "chosen version",
     "authenticationMethodId": "chosen method id",
     "name": "chosen name",

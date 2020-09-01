@@ -24,7 +24,6 @@ import de.adorsys.psd2.model.PaymentInitiationBulkElementJson;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.pis.Remittance;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
@@ -53,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BulkPaymentTypeValidatorImplTest {
     private static final String VALUE_36_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
     private static final String VALUE_71_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
+    private static final String VALUE_141_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
     private final BulkPaymentInitiationJson BULK_PAYMENT_INITIATION_JSON = getBulkPaymentInitiationJson();
 
     private BulkPaymentTypeValidatorImpl validator;
@@ -79,7 +79,7 @@ class BulkPaymentTypeValidatorImplTest {
 
         validator = new BulkPaymentTypeValidatorImpl(errorBuildingServiceMock,
                                                      xs2aObjectMapper,
-                                                     new PaymentMapper(xs2aObjectMapper, purposeCodeMapper, remittanceMapper),
+                                                     new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
                                                      new AmountValidator(errorBuildingServiceMock),
                                                      new IbanValidator(errorBuildingServiceMock));
     }
@@ -245,37 +245,11 @@ class BulkPaymentTypeValidatorImplTest {
 
     @Test
     void doBulkValidation_remittanceInformationStructuredArray_reference_error() {
-        Remittance remittance = new Remittance();
-        remittance.setReference(VALUE_36_LENGTH);
-        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
+        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(VALUE_141_LENGTH));
 
         validator.doBulkValidation(bulkPayment, messageError, validationConfig);
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"reference", 35}, messageError.getTppMessage().getTextParameters());
-    }
-
-    @Test
-    void doBulkValidation_remittanceInformationStructuredArray_reference_type_error() {
-        Remittance remittance = new Remittance();
-        remittance.setReference("reference");
-        remittance.setReferenceType(VALUE_36_LENGTH);
-        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
-
-        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"referenceType", 35}, messageError.getTppMessage().getTextParameters());
-    }
-
-    @Test
-    void doBulkValidation_remittanceInformationStructuredArray_reference_issuer_error() {
-        Remittance remittance = new Remittance();
-        remittance.setReference("reference");
-        remittance.setReferenceIssuer(VALUE_36_LENGTH);
-        singlePayment.setRemittanceInformationStructuredArray(Collections.singletonList(remittance));
-
-        validator.doBulkValidation(bulkPayment, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"referenceIssuer", 35}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{"remittanceInformationStructured", 140}, messageError.getTppMessage().getTextParameters());
     }
 
     private BulkPaymentInitiationJson getBulkPaymentInitiationJson() {
@@ -291,5 +265,4 @@ class BulkPaymentTypeValidatorImplTest {
         bulkPaymentInitiationJson.setPayments(Collections.singletonList(paymentInitiationBulkElementJson));
         return bulkPaymentInitiationJson;
     }
-
 }

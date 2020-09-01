@@ -1,6 +1,5 @@
 {
-  "booked":
-  [
+  "booked": [
     {
       "transactionId": "1234567",
       "entryReference": "12345678",
@@ -49,11 +48,7 @@
       },
       "ultimateDebtor": "Max",
       "remittanceInformationUnstructured": "Ref Number Merchant",
-      "remittanceInformationStructured": {
-        "reference": "Ref Number Merchant",
-        "referenceType": "Ref type",
-        "referenceIssuer": "Ref issuer"
-      },
+      "remittanceInformationStructured": "Ref Number Merchant",
       "purposeCode": "CDCS",
       "bankTransactionCodeCode": {
         "code": "DE52500105173911841934"
@@ -61,8 +56,7 @@
       "proprietaryBankTransactionCode": "DE52500105173911841934"
     }
   ],
-  "pending":
-  [
+  "pending": [
     {
       "transactionId": "7654321",
       "entryReference": "87654321",
@@ -110,11 +104,7 @@
       },
       "ultimateDebtor": "Max",
       "remittanceInformationUnstructured": "Ref Number Merchant",
-      "remittanceInformationStructured": {
-        "reference": "Ref Number Merchant",
-        "referenceType": "Ref type",
-        "referenceIssuer": "Ref issuer"
-      },
+      "remittanceInformationStructured": "Ref Number Merchant",
       "purposeCode": "CDCS",
       "bankTransactionCodeCode": {
         "code": "DE52500105173911841934"

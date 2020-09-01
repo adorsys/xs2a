@@ -36,6 +36,8 @@ import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PiisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.event.EventAuthorisationType;
+import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ConsentEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
@@ -69,9 +71,10 @@ public class PiisConsentAuthorisationService {
     private final LoggingContextService loggingContextService;
     private final PsuIdDataAuthorisationService psuIdDataAuthorisationService;
     private final Xs2aAuthorisationService authorisationService;
+    private final EventTypeService eventTypeService;
 
     public ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuData(UpdateConsentPsuDataReq updatePsuData) {
-        xs2aEventService.recordConsentTppRequest(updatePsuData.getConsentId(), EventType.UPDATE_PIIS_CONSENT_PSU_DATA_REQUEST_RECEIVED, updatePsuData);
+        xs2aEventService.recordConsentTppRequest(updatePsuData.getConsentId(), eventTypeService.getEventType(updatePsuData, EventAuthorisationType.PIIS), updatePsuData);
 
         String consentId = updatePsuData.getConsentId();
 

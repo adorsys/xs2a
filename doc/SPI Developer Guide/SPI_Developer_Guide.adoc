@@ -25,3 +25,5 @@ include::Special modes.adoc[Special modes]
 include::Certificate generator.adoc[Certificate generator]
 
 include::Configuration properties.adoc[Configuration properties]
+
+include::Multilevel Sca.adoc[Multilevel Sca]

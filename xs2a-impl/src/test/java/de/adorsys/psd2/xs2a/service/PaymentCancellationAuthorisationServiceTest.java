@@ -40,6 +40,8 @@ import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuData
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
+import de.adorsys.psd2.xs2a.service.event.EventAuthorisationType;
+import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
@@ -107,6 +109,8 @@ class PaymentCancellationAuthorisationServiceTest {
     private CreatePisCancellationAuthorisationValidator createPisCancellationAuthorisationValidator;
     @Mock
     private PsuIdDataAuthorisationService psuIdDataAuthorisationService;
+    @Mock
+    private EventTypeService eventTypeService;
 
     @Test
     void createPisCancellationAuthorisation_Success_ShouldRecordEvent() {
@@ -350,13 +354,15 @@ class PaymentCancellationAuthorisationServiceTest {
         // Given:
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
+        when(eventTypeService.getEventType(request, EventAuthorisationType.PIS_CANCELLATION))
+            .thenReturn(EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED);
 
         // When
         paymentCancellationAuthorisationService.updatePisCancellationPsuData(request);
 
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture(), any());
-        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_REQUEST_RECEIVED);
+        assertThat(argumentCaptor.getValue()).isEqualTo(EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED);
     }
 
     @Test

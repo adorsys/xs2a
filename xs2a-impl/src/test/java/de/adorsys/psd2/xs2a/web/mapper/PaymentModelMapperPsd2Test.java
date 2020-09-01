@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
+import de.adorsys.psd2.xs2a.exception.WrongPaymentTypeException;
 import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.ValueValidatorService;
@@ -44,8 +45,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.validation.Validation;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -191,6 +191,15 @@ class PaymentModelMapperPsd2Test {
                                                                                   true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION, null);
 
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToPaymentRequestParameters_incorrect_payment_type_throw_wrong_payment_type_exception() {
+        //Given
+        TppNotificationData tppNotificationData = new TppNotificationData(NOTIFICATION_MODES, "notification.uri");
+        //Then
+        assertThrows(WrongPaymentTypeException.class, () -> mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, "incorrect payment type", "certificate".getBytes(), "ok.uri", "nok.uri",
+                                                                                                                                      true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION, null));
     }
 
     @Test

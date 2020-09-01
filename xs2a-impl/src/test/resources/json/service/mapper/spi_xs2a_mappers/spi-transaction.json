@@ -48,11 +48,7 @@
   "debtorAgent": "debtorAgent",
   "ultimateDebtor": "Max",
   "remittanceInformationUnstructured": "Ref Number Merchant",
-  "remittanceInformationStructured": {
-    "reference": "Ref Number Merchant",
-    "referenceType": "Ref type",
-    "referenceIssuer": "Ref issuer"
-  },
+  "remittanceInformationStructured": "Ref Number Merchant",
   "purposeCode": "CDCS",
   "bankTransactionCodeCode": "DE52500105173911841934",
   "proprietaryBankTransactionCode": "DE52500105173911841934",
@@ -65,6 +61,6 @@
     "lastChangeDateTime": "2018-03-31T15:16:16.37Z",
     "referenceDate": "2018-03-29",
     "lastCommittedTransaction": "abc",
-    "creditLimitIncluded" : true
+    "creditLimitIncluded": true
   }
 }

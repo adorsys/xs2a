@@ -28,7 +28,6 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
-import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,11 +79,10 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     private static final OffsetDateTime STATUS_CHANGE_TIMESTAMP = OffsetDateTime.of(LocalDate.now(),
                                                                                     LocalTime.NOON,
                                                                                     ZoneOffset.UTC);
-    private static final JsonReader jsonReader = new JsonReader();
     private static final String ULTIMATE_DEBTOR = "ultimate debtor";
     private static final String ULTIMATE_CREDITOR = "ultimate creditor";
     private static final PurposeCode PURPOSE_CODE = PurposeCode.fromValue("BKDF");
-    private static final Remittance REMITTANCE = jsonReader.getObjectFromFile("json/service/mapper/remittance.json", Remittance.class);
+    private static final String REMITTANCE = "reference";
 
     @InjectMocks
     private Xs2aToSpiPeriodicPaymentMapper xs2aToSpiPaymentInfoMapper;
@@ -146,8 +144,8 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(ULTIMATE_DEBTOR, spiPeriodicPayment.getUltimateDebtor());
         assertEquals(ULTIMATE_CREDITOR, spiPeriodicPayment.getUltimateCreditor());
         assertEquals(PURPOSE_CODE, spiPeriodicPayment.getPurposeCode());
-        assertEquals(remittanceMapper.mapToSpiRemittance(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructured());
-        assertEquals(Collections.singletonList(remittanceMapper.mapToSpiRemittance(REMITTANCE)), spiPeriodicPayment.getRemittanceInformationStructuredArray());
+        assertEquals(REMITTANCE, spiPeriodicPayment.getRemittanceInformationStructured());
+        assertEquals(Collections.singletonList(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructuredArray());
         assertEquals(periodicPayment.getCreationTimestamp(), spiPeriodicPayment.getCreationTimestamp());
         assertEquals(periodicPayment.getContentType(), spiPeriodicPayment.getContentType());
     }

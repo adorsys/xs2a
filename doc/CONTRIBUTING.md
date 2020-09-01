@@ -104,3 +104,5 @@ replacing `{PSD2 API file}` with the actual name of file.
     and the method with `String` request body should consume raw payments, passed as plaintext (`consumes = {"text/plain"}`);
    - removing `@Size` annotation that are placed above enums in generated models (for now it's only applicable to
    `getDayOfExecution()` methods in models that are related to periodic payments);
+   - splitting `AccountInformationServiceAisApi` into `AccountApi`, `CardAccountApi` and `ConsentApi`;
+   - merging `ListOfTrustedBeneficiariesApi` into `AccountApi`;

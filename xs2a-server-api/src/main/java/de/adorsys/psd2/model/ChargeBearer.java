@@ -1,19 +1,25 @@
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import java.util.Objects;
+import io.swagger.annotations.ApiModel;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
  * Charge Bearer. ChargeBearerType1Code from ISO20022.
  */
 public enum ChargeBearer {
-
+  
   DEBT("DEBT"),
-
+  
   CRED("CRED"),
-
+  
   SHAR("SHAR"),
-
+  
   SLEV("SLEV");
 
   private String value;

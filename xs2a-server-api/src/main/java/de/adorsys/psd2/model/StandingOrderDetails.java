@@ -1,21 +1,26 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.DayOfExecution;
+import de.adorsys.psd2.model.ExecutionRule;
+import de.adorsys.psd2.model.FrequencyCode;
+import de.adorsys.psd2.model.MonthsOfExecution;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Details of underlying standing orders.
  */
 @ApiModel(description = "Details of underlying standing orders. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
 
 public class StandingOrderDetails   {
   @JsonProperty("startDate")
@@ -218,6 +223,7 @@ public class StandingOrderDetails   {
   @ApiModelProperty(value = "")
 
   @Valid
+
   @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
     return dayOfExecution;
@@ -252,23 +258,22 @@ public class StandingOrderDetails   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    StandingOrderDetails standingOrderDetails = (StandingOrderDetails) o;
+}    StandingOrderDetails standingOrderDetails = (StandingOrderDetails) o;
     return Objects.equals(this.startDate, standingOrderDetails.startDate) &&
-        Objects.equals(this.frequency, standingOrderDetails.frequency) &&
-        Objects.equals(this.endDate, standingOrderDetails.endDate) &&
-        Objects.equals(this.executionRule, standingOrderDetails.executionRule) &&
-        Objects.equals(this.withinAMonthFlag, standingOrderDetails.withinAMonthFlag) &&
-        Objects.equals(this.monthsOfExecution, standingOrderDetails.monthsOfExecution) &&
-        Objects.equals(this.multiplicator, standingOrderDetails.multiplicator) &&
-        Objects.equals(this.dayOfExecution, standingOrderDetails.dayOfExecution) &&
-        Objects.equals(this.limitAmount, standingOrderDetails.limitAmount);
+    Objects.equals(this.frequency, standingOrderDetails.frequency) &&
+    Objects.equals(this.endDate, standingOrderDetails.endDate) &&
+    Objects.equals(this.executionRule, standingOrderDetails.executionRule) &&
+    Objects.equals(this.withinAMonthFlag, standingOrderDetails.withinAMonthFlag) &&
+    Objects.equals(this.monthsOfExecution, standingOrderDetails.monthsOfExecution) &&
+    Objects.equals(this.multiplicator, standingOrderDetails.multiplicator) &&
+    Objects.equals(this.dayOfExecution, standingOrderDetails.dayOfExecution) &&
+    Objects.equals(this.limitAmount, standingOrderDetails.limitAmount);
   }
 
   @Override
@@ -298,7 +303,7 @@ public class StandingOrderDetails   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

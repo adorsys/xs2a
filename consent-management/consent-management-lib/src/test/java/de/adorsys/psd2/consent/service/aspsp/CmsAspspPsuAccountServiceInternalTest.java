@@ -75,8 +75,6 @@ class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertTrue(actualResult);
-        verify(consentJpaRepository, times(1)).save(aisConsent);
-        verify(consentJpaRepository, times(1)).save(piisConsentEntity);
         verify(consentSpecification).byPsuIdDataAndAspspAccountIdAndInstanceId(PSU_ID_DATA, ASPSP_ACCOUNT_ID, INSTANCE_ID);
     }
 
@@ -92,7 +90,6 @@ class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertTrue(actualResult);
-        verify(consentJpaRepository, times(1)).save(aisConsent);
         verify(consentSpecification).byPsuIdDataAndAspspAccountIdAndInstanceId(PSU_ID_DATA, ASPSP_ACCOUNT_ID, INSTANCE_ID);
     }
 
@@ -108,7 +105,6 @@ class CmsAspspPsuAccountServiceInternalTest {
 
         //then
         assertTrue(actualResult);
-        verify(consentJpaRepository, times(1)).save(piisConsentEntity);
     }
 
     @Test
@@ -138,7 +134,6 @@ class CmsAspspPsuAccountServiceInternalTest {
 
         assertTrue(actualResult);
         verify(consentSpecification).byPsuIdDataAndAspspAccountIdAndInstanceId(PSU_ID_DATA, ASPSP_ACCOUNT_ID, INSTANCE_ID);
-        verify(consentJpaRepository).save(piisConsentEntity);
         verifyNoMoreInteractions(consentJpaRepository);
     }
 }

@@ -34,6 +34,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.LocalDate;
 
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +69,19 @@ class GlobalExceptionHandlerControllerTest {
         // Then
         verify(errorTypeMapper).mapToErrorType(ServiceType.AIS, 400);
         verify(responseErrorMapper).generateErrorResponse(new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR)));
+    }
+
+    @Test
+    void wrongPaymentTypeException_shouldReturnParameterNotSupported() throws NoSuchMethodException {
+        // Given
+        when(handlerMethod.getMethod()).thenReturn(Object.class.getMethod("toString"));
+        String paymentType = "wrong payment type";
+        WrongPaymentTypeException exception = new WrongPaymentTypeException(paymentType);
+        // When
+        globalExceptionHandlerController.wrongPaymentTypeException(exception, handlerMethod);
+        // Then
+        MessageError messageError = new MessageError(ErrorType.PIS_400, TppMessageInformation.of(PARAMETER_NOT_SUPPORTED_WRONG_PAYMENT_TYPE, paymentType));
+        verify(responseErrorMapper).generateErrorResponse(messageError);
     }
 
     @Test

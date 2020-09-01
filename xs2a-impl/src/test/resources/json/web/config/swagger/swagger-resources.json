@@ -7,9 +7,9 @@
   },
   {
     "name": "Berlin Group PSD2 API v1",
-    "url": "/psd2-api_1.3.6_errata20200327.yaml",
+    "url": "/psd2-api_1.3.6_2020-08-14.yaml",
     "swaggerVersion": "2.0",
-    "location": "/psd2-api_1.3.6_2020-05-28.yaml"
+    "location": "/psd2-api_1.3.6_2020-08-14.yaml"
   },
   {
     "name": "Berlin Group PSD2 Funds confirmation API v2",

@@ -375,7 +375,6 @@ class CmsAspspPiisServiceInternalTest {
         // Then
         assertTrue(actual);
         verify(piisConsentLazyMigrationService).migrateIfNeeded(argumentCaptor.capture());
-        verify(consentJpaRepository).save(argumentCaptor.capture());
         assertEquals(ConsentStatus.TERMINATED_BY_ASPSP, argumentCaptor.getValue().getConsentStatus());
         verify(piisConsentEntitySpecification, times(1))
             .byConsentIdAndInstanceId(CONSENT_EXTERNAL_ID, DEFAULT_SERVICE_INSTANCE_ID);

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.component;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.exception.WrongPaymentTypeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.ConditionalGenericConverter;
@@ -40,10 +41,11 @@ public class PaymentTypeEnumConverter implements ConditionalGenericConverter {
 
     @Override
     public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-        Optional<PaymentType> paymentType = PaymentType.getByValue((String) source);
+        String paymentService = (String) source;
+        Optional<PaymentType> paymentType = PaymentType.getByValue(paymentService);
         return paymentType.orElseThrow(() -> {
             log.info("Can't convert {} to existing payment type", source);
-            return new IllegalArgumentException("Can't convert to existing payment type");
+            return new WrongPaymentTypeException(paymentService);
         });
     }
 }
