@@ -1,9 +1,9 @@
-name: Develop CI
+name: Develop 8.x CI
 
-on: 
+on:
   push:
     branches:
-      - develop
+      - support-8.x
 
 env:
   SONAR_PRJ_KEY: adorsys_xs2a
@@ -15,7 +15,7 @@ env:
   SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
 
 jobs:
-  build_and_test:
+  build_and_test_support_8x_java11:
     name: Build and test XS2A (openjdk 1.11)
     runs-on: ubuntu-latest
     steps:
@@ -38,21 +38,22 @@ jobs:
       - name: Build XS2A
         run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
 
-      - name: Check pmd  
+      - name: Check pmd
         run: mvn -ntp pmd:check
 
-      - name: Generate javadocs 
+      - name: Generate javadocs
         run: mvn -ntp javadoc:javadoc
 
-      - name: Run UI tests 
+      - name: Run UI tests
         run: mvn -ntp -DskipITs --fail-at-end clean install
 
-      - name: Run IT tests 
-        run: mvn -ntp failsafe:integration-test failsafe:verify 
+      - name: Run IT tests
+        run: mvn -ntp failsafe:integration-test failsafe:verify
+
 
   sonar:
     name: Publish code coverage to Sonar Cloud
-    needs: build_and_test
+    needs: build_and_test_support_8x_java11
     runs-on: ubuntu-latest
     steps:
       - name: Clone XS2A develop repository
@@ -89,7 +90,7 @@ jobs:
 
   deployMavenCentral:
     name: Publish XS2A artifacts to Maven Central
-    needs: [build_and_test, sonar]
+    needs: [build_and_test_support_8x_java11, sonar]
     runs-on: ubuntu-latest
     steps:
       - name: Clone ledgers develop repository
@@ -112,6 +113,6 @@ jobs:
         run: |
           gpg --version
           export GPG_TTY="$( tty )" #need to run to sign artifacts with maven
-          echo ${{ secrets.GPG_SECRET_KEY }} | base64 --decode | gpg --import --batch 
+          echo ${{ secrets.GPG_SECRET_KEY }} | base64 --decode | gpg --import --batch
           echo ${{ secrets.GPG_OWNERTRUST }} | base64 --decode | gpg --batch --import-ownertrust
           mvn -ntp --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -U deploy
