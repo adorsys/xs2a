@@ -379,7 +379,7 @@ Notify Slack channel (support-6.x):
   variables:
     HELM_RELEASE: support6x-psd2
     ENV_JSON_FILE: scripts/notifications/psd2-support6x.json
-    SLACK_CHANNEL: ${SLACK_PSD2_SUPPORT6X_CHANNEL}
+    SLACK_CHANNEL: ${SLACK_PSD2_SUPPORT_CHANNEL}
   script:
     - apk update && apk add jq curl
     - sleep 60
