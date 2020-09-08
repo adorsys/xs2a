@@ -14,6 +14,6 @@
   "tppNokRedirectUri": "nok.uri",
   "scaStatus": "received",
   "availableScaMethods": [],
-  "authorisationType": "PIS_CREATION",
+  "type": "PIS_CREATION",
   "instanceId": "UNDEFINED"
 }

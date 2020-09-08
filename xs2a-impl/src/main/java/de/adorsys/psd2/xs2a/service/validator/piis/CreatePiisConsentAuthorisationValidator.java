@@ -17,9 +17,9 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
@@ -75,10 +75,10 @@ public class CreatePiisConsentAuthorisationValidator extends AbstractConfirmatio
                                                  .map(auth -> new Authorisation(auth.getId(),
                                                                                 auth.getPsuIdData(),
                                                                                 auth.getConsentId(),
-                                                                                AuthorisationType.AIS,
+                                                                                AuthorisationType.CONSENT,
                                                                                 auth.getScaStatus()))
                                                  .collect(Collectors.toList());
-        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, authorisations, AuthorisationType.AIS);
+        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, authorisations, AuthorisationType.CONSENT);
 
         if (isFinalised) {
             return ValidationResult.invalid(PIIS_409, STATUS_INVALID);
