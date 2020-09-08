@@ -51,12 +51,6 @@ public interface AuthorisationMapper {
                                                            Optional<PsuData> psuDataOptional, AuthorisationType authorisationType,
                                                            long redirectUrlExpirationTimeMs, long authorisationExpirationTimeMs) {
         AuthorisationEntity entity = new AuthorisationEntity();
-        // TODO remove in 8.0 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1320
-        if (authorisationType == AuthorisationType.CONSENT) {
-            entity.setAuthorisationType(AuthorisationType.AIS);
-        } else {
-            entity.setAuthorisationType(authorisationType);
-        }
         entity.setType(authorisationType);
 
         ScaStatus scaStatus = ScaStatus.RECEIVED;
