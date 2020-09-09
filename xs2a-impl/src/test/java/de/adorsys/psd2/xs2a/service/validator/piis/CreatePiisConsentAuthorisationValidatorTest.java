@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -140,7 +140,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Given
         PiisConsent piisConsent = buildPiisConsentWithPsuIdDataAndAuthorisation();
         CreatePiisConsentAuthorisationObject createPiisAuthorisationPO = new CreatePiisConsentAuthorisationObject(piisConsent, PSU_DATA);
-        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.AIS))).thenReturn(true);
+        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.CONSENT))).thenReturn(true);
 
         when(piisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
