@@ -1,3 +1,9 @@
 = Release notes v.9.0
 
 == Table of Contents
+
+* Removed deprecated authorisation type AIS
+
+== Removed deprecated authorisation type AIS
+
+From now on, deprecated authorisation type AIS removed, use authorisation type CONSENT instead.
