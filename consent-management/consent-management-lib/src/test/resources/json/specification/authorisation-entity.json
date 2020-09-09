@@ -18,6 +18,5 @@
       "authenticationMethodId": "some sca method"
     }
   ],
-  "authorisationType": "CONSENT",
   "type": "CONSENT"
 }
