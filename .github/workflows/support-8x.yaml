@@ -46,9 +46,9 @@ jobs:
 
       - name: Run UI tests
         run: mvn -ntp -DskipITs --fail-at-end clean install
-
-      - name: Run IT tests
-        run: mvn -ntp failsafe:integration-test failsafe:verify
+#Blocked temporary 
+      # - name: Run IT tests
+      #   run: mvn -ntp failsafe:integration-test failsafe:verify
 
 
   sonar:
