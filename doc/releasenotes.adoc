@@ -6,7 +6,8 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 8.x (Stable. Supported minimum till 19.03.2021)
 
-* xref:release_notes/Release_notes_8.0.adoc[Version 8.0  (release date: ?)]
+* xref:release_notes/Release_notes_8.1.adoc[Version 8.1  (release date: ?)]
+* xref:release_notes/Release_notes_8.0.adoc[Version 8.0  (release date: 15.09.2020)]
 
 === Mainline 7.x (Development. Planned to be released 11.09.2020 as 8.0 Stable version)
 
