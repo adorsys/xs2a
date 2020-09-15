@@ -68,5 +68,6 @@
   "usageCounterMap": {
     "/accounts": 9
   },
-  "tppBrandLoggingInformation": "tppBrandLoggingInformation"
+  "tppBrandLoggingInformation": "tppBrandLoggingInformation",
+  "withBalance": true
 }
