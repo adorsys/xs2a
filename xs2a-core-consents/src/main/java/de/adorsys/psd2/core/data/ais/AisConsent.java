@@ -72,7 +72,9 @@ public class AisConsent extends Consent<AisConsentData> {
     }
 
     public boolean isWithBalance() {
-        return CollectionUtils.isNotEmpty(getTppAccountAccesses().getBalances());
+        return CollectionUtils.isNotEmpty(getTppAccountAccesses().getBalances())
+                   || getConsentData().getAvailableAccountsWithBalance() != null
+                   || isGlobalConsent();
     }
 
     @JsonIgnore

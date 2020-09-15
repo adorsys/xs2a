@@ -316,7 +316,11 @@ class AisConsentMapperTest {
         assertEquals(consentEntity.getLastActionDate(), aisAccountConsent.getLastActionDate());
         assertEquals(consentEntity.getConsentStatus(), aisAccountConsent.getConsentStatus());
         AccountAccess aspspAccountAccess = aisConsent.getAspspAccountAccesses();
-        assertEquals(!aspspAccountAccess.getBalances().isEmpty(), aisAccountConsent.isWithBalance());
+        if (aisConsent.isGlobalConsent()) {
+            assertEquals(true, aisAccountConsent.isWithBalance());
+        } else {
+            assertEquals(!aspspAccountAccess.getBalances().isEmpty(), aisAccountConsent.isWithBalance());
+        }
         assertEquals(consentEntity.getTppInformation().isTppRedirectPreferred(), aisAccountConsent.isTppRedirectPreferred());
         assertEquals(aisConsent.getConsentRequestType(), aisAccountConsent.getAisConsentRequestType());
         assertEquals(PSU_ID_DATA_LIST, aisAccountConsent.getPsuIdDataList());
