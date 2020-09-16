@@ -104,3 +104,5 @@ There are several ways to bypass this restriction:
 
 * Rebuild the service and launch;
 * Send the request with desired validity.
+
+include::Events.adoc[Events]
