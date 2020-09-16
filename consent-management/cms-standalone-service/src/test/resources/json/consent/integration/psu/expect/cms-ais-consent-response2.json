@@ -13,7 +13,7 @@
   "frequencyPerDay": 4,
   "lastActionDate": "2020-01-13",
   "consentStatus": "RECEIVED",
-  "withBalance": false,
+  "withBalance": true,
   "tppRedirectPreferred": true,
   "aisConsentRequestType": "GLOBAL",
   "psuIdDataList": [

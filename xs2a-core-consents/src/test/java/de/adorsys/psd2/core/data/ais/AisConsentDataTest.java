@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AisConsentDataTest {
     private JsonReader jsonReader = new JsonReader();
@@ -97,6 +98,7 @@ class AisConsentDataTest {
                                                              AisConsent.class);
 
         assertEquals(AisConsentRequestType.GLOBAL, aisConsent.getConsentRequestType());
+        assertTrue(aisConsent.isWithBalance());
     }
 
     @Test
