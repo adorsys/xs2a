@@ -1,0 +1,15 @@
+= Release notes v.9.0
+
+== Table of Contents
+
+* Adjusted OAuth flow
+
+== Adjusted OAuth flow
+
+From now on, OAUTH flow is a part of REDIRECT approach which configured modes (`common.scaRedirectFlow` property in ASPSP profile):
+
+* REDIRECT - usual redirect mode
+* OAUTH - integrated OAuth mode (TPP asks for token after initiation of request)
+* OAUTH_PRE_STEP - pre-step OAuth mode (TPP asks for token before initiation of request)
+
+There was a link `scaOAuth` which was replaced by `scaRedirect` in responses. SCA approach OAUTH was removed.

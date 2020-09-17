@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.core.profile;
 
 public enum ScaApproach {
     REDIRECT,
-    OAUTH,
     DECOUPLED,
     EMBEDDED,
     UNDEFINED
