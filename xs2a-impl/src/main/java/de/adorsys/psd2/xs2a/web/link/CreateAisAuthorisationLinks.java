@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -29,8 +29,7 @@ public class CreateAisAuthorisationLinks extends AbstractLinks {
 
     public CreateAisAuthorisationLinks(String httpUrl, CreateConsentAuthorizationResponse response,
                                        ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                       RedirectIdService redirectIdService, ScaRedirectFlow scaRedirectFlow,
-                                       boolean authorisationConfirmationRequestMandated,
+                                       RedirectIdService redirectIdService, boolean authorisationConfirmationRequestMandated,
                                        String instanceId) {
         super(httpUrl);
 
@@ -42,11 +41,7 @@ public class CreateAisAuthorisationLinks extends AbstractLinks {
         if (scaApproachResolver.getScaApproach(authorisationId) == REDIRECT) {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
-            String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
-                                          ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
-                                          : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.AIS);
-
-            setScaRedirectOAuthLink(scaRedirectFlow, consentOauthLink);
+            setScaRedirect(new HrefType(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.AIS)));
 
             if (authorisationConfirmationRequestMandated) {
                 setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.AIS)));

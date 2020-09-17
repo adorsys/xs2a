@@ -1,0 +1,40 @@
+@startuml
+actor PSU
+entity TPP
+entity Connector
+entity OBA
+entity IDP
+entity Ledgers
+
+PSU->TPP: Initiate payment
+|||
+TPP->Connector: POST Initiate payment
+activate Connector
+Connector-->TPP: link "scaRedirect" (before "scaOauth")
+deactivate Connector
+|||
+TPP-->PSU: PSU receives link
+|||
+PSU->OBA: Login to OBA
+|||
+activate OBA
+OBA->IDP: Retrieve auth code
+deactivate OBA
+|||
+activate IDP
+IDP-->OBA: Auth code
+deactivate IDP
+|||
+OBA-->TPP: Auth code
+activate TPP
+|||
+TPP->IDP: Change auth code with token
+deactivate TPP
+|||
+activate IDP
+IDP-->TPP: Token
+deactivate IDP
+|||
+
+@enduml
+

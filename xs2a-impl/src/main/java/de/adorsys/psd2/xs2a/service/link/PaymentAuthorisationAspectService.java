@@ -60,7 +60,7 @@ public class PaymentAuthorisationAspectService extends BaseAspectService<Payment
 
                 response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                   redirectIdService, request, response.getAuthorisationId(),
-                                                                  getScaRedirectFlow(), response.getInternalRequestId(),
+                                                                  response.getInternalRequestId(),
                                                                   isAuthorisationConfirmationRequestMandated(),
                                                                   requestProviderService.getInstanceId()));
             } else if (result.getBody() instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {

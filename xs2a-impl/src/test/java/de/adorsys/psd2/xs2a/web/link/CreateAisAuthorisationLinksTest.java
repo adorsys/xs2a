@@ -18,7 +18,6 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
@@ -36,7 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CreateAisAuthorisationLinksTest {
+class CreateAisAuthorisationLinksTest {
     private static final String HTTP_URL = "http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCi";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";
@@ -55,12 +54,10 @@ public class CreateAisAuthorisationLinksTest {
     private CreateConsentAuthorizationResponse response;
 
     private Links expectedLinks;
-    private ScaRedirectFlow scaRedirectFlow;
 
     @BeforeEach
     void setUp() {
         expectedLinks = new Links();
-        scaRedirectFlow = ScaRedirectFlow.REDIRECT;
 
         response = new CreateConsentAuthorizationResponse();
         response.setConsentId(CONSENT_ID);
@@ -72,13 +69,12 @@ public class CreateAisAuthorisationLinksTest {
     void isScaStatusMethodAuthenticated_redirectScaApproachOauth() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildConsentScaOauthRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
+        when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID), eq(""), eq(ConsentType.AIS))).thenReturn(REDIRECT_LINK);
 
-        ScaRedirectFlow scaRedirectFlow = ScaRedirectFlow.OAUTH;
-        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
+        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, false, "");
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setScaOAuth(new HrefType(REDIRECT_LINK));
+        expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
         assertEquals(expectedLinks, links);
     }
 
@@ -88,7 +84,7 @@ public class CreateAisAuthorisationLinksTest {
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID), eq(""), eq(ConsentType.AIS))).thenReturn(REDIRECT_LINK);
 
-        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
+        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, false, "");
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
@@ -104,7 +100,7 @@ public class CreateAisAuthorisationLinksTest {
         when(redirectLinkBuilder.buildConfirmationLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(ConsentType.AIS))).thenReturn(CONFIRMATION_LINK);
 
         // When
-        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, true, "");
+        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, true, "");
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
@@ -118,7 +114,7 @@ public class CreateAisAuthorisationLinksTest {
     void isScaStatusMethodAuthenticated_embeddedScaApproach() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
+        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, false, "");
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -129,18 +125,7 @@ public class CreateAisAuthorisationLinksTest {
     void isScaStatusMethodAuthenticated_decoupledScaApproach() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
-
-        expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void isScaStatusMethodAuthenticated_oauthScaApproach() {
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.OAUTH);
-
-        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
+        links = new CreateAisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, false, "");
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));

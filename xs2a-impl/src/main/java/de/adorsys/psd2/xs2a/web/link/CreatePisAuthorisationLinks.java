@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -32,8 +32,8 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
     public CreatePisAuthorisationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                        RedirectIdService redirectIdService,
                                        Xs2aCreatePisAuthorisationRequest createRequest, String authorisationId,
-                                       ScaRedirectFlow scaRedirectFlow, String internalRequestId,
-                                       boolean authorisationConfirmationRequestMandated, String instanceId) {
+                                       String internalRequestId,boolean authorisationConfirmationRequestMandated,
+                                       String instanceId) {
         super(httpUrl);
 
         String paymentId = createRequest.getPaymentId();
@@ -49,11 +49,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
         } else if (initiationScaApproach == REDIRECT) {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
-            String paymentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
-                                          ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
-                                          : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
-
-            setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
+            setScaRedirect(new HrefType(redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId)));
 
             if (authorisationConfirmationRequestMandated) {
                 setConfirmation(buildPath(redirectLinkBuilder.buildPisConfirmationLink(paymentService, paymentProduct, paymentId, redirectId)));
