@@ -60,7 +60,7 @@ public class PaymentAspectService extends BaseAspectService<PaymentController> {
 
             body.setLinks(new PaymentInitiationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                      redirectIdService,
-                                                     requestParameters, body, explicitMethod, signingBasketModeActive, getScaRedirectFlow(),
+                                                     requestParameters, body, explicitMethod, signingBasketModeActive,
                                                      isAuthorisationConfirmationRequestMandated(), requestProviderService.getInstanceId()));
         }
         return result;

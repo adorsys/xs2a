@@ -1,0 +1,40 @@
+@startuml
+actor PSU
+entity TPP
+entity Connector
+entity OBA
+entity IDP
+entity Ledgers
+
+PSU->TPP: Initiate payment
+|||
+TPP->Connector: POST Initiate payment
+|||
+activate Connector
+Connector-->TPP: HTTP 401: Retrieve token first at {link} (IDP server-info)
+deactivate Connector
+|||
+TPP-->PSU: PSU receives link built by TPP
+|||
+PSU->IDP: Login to IDP (made by TPP)
+|||
+activate IDP
+|||
+IDP-->TPP: Token (made by TPP)
+|||
+deactivate IDP
+|||
+TPP->Connector: Initiate payment with token
+|||
+Connector->Ledgers: Initiate payment
+|||
+Ledgers-->Connector: HTTP 201 Created
+|||
+Connector-->TPP: Redirect link to OBA
+|||
+PSU->OBA: Start SCA
+|||
+OBA->TPP: Redirect to TPP with new token
+
+@enduml
+
