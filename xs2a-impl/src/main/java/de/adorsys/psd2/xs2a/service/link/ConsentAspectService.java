@@ -71,7 +71,6 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
             body.setLinks(new CreateConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
                                                  redirectIdService,
                                                  explicitMethod, signingBasketModeActive,
-                                                 getScaRedirectFlow(),
                                                  isAuthorisationConfirmationRequestMandated(),
                                                  requestProviderService.getInstanceId()));
         }
@@ -86,7 +85,7 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
             } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
                 CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
                 body.setLinks(new CreateAisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder,
-                                                              redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated(),
+                                                              redirectIdService, isAuthorisationConfirmationRequestMandated(),
                                                               requestProviderService.getInstanceId()));
             }
         }
@@ -131,7 +130,6 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
             body.setLinks(new CreatePiisConsentLinks(getHttpUrl(), scaApproachResolver, body, redirectLinkBuilder,
                                                      redirectIdService,
                                                      explicitMethod, signingBasketModeActive,
-                                                     getScaRedirectFlow(),
                                                      isAuthorisationConfirmationRequestMandated(),
                                                      requestProviderService.getInstanceId()));
         }
@@ -146,7 +144,7 @@ public class ConsentAspectService extends BaseAspectService<ConsentController> {
             } else if (result.getBody() instanceof CreateConsentAuthorizationResponse) {
                 CreateConsentAuthorizationResponse body = (CreateConsentAuthorizationResponse) result.getBody();
                 body.setLinks(new CreatePiisAuthorisationLinks(getHttpUrl(), body, scaApproachResolver, redirectLinkBuilder,
-                                                               redirectIdService, getScaRedirectFlow(), isAuthorisationConfirmationRequestMandated(),
+                                                               redirectIdService, isAuthorisationConfirmationRequestMandated(),
                                                                requestProviderService.getInstanceId()));
             }
         }

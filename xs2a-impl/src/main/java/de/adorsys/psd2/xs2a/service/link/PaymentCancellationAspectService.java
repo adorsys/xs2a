@@ -68,7 +68,7 @@ public class PaymentCancellationAspectService extends BaseAspectService<PaymentC
                 // in payment cancellation case 'multilevelScaRequired' is always false
                 boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(request.getTppExplicitAuthorisationPreferred(), false);
                 response.setLinks(new PaymentCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                               redirectIdService, response, isExplicitMethod, getScaRedirectFlow(),
+                                                               redirectIdService, response, isExplicitMethod,
                                                                isAuthorisationConfirmationRequestMandated(),
                                                                requestProviderService.getInstanceId()));
             }
