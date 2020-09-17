@@ -106,6 +106,11 @@ public class CommonAspspProfileBankSetting {
     private boolean signingBasketSupported;
 
     /**
+     * Maximum entries in signing basket
+     */
+    private int signingBasketMaxEntries;
+
+    /**
      * Indicates whether ASPSP supports validation TPP roles from certificate
      */
     private boolean checkTppRolesFromCertificateSupported;

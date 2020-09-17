@@ -69,5 +69,6 @@
     "additionalInformationAccess": {
     }
   },
-  "instanceId": "UNDEFINED"
+  "instanceId": "UNDEFINED",
+  "signingBasketBlocked": true
 }

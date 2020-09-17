@@ -17,8 +17,8 @@
 package de.adorsys.psd2.consent.service.mapper;
 
 import de.adorsys.psd2.consent.api.pis.CmsRemittance;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -74,6 +75,12 @@ public class PisCommonPaymentMapper {
         return commonPaymentData;
     }
 
+    public List<PisCommonPaymentResponse> mapToPisCommonPaymentResponses(List<PisCommonPaymentData> commonPaymentDatas, Map<String, List<AuthorisationEntity>> authorisations) {
+        return commonPaymentDatas.stream()
+                   .map(payment -> mapToPisCommonPaymentResponse(payment, authorisations.get(payment.getExternalId())).get())
+                   .collect(Collectors.toList());
+    }
+
     public Optional<PisCommonPaymentResponse> mapToPisCommonPaymentResponse(PisCommonPaymentData commonPaymentData, List<AuthorisationEntity> authorisations) {
         return Optional.ofNullable(commonPaymentData)
                    .map(cmd -> {
@@ -92,6 +99,7 @@ public class PisCommonPaymentMapper {
                        response.setCreationTimestamp(cmd.getCreationTimestamp());
                        response.setContentType(cmd.getContentType());
                        response.setInstanceId(cmd.getInstanceId());
+                       response.setSigningBasketBlocked(cmd.isSigningBasketBlocked());
                        return response;
                    });
     }

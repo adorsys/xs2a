@@ -61,6 +61,9 @@ class CreateConsentAuthorisationValidatorTest {
     private static final MessageError STATUS_INVALID_ERROR =
         new MessageError(ErrorType.AIS_409, TppMessageInformation.of(STATUS_INVALID));
 
+    private static final MessageError RESOURCE_BLOCKED_SB_ERROR =
+        new MessageError(ErrorType.AIS_400, TppMessageInformation.of(RESOURCE_BLOCKED_SB));
+
     private static final PsuIdData PSU_DATA = new PsuIdData("111", null, null, null, null);
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final PsuIdData NEW_PSU_DATA = new PsuIdData("new PSU data", null, null, null, null);
@@ -96,6 +99,23 @@ class CreateConsentAuthorisationValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
         assertNull(validationResult.getMessageError());
+    }
+
+    @Test
+    void validate_consentIsBlocked_shouldReturnResourceBlockedInvalidError() {
+        // Given
+        AisConsent accountConsent = buildAccountConsentWithPsuIdData(false);
+        accountConsent.setSigningBasketBlocked(true);
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+        // When
+        ValidationResult validationResult = createConsentAuthorisationValidator.validate(new CreateConsentAuthorisationObject(accountConsent, NEW_PSU_DATA));
+
+        // Then
+        verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(RESOURCE_BLOCKED_SB_ERROR, validationResult.getMessageError());
     }
 
     @Test

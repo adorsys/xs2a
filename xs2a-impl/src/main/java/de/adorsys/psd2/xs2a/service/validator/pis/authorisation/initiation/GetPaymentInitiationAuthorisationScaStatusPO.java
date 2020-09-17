@@ -1,6 +1,6 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;

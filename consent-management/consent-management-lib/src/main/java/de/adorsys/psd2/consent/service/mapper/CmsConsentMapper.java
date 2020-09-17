@@ -31,6 +31,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -41,6 +42,12 @@ public class CmsConsentMapper {
     private final PsuDataMapper psuDataMapper;
     private final AuthorisationMapper authorisationMapper;
     private final AccessMapper accessMapper;
+
+    public List<CmsConsent> mapToCmsConsents(List<ConsentEntity> entities, Map<String, List<AuthorisationEntity>> authorisation, Map<String, Map<String, Integer>> usages) {
+        return entities.stream()
+                   .map(entity -> mapToCmsConsent(entity, authorisation.get(entity.getExternalId()), usages.get(entity.getExternalId())))
+                   .collect(Collectors.toList());
+    }
 
     public CmsConsent mapToCmsConsent(ConsentEntity entity, List<AuthorisationEntity> authorisations, Map<String, Integer> usages) {
         CmsConsent cmsConsent = new CmsConsent();
@@ -68,6 +75,7 @@ public class CmsConsentMapper {
                                                                                         entity.getOwnerNameType(),
                                                                                         entity.getTrustedBeneficiariesType()));
         cmsConsent.setInstanceId(entity.getInstanceId());
+        cmsConsent.setSigningBasketBlocked(entity.isSigningBasketBlocked());
         return cmsConsent;
     }
 

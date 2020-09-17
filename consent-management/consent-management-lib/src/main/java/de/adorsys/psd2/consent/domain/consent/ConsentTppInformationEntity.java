@@ -29,7 +29,6 @@ import java.util.List;
 @Entity(name = "consent_tpp_information")
 @ApiModel(description = "Consent tpp information", value = "ConsentTppInformationEntity")
 public class ConsentTppInformationEntity {
-
     @Id
     @Column(name = "consent_tpp_information_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "consent_tpp_information_generator")

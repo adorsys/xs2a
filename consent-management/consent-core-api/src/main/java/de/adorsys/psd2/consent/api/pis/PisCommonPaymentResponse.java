@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.api.pis.proto;
+package de.adorsys.psd2.consent.api.pis;
 
-import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -76,6 +74,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
 
     @ApiModelProperty(value = "Response instance id")
     private String instanceId;
+
+    @ApiModelProperty(value = "Signing basket blocked")
+    private boolean signingBasketBlocked;
 
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()

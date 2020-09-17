@@ -32,10 +32,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_409;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
  * Validator to be used for validating create consent authorisation request according to some business rules
@@ -57,10 +55,13 @@ public class CreateConsentAuthorisationValidator extends AbstractConsentTppValid
     @Override
     protected ValidationResult executeBusinessValidation(CreateConsentAuthorisationObject createConsentAuthorisationObject) {
 
-        PsuIdData psuDataFromRequest = createConsentAuthorisationObject.getPsuIdDataFromRequest();
         AisConsent aisConsent = createConsentAuthorisationObject.getAisConsent();
-        List<PsuIdData> psuDataFromDb = aisConsent.getPsuIdDataList();
+        if (aisConsent.isSigningBasketBlocked()) {
+            return ValidationResult.invalid(AIS_400, RESOURCE_BLOCKED_SB);
+        }
 
+        List<PsuIdData> psuDataFromDb = aisConsent.getPsuIdDataList();
+        PsuIdData psuDataFromRequest = createConsentAuthorisationObject.getPsuIdDataFromRequest();
         if (authorisationPsuDataChecker.isPsuDataWrong(
             aisConsent.isMultilevelScaRequired(),
             psuDataFromDb,

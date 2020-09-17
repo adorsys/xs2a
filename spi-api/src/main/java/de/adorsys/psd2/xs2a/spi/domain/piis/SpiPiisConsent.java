@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.domain.piis;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.spi.domain.SpiConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -48,4 +49,5 @@ public class SpiPiisConsent implements SpiConsent {
     private String registrationInformation;
     private OffsetDateTime statusChangeTimestamp;
     private String tppAuthorisationNumber;
+    private ConsentType consentType;
 }

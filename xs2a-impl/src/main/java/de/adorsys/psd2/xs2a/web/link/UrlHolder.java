@@ -43,12 +43,17 @@ public class UrlHolder {
     public static final String CARD_TRANSACTIONS_URL = "/v1/card-accounts/{accountId}/transactions";
     public static final String CARD_TRANSACTIONS_DOWNLOAD_URL = "/v1/card-accounts/{accountId}/transactions/download/{downloadId}";
 
-    //PIIS CONSENT
+    // PIIS CONSENT
     public static final String PIIS_PREFIX = "/v2/consents/confirmation-of-funds";
     public static final String PIIS_CONSENT_LINK_URL = PIIS_PREFIX + "/{consentId}";
     public static final String PIIS_CONSENT_STATUS_URL = PIIS_PREFIX + "/{consentId}/status";
     public static final String PIIS_AUTHORISATION_URL = PIIS_PREFIX + "/{consentId}/authorisations/{authorisation-id}";
     public static final String CREATE_PIIS_AUTHORISATION_URL = PIIS_PREFIX + "/{consentId}/authorisations";
+
+    // SIGNING BASKET
+    public static final String SIGNING_BASKET_LINK_URL = "/v1/signing-baskets/{basketId}";
+    public static final String SIGNING_BASKET_STATUS_URL = "/v1/signing-baskets/{basketId}/status";
+    public static final String CREATE_SIGNING_BASKET_AUTHORISATION_URL = "/v1/signing-baskets/{basketId}/authorisations";
 
     private UrlHolder() {
     }

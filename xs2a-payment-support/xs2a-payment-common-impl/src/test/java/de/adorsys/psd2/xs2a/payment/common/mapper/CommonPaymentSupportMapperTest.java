@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.payment.common.mapper;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiCommonPayment;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;

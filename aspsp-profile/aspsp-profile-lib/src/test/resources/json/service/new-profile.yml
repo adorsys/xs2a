@@ -44,6 +44,7 @@ setting:
     - EMBEDDED
     - DECOUPLED
     scaRedirectFlow: REDIRECT
+    signingBasketMaxEntries: 10
     signingBasketSupported: false
     startAuthorisationMode: auto
     supportedAccountReferenceFields:

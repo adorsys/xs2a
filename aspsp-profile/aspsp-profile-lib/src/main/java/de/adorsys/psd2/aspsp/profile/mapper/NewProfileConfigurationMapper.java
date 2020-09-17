@@ -38,6 +38,7 @@ public class NewProfileConfigurationMapper {
     private static final boolean DEFAULT_SCA_BY_ONE_TIME_GLOBAL_CONSENT_REQUIRED = true;
     private static final String DEFAULT_OAUTH_CONFIGURATION_URL = "http://localhost:4200/idp/";
     private static final String DEFAULT_PIIS_REDIRECT_URL = "http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}";
+    private static final int DEFAULT_SIGNING_BASKET_MAX_ENTRIES = 10;
 
     public NewProfileConfiguration mapToNewProfileConfiguration(OldProfileConfiguration oldProfileConfiguration) {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
@@ -84,6 +85,7 @@ public class NewProfileConfigurationMapper {
                                                                                  setting.getMulticurrencyAccountLevel(),
                                                                                  setting.isCombinedServiceIndicator(),
                                                                                  setting.isSigningBasketSupported(),
+                                                                                 DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
                                                                                  true,
                                                                                  Collections.singletonList(NotificationSupportedMode.NONE),
                                                                                  false,

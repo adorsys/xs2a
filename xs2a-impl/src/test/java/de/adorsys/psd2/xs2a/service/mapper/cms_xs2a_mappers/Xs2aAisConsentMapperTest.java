@@ -215,5 +215,6 @@ class Xs2aAisConsentMapperTest {
         assertEquals(aisConsent.getStatusChangeTimestamp(), cmsConsent.getStatusChangeTimestamp());
         assertEquals(aisConsent.getUsages(), cmsConsent.getUsages());
         assertEquals(aisConsent.getCreationTimestamp(), cmsConsent.getCreationTimestamp());
+        assertEquals(aisConsent.isSigningBasketBlocked(), cmsConsent.isSigningBasketBlocked());
     }
 }

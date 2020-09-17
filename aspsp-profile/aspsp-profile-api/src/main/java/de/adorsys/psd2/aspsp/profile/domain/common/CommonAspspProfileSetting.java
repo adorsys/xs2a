@@ -48,6 +48,7 @@ public class CommonAspspProfileSetting {
     private MulticurrencyAccountLevel multicurrencyAccountLevelSupported;
     private boolean aisPisSessionsSupported;
     private boolean signingBasketSupported;
+    private int signingBasketMaxEntries;
     private boolean checkTppRolesFromCertificateSupported;
     private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
     private boolean authorisationConfirmationRequestMandated;
