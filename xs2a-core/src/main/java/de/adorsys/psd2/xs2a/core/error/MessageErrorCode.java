@@ -56,6 +56,18 @@ public enum MessageErrorCode {
     FORBIDDEN(403), // Token is not valid for the addressed service/resource
 
     FORMAT_ERROR(400),  // Format of certain request fields are not matching the XS2A requirements
+    FORMAT_ERROR_IMPLICIT_SB(400){
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    }, // 'TPP-Explicit-Authorisation-Preferred' header should be true for signing basket
+    FORMAT_ERROR_OVERSIZE_SB(400){
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    }, // Number of entries in Signing Basket should not exceed more than %s
 
     // Please provide the PSU identification data
     FORMAT_ERROR_NO_PSU(400) {
@@ -337,7 +349,14 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
-    RESOURCE_BLOCKED(400), // The addressed resource is not addressable by this request, since it is blocked e.g. by a grouping in a signing basket
+    RESOURCE_BLOCKED(400), // Payment is finalised already and cannot be cancelled
+    // The addressed resource is not addressable by this request, since it is blocked e.g. by a grouping in a signing basket
+    RESOURCE_BLOCKED_SB(400) {
+        @Override
+        public String getName() {
+            return RESOURCE_BLOCKED.getName();
+        }
+    },
     PSU_CREDENTIALS_INVALID(401),  // The PSU-ID cannot be matched by the addressed ASPSP or is blocked, or a password resp. OTP was not correct
 
     // Couldn’t execute payment cancellation
@@ -439,8 +458,8 @@ public enum MessageErrorCode {
     NO_PIIS_ACTIVATION(400), // The PSU has not activated the addressed account for the usage of the PIIS associated with the TPP
 
     // Signing Basket Specific Error Codes
-    REFERENCE_MIX_INVALID(400),
-    REFERENCE_STATUS_INVALID(409),
+    REFERENCE_MIX_INVALID(400), // The used combination of referenced objects is not supported in the ASPSPs signing basket function.
+    REFERENCE_STATUS_INVALID(409), // At least one of the references is already fully authorised.
 
     // AIS specific error code
     SESSIONS_NOT_SUPPORTED(400),  // Sessions are not supported by ASPSP
@@ -470,6 +489,13 @@ public enum MessageErrorCode {
     },
     // 405 - The addressed service is not valid for the addressed resources or the submitted data
     SERVICE_INVALID_405(405) {
+        @Override
+        public String getName() {
+            return SERVICE_INVALID_NAME;
+        }
+    },
+    // 405 - Signing basket is not supported by ASPSP
+    SERVICE_INVALID_405_SB(405) {
         @Override
         public String getName() {
             return SERVICE_INVALID_NAME;

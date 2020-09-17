@@ -53,5 +53,6 @@
   "multilevelScaRequired": false,
   "aspspAccountId": "some account id",
   "statusChangeTimestamp": "2019-08-22T11:01:27Z",
-  "authorisationTemplate": {}
+  "authorisationTemplate": {},
+  "signingBasketBlocked": true
 }

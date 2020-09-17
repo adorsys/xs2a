@@ -61,6 +61,7 @@ setting:
     multicurrencyAccountLevelSupported: SUBACCOUNT
     aisPisSessionsSupported: FALSE
     signingBasketSupported: FALSE
+    signingBasketMaxEntries: 10
     checkTppRolesFromCertificateSupported: TRUE
     aspspNotificationsSupported:
       - NONE

@@ -17,6 +17,8 @@
 package de.adorsys.psd2.event.core.model;
 
 public enum EventType {
+    /* Signing basket */
+    CREATE_SIGNING_BASKET_REQUEST_RECEIVED,
     /* PIIS Funds Confirmation */
     CREATE_PIIS_CONSENT_REQUEST_RECEIVED,
     DELETE_PIIS_CONSENT_REQUEST_RECEIVED,

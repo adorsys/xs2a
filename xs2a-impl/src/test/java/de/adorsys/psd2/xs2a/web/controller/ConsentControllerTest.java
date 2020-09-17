@@ -159,8 +159,6 @@ class ConsentControllerTest {
             .thenReturn(createXs2aConsentResponse(null));
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
-            .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         Consents consents = getConsents();
         //When:

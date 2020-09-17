@@ -79,6 +79,7 @@ public abstract class Consent<T> {
     private String instanceId;
     @NotNull
     private ConsentType consentType;
+    private boolean signingBasketBlocked;
 
     public TppInfo getTppInfo() {
         return Optional.ofNullable(consentTppInformation)

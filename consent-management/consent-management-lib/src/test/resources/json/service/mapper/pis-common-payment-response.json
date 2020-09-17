@@ -72,5 +72,6 @@
       "authorisationType": "CONSENT"
     }
   ],
-  "instanceId": "UNDEFINED"
+  "instanceId": "UNDEFINED",
+  "signingBasketBlocked": true
 }

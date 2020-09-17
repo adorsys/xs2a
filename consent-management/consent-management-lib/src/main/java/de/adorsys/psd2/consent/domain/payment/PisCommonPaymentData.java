@@ -111,6 +111,9 @@ public class PisCommonPaymentData extends InstanceDependableEntity implements Au
     @Column(name = "tpp_brand_log_info")
     private String tppBrandLoggingInformation;
 
+    @Column(name = "signing_basket_blocked", nullable = false)
+    private boolean signingBasketBlocked;
+
     @Transient
     private TransactionStatus previousTransactionStatus;
 

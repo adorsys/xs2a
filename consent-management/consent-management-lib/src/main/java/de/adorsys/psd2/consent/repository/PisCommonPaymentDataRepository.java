@@ -30,5 +30,7 @@ public interface PisCommonPaymentDataRepository extends CrudRepository<PisCommon
 
     Optional<PisCommonPaymentData> findByPaymentId(String paymentId);
 
+    List<PisCommonPaymentData> findAllByPaymentIdIn(List<String> externalIds);
+
     List<PisCommonPaymentData> findByTransactionStatusIn(Set<TransactionStatus> statuses);
 }

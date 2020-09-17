@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -62,10 +62,13 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Create
     @Override
     protected ValidationResult executeBusinessValidation(CreatePisAuthorisationObject createPisAuthorisationObject) {
 
+        PisCommonPaymentResponse pisCommonPaymentResponse = createPisAuthorisationObject.getPisCommonPaymentResponse();
+        if (pisCommonPaymentResponse.isSigningBasketBlocked()) {
+            return ValidationResult.invalid(PIS_400, RESOURCE_BLOCKED_SB);
+        }
+
         PsuIdData psuDataFromRequest = createPisAuthorisationObject.getPsuDataFromRequest();
         List<PsuIdData> psuDataFromDb = createPisAuthorisationObject.getPisCommonPaymentResponse().getPsuData();
-        PisCommonPaymentResponse pisCommonPaymentResponse = createPisAuthorisationObject.getPisCommonPaymentResponse();
-
         if (authorisationPsuDataChecker.isPsuDataWrong(
             pisCommonPaymentResponse.isMultilevelScaRequired(),
             psuDataFromDb,

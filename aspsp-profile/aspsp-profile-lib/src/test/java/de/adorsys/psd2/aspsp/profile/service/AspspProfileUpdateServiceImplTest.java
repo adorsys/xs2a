@@ -70,6 +70,7 @@ class AspspProfileUpdateServiceImplTest {
     private static final boolean BANK_OFFERED_CONSENT_SUPPORTED = true;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = true;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
+    private static final int SIGNING_BASKET_MAX_ENTRIES = 10;
     private static final boolean PAYMENT_CANCELLATION_AUTHORISATION_MANDATED = true;
     private static final PiisConsentSupported PIIS_CONSENT_SUPPORTED = PiisConsentSupported.ASPSP_CONSENT_SUPPORTED;
     private static final boolean DELTA_LIST_SUPPORTED = true;
@@ -209,6 +210,7 @@ class AspspProfileUpdateServiceImplTest {
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
                                                                          SIGNING_BASKET_SUPPORTED,
+                                                                         SIGNING_BASKET_MAX_ENTRIES,
                                                                          IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
                                                                          ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                          AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,

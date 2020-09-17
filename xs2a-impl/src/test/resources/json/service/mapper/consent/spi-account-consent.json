@@ -29,5 +29,6 @@
   "statusChangeTimestamp": "2019-08-22T11:01:27Z",
   "creationTimestamp": "2019-08-22T11:00:00Z",
   "aisConsentRequestType": "DEDICATED_ACCOUNTS",
-  "withBalance": true
+  "withBalance": true,
+  "consentType": "AIS"
 }

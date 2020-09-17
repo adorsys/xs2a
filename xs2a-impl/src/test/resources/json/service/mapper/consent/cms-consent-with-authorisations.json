@@ -95,5 +95,6 @@
       }
     }
   ],
-  "usages": {}
+  "usages": {},
+  "signingBasketBlocked": true
 }

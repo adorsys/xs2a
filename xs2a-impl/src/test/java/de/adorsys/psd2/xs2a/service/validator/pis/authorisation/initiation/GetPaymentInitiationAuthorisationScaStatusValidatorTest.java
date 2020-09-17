@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -83,8 +83,8 @@ class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when( pisAuthorisationValidator.validate(AUTHORISATION_ID,commonPaymentResponse) )
-            .thenReturn( ValidationResult.valid() );
+        when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
+            .thenReturn(ValidationResult.valid());
         when(oauthPaymentValidator.validate(commonPaymentResponse))
             .thenReturn(ValidationResult.valid());
 
@@ -100,18 +100,18 @@ class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     }
 
     @Test
-    void validate_withValidPaymentObjectAndInvalidId_shouldReturnInvalid(){
+    void validate_withValidPaymentObjectAndInvalidId_shouldReturnInvalid() {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
         when(pisTppInfoValidator.validateTpp(TPP_INFO))
             .thenReturn(ValidationResult.valid());
-        when( pisAuthorisationValidator.validate(INVALID_AUTHORISATION_ID, commonPaymentResponse) )
-            .thenReturn( ValidationResult.invalid(AUTHORISATION_VALIDATION_ERROR));
+        when(pisAuthorisationValidator.validate(INVALID_AUTHORISATION_ID, commonPaymentResponse))
+            .thenReturn(ValidationResult.invalid(AUTHORISATION_VALIDATION_ERROR));
 
         ValidationResult validationResult = getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(commonPaymentResponse, INVALID_AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
-        assertNotNull( validationResult );
+        assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
-        assertEquals(AUTHORISATION_VALIDATION_ERROR,validationResult.getMessageError());
+        assertEquals(AUTHORISATION_VALIDATION_ERROR, validationResult.getMessageError());
     }
 
     @Test
