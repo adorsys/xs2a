@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
@@ -32,6 +33,7 @@ public class CreatePiisConsentLinks extends AbstractLinks {
                                   Xs2aConfirmationOfFundsResponse response, RedirectLinkBuilder redirectLinkBuilder,
                                   RedirectIdService redirectIdService,
                                   boolean explicitMethod, boolean signingBasketModeActive,
+                                  ScaRedirectFlow scaRedirectFlow,
                                   boolean authorisationConfirmationRequestMandated,
                                   String instanceId) {
         super(httpUrl);
@@ -53,8 +55,11 @@ public class CreatePiisConsentLinks extends AbstractLinks {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_PIIS_AUTHORISATION_URL, consentId));
             } else {
                 String redirectId = redirectIdService.generateRedirectId(authorisationId);
+                String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
+                                              ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
+                                              : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.PIIS_TPP);
 
-                setScaRedirect(new HrefType(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.PIIS_TPP)));
+                setScaRedirect(new HrefType(consentOauthLink));
                 setScaStatus(buildPath(UrlHolder.PIIS_AUTHORISATION_URL, consentId, authorisationId));
 
                 if (authorisationConfirmationRequestMandated) {
