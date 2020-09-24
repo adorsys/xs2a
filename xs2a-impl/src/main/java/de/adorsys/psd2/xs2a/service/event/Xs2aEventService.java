@@ -43,7 +43,31 @@ public class Xs2aEventService {
     private final EventMapper eventMapper;
 
     /**
-     * Records TPP request to the AIS in the CMS in form of TPP event for given consent id and event type
+     * Records TPP request to the signing basket in the CMS in form of TPP event for given basket id and event type
+     *
+     * @param basketId  signing basket id that will be recorded along with the event
+     * @param eventType Type of the event
+     */
+    public void recordSbTppRequest(@NotNull String basketId, @NotNull EventType eventType) {
+        recordConsentTppRequest(basketId, eventType, null);
+    }
+
+    /**
+     * Records TPP request to the signing basket in the CMS in form of TPP event for given basket id, event type and request body
+     *
+     * @param basketId  basket id that will be recorded along with the event
+     * @param eventType Type of the event
+     * @param body      Body of the request
+     */
+    public void recordSbTppRequest(@NotNull String basketId, @NotNull EventType eventType, @Nullable Object body) {
+        EventBO event = buildTppEvent(eventType, body);
+        event.setBasketId(basketId);
+
+        recordEventInCms(event);
+    }
+
+    /**
+     * Records TPP request to the consent in the CMS in form of TPP event for given consent id and event type
      *
      * @param consentId Consent id that will be recorded along with the event
      * @param eventType Type of the event
@@ -53,7 +77,7 @@ public class Xs2aEventService {
     }
 
     /**
-     * Records TPP request to the AIS in the CMS in form of TPP event for given consent id, event type and request body
+     * Records TPP request to the consent in the CMS in form of TPP event for given consent id, event type and request body
      *
      * @param consentId Consent id that will be recorded along with the event
      * @param eventType Type of the event

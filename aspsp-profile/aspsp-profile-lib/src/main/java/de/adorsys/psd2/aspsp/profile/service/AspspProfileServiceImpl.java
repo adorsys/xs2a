@@ -101,6 +101,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                          commonBankSetting.isAisPisSessionsSupported(),
                                                                          commonBankSetting.isSigningBasketSupported(),
                                                                          commonBankSetting.getSigningBasketMaxEntries(),
+                                                                         commonBankSetting.getNotConfirmedSigningBasketExpirationTimeMs(),
                                                                          commonBankSetting.isCheckTppRolesFromCertificateSupported(),
                                                                          commonBankSetting.getAspspNotificationsSupported(),
                                                                          commonBankSetting.isAuthorisationConfirmationRequestMandated(),

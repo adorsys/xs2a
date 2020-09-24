@@ -17,13 +17,19 @@
 <databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-    <changeSet author="ske@adorsys.de" id="2020-08-28-1">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-1">
         <comment>Create sequence for singing_basket_id</comment>
         <createSequence sequenceName="signing_basket_id_seq"/>
         <sql dbms="mariadb">CREATE SEQUENCE signing_basket_id_seq</sql>
     </changeSet>
 
-    <changeSet id="2020-08-28-2" author="ske@adorsys.de">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-2">
+        <comment>Create sequence for signing_basket_tpp_information</comment>
+        <createSequence sequenceName="signing_basket_tpp_information_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE signing_basket_id_seq</sql>
+    </changeSet>
+
+    <changeSet author="ske@adorsys.de" id="2020-09-11-3">
         <comment>Create table signing_basket</comment>
         <createTable tableName="signing_basket">
             <column name="signing_basket_id" type="BIGINT">
@@ -41,10 +47,16 @@
             </column>
             <column name="multilevel_sca_required" type="BOOLEAN"/>
             <column name="instance_id" type="VARCHAR(40)"/>
+            <column name="signing_basket_tpp_information_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="creation_timestamp" type="DATETIME" valueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
-    <changeSet id="2020-08-28-3" author="ske@adorsys.de">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-4">
         <comment>Create table signing_basket_consents</comment>
         <createTable tableName="signing_basket_consents">
             <column name="signing_basket_id" type="BIGINT">
@@ -63,7 +75,7 @@
                                  referencedColumnNames="consent_id"/>
     </changeSet>
 
-    <changeSet id="2020-08-28-4" author="ske@adorsys.de">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-5">
         <comment>Create table signing_basket_payments</comment>
         <createTable tableName="signing_basket_payments">
             <column name="signing_basket_id" type="BIGINT">
@@ -82,7 +94,7 @@
                                  referencedTableName="pis_common_payment" referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="2020-08-28-5" author="ske@adorsys.de">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-6">
         <comment>Create table signing_basket_psu_data</comment>
         <createTable tableName="signing_basket_psu_data">
             <column name="signing_basket_id" type="BIGINT">
@@ -101,22 +113,7 @@
                                  referencedTableName="psu_data" referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet author="ske@adorsys.de" id="2020-09-11-1">
-        <comment>Create sequence for signing_basket_tpp_information</comment>
-        <createSequence sequenceName="signing_basket_tpp_information_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE signing_basket_id_seq</sql>
-    </changeSet>
-
-    <changeSet author="ske@adorsys.de" id="2020-09-11-2">
-        <comment>Add tpp information id</comment>
-        <addColumn tableName="signing_basket">
-            <column name="signing_basket_tpp_information_id" type="BIGINT">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
-
-    <changeSet author="ske@adorsys.de" id="2020-09-11-3">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-7">
         <comment>Create table signing_basket_tpp_information</comment>
 
         <createTable tableName="signing_basket_tpp_information">
@@ -145,7 +142,7 @@
                                  referencedColumnNames="tpp_info_id"/>
     </changeSet>
 
-    <changeSet author="ske@adorsys.de" id="2020-09-11-4">
+    <changeSet author="ske@adorsys.de" id="2020-09-11-8">
         <comment>Create table signing_basket_consent_tpp_ntfc</comment>
 
         <createTable tableName="signing_basket_tpp_ntfc">
