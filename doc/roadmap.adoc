@@ -11,11 +11,11 @@ Stable branch will contain bugfixing and possibly necessary changes to support m
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 8.x is guaranteed. Will be released as Stable version 10.x on 19.03.2021
 
-[cols="3*.<"]
-|===
-|release date|version 8.x (Stable)|
+[cols="4*.<"]
+|====
+|release date|version 8.x (Stable)|version 9.x (Development)|XS2A extention (commercial)
 
-|11.09.2020|8.0|
+|15.09.2020|8.0| |
 
 a|
 
@@ -23,16 +23,36 @@ a|* Remove deprecated authorisation type AIS
 
 a|
 
-|XS2A extention (commercial)| |
+a|
+
+|09.10.2020|8.1|9.0|
+
+a|
+
+a|* Update OAuth flow
+
+* Set flag withBalance=true for Global Consent in CMS
+
+a|* All fixes and updates from v.8.1
+
+* Update CMS tables for Signing Basket plugin usage
+
+a|
+
+| |8.2|9.1|
 
 a|
 
 a|
 
-a|* Support Signing Basket in XS2A
+a|
 
-* Support AIS for single cards
+a|
 
-* Create Resource Notification Push Service
+| | | |Signing Basket plugin for XS2A
 
-|===
+| | | |Single card account plugin for XS2A
+
+| | | |Resource Notification Push Service
+
+|====
