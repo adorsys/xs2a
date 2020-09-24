@@ -20,6 +20,7 @@ package de.adorsys.psd2.xs2a.web.link;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -49,6 +50,7 @@ class PaymentCancellationLinksTest {
     private static final HrefType REDIRECT_LINK = new HrefType("built_redirect_link");
     private static final HrefType CANCEL_AUTH_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations");
     private static final HrefType PIS_CANCELLATION_AUTH_LINK_URL = new HrefType(CANCEL_AUTH_LINK.getHref() + "/" + AUTHORISATION_ID);
+    public static final HrefType START_AUTHORISATION_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations");
     private static final HrefType SELF_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111");
     private static final HrefType STATUS_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
     private static final String CONFIRMATION_LINK = "confirmation_link";
@@ -87,7 +89,7 @@ class PaymentCancellationLinksTest {
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), anyString(), eq(""))).thenReturn(REDIRECT_LINK.getHref());
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -108,7 +110,7 @@ class PaymentCancellationLinksTest {
         when(redirectLinkBuilder.buildPisCancellationConfirmationLink(eq(PAYMENT_SERVICE), eq(PAYMENT_PRODUCT), eq(PAYMENT_ID), eq(AUTHORISATION_ID))).thenReturn(CONFIRMATION_LINK);
 
         // When
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, true, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, true, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -125,7 +127,7 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -135,31 +137,11 @@ class PaymentCancellationLinksTest {
     }
 
     @Test
-    void buildCancellationLinks_redirect_oAuth_preStep_implicit() {
-        // Given
-        boolean isExplicitMethod = false;
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
-        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), anyString(), eq(""))).thenReturn(REDIRECT_LINK.getHref());
-
-        // When
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
-
-        // Then
-        expectedLinks.setSelf(SELF_LINK);
-        expectedLinks.setStatus(STATUS_LINK);
-        expectedLinks.setScaRedirect(REDIRECT_LINK);
-        expectedLinks.setScaStatus(PIS_CANCELLATION_AUTH_LINK_URL);
-
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
     void buildCancellationLinks_embedded_implicit() {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -174,7 +156,7 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -188,7 +170,7 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -203,11 +185,45 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(CANCEL_AUTH_LINK);
+
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    void buildCancellationLinks_redirect_oAuth_preStep_implicit() {
+        // Given
+        boolean isExplicitMethod = false;
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
+        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), anyString(), eq(""))).thenReturn(REDIRECT_LINK.getHref());
+
+        // When
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.OAUTH_PRE_STEP, false, "");
+
+        // Then
+        expectedLinks.setSelf(SELF_LINK);
+        expectedLinks.setStatus(STATUS_LINK);
+        expectedLinks.setScaRedirect(REDIRECT_LINK);
+        expectedLinks.setScaStatus(PIS_CANCELLATION_AUTH_LINK_URL);
+
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    void buildCancellationLinks_scaOAuth_explicit() {
+        boolean isExplicitMethod = true;
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.OAUTH, false, "");
+
+        expectedLinks.setSelf(SELF_LINK);
+        expectedLinks.setStatus(STATUS_LINK);
+        expectedLinks.setStartAuthorisation(START_AUTHORISATION_LINK);
 
         assertEquals(expectedLinks, links);
     }
@@ -219,7 +235,7 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = false;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -236,7 +252,7 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = true;
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
@@ -250,7 +266,7 @@ class PaymentCancellationLinksTest {
         boolean isExplicitMethod = true;
         response.setTransactionStatus(TransactionStatus.RJCT);
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, false, "");
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.REDIRECT, false, "");
 
         assertEquals(expectedLinks, links);
     }

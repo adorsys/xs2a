@@ -117,7 +117,7 @@ class PaymentControllerIT {
     private static final String CANCELLATION_AUTHORISATIONS_REDIRECT_OAUTH_RESP = "/json/payment/res/explicit/SinglePaymentCancellationAuth_Redirect_OAuth_response.json";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;
@@ -257,7 +257,7 @@ class PaymentControllerIT {
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponse())
                             .build());
-        given(authorisationServiceEncrypted.getAuthorisationScaApproach(any(String.class)))
+        given(authorisationServiceEncrypted.getAuthorisationScaApproach(anyString()))
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(SCA_APPROACH))
                             .build());
