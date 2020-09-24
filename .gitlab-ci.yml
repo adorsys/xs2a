@@ -47,6 +47,7 @@ variables:
   OPENSHIFT_NAMESPACE_DEV: "adorsys-psd2-develop"
   OPENSHIFT_NAMESPACE_INTEG: "adorsys-psd2-integ"
   OPENSHIFT_NAMESPACE_DEMO: "adorsys-psd2-demo"
+  OPENSHIFT_NAMESPACE_MODELBANK_KEYCLOAK_DEV: adorsys-modelbank-keycloak-dev
 
   ###########################
   # Build variables         #
@@ -440,4 +441,16 @@ Deploy to Openshift (release):
     GIT_STRATEGY: none
     DOCKER_TAG: $CI_COMMIT_TAG # Dockerhub source tag
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_DEMO} # Openshift target namespace
+  <<: *deploy_openshift
+
+Deploy to Openshift (sandbox_keycloack_dev):
+  stage: "Deploy"
+  cache: {}
+  dependencies: []
+  only:
+    - develop
+  variables:
+    GIT_STRATEGY: none
+    DOCKER_TAG: develop # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_MODELBANK_KEYCLOAK_DEV} # Openshift target namespace
   <<: *deploy_openshift
