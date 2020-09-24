@@ -94,10 +94,10 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="signing_basket_psu_data" baseColumnNames="signing_basket_id"
-                                 constraintName="fk_signing_basket_payments_signing_basket"
+                                 constraintName="fk_signing_basket_psu_data_signing_basket"
                                  referencedTableName="signing_basket" referencedColumnNames="signing_basket_id"/>
         <addForeignKeyConstraint baseTableName="signing_basket_psu_data" baseColumnNames="psu_data_id"
-                                 constraintName="fk_signing_basket_payments_psu_data"
+                                 constraintName="fk_signing_basket_psu_data_psu_data"
                                  referencedTableName="psu_data" referencedColumnNames="id"/>
     </changeSet>
 
@@ -139,7 +139,7 @@
                                  referencedColumnNames="signing_basket_tpp_information_id"/>
         <addForeignKeyConstraint baseTableName="signing_basket_tpp_information"
                                  baseColumnNames="tpp_info_id"
-                                 constraintName="fk_tpp_info_id" deferrable="false"
+                                 constraintName="fk_signing_basket_signing_basket_tpp_info" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedTableName="tpp_info"
                                  referencedColumnNames="tpp_info_id"/>
