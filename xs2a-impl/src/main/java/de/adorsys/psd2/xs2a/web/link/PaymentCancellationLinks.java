@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
@@ -33,17 +34,20 @@ public class PaymentCancellationLinks extends AbstractLinks {
     private RedirectLinkBuilder redirectLinkBuilder;
     private RedirectIdService redirectIdService;
     private boolean isExplicitMethod;
+    private ScaRedirectFlow scaRedirectFlow;
     private boolean authorisationConfirmationRequestMandated;
     private String instanceId;
 
     public PaymentCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                     RedirectIdService redirectIdService, CancelPaymentResponse response,
-                                    boolean isExplicitMethod,boolean authorisationConfirmationRequestMandated, String instanceId) {
+                                    boolean isExplicitMethod, ScaRedirectFlow scaRedirectFlow,
+                                    boolean authorisationConfirmationRequestMandated, String instanceId) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
         this.redirectLinkBuilder = redirectLinkBuilder;
         this.redirectIdService = redirectIdService;
         this.isExplicitMethod = isExplicitMethod;
+        this.scaRedirectFlow = scaRedirectFlow;
         this.authorisationConfirmationRequestMandated = authorisationConfirmationRequestMandated;
         this.instanceId = instanceId;
 
@@ -89,7 +93,11 @@ public class PaymentCancellationLinks extends AbstractLinks {
         } else {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
-            setScaRedirect(new HrefType(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId)));
+            String paymentCancellationOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
+                                          ? redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
+                                          : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
+
+            setScaRedirect(new HrefType(paymentCancellationOauthLink));
 
             setScaStatus(
                 buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));

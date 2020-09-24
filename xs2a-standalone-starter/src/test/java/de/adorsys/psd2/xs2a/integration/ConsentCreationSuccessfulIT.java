@@ -92,7 +92,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class ConsentCreationSuccessfulIT {
+class ConsentCreationSuccessfulIT {
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String DEDICATED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/DedicatedConsent.json";
     private static final String BANK_OFFERED_CONSENT_REQUEST_JSON_PATH = "/json/account/req/BankOfferedConsent.json";
@@ -110,8 +110,8 @@ public class ConsentCreationSuccessfulIT {
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
 
-    private HttpHeaders httpHeadersImplicit = new HttpHeaders();
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;
