@@ -50,6 +50,12 @@ public class EventBO {
     private String paymentId;
 
     /**
+     * Id of the signing basket that can be associated with this event.
+     * Can be null if the event isn't connected with the specific signing basket.
+     */
+    private String basketId;
+
+    /**
      * Indicates the origin of the event.
      */
     private EventOrigin eventOrigin;

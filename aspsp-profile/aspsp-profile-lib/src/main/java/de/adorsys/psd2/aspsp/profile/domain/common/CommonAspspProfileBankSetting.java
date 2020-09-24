@@ -111,6 +111,11 @@ public class CommonAspspProfileBankSetting {
     private int signingBasketMaxEntries;
 
     /**
+     * The limit of an expiration time of not confirmed signing basket url set in milliseconds
+     */
+    private long notConfirmedSigningBasketExpirationTimeMs;
+
+    /**
      * Indicates whether ASPSP supports validation TPP roles from certificate
      */
     private boolean checkTppRolesFromCertificateSupported;

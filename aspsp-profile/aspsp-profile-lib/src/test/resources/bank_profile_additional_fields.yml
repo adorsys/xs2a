@@ -60,6 +60,7 @@ setting:
     aisPisSessionsSupported: FALSE
     signingBasketSupported: FALSE
     signingBasketMaxEntries: 10
+    notConfirmedSigningBasketExpirationTimeMs: 86400000
     additionalField: 1
     checkTppRolesFromCertificateSupported: TRUE
     aspspNotificationsSupported:

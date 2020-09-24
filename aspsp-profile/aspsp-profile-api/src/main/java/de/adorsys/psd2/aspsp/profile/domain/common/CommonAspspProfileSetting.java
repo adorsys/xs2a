@@ -49,6 +49,7 @@ public class CommonAspspProfileSetting {
     private boolean aisPisSessionsSupported;
     private boolean signingBasketSupported;
     private int signingBasketMaxEntries;
+    private long notConfirmedSigningBasketExpirationTimeMs;
     private boolean checkTppRolesFromCertificateSupported;
     private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
     private boolean authorisationConfirmationRequestMandated;

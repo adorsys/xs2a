@@ -36,6 +36,7 @@ setting:
     checkUriComplianceToDomainSupported: false
     forceXs2aBaseLinksUrl: false
     multicurrencyAccountLevelSupported: SUBACCOUNT
+    notConfirmedSigningBasketExpirationTimeMs: 86400000
     oauthConfigurationUrl: http://localhost:4200/idp/
     psuInInitialRequestMandated: false
     redirectUrlExpirationTimeMs: 600000

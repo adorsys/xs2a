@@ -39,6 +39,7 @@ public class NewProfileConfigurationMapper {
     private static final String DEFAULT_OAUTH_CONFIGURATION_URL = "http://localhost:4200/idp/";
     private static final String DEFAULT_PIIS_REDIRECT_URL = "http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}";
     private static final int DEFAULT_SIGNING_BASKET_MAX_ENTRIES = 10;
+    private static final int DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS = 86400000;
 
     public NewProfileConfiguration mapToNewProfileConfiguration(OldProfileConfiguration oldProfileConfiguration) {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
@@ -86,6 +87,7 @@ public class NewProfileConfigurationMapper {
                                                                                  setting.isCombinedServiceIndicator(),
                                                                                  setting.isSigningBasketSupported(),
                                                                                  DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
+                                                                                 DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS,
                                                                                  true,
                                                                                  Collections.singletonList(NotificationSupportedMode.NONE),
                                                                                  false,

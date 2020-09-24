@@ -57,6 +57,7 @@ public class AspspSettingsBuilder {
     private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS = 86400000;
+    private static final long NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS = 86400000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "http://localhost:4200/pis/cancellation/{redirect-id}/";
     private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
@@ -146,6 +147,7 @@ public class AspspSettingsBuilder {
                                                                          AIS_PIS_SESSION_SUPPORTED,
                                                                          signingBasketSupported == null ? SIGNING_BASKET_SUPPORTED : signingBasketSupported,
                                                                          SIGNING_BASKET_MAX_ENTRIES,
+                                                                         NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
                                                                          true,
                                                                          ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                          AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,

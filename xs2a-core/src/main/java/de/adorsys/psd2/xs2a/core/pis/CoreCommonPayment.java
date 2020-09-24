@@ -23,6 +23,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface CoreCommonPayment {
+    String getPaymentId();
 
     List<PsuIdData> getPsuDataList();
 
