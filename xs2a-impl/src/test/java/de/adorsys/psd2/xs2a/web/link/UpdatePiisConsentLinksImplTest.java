@@ -29,12 +29,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UpdatePiisConsentLinksImplTest {
+class MultiReadHttpServletRequestMultiReadHttpServletRequestMultiReadHttpServletRequestMultiReadHttpServletRequestMultiReadHttpServletRequestMultiReadHttpServletRequestMultiReadHttpServletRequestUpdatePiisConsentLinksImplTest {
     private static final String HTTP_URL = "http://url";
     private static final String CONSENT_ID = "9mp1PaotpXSToNCiu4GLwd6mq";
     private static final String AUTHORISATION_ID = "463318a0-1e33-45d8-8209-e16444b18dda";

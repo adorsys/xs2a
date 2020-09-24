@@ -66,7 +66,7 @@ public class PaymentAuthorisationCancellationAspectService extends BaseAspectSer
                 response.setLinks(new PisAuthorisationCancellationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
                                                                         redirectIdService, request.getPaymentService().getValue(),
                                                                         request.getPaymentProduct(), request.getPaymentId(),
-                                                                        body.getAuthorisationId(), body.getInternalRequestId(),
+                                                                        body.getAuthorisationId(), getScaRedirectFlow(), body.getInternalRequestId(),
                                                                         requestProviderService.getInstanceId()));
             } else if (authorisationResponseType == AuthorisationResponseType.UPDATE) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
