@@ -143,10 +143,6 @@ xs2a:
             # How long, in seconds, the response from a pre-flight request can be cached by clients
             max-age: 3600
             # number of characters in a json string
-    application:
-        ais:
-            transaction:
-                max-length: 1000
 ----
 
 For testing purposes without real QWAC certificate, you can start application with `mock-qwac` profile.

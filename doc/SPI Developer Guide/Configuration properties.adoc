@@ -15,8 +15,6 @@
 
 |xs2a.iban.validation.enabled|Enable IBAN field validation|TRUE
 
-|xs2a.application.ais.transaction.max-length|Number of characters in a json string|100000
-
 |xs2a.cms.consent-service.baseurl|Consent service base URL|http://localhost:38080/api/v1
 |xs2a.cms.aspsp-profile.baseurl|ASPSP service base URL|http://localhost:48080/api/v1
 
