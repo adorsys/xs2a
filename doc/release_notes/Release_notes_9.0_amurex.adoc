@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Adjusted OAuth flow
+* Remove obsolete property `xs2a.application.ais.transaction.max-length`
 
 == Adjusted OAuth flow
 
@@ -13,3 +14,7 @@ From now on, OAUTH flow is a part of REDIRECT approach which configured modes (`
 * OAUTH_PRE_STEP - pre-step OAuth mode (TPP asks for token before initiation of request)
 
 There was a link `scaOAuth` which was replaced by `scaRedirect` in responses. SCA approach OAUTH was removed.
+
+== Remove obsolete property `xs2a.application.ais.transaction.max-length`
+
+The configuration property `xs2a.application.ais.transaction.max-length` was removed.
