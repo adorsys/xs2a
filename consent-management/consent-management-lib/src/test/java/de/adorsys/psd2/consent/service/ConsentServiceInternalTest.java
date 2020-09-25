@@ -702,7 +702,7 @@ class ConsentServiceInternalTest {
     private AspspSettings buildMockAspspSettings(int maxValidity) {
         ConsentTypeSetting consentTypeSettings = new ConsentTypeSetting(false, false, false, 0, 1L, maxValidity, false, false);
         AisAspspProfileSetting aisAspspProfileSettings = new AisAspspProfileSetting(consentTypeSettings, null, null, null, null);
-        return new AspspSettings(aisAspspProfileSettings, null, null, null);
+        return new AspspSettings(aisAspspProfileSettings, null, null, null, null);
     }
 }
 

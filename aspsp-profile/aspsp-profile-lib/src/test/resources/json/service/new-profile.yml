@@ -36,7 +36,6 @@ setting:
     checkUriComplianceToDomainSupported: false
     forceXs2aBaseLinksUrl: false
     multicurrencyAccountLevelSupported: SUBACCOUNT
-    notConfirmedSigningBasketExpirationTimeMs: 86400000
     oauthConfigurationUrl: http://localhost:4200/idp/
     psuInInitialRequestMandated: false
     redirectUrlExpirationTimeMs: 600000
@@ -45,8 +44,6 @@ setting:
     - EMBEDDED
     - DECOUPLED
     scaRedirectFlow: REDIRECT
-    signingBasketMaxEntries: 10
-    signingBasketSupported: false
     startAuthorisationMode: auto
     supportedAccountReferenceFields:
     - MSISDN
@@ -76,3 +73,7 @@ setting:
       SINGLE:
       - sepa-credit-transfers
       - instant-sepa-credit-transfers
+  sb:
+    notConfirmedSigningBasketExpirationTimeMs: 86400000
+    signingBasketMaxEntries: 10
+    signingBasketSupported: false

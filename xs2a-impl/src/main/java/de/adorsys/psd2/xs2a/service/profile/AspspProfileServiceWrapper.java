@@ -145,7 +145,7 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP supports signing basket , false if doesn't
      */
     public boolean isSigningBasketSupported() {
-        return readAspspSettings().getCommon().isSigningBasketSupported();
+        return readAspspSettings().getSb().isSigningBasketSupported();
     }
 
     /**
@@ -154,7 +154,7 @@ public class AspspProfileServiceWrapper {
      * @return maximum entries in signing basket
      */
     public int getSigningBasketMaxEntries() {
-        return readAspspSettings().getCommon().getSigningBasketMaxEntries();
+        return readAspspSettings().getSb().getSigningBasketMaxEntries();
     }
 
     /**

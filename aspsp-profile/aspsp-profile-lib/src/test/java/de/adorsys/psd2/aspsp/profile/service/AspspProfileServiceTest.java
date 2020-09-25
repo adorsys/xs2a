@@ -27,6 +27,7 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
- class AspspProfileServiceTest {
+class AspspProfileServiceTest {
     private static final int ACCOUNT_ACCESS_FREQUENCY_PER_DAY = 5;
     private static final boolean AIS_PIS_SESSION_SUPPORTED = false;
     private static final boolean TPP_SIGNATURE_REQUIRED = false;
@@ -111,27 +112,27 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
-     void getPisRedirectUrlToAspsp_success() {
+    void getPisRedirectUrlToAspsp_success() {
         assertEquals(PIS_REDIRECT_LINK, actualResponse.getPis().getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp());
     }
 
     @Test
-     void getPisPaymentCancellationRedirectUrlToAspsp_success() {
+    void getPisPaymentCancellationRedirectUrlToAspsp_success() {
         assertEquals(PIS_CANCELLATION_REDIRECT_LINK, actualResponse.getPis().getRedirectLinkToOnlineBanking().getPisPaymentCancellationRedirectUrlToAspsp());
     }
 
     @Test
-     void getAisRedirectUrlToAspsp_success() {
+    void getAisRedirectUrlToAspsp_success() {
         assertEquals(AIS_REDIRECT_LINK, actualResponse.getAis().getRedirectLinkToOnlineBanking().getAisRedirectUrlToAspsp());
     }
 
     @Test
-     void getAvailablePaymentTypes_success() {
+    void getAvailablePaymentTypes_success() {
         assertEquals(SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX, actualResponse.getPis().getSupportedPaymentTypeAndProductMatrix());
     }
 
     @Test
-     void getScaApproach_success() {
+    void getScaApproach_success() {
         //When:
         List<ScaApproach> actualResponse = aspspProfileService.getScaApproaches(INSTANCE_ID);
 
@@ -140,77 +141,77 @@ import static org.mockito.Mockito.when;
     }
 
     @Test
-     void getRedirectUrlExpirationTimeMs_success() {
+    void getRedirectUrlExpirationTimeMs_success() {
         assertEquals(REDIRECT_URL_EXPIRATION_TIME_MS, actualResponse.getCommon().getRedirectUrlExpirationTimeMs());
     }
 
     @Test
-     void getFrequencyPerDay_success() {
+    void getFrequencyPerDay_success() {
         assertEquals(ACCOUNT_ACCESS_FREQUENCY_PER_DAY, actualResponse.getAis().getConsentTypes().getAccountAccessFrequencyPerDay());
     }
 
     @Test
-     void getNotConfirmedConsentExpirationPeriodMs_success() {
+    void getNotConfirmedConsentExpirationPeriodMs_success() {
         assertEquals(NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS, actualResponse.getAis().getConsentTypes().getNotConfirmedConsentExpirationTimeMs());
     }
 
     @Test
-     void getNotConfirmedPaymentExpirationPeriodMs_success() {
+    void getNotConfirmedPaymentExpirationPeriodMs_success() {
         assertEquals(NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS, actualResponse.getPis().getNotConfirmedPaymentExpirationTimeMs());
     }
 
     @Test
-     void getPaymentCancellationRedirectUrlExpirationTimeMs_success() {
+    void getPaymentCancellationRedirectUrlExpirationTimeMs_success() {
         assertEquals(PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS, actualResponse.getPis().getRedirectLinkToOnlineBanking().getPaymentCancellationRedirectUrlExpirationTimeMs());
     }
 
     @Test
-     void getAuthorisationExpirationTimeMs_success() {
+    void getAuthorisationExpirationTimeMs_success() {
         assertEquals(AUTHORISATION_EXPIRATION_TIME_MS, actualResponse.getCommon().getAuthorisationExpirationTimeMs());
     }
 
     @Test
-     void getAvailableAccountsConsentSupported_success() {
+    void getAvailableAccountsConsentSupported_success() {
         assertEquals(AVAILABLE_ACCOUNTS_CONSENT_SUPPORTED, actualResponse.getAis().getConsentTypes().isAvailableAccountsConsentSupported());
     }
 
     @Test
-     void getScaByOneTimeAvailableAccountsConsentRequired_success() {
+    void getScaByOneTimeAvailableAccountsConsentRequired_success() {
         assertEquals(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, actualResponse.getAis().getScaRequirementsForOneTimeConsents().isScaByOneTimeAvailableAccountsConsentRequired());
     }
 
     @Test
-     void getPsuInInitialRequestMandated_success() {
+    void getPsuInInitialRequestMandated_success() {
         assertEquals(PSU_IN_INITIAL_REQUEST_MANDATED, actualResponse.getCommon().isPsuInInitialRequestMandated());
     }
 
     @Test
-     void getForceXs2aBaseUrl_success() {
+    void getForceXs2aBaseUrl_success() {
         assertEquals(FORCE_XS2A_BASE_LINKS_URL, actualResponse.getCommon().isForceXs2aBaseLinksUrl());
     }
 
     @Test
-     void getXs2aBaseUrl_success() {
+    void getXs2aBaseUrl_success() {
         assertEquals(XS2A_BASE_LINKS_URL, actualResponse.getCommon().getXs2aBaseLinksUrl());
     }
 
     @Test
-     void getEntryReferenceFromSupported_success() {
+    void getEntryReferenceFromSupported_success() {
         assertEquals(ENTRY_REFERENCE_FROM_SUPPORTED, actualResponse.getAis().getDeltaReportSettings().isEntryReferenceFromSupported());
     }
 
     @Test
-     void supportedTransactionApplicationTypes_success() {
+    void supportedTransactionApplicationTypes_success() {
         assertEquals(SUPPORTED_TRANSACTION_APPLICATION_TYPES, actualResponse.getAis().getTransactionParameters().getSupportedTransactionApplicationTypes());
     }
 
     @Test
-     void getStartAuthorisationMode() {
+    void getStartAuthorisationMode() {
         assertEquals(START_AUTHORISATION_MODE, actualResponse.getCommon().getStartAuthorisationMode());
     }
 
     @Test
-     void getScaRedirectFlow() {
+    void getScaRedirectFlow() {
         assertEquals(SCA_REDIRECT_FLOW, actualResponse.getCommon().getScaRedirectFlow());
     }
 
@@ -242,6 +243,9 @@ import static org.mockito.Mockito.when;
                                                                         COUNTRY_VALIDATION_SUPPORTED,
                                                                         SUPPORTED_TRANSACTION_STATUS_FORMATS);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkBankSetting(PIIS_REDIRECT_LINK));
+        SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting(SIGNING_BASKET_SUPPORTED,
+                                                                     SIGNING_BASKET_MAX_ENTRIES,
+                                                                     NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS);
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(Collections.singletonList(REDIRECT_APPROACH),
                                                                                  SCA_REDIRECT_FLOW,
                                                                                  OAUTH_CONFIGURATION_URL,
@@ -255,16 +259,13 @@ import static org.mockito.Mockito.when;
                                                                                  SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
                                                                                  MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                                  AIS_PIS_SESSION_SUPPORTED,
-                                                                                 SIGNING_BASKET_SUPPORTED,
-                                                                                 SIGNING_BASKET_MAX_ENTRIES,
-                                                                                 NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
                                                                                  IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
                                                                                  ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                                  AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
                                                                                  AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
                                                                                  CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                                  TPP_URI_COMPLIANCE_RESPONSE);
-        return new BankProfileSetting(ais, pis, piis, common);
+        return new BankProfileSetting(ais, pis, piis, sb, common);
     }
 
 

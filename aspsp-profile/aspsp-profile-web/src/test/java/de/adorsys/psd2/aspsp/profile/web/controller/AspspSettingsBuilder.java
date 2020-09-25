@@ -25,6 +25,7 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.*;
 
@@ -115,6 +116,9 @@ public class AspspSettingsBuilder {
                                                                 SUPPORTED_TRANSACTION_STATUS_FORMATS
         );
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
+        SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
+                                                             SIGNING_BASKET_MAX_ENTRIES,
+                                                             NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,
@@ -127,9 +131,6 @@ public class AspspSettingsBuilder {
                                                                          SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
-                                                                         SIGNING_BASKET_SUPPORTED,
-                                                                         SIGNING_BASKET_MAX_ENTRIES,
-                                                                         NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
                                                                          IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
                                                                          ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                          AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
@@ -137,7 +138,7 @@ public class AspspSettingsBuilder {
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                          TPP_URI_COMPLIANCE_RESPONSE);
 
-        return new AspspSettings(ais, pis, piis, common);
+        return new AspspSettings(ais, pis, piis, sb, common);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

@@ -31,6 +31,8 @@ import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.mapper.AspspSettingsToBankProfileSettingMapper;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.*;
@@ -160,7 +162,7 @@ class AspspProfileUpdateServiceImplTest {
         assertEquals(FORCE_XS2A_BASE_LINKS_URL, setting.getCommon().isForceXs2aBaseLinksUrl());
         assertEquals(AUTHORISATION_EXPIRATION_TIME_MS, setting.getCommon().getAuthorisationExpirationTimeMs());
         assertEquals(REDIRECT_URL_EXPIRATION_TIME_MS, setting.getCommon().getRedirectUrlExpirationTimeMs());
-        assertEquals(SIGNING_BASKET_SUPPORTED, setting.getCommon().isSigningBasketSupported());
+        assertEquals(SIGNING_BASKET_SUPPORTED, setting.getSb().isSigningBasketSupported());
         assertEquals(START_AUTHORISATION_MODE.getValue(), setting.getCommon().getStartAuthorisationMode());
         assertEquals(SUPPORTED_ACCOUNT_REFERENCE_FIELDS, setting.getCommon().getSupportedAccountReferenceFields());
         assertEquals(MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED, setting.getCommon().getMulticurrencyAccountLevelSupported());
@@ -198,6 +200,9 @@ class AspspProfileUpdateServiceImplTest {
                                                                 COUNTRY_VALIDATION_SUPPORTED,
                                                                 SUPPORTED_TRANSACTION_STATUS_FORMATS);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
+        SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
+                                                                 SIGNING_BASKET_MAX_ENTRIES,
+                                                                 NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,
@@ -210,9 +215,6 @@ class AspspProfileUpdateServiceImplTest {
                                                                          SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
-                                                                         SIGNING_BASKET_SUPPORTED,
-                                                                         SIGNING_BASKET_MAX_ENTRIES,
-                                                                         NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
                                                                          IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
                                                                          ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                          AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
@@ -220,7 +222,7 @@ class AspspProfileUpdateServiceImplTest {
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                          TPP_URI_COMPLIANCE_RESPONSE);
 
-        return new AspspSettings(ais, pis, piis, common);
+        return new AspspSettings(ais, pis, piis, sb, common);
     }
 
     private BankProfileSetting buildBankProfileSetting() {
@@ -237,8 +239,9 @@ class AspspProfileUpdateServiceImplTest {
         PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting();
         PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false, pisRedirectLinkToOnlineBanking, COUNTRY_VALIDATION_SUPPORTED, new ArrayList<>());
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting();
+        SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting();
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting();
-        return new BankProfileSetting(ais, pis, piis, common);
+        return new BankProfileSetting(ais, pis, piis, sb, common);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

@@ -614,7 +614,7 @@ class InitiatePaymentsSuccessfulIT {
 
     private boolean isSigningBasketModeActive(HttpHeaders headers) {
         boolean tppExplicitAuthorisationPreferred = Boolean.parseBoolean(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
-        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings(null).getCommon().isSigningBasketSupported();
+        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings(null).getSb().isSigningBasketSupported();
     }
 
     private CmsResponse<CreateAuthorisationResponse> getCmsReponse(ScaStatus scaStatus) {
