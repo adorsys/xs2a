@@ -3,7 +3,12 @@
 == Table of Contents
 
 * Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+* Remove obsolete property `xs2a.application.ais.transaction.max-length`
 
 == Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
 From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works correct with oracle db
+
+== Remove obsolete property `xs2a.application.ais.transaction.max-length`
+
+The configuration property `xs2a.application.ais.transaction.max-length` was removed.
