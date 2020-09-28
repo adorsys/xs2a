@@ -4,6 +4,7 @@
 
 * Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 * Remove obsolete property `xs2a.application.ais.transaction.max-length`
+* Changed (PaymentSpi | PaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse response type
 
 == Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
@@ -12,3 +13,8 @@ From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works
 == Remove obsolete property `xs2a.application.ais.transaction.max-length`
 
 The configuration property `xs2a.application.ais.transaction.max-length` was removed.
+
+== Changed PaymentSpi#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse response type
+
+From now on, (PaymentSpi | PaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse responses `SpiResponse<SpiPaymentExecutionResponse>`.
+This response includes transaction status and spi authorisation status simultaneously.

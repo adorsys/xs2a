@@ -52,7 +52,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsRespo
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import org.junit.jupiter.api.Test;
@@ -1172,7 +1171,7 @@ class PisAuthorisationProcessorServiceImplTest {
     @Test
     void doScaMethodSelected_success() {
         // Given
-        SpiResponse<SpiPaymentResponse> spiResponse = SpiResponse.<SpiPaymentResponse>builder()
+        SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_SUCCESS))
                                                                    .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
@@ -1194,7 +1193,7 @@ class PisAuthorisationProcessorServiceImplTest {
     @Test
     void doScaMethodSelected_multilevel_sca_success() {
         // Given
-        SpiResponse<SpiPaymentResponse> spiResponse = SpiResponse.<SpiPaymentResponse>builder()
+        SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .payload(buildSpiPaymentExecutionResponse(TEST_TRANSACTION_STATUS_MULTILEVEL_SCA))
                                                                    .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
@@ -1216,7 +1215,7 @@ class PisAuthorisationProcessorServiceImplTest {
     @Test
     void doScaMethodSelected_verifySca_fail_failure() {
         // Given
-        SpiResponse<SpiPaymentResponse> spiResponse = SpiResponse.<SpiPaymentResponse>builder()
+        SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
                                                                    .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                                    .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
@@ -1236,8 +1235,8 @@ class PisAuthorisationProcessorServiceImplTest {
     @Test
     void doScaMethodSelected_verifySca_fail_attemptFailure() {
         // Given
-        SpiResponse<SpiPaymentResponse> spiResponse = SpiResponse.<SpiPaymentResponse>builder()
-                                                          .payload(new SpiPaymentResponse(SpiAuthorisationStatus.ATTEMPT_FAILURE))
+        SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
+                                                          .payload(new SpiPaymentExecutionResponse(SpiAuthorisationStatus.ATTEMPT_FAILURE))
                                                           .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                           .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
