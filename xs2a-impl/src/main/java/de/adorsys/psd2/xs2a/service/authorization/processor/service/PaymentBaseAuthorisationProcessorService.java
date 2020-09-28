@@ -47,7 +47,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
+import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
@@ -168,7 +168,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
 
         SpiPayment payment = getSpiPayment(request.getPaymentId());
 
-        SpiResponse<SpiPaymentResponse> spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
+        SpiResponse<SpiPaymentExecutionResponse> spiResponse = verifyScaAuthorisationAndExecutePayment(authorisation, payment,
                                                                                               spiScaConfirmation,
                                                                                               contextData,
                                                                                               aspspConsentDataProvider);
@@ -177,7 +177,7 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
             writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, "Verify SCA authorisation and execute payment has failed.");
 
-            SpiPaymentResponse spiPaymentResponse = spiResponse.getPayload();
+            SpiPaymentExecutionResponse spiPaymentResponse = spiResponse.getPayload();
             if (spiPaymentResponse != null && spiPaymentResponse.getSpiAuthorisationStatus() == SpiAuthorisationStatus.ATTEMPT_FAILURE) {
                 return new Xs2aUpdatePisCommonPaymentPsuDataResponse(authorisationProcessorRequest.getScaStatus(), errorHolder, paymentId, authorisationId, psuData);
             }
@@ -194,13 +194,13 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         return getXs2aUpdatePisCommonPaymentPsuDataResponse(FINALISED, payment, contextData, aspspConsentDataProvider, psuData, authorisationId);
     }
 
-    abstract void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentResponse> spiResponse);
+    abstract void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentExecutionResponse> spiResponse);
 
     abstract SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(SpiPayment payment, String authenticationMethodId,
                                                                               SpiContextData spiContextData,
                                                                               SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 
-    abstract SpiResponse verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
+    abstract SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
                                                                  SpiPayment payment,
                                                                  SpiScaConfirmation spiScaConfirmation,
                                                                  SpiContextData contextData,

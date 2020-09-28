@@ -93,10 +93,10 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
 
     @Override
     @NotNull
-    public SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(@NotNull SpiContextData contextData, @NotNull SpiScaConfirmation spiScaConfirmation, @NotNull SpiPaymentInfo payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("CommonPaymentSpi#verifyScaAuthorisationAndExecutePayment: contextData {}, spiScaConfirmation{}, spiPaymentInfo {}, aspspConsentData {}", contextData, spiScaConfirmation, payment, aspspConsentDataProvider.loadAspspConsentData());
 
-        return SpiResponse.<SpiPaymentResponse>builder()
+        return SpiResponse.<SpiPaymentExecutionResponse>builder()
                    .payload(new SpiPaymentExecutionResponse(TransactionStatus.ACCP))
                    .build();
     }
