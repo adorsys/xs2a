@@ -39,6 +39,8 @@ setting:
       - application/json
   piis:
     piisConsentSupported: NOT_SUPPORTED
+  sb:
+    signingBasketSupported: FALSE
   common:
     scaApproachesSupported:
     - REDIRECT
@@ -54,4 +56,3 @@ setting:
     - IBAN
     multicurrencyAccountLevelSupported: SUBACCOUNT
     aisPisSessionsSupported: FALSE
-    signingBasketSupported: FALSE

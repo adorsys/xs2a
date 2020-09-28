@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.*;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.service.BankProfileReadingService;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -94,7 +95,7 @@ import static org.mockito.Mockito.when;
 
     private ProfileConfiguration buildProfileConfiguration() {
         ProfileConfiguration profileConfiguration = new ProfileConfiguration();
-        profileConfiguration.setSetting(new BankProfileSetting(buildAisAspspProfileBankSetting(), buildPisAspspProfileBankSetting(), buildPiisAspspProfileBankSetting(), buildCommonAspspProfileBankSetting()));
+        profileConfiguration.setSetting(new BankProfileSetting(buildAisAspspProfileBankSetting(), buildPisAspspProfileBankSetting(), buildPiisAspspProfileBankSetting(), buildSbAspspProfileBankSetting(), buildCommonAspspProfileBankSetting()));
         return profileConfiguration;
     }
 
@@ -108,6 +109,10 @@ import static org.mockito.Mockito.when;
 
     private PiisAspspProfileBankSetting buildPiisAspspProfileBankSetting() {
         return new PiisAspspProfileBankSetting();
+    }
+
+    private SbAspspProfileBankSetting buildSbAspspProfileBankSetting() {
+        return new SbAspspProfileBankSetting();
     }
 
     private CommonAspspProfileBankSetting buildCommonAspspProfileBankSetting() {

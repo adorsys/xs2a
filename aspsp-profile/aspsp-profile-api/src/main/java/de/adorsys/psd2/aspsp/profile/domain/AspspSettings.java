@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -29,5 +30,6 @@ public class AspspSettings {
     private AisAspspProfileSetting ais;
     private PisAspspProfileSetting pis;
     private PiisAspspProfileSetting piis;
+    private SbAspspProfileSetting sb;
     private CommonAspspProfileSetting common;
 }

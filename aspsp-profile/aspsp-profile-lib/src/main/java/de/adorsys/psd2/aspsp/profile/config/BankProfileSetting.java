@@ -20,6 +20,7 @@ import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,11 @@ public class BankProfileSetting {
      * Contains all settings regarding to PIIS
      */
     private PiisAspspProfileBankSetting piis;
+
+    /**
+     * Contains all settings regarding to SB
+     */
+    private SbAspspProfileBankSetting sb;
 
     /**
      * Contains common for consents and payments settings

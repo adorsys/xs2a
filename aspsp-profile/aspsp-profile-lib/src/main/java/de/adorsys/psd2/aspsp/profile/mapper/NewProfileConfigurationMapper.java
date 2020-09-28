@@ -22,6 +22,7 @@ import de.adorsys.psd2.aspsp.profile.domain.migration.*;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.PiisConsentSupported;
@@ -72,6 +73,11 @@ public class NewProfileConfigurationMapper {
                                                                               setting.isPaymentCancellationAuthorizationMandated(),
                                                                               pisRedirectLinkToOnlineBanking);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED : PiisConsentSupported.NOT_SUPPORTED, new PiisRedirectLinkBankSetting(DEFAULT_PIIS_REDIRECT_URL));
+
+        SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting(setting.isSigningBasketSupported(),
+                                                                     DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
+                                                                     DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS);
+
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(setting.getScaApproaches(),
                                                                                  setting.getScaRedirectFlow(),
                                                                                  DEFAULT_OAUTH_CONFIGURATION_URL,
@@ -85,9 +91,6 @@ public class NewProfileConfigurationMapper {
                                                                                  setting.getSupportedAccountReferenceFields(),
                                                                                  setting.getMulticurrencyAccountLevel(),
                                                                                  setting.isCombinedServiceIndicator(),
-                                                                                 setting.isSigningBasketSupported(),
-                                                                                 DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
-                                                                                 DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS,
                                                                                  true,
                                                                                  Collections.singletonList(NotificationSupportedMode.NONE),
                                                                                  false,
@@ -96,7 +99,7 @@ public class NewProfileConfigurationMapper {
                                                                                  TppUriCompliance.WARNING);
 
         NewProfileConfiguration result = new NewProfileConfiguration();
-        result.setSetting(new NewBankProfileSetting(ais, pis, piis, common));
+        result.setSetting(new NewBankProfileSetting(ais, pis, piis, sb, common));
         return result;
     }
 }

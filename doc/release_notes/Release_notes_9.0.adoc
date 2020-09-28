@@ -3,7 +3,21 @@
 == Table of Contents
 
 * Removed deprecated authorisation type AIS
+* Refactored profile
+* Added migration file for creation signing basket table
 
 == Removed deprecated authorisation type AIS
 
 From now on, deprecated authorisation type AIS removed, use authorisation type CONSENT instead.
+
+== Refactored profile
+
+From now on, signing basket profile properties `signingBasketSupported`, `signingBasketMaxEntries`,
+`notConfirmedSigningBasketExpirationTimeMs` located in separate field of `SbAspspProfileSetting` inside
+`AspspSettings`.
+
+* Added migration file for creation signing basket table
+
+From now on, signing basket table added into cms database along with all required related tables for
+storing signing basket. Also, added columns `signing_basket_blocked` into `consents` and `pis_common_payment
+tables.

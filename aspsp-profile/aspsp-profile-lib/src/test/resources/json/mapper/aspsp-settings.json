@@ -47,6 +47,9 @@
   "piis": {
     "piisConsentSupported": "ASPSP_CONSENT_SUPPORTED"
   },
+  "sb": {
+    "signingBasketSupported": false
+  },
   "common": {
     "scaRedirectFlow": "REDIRECT",
     "startAuthorisationMode": "AUTO",
@@ -61,7 +64,6 @@
       "BBAN"
     ],
     "multicurrencyAccountLevelSupported": "SUBACCOUNT",
-    "aisPisSessionsSupported": false,
-    "signingBasketSupported": false
+    "aisPisSessionsSupported": false
   }
 }
