@@ -43,7 +43,10 @@ public class CmsAspspPsuAccountServiceInternal implements CmsAspspPsuAccountServ
     @Transactional
     public boolean revokeAllConsents(@Nullable String aspspAccountId, @NotNull PsuIdData psuIdData, @Nullable String instanceId) {
         List<ConsentEntity> consents = consentJpaRepository
-                                           .findAll(consentSpecification.byPsuIdDataAndAspspAccountIdAndInstanceId(psuIdData, aspspAccountId, instanceId));
+                                           .findAll(consentSpecification.byPsuIdDataAndAspspAccountIdAndInstanceId(psuIdData, aspspAccountId, instanceId))
+                                           .stream()
+                                           .distinct()
+                                           .collect(Collectors.toList());
 
         List<ConsentEntity> filteredConsents = consents.stream()
                                                    .filter(cst -> !cst.getConsentStatus().isFinalisedStatus())

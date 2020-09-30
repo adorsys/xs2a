@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -94,7 +95,10 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
 
-        return findAllBySpecification(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId));
+        return findAllBySpecification(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId))
+            .stream()
+            .distinct()
+            .collect(Collectors.toList());
     }
 
     private Collection<CmsPiisConsent> findAllBySpecification(Specification<ConsentEntity> specification) {

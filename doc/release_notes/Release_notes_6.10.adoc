@@ -1,0 +1,9 @@
+= Release notes v.6.10
+
+== Table of Contents
+
+* Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+
+== Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+
+From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works correct with oracle db
