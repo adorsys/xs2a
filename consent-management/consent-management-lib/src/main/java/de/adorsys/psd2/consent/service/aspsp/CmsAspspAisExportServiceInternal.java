@@ -118,6 +118,7 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                                             instanceId);
         List<ConsentEntity> consents = consentJpaRepository.findAll(specification)
                                            .stream()
+                                           .distinct()
                                            .map(aisConsentLazyMigrationService::migrateIfNeeded)
                                            .collect(Collectors.toList());
 
