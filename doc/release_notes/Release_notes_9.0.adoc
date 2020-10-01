@@ -5,6 +5,7 @@
 * Removed deprecated authorisation type AIS
 * Refactored profile
 * Added migration file for creation signing basket table
+* Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
 == Removed deprecated authorisation type AIS
 
@@ -21,3 +22,7 @@ From now on, signing basket profile properties `signingBasketSupported`, `signin
 From now on, signing basket table added into cms database along with all required related tables for
 storing signing basket. Also, added columns `signing_basket_blocked` into `consents` and `pis_common_payment
 tables.
+
+* Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+
+From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works correct with oracle db
