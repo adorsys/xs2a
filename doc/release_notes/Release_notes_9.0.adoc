@@ -17,12 +17,12 @@ From now on, signing basket profile properties `signingBasketSupported`, `signin
 `notConfirmedSigningBasketExpirationTimeMs` located in separate field of `SbAspspProfileSetting` inside
 `AspspSettings`.
 
-* Added migration file for creation signing basket table
+== Added migration file for creation signing basket table
 
 From now on, signing basket table added into cms database along with all required related tables for
 storing signing basket. Also, added columns `signing_basket_blocked` into `consents` and `pis_common_payment
 tables.
 
-* Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+== Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
 From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works correct with oracle db
