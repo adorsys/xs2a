@@ -24,9 +24,9 @@
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-09-11-2">
-        <comment>Create sequence for signing_basket_tpp_information</comment>
-        <createSequence sequenceName="signing_basket_tpp_information_id_seq"/>
-        <sql dbms="mariadb">CREATE SEQUENCE signing_basket_id_seq</sql>
+        <comment>Create sequence for sb_tpp_information</comment>
+        <createSequence sequenceName="sb_tpp_information_id_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE sb_tpp_information_id_seq</sql>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-09-11-3">
@@ -47,7 +47,7 @@
             </column>
             <column name="multilevel_sca_required" type="BOOLEAN"/>
             <column name="instance_id" type="VARCHAR(40)"/>
-            <column name="signing_basket_tpp_information_id" type="BIGINT">
+            <column name="sb_tpp_information_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
             <column name="creation_timestamp" type="DATETIME" valueDate="${now}">
@@ -68,10 +68,10 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="signing_basket_consents" baseColumnNames="signing_basket_id"
-                                 constraintName="fk_signing_basket_consents_signing_basket"
+                                 constraintName="fk_sb_consents_signing_basket"
                                  referencedTableName="signing_basket" referencedColumnNames="signing_basket_id"/>
         <addForeignKeyConstraint baseTableName="signing_basket_consents" baseColumnNames="consent_id"
-                                 constraintName="fk_signing_basket_consents_conset" referencedTableName="consent"
+                                 constraintName="fk_sb_consents_conset" referencedTableName="consent"
                                  referencedColumnNames="consent_id"/>
     </changeSet>
 
@@ -87,10 +87,10 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="signing_basket_payments" baseColumnNames="signing_basket_id"
-                                 constraintName="fk_signing_basket_payments_signing_basket"
+                                 constraintName="fk_sb_payments_signing_basket"
                                  referencedTableName="signing_basket" referencedColumnNames="signing_basket_id"/>
         <addForeignKeyConstraint baseTableName="signing_basket_payments" baseColumnNames="payment_id"
-                                 constraintName="fk_signing_basket_payments_payment"
+                                 constraintName="fk_sb_payments_payment"
                                  referencedTableName="pis_common_payment" referencedColumnNames="id"/>
     </changeSet>
 
@@ -106,10 +106,10 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="signing_basket_psu_data" baseColumnNames="signing_basket_id"
-                                 constraintName="fk_signing_basket_psu_data_signing_basket"
+                                 constraintName="fk_sb_psu_data_signing_basket"
                                  referencedTableName="signing_basket" referencedColumnNames="signing_basket_id"/>
         <addForeignKeyConstraint baseTableName="signing_basket_psu_data" baseColumnNames="psu_data_id"
-                                 constraintName="fk_signing_basket_psu_data_psu_data"
+                                 constraintName="fk_sb_psu_data_psu_data"
                                  referencedTableName="psu_data" referencedColumnNames="id"/>
     </changeSet>
 
@@ -117,7 +117,7 @@
         <comment>Create table signing_basket_tpp_information</comment>
 
         <createTable tableName="signing_basket_tpp_information">
-            <column name="signing_basket_tpp_information_id" type="BIGINT">
+            <column name="sb_tpp_information_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="tpp_ntfc_uri" type="VARCHAR(100)"/>
@@ -130,20 +130,20 @@
         </createTable>
 
         <addForeignKeyConstraint baseTableName="signing_basket"
-                                 baseColumnNames="signing_basket_tpp_information_id"
-                                 constraintName="fk_signing_basket_signing_basket_tpp_information"
+                                 baseColumnNames="sb_tpp_information_id"
+                                 constraintName="fk_sb_tpp_information"
                                  referencedTableName="signing_basket_tpp_information"
-                                 referencedColumnNames="signing_basket_tpp_information_id"/>
+                                 referencedColumnNames="sb_tpp_information_id"/>
         <addForeignKeyConstraint baseTableName="signing_basket_tpp_information"
                                  baseColumnNames="tpp_info_id"
-                                 constraintName="fk_signing_basket_signing_basket_tpp_info" deferrable="false"
+                                 constraintName="fk_sb_tpp_info" deferrable="false"
                                  initiallyDeferred="false"
                                  referencedTableName="tpp_info"
                                  referencedColumnNames="tpp_info_id"/>
     </changeSet>
 
     <changeSet author="ske@adorsys.de" id="2020-09-11-8">
-        <comment>Create table signing_basket_consent_tpp_ntfc</comment>
+        <comment>Create table signing_basket_tpp_ntfc</comment>
 
         <createTable tableName="signing_basket_tpp_ntfc">
             <column name="id" type="BIGINT">
