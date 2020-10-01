@@ -137,7 +137,6 @@ public class ConsentSpecification {
     private Specification<ConsentEntity> byAspspAccountIdInAspspAccountAccess(@Nullable String aspspAccountId) {
         return (root, query, cb) -> {
             Join<ConsentEntity, List<AspspAccountAccess>> aspspAccountAccessJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
-            query.distinct(true);
             return provideSpecificationForJoinedEntityAttribute(aspspAccountAccessJoin, ASPSP_ACCOUNT_ID_ATTRIBUTE, aspspAccountId)
                        .toPredicate(root, query, cb);
         };
