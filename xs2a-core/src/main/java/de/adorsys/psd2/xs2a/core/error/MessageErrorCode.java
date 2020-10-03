@@ -435,7 +435,7 @@ public enum MessageErrorCode {
             return "PAYMENT_FAILED";
         }
     },
-    //
+    // Couldn't get payment by ID
     PAYMENT_FAILED_INCORRECT_ID(400) {
         @Override
         public String getName() {
