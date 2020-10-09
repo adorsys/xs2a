@@ -67,6 +67,10 @@ public class CreatePisAuthorisationValidator extends AbstractPisValidator<Create
             return ValidationResult.invalid(PIS_400, RESOURCE_BLOCKED_SB);
         }
 
+        if (pisCommonPaymentResponse.isSigningBasketAuthorised()) {
+            return ValidationResult.invalid(PIS_400, STATUS_INVALID);
+        }
+
         PsuIdData psuDataFromRequest = createPisAuthorisationObject.getPsuDataFromRequest();
         List<PsuIdData> psuDataFromDb = createPisAuthorisationObject.getPisCommonPaymentResponse().getPsuData();
         if (authorisationPsuDataChecker.isPsuDataWrong(

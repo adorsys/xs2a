@@ -78,6 +78,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
     @ApiModelProperty(value = "Signing basket blocked")
     private boolean signingBasketBlocked;
 
+    @ApiModelProperty(value = "Signing basket authorised")
+    private boolean signingBasketAuthorised;
+
     public Optional<Authorisation> findAuthorisationInPayment(String authorisationId) {
         return authorisations.stream()
                    .filter(auth -> auth.getAuthorisationId().equals(authorisationId))

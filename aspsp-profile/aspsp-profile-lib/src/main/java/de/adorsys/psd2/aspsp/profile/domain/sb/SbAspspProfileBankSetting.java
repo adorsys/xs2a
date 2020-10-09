@@ -37,4 +37,9 @@ public class SbAspspProfileBankSetting {
      * The limit of an expiration time of not confirmed signing basket url set in milliseconds
      */
     private long notConfirmedSigningBasketExpirationTimeMs;
+
+    /**
+     * 	URL to online-banking to authorise signing basket with redirect approach
+     */
+    private String sbRedirectUrlToAspsp;
 }

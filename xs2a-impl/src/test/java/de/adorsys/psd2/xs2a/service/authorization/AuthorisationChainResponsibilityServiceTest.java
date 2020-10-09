@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.service.authorization.processor.AuthorisationProcessorServiceProvider;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AisAuthorisationProcessorServiceImpl;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import static org.mockito.Mockito.*;
 
@@ -39,7 +39,7 @@ class AuthorisationChainResponsibilityServiceTest {
     private AuthorisationChainResponsibilityService service;
 
     @Mock
-    private ApplicationContext applicationContext;
+    private AuthorisationProcessorServiceProvider provider;
     @Mock
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorServiceImpl;
 
@@ -50,14 +50,14 @@ class AuthorisationChainResponsibilityServiceTest {
                                                                                         ScaStatus.RECEIVED,
                                                                                         new Xs2aUpdatePisCommonPaymentPsuDataRequest(),
                                                                                         authorisation);
-        when(applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class)).thenReturn(aisAuthorisationProcessorServiceImpl);
+        when(provider.getProcessorService(request)).thenReturn(aisAuthorisationProcessorServiceImpl);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
         when(aisAuthorisationProcessorServiceImpl.doScaReceived(request)).thenReturn(processorResponse);
         doNothing().when(aisAuthorisationProcessorServiceImpl).updateAuthorisation(request, processorResponse);
 
         service.apply(request);
 
-        verify(applicationContext, times(2)).getBean(AisAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(2)).getProcessorService(request);
         verify(aisAuthorisationProcessorServiceImpl, times(1)).doScaReceived(request);
         verify(aisAuthorisationProcessorServiceImpl, times(1)).updateAuthorisation(request, processorResponse);
     }

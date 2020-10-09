@@ -152,6 +152,8 @@ If parameter = FALSE then XS2A sends the response with HTTP code 405 SERVICE_INV
 
 Not confirmed during this period of time signing baskets will be considered obsolete. The default value is set to 24 hours. |86 400 000 |milliseconds (1, 2,...)
 
+|sbRedirectUrlToAspsp |Link to online-banking to authorise signing basket with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id} |String
+
 |*Common:* | | |
 |scaApproachesSupported |This field contains the List of SCA Approach supported by ASPSP ordered by priority - first one with the highest priority. |REDIRECT |	REDIRECT, EMBEDDED, DECOUPLED
 |scaRedirectFlow |This field defines variant of the SCA redirect approach:

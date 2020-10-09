@@ -57,4 +57,5 @@ public class CmsConsent {
     private AccountAccess aspspAccountAccesses;
     private String instanceId;
     private boolean signingBasketBlocked;
+    private boolean signingBasketAuthorised;
 }

@@ -41,6 +41,7 @@ public class AspspSettingsBuilder {
     private static final String PIS_REDIRECT_LINK = "https://localhost/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://localhost/view/account/";
     private static final String PIIS_REDIRECT_LINK = "https://localhost/piis/account/";
+    private static final String SB_REDIRECT_LINK = "http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -118,7 +119,8 @@ public class AspspSettingsBuilder {
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
                                                              SIGNING_BASKET_MAX_ENTRIES,
-                                                             NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS);
+                                                             NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
+                                                             SB_REDIRECT_LINK);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,

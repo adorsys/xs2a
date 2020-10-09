@@ -80,6 +80,7 @@ public abstract class Consent<T> {
     @NotNull
     private ConsentType consentType;
     private boolean signingBasketBlocked;
+    private boolean signingBasketAuthorised;
 
     public TppInfo getTppInfo() {
         return Optional.ofNullable(consentTppInformation)

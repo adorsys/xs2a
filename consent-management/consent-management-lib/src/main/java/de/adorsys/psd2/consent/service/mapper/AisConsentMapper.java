@@ -119,7 +119,7 @@ public class AisConsentMapper {
                               accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
                                                                            entity.getOwnerNameType(),
                                                                            entity.getTrustedBeneficiariesType()),
-                              entity.getInstanceId(), entity.isSigningBasketBlocked());
+                              entity.getInstanceId(), entity.isSigningBasketBlocked(), entity.isSigningBasketAuthorised());
     }
 
     public AccountAccess mapToAccountAccess(AisAccountAccess accountAccess) {

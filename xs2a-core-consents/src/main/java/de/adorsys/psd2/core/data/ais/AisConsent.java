@@ -44,11 +44,11 @@ public class AisConsent extends Consent<AisConsentData> {
     public AisConsent(AisConsentData consentData, String id, String internalRequestId, ConsentStatus consentStatus, Integer frequencyPerDay, boolean recurringIndicator, boolean multilevelScaRequired,
                       LocalDate validUntil, LocalDate expireDate, LocalDate lastActionDate, OffsetDateTime creationTimestamp, OffsetDateTime statusChangeTimestamp, ConsentTppInformation consentTppInformation,
                       AuthorisationTemplate authorisationTemplate, List<PsuIdData> psuIdDataList, List<ConsentAuthorization> authorisations, Map<String, Integer> usages,
-                      AccountAccess tppAccountAccess, AccountAccess aspspAccountAccess, String instanceId, boolean signingBasketBlocked) {
+                      AccountAccess tppAccountAccess, AccountAccess aspspAccountAccess, String instanceId, boolean signingBasketBlocked, boolean signingBasketAuthorised) {
 
         super(consentData, id, internalRequestId, consentStatus, frequencyPerDay, recurringIndicator, multilevelScaRequired,
               validUntil, expireDate, lastActionDate, creationTimestamp, statusChangeTimestamp, consentTppInformation,
-              authorisationTemplate, psuIdDataList, authorisations, usages, tppAccountAccess, aspspAccountAccess, instanceId, ConsentType.AIS, signingBasketBlocked);
+              authorisationTemplate, psuIdDataList, authorisations, usages, tppAccountAccess, aspspAccountAccess, instanceId, ConsentType.AIS, signingBasketBlocked, signingBasketAuthorised);
     }
 
     @JsonIgnore

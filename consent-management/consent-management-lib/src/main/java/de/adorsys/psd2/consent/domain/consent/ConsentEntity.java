@@ -136,6 +136,9 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @Column(name = "signing_basket_blocked", nullable = false)
     private boolean signingBasketBlocked;
 
+    @Column(name = "signing_basket_authorised", nullable = false)
+    private boolean signingBasketAuthorised;
+
     @Transient
     private ConsentStatus previousConsentStatus;
 

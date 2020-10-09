@@ -75,5 +75,6 @@ setting:
       - instant-sepa-credit-transfers
   sb:
     notConfirmedSigningBasketExpirationTimeMs: 86400000
+    sbRedirectUrlToAspsp: http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}
     signingBasketMaxEntries: 10
     signingBasketSupported: false

@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,7 +43,7 @@ class AuthorisationProcessorTest {
     private AuthorisationProcessor authorisationProcessor;
 
     @Mock
-    private ApplicationContext applicationContext;
+    private AuthorisationProcessorServiceProvider provider;
     @Mock
     private AuthorisationProcessor nextProcessor;
     @Mock
@@ -60,7 +59,7 @@ class AuthorisationProcessorTest {
 
     @BeforeEach
     void setUp() {
-        authorisationProcessor = new ReceivedAuthorisationProcessor(applicationContext);
+        authorisationProcessor = new ReceivedAuthorisationProcessor(provider);
         authorisationProcessor.setNext(nextProcessor);
 
         request = new AisAuthorisationProcessorRequest(ScaApproach.EMBEDDED, null, null, null);
@@ -71,13 +70,13 @@ class AuthorisationProcessorTest {
         request.setScaStatus(ScaStatus.RECEIVED);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
-        when(applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class)).thenReturn(aisAuthorisationProcessorServiceImpl);
+        when(provider.getProcessorService(request)).thenReturn(aisAuthorisationProcessorServiceImpl);
         when(aisAuthorisationProcessorServiceImpl.doScaReceived(request)).thenReturn(processorResponse);
         doNothing().when(aisAuthorisationProcessorServiceImpl).updateAuthorisation(request, processorResponse);
 
         authorisationProcessor.apply(request);
 
-        verify(applicationContext, times(2)).getBean(AisAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(2)).getProcessorService(request);
         verify(aisAuthorisationProcessorServiceImpl, times(1)).doScaReceived(request);
         verify(aisAuthorisationProcessorServiceImpl, times(1)).updateAuthorisation(request, processorResponse);
     }
@@ -89,34 +88,34 @@ class AuthorisationProcessorTest {
 
         when(nextProcessor.process(request)).thenReturn(processorResponse);
 
-        when(applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class)).thenReturn(aisAuthorisationProcessorServiceImpl);
+        when(provider.getProcessorService(request)).thenReturn(aisAuthorisationProcessorServiceImpl);
         doNothing().when(aisAuthorisationProcessorServiceImpl).updateAuthorisation(request, processorResponse);
 
         authorisationProcessor.apply(request);
 
         verify(nextProcessor, times(1)).process(request);
-        verify(applicationContext, times(1)).getBean(AisAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(1)).getProcessorService(request);
         verify(aisAuthorisationProcessorServiceImpl, times(1)).updateAuthorisation(request, processorResponse);
     }
 
     @Test
     void getProcessorService_AIS() {
         request.setServiceType(ServiceType.AIS);
-        when(applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class)).thenReturn(aisAuthorisationProcessorServiceImpl);
+        when(provider.getProcessorService(request)).thenReturn(aisAuthorisationProcessorServiceImpl);
 
         authorisationProcessor.getProcessorService(request);
 
-        verify(applicationContext, times(1)).getBean(AisAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(1)).getProcessorService(request);
     }
 
     @Test
     void getProcessorService_PIIS() {
         request.setServiceType(ServiceType.PIIS);
-        when(applicationContext.getBean(PiisAuthorisationProcessorServiceImpl.class)).thenReturn(piisAuthorisationProcessorService);
+        when(provider.getProcessorService(request)).thenReturn(piisAuthorisationProcessorService);
 
         authorisationProcessor.getProcessorService(request);
 
-        verify(applicationContext, times(1)).getBean(PiisAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(1)).getProcessorService(request);
     }
 
     @Test
@@ -125,11 +124,11 @@ class AuthorisationProcessorTest {
         Authorisation authorisation = new Authorisation();
         authorisation.setAuthorisationType(AuthorisationType.PIS_CREATION);
         request.setAuthorisation(authorisation);
-        when(applicationContext.getBean(PisAuthorisationProcessorServiceImpl.class)).thenReturn(pisAuthorisationProcessorService);
+        when(provider.getProcessorService(request)).thenReturn(pisAuthorisationProcessorService);
 
         authorisationProcessor.getProcessorService(request);
 
-        verify(applicationContext, times(1)).getBean(PisAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(1)).getProcessorService(request);
     }
 
     @Test
@@ -138,11 +137,11 @@ class AuthorisationProcessorTest {
         Authorisation authorisation = new Authorisation();
         authorisation.setAuthorisationType(AuthorisationType.PIS_CANCELLATION);
         request.setAuthorisation(authorisation);
-        when(applicationContext.getBean(PisCancellationAuthorisationProcessorServiceImpl.class)).thenReturn(pisCancellationAuthorisationProcessorServiceImpl);
+        when(provider.getProcessorService(request)).thenReturn(pisCancellationAuthorisationProcessorServiceImpl);
 
         authorisationProcessor.getProcessorService(request);
 
-        verify(applicationContext, times(1)).getBean(PisCancellationAuthorisationProcessorServiceImpl.class);
+        verify(provider, times(1)).getProcessorService(request);
     }
 
     @Test
@@ -150,10 +149,11 @@ class AuthorisationProcessorTest {
         request.setServiceType(ServiceType.PIS);
         Authorisation authorisation = new Authorisation();
         request.setAuthorisation(authorisation);
+        when(provider.getProcessorService(request)).thenThrow(new IllegalArgumentException());
 
         assertThrows(IllegalArgumentException.class, () -> authorisationProcessor.getProcessorService(request));
 
-        verify(applicationContext, never()).getBean(anyString());
+        verify(provider, times(1)).getProcessorService(request);
     }
 
     @Test

@@ -20,5 +20,6 @@ public enum EventAuthorisationType {
     AIS,
     PIS,
     PIS_CANCELLATION,
-    PIIS
+    PIIS,
+    SB
 }
