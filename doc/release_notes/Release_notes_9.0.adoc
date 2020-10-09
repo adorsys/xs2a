@@ -6,6 +6,7 @@
 * Refactored profile
 * Added migration file for creation signing basket table
 * Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+* Fixed deadlock while saving authentication methods for authorisation
 
 == Removed deprecated authorisation type AIS
 
@@ -26,3 +27,8 @@ tables.
 == Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
 From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works correct with oracle db
+
+== Fixed deadlock while saving authentication methods for authorisation
+
+From now on, authentication methods for authorisation saving only in case they differ from already
+saved one for same authorisation.
