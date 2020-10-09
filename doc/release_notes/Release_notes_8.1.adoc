@@ -1,0 +1,15 @@
+= Release notes v.8.1
+
+== Table of Contents
+
+* Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+* Fixed deadlock while saving authentication methods for authorisation
+
+== Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
+
+From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works correct with oracle db
+
+== Fixed deadlock while saving authentication methods for authorisation
+
+From now on, authentication methods for authorisation saving only in case they differ from already
+saved one for same authorisation.
