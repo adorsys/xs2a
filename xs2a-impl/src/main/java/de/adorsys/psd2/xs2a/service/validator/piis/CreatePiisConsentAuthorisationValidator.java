@@ -60,6 +60,10 @@ public class CreatePiisConsentAuthorisationValidator extends AbstractConfirmatio
             return ValidationResult.invalid(PIIS_400, RESOURCE_BLOCKED_SB);
         }
 
+        if (piisConsent.isSigningBasketAuthorised()) {
+            return ValidationResult.invalid(PIIS_400, STATUS_INVALID);
+        }
+
         List<PsuIdData> psuDataFromDb = piisConsent.getPsuIdDataList();
         PsuIdData psuDataFromRequest = createPiisConsentAuthorisationObject.getPsuIdDataFromRequest();
         if (authorisationPsuDataChecker.isPsuDataWrong(

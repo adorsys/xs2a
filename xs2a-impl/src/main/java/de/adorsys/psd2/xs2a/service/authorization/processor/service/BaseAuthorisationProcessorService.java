@@ -98,7 +98,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
         return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisation.getPsuIdData();
     }
 
-    private String resolveBusinessObjectName(ServiceType serviceType) {
+    protected String resolveBusinessObjectName(ServiceType serviceType) {
         return serviceType == ServiceType.AIS || serviceType == ServiceType.PIIS ? "Consent-ID" : "Payment-ID";
     }
 }

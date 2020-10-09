@@ -23,4 +23,5 @@ public class SbAspspProfileSetting {
     private boolean signingBasketSupported;
     private int signingBasketMaxEntries;
     private long notConfirmedSigningBasketExpirationTimeMs;
+    private String sbRedirectUrlToAspsp;
 }

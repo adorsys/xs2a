@@ -114,6 +114,9 @@ public class PisCommonPaymentData extends InstanceDependableEntity implements Au
     @Column(name = "signing_basket_blocked", nullable = false)
     private boolean signingBasketBlocked;
 
+    @Column(name = "signing_basket_authorised", nullable = false)
+    private boolean signingBasketAuthorised;
+
     @Transient
     private TransactionStatus previousTransactionStatus;
 

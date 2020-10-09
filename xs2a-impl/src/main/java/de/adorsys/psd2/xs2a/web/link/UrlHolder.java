@@ -54,6 +54,7 @@ public class UrlHolder {
     public static final String SIGNING_BASKET_LINK_URL = "/v1/signing-baskets/{basketId}";
     public static final String SIGNING_BASKET_STATUS_URL = "/v1/signing-baskets/{basketId}/status";
     public static final String CREATE_SIGNING_BASKET_AUTHORISATION_URL = "/v1/signing-baskets/{basketId}/authorisations";
+    public static final String SIGNING_BASKET_AUTHORISATION_URL = "/v1/signing-baskets/{basketId}/authorisations/{authorisation-id}";
 
     private UrlHolder() {
     }

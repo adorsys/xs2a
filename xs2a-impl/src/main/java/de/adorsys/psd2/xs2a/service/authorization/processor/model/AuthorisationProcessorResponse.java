@@ -33,6 +33,7 @@ import java.util.List;
 public class AuthorisationProcessorResponse implements AuthorisationResponse {
     protected String consentId;
     protected String paymentId;
+    protected String basketId;
     protected String authorisationId;
     protected PsuIdData psuData;
 

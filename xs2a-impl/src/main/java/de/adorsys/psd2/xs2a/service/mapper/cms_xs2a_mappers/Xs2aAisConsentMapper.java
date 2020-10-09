@@ -167,6 +167,7 @@ public class Xs2aAisConsentMapper {
                        aisConsent.setAspspAccountAccesses(ais.getAspspAccountAccesses());
                        aisConsent.setInstanceId(ac.getInstanceId());
                        aisConsent.setSigningBasketBlocked(ac.isSigningBasketBlocked());
+                       aisConsent.setSigningBasketAuthorised(ac.isSigningBasketAuthorised());
                        return aisConsent;
                    })
                    .orElse(null);

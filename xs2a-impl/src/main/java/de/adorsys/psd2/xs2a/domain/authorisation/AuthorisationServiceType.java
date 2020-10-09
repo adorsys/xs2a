@@ -20,5 +20,6 @@ public enum AuthorisationServiceType {
     AIS,
     PIIS,
     PIS,
-    PIS_CANCELLATION
+    PIS_CANCELLATION,
+    SB
 }

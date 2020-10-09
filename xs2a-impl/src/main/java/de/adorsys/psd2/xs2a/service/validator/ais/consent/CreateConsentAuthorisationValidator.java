@@ -60,6 +60,10 @@ public class CreateConsentAuthorisationValidator extends AbstractConsentTppValid
             return ValidationResult.invalid(AIS_400, RESOURCE_BLOCKED_SB);
         }
 
+        if (aisConsent.isSigningBasketAuthorised()) {
+            return ValidationResult.invalid(AIS_400, STATUS_INVALID);
+        }
+
         List<PsuIdData> psuDataFromDb = aisConsent.getPsuIdDataList();
         PsuIdData psuDataFromRequest = createConsentAuthorisationObject.getPsuIdDataFromRequest();
         if (authorisationPsuDataChecker.isPsuDataWrong(

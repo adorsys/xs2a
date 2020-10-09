@@ -41,6 +41,7 @@ public class NewProfileConfigurationMapper {
     private static final String DEFAULT_PIIS_REDIRECT_URL = "http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}";
     private static final int DEFAULT_SIGNING_BASKET_MAX_ENTRIES = 10;
     private static final int DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS = 86400000;
+    private static final String DEFAULT_SB_REDIRECT_LINK = "http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}";
 
     public NewProfileConfiguration mapToNewProfileConfiguration(OldProfileConfiguration oldProfileConfiguration) {
         OldBankProfileSetting setting = oldProfileConfiguration.getSetting();
@@ -76,7 +77,8 @@ public class NewProfileConfigurationMapper {
 
         SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting(setting.isSigningBasketSupported(),
                                                                      DEFAULT_SIGNING_BASKET_MAX_ENTRIES,
-                                                                     DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS);
+                                                                     DEFAULT_NOT_CONFIRMED_SB_EXPIRATION_TIME_MS,
+                                                                     DEFAULT_SB_REDIRECT_LINK);
 
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting(setting.getScaApproaches(),
                                                                                  setting.getScaRedirectFlow(),

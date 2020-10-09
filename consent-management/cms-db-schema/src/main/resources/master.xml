@@ -145,4 +145,5 @@
     <include relativeToChangelogFile="true" file="migration/0117-removed-authorisation-type-column-from-authorisation-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0118-add-signing-basket-blocked-column-consent-payment-tables.xml"/>
     <include relativeToChangelogFile="true" file="migration/0119-add-signing-basket-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0120-add-signing-basket-authorised-column-consent-payment-tables.xml"/>
 </databaseChangeLog>

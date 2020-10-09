@@ -89,7 +89,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
         SbAspspProfileBankSetting sbBankSetting = setting.getSb();
         SbAspspProfileSetting sb = new SbAspspProfileSetting(sbBankSetting.isSigningBasketSupported(),
                                                              sbBankSetting.getSigningBasketMaxEntries(),
-                                                             sbBankSetting.getNotConfirmedSigningBasketExpirationTimeMs());
+                                                             sbBankSetting.getNotConfirmedSigningBasketExpirationTimeMs(),
+                                                             sbBankSetting.getSbRedirectUrlToAspsp());
 
         CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),
