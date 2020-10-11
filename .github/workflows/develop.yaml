@@ -120,6 +120,7 @@ jobs:
   deployGithubPages:
     name: create github pages
     runs-on: ubuntu-latest
+    needs: [build_and_test]
     steps:
       - name: Clone XS2A develop repository
         uses: actions/checkout@v2
