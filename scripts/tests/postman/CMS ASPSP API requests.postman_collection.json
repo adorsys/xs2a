@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "4a034747-43cb-4ddf-9305-f52b4618ebe9",
+		"_postman_id": "296b8ec6-96b1-4896-90a1-1c83e3936aa0",
 		"name": "CMS ASPSP API requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -17,7 +17,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"id": "fdc2ba05-14c2-41a2-bce5-ad5f357e5ed3",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -65,7 +65,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "6f709a09-78fc-40ce-8274-dc29bbcd560e",
+										"id": "3ded9f1f-c4a4-442c-af20-5587bfe56274",
 										"exec": [
 											"pm.globals.unset(\"redirect_id\");"
 										],
@@ -75,7 +75,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "27c858ba-9ceb-426a-8e5d-438f019c0598",
+										"id": "fcbb6c6c-dc93-430b-be17-39b896051c92",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -168,7 +168,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "a193808c-f26e-494c-a2b3-eda93ed48629",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -185,7 +185,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "39c392a0-5596-483d-97c9-dd88f0c154b4",
+										"id": "25f06e1e-8ff0-401e-b4a2-2ce26501e363",
 										"exec": [
 											"pm.globals.unset(\"consent_id\");"
 										],
@@ -220,7 +220,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3fc4e0ae-01a7-4e91-826a-f200e684188d",
+										"id": "54f58f35-4cc1-42c4-acf2-229ba2f8bdb0",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -242,7 +242,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "c7a63bd2-7b8f-44d9-91f4-cf140c8d520c",
+										"id": "db04f948-511e-46e2-83d2-a0c2201e0cbe",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -356,7 +356,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4f59f5dd-041d-42be-92ed-fe274441dc35",
+										"id": "6a7bf2b4-e880-4282-b2f1-1e943086857a",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -377,7 +377,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "44d2b66e-ee81-436f-bafd-002ecdcbbe0d",
+										"id": "4943b440-e346-4a8d-bf1e-7e7532a2254a",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -492,7 +492,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a8963198-16f3-488f-8500-a7b08aa353e9",
+										"id": "06123150-7c44-4244-b1a9-2ef95fcffbee",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -505,7 +505,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "101feacd-60b5-4758-8781-a572f710c448",
+										"id": "4f042341-cecd-47f2-b391-c7c369bfb418",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -605,7 +605,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"id": "1e62b0f9-beed-428a-a479-251e9cc9bc26",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -653,7 +653,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "96d686a3-5f56-4cd2-b043-50dc3bf36d7c",
+										"id": "f520ca7e-f849-4edd-a932-7db7f3b98276",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -684,7 +684,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "b4cbc456-5fd9-4fd5-a8cc-c601b228c824",
+										"id": "5f0e57dd-bdbd-4ebe-a828-06e68def9bbd",
 										"exec": [
 											"pm.globals.unset(\"redirect_id\");"
 										],
@@ -750,7 +750,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "c5d663d5-c788-4cf8-85bc-8bd69884b2ae",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -767,7 +767,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "39c392a0-5596-483d-97c9-dd88f0c154b4",
+										"id": "e95bcf82-31f5-441b-bb9f-d13f4734ee82",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -801,7 +801,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "86bab0dd-e498-46af-9e9a-4d95045a71eb",
+										"id": "810968d3-a9b2-40bc-99a5-2450e6f3b4d1",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -822,7 +822,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "1620a4e5-e064-4703-88a4-5997c344188a",
+										"id": "af355b2d-0d67-4728-b70a-2fc30d4c936a",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -936,7 +936,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "93ed30d3-adab-4414-9e67-fed722ce52a3",
+										"id": "17938ae9-2738-4656-bee5-449abf66c588",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -957,7 +957,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "609e8616-6664-4e38-a9b5-f76375b9c7d1",
+										"id": "017f4f5e-5352-41f7-a5a0-c5c844c8e7f7",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -1072,7 +1072,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8f657fd3-a1f8-46d0-9353-3dd20817e115",
+										"id": "ad981abf-481f-4a43-ae5e-3c2ce7952aac",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1084,7 +1084,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "e1f2e06a-1ba5-4143-9302-291e37d552ab",
+										"id": "f30e6fb3-54d7-4fcf-9051-6aac2f0af397",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -1183,7 +1183,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8e5fd63e-5f0d-4f77-bac6-5daac4e22b5b",
+										"id": "8f08a6a7-4ce7-425e-b7c6-44efafc1c97c",
 										"exec": [
 											"pm.globals.unset(\"consent_id\");"
 										],
@@ -1193,7 +1193,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c974304c-f1b8-4e0b-ad13-5edfcc4011d2",
+										"id": "599ba63b-f12b-444c-a6f3-7b627e93b1f0",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -1250,7 +1250,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "4a285434-eaf2-4c38-b984-fabd7fa7524e",
+										"id": "d597d29a-6983-45ea-9d61-08f06b139114",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1337,7 +1337,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "069929dc-82a1-4c6e-8d01-edefda01ae5c",
+										"id": "03e0cd40-686a-4812-9572-e489d6f5e81f",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1426,7 +1426,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f8c082e8-5356-46a1-b95c-4e9f403ca7ba",
+										"id": "d4c734ae-254c-47b1-8e27-d06e5db8220c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1439,7 +1439,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "01805dda-cb75-4402-abac-e17e4cb10c09",
+										"id": "91f7ac7e-635c-4dab-a087-8a00a049cf28",
 										"exec": [
 											"",
 											"var end = new Date();",
@@ -1544,7 +1544,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8e5fd63e-5f0d-4f77-bac6-5daac4e22b5b",
+										"id": "d1931227-4be1-487d-b1a2-d03956c80910",
 										"exec": [
 											"pm.globals.unset(\"consent_id\");"
 										],
@@ -1554,7 +1554,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c974304c-f1b8-4e0b-ad13-5edfcc4011d2",
+										"id": "d59fc965-c921-4fea-a695-3192bb0d7518",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -1615,7 +1615,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2ce3ac9f-0ba6-4507-aca2-1204d87765d8",
+										"id": "3a9c3b15-e3fe-4c82-b1b9-26dcd88ec209",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1665,7 +1665,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8e5fd63e-5f0d-4f77-bac6-5daac4e22b5b",
+										"id": "249cee03-2af9-4f59-bd85-1f04ae39fe73",
 										"exec": [
 											""
 										],
@@ -1675,7 +1675,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c974304c-f1b8-4e0b-ad13-5edfcc4011d2",
+										"id": "1996be9f-ced9-4a1e-9a75-47b9a4c97835",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -1734,7 +1734,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b727f1bb-e45f-4759-8144-77d1e1c5dfea",
+										"id": "c67a7fde-8e10-4e16-abc1-3d3726f4137a",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1783,7 +1783,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "079f5a95-b9d9-47bd-88cc-94fd391ca51e",
+								"id": "b2202c68-a616-4764-8a84-c42dfe8bae26",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1793,7 +1793,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c9048598-8f5f-432c-9359-77f21bcbc24e",
+								"id": "5d953824-ff63-4191-b881-9f069a7af745",
 								"type": "text/javascript",
 								"exec": [
 									""
@@ -1813,7 +1813,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8e5fd63e-5f0d-4f77-bac6-5daac4e22b5b",
+										"id": "c252e486-9b39-4f19-9377-d6fc9339e2b9",
 										"exec": [
 											"pm.globals.unset(\"consent_id\");"
 										],
@@ -1823,7 +1823,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c974304c-f1b8-4e0b-ad13-5edfcc4011d2",
+										"id": "adf8596a-8e1f-42c6-a1bd-556752b8a501",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -1884,7 +1884,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a1c7406b-140b-4e8c-95b2-dec5309c9fc1",
+										"id": "4af7538c-347a-4f90-8851-3c0b24c83818",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1969,6 +1969,46 @@
 									"body": ""
 								},
 								{
+									"name": "OK",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": {
+													"content": "ID of the particular service instance",
+													"type": "text/plain"
+												},
+												"key": "instance-id",
+												"value": "UNDEFINED"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aspsp-api",
+												"v1",
+												"piis",
+												"consents",
+												"<string>"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "*/*"
+										}
+									],
+									"cookie": [],
+									"body": "<boolean>"
+								},
+								{
 									"name": "No Content",
 									"originalRequest": {
 										"method": "DELETE",
@@ -1998,6 +2038,46 @@
 									},
 									"status": "No Content",
 									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Forbidden",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [
+											{
+												"description": {
+													"content": "ID of the particular service instance",
+													"type": "text/plain"
+												},
+												"key": "instance-id",
+												"value": "UNDEFINED"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"aspsp-api",
+												"v1",
+												"piis",
+												"consents",
+												"<string>"
+											]
+										}
+									},
+									"status": "Forbidden",
+									"code": 403,
 									"_postman_previewlanguage": "text",
 									"header": [
 										{
@@ -2047,86 +2127,6 @@
 									],
 									"cookie": [],
 									"body": ""
-								},
-								{
-									"name": "OK",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "*/*"
-										}
-									],
-									"cookie": [],
-									"body": "<boolean>"
-								},
-								{
-									"name": "Forbidden",
-									"originalRequest": {
-										"method": "DELETE",
-										"header": [
-											{
-												"description": {
-													"content": "ID of the particular service instance",
-													"type": "text/plain"
-												},
-												"key": "instance-id",
-												"value": "UNDEFINED"
-											}
-										],
-										"url": {
-											"raw": "{{baseUrl}}/aspsp-api/v1/piis/consents/<string>",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"aspsp-api",
-												"v1",
-												"piis",
-												"consents",
-												"<string>"
-											]
-										}
-									},
-									"status": "Forbidden",
-									"code": 403,
-									"_postman_previewlanguage": "text",
-									"header": [
-										{
-											"key": "Content-Type",
-											"value": "text/plain"
-										}
-									],
-									"cookie": [],
-									"body": ""
 								}
 							]
 						},
@@ -2136,7 +2136,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2ce3ac9f-0ba6-4507-aca2-1204d87765d8",
+										"id": "83aad07c-212a-46e7-ad84-68e4d37a9837",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2186,7 +2186,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8e5fd63e-5f0d-4f77-bac6-5daac4e22b5b",
+										"id": "f27f902e-9c5d-4031-84f9-bb7117bdcbcd",
 										"exec": [
 											""
 										],
@@ -2196,7 +2196,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c974304c-f1b8-4e0b-ad13-5edfcc4011d2",
+										"id": "952b4c43-f323-4622-9981-d7712d3a36ed",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -2255,7 +2255,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b727f1bb-e45f-4759-8144-77d1e1c5dfea",
+										"id": "e35c7357-2a73-4a0f-8447-3ada65877ad8",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2318,7 +2318,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "67af457a-0c1a-44da-8b16-9af106584c29",
+										"id": "eaf99216-5d1e-4cee-909b-98b5aa305fa2",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2371,7 +2371,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e875b7ad-3c8b-4f08-b713-0ab4ebb3dbbb",
+										"id": "69ebcd61-584d-4e5c-98f6-6b2a7792dd92",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2419,7 +2419,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ce918dd0-6631-4518-b6f5-fdc4f308740a",
+										"id": "565f1c2a-48e2-4b30-83d5-08aa17af6d8a",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -2466,7 +2466,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "b421d8cf-914b-4f0f-906d-198ed1045657",
+										"id": "e860089e-0363-49f5-ba72-984dfd4d99c5",
 										"exec": [
 											"pm.globals.unset(\"consent_id\");"
 										],
@@ -2532,7 +2532,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "d3cf7c9d-a6a2-4ec9-98e9-4d0a8adf1e25",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2573,7 +2573,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "76336274-4edd-4754-be5d-a1367287a5ea",
+										"id": "f6391aa5-687b-42cc-9e2a-fd4f9b4423a2",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -2609,7 +2609,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "caf1f69f-736e-4afa-9495-a8cbbe1b616e",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2621,7 +2621,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "76336274-4edd-4754-be5d-a1367287a5ea",
+										"id": "6af58117-4cf5-4d67-a5c2-e6fd541be43e",
 										"exec": [
 											""
 										],
@@ -2654,13 +2654,12 @@
 									"raw": "{\n\"accountAccess\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"accountAdditionalInformationAccess\": {\n            \"ownerName\": [\n                {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_none}}\"\n            }\n            ]\n        }\n    },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}//psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
 									],
 									"path": [
-										"",
 										"psu-api",
 										"v1",
 										"ais",
@@ -2678,7 +2677,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "fc7e29e6-fdce-40b5-b47c-4137a0388424",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2719,7 +2718,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "76336274-4edd-4754-be5d-a1367287a5ea",
+										"id": "b5a43f31-a65c-4c01-b0e1-c73b30073bf8",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -2755,7 +2754,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "9cdd2b33-fec4-4f11-9703-16cd46a0f8b0",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2767,7 +2766,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "76336274-4edd-4754-be5d-a1367287a5ea",
+										"id": "4280fe64-db63-4b79-8112-a9e11a2efa73",
 										"exec": [
 											""
 										],
@@ -2800,13 +2799,12 @@
 									"raw": "{\n\"accountAccess\": {\n        \"accounts\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"balances\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ],\n        \"transactions\": [\n            {\n                \"currency\": \"EUR\",\n                \"iban\": \"{{iban_single}}\"\n            }\n        ]\n    },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 15,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
-									"raw": "{{protocol}}://{{url_cms}}//psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
+									"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/ais/consent/{{internal_consent_id}}/save-access",
 									"protocol": "{{protocol}}",
 									"host": [
 										"{{url_cms}}"
 									],
 									"path": [
-										"",
 										"psu-api",
 										"v1",
 										"ais",
@@ -2824,7 +2822,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f5bf291c-591b-452c-9609-537cd0cb7050",
+										"id": "547feb57-af97-4abe-94a3-b9f54eaf39c6",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2865,7 +2863,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "76336274-4edd-4754-be5d-a1367287a5ea",
+										"id": "0da1a407-7eac-45e9-8e06-2521a9c099da",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"

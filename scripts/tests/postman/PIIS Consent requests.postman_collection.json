@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "13f99bf2-546f-4f37-9b21-9ed8e0352956",
+		"_postman_id": "46cebc76-af7d-44ea-b8c3-367c4ae87d21",
 		"name": "PIIS Consent requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -17,7 +17,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "42148831-c69b-4959-9182-585e38ea0ca9",
+										"id": "5f071930-c3b6-450d-b363-4f8f34c48461",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -70,7 +70,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "07a7ed67-6eae-4a2f-89fc-db25fae83e7c",
+										"id": "af84fcf5-eb4d-421f-948d-b96a842ea780",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -90,7 +90,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "01e24408-5911-4318-a189-936503a77a4c",
+										"id": "eee53bda-c5ba-44e2-afbe-6e75e3a2e788",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -144,7 +144,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"aspspAccountId\": \"125-DEDE89370400440532013000-EUR\",\n    \"currency\": \"EUR\",\n    \"iban\": \"{{iban_multiple}}\"\n  },\n  \"cardExpiryDate\": \"2020-12-31\",\n  \"cardInformation\": \"MyMerchant Loyalty Card\",\n  \"cardNumber\": 1234567891234,\n  \"registrationInformation\": \"Your contract Number 1234 with MyMerchant is completed with the registration with your bank.\",\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -170,7 +170,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "835c06f7-5a19-47e8-907e-c855d3f45451",
+										"id": "f26687ac-d452-4d20-a660-bd5ce2089090",
 										"exec": [
 											"pm.test('Status code is 400', () => {",
 											"   pm.response.to.have.status(400);",
@@ -261,7 +261,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "aa7032ea-1fe2-46f2-ba01-25955b051ae4",
+										"id": "c7a11317-3adf-4606-9779-641040a2d25d",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -314,7 +314,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0c543937-9244-4b89-87d3-75021c527294",
+										"id": "4642400c-3d44-4315-832c-1d31fef04eae",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -384,7 +384,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6634a859-02f5-44a4-b33d-40a5a296e0d6",
+										"id": "f129e463-4c1d-487b-adff-fafb921c2388",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -442,7 +442,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ddba6624-e549-41b8-9378-0b9a3bcce5b2",
+										"id": "492c10fe-0607-4718-851e-b069c2b96eac",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -478,7 +478,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -503,7 +503,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "caf55e6e-8c83-4750-9633-3adb48c58ee6",
+										"id": "d3691d21-5e7a-4618-b92d-972185f3696a",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -543,7 +543,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AC\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AC\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_ledgers}}/consents/piis",
@@ -565,7 +565,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d1d25ce1-de6b-4d25-a7a4-31cadbcc4a57",
+										"id": "436583d3-1284-4591-8f9d-937ca69e6668",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -578,7 +578,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "c6921436-5166-47e8-b232-91fe0ade7250",
+										"id": "aac34bc6-8f08-4331-b7e5-560335f4db80",
 										"exec": [
 											"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -626,7 +626,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6c50a351-bfde-499a-b133-09f3e2f126ee",
+										"id": "0505ccd7-2b74-4244-9f4e-86f3e1690733",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -694,7 +694,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c6e5305d-7a0b-4278-8ad5-db2dfe8833f0",
+										"id": "c30be7ed-882a-4aac-a8e9-d98e715e46d0",
 										"exec": [
 											"pm.test(\"Status code is 201\", () => {",
 											"    pm.response.to.have.status(201);",
@@ -730,7 +730,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AD\",\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AD\",\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -755,7 +755,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "72eaa05b-d7a8-40a4-916e-047f5972da2c",
+										"id": "1922f787-6869-4eb8-89fa-65b6f04eb960",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -795,7 +795,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AD\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2020-10-10\"\n}"
+									"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AD\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_ledgers}}/consents/piis",
@@ -817,7 +817,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "85db3ac8-5c28-45aa-9264-77a0c424715f",
+										"id": "93518186-404b-4aa0-a44b-06c1de230c79",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -830,7 +830,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "8f0917aa-2d52-4053-b9bb-64040ab4d1f6",
+										"id": "3819fa82-07c6-49f7-89c8-4b41f5c6ab9d",
 										"exec": [
 											"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 											"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -878,7 +878,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "979e88cf-148e-448b-907e-80a7fa61735c",
+										"id": "f05fa774-3415-4e13-8824-883819b04552",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -946,7 +946,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "672529ef-c69f-486b-8775-da9d1953489b",
+						"id": "ce070ec3-4e5d-45d6-8615-6135065bb92b",
 						"exec": [
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
@@ -999,7 +999,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "3236ee4e-8849-4506-a238-7fafc2dab210",
+						"id": "601cbea3-826b-44e9-a3e6-4c7f736cc275",
 						"exec": [
 							"pm.test(\"Status code is 201\", () => {",
 							"    pm.response.to.have.status(201);",
@@ -1035,7 +1035,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2020-10-10\"\n}"
+					"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_none}}\",\n    \"currency\": \"EUR\"\n  },\n  \"tppAuthorisationNumber\": \"PSDDE-FAKENCA-87B2AC\",\n  \"validUntil\": \"2025-10-10\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{url_cms}}/aspsp-api/v1/piis/consents/",
@@ -1060,7 +1060,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "262a1785-ea6e-49fc-92e2-abe87bfa6c3c",
+						"id": "82712b9b-11fc-4814-af3b-050cfaaf3741",
 						"exec": [
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
@@ -1130,7 +1130,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "91ec9c7f-978e-480f-bfa2-84b3c3c6274f",
+						"id": "e5253883-82de-4728-8184-b5a8f6e49561",
 						"exec": [
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
@@ -1181,7 +1181,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "345d20f2-7ba4-436b-bf20-5724413d1956",
+						"id": "9b008cf6-abdb-4275-9ef6-697a90b2e525",
 						"exec": [
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
@@ -1221,7 +1221,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AC\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2020-10-10\"\n}"
+					"raw": "{\n  \"access\": {\n    \"accounts\": [\n         \"{{iban_none}}\"\n    ]\n  },\n  \"frequencyPerDay\": 4,\n  \"tppId\": \"PSDDE-FAKENCA-87B2AC\",\n  \"userId\": \"{{userId}}\",\n  \"validUntil\": \"2025-10-10\"\n}"
 				},
 				"url": {
 					"raw": "{{protocol}}://{{url_ledgers}}/consents/piis",
@@ -1243,7 +1243,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "08d6b220-1043-4b95-a04c-0e6708496bd5",
+						"id": "24a8549c-0ca4-4246-9fa0-7b660ec008b5",
 						"exec": [
 							"pm.test(\"Status code is 200\", () => {",
 							"    pm.response.to.have.status(200);",
@@ -1256,7 +1256,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "c2a3542a-26a3-434c-abb9-5ed1ca4fb75a",
+						"id": "90ae899b-5aa5-4fe5-acb0-f62cb1d7b3ca",
 						"exec": [
 							"var ledgersResponse = pm.globals.get(\"ledgersResponse\");",
 							"var utf8string = CryptoJS.enc.Utf8.parse(ledgersResponse);",
@@ -1304,7 +1304,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "96099df9-1fd5-4344-a777-8d95ec0748ce",
+						"id": "0ad483ba-1bf6-48d0-b5ee-04b139fc1108",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1359,7 +1359,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "087833ea-e6d5-4dfb-91c5-298cd9545ffc",
+				"id": "9e915684-bbd4-480b-8594-df50bd8b471a",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1369,7 +1369,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "b808956e-a830-4921-a6cf-77c8ef13dc88",
+				"id": "228001a4-51b2-4e68-99dd-41ae85225811",
 				"type": "text/javascript",
 				"exec": [
 					""
