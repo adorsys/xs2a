@@ -103,8 +103,14 @@ public class AccountSpiMockImpl implements AccountSpi {
                                                 buildSpiInformationTransactionList() :
                                                 buildSpiTransactionList();
 
+        SpiTransactionLinks spiTransactionLinks = new SpiTransactionLinks(
+            "http://localhost:8089/v1/first/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
+            "http://localhost:8089/v1/next/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
+            "http://localhost:8089/v1/previous/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
+            "http://localhost:8089/v1/last/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q"
+        );
         return SpiResponse.<SpiTransactionReport>builder()
-                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null))
+                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null, spiTransactionLinks))
                    .build();
     }
 

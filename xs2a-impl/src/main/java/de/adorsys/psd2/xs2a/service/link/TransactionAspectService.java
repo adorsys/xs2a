@@ -39,7 +39,7 @@ public class TransactionAspectService extends BaseAspectService<AccountControlle
                                                                                 Xs2aTransactionsReportByPeriodRequest request) {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
-            transactionsReport.setLinks(new TransactionsReportDownloadLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance(), transactionsReport.getDownloadId()));
+            transactionsReport.setLinks(new TransactionsReportDownloadLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance(), transactionsReport.getDownloadId(), transactionsReport.getLinks()));
             Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
 
             if (transactionsReport.getAccountReport() != null) {

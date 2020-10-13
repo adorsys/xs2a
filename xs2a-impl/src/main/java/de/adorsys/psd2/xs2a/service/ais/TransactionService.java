@@ -26,6 +26,8 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
@@ -393,7 +395,20 @@ public class TransactionService {
         transactionsReport.setAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
         transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
+        transactionsReport.setLinks(mapToLinks(spiTransactionReport.getSpiTransactionLinks()));
         return transactionsReport;
+    }
+
+    private Links mapToLinks(SpiTransactionLinks spiTransactionLinks) {
+        if (spiTransactionLinks == null) {
+            return null;
+        }
+        Links links = new Links();
+        links.setFirst(new HrefType(spiTransactionLinks.getFirst()));
+        links.setNext(new HrefType(spiTransactionLinks.getNext()));
+        links.setPrevious(new HrefType(spiTransactionLinks.getPrevious()));
+        links.setLast(new HrefType(spiTransactionLinks.getLast()));
+        return links;
     }
 
     @NotNull
