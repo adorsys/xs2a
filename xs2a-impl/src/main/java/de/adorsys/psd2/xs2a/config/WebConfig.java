@@ -43,7 +43,6 @@ import de.adorsys.psd2.xs2a.web.interceptor.logging.*;
 import de.adorsys.psd2.xs2a.web.interceptor.tpp.TppStopListInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -66,8 +65,6 @@ import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebConfig implements WebMvcConfigurer {
-    @Value("${application.ais.transaction.max-length}")
-    private int maxNumberOfCharInTransactionJson;
 
     @Qualifier("xs2aCorsConfigProperties")
     private final CorsConfigurationProperties corsConfigurationProperties;
@@ -113,11 +110,6 @@ public class WebConfig implements WebMvcConfigurer {
         // their URLs (and 'payment-service' or 'payment-type' can be broken).
         registry.addInterceptor(paymentParametersValidationInterceptor).addPathPatterns(GLOBAL_PATH);
         registry.addInterceptor(requestValidationInterceptor).addPathPatterns(getAllXs2aEndpointPaths());
-    }
-
-    @Bean
-    public int maxNumberOfCharInTransactionJson() {
-        return maxNumberOfCharInTransactionJson;
     }
 
     @Bean
