@@ -5,6 +5,7 @@
 * Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 * Remove obsolete property `xs2a.application.ais.transaction.max-length`
 * Changed (PaymentSpi | PaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse response type
+* Fixed deadlock while saving authentication methods for authorisation
 
 == Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
@@ -18,3 +19,8 @@ The configuration property `xs2a.application.ais.transaction.max-length` was rem
 
 From now on, (PaymentSpi | PaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse responses `SpiResponse<SpiPaymentExecutionResponse>`.
 This response includes transaction status and spi authorisation status simultaneously.
+
+== Fixed deadlock while saving authentication methods for authorisation
+
+From now on, authentication methods for authorisation saving only in case they differ from already
+saved one for same authorisation.
