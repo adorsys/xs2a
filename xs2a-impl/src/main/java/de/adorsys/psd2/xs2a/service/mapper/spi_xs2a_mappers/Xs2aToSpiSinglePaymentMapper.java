@@ -16,10 +16,13 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -57,6 +60,9 @@ public class Xs2aToSpiSinglePaymentMapper {
         single.setContentType(payment.getContentType());
         single.setDebtorName(payment.getDebtorName());
         single.setInstanceId(payment.getInstanceId());
+        single.setChargeBearer(Optional.ofNullable(payment.getChargeBearer())
+                                   .map(ChargeBearer::toString)
+                                   .orElse(null));
 
         return single;
     }

@@ -7,6 +7,7 @@
 * Added migration file for creation signing basket table
 * Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 * Fixed deadlock while saving authentication methods for authorisation
+* Added field charge bearer
 
 == Removed deprecated authorisation type AIS
 
@@ -32,3 +33,10 @@ From now on, endpoint `GET aspsp-api/v1/ais/consents/account/{account-id}` works
 
 From now on, authentication methods for authorisation saving only in case they differ from already
 saved one for same authorisation.
+
+== Added field charge bearer
+
+Added field charge bearer to `PaymentInitiationJson`, `PaymentInitiationWithStatusResponse`, `PaymentInitiationBulkElementJson`
+and passed this field to spi level. From now on, `SpiSinglePayment` contains String field `chargeBearer`.
+For validating this field according to bank requirements, extend payment validation on connector side.
+Instruction how to do that one can find in `Extending payment validation.adoc`.
