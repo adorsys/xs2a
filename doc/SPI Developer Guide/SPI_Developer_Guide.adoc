@@ -27,3 +27,5 @@ include::Certificate generator.adoc[Certificate generator]
 include::Configuration properties.adoc[Configuration properties]
 
 include::Multilevel Sca.adoc[Multilevel Sca]
+
+include::Extending payment validation.adoc[Extending payment validation]

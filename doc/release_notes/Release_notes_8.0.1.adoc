@@ -1,0 +1,12 @@
+= Release notes v.8.0.1
+
+== Table of Contents
+
+* Added field charge bearer
+
+== Added field charge bearer
+
+Added field charge bearer to `PaymentInitiationJson`, `PaymentInitiationWithStatusResponse`, `PaymentInitiationBulkElementJson`
+and passed this field to spi level. From now on, `SpiSinglePayment` contains String field `chargeBearer`.
+For validating this field according to bank requirements, extend payment validation on connector side.
+Instruction how to do that one can find in `Extending payment validation.adoc`.

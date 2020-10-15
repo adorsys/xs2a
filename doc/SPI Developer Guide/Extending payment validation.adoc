@@ -1,0 +1,9 @@
+== Extending payment validation
+
+In order to extend payment validation with custom bank's requirements, one needs to override:
+
+- `DefaultPaymentValidationConfigImpl` with custom `ValidationObject` fields (Occurrence and max length);
+- `DefaultPaymentBodyFieldsValidatorImpl` with overridden method `createPaymentValidationConfig` (put there custom DefaultPaymentValidationConfigImpl extension);
+- `DefaultPaymentValidatorHolder` with passing custom extended `DefaultPaymentBodyFieldsValidatorImpl` in constructor parameters and overridden method `isCustom` (return true here);
+- `CustomPaymentValidationService` with annotation `@Primary` and override needed methods according to bank's requirements. Use
+`ErrorBuildingService` to enrich message error.
