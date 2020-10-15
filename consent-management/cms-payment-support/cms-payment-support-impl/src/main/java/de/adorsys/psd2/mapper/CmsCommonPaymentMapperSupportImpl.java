@@ -134,6 +134,9 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setPurposeCode(mapToPurposeCode(paymentInitiationBulkElementJson.getPurposeCode()));
         singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationBulkElementJson.getRemittanceInformationStructured()));
         singlePayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(paymentInitiationBulkElementJson.getRemittanceInformationStructuredArray()));
+        singlePayment.setChargeBearer(Optional.ofNullable(paymentInitiationBulkElementJson.getChargeBearer())
+                                          .map(ChargeBearer::toString)
+                                          .orElse(null));
         return singlePayment;
     }
 
@@ -158,6 +161,9 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationJson.getRemittanceInformationStructured()));
         singlePayment.setTppBrandLoggingInformation(cmsCommonPayment.getTppBrandLoggingInformation());
         singlePayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(paymentInitiationJson.getRemittanceInformationStructuredArray()));
+        singlePayment.setChargeBearer(Optional.ofNullable(paymentInitiationJson.getChargeBearer())
+                                          .map(ChargeBearer::toString)
+                                          .orElse(null));
         return singlePayment;
     }
 
