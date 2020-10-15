@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ca9b3dd7-e2d2-4aa3-9939-7aa4c9764e32",
+		"_postman_id": "c66a8c90-b271-4b00-89a9-d570abe1b108",
 		"name": "Header Validation Requests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,7 +14,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3c82ed4b-2080-4961-8122-de2b4776dafd",
+								"id": "732fa4c0-61cd-45bd-a8be-734ac91f33ae",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -62,7 +62,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1aebecf4-063f-4594-a1bb-919b89a3e052",
+								"id": "ac824f0b-a283-44c5-8c72-e9e2c55dfd82",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -115,7 +115,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "10e8bbdd-5b12-4f91-a398-9172e2cbfcc7",
+								"id": "dac99d0a-e60c-42f2-b458-c0f2c0caeb80",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -127,14 +127,6 @@
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 									"});",
 									"",
-									"pm.test(\"Links exist\", () => {",
-									"    pm.expect(jsonData).to.have.property('_links');",
-									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('self');",
-									"    pm.expect(_links).to.have.property('status');",
-									"    pm.expect(_links).to.have.property('scaOAuth');",
-									"});",
 									"",
 									"pm.test(\"Payment ID exists\", () => {",
 									"    pm.expect(jsonData).to.have.property('paymentId');",
@@ -160,7 +152,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "8315c186-f9e3-451e-a7b1-ea792f887cef",
+								"id": "75882352-40be-4953-9e99-bd8873468ac9",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
@@ -257,7 +249,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "53389d24-3c14-47c3-9b7f-52dd85c93728",
+								"id": "7e6c1381-0d59-4417-b54e-ef37397db8aa",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -267,15 +259,6 @@
 									"",
 									"pm.test(\"Transcation status is RCVD\", () => {",
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
-									"});",
-									"",
-									"pm.test(\"Links exist\", () => {",
-									"    pm.expect(jsonData).to.have.property('_links');",
-									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('self');",
-									"    pm.expect(_links).to.have.property('status');",
-									"    pm.expect(_links).to.have.property('scaOAuth');",
 									"});",
 									"",
 									"pm.test(\"Payment ID exists\", () => {",
@@ -299,7 +282,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "d111b2fa-2f4c-4eff-9505-935ab108fe63",
+								"id": "060ffb25-6f5c-4022-b315-1dcb47aacaa2",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
@@ -402,7 +385,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "67c72fd4-24fa-4b60-bf1f-30928b53a206",
+								"id": "e130a96f-49bc-435c-86a2-30368065de0b",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -450,7 +433,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "89eb4833-a3b2-4bd1-8c63-f377c0eb03ee",
+								"id": "91e69bff-66a4-41c0-b981-f904d5ec0c71",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -503,7 +486,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "3648d08d-9985-4ebf-8bd2-aaefc7ae8b13",
+								"id": "3614e46b-b353-466d-8461-56cc3821967e",
 								"exec": [
 									"pm.test(\"Status code is 400\", () => {",
 									"    pm.response.to.have.status(400);",
@@ -522,7 +505,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "e879e59f-a200-4ff3-92fc-210a69f3e71c",
+								"id": "0cb4e658-c28e-48fb-9fd3-9bbaafc7b66f",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
@@ -619,7 +602,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2a41cb5d-902f-4b18-bf13-be2eb70b065d",
+								"id": "05a6fadf-ec8d-4ef2-8391-b23a0714cfc0",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -629,15 +612,6 @@
 									"",
 									"pm.test(\"Transcation status is RCVD\", () => {",
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
-									"});",
-									"",
-									"pm.test(\"Links exist\", () => {",
-									"    pm.expect(jsonData).to.have.property('_links');",
-									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('self');",
-									"    pm.expect(_links).to.have.property('status');",
-									"    pm.expect(_links).to.have.property('scaOAuth');",
 									"});",
 									"",
 									"pm.test(\"Payment ID exists\", () => {",
@@ -661,7 +635,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b79881cc-67bf-4d5b-a35c-47040f07ee54",
+								"id": "51d12655-9f2c-4619-a3ea-3b68fd42a47b",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
@@ -764,7 +738,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "671441db-1c8d-4a10-a4e1-faa5436ac56c",
+								"id": "c1155802-75e8-44f7-9c1b-cab2a74f37fa",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -812,7 +786,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bb7268c6-b3be-42b0-b5b7-8f5d61cfeb09",
+								"id": "bbc103e0-3768-4a5f-84c9-4a74aadc1c26",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -865,7 +839,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "216bf5f8-d4f7-4aa1-b502-5270cd5aa3eb",
+								"id": "8cd57230-5259-4f33-901a-658433ef54ce",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -877,14 +851,6 @@
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
 									"});",
 									"",
-									"pm.test(\"Links exist\", () => {",
-									"    pm.expect(jsonData).to.have.property('_links');",
-									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('self');",
-									"    pm.expect(_links).to.have.property('status');",
-									"    pm.expect(_links).to.have.property('scaOAuth');",
-									"});",
 									"",
 									"pm.test(\"Payment ID exists\", () => {",
 									"    pm.expect(jsonData).to.have.property('paymentId');",
@@ -907,7 +873,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "300ba67c-44a5-4c93-b3f1-dac66ed27754",
+								"id": "f524cff7-ba4c-4c3e-a1cf-db0a9f2d17d1",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
@@ -1004,7 +970,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "1a1e6697-1309-4435-84d5-2c046c2c7aab",
+								"id": "8841f489-9ade-420a-b155-f4745d334fab",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -1014,15 +980,6 @@
 									"",
 									"pm.test(\"Transcation status is RCVD\", () => {",
 									"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
-									"});",
-									"",
-									"pm.test(\"Links exist\", () => {",
-									"    pm.expect(jsonData).to.have.property('_links');",
-									"    const _links = jsonData._links;",
-									"    ",
-									"    pm.expect(_links).to.have.property('self');",
-									"    pm.expect(_links).to.have.property('status');",
-									"    pm.expect(_links).to.have.property('scaOAuth');",
 									"});",
 									"",
 									"pm.test(\"Payment ID exists\", () => {",
@@ -1046,7 +1003,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "69a13fcb-e56f-4d25-b832-d927b4d134d4",
+								"id": "42ff1c21-4d3b-42f3-8668-732d376a42f3",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
