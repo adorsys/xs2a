@@ -57,6 +57,7 @@ public class SpiSinglePayment implements SpiPayment {
     private String contentType;
     private String debtorName;
     private String instanceId;
+    private String chargeBearer;
 
     public SpiSinglePayment(String paymentProduct) {
         this.paymentProduct = paymentProduct;

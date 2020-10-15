@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.PaymentValidationConfig;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.service.CustomPaymentValidationService;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,14 @@ import java.util.List;
 
 @Component
 public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
+    private CustomPaymentValidationService customPaymentValidationService;
 
     @Autowired
     public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                         PaymentMapper paymentMapper, AmountValidator amountValidator,
-                                        IbanValidator ibanValidator) {
-        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator, ibanValidator);
+                                        IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService) {
+        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator, ibanValidator, customPaymentValidationService);
+        this.customPaymentValidationService = customPaymentValidationService;
     }
 
     @Override
@@ -84,5 +87,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
             errorBuildingService.enrichMessageError(
                 messageError, TppMessageInformation.of(MessageErrorCode.EXECUTION_DATE_INVALID_IN_THE_PAST));
         }
+
+        customPaymentValidationService.performCustomBulkValidation(bulkPayment, messageError, validationConfig);
     }
 }

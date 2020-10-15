@@ -48,4 +48,5 @@ public interface PaymentValidationConfig{
     ValidationObject getDayOfExecution();
 
     ValidationObject getRemittanceInformationStructured();
+    ValidationObject getChargeBearer();
 }

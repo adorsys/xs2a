@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.PaymentValidationConfig;
+import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.service.CustomPaymentValidationService;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.mapper.PaymentMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,15 +50,17 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     protected PaymentMapper paymentMapper;
     private AmountValidator amountValidator;
     private IbanValidator ibanValidator;
+    private CustomPaymentValidationService customPaymentValidationService;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                           PaymentMapper paymentMapper, AmountValidator amountValidator,
-                                          IbanValidator ibanValidator) {
+                                          IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService) {
         super(errorBuildingService, xs2aObjectMapper);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
         this.ibanValidator = ibanValidator;
+        this.customPaymentValidationService = customPaymentValidationService;
     }
 
     @Override
@@ -118,6 +121,7 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
         checkFieldForMaxLength(singlePayment.getDebtorName(), "debtorName", validationConfig.getDebtorName(), messageError);
         checkFieldForMaxLength(singlePayment.getRemittanceInformationStructured(), "remittanceInformationStructured", validationConfig.getRemittanceInformationStructured(), messageError);
         validateRemittanceInformationStructuredArray(singlePayment.getRemittanceInformationStructuredArray(), messageError, validationConfig);
+        customPaymentValidationService.performCustomSingleValidation(singlePayment, messageError, validationConfig);
     }
 
     void validateAddress(Xs2aAddress address, MessageError messageError, PaymentValidationConfig validationConfig) {
