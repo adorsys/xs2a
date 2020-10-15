@@ -5,6 +5,7 @@
 * Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 * Fixed deadlock while saving authentication methods for authorisation
 * Added field charge bearer
+* Added pagination for transactions
 
 == Fixed internal server error on `GET aspsp-api/v1/ais/consents/account/{account-id}` with oracle db
 
@@ -21,3 +22,7 @@ Added field charge bearer to `PaymentInitiationJson`, `PaymentInitiationWithStat
 and passed this field to spi level. From now on, `SpiSinglePayment` contains String field `chargeBearer`.
 For validating this field according to bank requirements, extend payment validation on connector side.
 Instruction how to do that one can find in `Extending payment validation.adoc`.
+
+== Added pagination for transactions
+
+From now on, pagination links passed from spi to get transaction list response.
