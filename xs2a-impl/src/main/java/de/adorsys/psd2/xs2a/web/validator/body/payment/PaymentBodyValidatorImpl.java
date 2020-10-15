@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.model.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -53,6 +54,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     static final String BULK_PAYMENT_PATH_VAR = "bulk-payments";
     static final String PURPOSE_CODE_FIELD_NAME = "purposeCode";
     static final String FREQUENCY_FIELD_NAME = "frequency";
+    static final String CHARGE_BEARER_FIELD_NAME = "chargeBearer";
     static final String BATCH_BOOKING_PREFERRED_FIELD_NAME = "batchBookingPreferred";
     static final String CURRENCY_STRING = "currency";
 
@@ -111,7 +113,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         validateBulkPaymentFields(request, messageError);
         validateFrequencyForPeriodicPayment(request, messageError);
         validatePurposeCodes(request, messageError);
-
+        validateChargeBearerList(request, messageError);
         return messageError;
     }
 
@@ -153,6 +155,24 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
             } else if (FrequencyCode.fromValue(frequencyOptional.get()) == null) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, FREQUENCY_FIELD_NAME));
             }
+        }
+    }
+
+    private void validateChargeBearerList(HttpServletRequest request, MessageError messageError) {
+        List<String> chargeBearerList = getChargeBearerOptionalString(request);
+        if (!chargeBearerList.isEmpty()) {
+            chargeBearerList.forEach(c -> validateChargeBearer(messageError, c));
+        }
+    }
+
+    private List<String> getChargeBearerOptionalString(HttpServletRequest request) {
+        return fieldExtractor.extractOptionalList(request, CHARGE_BEARER_FIELD_NAME);
+    }
+
+    private void validateChargeBearer(MessageError messageError, String chargeBearer) {
+        if (chargeBearer != null
+                && ChargeBearer.fromValue(chargeBearer) == null) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, CHARGE_BEARER_FIELD_NAME));
         }
     }
 

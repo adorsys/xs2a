@@ -85,6 +85,7 @@ public class PaymentMapper {
         payment.setRemittanceInformationStructuredArray(paymentRequest.getRemittanceInformationStructuredArray());
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
+        payment.setChargeBearer(paymentRequest.getChargeBearer());
 
         return payment;
     }
@@ -206,6 +207,7 @@ public class PaymentMapper {
                        payment.setRemittanceInformationStructuredArray(p.getRemittanceInformationStructuredArray());
                        payment.setInstructionIdentification(p.getInstructionIdentification());
                        payment.setDebtorName(p.getDebtorName());
+                       payment.setChargeBearer(p.getChargeBearer());
 
                        return payment;
                    })
