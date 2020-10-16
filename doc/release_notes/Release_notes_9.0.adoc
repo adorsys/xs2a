@@ -9,6 +9,7 @@
 * Fixed deadlock while saving authentication methods for authorisation
 * Added field charge bearer
 * Added pagination for transactions
+* Added debtorName field to get payment response
 
 == Removed deprecated authorisation type AIS
 
@@ -45,3 +46,8 @@ Instruction how to do that one can find in `Extending payment validation.adoc`.
 == Added pagination for transactions
 
 From now on, pagination links passed from spi to get transaction list response.
+
+== Added debtorName field to get payment response
+
+Field `debtorName` was added to get payment response. Cms store original payment, and updated payment with
+`debtorName` will be extracted from bank via spi call and passed to get payment response.
