@@ -70,7 +70,7 @@ public class CardAccountController implements CardAccountsApi {
 
     @Override
     public ResponseEntity getCardAccountTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest = new Xs2aTransactionsReportByPeriodRequest(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus), trimEndingSlash(request.getRequestURI()), entryReferenceFrom, deltaList);
+        Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest = new Xs2aTransactionsReportByPeriodRequest(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus), trimEndingSlash(request.getRequestURI()), entryReferenceFrom, deltaList, null, null);
         ResponseObject<Xs2aCardTransactionsReport> cardTransactionsReport = cardTransactionService.getCardTransactionsReportByPeriod(xs2aTransactionsReportByPeriodRequest);
 
         if (cardTransactionsReport.hasError()) {
