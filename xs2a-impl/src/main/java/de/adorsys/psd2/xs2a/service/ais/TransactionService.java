@@ -278,7 +278,8 @@ public class TransactionService {
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
 
         return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
-                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList());
+                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList(),
+                                                  request.getPageIndex(), request.getItemsPerPage());
     }
 
     private SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {
@@ -404,11 +405,17 @@ public class TransactionService {
             return null;
         }
         Links links = new Links();
-        links.setFirst(new HrefType(spiTransactionLinks.getFirst()));
-        links.setNext(new HrefType(spiTransactionLinks.getNext()));
-        links.setPrevious(new HrefType(spiTransactionLinks.getPrevious()));
-        links.setLast(new HrefType(spiTransactionLinks.getLast()));
+        links.setFirst(mapToHrefType(spiTransactionLinks.getFirst()));
+        links.setNext(mapToHrefType(spiTransactionLinks.getNext()));
+        links.setPrevious(mapToHrefType(spiTransactionLinks.getPrevious()));
+        links.setLast(mapToHrefType(spiTransactionLinks.getLast()));
         return links;
+    }
+
+    private HrefType mapToHrefType(String link) {
+        return Optional.ofNullable(link)
+            .map(HrefType::new)
+            .orElse(null);
     }
 
     @NotNull

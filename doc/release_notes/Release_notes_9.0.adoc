@@ -11,6 +11,7 @@
 * Added pagination for transactions
 * Added debtorName field to get payment response
 * Added cms payment mapper resolver
+* Added pageIndex and itemsPerPage to SpiTransactionReportParameters
 
 == Removed deprecated authorisation type AIS
 
@@ -56,3 +57,8 @@ Field `debtorName` was added to get payment response. Cms store original payment
 == Added cms payment mapper resolver
 
 From now on, cms payment mapper resolves through implementation of `PaymentMapperResolver`.
+
+== Added pageIndex and itemsPerPage to SpiTransactionReportParameters
+
+From now on, `SpiTransactionReportParameters` has two new integer fields: `pageIndex` and `itemsPerPage`. And
+`AccountApi` has two new query parameters `pageIndex` and `itemsPerPage`.

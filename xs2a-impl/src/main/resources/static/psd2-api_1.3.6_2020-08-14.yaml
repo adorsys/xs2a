@@ -1681,6 +1681,8 @@ paths:
         - $ref: "#/components/parameters/bookingStatus"
         - $ref: "#/components/parameters/deltaList"
         - $ref: "#/components/parameters/withBalanceQuery"
+        - $ref: "#/components/parameters/pageIndex"
+        - $ref: "#/components/parameters/itemsPerPage"
       #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
@@ -11189,6 +11191,27 @@ components:
       schema:
         type: string
 
+    pageIndex:
+      name: pageIndex
+      in: query
+      description: |
+        This data attribute is indicating current transaction page.
+
+        Optional if supported by API provider.
+      required: false
+      schema:
+        type: integer
+
+    itemsPerPage:
+      name: itemsPerPage
+      in: query
+      description: |
+        This data attribute is indicating current transaction items on one page.
+
+        Optional if supported by API provider.
+      required: false
+      schema:
+        type: integer
 
     bookingStatus:
       name: bookingStatus
