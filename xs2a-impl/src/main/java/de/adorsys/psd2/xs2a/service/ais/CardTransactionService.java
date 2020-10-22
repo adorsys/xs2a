@@ -159,7 +159,7 @@ public class CardTransactionService {
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
 
         return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
-                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList());
+                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList(), null, null);
     }
 
     private SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {

@@ -103,6 +103,18 @@ Might be ignored if a delta function is used or if bookingStatus equals "inform
 |Optional
 |If contained, this function reads the list of transactions including the booking balance, if granted by the PSU in the related consent and available by the ASPSP. This parameter might be ignored by the ASPSP
 |
+
+|pageIndex
+
+|Optional
+|If contained, corresponding transactions page returned. This parameter might be ignored by the ASPSP.
+|
+
+|itemsPerPage
+
+|Optional
+|If contained, corresponding transactions number on page returned. This parameter might be ignored by the ASPSP.
+|
 |===
 
 ==== Standing Orders reporting

@@ -33,4 +33,6 @@ public class Xs2aTransactionsReportByPeriodRequest {
     private final String requestUri;
     private final String entryReferenceFrom;
     private final Boolean deltaList;
+    private final Integer pageIndex;
+    private final Integer itemsPerPage;
 }
