@@ -30,6 +30,7 @@
     <modules>
         <module>cms-payment-common-impl</module>
         <module>cms-payment-support-impl</module>
+        <module>cms-payment-mapper</module>
     </modules>
 
 </project>

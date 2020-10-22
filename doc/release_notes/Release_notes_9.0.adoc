@@ -10,6 +10,7 @@
 * Added field charge bearer
 * Added pagination for transactions
 * Added debtorName field to get payment response
+* Added cms payment mapper resolver
 
 == Removed deprecated authorisation type AIS
 
@@ -51,3 +52,7 @@ From now on, pagination links passed from spi to get transaction list response.
 
 Field `debtorName` was added to get payment response. Cms store original payment, and updated payment with
 `debtorName` will be extracted from bank via spi call and passed to get payment response.
+
+== Added cms payment mapper resolver
+
+From now on, cms payment mapper resolves through implementation of `PaymentMapperResolver`.
