@@ -25,18 +25,13 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cms-payment-support-impl</artifactId>
+    <artifactId>cms-payment-mapper</artifactId>
 
     <properties>
         <ruleset.basedir>../../..</ruleset.basedir>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>de.adorsys.psd2</groupId>
-            <artifactId>cms-payment-mapper</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-api</artifactId>
@@ -82,17 +77,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
