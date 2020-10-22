@@ -36,7 +36,7 @@ import java.util.List;
 public class CorePaymentsConvertService {
     private final CmsCorePaymentMapper cmsCorePaymentMapper;
     private final Xs2aObjectMapper xs2aObjectMapper;
-    private final CmsCommonPaymentMapper cmsCommonPaymentMapper;
+    private final PaymentMapperResolver paymentMapperResolver;
 
     public byte[] buildPaymentData(List<PisPayment> pisPayments, PaymentType paymentType) {
         switch (paymentType) {
@@ -52,6 +52,7 @@ public class CorePaymentsConvertService {
     }
 
     public CmsPayment expandCommonPaymentWithCorePayment(CmsCommonPayment cmsCommonPayment) {
+        CmsCommonPaymentMapper cmsCommonPaymentMapper = paymentMapperResolver.getCmsCommonPaymentMapper(cmsCommonPayment.getPaymentProduct());
         switch (cmsCommonPayment.getPaymentType()) {
             case SINGLE:
                 return cmsCommonPaymentMapper.mapToCmsSinglePayment(cmsCommonPayment);

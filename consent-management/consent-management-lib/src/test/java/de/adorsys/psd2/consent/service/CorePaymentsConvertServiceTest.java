@@ -52,6 +52,7 @@ class CorePaymentsConvertServiceTest {
     private Xs2aObjectMapper xs2aObjectMapper;
 
     private CmsCommonPaymentMapper cmsCommonPaymentMapper;
+    private PaymentMapperResolver paymentMapperResolver;
 
     private JsonReader jsonReader = new JsonReader();
     private PisPayment pisPayment;
@@ -63,7 +64,10 @@ class CorePaymentsConvertServiceTest {
         cmsCommonPayment = new CmsCommonPayment("payments");
 
         cmsCommonPaymentMapper = mock(CmsCommonPaymentMapper.class);
-        corePaymentsConvertService = new CorePaymentsConvertService(cmsCorePaymentMapper, xs2aObjectMapper, cmsCommonPaymentMapper);
+
+        paymentMapperResolver = mock(PaymentMapperResolver.class);
+        when(paymentMapperResolver.getCmsCommonPaymentMapper(any())).thenReturn(cmsCommonPaymentMapper);
+        corePaymentsConvertService = new CorePaymentsConvertService(cmsCorePaymentMapper, xs2aObjectMapper, paymentMapperResolver);
     }
 
     @Test
@@ -122,7 +126,7 @@ class CorePaymentsConvertServiceTest {
 
     @Test
     void expandCommonPaymentWithCorePayment_singlePayment() {
-        corePaymentsConvertService = new CorePaymentsConvertService(null, null, cmsCommonPaymentMapper);
+        corePaymentsConvertService = new CorePaymentsConvertService(null, null, paymentMapperResolver);
         cmsCommonPayment.setPaymentType(PaymentType.SINGLE);
 
         corePaymentsConvertService.expandCommonPaymentWithCorePayment(cmsCommonPayment);
