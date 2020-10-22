@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.domain.pis;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
@@ -82,6 +83,8 @@ public class SinglePayment extends CommonPayment implements AccountReferenceColl
     private OffsetDateTime requestedExecutionTime;
 
     private String debtorName;
+
+    private ChargeBearer chargeBearer;
 
     protected PaymentType paymentType = PaymentType.SINGLE;
 

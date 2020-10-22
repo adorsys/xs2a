@@ -1,7 +1,7 @@
 {
   "scaStatus": "received",
   "_links": {
-    "scaOAuth": {
+    "scaRedirect": {
       "href": "http://localhost:4200/idp/"
     },
     "scaStatus": {

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -53,7 +54,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
                                           ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
                                           : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
-            setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
+            setScaRedirect(new HrefType(paymentOauthLink));
 
             if (authorisationConfirmationRequestMandated) {
                 setConfirmation(buildPath(redirectLinkBuilder.buildPisConfirmationLink(paymentService, paymentProduct, paymentId, redirectId)));

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.Address;
 import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.model.PurposeCode;
 import de.adorsys.psd2.model.RemittanceInformationStructuredArray;
 import de.adorsys.psd2.model.TransactionStatus;
@@ -21,7 +22,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-10-12T18:49:50.746534+03:00[Europe/Kiev]")
 
 public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -62,6 +63,9 @@ public class PaymentInitiationWithStatusResponse   {
 
   @JsonProperty("purposeCode")
   private PurposeCode purposeCode = null;
+
+  @JsonProperty("chargeBearer")
+  private ChargeBearer chargeBearer = null;
 
   @JsonProperty("remittanceInformationUnstructured")
   private String remittanceInformationUnstructured = null;
@@ -373,6 +377,29 @@ public class PaymentInitiationWithStatusResponse   {
     this.purposeCode = purposeCode;
   }
 
+  public PaymentInitiationWithStatusResponse chargeBearer(ChargeBearer chargeBearer) {
+    this.chargeBearer = chargeBearer;
+    return this;
+  }
+
+  /**
+   * Get chargeBearer
+   * @return chargeBearer
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("chargeBearer")
+  public ChargeBearer getChargeBearer() {
+    return chargeBearer;
+  }
+
+  public void setChargeBearer(ChargeBearer chargeBearer) {
+    this.chargeBearer = chargeBearer;
+  }
+
   public PaymentInitiationWithStatusResponse remittanceInformationUnstructured(String remittanceInformationUnstructured) {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
     return this;
@@ -508,6 +535,7 @@ public class PaymentInitiationWithStatusResponse   {
     Objects.equals(this.creditorId, paymentInitiationWithStatusResponse.creditorId) &&
     Objects.equals(this.ultimateCreditor, paymentInitiationWithStatusResponse.ultimateCreditor) &&
     Objects.equals(this.purposeCode, paymentInitiationWithStatusResponse.purposeCode) &&
+    Objects.equals(this.chargeBearer, paymentInitiationWithStatusResponse.chargeBearer) &&
     Objects.equals(this.remittanceInformationUnstructured, paymentInitiationWithStatusResponse.remittanceInformationUnstructured) &&
     Objects.equals(this.remittanceInformationStructured, paymentInitiationWithStatusResponse.remittanceInformationStructured) &&
     Objects.equals(this.remittanceInformationStructuredArray, paymentInitiationWithStatusResponse.remittanceInformationStructuredArray) &&
@@ -517,7 +545,7 @@ public class PaymentInitiationWithStatusResponse   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, remittanceInformationStructuredArray, requestedExecutionDate, transactionStatus);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, chargeBearer, remittanceInformationUnstructured, remittanceInformationStructured, remittanceInformationStructuredArray, requestedExecutionDate, transactionStatus);
   }
 
   @Override
@@ -538,6 +566,7 @@ public class PaymentInitiationWithStatusResponse   {
     sb.append("    creditorId: ").append(toIndentedString(creditorId)).append("\n");
     sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
     sb.append("    purposeCode: ").append(toIndentedString(purposeCode)).append("\n");
+    sb.append("    chargeBearer: ").append(toIndentedString(chargeBearer)).append("\n");
     sb.append("    remittanceInformationUnstructured: ").append(toIndentedString(remittanceInformationUnstructured)).append("\n");
     sb.append("    remittanceInformationStructured: ").append(toIndentedString(remittanceInformationStructured)).append("\n");
     sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");

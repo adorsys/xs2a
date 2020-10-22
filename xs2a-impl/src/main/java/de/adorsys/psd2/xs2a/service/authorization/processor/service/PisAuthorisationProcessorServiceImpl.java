@@ -47,7 +47,6 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
@@ -119,7 +118,7 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     }
 
     @Override
-    SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
+    SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
                                                                             SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
                                                                             SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(contextData,
@@ -129,8 +128,8 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
     }
 
     @Override
-    void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentResponse> spiResponse) {
-        SpiPaymentExecutionResponse payload = (SpiPaymentExecutionResponse) spiResponse.getPayload();
+    void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentExecutionResponse> spiResponse) {
+        SpiPaymentExecutionResponse payload = spiResponse.getPayload();
         TransactionStatus paymentStatus = payload.getTransactionStatus();
 
         if (paymentStatus == TransactionStatus.PATC) {

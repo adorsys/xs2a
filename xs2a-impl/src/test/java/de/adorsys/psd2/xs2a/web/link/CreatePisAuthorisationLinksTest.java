@@ -131,14 +131,4 @@ class CreatePisAuthorisationLinksTest {
         expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
         assertEquals(expectedLinks, links);
     }
-
-    @Test
-    void scaApproachOAuth() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.OAUTH);
-
-        links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false, "");
-
-        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        assertEquals(expectedLinks, links);
-    }
 }

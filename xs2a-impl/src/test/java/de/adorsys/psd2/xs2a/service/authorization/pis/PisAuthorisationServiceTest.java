@@ -65,7 +65,7 @@ class PisAuthorisationServiceTest {
     private static final String TPP_NOK_REDIRECT_URI = "request/nok_redirect_uri";
 
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final ScaApproach SCA_APPROACH = ScaApproach.OAUTH;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildXs2aUpdatePisCommonPaymentPsuDataRequest();
@@ -325,7 +325,6 @@ class PisAuthorisationServiceTest {
 
     @Test
     void getAuthorisationScaApproach_error() {
-        AuthorisationScaApproachResponse payload = new AuthorisationScaApproachResponse(ScaApproach.DECOUPLED);
         when(authorisationServiceEncrypted.getAuthorisationScaApproach(eq(AUTHORISATION_ID)))
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 

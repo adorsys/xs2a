@@ -50,6 +50,7 @@ class PaymentCancellationLinksTest {
     private static final HrefType REDIRECT_LINK = new HrefType("built_redirect_link");
     private static final HrefType CANCEL_AUTH_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations");
     private static final HrefType PIS_CANCELLATION_AUTH_LINK_URL = new HrefType(CANCEL_AUTH_LINK.getHref() + "/" + AUTHORISATION_ID);
+    public static final HrefType START_AUTHORISATION_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations");
     private static final HrefType SELF_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111");
     private static final HrefType STATUS_LINK = new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status");
     private static final String CONFIRMATION_LINK = "confirmation_link";
@@ -194,15 +195,21 @@ class PaymentCancellationLinksTest {
     }
 
     @Test
-    void buildCancellationLinks_scaOAuth_implicit() {
+    void buildCancellationLinks_redirect_oAuth_preStep_implicit() {
+        // Given
         boolean isExplicitMethod = false;
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
+        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), anyString(), eq(""))).thenReturn(REDIRECT_LINK.getHref());
 
-        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.OAUTH, false, "");
+        // When
+        links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.OAUTH_PRE_STEP, false, "");
 
+        // Then
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
-        expectedLinks.setScaOAuth(new HrefType("scaOAuth"));
+        expectedLinks.setScaRedirect(REDIRECT_LINK);
+        expectedLinks.setScaStatus(PIS_CANCELLATION_AUTH_LINK_URL);
 
         assertEquals(expectedLinks, links);
     }
@@ -210,13 +217,13 @@ class PaymentCancellationLinksTest {
     @Test
     void buildCancellationLinks_scaOAuth_explicit() {
         boolean isExplicitMethod = true;
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
 
         links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, isExplicitMethod, ScaRedirectFlow.OAUTH, false, "");
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
-        expectedLinks.setScaOAuth(new HrefType("scaOAuth"));
+        expectedLinks.setStartAuthorisation(START_AUTHORISATION_LINK);
 
         assertEquals(expectedLinks, links);
     }

@@ -54,7 +54,7 @@ public class AisConsent extends Consent<AisConsentData> {
     @JsonIgnore
     public AccountAccess getAccess() {
         Optional<AccountAccessType> allPsd2Optional = Optional.ofNullable(getConsentData())
-                                              .map(AisConsentData::getAllPsd2);
+                                                          .map(AisConsentData::getAllPsd2);
 
         if (allPsd2Optional.isPresent()) {
             return getTppAccountAccesses();
@@ -70,7 +70,8 @@ public class AisConsent extends Consent<AisConsentData> {
 
     public boolean isWithBalance() {
         return CollectionUtils.isNotEmpty(getTppAccountAccesses().getBalances())
-                   || getConsentData().getAvailableAccountsWithBalance() != null;
+                   || getConsentData().getAvailableAccountsWithBalance() != null
+                   || isGlobalConsent();
     }
 
     @JsonIgnore

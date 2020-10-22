@@ -26,7 +26,6 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentInitiationResponse;
-import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.*;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +42,7 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
     private final SpiPaymentMapper spiPaymentMapper;
 
     @Override
-    public SpiResponse<SpiPaymentResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData contextData,
+    public SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(SpiContextData contextData,
                                                                                                       SpiScaConfirmation spiScaConfirmation,
                                                                                                       SpiPayment payment,
                                                                                                       SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
@@ -77,7 +76,7 @@ public class PisExecutePaymentServiceSupportImpl implements PisExecutePaymentSer
         }
     }
 
-    private <T extends SpiPayment> SpiResponse<SpiPaymentResponse> verifyScaAndExecutePaymentWithPaymentResponse(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
+    private <T extends SpiPayment> SpiResponse<SpiPaymentExecutionResponse> verifyScaAndExecutePaymentWithPaymentResponse(PaymentSpi<T, ? extends SpiPaymentInitiationResponse> paymentSpi,
                                                                                               T payment,
                                                                                               SpiScaConfirmation spiScaConfirmation,
                                                                                               SpiContextData contextData,

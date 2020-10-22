@@ -45,4 +45,6 @@ public class SpiTransactionReport {
     private String responseContentType;
 
     private byte[] transactionsRaw;
+
+    private SpiTransactionLinks spiTransactionLinks;
 }

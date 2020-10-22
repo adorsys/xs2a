@@ -52,8 +52,6 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
             setUpdatePsuAuthentication(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         } else if (cancellationScaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
-        } else if (cancellationScaApproach == OAUTH) {
-            setScaOAuth(new HrefType("scaOAuth"));
         }
     }
 
@@ -64,7 +62,7 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
                                       ? redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
                                       : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
-        setScaRedirectOAuthLink(scaRedirectFlow, paymentCancellationOauthLink);
+        setScaRedirect(new HrefType(paymentCancellationOauthLink));
 
         setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorizationId));
     }

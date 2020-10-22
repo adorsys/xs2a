@@ -278,20 +278,6 @@ class PaymentInitiationLinksTest {
     }
 
     @Test
-    void scaApproachOAuth() {
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
-            .thenReturn(ScaApproach.OAUTH);
-
-        links = new PaymentInitiationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
-                                           response, false, false, null, false, "");
-
-        expectedLinks.setSelf(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111"));
-        expectedLinks.setStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/status"));
-        expectedLinks.setScaOAuth(new HrefType("scaOAuth"));
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
     void scaApproachRedirectAndExplicitMethod() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
@@ -322,7 +308,7 @@ class PaymentInitiationLinksTest {
     }
 
     @Test
-    public void scaApproachRedirectAndImplicitMethod_confirmation() {
+    void scaApproachRedirectAndImplicitMethod_confirmation() {
         // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);

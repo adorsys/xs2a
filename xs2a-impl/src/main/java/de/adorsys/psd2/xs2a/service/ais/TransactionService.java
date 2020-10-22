@@ -26,6 +26,8 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
@@ -276,7 +278,8 @@ public class TransactionService {
             !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
 
         return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
-                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList());
+                                                  request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList(),
+                                                  request.getPageIndex(), request.getItemsPerPage());
     }
 
     private SpiAccountReference getRequestedAccountReference(AisConsent aisConsent, String accountId) {
@@ -393,7 +396,26 @@ public class TransactionService {
         transactionsReport.setAccountReference(referenceMapper.mapToXs2aAccountReference(requestedAccountReference));
         transactionsReport.setBalances(balanceMapper.mapToXs2aBalanceList(spiTransactionReport.getBalances()));
         transactionsReport.setResponseContentType(spiTransactionReport.getResponseContentType());
+        transactionsReport.setLinks(mapToLinks(spiTransactionReport.getSpiTransactionLinks()));
         return transactionsReport;
+    }
+
+    private Links mapToLinks(SpiTransactionLinks spiTransactionLinks) {
+        if (spiTransactionLinks == null) {
+            return null;
+        }
+        Links links = new Links();
+        links.setFirst(mapToHrefType(spiTransactionLinks.getFirst()));
+        links.setNext(mapToHrefType(spiTransactionLinks.getNext()));
+        links.setPrevious(mapToHrefType(spiTransactionLinks.getPrevious()));
+        links.setLast(mapToHrefType(spiTransactionLinks.getLast()));
+        return links;
+    }
+
+    private HrefType mapToHrefType(String link) {
+        return Optional.ofNullable(link)
+            .map(HrefType::new)
+            .orElse(null);
     }
 
     @NotNull

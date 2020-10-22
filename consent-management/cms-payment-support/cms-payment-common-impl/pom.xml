@@ -21,7 +21,7 @@
     <parent>
         <artifactId>cms-payment-support</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>8.0</version>
+        <version>8.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,6 +32,19 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-payment-mapper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-core-api</artifactId>
@@ -49,11 +62,29 @@
         </dependency>
 
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--        test dependencies -->
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

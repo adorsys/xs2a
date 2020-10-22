@@ -70,15 +70,19 @@ class CreatePiisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_redirectScaApproachOauth() {
+        scaRedirectFlow = ScaRedirectFlow.OAUTH;
+
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaOauthRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
 
-        ScaRedirectFlow scaRedirectFlow = ScaRedirectFlow.OAUTH;
+        // When
         links = new CreatePiisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
 
+        // Then
         expectedLinks.setScaStatus(new HrefType("http://url/v2/consents/confirmation-of-funds/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setScaOAuth(new HrefType(REDIRECT_LINK));
+        expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
         assertEquals(expectedLinks, links);
     }
 
@@ -138,12 +142,19 @@ class CreatePiisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticated_oauthScaApproach() {
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.OAUTH);
+        scaRedirectFlow = ScaRedirectFlow.OAUTH;
 
+        // Given
+        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
+        when(redirectLinkBuilder.buildConsentScaOauthRedirectLink(eq(CONSENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID))).thenReturn(REDIRECT_LINK);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
+
+        // When
         links = new CreatePiisAuthorisationLinks(HTTP_URL, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow, false, "");
 
+        // Then
         expectedLinks.setScaStatus(new HrefType("http://url/v2/consents/confirmation-of-funds/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v2/consents/confirmation-of-funds/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
+        expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
         assertEquals(expectedLinks, links);
     }
 }

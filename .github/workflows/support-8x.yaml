@@ -28,12 +28,12 @@ jobs:
           java-version: 1.11
           architecture: x64
 
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+      # - name: Cache Maven packages
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.m2
+      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: ${{ runner.os }}-m2
 
       - name: Build XS2A
         run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
@@ -46,9 +46,9 @@ jobs:
 
       - name: Run UI tests
         run: mvn -ntp -DskipITs --fail-at-end clean install
-
-      - name: Run IT tests
-        run: mvn -ntp failsafe:integration-test failsafe:verify
+#Blocked temporary 
+      # - name: Run IT tests
+      #   run: mvn -ntp failsafe:integration-test failsafe:verify
 
 
   sonar:
@@ -65,12 +65,12 @@ jobs:
           java-version: 1.11
           architecture: x64
 
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+      # - name: Cache Maven packages
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.m2
+      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: ${{ runner.os }}-m2
 
       - name: Publish to sonarcloud
         run: >

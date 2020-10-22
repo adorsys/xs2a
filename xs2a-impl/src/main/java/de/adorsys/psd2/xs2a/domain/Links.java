@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -96,12 +95,4 @@ public class Links {
 
     @ApiModelProperty(value = "The link, which should be used by for storing the confirmation code in CMS.")
     private HrefType confirmation;
-
-    public void setScaRedirectOAuthLink(ScaRedirectFlow scaRedirectFlow, String path) {
-        if (ScaRedirectFlow.OAUTH == scaRedirectFlow) {
-            setScaOAuth(new HrefType(path));
-        } else {
-            setScaRedirect(new  HrefType(path));
-        }
-    }
 }
