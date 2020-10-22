@@ -103,12 +103,7 @@ public class AccountSpiMockImpl implements AccountSpi {
                                                 buildSpiInformationTransactionList() :
                                                 buildSpiTransactionList();
 
-        SpiTransactionLinks spiTransactionLinks = new SpiTransactionLinks(
-            "http://localhost:8089/v1/first/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
-            "http://localhost:8089/v1/next/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
-            "http://localhost:8089/v1/previous/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q",
-            "http://localhost:8089/v1/last/24RpjVBtukeKQgNVz46fna5R53jo8Oe3cSEdqOAYMuyJgp3WKEGB-Toq1lKqF8PleuzFVsh-GH5mB4KTOwobVnPybWXPLgBOh3pN-2fp7lQ=_=_psGLvQpt9Q"
-        );
+        SpiTransactionLinks spiTransactionLinks = buildSpiTransactionLinks();
         return SpiResponse.<SpiTransactionReport>builder()
                    .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null, spiTransactionLinks))
                    .build();
@@ -200,5 +195,14 @@ public class AccountSpiMockImpl implements AccountSpi {
     private SpiAccountReference buildSpiAccountReference() {
         return new SpiAccountReference(ASPSP_ACCOUNT_ID, RESOURCE_ID, IBAN,
                                        "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"));
+    }
+
+    private SpiTransactionLinks buildSpiTransactionLinks() {
+        return new SpiTransactionLinks(
+            "http://localhost:8089/v1/accounts/account-id/transactions?pageIndex=0&itemsPerPage=20",
+            "http://localhost:8089/v1/accounts/account-id/transactions?pageIndex=3&itemsPerPage=20",
+            "http://localhost:8089/v1/accounts/account-id/transactions?pageIndex=1&itemsPerPage=20",
+            "http://localhost:8089/v1/accounts/account-id/transactions?pageIndex=7&itemsPerPage=20"
+        );
     }
 }
