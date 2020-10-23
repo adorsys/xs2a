@@ -4,18 +4,20 @@ Starting 1st of March 2020 XS2A-core Team is providing development within two br
 
 *Stable branch 8.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.6. Will be supported till 05.03.2021
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.6. Will be supported till 16.04.2021
 
-*Development branch 9.x* - release date is not specified yet
+*Development branch 9.x* 
 
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 8.x is guaranteed. Will be released as Stable version 10.x on 19.03.2021
 
-[cols="4*.<"]
+[cols="5*.<"]
 |====
-|release date|version 8.x (Stable)|version 9.x (Development)|XS2A extention (commercial)
+|release date|version 6.x (Stable)|version 8.x (Stable)|version 9.x (Development)|XS2A extention (commercial)
 
-|15.09.2020|8.0| |
+|15.09.2020| | 8.0| |
+
+a|
 
 a|
 
@@ -25,7 +27,33 @@ a|
 
 a|
 
-|09.10.2020|8.1|9.0|
+|12.10.2020|6.10| | |
+
+a|
+
+a|* Provide ScaStatus EXEMTED for user without SCA method
+
+* Set flag withBalance=true for Global Consent in CMS
+
+* Fix usage of embedded mode of connector
+
+*  Fix cms aspsp api working with oracte db
+
+* Remove obsolete property transaction.max-length
+
+* Change type in PaymentSpi#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse
+
+* Fix deadlock during SCA execution
+
+a|
+
+a|
+
+a|
+
+|23.10.2020| |8.1|9.0|
+
+a|
 
 a|
 
@@ -33,26 +61,46 @@ a|* Update OAuth flow
 
 * Set flag withBalance=true for Global Consent in CMS
 
+* Fix internal server error on GET aspsp-api/v1/ais/consents/account/{account-id} with oracle db
+
+* Fix deadlock while saving authentication methods for authorisation
+
+* Add field chargeBearer for PIS
+
+* Add pagination for transactions
+
+* Add debtorName field to get payment response
+
+* Add cms payment mapper resolver
+
+* Add pageIndex and itemsPerPage to SpiTransactionReportParameters
+
+* Remove obsolete property xs2a.application.ais.transaction.max-length
+
+* Change (PaymentSpiPaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse response type
+
 a|* All fixes and updates from v.8.1
 
 * Update CMS tables for Signing Basket plugin usage
 
 a|
 
-| |8.2|9.1|
+|06.11.2020| |8.2|9.1|
 
 a|
 
 a|
 
-a|
+a|* Add pagination at call GET /psu-api/v1/ais/consent/consents
+
+a|* All fixes and updates from v.8.2
 
 a|
 
-| | | |Signing Basket plugin for XS2A
+| | | | |Signing Basket plugin for XS2A
 
-| | | |Single card account plugin for XS2A
+| | | | |Single card account plugin for XS2A
 
-| | | |Resource Notification Push Service
+| | | | |Resource Notification Push Service
 
 |====
