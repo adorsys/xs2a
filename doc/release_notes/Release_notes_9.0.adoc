@@ -12,6 +12,9 @@
 * Added debtorName field to get payment response
 * Added cms payment mapper resolver
 * Added pageIndex and itemsPerPage to SpiTransactionReportParameters
+* Adjusted OAuth flow
+* Remove obsolete property `xs2a.application.ais.transaction.max-length`
+* Changed (PaymentSpi | PaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse response type
 
 == Removed deprecated authorisation type AIS
 
@@ -62,3 +65,22 @@ From now on, cms payment mapper resolves through implementation of `PaymentMappe
 
 From now on, `SpiTransactionReportParameters` has two new integer fields: `pageIndex` and `itemsPerPage`. And
 `AccountApi` has two new query parameters `pageIndex` and `itemsPerPage`.
+
+== Adjusted OAuth flow
+
+From now on, OAUTH flow is a part of REDIRECT approach which configured modes (`common.scaRedirectFlow` property in ASPSP profile):
+
+* REDIRECT - usual redirect mode
+* OAUTH - integrated OAuth mode (TPP asks for token after initiation of request)
+* OAUTH_PRE_STEP - pre-step OAuth mode (TPP asks for token before initiation of request)
+
+There was a link `scaOAuth` which was replaced by `scaRedirect` in responses. SCA approach OAUTH was removed.
+
+== Remove obsolete property `xs2a.application.ais.transaction.max-length`
+
+The configuration property `xs2a.application.ais.transaction.max-length` was removed.
+
+== Changed PaymentSpi#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse response type
+
+From now on, (PaymentSpi | PaymentCancellationSpi)#verifyScaAuthorisationAndExecutePaymentWithPaymentResponse responses `SpiResponse<SpiPaymentExecutionResponse>`.
+This response includes transaction status and spi authorisation status simultaneously.
