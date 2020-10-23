@@ -16,11 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -50,10 +51,10 @@ import org.springframework.stereotype.Service;
 import java.util.EnumSet;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_400;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIS_403;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_BLOCKED;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
 
 @Slf4j
 @Service
@@ -135,7 +136,7 @@ public class PaymentService {
         if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get payment failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.<CommonPayment>builder()
-                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
+                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -186,7 +187,7 @@ public class PaymentService {
         if (pisCommonPaymentOptional.isEmpty()) {
             log.info("Payment-ID [{}]. Get Payment Status failed. PIS CommonPayment not found by ID", encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
+                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -222,7 +223,7 @@ public class PaymentService {
         if (transactionStatus == null) {
             log.info("Payment-ID [{}].  Get Payment Status by ID failed. Transaction status is null.", encryptedPaymentId);
             return ResponseObject.<GetPaymentStatusResponse>builder()
-                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
+                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -251,7 +252,7 @@ public class PaymentService {
             log.info("Payment-ID [{}]. Cancel payment has failed. Payment not found by ID.",
                      paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_403, of(RESOURCE_UNKNOWN_403))
+                       .fail(PIS_403, TppMessageInformation.of(RESOURCE_UNKNOWN_403))
                        .build();
         }
 
@@ -271,7 +272,7 @@ public class PaymentService {
             log.info("Payment-ID [{}]. Cancel payment has failed. Payment has finalised status",
                      paymentCancellationRequest.getEncryptedPaymentId());
             return ResponseObject.<CancelPaymentResponse>builder()
-                       .fail(PIS_400, of(RESOURCE_BLOCKED))
+                       .fail(PIS_400, TppMessageInformation.of(RESOURCE_BLOCKED))
                        .build();
         }
 

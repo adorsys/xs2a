@@ -28,6 +28,8 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +86,12 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                                           .orElse(null));
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(setting.getPiis().getPiisConsentSupported(), piisRedirectLinkSetting);
 
+        SbAspspProfileBankSetting sbBankSetting = setting.getSb();
+        SbAspspProfileSetting sb = new SbAspspProfileSetting(sbBankSetting.isSigningBasketSupported(),
+                                                             sbBankSetting.getSigningBasketMaxEntries(),
+                                                             sbBankSetting.getNotConfirmedSigningBasketExpirationTimeMs(),
+                                                             sbBankSetting.getSbRedirectUrlToAspsp());
+
         CommonAspspProfileBankSetting commonBankSetting = setting.getCommon();
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(commonBankSetting.getScaRedirectFlow(),
                                                                          commonBankSetting.getOauthConfigurationUrl(),
@@ -99,7 +107,6 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                          commonBankSetting.getSupportedAccountReferenceFields(),
                                                                          commonBankSetting.getMulticurrencyAccountLevelSupported(),
                                                                          commonBankSetting.isAisPisSessionsSupported(),
-                                                                         commonBankSetting.isSigningBasketSupported(),
                                                                          commonBankSetting.isCheckTppRolesFromCertificateSupported(),
                                                                          commonBankSetting.getAspspNotificationsSupported(),
                                                                          commonBankSetting.isAuthorisationConfirmationRequestMandated(),
@@ -107,7 +114,7 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                          commonBankSetting.isCheckUriComplianceToDomainSupported(),
                                                                          commonBankSetting.getTppUriComplianceResponse());
 
-        return new AspspSettings(ais, pis, piis, common);
+        return new AspspSettings(ais, pis, piis, sb, common);
     }
 
     @Override

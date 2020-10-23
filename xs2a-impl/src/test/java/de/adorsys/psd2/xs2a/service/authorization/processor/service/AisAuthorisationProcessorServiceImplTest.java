@@ -147,7 +147,7 @@ class AisAuthorisationProcessorServiceImplTest {
         // Given
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateConsentPsuDataReq();
 
-        AuthorisationProcessorRequest processorRequest = new AuthorisationProcessorRequest(ServiceType.AIS, ScaApproach.OAUTH, ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
+        AuthorisationProcessorRequest processorRequest = new AuthorisationProcessorRequest(ServiceType.AIS, ScaApproach.REDIRECT, ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
         // When

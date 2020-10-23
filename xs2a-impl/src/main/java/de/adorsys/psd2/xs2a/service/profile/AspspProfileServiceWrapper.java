@@ -145,7 +145,7 @@ public class AspspProfileServiceWrapper {
      * @return true if ASPSP supports signing basket , false if doesn't
      */
     public boolean isSigningBasketSupported() {
-        return readAspspSettings().getCommon().isSigningBasketSupported();
+        return readAspspSettings().getSb().isSigningBasketSupported();
     }
 
     /**

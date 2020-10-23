@@ -133,6 +133,12 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @Enumerated(value = EnumType.STRING)
     private AdditionalAccountInformationType trustedBeneficiariesType = AdditionalAccountInformationType.NONE;
 
+    @Column(name = "signing_basket_blocked", nullable = false)
+    private boolean signingBasketBlocked;
+
+    @Column(name = "signing_basket_authorised", nullable = false)
+    private boolean signingBasketAuthorised;
+
     @Transient
     private ConsentStatus previousConsentStatus;
 

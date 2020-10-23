@@ -44,7 +44,6 @@ setting:
     - EMBEDDED
     - DECOUPLED
     scaRedirectFlow: REDIRECT
-    signingBasketSupported: false
     startAuthorisationMode: auto
     supportedAccountReferenceFields:
     - MSISDN
@@ -74,3 +73,8 @@ setting:
       SINGLE:
       - sepa-credit-transfers
       - instant-sepa-credit-transfers
+  sb:
+    notConfirmedSigningBasketExpirationTimeMs: 86400000
+    sbRedirectUrlToAspsp: http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}
+    signingBasketMaxEntries: 10
+    signingBasketSupported: false

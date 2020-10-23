@@ -22,11 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum AuthorisationType {
-    // TODO remove in 8.0 https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1320
-    @Deprecated AIS,
     CONSENT,
     PIS_CREATION,
-    PIS_CANCELLATION;
+    PIS_CANCELLATION,
+    SIGNING_BASKET;
 
     private static final Map<String, AuthorisationType> HOLDER = new HashMap<>();
 

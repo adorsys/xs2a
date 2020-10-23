@@ -253,19 +253,6 @@ class CreateConsentLinksTest {
     }
 
     @Test
-    void scaApproachOAuth() {
-        response.setAuthorizationId(null);
-
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
-
-        links = new CreateConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, false, false, null, false, "");
-
-        expectedLinks.setSelf(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi"));
-        expectedLinks.setStatus(new HrefType("http://url/v1/consents/9mp1PaotpXSToNCi/status"));
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
     void scaApproachRedirectAndImplicitMethod_confirmation() {
         // Given
         when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);

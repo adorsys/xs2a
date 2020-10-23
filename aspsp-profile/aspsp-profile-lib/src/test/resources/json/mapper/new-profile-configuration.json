@@ -45,7 +45,6 @@
       ],
       "scaRedirectFlow": "REDIRECT",
       "oauthConfigurationUrl": "http://localhost:4200/idp/",
-      "signingBasketSupported": false,
       "startAuthorisationMode": "auto",
       "supportedAccountReferenceFields": [
         "MSISDN",
@@ -91,6 +90,12 @@
           "instant-sepa-credit-transfers"
         ]
       }
+    },
+    "sb": {
+      "signingBasketSupported": false,
+      "signingBasketMaxEntries": 10,
+      "notConfirmedSigningBasketExpirationTimeMs": 86400000,
+      "sbRedirectUrlToAspsp": "http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}"
     }
   }
 }

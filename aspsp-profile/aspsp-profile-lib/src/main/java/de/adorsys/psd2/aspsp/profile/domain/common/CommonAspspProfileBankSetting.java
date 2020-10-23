@@ -101,11 +101,6 @@ public class CommonAspspProfileBankSetting {
     private boolean aisPisSessionsSupported;
 
     /**
-     * Indicates whether ASPSP supports signing basket
-     */
-    private boolean signingBasketSupported;
-
-    /**
      * Indicates whether ASPSP supports validation TPP roles from certificate
      */
     private boolean checkTppRolesFromCertificateSupported;

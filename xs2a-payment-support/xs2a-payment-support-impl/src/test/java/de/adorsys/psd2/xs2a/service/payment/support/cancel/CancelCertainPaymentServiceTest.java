@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment.support.cancel;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;

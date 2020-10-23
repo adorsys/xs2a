@@ -299,7 +299,7 @@ class AccountControllerTest {
         // When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
                                                                                     null, CONSENT_ID, null, null, "both", false,
-                                                                                    false, null, null, null, null, null,
+                                                                                    false, null, null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
 
@@ -325,7 +325,7 @@ class AccountControllerTest {
         // When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
                                                                                     null, CONSENT_ID, null, null, "both", false,
-                                                                                    false, null, null, null, null, null,
+                                                                                    false, null, null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
         // Then
@@ -348,7 +348,7 @@ class AccountControllerTest {
         // When
         AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
                                                                                     null, CONSENT_ID, null, null, "both", false,
-                                                                                    false, null, null, null, null, null,
+                                                                                    false, null, null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
         // Then

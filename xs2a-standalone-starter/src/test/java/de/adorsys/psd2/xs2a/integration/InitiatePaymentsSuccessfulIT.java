@@ -124,13 +124,13 @@ class InitiatePaymentsSuccessfulIT {
 
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
-    private HttpHeaders httpHeadersImplicit = new HttpHeaders();
-    private HttpHeaders httpHeadersImplicitNoPsuData = new HttpHeaders();
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
-    private HttpHeaders httpHeadersExplicitNoPsuData = new HttpHeaders();
-    private MultiKeyMap responseMap = new MultiKeyMap();
-    private MultiKeyMap responseMapOauth = new MultiKeyMap();
-    private MultiKeyMap responseMapSigningBasketMode = new MultiKeyMap();
+    private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersImplicitNoPsuData = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicitNoPsuData = new HttpHeaders();
+    private final MultiKeyMap responseMap = new MultiKeyMap();
+    private final MultiKeyMap responseMapOauth = new MultiKeyMap();
+    private final MultiKeyMap responseMapSigningBasketMode = new MultiKeyMap();
 
     @Autowired
     private MockMvc mockMvc;
@@ -614,7 +614,7 @@ class InitiatePaymentsSuccessfulIT {
 
     private boolean isSigningBasketModeActive(HttpHeaders headers) {
         boolean tppExplicitAuthorisationPreferred = Boolean.parseBoolean(headers.toSingleValueMap().get("TPP-Explicit-Authorisation-Preferred"));
-        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings(null).getCommon().isSigningBasketSupported();
+        return tppExplicitAuthorisationPreferred && aspspProfileService.getAspspSettings(null).getSb().isSigningBasketSupported();
     }
 
     private CmsResponse<CreateAuthorisationResponse> getCmsReponse(ScaStatus scaStatus) {

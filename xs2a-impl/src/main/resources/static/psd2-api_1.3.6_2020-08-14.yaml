@@ -1681,6 +1681,8 @@ paths:
         - $ref: "#/components/parameters/bookingStatus"
         - $ref: "#/components/parameters/deltaList"
         - $ref: "#/components/parameters/withBalanceQuery"
+        - $ref: "#/components/parameters/pageIndex"
+        - $ref: "#/components/parameters/itemsPerPage"
       #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
@@ -6107,8 +6109,8 @@ components:
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/purposeCode"
-#        chargeBearer: #In some payment product N.A. in some Optional in some conditional
-#          $ref: "#/components/schemas/chargeBearer"
+        chargeBearer: #In some payment product N.A. in some Optional in some conditional
+          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
@@ -6236,8 +6238,8 @@ components:
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/purposeCode"
-#        chargeBearer: #In some payment product N.A. in some Optional in some conditional
-#          $ref: "#/components/schemas/chargeBearer"
+        chargeBearer: #In some payment product N.A. in some Optional in some conditional
+          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
@@ -6803,8 +6805,8 @@ components:
           $ref: "#/components/schemas/ultimateCreditor"
         purposeCode: # N.A. for all, but can be used by ASPSP if needed
           $ref: "#/components/schemas/purposeCode"
-#        chargeBearer: #In some payment product N.A. in some Optional in some conditional
-#          $ref: "#/components/schemas/chargeBearer"
+        chargeBearer: #In some payment product N.A. in some Optional in some conditional
+          $ref: "#/components/schemas/chargeBearer"
         remittanceInformationUnstructured:
           $ref: "#/components/schemas/remittanceInformationUnstructured"
 #        remittanceInformationUnstructuredArray:
@@ -11189,6 +11191,27 @@ components:
       schema:
         type: string
 
+    pageIndex:
+      name: pageIndex
+      in: query
+      description: |
+        This data attribute is indicating current transaction page.
+
+        Optional if supported by API provider.
+      required: false
+      schema:
+        type: integer
+
+    itemsPerPage:
+      name: itemsPerPage
+      in: query
+      description: |
+        This data attribute is indicating current transaction items on one page.
+
+        Optional if supported by API provider.
+      required: false
+      schema:
+        type: integer
 
     bookingStatus:
       name: bookingStatus

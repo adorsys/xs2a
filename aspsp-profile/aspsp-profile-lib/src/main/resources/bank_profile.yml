@@ -44,6 +44,10 @@ setting:
     piisConsentSupported: NOT_SUPPORTED
     redirectLinkToOnlineBanking:
       piisRedirectUrlToAspsp: http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}
+  sb:
+    signingBasketSupported: FALSE
+    signingBasketMaxEntries: 10
+    notConfirmedSigningBasketExpirationTimeMs: 86400000
   common:
     scaApproachesSupported:
       - REDIRECT
@@ -60,7 +64,6 @@ setting:
       - IBAN
     multicurrencyAccountLevelSupported: SUBACCOUNT
     aisPisSessionsSupported: FALSE
-    signingBasketSupported: FALSE
     checkTppRolesFromCertificateSupported: TRUE
     aspspNotificationsSupported:
       - NONE

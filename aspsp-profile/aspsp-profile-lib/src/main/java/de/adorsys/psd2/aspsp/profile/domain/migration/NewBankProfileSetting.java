@@ -19,6 +19,7 @@ package de.adorsys.psd2.aspsp.profile.domain.migration;
 import de.adorsys.psd2.aspsp.profile.domain.ais.AisAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.common.CommonAspspProfileBankSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileBankSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileBankSetting;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,5 +31,6 @@ public class NewBankProfileSetting {
     private AisAspspProfileBankSetting ais;
     private NewPisAspspProfileBankSetting pis;
     private PiisAspspProfileBankSetting piis;
+    private SbAspspProfileBankSetting sb;
     private CommonAspspProfileBankSetting common;
 }

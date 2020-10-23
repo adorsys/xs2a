@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -62,6 +62,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
     private static final MessageError STATUS_INVALID_ERROR =
         new MessageError(ErrorType.PIIS_409, TppMessageInformation.of(STATUS_INVALID));
 
+    private static final MessageError RESOURCE_BLOCKED_SB_ERROR =
+        new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(RESOURCE_BLOCKED_SB));
+
     private static final PsuIdData PSU_DATA = new PsuIdData("111", null, null, null, null);
     private static final PsuIdData EMPTY_PSU_DATA = new PsuIdData(null, null, null, null, null);
     private static final PsuIdData NEW_PSU_DATA = new PsuIdData("new PSU data", null, null, null, null);
@@ -97,6 +100,23 @@ class CreatePiisConsentAuthorisationValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isValid());
         assertNull(validationResult.getMessageError());
+    }
+
+    @Test
+    void validate_consentIsBlocked_shouldReturnResourceBlockedInvalidError() {
+        // Given
+        PiisConsent piisConsent = buildPiisConsent(TPP_INFO);
+        piisConsent.setSigningBasketBlocked(true);
+        when(piisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+        // When
+        ValidationResult validationResult = createPiisConsentAuthorisationValidator.validate(new CreatePiisConsentAuthorisationObject(piisConsent, EMPTY_PSU_DATA));
+
+        // Then
+        verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(RESOURCE_BLOCKED_SB_ERROR, validationResult.getMessageError());
     }
 
     @Test
@@ -140,7 +160,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Given
         PiisConsent piisConsent = buildPiisConsentWithPsuIdDataAndAuthorisation();
         CreatePiisConsentAuthorisationObject createPiisAuthorisationPO = new CreatePiisConsentAuthorisationObject(piisConsent, PSU_DATA);
-        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.AIS))).thenReturn(true);
+        when(aisAuthorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.CONSENT))).thenReturn(true);
 
         when(piisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 

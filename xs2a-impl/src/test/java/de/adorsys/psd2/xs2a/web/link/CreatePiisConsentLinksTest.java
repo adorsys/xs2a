@@ -254,19 +254,6 @@ class CreatePiisConsentLinksTest {
     }
 
     @Test
-    void scaApproachOAuth() {
-        response.setAuthorizationId(null);
-
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.OAUTH);
-
-        links = new CreatePiisConsentLinks(HTTP_URL, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, false, false, null, false, "");
-
-        expectedLinks.setSelf(SELF);
-        expectedLinks.setStatus(STATUS);
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
     void scaApproachRedirectAndImplicitMethod_confirmation() {
         // Given
         when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);

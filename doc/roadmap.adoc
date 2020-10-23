@@ -6,113 +6,53 @@ Starting 1st of March 2020 XS2A-core Team is providing development within two br
 
 Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.6. Will be supported till 05.03.2021
 
-*Development branch 9.x*
+*Development branch 9.x* - release date is not specified yet
 
 Development branch is oriented on implementation of new features and optional endpoints.
 No backward compatibility with 8.x is guaranteed. Will be released as Stable version 10.x on 19.03.2021
 
-[cols="3*.<"]
-|===
-|release date|version 8.x (Stable)|version 9.x (Development)
+[cols="4*.<"]
+|====
+|release date|version 8.x (Stable)|version 9.x (Development)|XS2A extention (commercial)
 
-|11.09.2020|8.0|9.0
+|15.09.2020|8.0| |
 
 a|
 
 a|* Remove deprecated authorisation type AIS
 
-a|* All fixes and updates from v.8.0
-
-* Create Signing Basket in CMS 
-
-* Implement Establish Signing Basket request
-
-|25.09.2020|8.1|9.1
-
 a|
 
 a|
+
+|09.10.2020|8.1|9.0|
+
+a|
+
+a|* Update OAuth flow
+
+* Set flag withBalance=true for Global Consent in CMS
 
 a|* All fixes and updates from v.8.1
 
-* Implement Cancellation of Signing Baskets
+* Update CMS tables for Signing Basket plugin usage
 
-|09.10.2020|8.2|9.2
+a|
+
+| |8.2|9.1|
 
 a|
 
 a|
 
-a|* All fixes and updates from v.8.2
-
-* Create interfaces in cms-psu-api for Signing Basket
-
-|23.10.2020|8.3|9.3
-
 a|
 
 a|
 
-a|* All fixes and updates from v.8.3
+| | | |Signing Basket plugin for XS2A
 
-* Support Signing Basket in Redirect approach with multilevel SCA
+| | | |Single card account plugin for XS2A
 
-|06.11.2020|8.4|9.4
+| | | |Resource Notification Push Service
 
-a|
-
-a|
-
-a|* All fixes and updates from v.8.4
-
-* Support Signing Basket in Embedded approach with multilevel SCA
-
-|20.11.2020|8.5|9.5
-
-a|
-
-a|
-
-a|* All fixes and updates from v.8.5
-
-* Implement Get Authorisation Sub-resources for Signing Baskets
-
-* Implement Get Signing Basket Status Request
-
-* Implement Get Signing Basket Request 
-
-* Implement Get SCA Status request for Signing Baskets
-
-|04.12.2020|8.6|9.6
-
-a|
-
-a|
-
-a|* All fixes and updates from v.8.6
-
-* Support Signing Basket in Decoupled approach with multilevel SCA
-
-* Add calls to SPI for Signing Basket
-
-|Further development| |
-
-a|
-
-a|
-
-a|* New feature: Implement Read Card List
-
-* New feature: Implement Read Card Details
-
-* New feature: Implement Read Card Balances
-
-* New feature: Implement Read Card Transaction List
-
-* Adjust Create AIS consent request for Single card service
-
-* Adjust Read AIS consent response links for Single card service
-
-* New feature: Create Resource Notification Push Service
-
-|===
+|====

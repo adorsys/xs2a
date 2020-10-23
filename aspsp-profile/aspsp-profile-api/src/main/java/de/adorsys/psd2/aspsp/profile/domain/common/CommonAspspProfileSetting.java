@@ -47,7 +47,6 @@ public class CommonAspspProfileSetting {
     private List<SupportedAccountReferenceField> supportedAccountReferenceFields = new ArrayList<>();
     private MulticurrencyAccountLevel multicurrencyAccountLevelSupported;
     private boolean aisPisSessionsSupported;
-    private boolean signingBasketSupported;
     private boolean checkTppRolesFromCertificateSupported;
     private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
     private boolean authorisationConfirmationRequestMandated;

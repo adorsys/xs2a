@@ -78,8 +78,6 @@ public class PaymentInitiationLinks extends AbstractLinks {
             addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
         } else if (scaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
-        } else if (scaApproach == OAUTH) {
-            setScaOAuth(new HrefType("scaOAuth"));
         }
     }
 
@@ -109,7 +107,7 @@ public class PaymentInitiationLinks extends AbstractLinks {
                                           ? redirectLinkBuilder.buildPaymentScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
                                           : redirectLinkBuilder.buildPaymentScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
-            setScaRedirectOAuthLink(scaRedirectFlow, paymentOauthLink);
+            setScaRedirect(new HrefType(paymentOauthLink));
             setScaStatus(
                 buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
 

@@ -52,6 +52,7 @@ public class EventTypeService {
         IDENTIFICATION(
             Map.of(
                 EventAuthorisationType.AIS, EventType.UPDATE_AIS_CONSENT_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED,
+                EventAuthorisationType.SB, EventType.UPDATE_SB_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED,
                 EventAuthorisationType.PIIS, EventType.UPDATE_PIIS_CONSENT_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED
@@ -59,6 +60,7 @@ public class EventTypeService {
         ), AUTHENTICATION(
             Map.of(
                 EventAuthorisationType.AIS, EventType.UPDATE_AIS_CONSENT_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED,
+                EventAuthorisationType.SB, EventType.UPDATE_SB_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED,
                 EventAuthorisationType.PIIS, EventType.UPDATE_PIIS_CONSENT_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED
@@ -66,6 +68,7 @@ public class EventTypeService {
         ), SELECT_AUTHENTICATION_METHOD(
             Map.of(
                 EventAuthorisationType.AIS, EventType.UPDATE_AIS_CONSENT_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED,
+                EventAuthorisationType.SB, EventType.UPDATE_SB_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED,
                 EventAuthorisationType.PIIS, EventType.UPDATE_PIIS_CONSENT_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED
@@ -73,6 +76,7 @@ public class EventTypeService {
         ), TAN(
             Map.of(
                 EventAuthorisationType.AIS, EventType.UPDATE_AIS_CONSENT_PSU_DATA_TAN_REQUEST_RECEIVED,
+                EventAuthorisationType.SB, EventType.UPDATE_SB_PSU_DATA_TAN_REQUEST_RECEIVED,
                 EventAuthorisationType.PIIS, EventType.UPDATE_PIIS_CONSENT_PSU_DATA_TAN_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_TAN_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_TAN_REQUEST_RECEIVED
@@ -80,6 +84,7 @@ public class EventTypeService {
         ), CONFIRMATION_CODE(
             Map.of(
                 EventAuthorisationType.AIS, EventType.UPDATE_AIS_CONSENT_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED,
+                EventAuthorisationType.SB, EventType.UPDATE_SB_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED,
                 EventAuthorisationType.PIIS, EventType.UPDATE_PIIS_CONSENT_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED,
                 EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED

@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.payment.support.mapper;
 
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;

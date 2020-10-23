@@ -25,6 +25,7 @@ import de.adorsys.psd2.aspsp.profile.domain.piis.PiisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.piis.PiisRedirectLinkSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisAspspProfileSetting;
 import de.adorsys.psd2.aspsp.profile.domain.pis.PisRedirectLinkSetting;
+import de.adorsys.psd2.aspsp.profile.domain.sb.SbAspspProfileSetting;
 import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.*;
 
@@ -40,6 +41,7 @@ public class AspspSettingsBuilder {
     private static final String PIS_REDIRECT_LINK = "https://localhost/payment/confirmation/";
     private static final String AIS_REDIRECT_LINK = "https://localhost/view/account/";
     private static final String PIIS_REDIRECT_LINK = "https://localhost/piis/account/";
+    private static final String SB_REDIRECT_LINK = "http://localhost:4200/signing-basket/{redirect-id}/{encrypted-basket-id}";
     private static final MulticurrencyAccountLevel MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED = MulticurrencyAccountLevel.SUBACCOUNT;
     private static final List<BookingStatus> AVAILABLE_BOOKING_STATUSES = getBookingStatuses();
     private static final List<SupportedAccountReferenceField> SUPPORTED_ACCOUNT_REFERENCE_FIELDS = getSupportedAccountReferenceFields();
@@ -49,6 +51,7 @@ public class AspspSettingsBuilder {
     private static final boolean BANK_OFFERED_CONSENT_SUPPORTED = false;
     private static final boolean TRANSACTIONS_WITHOUT_BALANCES_SUPPORTED = false;
     private static final boolean SIGNING_BASKET_SUPPORTED = true;
+    private static final int SIGNING_BASKET_MAX_ENTRIES = 10;
     private static final boolean PAYMENT_CANCELLATION_AUTHORISATION_MANDATED = false;
     private static final PiisConsentSupported PIIS_CONSENT_SUPPORTED = PiisConsentSupported.NOT_SUPPORTED;
     private static final boolean DELTA_LIST_SUPPORTED = false;
@@ -56,6 +59,7 @@ public class AspspSettingsBuilder {
     private static final long AUTHORISATION_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_CONSENT_EXPIRATION_TIME_MS = 86400000;
     private static final long NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS = 86400000;
+    private static final long NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS = 86400000;
     private static final String PIS_PAYMENT_CANCELLATION_REDIRECT_URL_TO_ASPSP = "https://localhost/payment/cancellation/";
     private static final Map<PaymentType, Set<String>> SUPPORTED_PAYMENT_TYPE_AND_PRODUCT_MATRIX = buildSupportedPaymentTypeAndProductMatrix();
     private static final long PAYMENT_CANCELLATION_REDIRECT_URL_EXPIRATION_TIME_MS = 600000;
@@ -113,6 +117,10 @@ public class AspspSettingsBuilder {
                                                                 SUPPORTED_TRANSACTION_STATUS_FORMATS
         );
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
+        SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
+                                                             SIGNING_BASKET_MAX_ENTRIES,
+                                                             NOT_CONFIRMED_SIGNING_BASKET_EXPIRATION_TIME_MS,
+                                                             SB_REDIRECT_LINK);
         CommonAspspProfileSetting common = new CommonAspspProfileSetting(SCA_REDIRECT_FLOW,
                                                                          OAUTH_CONFIGURATION_URL,
                                                                          START_AUTHORISATION_MODE,
@@ -125,7 +133,6 @@ public class AspspSettingsBuilder {
                                                                          SUPPORTED_ACCOUNT_REFERENCE_FIELDS,
                                                                          MULTICURRENCY_ACCOUNT_LEVEL_SUPPORTED,
                                                                          AIS_PIS_SESSION_SUPPORTED,
-                                                                         SIGNING_BASKET_SUPPORTED,
                                                                          IS_CHECK_TPP_ROLES_FROM_CERTIFICATE,
                                                                          ASPSP_NOTIFICATIONS_SUPPORTED,
                                                                          AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
@@ -133,7 +140,7 @@ public class AspspSettingsBuilder {
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                          TPP_URI_COMPLIANCE_RESPONSE);
 
-        return new AspspSettings(ais, pis, piis, common);
+        return new AspspSettings(ais, pis, piis, sb, common);
     }
 
     private static List<SupportedAccountReferenceField> getSupportedAccountReferenceFields() {

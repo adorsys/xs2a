@@ -393,7 +393,7 @@ class TransactionServiceTest {
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        SpiTransactionReport transactionReportWithTransactions = new SpiTransactionReport(DOWNLOAD_ID, Collections.singletonList(spiTransaction), null, SpiTransactionReport.RESPONSE_TYPE_JSON, null);
+        SpiTransactionReport transactionReportWithTransactions = new SpiTransactionReport(DOWNLOAD_ID, Collections.singletonList(spiTransaction), null, SpiTransactionReport.RESPONSE_TYPE_JSON, null, null);
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(transactionReportWithTransactions));
 
@@ -431,7 +431,7 @@ class TransactionServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
-        SpiTransactionReport transactionReportWithoutTransactions = new SpiTransactionReport(DOWNLOAD_ID, null, null, SpiTransactionReport.RESPONSE_TYPE_JSON, null);
+        SpiTransactionReport transactionReportWithoutTransactions = new SpiTransactionReport(DOWNLOAD_ID, null, null, SpiTransactionReport.RESPONSE_TYPE_JSON, null, null);
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(transactionReportWithoutTransactions));
 
@@ -923,12 +923,12 @@ class TransactionServiceTest {
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
     private static SpiTransactionReport buildSpiTransactionReport() {
-        return new SpiTransactionReport(DOWNLOAD_ID, Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null);
+        return new SpiTransactionReport(DOWNLOAD_ID, Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null, null);
     }
 
     @NotNull
     private static Xs2aTransactionsReportByPeriodRequest buildXs2aTransactionsReportByPeriodRequest() {
-        return new Xs2aTransactionsReportByPeriodRequest(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST);
+        return new Xs2aTransactionsReportByPeriodRequest(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, null, null);
     }
 
     @NotNull
@@ -937,6 +937,6 @@ class TransactionServiceTest {
     }
 
     private SpiTransactionReportParameters buildSpiTransactionReportParameters() {
-        return new SpiTransactionReportParameters(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, ENTRY_REFERENCE_FROM, DELTA_LIST);
+        return new SpiTransactionReportParameters(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, ENTRY_REFERENCE_FROM, DELTA_LIST, null, null);
     }
 }

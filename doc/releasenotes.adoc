@@ -4,9 +4,18 @@ On this page release notes for each version released are published.
 For Versioning policy see xref:Version_Policy.adoc[Versioning, Release and Support policy].
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
+=== Mainline 9.x (Development. Planned to be released 19.03.2021 as 10.0 Stable version)
+
+* xref:release_notes/Release_notes_9.0.adoc[Version 9.0 (release date: ?)]
+
+=== Mainline 8.x (Stable. Supported minimum till 19.03.2021)
+
+* xref:release_notes/Release_notes_8.0.adoc[Version 8.0  (release date: ?)]
+
 === Mainline 7.x (Development. Planned to be released 11.09.2020 as 8.0 Stable version)
 
-* xref:release_notes/Release_notes_7.7.adoc[Version 7.8 (release date: ?)]
+* xref:release_notes/Release_notes_7.9.adoc[Version 7.9 (release date: 1.09.2020)]
+* xref:release_notes/Release_notes_7.8.adoc[Version 7.8 (release date: 14.08.2020)]
 * xref:release_notes/Release_notes_7.7.adoc[Version 7.7 (release date: 31.07.2020)]
 * xref:release_notes/Release_notes_7.6.adoc[Version 7.6 (release date: 17.07.2020)]
 * xref:release_notes/Release_notes_7.5.1.adoc[Version 7.5.1 (release date: 01.07.2020)]
@@ -20,7 +29,8 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 6.x (Stable. Supported minimum till 13.09.2020)
 
-* xref:release_notes/Release_notes_6.8.adoc[Version 6.8  (release date: ?)]
+* xref:release_notes/Release_notes_6.9.adoc[Version 6.8  (release date: 31.08.2020)]
+* xref:release_notes/Release_notes_6.8.adoc[Version 6.8  (release date: 14.08.2020)]
 * xref:release_notes/Release_notes_6.7.adoc[Version 6.7  (release date: 31.07.2020)]
 * xref:release_notes/Release_notes_6.6.adoc[Version 6.6  (release date: 17.07.2020)]
 * xref:release_notes/Release_notes_6.5.adoc[Version 6.5  (release date: 17.06.2020)]

@@ -135,6 +135,6 @@ class AisConsentConfirmationExpirationServiceTest {
     }
 
     private AspspSettings buildAspspSettings(Long notConfirmedConsentExpirationTimeMs) {
-        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, notConfirmedConsentExpirationTimeMs, 0, false, false), null, null, null, null), null, null, null);
+        return new AspspSettings(new AisAspspProfileSetting(new ConsentTypeSetting(false, false, false, 0, notConfirmedConsentExpirationTimeMs, 0, false, false), null, null, null, null), null, null, null, null);
     }
 }

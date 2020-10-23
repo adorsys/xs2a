@@ -17,9 +17,9 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
@@ -32,10 +32,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_401;
-import static de.adorsys.psd2.xs2a.core.error.ErrorType.PIIS_409;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PSU_CREDENTIALS_INVALID;
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.STATUS_INVALID;
+import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 /**
  * Validator to be used for validating create consent authorisation request according to some business rules
@@ -57,10 +55,17 @@ public class CreatePiisConsentAuthorisationValidator extends AbstractConfirmatio
     @Override
     protected ValidationResult executeBusinessValidation(CreatePiisConsentAuthorisationObject createPiisConsentAuthorisationObject) {
 
-        PsuIdData psuDataFromRequest = createPiisConsentAuthorisationObject.getPsuIdDataFromRequest();
         PiisConsent piisConsent = createPiisConsentAuthorisationObject.getPiisConsent();
-        List<PsuIdData> psuDataFromDb = piisConsent.getPsuIdDataList();
+        if (piisConsent.isSigningBasketBlocked()) {
+            return ValidationResult.invalid(PIIS_400, RESOURCE_BLOCKED_SB);
+        }
 
+        if (piisConsent.isSigningBasketAuthorised()) {
+            return ValidationResult.invalid(PIIS_400, STATUS_INVALID);
+        }
+
+        List<PsuIdData> psuDataFromDb = piisConsent.getPsuIdDataList();
+        PsuIdData psuDataFromRequest = createPiisConsentAuthorisationObject.getPsuIdDataFromRequest();
         if (authorisationPsuDataChecker.isPsuDataWrong(
             piisConsent.isMultilevelScaRequired(),
             psuDataFromDb,
@@ -75,10 +80,10 @@ public class CreatePiisConsentAuthorisationValidator extends AbstractConfirmatio
                                                  .map(auth -> new Authorisation(auth.getId(),
                                                                                 auth.getPsuIdData(),
                                                                                 auth.getConsentId(),
-                                                                                AuthorisationType.AIS,
+                                                                                AuthorisationType.CONSENT,
                                                                                 auth.getScaStatus()))
                                                  .collect(Collectors.toList());
-        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, authorisations, AuthorisationType.AIS);
+        boolean isFinalised = authorisationStatusChecker.isFinalised(psuDataFromRequest, authorisations, AuthorisationType.CONSENT);
 
         if (isFinalised) {
             return ValidationResult.invalid(PIIS_409, STATUS_INVALID);

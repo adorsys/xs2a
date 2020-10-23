@@ -16,20 +16,17 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.processor;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
-import de.adorsys.psd2.xs2a.service.authorization.processor.service.*;
-import org.springframework.context.ApplicationContext;
+import de.adorsys.psd2.xs2a.service.authorization.processor.service.AuthorisationProcessorService;
 
 public abstract class AuthorisationProcessor {
-    private ApplicationContext applicationContext;
     private AuthorisationProcessor nextProcessor;
+    private AuthorisationProcessorServiceProvider provider;
 
-    public AuthorisationProcessor(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public AuthorisationProcessor(AuthorisationProcessorServiceProvider provider) {
+        this.provider = provider;
     }
 
     public void setNext(AuthorisationProcessor nextProcessor) {
@@ -62,18 +59,7 @@ public abstract class AuthorisationProcessor {
     }
 
     AuthorisationProcessorService getProcessorService(AuthorisationProcessorRequest request) {
-        if (request.getServiceType() == ServiceType.AIS) {
-            return applicationContext.getBean(AisAuthorisationProcessorServiceImpl.class);
-        } else if (request.getServiceType() == ServiceType.PIS &&
-                       request.getAuthorisation().getAuthorisationType() == AuthorisationType.PIS_CREATION) {
-            return applicationContext.getBean(PisAuthorisationProcessorServiceImpl.class);
-        } else if (request.getServiceType() == ServiceType.PIS &&
-                       request.getAuthorisation().getAuthorisationType() == AuthorisationType.PIS_CANCELLATION) {
-            return applicationContext.getBean(PisCancellationAuthorisationProcessorServiceImpl.class);
-        } else if (request.getServiceType() == ServiceType.PIIS) {
-            return applicationContext.getBean(PiisAuthorisationProcessorServiceImpl.class);
-        }
-        throw new IllegalArgumentException("Authorisation processor service is unknown: " + request);
+        return provider.getProcessorService(request);
     }
 
     private boolean hasNext() {

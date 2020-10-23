@@ -33,6 +33,8 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     Optional<ConsentEntity> findByExternalId(String externalId);
 
+    List<ConsentEntity> findAllByExternalIdIn(List<String> externalIds);
+
     @Query(
         "select c from consent c " +
             "join c.psuDataList psuList " +

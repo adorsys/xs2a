@@ -16,10 +16,11 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 
-import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -64,6 +65,8 @@ class CreatePisAuthorisationValidatorTest {
         new MessageError(PIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
     private static final MessageError STATUS_INVALID_ERROR =
         new MessageError(PIS_409, TppMessageInformation.of(STATUS_INVALID));
+    private static final MessageError RESOURCE_BLOCKED_SB_ERROR =
+        new MessageError(ErrorType.PIS_400, TppMessageInformation.of(RESOURCE_BLOCKED_SB));
 
     private static final String CORRECT_PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String WRONG_PAYMENT_PRODUCT = "sepa-credit-transfers111";
@@ -115,6 +118,22 @@ class CreatePisAuthorisationValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(PAYMENT_PRODUCT_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void validate_paymentIsBlocked_shouldReturnResourceBlockedInvalidError() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO);
+        commonPaymentResponse.setSigningBasketBlocked(true);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        // When
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT, null));
+
+        // Then
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+        assertEquals(RESOURCE_BLOCKED_SB_ERROR, validationResult.getMessageError());
     }
 
     @Test

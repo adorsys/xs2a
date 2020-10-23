@@ -20,11 +20,10 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.service.AuthorisationProcessorService;
-import org.springframework.context.ApplicationContext;
 
 public class StartedAuthorisationProcessor extends AuthorisationProcessor {
 
-    public StartedAuthorisationProcessor(ApplicationContext applicationContext) {
+    public StartedAuthorisationProcessor(AuthorisationProcessorServiceProvider applicationContext) {
         super(applicationContext);
     }
 

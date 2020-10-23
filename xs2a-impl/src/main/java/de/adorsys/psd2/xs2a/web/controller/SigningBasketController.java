@@ -22,7 +22,4 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-public class SigningBasketController implements SigningBasketApi {
-
-
-}
+public class SigningBasketController implements SigningBasketApi {}

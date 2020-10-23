@@ -45,5 +45,6 @@
   "checksum": "Y2hlY2tTdW0=",
   "data": "ZGF0YQ==",
   "internalRequestId": "05319ae6-053b-45a1-a564-5e52948f034a",
-  "lastActionDate": "2019-12-31"
+  "lastActionDate": "2019-12-31",
+  "signingBasketBlocked": true
 }
