@@ -41,9 +41,9 @@ public class CmsPsuPiisController implements CmsPsuPiisApi {
     }
 
     @Override
-    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId, Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        return new ResponseEntity<>(cmsPsuPiisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
+        return new ResponseEntity<>(cmsPsuPiisService.getConsentsForPsu(psuIdData, instanceId, pageIndex, itemsPerPage), HttpStatus.OK);
     }
 
     @Override

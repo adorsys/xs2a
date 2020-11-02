@@ -1,3 +1,16 @@
 = Release notes v.8.2
 
 == Table of Contents
+
+* Added pagination to CMS
+
+== Added pagination to CMS
+
+From now on, following CMS endpoints  has two new query parameters: `pageIndex` and `itemsPerPage`.
+They are optional and default values are `pageIndex=0` and `itemsPerPage=50`. If none of the parameters passed,
+retrieving performs without pagination.
+
+* `GET /psu-api/v1/ais/consent/consents`
+* `GET /psu-api/v1/ais/consent/{consent-id}/authorisation/psus`
+* `GET /psu-api/v1/piis/consents`
+* `GET /psu-api/v1/payment/{payment-id}/authorisation/psus`
