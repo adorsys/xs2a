@@ -1,1161 +1,2099 @@
 {
 	"info": {
-		"_postman_id": "f7850946-4bb9-49b2-aa93-6e78c8b7b64b",
+		"_postman_id": "7e68acc5-ce01-46e4-a057-43765745bb99",
 		"name": "Redirect OAuth (works with Dynamic Sandbox)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Pre-step",
+			"name": "AIS",
 			"item": [
 				{
-					"name": "1. Set redirect SCA approach",
-					"event": [
+					"name": "Pre-step",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"id": "ddce6a33-dca9-4b1f-be6a-d9c5da8d0247",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
+							"name": "1. Set redirect SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d3ea925a-e577-4559-8bf1-8acc20d71155",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Update ASPSP profile settings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c910b8f6-4e39-4a2c-93ce-d927aa12ea30",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH_PRE_STEP\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"aspsp-settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Create AIS consent without token (should be 401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c7cae976-c7ae-4fbf-b22f-a9cc615bb42a",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 401\", () => {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											"pm.test(\"Response category is ERROR\", () => {",
+											"    pm.expect(jsonData.tppMessages[0].category).to.eql('ERROR');",
+											"});",
+											"",
+											"pm.test(\"Response code is UNAUTHORIZED\", () => {",
+											"    pm.expect(jsonData.tppMessages[0].code).to.eql('UNAUTHORIZED');",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"type": "text",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"type": "text",
+										"value": "2f77a125-aa7a-45c0-b414-cea25a116035"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "psu-ip-address",
+										"type": "text",
+										"value": "192.168.1.1"
+									},
+									{
+										"key": "tpp-redirect-preferred",
+										"type": "text",
+										"value": "true"
+									},
+									{
+										"key": "tpp-redirect-uri",
+										"type": "text",
+										"value": "https://www.google.com"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Get redirect URL and auth code from online-banking",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ad4d635c-9f6f-4ac7-9fd3-19fe9f64e4c6",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Redirect URL link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('redirectUri');",
+											"    ",
+											"    var scaOAuth = jsonData.redirectUri;",
+											"",
+											"    if (scaOAuth === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"const code = jsonData.redirectUri.split('code=').pop();",
+											"",
+											"",
+											"pm.globals.set(\"code\", code);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "login",
+										"value": "{{psu_id_single}}",
+										"type": "text"
+									},
+									{
+										"key": "pin",
+										"value": "{{psu_id_password}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking_ui}}"
+									],
+									"path": [
+										"oba-proxy",
+										"oauth",
+										"authorise"
+									],
+									"query": [
+										{
+											"key": "redirect_uri",
+											"value": "https%3A%2F%2Fgoogle.com"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Exchange code for token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "66b5cf84-d5a0-42de-a83d-a27895918987",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Access_token value exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('access_token');",
+											"    ",
+											"    var access_token = jsonData.access_token;",
+											"",
+											"    if (access_token === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.globals.set(\"access_token\", jsonData.access_token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "kdIaB9BK3Q7vixRrjzgSrr1l",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/token",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Create AIS consent with token and proceed to SCA in OBA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ef067def-f774-4fbd-90df-0490b47101a6",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Consent Id exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('consentId');",
+											"});",
+											"",
+											"pm.test(\"Status code is 201\", () => {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Consent status is received\", () => {",
+											"    pm.expect(jsonData.consentStatus).to.eql('received');",
+											"});",
+											"",
+											"pm.globals.set(\"consent_id\", jsonData.consentId);",
+											"",
+											"",
+											"const scaRedirectLink = jsonData._links.scaRedirect.href;",
+											"",
+											"if (scaRedirectLink !== undefined) {",
+											"    var a = scaRedirectLink.split('/');",
+											"    a.pop();",
+											"    const authorisationId = a.pop();",
+											"    pm.globals.set(\"redirect_id\", authorisationId);",
+											"    pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"}",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"type": "text",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"type": "text",
+										"value": "2f77a125-aa7a-45c0-b414-cea25a116035"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "psu-ip-address",
+										"type": "text",
+										"value": "192.168.1.1"
+									},
+									{
+										"key": "tpp-redirect-preferred",
+										"type": "text",
+										"value": "true"
+									},
+									{
+										"key": "tpp-redirect-uri",
+										"type": "text",
+										"value": "https://www.google.com"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "7. Get Consent Request with token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "497c7138-f956-4a6a-b288-6d9176a6df81",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Result validator\", () => {",
+											"      pm.expect(jsonData).to.have.property('access');",
+											"       pm.expect(jsonData).to.have.property('recurringIndicator');",
+											"       pm.expect(jsonData).to.have.property('validUntil');",
+											"       pm.expect(jsonData).to.have.property('frequencyPerDay');",
+											"       pm.expect(jsonData).to.have.property('consentStatus');",
+											"     ",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents",
+										"{{consent_id}}"
+									]
+								},
+								"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+							},
+							"response": []
+						},
+						{
+							"name": "8. Get Consent Request with wrong token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "36af25bf-77db-4bec-9e16-322b808ccfc8",
+										"exec": [
+											"pm.test(\"Status code is 401\", () => {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents",
+										"{{consent_id}}"
+									]
+								},
+								"description": "Returns the content of an account information consent object.  This is returning the data for the TPP especially in cases,  where the consent was directly managed between ASPSP and PSU e.g. in a re-direct SCA Approach. "
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\"\n]"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_aspsp_profile}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"aspsp-profile",
-								"for-debug",
-								"sca-approaches"
-							]
-						}
-					},
-					"response": []
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "2. Update ASPSP profile settings",
-					"event": [
+					"name": "Integrated",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"id": "1bcbce2c-2767-4609-bbec-756371f0a1d7",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
+							"name": "1. Set redirect SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "810db22e-eb64-44b2-ac75-b1a2186159e2",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Update ASPSP profile settings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b6c04532-aa3c-46e2-bab4-b0dadb6277ac",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking}}/oauth/authorization-server\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"aspsp-settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Create AIS consent",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ac1591b0-4ac8-4a8b-8113-f63c7304e3eb",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Consent Id exists\", () => {",
+											"   pm.expect(jsonData).to.have.property('consentId');",
+											"});",
+											"",
+											"pm.test(\"Status code is 201\", () => {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Consent status is received\", () => {",
+											"    pm.expect(jsonData.consentStatus).to.eql('received');",
+											"});",
+											"",
+											"pm.globals.set(\"consent_id\", jsonData.consentId);",
+											"",
+											"",
+											"const scaRedirectLink = jsonData._links.scaRedirect.href;",
+											"",
+											"if (scaRedirectLink !== undefined) {",
+											"    var a = scaRedirectLink.split('redirectId=');",
+											"    ",
+											"    const authorisationId = a.pop();",
+											"    pm.globals.set(\"redirect_id\", authorisationId);",
+											"    pm.globals.set(\"authorisation_id\", authorisationId);",
+											"",
+											"}",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "accept",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "PSU-ID",
+										"type": "text",
+										"value": "{{psu_id_single}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"type": "text",
+										"value": "2f77a125-aa7a-45c0-b414-cea25a116035"
+									},
+									{
+										"key": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									},
+									{
+										"key": "psu-ip-address",
+										"type": "text",
+										"value": "192.168.1.1"
+									},
+									{
+										"key": "tpp-redirect-preferred",
+										"type": "text",
+										"value": "true"
+									},
+									{
+										"key": "tpp-redirect-uri",
+										"type": "text",
+										"value": "https://www.google.com"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"consents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4. Get authorization endpoint from redirect URL and proceed to SCA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "51d0940f-fd9f-4dd3-a19a-9ed3d2783684",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Authorisation endpoint is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"authorization_endpoint\");",
+											"});",
+											"",
+											"pm.test(\"Token endpoint is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"token_endpoint\");",
+											"});",
+											"",
+											"",
+											"// pm.globals.set(\"internal_consent_id\", jsonData.accountConsent.id);",
+											"// pm.globals.set(\"authorisation_id\", authorisationId);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "4477e238-ff43-46ed-aa89-e53cf1aecfb9",
+										"exec": [
+											"pm.globals.unset(\"internal_consent_id\");",
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/authorization-server/?consentId={{consent_id}}&redirectId={{redirect_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"authorization-server",
+										""
+									],
+									"query": [
+										{
+											"key": "consentId",
+											"value": "{{consent_id}}"
+										},
+										{
+											"key": "redirectId",
+											"value": "{{redirect_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Exchange code for token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3972c937-da59-4bf6-a8ea-1a10b0834e01",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Access_token value exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('access_token');",
+											"    ",
+											"    var access_token = jsonData.access_token;",
+											"",
+											"    if (access_token === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.globals.set(\"access_token\", jsonData.access_token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "MUvoJABAFDUV8vj1N595UC6Q",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/token",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Read Account List with token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9cd39f98-5a00-47ee-ade0-efeff77aa642",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.globals.set(\"resource_id\", jsonData.accounts[0].resourceId);",
+											"",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Data exists\", () => {",
+											"    if (jsonData.accounts.length > 0) {",
+											"        const firstAccount = jsonData.accounts[0];",
+											"        ",
+											"        pm.expect(firstAccount).to.have.property('_links');",
+											"        pm.expect(firstAccount._links).to.have.property('balances');",
+											"        pm.expect(firstAccount._links).to.have.property('transactions');",
+											"        pm.expect(firstAccount).to.have.property('resourceId');",
+											"        ",
+											"//",
+											"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
+											"//",
+											"",
+											"        ",
+											"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
+											"//           pm.expect(firstAccount).to.have.property('balances');",
+											"//        }",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9cad16ab-fb9a-46c8-91fa-1098ddd60f3f",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
+						},
+						{
+							"name": "7. Read Account List with wrong token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "3451ae82-1a1e-453b-b07a-8207208174a2",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "3aa9c23f-51c1-4580-8111-bf91b7913228",
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Consent-ID",
+										"value": "{{consent_id}}"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"accounts"
+									],
+									"query": [
+										{
+											"key": "withBalance",
+											"value": "{{with_balance}}"
+										}
+									]
+								},
+								"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH_PRE_STEP\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_aspsp_profile}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"aspsp-profile",
-								"for-debug",
-								"aspsp-settings"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3. Create AIS consent without token (should be 401)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6e543b34-7c59-425a-9ec1-8e9443bb2417",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 401\", () => {",
-									"    pm.response.to.have.status(401);",
-									"});",
-									"",
-									"pm.test(\"Response category is ERROR\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].category).to.eql('ERROR');",
-									"});",
-									"",
-									"pm.test(\"Response code is UNAUTHORIZED\", () => {",
-									"    pm.expect(jsonData.tppMessages[0].code).to.eql('UNAUTHORIZED');",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "accept",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "PSU-ID",
-								"type": "text",
-								"value": "{{psu_id_single}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"type": "text",
-								"value": "2f77a125-aa7a-45c0-b414-cea25a116035"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "psu-ip-address",
-								"type": "text",
-								"value": "192.168.1.1"
-							},
-							{
-								"key": "tpp-redirect-preferred",
-								"type": "text",
-								"value": "true"
-							},
-							{
-								"key": "tpp-redirect-uri",
-								"type": "text",
-								"value": "https://www.google.com"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"consents"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4. Get redirect URL and auth code from online-banking",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "13aabe08-ca73-409b-a305-7f13200bb0c0",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Redirect URL link exists\", () => {",
-									"    pm.expect(jsonData).to.have.property('redirectUri');",
-									"    ",
-									"    var scaOAuth = jsonData.redirectUri;",
-									"",
-									"    if (scaOAuth === undefined) {",
-									"       pm.expect().fail();",
-									"    }",
-									"});",
-									"",
-									"const code = jsonData.redirectUri.split('code=').pop();",
-									"",
-									"",
-									"pm.globals.set(\"code\", code);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "login",
-								"value": "{{psu_id_single}}",
-								"type": "text"
-							},
-							{
-								"key": "pin",
-								"value": "{{psu_id_password}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_online_banking_ui}}"
-							],
-							"path": [
-								"oba-proxy",
-								"oauth",
-								"authorise"
-							],
-							"query": [
-								{
-									"key": "redirect_uri",
-									"value": "https%3A%2F%2Fgoogle.com"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "5. Exchange code for token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "e163aba2-ed6c-4289-af82-26fb0dbc8600",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Access_token value exists\", () => {",
-									"    pm.expect(jsonData).to.have.property('access_token');",
-									"    ",
-									"    var access_token = jsonData.access_token;",
-									"",
-									"    if (access_token === undefined) {",
-									"       pm.expect().fail();",
-									"    }",
-									"});",
-									"",
-									"pm.globals.set(\"access_token\", jsonData.access_token);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "code",
-									"value": "kdIaB9BK3Q7vixRrjzgSrr1l",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_online_banking}}/oauth/token",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_online_banking}}"
-							],
-							"path": [
-								"oauth",
-								"token"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "6. Create AIS consent with token and proceed to SCA in OBA",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a54db970-4889-4029-9885-ea9698a52d28",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Consent Id exists\", () => {",
-									"   pm.expect(jsonData).to.have.property('consentId');",
-									"});",
-									"",
-									"pm.test(\"Status code is 201\", () => {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Consent status is received\", () => {",
-									"    pm.expect(jsonData.consentStatus).to.eql('received');",
-									"});",
-									"",
-									"pm.globals.set(\"consent_id\", jsonData.consentId);",
-									"",
-									"",
-									"const scaRedirectLink = jsonData._links.scaRedirect.href;",
-									"",
-									"if (scaRedirectLink !== undefined) {",
-									"    var a = scaRedirectLink.split('/');",
-									"    a.pop();",
-									"    const authorisationId = a.pop();",
-									"    pm.globals.set(\"redirect_id\", authorisationId);",
-									"    pm.globals.set(\"authorisation_id\", authorisationId);",
-									"",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "accept",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "PSU-ID",
-								"type": "text",
-								"value": "{{psu_id_single}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"type": "text",
-								"value": "2f77a125-aa7a-45c0-b414-cea25a116035"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "psu-ip-address",
-								"type": "text",
-								"value": "192.168.1.1"
-							},
-							{
-								"key": "tpp-redirect-preferred",
-								"type": "text",
-								"value": "true"
-							},
-							{
-								"key": "tpp-redirect-uri",
-								"type": "text",
-								"value": "https://www.google.com"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"consents"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "7. Read Account List with token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "760686f2-5780-487b-9d03-dcbe55d17d0e",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.globals.set(\"resource_id\", jsonData.accounts[0].resourceId);",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Data exists\", () => {",
-									"    if (jsonData.accounts.length > 0) {",
-									"        const firstAccount = jsonData.accounts[0];",
-									"        ",
-									"        pm.expect(firstAccount).to.have.property('_links');",
-									"        pm.expect(firstAccount._links).to.have.property('balances');",
-									"        pm.expect(firstAccount._links).to.have.property('transactions');",
-									"        pm.expect(firstAccount).to.have.property('resourceId');",
-									"        ",
-									"//",
-									"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
-									"//",
-									"",
-									"        ",
-									"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
-									"//           pm.expect(firstAccount).to.have.property('balances');",
-									"//        }",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "98732d7d-d73b-4620-b174-5eb8df2d1ea8",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Consent-ID",
-								"value": "{{consent_id}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"accounts"
-							],
-							"query": [
-								{
-									"key": "withBalance",
-									"value": "{{with_balance}}"
-								}
-							]
-						},
-						"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
-					},
-					"response": []
-				},
-				{
-					"name": "8. Read Account List with wrong token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "578b5a3c-8771-4bd3-b142-6de9b51239fc",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.globals.set(\"resource_id\", jsonData.accounts[0].resourceId);",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Data exists\", () => {",
-									"    if (jsonData.accounts.length > 0) {",
-									"        const firstAccount = jsonData.accounts[0];",
-									"        ",
-									"        pm.expect(firstAccount).to.have.property('_links');",
-									"        pm.expect(firstAccount._links).to.have.property('balances');",
-									"        pm.expect(firstAccount._links).to.have.property('transactions');",
-									"        pm.expect(firstAccount).to.have.property('resourceId');",
-									"        ",
-									"//",
-									"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
-									"//",
-									"",
-									"        ",
-									"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
-									"//           pm.expect(firstAccount).to.have.property('balances');",
-									"//        }",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "68ab4a31-bb46-429b-a548-8cc3e230255a",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "wrong_token",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Consent-ID",
-								"value": "{{consent_id}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"accounts"
-							],
-							"query": [
-								{
-									"key": "withBalance",
-									"value": "{{with_balance}}"
-								}
-							]
-						},
-						"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
-					},
-					"response": []
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Integrated",
+			"name": "PIS",
 			"item": [
 				{
-					"name": "1. Set redirect SCA approach",
-					"event": [
+					"name": "Integrated",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"id": "d0e1696b-def3-406b-9758-a89422e86b87",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\"\n]"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_aspsp_profile}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"aspsp-profile",
-								"for-debug",
-								"sca-approaches"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "2. Update ASPSP profile settings",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "f0574aa3-92ab-4a13-a3f5-4541944c9113",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking}}/oauth/authorization-server\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"signingBasketSupported\": false,\n        \"aspspNotificationsSupported\": [\n        \t\"NONE\"\t\n        ]\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_aspsp_profile}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"aspsp-profile",
-								"for-debug",
-								"aspsp-settings"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3. Create AIS consent",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "598810c9-b720-4c66-8dfc-b5d109a90130",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Consent Id exists\", () => {",
-									"   pm.expect(jsonData).to.have.property('consentId');",
-									"});",
-									"",
-									"pm.test(\"Status code is 201\", () => {",
-									"    pm.response.to.have.status(201);",
-									"});",
-									"",
-									"pm.test(\"Consent status is received\", () => {",
-									"    pm.expect(jsonData.consentStatus).to.eql('received');",
-									"});",
-									"",
-									"pm.globals.set(\"consent_id\", jsonData.consentId);",
-									"",
-									"",
-									"const scaRedirectLink = jsonData._links.scaRedirect.href;",
-									"",
-									"if (scaRedirectLink !== undefined) {",
-									"    var a = scaRedirectLink.split('redirectId=');",
-									"    ",
-									"    const authorisationId = a.pop();",
-									"    pm.globals.set(\"redirect_id\", authorisationId);",
-									"    pm.globals.set(\"authorisation_id\", authorisationId);",
-									"",
-									"}",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "accept",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "PSU-ID",
-								"type": "text",
-								"value": "{{psu_id_single}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"type": "text",
-								"value": "2f77a125-aa7a-45c0-b414-cea25a116035"
-							},
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "psu-ip-address",
-								"type": "text",
-								"value": "192.168.1.1"
-							},
-							{
-								"key": "tpp-redirect-preferred",
-								"type": "text",
-								"value": "true"
-							},
-							{
-								"key": "tpp-redirect-uri",
-								"type": "text",
-								"value": "https://www.google.com"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"consents"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4. Get authorization endpoint from redirect URL and proceed to SCA",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a1e515b0-6f8b-43a9-b475-dbc891b06fb8",
-								"exec": [
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Authorisation endpoint is present\", () => {",
-									"    pm.expect(jsonData).to.have.property(\"authorization_endpoint\");",
-									"});",
-									"",
-									"pm.test(\"Token endpoint is present\", () => {",
-									"    pm.expect(jsonData).to.have.property(\"token_endpoint\");",
-									"});",
-									"",
-									"",
-									"// pm.globals.set(\"internal_consent_id\", jsonData.accountConsent.id);",
-									"// pm.globals.set(\"authorisation_id\", authorisationId);"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "5cf69360-955c-4afa-a164-3ab0a6e0ecb6",
-								"exec": [
-									"pm.globals.unset(\"internal_consent_id\");",
-									"pm.globals.unset(\"authorisation_id\");"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{protocol}}://{{url_online_banking}}/oauth/authorization-server/?consentId={{consent_id}}&redirectId={{redirect_id}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_online_banking}}"
-							],
-							"path": [
-								"oauth",
-								"authorization-server",
-								""
-							],
-							"query": [
+							"name": "1. Set redirect SCA approach",
+							"event": [
 								{
-									"key": "consentId",
-									"value": "{{consent_id}}"
+									"listen": "test",
+									"script": {
+										"id": "bcc5194c-162f-4740-aa6e-ea6e0cd00993",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2. Update ASPSP profile settings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "28b8393e-0051-4eb0-a48c-dfe17f558275",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking}}/oauth/authorization-server\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"aspsp-settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Payment initiation request with token and process SCA in OBA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fac54ecb-2097-4457-8aff-d5b0abcc82c1",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('scaRedirect');",
+											"});",
+											"",
+											"pm.test(\"Payment ID exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"",
+											"const scaRedirectLink = jsonData._links.scaRedirect.href;",
+											"",
+											"if (scaRedirectLink !== undefined) {",
+											"    var a = scaRedirectLink.split('/');",
+											"    a.pop();",
+											"    const authorisationId = a.pop();",
+											"    pm.globals.set(\"authorisation_id\", authorisationId);",
+											"}",
+											"",
+											"const scaStatusParts = jsonData._links.scaStatus.href.split('/');",
+											"const redirectId = scaStatusParts.pop() || scaStatusParts.pop();",
+											"pm.globals.set(\"redirect_id\", redirectId);",
+											""
+										],
+										"type": "text/javascript"
+									}
 								},
 								{
-									"key": "redirectId",
-									"value": "{{redirect_id}}"
+									"listen": "prerequest",
+									"script": {
+										"id": "aa8016f3-c952-4f42-a40b-2f36a59c134b",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "5. Exchange code for token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "346aac65-c54b-44d1-b2fe-46e0d747d52b",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Access_token value exists\", () => {",
-									"    pm.expect(jsonData).to.have.property('access_token');",
-									"    ",
-									"    var access_token = jsonData.access_token;",
-									"",
-									"    if (access_token === undefined) {",
-									"       pm.expect().fail();",
-									"    }",
-									"});",
-									"",
-									"pm.globals.set(\"access_token\", jsonData.access_token);",
-									""
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}",
+										"type": "text"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Redirect-URI",
+										"value": "https://google.com",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Nok-Redirect-URI",
+										"value": "TPP-Nok-Redirect-URI",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "4. Get authorization endpoint from redirect URL and proceed to SCA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "36621e83-83bd-40c7-8154-b217829aad77",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Authorisation endpoint is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"authorization_endpoint\");",
+											"});",
+											"",
+											"pm.test(\"Token endpoint is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"token_endpoint\");",
+											"});",
+											"",
+											"",
+											"// pm.globals.set(\"internal_consent_id\", jsonData.accountConsent.id);",
+											"// pm.globals.set(\"authorisation_id\", authorisationId);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "12f7d61a-fe8a-4fc0-ad1b-663ff74ee4cb",
+										"exec": [
+											"pm.globals.unset(\"internal_consent_id\");",
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/authorization-server?paymentId={{payment_id}}&redirectId={{redirect_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"authorization-server"
+									],
+									"query": [
+										{
+											"key": "paymentId",
+											"value": "{{payment_id}}"
+										},
+										{
+											"key": "redirectId",
+											"value": "{{redirect_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Exchange code for token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8f880960-e3a4-49c0-b749-0ea10a070f3d",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Access_token value exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('access_token');",
+											"    ",
+											"    var access_token = jsonData.access_token;",
+											"",
+											"    if (access_token === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.globals.set(\"access_token\", jsonData.access_token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "MUvoJABAFDUV8vj1N595UC6Q",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/token",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Get Payment Information with token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d13adc57-8ea0-4179-a574-226ec4fee984",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Mandated fields exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('debtorAccount');",
+											"    pm.expect(jsonData).to.have.property('instructedAmount');",
+											"    pm.expect(jsonData).to.have.property('creditorAccount');",
+											"    pm.expect(jsonData).to.have.property('creditorName');",
+											"",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
+						},
+						{
+							"name": "7. Get Payment Information without token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b9337747-b9ff-4160-93b3-6a3092d1095a",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "code",
-									"value": "MUvoJABAFDUV8vj1N595UC6Q",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{protocol}}://{{url_online_banking}}/oauth/token",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_online_banking}}"
-							],
-							"path": [
-								"oauth",
-								"token"
-							]
-						}
-					},
-					"response": []
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				},
 				{
-					"name": "6. Read Account List with token",
-					"event": [
+					"name": "Pre-step",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"id": "5a6ae1b7-35a9-4767-89de-3300d45fb33b",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.globals.set(\"resource_id\", jsonData.accounts[0].resourceId);",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Data exists\", () => {",
-									"    if (jsonData.accounts.length > 0) {",
-									"        const firstAccount = jsonData.accounts[0];",
-									"        ",
-									"        pm.expect(firstAccount).to.have.property('_links');",
-									"        pm.expect(firstAccount._links).to.have.property('balances');",
-									"        pm.expect(firstAccount._links).to.have.property('transactions');",
-									"        pm.expect(firstAccount).to.have.property('resourceId');",
-									"        ",
-									"//",
-									"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
-									"//",
-									"",
-									"        ",
-									"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
-									"//           pm.expect(firstAccount).to.have.property('balances');",
-									"//        }",
-									"    }",
-									"});"
+							"name": "1. Set redirect SCA approach",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9a2d6632-f608-415a-93e7-a6dee64911a9",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\"\n]"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"sca-approaches"
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"listen": "prerequest",
-							"script": {
-								"id": "6fc3c4ac-4ab1-4558-8595-d4301a5b29cf",
-								"exec": [
-									""
+							"name": "2. Update ASPSP profile settings",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "9e214793-7d84-4e21-ba98-46188e3db25d",
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
 								],
-								"type": "text/javascript"
-							}
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH_PRE_STEP\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_aspsp_profile}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"aspsp-profile",
+										"for-debug",
+										"aspsp-settings"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3. Payment initiation request without token (401)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8f21fe45-8958-4b2f-94ca-64e5cdccd545",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "9d04871a-0c33-4d4e-a5f7-9202650111c2",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}",
+										"type": "text"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Redirect-URI",
+										"value": "TPP-Redirect-URI",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Nok-Redirect-URI",
+										"value": "TPP-Nok-Redirect-URI",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "4. Get redirect URL and auth code from online-banking",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "8c551209-dc42-4e62-aa9d-8574972ba579",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Redirect URL link exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('redirectUri');",
+											"    ",
+											"    var scaOAuth = jsonData.redirectUri;",
+											"",
+											"    if (scaOAuth === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"const code = jsonData.redirectUri.split('code=').pop();",
+											"",
+											"",
+											"pm.globals.set(\"code\", code);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "login",
+										"value": "{{psu_id_single}}",
+										"type": "text"
+									},
+									{
+										"key": "pin",
+										"value": "{{psu_id_password}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking_ui}}"
+									],
+									"path": [
+										"oba-proxy",
+										"oauth",
+										"authorise"
+									],
+									"query": [
+										{
+											"key": "redirect_uri",
+											"value": "https%3A%2F%2Fgoogle.com"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "5. Exchange code for token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "73e39d44-3eb1-457d-803e-b970ec3e6fdf",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Access_token value exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('access_token');",
+											"    ",
+											"    var access_token = jsonData.access_token;",
+											"",
+											"    if (access_token === undefined) {",
+											"       pm.expect().fail();",
+											"    }",
+											"});",
+											"",
+											"pm.globals.set(\"access_token\", jsonData.access_token);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "code",
+											"value": "kdIaB9BK3Q7vixRrjzgSrr1l",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/token",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "6. Payment initiation request with token and process SCA in OBA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e2b7c9d5-924c-403d-904f-019382f96acf",
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"pm.test(\"Transcation status is RCVD\", () => {",
+											"    pm.expect(jsonData.transactionStatus).to.eql('RCVD');",
+											"});",
+											"",
+											"pm.test(\"Links exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('_links');",
+											"    const _links = jsonData._links;",
+											"    ",
+											"    pm.expect(_links).to.have.property('self');",
+											"    pm.expect(_links).to.have.property('status');",
+											"    pm.expect(_links).to.have.property('scaRedirect');",
+											"});",
+											"",
+											"pm.test(\"Payment ID exists\", () => {",
+											"    pm.expect(jsonData).to.have.property('paymentId');",
+											"});",
+											"",
+											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "15f5f7d0-12b3-4487-ba48-2f7a91260596",
+										"exec": [
+											"pm.globals.unset(\"payment_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "PSU-ID",
+										"value": "{{psu_id_single}}",
+										"type": "text"
+									},
+									{
+										"key": "PSU-IP-Address",
+										"value": "{{ip_address}}",
+										"type": "text"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Explicit-Authorisation-Preferred",
+										"value": "true",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Redirect-URI",
+										"value": "TPP-Redirect-URI",
+										"type": "text"
+									},
+									{
+										"key": "TPP-Nok-Redirect-URI",
+										"value": "TPP-Nok-Redirect-URI",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
+								},
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}"
+									]
+								},
+								"description": "This method is used to initiate a payment at the ASPSP.  ## Variants of Payment Initiation Requests  This method to initiate a payment initiation at the ASPSP can be sent with either a JSON body or an pain.001 body depending on the payment product in the path.  There are the following **payment products**:    - Payment products with payment information in *JSON* format:     - ***sepa-credit-transfers***     - ***instant-sepa-credit-transfers***     - ***target-2-payments***     - ***cross-border-credit-transfers***   - Payment products with payment information in *pain.001* XML format:     - ***pain.001-sepa-credit-transfers***     - ***pain.001-instant-sepa-credit-transfers***     - ***pain.001-target-2-payments***     - ***pain.001-cross-border-credit-transfers***  Furthermore the request body depends on the **payment-service**   * ***payments***: A single payment initiation request.   * ***bulk-payments***: A collection of several payment iniatiation requests.        In case of a *pain.001* message there are more than one payments contained in the *pain.001 message.          In case of a *JSON* there are several JSON payment blocks contained in a joining list.   * ***periodic-payments***:      Create a standing order initiation resource for recurrent i.e. periodic payments addressable under {paymentId}       with all data relevant for the corresponding payment product and the execution of the standing order contained in a JSON body.   This is the first step in the API to initiate the related recurring/periodic payment.    ## Single and mulitilevel SCA Processes  The Payment Initiation Requests are independent from the need of one ore multilevel  SCA processing, i.e. independent from the number of authorisations needed for the execution of payments.   But the response messages are specific to either one SCA processing or multilevel SCA processing.   For payment initiation with multilevel SCA, this specification requires an explicit start of the authorisation,  i.e. links directly associated with SCA processing like 'scaRedirect' or 'scaOAuth' cannot be contained in the  response message of a Payment Initation Request for a payment, where multiple authorisations are needed.  Also if any data is needed for the next action, like selecting an SCA method is not supported in the response,  since all starts of the multiple authorisations are fully equal.  In these cases, first an authorisation sub-resource has to be generated following the 'startAuthorisation' link. "
+							},
+							"response": []
+						},
+						{
+							"name": "7. Get Payment Information",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "770b7e2e-0a53-42d4-bb47-587d7ff7fb9b",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Mandated fields exist\", () => {",
+											"    pm.expect(jsonData).to.have.property('debtorAccount');",
+											"    pm.expect(jsonData).to.have.property('instructedAmount');",
+											"    pm.expect(jsonData).to.have.property('creditorAccount');",
+											"    pm.expect(jsonData).to.have.property('creditorName');",
+											"",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
+						},
+						{
+							"name": "8. Get Payment Information without token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5848f6ba-ad32-4a14-9fbc-6f8b2fe65c5d",
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {",
+											"    pm.response.to.have.status(401);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json, application/xml, multipart/form-data"
+									},
+									{
+										"key": "X-Request-ID",
+										"value": "{{x_request_id}}"
+									}
+								],
+								"url": {
+									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}/{{payment_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_xs2a}}"
+									],
+									"path": [
+										"v1",
+										"{{payment_service}}",
+										"{{payment_product}}",
+										"{{payment_id}}"
+									]
+								},
+								"description": "Returns the content of a payment object"
+							},
+							"response": []
 						}
 					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Consent-ID",
-								"value": "{{consent_id}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"accounts"
-							],
-							"query": [
-								{
-									"key": "withBalance",
-									"value": "{{with_balance}}"
-								}
-							]
-						},
-						"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
-					},
-					"response": []
-				},
-				{
-					"name": "7. Read Account List with wrong token",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "444b6609-be52-4e9a-8f22-445cd4614f54",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"",
-									"pm.globals.set(\"resource_id\", jsonData.accounts[0].resourceId);",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Data exists\", () => {",
-									"    if (jsonData.accounts.length > 0) {",
-									"        const firstAccount = jsonData.accounts[0];",
-									"        ",
-									"        pm.expect(firstAccount).to.have.property('_links');",
-									"        pm.expect(firstAccount._links).to.have.property('balances');",
-									"        pm.expect(firstAccount._links).to.have.property('transactions');",
-									"        pm.expect(firstAccount).to.have.property('resourceId');",
-									"        ",
-									"//",
-									"// This test fails and is blocked by the https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/987 issue.",
-									"//",
-									"",
-									"        ",
-									"//        if (pm.globals.get(\"with_balance\") === \"true\") {",
-									"//           pm.expect(firstAccount).to.have.property('balances');",
-									"//        }",
-									"    }",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						},
-						{
-							"listen": "prerequest",
-							"script": {
-								"id": "fde6641b-41dd-4f68-9e5c-688bcff7ba62",
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}wrong",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							},
-							{
-								"key": "Consent-ID",
-								"value": "{{consent_id}}"
-							},
-							{
-								"key": "X-Request-ID",
-								"value": "{{x_request_id}}"
-							}
-						],
-						"url": {
-							"raw": "{{protocol}}://{{url_xs2a}}/v1/accounts?withBalance={{with_balance}}",
-							"protocol": "{{protocol}}",
-							"host": [
-								"{{url_xs2a}}"
-							],
-							"path": [
-								"v1",
-								"accounts"
-							],
-							"query": [
-								{
-									"key": "withBalance",
-									"value": "{{with_balance}}"
-								}
-							]
-						},
-						"description": "Read the identifiers of the available payment account together with  booking balance information, depending on the consent granted.  It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.  The addressed list of accounts depends then on the PSU ID and the stored consent addressed by consentId,  respectively the OAuth2 access token.   Returns all identifiers of the accounts, to which an account access has been granted to through  the /consents endpoint by the PSU.  In addition, relevant information about the accounts and hyperlinks to corresponding account  information resources are provided if a related consent has been already granted.  Remark: Note that the /consents endpoint optionally offers to grant an access on all available  payment accounts of a PSU.  In this case, this endpoint will deliver the information about all available payment accounts  of the PSU at this ASPSP. "
-					},
-					"response": []
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
