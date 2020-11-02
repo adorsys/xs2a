@@ -24,16 +24,19 @@ import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecifi
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
@@ -45,6 +48,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CmsPsuPiisServiceInternalTest {
+    public static final Integer PAGE_INDEX = 0;
+    public static final Integer ITEMS_PER_PAGE = 20;
     private static final String EXTERNAL_CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
     private static final String EXTERNAL_CONSENT_ID_FINALISED = "4b112130-6a96-4941-a220-2da8a4af2c64";
     private static final String EXTERNAL_CONSENT_ID_NOT_EXIST = "4b112130-6a96-4941-a220-2da8a4af2c63";
@@ -68,6 +73,10 @@ class CmsPsuPiisServiceInternalTest {
     private PsuDataMapper psuDataMapper;
     @Mock
     private PiisConsentLazyMigrationService piisConsentLazyMigrationService;
+    @Mock
+    private PageRequestBuilder pageRequestBuilder;
+    @Mock
+    private Specification specification;
 
     private JsonReader jsonReader = new JsonReader();
 
@@ -165,8 +174,30 @@ class CmsPsuPiisServiceInternalTest {
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(consentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(piisConsentEntity));
+
         // When
-        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+
+        // Then
+        assertFalse(consents.isEmpty());
+        assertEquals(1, consents.size());
+    }
+
+
+    @Test
+    void getConsentsForPsu_successPagination() {
+        // Given
+        when(psuDataMapper.mapToPsuIdData(psuData)).thenReturn(psuIdData);
+        when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
+        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+
+        when(consentJpaRepository.findAll(any(), eq(pageRequest))).thenReturn(new PageImpl<>(Collections.singletonList(piisConsentEntity)));
+
+        // When
+        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
+
         // Then
         assertFalse(consents.isEmpty());
         assertEquals(1, consents.size());
@@ -179,10 +210,12 @@ class CmsPsuPiisServiceInternalTest {
         PsuIdData psuIdDataWithIp = jsonReader.getObjectFromFile("json/service/psu/piis/psu-data-ip-address.json", PsuIdData.class);
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdDataWithIp, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(consentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(piisConsentEntity));
+        PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
+        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(consentJpaRepository.findAll(any(), eq(pageRequest))).thenReturn(new PageImpl(Collections.singletonList(piisConsentEntity)));
 
         // When
-        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataWithIp, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataWithIp, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
         assertFalse(consents.isEmpty());
@@ -191,7 +224,13 @@ class CmsPsuPiisServiceInternalTest {
 
     @Test
     void getConsentsForPsu_fail() {
-        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataNotExist, DEFAULT_SERVICE_INSTANCE_ID);
+        PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
+        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+
+        when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdDataNotExist, "UNDEFINED")).thenReturn(specification);
+        when(consentJpaRepository.findAll(specification, pageRequest)).thenReturn(Page.empty());
+
+        List<CmsPiisConsent> consents = cmsPsuPiisServiceInternal.getConsentsForPsu(psuIdDataNotExist, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         assertTrue(consents.isEmpty());
     }
