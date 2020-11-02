@@ -43,6 +43,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
@@ -61,6 +62,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +98,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final PsuDataUpdater psuDataUpdater;
     private final CmsConsentAuthorisationServiceInternal consentAuthorisationService;
     private final CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
+    private final PageRequestBuilder pageRequestBuilder;
 
     @Override
     @Transactional
@@ -201,12 +204,20 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public @NotNull List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+    public @NotNull List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId))
+        if (pageIndex == null && itemsPerPage == null) {
+            return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId))
+                       .stream()
+                       .map(aisConsentLazyMigrationService::migrateIfNeeded)
+                       .map(this::mapToCmsAisAccountConsentWithAuthorisations)
+                       .collect(Collectors.toList());
+        }
+        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId), pageRequest)
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
@@ -238,15 +249,23 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId) {
+    public Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
         Optional<ConsentEntity> aisConsentOptional = getActualAisConsent(consentId, instanceId);
 
         if (aisConsentOptional.isEmpty()) {
             return Optional.empty();
         }
 
-        List<AuthorisationEntity> consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndType(aisConsentOptional.get().getExternalId(),
-                                                                                                                   AuthorisationType.CONSENT);
+        List<AuthorisationEntity> consentAuthorisations;
+        if (pageIndex == null && itemsPerPage == null) {
+            consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndType(aisConsentOptional.get().getExternalId(),
+                                                                                             AuthorisationType.CONSENT);
+        } else {
+            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+            consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndType(aisConsentOptional.get().getExternalId(),
+                                                                                             AuthorisationType.CONSENT,
+                                                                                             pageRequest);
+        }
         return Optional.of(getPsuDataAuthorisations(consentAuthorisations));
     }
 

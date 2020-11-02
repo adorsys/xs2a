@@ -111,7 +111,7 @@ class CmsPsuPiisControllerTest {
     void getConsentsForPsu_withValidRequest_shouldReturnList() throws Exception {
         String cmsPiisConsentsJson = jsonReader.getStringFromFile("json/piis/response/cms-piis-consent-list.json");
         List<CmsPiisConsent> cmsPiisConsents = jsonReader.getListFromString(cmsPiisConsentsJson, CmsPiisConsent.class);
-        when(cmsPsuPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
+        when(cmsPsuPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID, null, null))
             .thenReturn(cmsPiisConsents);
 
         mockMvc.perform(get("/psu-api/v1/piis/consents")
@@ -124,7 +124,7 @@ class CmsPsuPiisControllerTest {
     @Test
     void getConsentsForPsu_withEmptyListServiceResponse_shouldReturnList() throws Exception {
         String emptyListJson = "[]";
-        when(cmsPsuPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
+        when(cmsPsuPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID, null, null))
             .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/psu-api/v1/piis/consents")

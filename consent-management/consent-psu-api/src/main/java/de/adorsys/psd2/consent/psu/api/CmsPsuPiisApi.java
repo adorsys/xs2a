@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
 import io.swagger.annotations.*;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
+import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.*;
 
 @RequestMapping(path = "psu-api/v1/piis/consents")
 @Api(value = "psu-api/v1/piis/consents", tags = CmsPsuApiTagName.PSU_PIIS_CONSENTS)
@@ -64,7 +65,9 @@ public interface CmsPsuPiisApi {
         @RequestHeader(value = "psu-corporate-id", required = false) String psuCorporateId,
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, required = false) Integer pageIndex,
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, required = false) Integer itemsPerPage);
 
     @PutMapping(path = "/{consent-id}/revoke-consent")
     @ApiOperation(value = "Revokes PIIS Consent object by its ID. Consent gets status Revoked by PSU.")
