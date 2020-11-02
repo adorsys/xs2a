@@ -114,7 +114,9 @@ public interface CmsPsuPisService {
      *
      * @param paymentId  ID of Payment
      * @param instanceId optional ID of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of psu authorisations on one page
      * @return list of info objects about psu data and authorisation scaStatuses
      */
-    Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId);
+    Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
 }

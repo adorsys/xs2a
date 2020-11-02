@@ -38,6 +38,7 @@ import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
@@ -50,6 +51,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +79,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     private final CmsPsuAuthorisationMapper cmsPsuPisAuthorisationMapper;
     private final CorePaymentsConvertService corePaymentsConvertService;
     private final PsuDataUpdater psuDataUpdater;
+    private final PageRequestBuilder pageRequestBuilder;
 
     @Override
     @Transactional
@@ -222,9 +225,20 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
     }
 
     @Override
-    public Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId) {
+    public Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
+        if (pageIndex == null && itemsPerPage == null) {
+            return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
+                       .map(p -> authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId,
+                                                                                            EnumSet.of(AuthorisationType.PIS_CREATION,
+                                                                                                       AuthorisationType.PIS_CANCELLATION)))
+                       .map(this::getPsuDataAuthorisations);
+        }
+        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
         return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
-                   .map(p -> authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION)))
+                   .map(p -> authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId,
+                                                                                        EnumSet.of(AuthorisationType.PIS_CREATION,
+                                                                                                   AuthorisationType.PIS_CANCELLATION),
+                                                                                        pageRequest))
                    .map(this::getPsuDataAuthorisations);
     }
 

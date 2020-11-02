@@ -41,10 +41,12 @@ public interface CmsPsuPiisService {
      *
      * @param psuIdData     PSU credentials data
      * @param instanceId    optional ID of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Revokes PIIS Consent object by its ID. Consent gets status "Revoked by PSU".

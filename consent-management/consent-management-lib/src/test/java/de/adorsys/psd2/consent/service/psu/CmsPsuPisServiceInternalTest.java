@@ -38,6 +38,7 @@ import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuAuthorisationMapper;
 import de.adorsys.psd2.consent.service.mapper.CmsPsuPisMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.consent.service.psu.util.PsuDataUpdater;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
@@ -53,6 +54,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -65,6 +67,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CmsPsuPisServiceInternalTest {
+    public static final Integer DEFAULT_PAGE_INDEX = 0;
+    public static final Integer DEFAULT_ITEMS_PER_PAGE = 20;
     private static final String WRONG_PAYMENT_ID = "wrong payment id";
     private static final String AUTHORISATION_ID = "authorisation id";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
@@ -108,6 +112,8 @@ class CmsPsuPisServiceInternalTest {
     private CmsPsuAuthorisationMapper cmsPsuAuthorisationMapper;
     @Mock
     private PsuDataUpdater psuDataUpdater;
+    @Mock
+    private PageRequestBuilder pageRequestBuilder;
 
     private AuthenticationDataHolder authenticationDataHolder;
     private PsuData psuData;
@@ -123,7 +129,7 @@ class CmsPsuPisServiceInternalTest {
     }
 
     @Test
-    void getAuthorisationByAuthorisationId_Success(){
+    void getAuthorisationByAuthorisationId_Success() {
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         AuthorisationEntity authorisationEntity = buildPisAuthorisation();
@@ -138,7 +144,7 @@ class CmsPsuPisServiceInternalTest {
     }
 
     @Test
-    void getAuthorisationbyAuthorisationId_authorisationNotFound(){
+    void getAuthorisationbyAuthorisationId_authorisationNotFound() {
         when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(((root, criteriaQuery, criteriaBuilder) -> null));
         //noinspection unchecked
@@ -541,7 +547,26 @@ class CmsPsuPisServiceInternalTest {
             .thenReturn(Collections.singletonList(buildPisAuthorisation()));
 
         // When
-        Optional<List<CmsPisPsuDataAuthorisation>> actualResult = cmsPsuPisServiceInternal.getPsuDataAuthorisations(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<List<CmsPisPsuDataAuthorisation>> actualResult = cmsPsuPisServiceInternal.getPsuDataAuthorisations(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+
+        // Then
+        assertTrue(actualResult.isPresent());
+        assertEquals(1, actualResult.get().size());
+    }
+
+    @Test
+    void getPsuDataAuthorisations_SuccessPagination() {
+        // Given
+        when(commonPaymentDataService.getPisCommonPaymentData(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
+            .thenReturn(Optional.of(buildPisCommonPaymentData()));
+
+        PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
+        when(pageRequestBuilder.getPageParams(DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION), pageRequest))
+            .thenReturn(Collections.singletonList(buildPisAuthorisation()));
+
+        // When
+        Optional<List<CmsPisPsuDataAuthorisation>> actualResult = cmsPsuPisServiceInternal.getPsuDataAuthorisations(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -555,7 +580,7 @@ class CmsPsuPisServiceInternalTest {
             .thenReturn(Optional.of(buildPisCommonPaymentDataWithAuthorisationEmptyPsuData()));
 
         // When
-        Optional<List<CmsPisPsuDataAuthorisation>> actualResult = cmsPsuPisServiceInternal.getPsuDataAuthorisations(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<List<CmsPisPsuDataAuthorisation>> actualResult = cmsPsuPisServiceInternal.getPsuDataAuthorisations(PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -762,7 +787,7 @@ class CmsPsuPisServiceInternalTest {
         );
     }
 
-    private CmsPsuAuthorisation buildCmsPsuAuthorisation(){
+    private CmsPsuAuthorisation buildCmsPsuAuthorisation() {
         CmsPsuAuthorisation cmsPsuAuthorisation = new CmsPsuAuthorisation();
         cmsPsuAuthorisation.setScaStatus(ScaStatus.FAILED);
         return cmsPsuAuthorisation;

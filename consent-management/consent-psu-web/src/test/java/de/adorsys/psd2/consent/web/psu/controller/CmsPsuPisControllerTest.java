@@ -416,7 +416,7 @@ class CmsPsuPisControllerTest {
     void psuAuthorisationStatuses_withValidRequest_shouldReturnOk() throws Exception {
         String cmsPisPsuDataAuthorisationListJson = jsonReader.getStringFromFile("json/pis/response/cms-pis-psu-data-authorisation-list.json");
         CmsPisPsuDataAuthorisation cmsPisPsuDataAuthorisation = new CmsPisPsuDataAuthorisation(psuIdData, AUTHORISATION_ID, ScaStatus.RECEIVED, AuthorisationType.PIS_CREATION);
-        when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID))
+        when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID, null, null))
             .thenReturn(Optional.of(Collections.singletonList(cmsPisPsuDataAuthorisation)));
 
         mockMvc.perform(get("/psu-api/v1/payment/{payment-id}/authorisation/psus", PAYMENT_ID)
@@ -427,7 +427,7 @@ class CmsPsuPisControllerTest {
 
     @Test
     void psuAuthorisationStatuses_withEmptyServiceResponse_shouldReturnNotFound() throws Exception {
-        when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID))
+        when(cmsPsuPisService.getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID, null, null))
             .thenReturn(Optional.empty());
 
         mockMvc.perform(get("/psu-api/v1/payment/{payment-id}/authorisation/psus", PAYMENT_ID)
@@ -435,7 +435,7 @@ class CmsPsuPisControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().bytes(EMPTY_BODY));
 
-        verify(cmsPsuPisService).getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID);
+        verify(cmsPsuPisService).getPsuDataAuthorisations(PAYMENT_ID, INSTANCE_ID, null, null);
     }
 
     private CmsPaymentResponse buildCmsPaymentResponse() {

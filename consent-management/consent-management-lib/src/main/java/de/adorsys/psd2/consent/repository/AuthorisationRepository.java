@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
@@ -35,6 +36,14 @@ public interface AuthorisationRepository extends CrudRepository<AuthorisationEnt
     List<AuthorisationEntity> findAllByParentExternalIdAndType(String parentExternalId,
                                                                AuthorisationType authorisationType);
 
+    List<AuthorisationEntity> findAllByParentExternalIdAndType(String parentExternalId,
+                                                               AuthorisationType authorisationType,
+                                                               Pageable pageable);
+
     List<AuthorisationEntity> findAllByParentExternalIdAndTypeIn(String parentExternalId,
                                                                  Set<AuthorisationType> authorisationTypes);
+
+    List<AuthorisationEntity> findAllByParentExternalIdAndTypeIn(String parentExternalId,
+                                                                 Set<AuthorisationType> authorisationTypes,
+                                                                 Pageable pageable);
 }
