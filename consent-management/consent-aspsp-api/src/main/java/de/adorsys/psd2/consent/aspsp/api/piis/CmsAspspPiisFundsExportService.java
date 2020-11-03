@@ -38,6 +38,9 @@ public interface CmsAspspPiisFundsExportService {
      * @param psuIdData              Optional Psu information criteria
      * @param instanceId             Optional id of particular service instance.
      *                               If it's not provided, default value will be used instead.
+     *
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return Collection of consents for TPP by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -46,7 +49,8 @@ public interface CmsAspspPiisFundsExportService {
     Collection<CmsPiisConsent> exportConsentsByTpp(String tppAuthorisationNumber,
                                                    @Nullable LocalDate createDateFrom,
                                                    @Nullable LocalDate createDateTo,
-                                                   @Nullable PsuIdData psuIdData, @Nullable String instanceId
+                                                   @Nullable PsuIdData psuIdData, @Nullable String instanceId,
+                                                   Integer pageIndex, Integer itemsPerPage
     );
 
     /**
@@ -57,6 +61,9 @@ public interface CmsAspspPiisFundsExportService {
      * @param createDateTo   Optional ending creation date criteria
      * @param instanceId     Optional id of particular service instance.
      *                       If it's not provided, default value will be used instead.
+     *
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return Collection of consents for PSU by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -65,7 +72,8 @@ public interface CmsAspspPiisFundsExportService {
     Collection<CmsPiisConsent> exportConsentsByPsu(PsuIdData psuIdData,
                                                    @Nullable LocalDate createDateFrom,
                                                    @Nullable LocalDate createDateTo,
-                                                   @Nullable String instanceId
+                                                   @Nullable String instanceId,
+                                                   Integer pageIndex, Integer itemsPerPage
     );
 
     /**
@@ -76,6 +84,9 @@ public interface CmsAspspPiisFundsExportService {
      * @param createDateTo   Optional ending creation date criteria
      * @param instanceId     Optional id of particular service instance.
      *                       If it's not provided, default value will be used instead.
+     *
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return Collection of consents by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -83,6 +94,8 @@ public interface CmsAspspPiisFundsExportService {
      */
     Collection<CmsPiisConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
                                                          @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                         @Nullable String instanceId);
+                                                         @Nullable String instanceId,
+                                                         Integer pageIndex, Integer itemsPerPage
+    );
 
 }
