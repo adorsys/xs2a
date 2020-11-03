@@ -34,22 +34,32 @@ public class CmsAspspPiisExportController implements CmsAspspPiisExportApi {
     private final CmsAspspPiisFundsExportService cmsAspspPiisExportService;
 
     @Override
-    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByTpp(String tppId, LocalDate start, LocalDate end, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByTpp(String tppId, LocalDate start,
+                                                                       LocalDate end, String psuId,
+                                                                       String psuIdType, String psuCorporateId,
+                                                                       String psuCorporateIdType, String instanceId,
+                                                                       Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId);
+        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex, itemsPerPage);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByPsu(LocalDate start, LocalDate end, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByPsu(LocalDate start, LocalDate end,
+                                                                       String psuId, String psuIdType,
+                                                                       String psuCorporateId, String psuCorporateIdType,
+                                                                       String instanceId, Integer pageIndex,
+                                                                       Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId);
+        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId, pageIndex, itemsPerPage);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByAccountId(String aspspAccountId, LocalDate start, LocalDate end, String instanceId) {
-        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId);
+    public ResponseEntity<Collection<CmsPiisConsent>> getConsentsByAccountId(String aspspAccountId, LocalDate start,
+                                                                             LocalDate end, String instanceId,
+                                                                             Integer pageIndex, Integer itemsPerPage) {
+        Collection<CmsPiisConsent> consents = cmsAspspPiisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId, pageIndex, itemsPerPage);
         return new ResponseEntity<>(consents, HttpStatus.OK);
     }
 }

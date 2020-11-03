@@ -37,6 +37,8 @@ public interface CmsAspspPisExportService {
      * @param createDateTo           Optional ending creation date criteria
      * @param psuIdData              Optional Psu information criteria
      * @param instanceId             Mandatory id of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return Collection of payments for TPP by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -44,7 +46,8 @@ public interface CmsAspspPisExportService {
      */
     Collection<CmsPayment> exportPaymentsByTpp(String tppAuthorisationNumber,
                                                @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                               @Nullable PsuIdData psuIdData, @NotNull String instanceId);
+                                               @Nullable PsuIdData psuIdData, @NotNull String instanceId,
+                                               Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Returns list of payments by given criteria.
@@ -53,6 +56,8 @@ public interface CmsAspspPisExportService {
      * @param createDateFrom Optional starting creation date criteria
      * @param createDateTo   Optional ending creation date criteria
      * @param instanceId     Mandatory id of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return Collection of payments for PSU by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -60,7 +65,8 @@ public interface CmsAspspPisExportService {
      */
     Collection<CmsPayment> exportPaymentsByPsu(PsuIdData psuIdData,
                                                @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                               @NotNull String instanceId);
+                                               @NotNull String instanceId,
+                                               Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Returns list of payments by given criteria.
@@ -69,6 +75,8 @@ public interface CmsAspspPisExportService {
      * @param createDateFrom         Optional starting creation date criteria
      * @param createDateTo           Optional ending creation date criteria
      * @param instanceId             Mandatory id of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return Collection of payments for PSU by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
@@ -76,6 +84,7 @@ public interface CmsAspspPisExportService {
      */
     Collection<CmsPayment> exportPaymentsByAccountId(@NotNull String aspspAccountId,
                                                      @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                     @NotNull String instanceId);
+                                                     @NotNull String instanceId,
+                                                     Integer pageIndex, Integer itemsPerPage);
 
 }
