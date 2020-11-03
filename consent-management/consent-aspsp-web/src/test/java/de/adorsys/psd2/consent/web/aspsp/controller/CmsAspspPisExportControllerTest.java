@@ -94,7 +94,7 @@ class CmsAspspPisExportControllerTest {
 
     @Test
     void getPaymentsByTpp() throws Exception {
-        when(cmsAspspPisExportService.exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
+        when(cmsAspspPisExportService.exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null))
             .thenReturn(cmsPayments);
 
         mockMvc.perform(get(EXPORT_PIS_CONSENT_BY_TPP)
@@ -103,12 +103,12 @@ class CmsAspspPisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPisExportService, times(1)).exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID);
+        verify(cmsAspspPisExportService, times(1)).exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null);
     }
 
     @Test
     void getPaymentsByPsu() throws Exception {
-        when(cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
+        when(cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null))
             .thenReturn(cmsPayments);
 
         mockMvc.perform(get(EXPORT_PIS_CONSENT_BY_PSU)
@@ -117,12 +117,12 @@ class CmsAspspPisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPisExportService, times(1)).exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID);
+        verify(cmsAspspPisExportService, times(1)).exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null);
     }
 
     @Test
     void getPaymentsByAccountId() throws Exception {
-        when(cmsAspspPisExportService.exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
+        when(cmsAspspPisExportService.exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null))
             .thenReturn(cmsPayments);
 
         mockMvc.perform(get(EXPORT_PIS_CONSENT_BY_ACCOUNT)
@@ -131,7 +131,7 @@ class CmsAspspPisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPisExportService, times(1)).exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID);
+        verify(cmsAspspPisExportService, times(1)).exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null);
     }
 
     private CmsPayment getCmsPayment() {

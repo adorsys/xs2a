@@ -34,22 +34,30 @@ public class CmsAspspPisExportController implements CmsAspspPisExportApi {
     private final CmsAspspPisExportService cmsAspspPisExportService;
 
     @Override
-    public ResponseEntity<Collection<CmsPayment>> getPaymentsByTpp(String tppId, LocalDate start, LocalDate end, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<Collection<CmsPayment>> getPaymentsByTpp(String tppId, LocalDate start, LocalDate end,
+                                                                   String psuId, String psuIdType,
+                                                                   String psuCorporateId, String psuCorporateIdType,
+                                                                   String instanceId, Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByTpp(tppId, start, end, psuIdData, instanceId);
+        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex, itemsPerPage);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Collection<CmsPayment>> getPaymentsByPsu(LocalDate start, LocalDate end, String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<Collection<CmsPayment>> getPaymentsByPsu(LocalDate start, LocalDate end,
+                                                                   String psuId, String psuIdType,
+                                                                   String psuCorporateId, String psuCorporateIdType,
+                                                                   String instanceId, Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, start, end, instanceId);
+        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, start, end, instanceId, pageIndex, itemsPerPage);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Collection<CmsPayment>> getPaymentsByAccountId(String aspspAccountId, LocalDate start, LocalDate end, String instanceId) {
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByAccountId(aspspAccountId, start, end, instanceId);
+    public ResponseEntity<Collection<CmsPayment>> getPaymentsByAccountId(String aspspAccountId, LocalDate start,
+                                                                         LocalDate end, String instanceId,
+                                                                         Integer pageIndex, Integer itemsPerPage) {
+        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByAccountId(aspspAccountId, start, end, instanceId, pageIndex, itemsPerPage);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 }
