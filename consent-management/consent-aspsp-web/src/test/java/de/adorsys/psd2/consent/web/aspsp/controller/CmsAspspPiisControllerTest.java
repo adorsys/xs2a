@@ -119,7 +119,7 @@ class CmsAspspPiisControllerTest {
     @Test
     void getConsentsForPsu_Success() throws Exception {
         List<CmsPiisConsent> consents = Collections.singletonList(cmsPiisConsent);
-        when(cmsAspspPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID))
+        when(cmsAspspPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID, null, null))
             .thenReturn(consents);
 
         mockMvc.perform(get(CREATE_PIIS_CONSENT_URL)
@@ -128,7 +128,7 @@ class CmsAspspPiisControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPiisService, times(1)).getConsentsForPsu(psuIdData, INSTANCE_ID);
+        verify(cmsAspspPiisService, times(1)).getConsentsForPsu(psuIdData, INSTANCE_ID, null, null);
     }
 
     @Test

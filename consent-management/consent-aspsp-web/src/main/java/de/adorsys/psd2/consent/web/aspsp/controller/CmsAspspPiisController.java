@@ -45,9 +45,11 @@ public class CmsAspspPiisController implements CmsAspspPiisApi {
     }
 
     @Override
-    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId,
+                                                                  String psuCorporateIdType, String instanceId,
+                                                                  Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsAspspPiisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
+        return new ResponseEntity<>(cmsAspspPiisService.getConsentsForPsu(psuIdData, instanceId, pageIndex, itemsPerPage), HttpStatus.OK);
     }
 
     @Override
