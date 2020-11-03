@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,25 +54,42 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     private final AisConsentMapper aisConsentMapper;
     private final AuthorisationRepository authorisationRepository;
     private final AisConsentLazyMigrationService aisConsentLazyMigrationService;
+    private final PageRequestBuilder pageRequestBuilder;
 
     @Override
     @Transactional
     public Collection<CmsAisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
                                                                 @Nullable LocalDate createDateFrom,
                                                                 @Nullable LocalDate createDateTo,
-                                                                @Nullable PsuIdData psuIdData, @NotNull String instanceId) {
+                                                                @Nullable PsuIdData psuIdData, @NotNull String instanceId,
+                                                                Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             log.info("TPP ID: [{}], InstanceId: [{}]. Export Consents by TPP: Some of these two values are empty", tppAuthorisationNumber, instanceId);
             return Collections.emptyList();
         }
 
+        if (pageIndex == null && itemsPerPage == null) {
+            return consentJpaRepository.findAll(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
+                tppAuthorisationNumber,
+                createDateFrom,
+                createDateTo,
+                psuIdData,
+                instanceId
+            ))
+                       .stream()
+                       .map(aisConsentLazyMigrationService::migrateIfNeeded)
+                       .map(this::mapToCmsAisAccountConsentWithAuthorisations)
+                       .collect(Collectors.toList());
+        }
+
+        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
         return consentJpaRepository.findAll(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
             tppAuthorisationNumber,
             createDateFrom,
             createDateTo,
             psuIdData,
             instanceId
-        ))
+        ), pageRequest)
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
@@ -81,18 +100,31 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     @Transactional
     public Collection<CmsAisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
                                                                 @Nullable LocalDate createDateTo,
-                                                                @NotNull String instanceId) {
+                                                                @NotNull String instanceId,
+                                                                Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}]. Export consents by Psu failed, psuIdData or instanceId is empty or null.",
                      instanceId);
             return Collections.emptyList();
         }
 
+        if (pageIndex == null && itemsPerPage == null) {
+            return consentJpaRepository.findAll(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
+                                                                                                                  createDateFrom,
+                                                                                                                  createDateTo,
+                                                                                                                  instanceId
+            ))
+                       .stream()
+                       .map(aisConsentLazyMigrationService::migrateIfNeeded)
+                       .map(this::mapToCmsAisAccountConsentWithAuthorisations)
+                       .collect(Collectors.toList());
+        }
+        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
         return consentJpaRepository.findAll(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
                                                                                                               createDateFrom,
                                                                                                               createDateTo,
                                                                                                               instanceId
-        ))
+        ), pageRequest)
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
@@ -104,7 +136,8 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     public Collection<CmsAisAccountConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
                                                                       @Nullable LocalDate createDateFrom,
                                                                       @Nullable LocalDate createDateTo,
-                                                                      @NotNull String instanceId) {
+                                                                      @NotNull String instanceId,
+                                                                      Integer pageIndex, Integer itemsPerPage) {
 
         if (StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}], aspspAccountId: [{}]. Export consents by accountId failed, instanceId is empty or null.",
@@ -116,14 +149,24 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                                                                             createDateFrom,
                                                                                                                             createDateTo,
                                                                                                                             instanceId);
-        List<ConsentEntity> consents = consentJpaRepository.findAll(specification)
-                                           .stream()
-                                           .distinct()
-                                           .map(aisConsentLazyMigrationService::migrateIfNeeded)
-                                           .collect(Collectors.toList());
+        List<ConsentEntity> consents;
+        if (pageIndex == null && itemsPerPage == null) {
+            consents = consentJpaRepository.findAll(specification)
+                           .stream()
+                           .distinct()
+                           .collect(Collectors.toList());
+        } else {
+            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+            consents = consentJpaRepository.findAll(specification, pageRequest)
+                           .stream()
+                           // TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1373
+                           .distinct()
+                           .collect(Collectors.toList());
+        }
 
         return consents
                    .stream()
+                   .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                    .collect(Collectors.toList());
     }
