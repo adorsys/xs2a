@@ -26,6 +26,7 @@ import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +58,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentMapper piisConsentMapper;
     private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
+    private final PageRequestBuilder pageRequestBuilder;
 
     @Override
     @Transactional
@@ -82,16 +85,26 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     @Transactional
-    public @NotNull List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+    public @NotNull List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
+                                                           Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
-                   .stream()
-                   .map(piisConsentLazyMigrationService::migrateIfNeeded)
-                   .map(piisConsentMapper::mapToCmsPiisConsent)
-                   .collect(Collectors.toList());
+        if (pageIndex == null && itemsPerPage == null) {
+            return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
+                       .stream()
+                       .map(piisConsentLazyMigrationService::migrateIfNeeded)
+                       .map(piisConsentMapper::mapToCmsPiisConsent)
+                       .collect(Collectors.toList());
+        } else {
+            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+            return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId), pageRequest)
+                       .stream()
+                       .map(piisConsentLazyMigrationService::migrateIfNeeded)
+                       .map(piisConsentMapper::mapToCmsPiisConsent)
+                       .collect(Collectors.toList());
+        }
     }
 
     @Override
