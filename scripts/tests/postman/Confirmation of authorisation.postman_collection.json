@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0f89e48c-b377-4c41-9e6f-9c6d007b7491",
+		"_postman_id": "fa3803d6-0cb9-4059-b3b7-fa082e4271b2",
 		"name": "Confirmation of authorisation",
 		"description": "Note, this collection works correct only after switching the boolean flag `authorisation_confirmation_enabled` to `true` in ledgers.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -21,7 +21,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "c0b912ec-fccd-47f7-a8dc-64c39e6b8af1",
+												"id": "f88cef26-a783-4575-9289-263b1dd909bc",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -72,7 +72,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "08aec46b-8d55-4818-ae61-74b87c73b6dc",
+												"id": "12ec1ec7-7b38-4a71-a1dc-5fff263a7085",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -125,7 +125,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "9b9bc702-39f1-49cd-907d-301feb76e761",
+												"id": "19fe81af-9a70-4571-ab42-1c3aca6c1687",
 												"exec": [
 													"pm.globals.unset(\"consent_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -136,7 +136,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "2ad00d61-7ef6-43fa-bb6e-eb3e00c40b09",
+												"id": "e0380353-0d7a-4f62-9e0d-e6c22f5e6969",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -244,7 +244,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "66d1ad49-97a6-4733-961f-1389ec471b89",
+												"id": "8c633bd4-ecc5-487b-9b13-388377d2e61b",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -279,7 +279,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "90dd5760-9650-48aa-9af3-4740334b24cb",
+												"id": "45e45d72-01e6-4199-8e59-e044e9e70c5e",
 												"exec": [
 													"pm.globals.unset(\"internal_consent_id\");",
 													"pm.globals.unset(\"authorisation_id\");"
@@ -310,12 +310,12 @@
 									"response": []
 								},
 								{
-									"name": "5. Authorise in ledgers for consent processing",
+									"name": "5. Authorise in Keycloak",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "24056f5a-f1c3-4442-b416-398e06587d7d",
+												"id": "ba409c3e-52a9-4d7c-b116-70eb5cf6ff8e",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -323,81 +323,225 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"pm.globals.set(\"keycloak_login_token\", jsonData.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"user-agent": true,
+											"connection": true,
+											"accept-encoding": true,
+											"accept": true
+										}
+									},
 									"request": {
+										"auth": {
+											"type": "noauth"
+										},
 										"method": "POST",
 										"header": [
 											{
-												"key": "psu-id",
+												"key": "Content-Type",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "{{psu_id_none}}",
 												"disabled": true
 											},
 											{
-												"key": "Content-Type",
-												"name": "Content-Type",
+												"key": "Accept",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "application/json"
+												"disabled": true
+											},
+											{
+												"key": "Authentication",
+												"value": "Basic UzZCaGRSa3F0MzpmYzgyOTQxNC1jYmRlLTQ5NGYtYTJhNy0xNDY3OTkzN2FlZWI=",
+												"type": "text",
+												"disabled": true
 											}
 										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "password",
+													"type": "text"
+												},
+												{
+													"key": "username",
+													"value": "{{psu_id_single}}",
+													"type": "text"
+												},
+												{
+													"key": "password",
+													"value": "{{psu_id_password}}",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "ledgers-client",
+													"type": "text"
+												},
+												{
+													"key": "client_secret",
+													"value": "a61a81cd-7178-40d8-8386-ed02791e6592",
+													"type": "text"
+												}
+											],
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_consent_id}}&authorisationId={{authorisation_id}}&opType=CONSENT",
+											"raw": "{{protocol}}://{{url_keycloak}}/auth/realms/ledgers/protocol/openid-connect/token",
 											"protocol": "{{protocol}}",
 											"host": [
-												"{{url_ledgers}}"
+												"{{url_keycloak}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_consent_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "CONSENT"
-												}
+												"auth",
+												"realms",
+												"ledgers",
+												"protocol",
+												"openid-connect",
+												"token"
 											]
 										}
 									},
 									"response": []
 								},
 								{
-									"name": "6. Start SCA in ledgers",
+									"name": "6. Create AIS consent in Ledgers",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "3cbccf73-b382-4d08-9e62-7baaa8f695d7",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "d537cf70-7e8f-4ce7-a5bc-58dce5c39df3",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.globals.set(\"internal_consent_id\", jsonData.consentId);",
+													"pm.globals.set(\"keycloak_sca_token\", jsonData.bearerToken.access_token)"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_login_token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "date",
+												"value": "Sun, 11 Aug 2019 15:02:37 GMT",
+												"disabled": true
+											},
+											{
+												"key": "tpp-qwac-certificate",
+												"value": "qwac certificate",
+												"disabled": true
+											},
+											{
+												"key": "x-request-id",
+												"value": "{{x_request_id}}",
+												"disabled": true
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_single}}",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"type": "text",
+												"value": "true",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"type": "text",
+												"value": "TPP-Redirect-URI",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"type": "text",
+												"value": "TPP-Nok-Redirect-URI",
+												"disabled": true
+											},
+											{
+												"key": "psu-ip-address",
+												"type": "text",
+												"value": "{{ip_address}}",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n      \"id\": \"{{internal_consent_id}}\",\n      \"userId\": \"{{psu_id_single}}\",\n      \"tppId\": \"{{tpp_id}}\",\n\n      \"access\": {\n        \"accounts\": [\n          \"{{iban_single}}\"\n        ],\n        \"balances\": [\n          \"{{iban_single}}\"\n        ],\n        \"transactions\": [\n            \"{{iban_single}}\"\n        ]\n      },\n\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": true,\n      \"validUntil\": \"2021-12-31\"\n    }",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_ledgers}}"
+											],
+											"path": [
+												"consents",
+												"{{internal_consent_id}}"
+											]
+										},
+										"description": "This method create a consent resource, defining access rights to dedicated accounts of a given PSU-ID. These accounts are addressed explicitly in the method as parameters as a core function. Side Effects When this Consent Request is a request where the “recurringIndicator” equals \"true\", and if it exists already a former consent for recurring access on account information for the addressed PSU, then the former consent automatically expires as soon as the new consent request is authorised by the PSU. Optional Extension: As an option, an ASPSP might optionally accept a specific access right on the access on all psd2 related services for all available accounts. As another option an ASPSP might optionally also accept a command, where only access rights are inserted without mentioning the addressed account. The relation to accounts is then handled afterwards between PSU and ASPSP. This option is supported only within the Decoupled, OAuth2 or Re-direct SCA Approach. As a last option, an ASPSP might in addition accept a command with access rights * to see the list of available payment accounts or * to see the list of available payment accounts with balances."
+									},
+									"response": []
+								},
+								{
+									"name": "7. Start SCA in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "8c7a37b3-6960-4759-9d82-c636c265a2ff",
+												"id": "f73061bb-46e5-4d78-aeee-e0da4874454b",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -412,8 +556,8 @@
 													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
 													"",
 													"pm.test(\"Consent ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('consentId');",
-													"    pm.expect(jsonData.consentId).to.eq(pm.globals.get('internal_consent_id'));",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_consent_id'));",
 													"});",
 													"",
 													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
@@ -431,7 +575,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -447,7 +591,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"id\": \"{{internal_consent_id}}\",\n\t\"tppId\": \"{{tpp_id}}\",\n\t\"frequencyPerDay\": 400,\n\t\"access\": {\n    \t\"accounts\": [\"{{iban_single}}\"],\n    \t\"balances\": [\"{{iban_single}}\"],\n    \t\"transactions\": [\"{{iban_single}}\"]\n\t},\n\t\"validUntil\": \"2021-12-31\",\n\t\"recurringIndicator\": true\n}",
+											"raw": "{\n\t\"oprId\": \"{{internal_consent_id}}\",\n\t\"authorisationId\": \"{{redirect_id}}\",\n\t\"opType\": \"CONSENT\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -455,27 +599,26 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations"
+												"sca",
+												"start"
 											]
 										}
 									},
 									"response": []
 								},
 								{
-									"name": "7. Select SCA method",
+									"name": "8. Select SCA method",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "a5c4130a-7e3f-4bfa-99e4-b92af56e832b",
+												"id": "1df72256-9a20-4680-bfda-68591eda1c06",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -493,7 +636,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -517,14 +660,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"consents",
-												"{{internal_consent_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"scaMethods",
@@ -535,12 +677,12 @@
 									"response": []
 								},
 								{
-									"name": "8. Authorise consent in ledgers",
+									"name": "9. Authorise consent in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "0f6bf889-f784-403f-8600-9d0815058eda",
+												"id": "0d9a831c-b3aa-4ef2-a06c-150dd4567906",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -580,7 +722,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -604,14 +746,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"consents",
-												"{{internal_consent_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"authCode"
@@ -627,12 +768,12 @@
 									"response": []
 								},
 								{
-									"name": "9. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
+									"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "20e2df84-290b-427c-a91c-1c05aab6c245",
+												"id": "cf37011e-3403-4d09-b317-a2374f4d5da3",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -645,12 +786,12 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "8c7ff844-cc4c-4343-a961-e69ce02b9fc6",
+												"id": "85374348-239c-4a4a-98a9-fbfcc8752cd6",
 												"exec": [
-													"const ledgersConsentResponse = pm.globals.get(\"ledgersConsentResponse\");",
-													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersConsentResponse);",
+													"var keycloakScaToken = pm.globals.get(\"keycloak_sca_token\");",
+													"var utf8string = CryptoJS.enc.Utf8.parse('{\"bearerToken\": { \"access_token\": \"' + keycloakScaToken + '\" }}');",
 													"",
-													"pm.globals.set(\"encodedLedgersConsentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+													"pm.globals.set(\"encoded_keycloak_token\", CryptoJS.enc.Base64.stringify(utf8string));"
 												],
 												"type": "text/javascript"
 											}
@@ -668,7 +809,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersConsentResponse}}\",\n  \"consentId\": \"{{consent_id}}\"\n}",
+											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encoded_keycloak_token}}\",\n  \"consentId\": \"{{internal_consent_id}}\"\n}",
 											"options": {
 												"raw": {}
 											}
@@ -691,12 +832,12 @@
 									"response": []
 								},
 								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
+									"name": "11. Update status of authorisation to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "9c0f8d1a-986f-489e-b701-15e9f7a0b8cd",
+												"id": "6ff60c8e-892e-4363-a5c0-213f64afd4d3",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -752,12 +893,12 @@
 									"response": []
 								},
 								{
-									"name": "11. Update PSU Data for consents finalization - provide code",
+									"name": "12. Update PSU Data for consents finalization - provide code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "1c0b51ba-ee1b-494a-bd99-c1a430c7559c",
+												"id": "c8bda988-91da-4728-a1f7-371146bcf8bb",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -844,7 +985,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "34596c6c-1d1c-4e3f-b2e6-305deef619cf",
+												"id": "48361926-de49-4f81-903e-9c2b715de1b0",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -895,7 +1036,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "14614156-2380-40dd-bbb9-bbe0b3f06576",
+												"id": "b9eb50d6-1d60-43f9-a41f-5cc43edb28dc",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -948,7 +1089,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "1c5103aa-3bf3-4b99-905d-a2848960f450",
+												"id": "7591ce4d-4aff-4282-a075-aa855009e073",
 												"exec": [
 													"pm.globals.unset(\"consent_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -959,7 +1100,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "1783c47f-3937-4260-9712-c8967a4df238",
+												"id": "f030a03d-2d4f-4fce-bcbb-31140dc2c10d",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -1067,7 +1208,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "ea0db244-757c-4f0c-b689-99873bfeae46",
+												"id": "a323b292-b2ef-4879-8377-5225a2099dc7",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1102,7 +1243,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "77631f63-e4cb-4881-8435-27ccca585a5c",
+												"id": "fbf94f77-1277-4bef-a08c-d67a0e40d68a",
 												"exec": [
 													"pm.globals.unset(\"internal_consent_id\");",
 													"pm.globals.unset(\"authorisation_id\");"
@@ -1133,12 +1274,12 @@
 									"response": []
 								},
 								{
-									"name": "5. Authorise in ledgers for consent processing",
+									"name": "5. Authorise in Keycloak",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "61a454e0-2590-450d-b618-09a2038e3ce0",
+												"id": "e5975f05-eeb1-41a4-8785-be1c3ae0bbb9",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1146,81 +1287,226 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"pm.globals.set(\"keycloak_login_token\", jsonData.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"user-agent": true,
+											"connection": true,
+											"accept-encoding": true,
+											"accept": true
+										}
+									},
 									"request": {
+										"auth": {
+											"type": "noauth"
+										},
 										"method": "POST",
 										"header": [
 											{
-												"key": "psu-id",
+												"key": "Content-Type",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "{{psu_id_none}}",
 												"disabled": true
 											},
 											{
-												"key": "Content-Type",
-												"name": "Content-Type",
+												"key": "Accept",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "application/json"
+												"disabled": true
+											},
+											{
+												"key": "Authentication",
+												"value": "Basic UzZCaGRSa3F0MzpmYzgyOTQxNC1jYmRlLTQ5NGYtYTJhNy0xNDY3OTkzN2FlZWI=",
+												"type": "text",
+												"disabled": true
 											}
 										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "password",
+													"type": "text"
+												},
+												{
+													"key": "username",
+													"value": "{{psu_id_single}}",
+													"type": "text"
+												},
+												{
+													"key": "password",
+													"value": "{{psu_id_password}}",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "ledgers-client",
+													"type": "text"
+												},
+												{
+													"key": "client_secret",
+													"value": "a61a81cd-7178-40d8-8386-ed02791e6592",
+													"type": "text"
+												}
+											],
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_consent_id}}&authorisationId={{authorisation_id}}&opType=CONSENT",
+											"raw": "{{protocol}}://{{url_keycloak}}/auth/realms/ledgers/protocol/openid-connect/token",
 											"protocol": "{{protocol}}",
 											"host": [
-												"{{url_ledgers}}"
+												"{{url_keycloak}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_consent_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "CONSENT"
-												}
+												"auth",
+												"realms",
+												"ledgers",
+												"protocol",
+												"openid-connect",
+												"token"
 											]
 										}
 									},
 									"response": []
 								},
 								{
-									"name": "6. Start SCA in ledgers",
+									"name": "6. Create AIS consent in Ledgers",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"id": "001675b5-29a4-4f23-a15b-92927904a06f",
+												"exec": [
+													""
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"id": "3ed172b6-e458-495a-91b8-a2d557923a5e",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.globals.set(\"internal_consent_id\", jsonData.consentId);",
+													"pm.globals.set(\"keycloak_sca_token\", jsonData.bearerToken.access_token);",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_login_token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "*/*"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "date",
+												"value": "Sun, 11 Aug 2019 15:02:37 GMT",
+												"disabled": true
+											},
+											{
+												"key": "tpp-qwac-certificate",
+												"value": "qwac certificate",
+												"disabled": true
+											},
+											{
+												"key": "x-request-id",
+												"value": "{{x_request_id}}",
+												"disabled": true
+											},
+											{
+												"key": "PSU-ID",
+												"value": "{{psu_id_single}}",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Explicit-Authorisation-Preferred",
+												"type": "text",
+												"value": "true",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Redirect-URI",
+												"type": "text",
+												"value": "TPP-Redirect-URI",
+												"disabled": true
+											},
+											{
+												"key": "TPP-Nok-Redirect-URI",
+												"type": "text",
+												"value": "TPP-Nok-Redirect-URI",
+												"disabled": true
+											},
+											{
+												"key": "psu-ip-address",
+												"type": "text",
+												"value": "{{ip_address}}",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n      \"id\": \"{{internal_consent_id}}\",\n      \"userId\": \"{{psu_id_single}}\",\n      \"tppId\": \"{{tpp_id}}\",\n\n      \"access\": {\n        \"accounts\": [\n          \"{{iban_single}}\"\n        ],\n        \"balances\": [\n          \"{{iban_single}}\"\n        ],\n        \"transactions\": [\n            \"{{iban_single}}\"\n        ]\n      },\n\n      \"frequencyPerDay\": 400,\n      \"recurringIndicator\": true,\n      \"validUntil\": \"2021-12-31\"\n    }",
+											"options": {
+												"raw": {}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_ledgers}}"
+											],
+											"path": [
+												"consents",
+												"{{internal_consent_id}}"
+											]
+										},
+										"description": "This method create a consent resource, defining access rights to dedicated accounts of a given PSU-ID. These accounts are addressed explicitly in the method as parameters as a core function. Side Effects When this Consent Request is a request where the “recurringIndicator” equals \"true\", and if it exists already a former consent for recurring access on account information for the addressed PSU, then the former consent automatically expires as soon as the new consent request is authorised by the PSU. Optional Extension: As an option, an ASPSP might optionally accept a specific access right on the access on all psd2 related services for all available accounts. As another option an ASPSP might optionally also accept a command, where only access rights are inserted without mentioning the addressed account. The relation to accounts is then handled afterwards between PSU and ASPSP. This option is supported only within the Decoupled, OAuth2 or Re-direct SCA Approach. As a last option, an ASPSP might in addition accept a command with access rights * to see the list of available payment accounts or * to see the list of available payment accounts with balances."
+									},
+									"response": []
+								},
+								{
+									"name": "7. Start SCA in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "7741a28d-da46-4ceb-b01c-9cf7e392df46",
+												"id": "564a65ba-b0ec-440b-b37d-3c1501362463",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1235,8 +1521,8 @@
 													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
 													"",
 													"pm.test(\"Consent ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('consentId');",
-													"    pm.expect(jsonData.consentId).to.eq(pm.globals.get('internal_consent_id'));",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_consent_id'));",
 													"});",
 													"",
 													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
@@ -1254,7 +1540,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -1270,7 +1556,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"id\": \"{{internal_consent_id}}\",\n\t\"tppId\": \"{{tpp_id}}\",\n\t\"frequencyPerDay\": 400,\n\t\"access\": {\n    \t\"accounts\": [\"{{iban_single}}\"],\n    \t\"balances\": [\"{{iban_single}}\"],\n    \t\"transactions\": [\"{{iban_single}}\"]\n\t},\n\t\"validUntil\": \"2021-12-31\",\n\t\"recurringIndicator\": true\n}",
+											"raw": "{\n\t\"oprId\": \"{{internal_consent_id}}\",\n\t\"authorisationId\": \"{{redirect_id}}\",\n\t\"opType\": \"CONSENT\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -1278,27 +1564,26 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations"
+												"sca",
+												"start"
 											]
 										}
 									},
 									"response": []
 								},
 								{
-									"name": "7. Select SCA method",
+									"name": "8. Select SCA method",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "3f7071b9-719a-4a4f-b94c-a544e6207d4b",
+												"id": "a6356050-95a2-41b8-b069-3a383617c3a4",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1316,7 +1601,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -1340,14 +1625,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"consents",
-												"{{internal_consent_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"scaMethods",
@@ -1358,12 +1642,12 @@
 									"response": []
 								},
 								{
-									"name": "8. Authorise consent in ledgers",
+									"name": "9. Authorise consent in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "c669c072-7887-4c48-b565-e8b6851b9997",
+												"id": "d850a31e-f449-48e4-b1fa-049f13625d5f",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -1403,7 +1687,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -1427,14 +1711,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"consents",
-												"{{internal_consent_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"authCode"
@@ -1450,12 +1733,12 @@
 									"response": []
 								},
 								{
-									"name": "9. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
+									"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "728c6457-a2c1-4438-a0ee-ea20d84315bd",
+												"id": "f0c81e31-be62-4e40-9a9e-7a2dfcde24cc",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1468,12 +1751,12 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "cd8e3f4a-e9fb-432b-8d0c-9053a07b40c6",
+												"id": "daca7677-bce2-4053-a172-5aa2b199fb3a",
 												"exec": [
-													"const ledgersConsentResponse = pm.globals.get(\"ledgersConsentResponse\");",
-													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersConsentResponse);",
+													"var keycloakScaToken = pm.globals.get(\"keycloak_login_token\");",
+													"var utf8string = CryptoJS.enc.Utf8.parse('{\"bearerToken\": { \"access_token\": \"' + keycloakScaToken + '\" }}');",
 													"",
-													"pm.globals.set(\"encodedLedgersConsentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+													"pm.globals.set(\"encoded_keycloak_token\", CryptoJS.enc.Base64.stringify(utf8string));"
 												],
 												"type": "text/javascript"
 											}
@@ -1491,7 +1774,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersConsentResponse}}\",\n  \"consentId\": \"{{consent_id}}\"\n}",
+											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encoded_keycloak_token}}\",\n  \"consentId\": \"{{internal_consent_id}}\"\n}",
 											"options": {
 												"raw": {}
 											}
@@ -1514,12 +1797,12 @@
 									"response": []
 								},
 								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
+									"name": "11. Update status of authorisation to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "683c7d2b-3dff-4f0d-8370-9671b8760929",
+												"id": "e76ee40f-6d06-4da8-9438-f3889a94e349",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1575,12 +1858,12 @@
 									"response": []
 								},
 								{
-									"name": "11. Update PSU Data for consents finalization - provide code",
+									"name": "12. Update PSU Data for consents finalization - provide code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "eefb8a6e-3091-472e-9709-d4eeb101bf46",
+												"id": "0f700aef-353d-4c71-bcce-9f14921cbb80",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -1652,7 +1935,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "52852da7-c953-41f0-8763-48bef0f8f893",
+										"id": "371bcd1f-1e1c-492b-a808-77416548dbac",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -1662,7 +1945,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "37c29a48-234a-46ff-a7da-d1cb9091fcec",
+										"id": "a097964a-11cc-4c10-a542-edfaafcc9da2",
 										"type": "text/javascript",
 										"exec": [
 											""
@@ -1695,7 +1978,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "996289e7-1aa7-4ecb-9629-f14ed34114e3",
+												"id": "edde5364-6a19-4e95-baee-66f88b953f59",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1743,7 +2026,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "751cb6ad-f7cd-42b8-b04b-2ecc6209f264",
+												"id": "64120200-c509-4aec-9289-c9846c1b62f4",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1796,7 +2079,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "f8b5e23f-88c0-46e9-a8e3-f3307ac11c6d",
+												"id": "eddfe342-a5b6-48b8-b2d5-003845c4d308",
 												"exec": [
 													"pm.globals.unset(\"payment_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -1807,7 +2090,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "9ac4938d-0f30-48de-a3cf-6dd157815287",
+												"id": "fa9875a0-3418-4cb2-921a-3f54c1705c28",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -1902,7 +2185,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "e2fe53b0-0967-40d7-b147-b381a0739086",
+												"id": "8279cd04-f3f9-4bdf-a52b-f643381b7f29",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1943,12 +2226,12 @@
 									"response": []
 								},
 								{
-									"name": "5. Authorise in ledgers for payment processing",
+									"name": "5. Authorise in Keycloak",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "d8576b7f-3a90-4b41-af8f-1ee1fdeec602",
+												"id": "4322e220-4a48-4c45-9ab9-39a04ce0febc",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -1956,69 +2239,94 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"pm.globals.set(\"keycloak_login_token\", jsonData.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"user-agent": true,
+											"connection": true,
+											"accept-encoding": true,
+											"accept": true
+										}
+									},
 									"request": {
+										"auth": {
+											"type": "noauth"
+										},
 										"method": "POST",
 										"header": [
 											{
-												"key": "psu-id",
+												"key": "Content-Type",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "{{psu_id_none}}",
 												"disabled": true
 											},
 											{
-												"key": "Content-Type",
-												"name": "Content-Type",
+												"key": "Accept",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "application/json"
+												"disabled": true
+											},
+											{
+												"key": "Authentication",
+												"value": "Basic UzZCaGRSa3F0MzpmYzgyOTQxNC1jYmRlLTQ5NGYtYTJhNy0xNDY3OTkzN2FlZWI=",
+												"type": "text",
+												"disabled": true
 											}
 										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "password",
+													"type": "text"
+												},
+												{
+													"key": "username",
+													"value": "{{psu_id_single}}",
+													"type": "text"
+												},
+												{
+													"key": "password",
+													"value": "{{psu_id_password}}",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "ledgers-client",
+													"type": "text"
+												},
+												{
+													"key": "client_secret",
+													"value": "a61a81cd-7178-40d8-8386-ed02791e6592",
+													"type": "text"
+												}
+											],
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_payment_id}}&authorisationId={{authorisation_id}}&opType=PAYMENT",
+											"raw": "{{protocol}}://{{url_keycloak}}/auth/realms/ledgers/protocol/openid-connect/token",
 											"protocol": "{{protocol}}",
 											"host": [
-												"{{url_ledgers}}"
+												"{{url_keycloak}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_payment_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "PAYMENT"
-												}
+												"auth",
+												"realms",
+												"ledgers",
+												"protocol",
+												"openid-connect",
+												"token"
 											]
 										}
 									},
@@ -2030,7 +2338,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "54e8f314-743b-4e48-bfdd-3af612c75b22",
+												"id": "3722941a-280f-4579-9f87-ee843f3294b2",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -2049,10 +2357,8 @@
 													"    pm.expect(jsonData.paymentId).to.eq(pm.globals.get('internal_payment_id'));",
 													"});",
 													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});"
+													"pm.globals.set(\"keycloak_sca_token\", jsonData.bearerToken.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -2064,7 +2370,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_login_token}}",
 													"type": "string"
 												}
 											]
@@ -2108,12 +2414,89 @@
 									"response": []
 								},
 								{
-									"name": "7. Select SCA method",
+									"name": "7. Start SCA in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "ae624568-c250-4bd0-9039-3b79a8997ebe",
+												"id": "b26cfeb5-3b45-4652-94c7-b4dcc870bcf6",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"SCA methods exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('scaMethods');",
+													"});",
+													"",
+													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
+													"",
+													"pm.test(\"Payment ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_payment_id'));",
+													"});",
+													"",
+													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('authorisationId');",
+													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_sca_token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"oprId\": \"{{internal_payment_id}}\",\n\t\"authorisationId\": \"{{redirect_id}}\",\n\t\"opType\": \"PAYMENT\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_ledgers}}"
+											],
+											"path": [
+												"sca",
+												"start"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Select SCA method",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "9e11224f-0d20-48e2-9651-df3bbacfc96f",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2131,7 +2514,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -2155,14 +2538,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"scaMethods",
@@ -2173,12 +2555,12 @@
 									"response": []
 								},
 								{
-									"name": "8. Authorise payment in ledgers",
+									"name": "9. Authorise payment in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "c24e7849-f7b0-42c4-92ff-4d4859abd081",
+												"id": "88e75e5b-fed8-4f8d-80de-14c82a478506",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -2191,8 +2573,11 @@
 													"   pm.expect(jsonData).to.have.property('bearerToken');",
 													"});",
 													"",
-													"const paymentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersPaymentResponse\", paymentResponse);",
+													"var token = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersBearerToken\", token);",
+													"",
+													"const consentResponse = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
 													"",
 													"pm.test(\"SCA status is unconfirmed\", () => {",
 													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
@@ -2215,7 +2600,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -2239,14 +2624,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"authCode"
@@ -2262,12 +2646,12 @@
 									"response": []
 								},
 								{
-									"name": "9. Update ASPSP consent data for the given payment via CMS-PSU-API",
+									"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "0e0b0278-2def-40fe-8213-1272e1fcfbf2",
+												"id": "cd63f721-fb80-4b87-a607-8e26f8bd6df4",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2280,12 +2664,12 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "88a011d4-5d1c-4c69-913e-1a2aae0166eb",
+												"id": "50dbed72-c541-42c6-8b89-bc71afa582b3",
 												"exec": [
-													"const ledgersPaymentResponse = pm.globals.get(\"ledgersPaymentResponse\");",
-													"const utf8string = CryptoJS.enc.Utf8.parse(ledgersPaymentResponse);",
+													"var keycloakScaToken = pm.globals.get(\"keycloak_sca_token\");",
+													"var utf8string = CryptoJS.enc.Utf8.parse('{\"bearerToken\": { \"access_token\": \"' + keycloakScaToken + '\" }}');",
 													"",
-													"pm.globals.set(\"encodedLedgersPaymentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+													"pm.globals.set(\"encoded_keycloak_token\", CryptoJS.enc.Base64.stringify(utf8string));"
 												],
 												"type": "text/javascript"
 											}
@@ -2297,13 +2681,13 @@
 											{
 												"key": "Content-Type",
 												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersPaymentResponse}}\",\n  \"consentId\": \"{{payment_id}}\"\n}",
+											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encoded_keycloak_token}}\",\n  \"consentId\": \"{{internal_consent_id}}\"\n}",
 											"options": {
 												"raw": {}
 											}
@@ -2326,12 +2710,12 @@
 									"response": []
 								},
 								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
+									"name": "11. Update status of authorisation to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "7e398ae5-b0e5-4b50-a925-af72b0070987",
+												"id": "45397912-7f33-4c30-bfd3-54c9ac20b205",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2386,12 +2770,12 @@
 									"response": []
 								},
 								{
-									"name": "11. Update PSU data for payment initiation - provide confirmation code",
+									"name": "12. Update PSU data for payment initiation - provide confirmation code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "3f66e571-f964-438c-bb05-65cb0ee4fcb3",
+												"id": "1f32b5b8-463f-48fb-94d6-4c84037e0983",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -2469,7 +2853,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a4e5a513-7785-4307-991f-462bb05ec8b5",
+												"id": "6e9cc3e4-89af-490c-8640-2eeca1b7e6d5",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2517,7 +2901,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "62d5553a-c95b-4b19-bbca-a438e1b452da",
+												"id": "aa77e5f2-37e9-4bb8-bc0f-49c23b6654e2",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2570,7 +2954,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "e7bb9428-cc0e-48d6-a3f1-e0ba830bfa44",
+												"id": "a05f9c76-cfd3-427c-a0e4-a37b8a49fbea",
 												"exec": [
 													"pm.globals.unset(\"payment_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -2581,7 +2965,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "4e8a32c3-04d0-4f04-8c5a-8bfcc5abd858",
+												"id": "a9991379-098f-4754-81f0-1b570df61acb",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -2676,7 +3060,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "65fe2529-c0c6-45a0-a966-b6d1fb1807b5",
+												"id": "a050c587-fbbd-4bd7-9285-1d649d9a633e",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2717,12 +3101,12 @@
 									"response": []
 								},
 								{
-									"name": "5. Authorise in ledgers for payment processing",
+									"name": "5. Authorise in Keycloak",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "40efc2c3-db53-49db-9b9d-2a61f51cf15a",
+												"id": "8aea3a4e-0241-486f-8a81-ac3ecf571595",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2730,69 +3114,94 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"pm.globals.set(\"keycloak_login_token\", jsonData.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"user-agent": true,
+											"connection": true,
+											"accept-encoding": true,
+											"accept": true
+										}
+									},
 									"request": {
+										"auth": {
+											"type": "noauth"
+										},
 										"method": "POST",
 										"header": [
 											{
-												"key": "psu-id",
+												"key": "Content-Type",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "{{psu_id_none}}",
 												"disabled": true
 											},
 											{
-												"key": "Content-Type",
-												"name": "Content-Type",
+												"key": "Accept",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "application/json"
+												"disabled": true
+											},
+											{
+												"key": "Authentication",
+												"value": "Basic UzZCaGRSa3F0MzpmYzgyOTQxNC1jYmRlLTQ5NGYtYTJhNy0xNDY3OTkzN2FlZWI=",
+												"type": "text",
+												"disabled": true
 											}
 										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "password",
+													"type": "text"
+												},
+												{
+													"key": "username",
+													"value": "{{psu_id_single}}",
+													"type": "text"
+												},
+												{
+													"key": "password",
+													"value": "{{psu_id_password}}",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "ledgers-client",
+													"type": "text"
+												},
+												{
+													"key": "client_secret",
+													"value": "a61a81cd-7178-40d8-8386-ed02791e6592",
+													"type": "text"
+												}
+											],
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_payment_id}}&authorisationId={{authorisation_id}}&opType=PAYMENT",
+											"raw": "{{protocol}}://{{url_keycloak}}/auth/realms/ledgers/protocol/openid-connect/token",
 											"protocol": "{{protocol}}",
 											"host": [
-												"{{url_ledgers}}"
+												"{{url_keycloak}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_payment_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "PAYMENT"
-												}
+												"auth",
+												"realms",
+												"ledgers",
+												"protocol",
+												"openid-connect",
+												"token"
 											]
 										}
 									},
@@ -2804,7 +3213,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "94501f72-6c83-47b7-a7a9-6e1a1b1a4100",
+												"id": "195453ee-31e7-478d-ab37-d0711db65fdb",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -2823,10 +3232,8 @@
 													"    pm.expect(jsonData.paymentId).to.eq(pm.globals.get('internal_payment_id'));",
 													"});",
 													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});"
+													"pm.globals.set(\"keycloak_sca_token\", jsonData.bearerToken.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -2838,7 +3245,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_login_token}}",
 													"type": "string"
 												}
 											]
@@ -2882,12 +3289,89 @@
 									"response": []
 								},
 								{
-									"name": "7. Select SCA method",
+									"name": "7. Start SCA in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "b5a85e89-8a0e-4d78-9e9c-4d964fa34256",
+												"id": "8f633669-cd7e-43d1-9249-6854a6c50b79",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"SCA methods exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('scaMethods');",
+													"});",
+													"",
+													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
+													"",
+													"pm.test(\"Payment ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_payment_id'));",
+													"});",
+													"",
+													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('authorisationId');",
+													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_sca_token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"oprId\": \"{{internal_payment_id}}\",\n\t\"authorisationId\": \"{{redirect_id}}\",\n\t\"opType\": \"PAYMENT\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_ledgers}}"
+											],
+											"path": [
+												"sca",
+												"start"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Select SCA method",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "341e6be8-44d5-4b48-871a-e7a27779c7ed",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -2905,7 +3389,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -2929,14 +3413,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"scaMethods",
@@ -2947,12 +3430,12 @@
 									"response": []
 								},
 								{
-									"name": "8. Authorise payment in ledgers",
+									"name": "9. Authorise payment in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "c46b7a0d-0d6e-40dc-afbe-56ea1032adf5",
+												"id": "6d5c901a-8a23-4e65-b91c-c0ea4abdc2d1",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -2965,8 +3448,11 @@
 													"   pm.expect(jsonData).to.have.property('bearerToken');",
 													"});",
 													"",
-													"const paymentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersPaymentResponse\", paymentResponse);",
+													"var token = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersBearerToken\", token);",
+													"",
+													"const consentResponse = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
 													"",
 													"pm.test(\"SCA status is unconfirmed\", () => {",
 													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
@@ -2989,7 +3475,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -3013,14 +3499,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"authCode"
@@ -3036,12 +3521,12 @@
 									"response": []
 								},
 								{
-									"name": "9. Update ASPSP consent data for the given payment via CMS-PSU-API",
+									"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "41e8dae9-8e0c-4870-8f20-117c862d29fc",
+												"id": "6c834e2c-f561-42ca-9a34-a4cf53634542",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3054,12 +3539,12 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "58462e73-98e6-4a19-99eb-9e8bc9a122e0",
+												"id": "e795bbec-3fe7-4afe-a773-2c60f353ca83",
 												"exec": [
-													"const ledgersPaymentResponse = pm.globals.get(\"ledgersPaymentResponse\");",
-													"const utf8string = CryptoJS.enc.Utf8.parse(ledgersPaymentResponse);",
+													"var keycloakScaToken = pm.globals.get(\"keycloak_sca_token\");",
+													"var utf8string = CryptoJS.enc.Utf8.parse('{\"bearerToken\": { \"access_token\": \"' + keycloakScaToken + '\" }}');",
 													"",
-													"pm.globals.set(\"encodedLedgersPaymentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+													"pm.globals.set(\"encoded_keycloak_token\", CryptoJS.enc.Base64.stringify(utf8string));"
 												],
 												"type": "text/javascript"
 											}
@@ -3071,13 +3556,13 @@
 											{
 												"key": "Content-Type",
 												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersPaymentResponse}}\",\n  \"consentId\": \"{{payment_id}}\"\n}",
+											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encoded_keycloak_token}}\",\n  \"consentId\": \"{{internal_consent_id}}\"\n}",
 											"options": {
 												"raw": {}
 											}
@@ -3100,12 +3585,12 @@
 									"response": []
 								},
 								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
+									"name": "11. Update status of authorisation to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "ee967b73-d723-4999-8962-daf811272964",
+												"id": "7c88eafc-b86e-411b-a4bb-a690bcaa93e6",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3160,12 +3645,12 @@
 									"response": []
 								},
 								{
-									"name": "11. Update PSU data for payment initiation - provide confirmation code",
+									"name": "12. Update PSU data for payment initiation - provide confirmation code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "6288e738-1023-480e-bfb0-3aa9b9388362",
+												"id": "57ab8b5f-adfb-4664-87e0-073e55fd4678",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -3231,12 +3716,12 @@
 									"response": []
 								},
 								{
-									"name": "12. Cancel payment",
+									"name": "13. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "07ca87d5-3158-474a-ab28-65bc53419113",
+												"id": "b6606920-e412-4da7-9256-7b09425643ae",
 												"exec": [
 													"pm.test(\"Status code is 202\", function () {",
 													"    pm.response.to.have.status(202);",
@@ -3328,12 +3813,12 @@
 									"response": []
 								},
 								{
-									"name": "13. Authorise in ledgers for payment cancellation",
+									"name": "14. Start SCA in ledgers for cancellation",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "69145b92-ea94-46da-a186-79c5fb77f5c8",
+												"id": "2fe68bb0-6547-419b-b8d4-063c38aa913b",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3341,75 +3826,76 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
+													"pm.test(\"SCA methods exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"});",
 													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
+													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
+													"",
+													"pm.test(\"Payment ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_payment_id'));",
+													"});",
+													"",
+													"pm.test(\"Cancellation ID matches ID in CMS\", () => {",
 													"    pm.expect(jsonData).to.have.property('authorisationId');",
 													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('cancellation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"});"
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
 									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_sca_token}}",
+													"type": "string"
+												}
+											]
+										},
 										"method": "POST",
 										"header": [
 											{
 												"key": "Content-Type",
 												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"oprId\": \"{{internal_payment_id}}\",\n\t\"authorisationId\": \"{{cancellation_id}}\",\n\t\"opType\": \"CANCEL_PAYMENT\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_payment_id}}&authorisationId={{cancellation_id}}&opType=CANCEL_PAYMENT",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_payment_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{cancellation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "CANCEL_PAYMENT"
-												}
+												"sca",
+												"start"
 											]
 										}
 									},
 									"response": []
 								},
 								{
-									"name": "14. Select SCA method for cancellation",
+									"name": "15. Select SCA method for cancellation",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "961be934-0c9a-438b-ad10-db0d5f833fee",
+												"id": "9ec4f2ef-3fb5-4dc1-a22d-811e048ca364",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3427,7 +3913,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -3451,15 +3937,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/cancellation-authorisations/{{cancellation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{cancellation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
-												"cancellation-authorisations",
+												"sca",
+												"authorisations",
 												"{{cancellation_id}}",
 												"scaMethods",
 												"{{authenticationMethodId}}"
@@ -3469,12 +3954,12 @@
 									"response": []
 								},
 								{
-									"name": "15. Authorise payment cancellation in ledgers",
+									"name": "16. Authorise payment cancellation in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "f4fc1666-2a85-4f4c-8d43-ddb8d0594bd5",
+												"id": "454337a1-e3ed-466c-bcfe-208d711353ec",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -3487,8 +3972,11 @@
 													"   pm.expect(jsonData).to.have.property('bearerToken');",
 													"});",
 													"",
-													"const paymentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersPaymentResponse\", paymentResponse);",
+													"var token = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersBearerToken\", token);",
+													"",
+													"const consentResponse = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
 													"",
 													"pm.test(\"SCA status is unconfirmed\", () => {",
 													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
@@ -3511,7 +3999,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -3535,15 +4023,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/cancellation-authorisations/{{cancellation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{cancellation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
-												"cancellation-authorisations",
+												"sca",
+												"authorisations",
 												"{{cancellation_id}}",
 												"authCode"
 											],
@@ -3558,12 +4045,12 @@
 									"response": []
 								},
 								{
-									"name": "16. Update cancellation authorisation status to UNCONFIRMED",
+									"name": "17. Update cancellation authorisation status to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "acd4ff90-d23b-4826-9c60-89263fd61c83",
+												"id": "7c694bfc-03c1-4337-8ed5-b2821a0b21cf",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3576,7 +4063,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "7705eb4d-a27b-4bd7-9161-ce7b8e1208a4",
+												"id": "f7a4fe68-8833-4225-bb32-6e643b3dae78",
 												"exec": [
 													"var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
 													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
@@ -3627,12 +4114,12 @@
 									"response": []
 								},
 								{
-									"name": "17. Update PSU data for payment cancellation - provide code",
+									"name": "18. Update PSU data for payment cancellation - provide code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "fb9a0df0-32d6-4328-ae14-e3a3599ee37e",
+												"id": "67aba3ea-c50e-4c58-9703-235e9544f4f8",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -3698,12 +4185,12 @@
 									"response": []
 								},
 								{
-									"name": "18. Get payment initiation status",
+									"name": "19. Get payment initiation status",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "95d17e74-a8ca-455c-8225-2bf9e8225584",
+												"id": "65051a93-f6cf-438e-b534-0873cfcd8cc0",
 												"exec": [
 													"pm.test(\"Status code is 200\", function () {",
 													"    pm.response.to.have.status(200);",
@@ -3785,7 +4272,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a0892e17-72e5-446d-9131-5b3468cc2c1e",
+												"id": "5d683995-d1c6-4e66-8d96-d23fd19f0866",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3833,7 +4320,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "f8123c13-6771-41e3-95cc-1dfcea0da8f7",
+												"id": "f9ec78ad-f842-4bc2-b713-8120f790cebc",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -3886,7 +4373,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "303b586a-ff2b-49d7-a9b3-514fd228b3b6",
+												"id": "30885726-71a2-4bf7-9f09-e6c85e40cdae",
 												"exec": [
 													"pm.globals.unset(\"payment_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -3897,7 +4384,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "8bcdf89f-30aa-4830-b0f8-5689b6cea5a7",
+												"id": "b223b3a1-8c5f-479c-a4f5-c881ffd3d632",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -3992,7 +4479,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "cffc9122-d372-45d8-b633-e9f4335bc550",
+												"id": "95c5c8ef-95a0-46c6-be48-656bc7e05f27",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4033,12 +4520,12 @@
 									"response": []
 								},
 								{
-									"name": "5. Authorise in ledgers for payment processing",
+									"name": "5. Authorise in Keycloak",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "bc229fde-c579-45c6-a5e4-124aa3de125f",
+												"id": "3eda28e3-09bd-4695-82ee-594884f6b2a6",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4046,69 +4533,94 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"pm.globals.set(\"keycloak_login_token\", jsonData.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"user-agent": true,
+											"connection": true,
+											"accept-encoding": true,
+											"accept": true
+										}
+									},
 									"request": {
+										"auth": {
+											"type": "noauth"
+										},
 										"method": "POST",
 										"header": [
 											{
-												"key": "psu-id",
+												"key": "Content-Type",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "{{psu_id_none}}",
 												"disabled": true
 											},
 											{
-												"key": "Content-Type",
-												"name": "Content-Type",
+												"key": "Accept",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "application/json"
+												"disabled": true
+											},
+											{
+												"key": "Authentication",
+												"value": "Basic UzZCaGRSa3F0MzpmYzgyOTQxNC1jYmRlLTQ5NGYtYTJhNy0xNDY3OTkzN2FlZWI=",
+												"type": "text",
+												"disabled": true
 											}
 										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "password",
+													"type": "text"
+												},
+												{
+													"key": "username",
+													"value": "{{psu_id_single}}",
+													"type": "text"
+												},
+												{
+													"key": "password",
+													"value": "{{psu_id_password}}",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "ledgers-client",
+													"type": "text"
+												},
+												{
+													"key": "client_secret",
+													"value": "a61a81cd-7178-40d8-8386-ed02791e6592",
+													"type": "text"
+												}
+											],
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_payment_id}}&authorisationId={{authorisation_id}}&opType=PAYMENT",
+											"raw": "{{protocol}}://{{url_keycloak}}/auth/realms/ledgers/protocol/openid-connect/token",
 											"protocol": "{{protocol}}",
 											"host": [
-												"{{url_ledgers}}"
+												"{{url_keycloak}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_payment_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "PAYMENT"
-												}
+												"auth",
+												"realms",
+												"ledgers",
+												"protocol",
+												"openid-connect",
+												"token"
 											]
 										}
 									},
@@ -4120,7 +4632,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "55a40aae-c41f-4b47-82da-962b13346e96",
+												"id": "9903394c-292a-4d1d-89db-4c0c2929fac6",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -4139,10 +4651,8 @@
 													"    pm.expect(jsonData.paymentId).to.eq(pm.globals.get('internal_payment_id'));",
 													"});",
 													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});"
+													"pm.globals.set(\"keycloak_sca_token\", jsonData.bearerToken.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -4154,7 +4664,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_login_token}}",
 													"type": "string"
 												}
 											]
@@ -4198,12 +4708,89 @@
 									"response": []
 								},
 								{
-									"name": "7. Select SCA method",
+									"name": "7. Start SCA in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "24ff0531-a028-4318-8308-9c9d936971d9",
+												"id": "08cc406c-a554-43bd-a147-6a7f98107b4a",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"SCA methods exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('scaMethods');",
+													"});",
+													"",
+													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
+													"",
+													"pm.test(\"Payment ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_payment_id'));",
+													"});",
+													"",
+													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('authorisationId');",
+													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_sca_token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"oprId\": \"{{internal_payment_id}}\",\n\t\"authorisationId\": \"{{redirect_id}}\",\n\t\"opType\": \"PAYMENT\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_ledgers}}"
+											],
+											"path": [
+												"sca",
+												"start"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Select SCA method",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "d3c91262-046d-46e9-80b3-fe1c01d3508b",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4221,7 +4808,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -4245,14 +4832,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"scaMethods",
@@ -4263,12 +4849,12 @@
 									"response": []
 								},
 								{
-									"name": "8. Authorise payment in ledgers",
+									"name": "9. Authorise payment in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "0df9f47f-4336-4bab-b86c-b5a03da01cbc",
+												"id": "6d0b2fff-155f-4bd3-a069-fdbddb03f31c",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -4281,8 +4867,11 @@
 													"   pm.expect(jsonData).to.have.property('bearerToken');",
 													"});",
 													"",
-													"const paymentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersPaymentResponse\", paymentResponse);",
+													"var token = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersBearerToken\", token);",
+													"",
+													"const consentResponse = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
 													"",
 													"pm.test(\"SCA status is unconfirmed\", () => {",
 													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
@@ -4305,7 +4894,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -4329,14 +4918,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"authCode"
@@ -4352,12 +4940,12 @@
 									"response": []
 								},
 								{
-									"name": "9. Update ASPSP consent data for the given payment via CMS-PSU-API",
+									"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "23c89e89-32a0-4bde-bf51-508f7ee2eb7f",
+												"id": "1e67b158-f4d6-4be4-8369-9d7f78c6af64",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4370,12 +4958,12 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "1a489942-0847-4809-b939-04a65f5ee541",
+												"id": "6ca13e6b-9d7a-44df-8018-feeac51fc476",
 												"exec": [
-													"const ledgersPaymentResponse = pm.globals.get(\"ledgersPaymentResponse\");",
-													"const utf8string = CryptoJS.enc.Utf8.parse(ledgersPaymentResponse);",
+													"var keycloakLoginToken = pm.globals.get(\"keycloak_sca_token\");",
+													"var utf8string = CryptoJS.enc.Utf8.parse('{\"bearerToken\": { \"access_token\": \"' + keycloakLoginToken + '\" }}');",
 													"",
-													"pm.globals.set(\"encodedLedgersPaymentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+													"pm.globals.set(\"encoded_keycloak_token\", CryptoJS.enc.Base64.stringify(utf8string));"
 												],
 												"type": "text/javascript"
 											}
@@ -4387,13 +4975,13 @@
 											{
 												"key": "Content-Type",
 												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersPaymentResponse}}\",\n  \"consentId\": \"{{payment_id}}\"\n}",
+											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encoded_keycloak_token}}\",\n  \"consentId\": \"{{internal_payment_id}}\"\n}",
 											"options": {
 												"raw": {}
 											}
@@ -4416,12 +5004,12 @@
 									"response": []
 								},
 								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
+									"name": "11. Update status of authorisation to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "61f91b33-4806-45a8-851a-34dab8b78cf6",
+												"id": "ef9756f1-3d1e-4ecb-9d27-4049f7483832",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4448,7 +5036,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"SMS\",\n    \"authenticationData\": \"{{authConfirmationCode}}\"\n}",
+											"raw": "{\n\t\"authenticationMethodId\": \"SMS\",\n    \"authenticationData\": \"{{authConfirmationCode}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -4476,12 +5064,12 @@
 									"response": []
 								},
 								{
-									"name": "11. Update PSU data for payment initiation - provide confirmation code",
+									"name": "12. Update PSU data for payment initiation - provide confirmation code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "68bfd29f-4095-46a2-959a-7bf9c1942f50",
+												"id": "a4c9bee0-d4fe-4fb8-929b-a7e293651a3a",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -4551,7 +5139,7 @@
 							"_postman_isSubFolder": true
 						},
 						{
-							"name": "Single payment cancellation REDIRECT - confirmation of authorisation XS2A",
+							"name": "Single payment cancellation REDIRECT - confirmation of authorisation Ledgers",
 							"item": [
 								{
 									"name": "1. Set redirect SCA approach",
@@ -4559,7 +5147,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "7c16b464-c344-497a-8d89-594b1290efaf",
+												"id": "a0f5966f-bcfd-43ed-9625-a372ac7ab1ac",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4607,7 +5195,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "a470d80e-b085-4999-92a9-90a15343965c",
+												"id": "29fa5fea-c1a9-4dec-b242-8843961000a9",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4660,7 +5248,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "8fbbbce1-cef0-415f-9343-d3afccf1b327",
+												"id": "57ae2519-f520-4959-9c3e-37db0fed521a",
 												"exec": [
 													"pm.globals.unset(\"payment_id\");",
 													"pm.globals.unset(\"redirect_id\");"
@@ -4671,7 +5259,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "016750b8-4b2f-432e-b01a-41d5e702d4d7",
+												"id": "21c6b1ed-7370-4455-8fa8-500142a540b3",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -4766,7 +5354,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "4bad11f5-2cea-4f76-b64f-53413e1be64e",
+												"id": "07809978-ddf2-4e4c-8763-817161c52466",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4807,12 +5395,12 @@
 									"response": []
 								},
 								{
-									"name": "5. Authorise in ledgers for payment processing",
+									"name": "5. Authorise in Keycloak",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "8ddd8a3f-c5b5-4f33-844b-f01ba6f0a1e0",
+												"id": "dab791e7-bcc6-4792-8d19-fe87ea9b63e7",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4820,69 +5408,94 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"pm.globals.set(\"keycloak_login_token\", jsonData.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"user-agent": true,
+											"connection": true,
+											"accept-encoding": true,
+											"accept": true
+										}
+									},
 									"request": {
+										"auth": {
+											"type": "noauth"
+										},
 										"method": "POST",
 										"header": [
 											{
-												"key": "psu-id",
+												"key": "Content-Type",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "{{psu_id_none}}",
 												"disabled": true
 											},
 											{
-												"key": "Content-Type",
-												"name": "Content-Type",
+												"key": "Accept",
+												"value": "application/jwt",
 												"type": "text",
-												"value": "application/json"
+												"disabled": true
+											},
+											{
+												"key": "Authentication",
+												"value": "Basic UzZCaGRSa3F0MzpmYzgyOTQxNC1jYmRlLTQ5NGYtYTJhNy0xNDY3OTkzN2FlZWI=",
+												"type": "text",
+												"disabled": true
 											}
 										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "password",
+													"type": "text"
+												},
+												{
+													"key": "username",
+													"value": "{{psu_id_single}}",
+													"type": "text"
+												},
+												{
+													"key": "password",
+													"value": "{{psu_id_password}}",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "ledgers-client",
+													"type": "text"
+												},
+												{
+													"key": "client_secret",
+													"value": "a61a81cd-7178-40d8-8386-ed02791e6592",
+													"type": "text"
+												}
+											],
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_payment_id}}&authorisationId={{authorisation_id}}&opType=PAYMENT",
+											"raw": "{{protocol}}://{{url_keycloak}}/auth/realms/ledgers/protocol/openid-connect/token",
 											"protocol": "{{protocol}}",
 											"host": [
-												"{{url_ledgers}}"
+												"{{url_keycloak}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_payment_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "PAYMENT"
-												}
+												"auth",
+												"realms",
+												"ledgers",
+												"protocol",
+												"openid-connect",
+												"token"
 											]
 										}
 									},
@@ -4894,7 +5507,7 @@
 										{
 											"listen": "test",
 											"script": {
-												"id": "fc1511b9-a237-43ce-9279-82b689da6c97",
+												"id": "6c3ebaf7-107f-4136-a8b6-77b1fdaffc92",
 												"exec": [
 													"pm.test(\"Status code is 201\", () => {",
 													"    pm.response.to.have.status(201);",
@@ -4913,10 +5526,8 @@
 													"    pm.expect(jsonData.paymentId).to.eq(pm.globals.get('internal_payment_id'));",
 													"});",
 													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});"
+													"pm.globals.set(\"keycloak_sca_token\", jsonData.bearerToken.access_token);",
+													""
 												],
 												"type": "text/javascript"
 											}
@@ -4928,7 +5539,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_login_token}}",
 													"type": "string"
 												}
 											]
@@ -4972,12 +5583,89 @@
 									"response": []
 								},
 								{
-									"name": "7. Select SCA method",
+									"name": "7. Start SCA in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "8b4fec84-9ada-4523-9822-15bb0986b8a7",
+												"id": "6632292c-3cc9-45e3-b25c-12600a099bc1",
+												"exec": [
+													"pm.test(\"Status code is 200\", () => {",
+													"    pm.response.to.have.status(200);",
+													"});",
+													"",
+													"const jsonData = pm.response.json();",
+													"",
+													"pm.test(\"SCA methods exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('scaMethods');",
+													"});",
+													"",
+													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
+													"",
+													"pm.test(\"Payment ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_payment_id'));",
+													"});",
+													"",
+													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('authorisationId');",
+													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_sca_token}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"name": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"oprId\": \"{{internal_payment_id}}\",\n\t\"authorisationId\": \"{{redirect_id}}\",\n\t\"opType\": \"PAYMENT\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
+											"protocol": "{{protocol}}",
+											"host": [
+												"{{url_ledgers}}"
+											],
+											"path": [
+												"sca",
+												"start"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "8. Select SCA method",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "ef8b6876-b916-485b-aae6-432f95c6d2cf",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -4995,7 +5683,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -5019,14 +5707,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"scaMethods",
@@ -5037,12 +5724,12 @@
 									"response": []
 								},
 								{
-									"name": "8. Authorise payment in ledgers",
+									"name": "9. Authorise payment in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "469fbe5d-7c85-43c4-a851-841fc8b346c1",
+												"id": "7afd5c1a-d112-4df8-9b9b-388c5321be0c",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -5055,8 +5742,11 @@
 													"   pm.expect(jsonData).to.have.property('bearerToken');",
 													"});",
 													"",
-													"const paymentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersPaymentResponse\", paymentResponse);",
+													"var token = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersBearerToken\", token);",
+													"",
+													"const consentResponse = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
 													"",
 													"pm.test(\"SCA status is unconfirmed\", () => {",
 													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
@@ -5079,7 +5769,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -5103,14 +5793,13 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
+												"sca",
 												"authorisations",
 												"{{authorisation_id}}",
 												"authCode"
@@ -5126,12 +5815,12 @@
 									"response": []
 								},
 								{
-									"name": "9. Update ASPSP consent data for the given payment via CMS-PSU-API",
+									"name": "10. Update ASPSP consent data for the given AIS consent in CMS-PSU-API",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "7ff1fd74-570e-46b9-876a-0b4f23b29c6e",
+												"id": "a4557494-4d8c-4288-aaa5-2a29316a2828",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -5144,12 +5833,12 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "15d04406-ccf4-4fb5-9a15-28fca1fd703a",
+												"id": "dd48b1cb-6f13-43d0-a6da-3bbe3a0e3df1",
 												"exec": [
-													"const ledgersPaymentResponse = pm.globals.get(\"ledgersPaymentResponse\");",
-													"const utf8string = CryptoJS.enc.Utf8.parse(ledgersPaymentResponse);",
+													"var keycloakScaToken = pm.globals.get(\"keycloak_sca_token\");",
+													"var utf8string = CryptoJS.enc.Utf8.parse('{\"bearerToken\": { \"access_token\": \"' + keycloakScaToken + '\" }}');",
 													"",
-													"pm.globals.set(\"encodedLedgersPaymentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
+													"pm.globals.set(\"encoded_keycloak_token\", CryptoJS.enc.Base64.stringify(utf8string));"
 												],
 												"type": "text/javascript"
 											}
@@ -5161,13 +5850,13 @@
 											{
 												"key": "Content-Type",
 												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersPaymentResponse}}\",\n  \"consentId\": \"{{payment_id}}\"\n}",
+											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encoded_keycloak_token}}\",\n  \"consentId\": \"{{internal_consent_id}}\"\n}",
 											"options": {
 												"raw": {}
 											}
@@ -5190,12 +5879,12 @@
 									"response": []
 								},
 								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
+									"name": "11. Update status of authorisation to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "bf899bf8-c131-4609-951d-72e782012a9a",
+												"id": "e3a56776-6dd8-43ae-b973-b4447dbf04a0",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -5222,7 +5911,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n    \"authenticationMethodId\": \"SMS\",\n    \"authenticationData\": \"{{authConfirmationCode}}\"\n}",
+											"raw": "{\n\t\"authenticationMethodId\": \"SMS\",\n    \"authenticationData\": \"{{authConfirmationCode}}\"\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -5250,12 +5939,12 @@
 									"response": []
 								},
 								{
-									"name": "11. Update PSU data for payment initiation - provide confirmation code",
+									"name": "12. Update PSU data for payment initiation - provide confirmation code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "d0fe6f32-fbff-47af-833b-4f155ddbd241",
+												"id": "424f0615-7c7d-4e47-bb4c-95cb33d846b5",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -5321,12 +6010,12 @@
 									"response": []
 								},
 								{
-									"name": "12. Cancel payment",
+									"name": "13. Cancel payment",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "fd4627db-344e-4a66-adb6-877708f798b4",
+												"id": "d4b11247-8c0e-46b2-a985-e9e68cd7c279",
 												"exec": [
 													"pm.test(\"Status code is 202\", function () {",
 													"    pm.response.to.have.status(202);",
@@ -5418,12 +6107,12 @@
 									"response": []
 								},
 								{
-									"name": "13. Authorise in ledgers for payment cancellation",
+									"name": "14. Start SCA in ledgers for cancellation",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "84364765-4211-429a-ade4-75300468192a",
+												"id": "497e7723-ee65-4d59-8f5a-51d41fcf3006",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -5431,75 +6120,76 @@
 													"",
 													"const jsonData = pm.response.json();",
 													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
+													"pm.test(\"SCA methods exists\", () => {",
+													"    pm.expect(jsonData).to.have.property('scaMethods');",
 													"});",
 													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
+													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
+													"",
+													"pm.test(\"Payment ID matches ID in CMS\", () => {",
+													"    pm.expect(jsonData).to.have.property('operationObjectId');",
+													"    pm.expect(jsonData.operationObjectId).to.eq(pm.globals.get('internal_payment_id'));",
+													"});",
+													"",
+													"pm.test(\"Cancellation ID matches ID in CMS\", () => {",
 													"    pm.expect(jsonData).to.have.property('authorisationId');",
 													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('cancellation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
+													"});"
 												],
 												"type": "text/javascript"
 											}
 										}
 									],
 									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{keycloak_sca_token}}",
+													"type": "string"
+												}
+											]
+										},
 										"method": "POST",
 										"header": [
 											{
 												"key": "Content-Type",
 												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
+												"value": "application/json",
+												"type": "text"
 											}
 										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\t\"oprId\": \"{{internal_payment_id}}\",\n\t\"authorisationId\": \"{{cancellation_id}}\",\n\t\"opType\": \"CANCEL_PAYMENT\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_payment_id}}&authorisationId={{cancellation_id}}&opType=CANCEL_PAYMENT",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/start",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_payment_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{cancellation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "CANCEL_PAYMENT"
-												}
+												"sca",
+												"start"
 											]
 										}
 									},
 									"response": []
 								},
 								{
-									"name": "14. Select SCA method for cancellation",
+									"name": "15. Select SCA method for cancellation",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "fb0fcda2-1d30-40e2-b0bf-2ed9abebcb16",
+												"id": "c356b439-2891-45ce-9458-ecdd055e0e55",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -5517,7 +6207,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -5541,15 +6231,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/cancellation-authorisations/{{cancellation_id}}/scaMethods/{{authenticationMethodId}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{cancellation_id}}/scaMethods/{{authenticationMethodId}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
-												"cancellation-authorisations",
+												"sca",
+												"authorisations",
 												"{{cancellation_id}}",
 												"scaMethods",
 												"{{authenticationMethodId}}"
@@ -5559,12 +6248,12 @@
 									"response": []
 								},
 								{
-									"name": "15. Authorise payment cancellation in ledgers",
+									"name": "16. Authorise payment cancellation in ledgers",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "43c65f26-b74c-4343-92c0-17522232d175",
+												"id": "5b15149e-7195-4edb-9718-a14913790385",
 												"exec": [
 													"const jsonData = pm.response.json();",
 													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
@@ -5577,8 +6266,11 @@
 													"   pm.expect(jsonData).to.have.property('bearerToken');",
 													"});",
 													"",
-													"const paymentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersPaymentResponse\", paymentResponse);",
+													"var token = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersBearerToken\", token);",
+													"",
+													"const consentResponse = JSON.stringify(jsonData);",
+													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
 													"",
 													"pm.test(\"SCA status is unconfirmed\", () => {",
 													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
@@ -5601,7 +6293,7 @@
 											"bearer": [
 												{
 													"key": "token",
-													"value": "{{ledgersBearerToken}}",
+													"value": "{{keycloak_sca_token}}",
 													"type": "string"
 												}
 											]
@@ -5625,15 +6317,14 @@
 											}
 										},
 										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/payments/{{internal_payment_id}}/cancellation-authorisations/{{cancellation_id}}/authCode?authCode={{tan}}",
+											"raw": "{{protocol}}://{{url_ledgers}}/sca/authorisations/{{cancellation_id}}/authCode?authCode={{tan}}",
 											"protocol": "{{protocol}}",
 											"host": [
 												"{{url_ledgers}}"
 											],
 											"path": [
-												"payments",
-												"{{internal_payment_id}}",
-												"cancellation-authorisations",
+												"sca",
+												"authorisations",
 												"{{cancellation_id}}",
 												"authCode"
 											],
@@ -5648,12 +6339,12 @@
 									"response": []
 								},
 								{
-									"name": "16. Update cancellation authorisation status to UNCONFIRMED",
+									"name": "17. Update cancellation authorisation status to UNCONFIRMED",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "4dac611b-f8ff-46c9-82d1-7494e31dca16",
+												"id": "b04fdfba-7b06-4f2f-8c47-e3110a60886b",
 												"exec": [
 													"pm.test(\"Status code is 200\", () => {",
 													"    pm.response.to.have.status(200);",
@@ -5666,7 +6357,7 @@
 										{
 											"listen": "prerequest",
 											"script": {
-												"id": "76a1f54a-ccd9-461d-bbf6-a51f18210613",
+												"id": "04fac1bd-a5b8-487d-82ba-ff6c1080869f",
 												"exec": [
 													"var ledgersBearerToken = pm.globals.get(\"ledgersBearerToken\");",
 													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersBearerToken);",
@@ -5694,7 +6385,7 @@
 										],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n\t\"authenticationMethodId\": \"SMS\",\n    \"authenticationData\": \"{{authConfirmationCode}}\"\n}"
+											"raw": "{\n\t\"authenticationMethodId\": \"SMS\",\n\t\"authenticationData\": \"{{authConfirmationCode}}\"\n}"
 										},
 										"url": {
 											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/payment/{{internal_payment_id}}/authorisation/{{cancellation_id}}/status/UNCONFIRMED",
@@ -5717,12 +6408,12 @@
 									"response": []
 								},
 								{
-									"name": "17. Update PSU data for payment cancellation - provide code",
+									"name": "18. Update PSU data for payment cancellation - provide code",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "d85aa2e7-12eb-4140-81c8-c07bf919ecc1",
+												"id": "aa1d250e-e4bc-4a37-bda6-08444c01e8da",
 												"exec": [
 													"pm.test('Status code is 200', () => {",
 													"  pm.response.to.have.status(200);",
@@ -5788,12 +6479,12 @@
 									"response": []
 								},
 								{
-									"name": "18. Get payment initiation status",
+									"name": "19. Get payment initiation status",
 									"event": [
 										{
 											"listen": "test",
 											"script": {
-												"id": "7855d27d-e2d3-4010-9cf9-b9e1eab1d935",
+												"id": "4fe9c16f-0357-4704-a7f9-0614a43cd4b1",
 												"exec": [
 													"pm.test(\"Status code is 200\", function () {",
 													"    pm.response.to.have.status(200);",
@@ -5865,1615 +6556,13 @@
 				}
 			],
 			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "PIIS",
-			"item": [
-				{
-					"name": "Confirmation by SPI",
-					"item": [
-						{
-							"name": "PIIS Consent REDIRECT - confirmation of authorisation Ledgers",
-							"item": [
-								{
-									"name": "1. Set redirect SCA approach",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "2bf38d2d-d207-49e3-bba7-936e655a771b",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_profile}}"
-											],
-											"path": [
-												"api",
-												"v1",
-												"aspsp-profile",
-												"for-debug",
-												"sca-approaches"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "2. Enable PIIS consent support in ASPSP profile",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "f34779d5-2a7f-40a8-9206-030eb8fe7604",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        }\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"TPP_CONSENT_SUPPORTED\",\n        \"redirectLinkToOnlineBanking\": {\n            \"piisRedirectUrlToAspsp\": \"http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}\"\n        }\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"authorisationConfirmationRequestMandated\": true,\n    \t\"authorisationConfirmationCheckByXs2a\": false, \n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_profile}}"
-											],
-											"path": [
-												"api",
-												"v1",
-												"aspsp-profile",
-												"for-debug",
-												"aspsp-settings"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "3. Create PIIS consent in XS2A",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "43b49288-0e31-4093-af96-be34bdbdd6c9",
-												"exec": [
-													"pm.test(\"Status code is 201\", () => {",
-													"    pm.response.to.have.status(201);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"PIIS consent ID exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('consentId');",
-													"});",
-													"",
-													"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
-													"",
-													"const scaRedirectLink = jsonData._links.scaRedirect.href;",
-													"",
-													"if (scaRedirectLink !== undefined) {",
-													"    var a = scaRedirectLink.split('/');",
-													"    a.pop();",
-													"    const authorisationId = a.pop();",
-													"    pm.globals.set(\"authorisation_id\", authorisationId);",
-													"}",
-													"",
-													"const scaStatusParts = jsonData._links.scaStatus.href.split('/');",
-													"const redirectId = scaStatusParts.pop() || scaStatusParts.pop();",
-													"pm.globals.set(\"redirect_id\", redirectId);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "psu-id",
-												"value": "{{psu_id_single}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											},
-											{
-												"key": "X-Request-ID",
-												"value": "{{x_request_id}}",
-												"type": "text"
-											},
-											{
-												"key": "TPP-Explicit-Authorisation-Preferred",
-												"value": "true",
-												"type": "text"
-											},
-											{
-												"key": "TPP-Redirect-URI",
-												"value": "TPP-Redirect-URI",
-												"type": "text"
-											},
-											{
-												"key": "TPP-Nok-Redirect-URI",
-												"value": "TPP-Nok-Redirect-URI",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_single}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_xs2a}}"
-											],
-											"path": [
-												"v2",
-												"consents",
-												"confirmation-of-funds"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "8. Get consent response object by redirect id",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "a77f2417-130e-4edf-8abf-498aaa0d5ca5",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Authorisation id is present\", () => {",
-													"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
-													"});",
-													"",
-													"pm.test(\"Redirect URLs are present\", () => {",
-													"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-													"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
-													"});",
-													"",
-													"const authorisationId = jsonData.authorisationId;",
-													"pm.test(\"Authorisation id is correct\", () => {",
-													"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
-													"});",
-													"",
-													"pm.test(\"Consent id is present\", () => {",
-													"    pm.expect(jsonData.consent).to.have.property(\"id\");",
-													"});",
-													"",
-													"pm.globals.set(\"internal_consent_id\", jsonData.consent.id);",
-													"pm.globals.set(\"authorisation_id\", authorisationId);"
-												],
-												"type": "text/javascript"
-											}
-										},
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "0a1bae98-317a-49bc-b03a-5701e37b81b9",
-												"exec": [
-													"pm.globals.unset(\"internal_consent_id\");",
-													"pm.globals.unset(\"authorisation_id\");"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consent/redirect/{{redirect_id}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_cms}}"
-											],
-											"path": [
-												"psu-api",
-												"v2",
-												"piis",
-												"consent",
-												"redirect",
-												"{{redirect_id}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5. Authorise in ledgers for consent processing",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "f24a16c0-f078-40f3-ad80-16eaebc2008a",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "psu-id",
-												"type": "text",
-												"value": "{{psu_id_none}}",
-												"disabled": true
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_consent_id}}&authorisationId={{authorisation_id}}&opType=CONSENT",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_consent_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "CONSENT"
-												}
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "6. Start SCA in ledgers",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "49e27973-7564-44a8-9f56-89351025df7a",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"SCA methods exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('scaMethods');",
-													"});",
-													"",
-													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
-													"",
-													"pm.test(\"Consent ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('consentId');",
-													"    pm.expect(jsonData.consentId).to.eq(pm.globals.get('internal_consent_id'));",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{ledgersBearerToken}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"id\": \"{{internal_consent_id}}\",\n\t\"tppId\": \"{{tpp_id}}\",\n\t\"frequencyPerDay\": 400,\n\t\"access\": {\n    \t\"accounts\": [\"{{iban_single}}\"],\n    \t\"balances\": [\"{{iban_single}}\"],\n    \t\"transactions\": [\"{{iban_single}}\"]\n\t},\n\t\"validUntil\": \"2021-12-31\",\n\t\"recurringIndicator\": true\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "7. Select SCA method",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "70965ad3-61f1-4ffc-ba14-3e350ffdacc1",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{ledgersBearerToken}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations",
-												"{{authorisation_id}}",
-												"scaMethods",
-												"{{authenticationMethodId}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "8. Authorise consent in ledgers",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "ee686f9e-d8a8-4800-80bb-f0bc4f37c016",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"var token = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersBearerToken\", token);",
-													"",
-													"const consentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
-													"",
-													"pm.test(\"SCA status is unconfirmed\", () => {",
-													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
-													"});",
-													"",
-													"pm.test(\"Auth confirmation code exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('authConfirmationCode');",
-													"});",
-													"",
-													"const authConfirmationCode = jsonData.authConfirmationCode;",
-													"pm.globals.set(\"authConfirmationCode\", authConfirmationCode);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{ledgersBearerToken}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations",
-												"{{authorisation_id}}",
-												"authCode"
-											],
-											"query": [
-												{
-													"key": "authCode",
-													"value": "{{tan}}"
-												}
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "9. Update ASPSP consent data for the given PIIS consent in CMS-PSU-API",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "eb785f1e-bb24-4c56-954f-13672cbe6e05",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										},
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "b602027e-6a79-451a-86bc-11d82df11709",
-												"exec": [
-													"const ledgersConsentResponse = pm.globals.get(\"ledgersConsentResponse\");",
-													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersConsentResponse);",
-													"",
-													"pm.globals.set(\"encodedLedgersConsentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersConsentResponse}}\",\n  \"consentId\": \"{{consent_id}}\"\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/aspsp-consent-data/consents/{{piis_consent_id}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_cms}}"
-											],
-											"path": [
-												"psu-api",
-												"v1",
-												"aspsp-consent-data",
-												"consents",
-												"{{piis_consent_id}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "f7aa03e8-b027-4844-949e-5e1cfe7110dd",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "PSU-ID",
-												"type": "text",
-												"value": "{{psu_id_none}}"
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"authenticationMethodId\": \"SMS\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consent/{{internal_consent_id}}/authorisation/{{authorisation_id}}/status/UNCONFIRMED",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_cms}}"
-											],
-											"path": [
-												"psu-api",
-												"v2",
-												"piis",
-												"consent",
-												"{{internal_consent_id}}",
-												"authorisation",
-												"{{authorisation_id}}",
-												"status",
-												"UNCONFIRMED"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "11. Update PSU Data for consents finalization - provide code",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "1f5414db-92f9-4d32-b907-2ba370d960f3",
-												"exec": [
-													"pm.test('Status code is 200', () => {",
-													"  pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test('Sca status is finalised', () => {",
-													"  pm.expect(jsonData.scaStatus).to.eql('finalised');",
-													"});",
-													"",
-													"pm.test(\"Select scaStatus link exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('_links');",
-													"    const _links = jsonData._links;",
-													"    pm.expect(_links).to.have.property('scaStatus');",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "application/json"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "PSU-ID",
-												"value": "{{psu_id_single}}"
-											},
-											{
-												"key": "X-Request-ID",
-												"value": "{{x_request_id}}"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"confirmationCode\": \"{{authConfirmationCode}}\"\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{piis_consent_id}}/authorisations/{{authorisation_id}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_xs2a}}"
-											],
-											"path": [
-												"v2",
-												"consents",
-												"confirmation-of-funds",
-												"{{piis_consent_id}}",
-												"authorisations",
-												"{{authorisation_id}}"
-											]
-										},
-										"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
-									},
-									"response": []
-								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Confirmation by XS2A",
-					"item": [
-						{
-							"name": "PIIS Consent REDIRECT - confirmation of authorisation XS2A",
-							"item": [
-								{
-									"name": "1. Set redirect SCA approach",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "36253f71-7dba-405e-8185-cbff2dc6b05d",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "[\n  \"REDIRECT\",\n  \"EMBEDDED\",\n  \"DECOUPLED\"\n]",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/sca-approaches",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_profile}}"
-											],
-											"path": [
-												"api",
-												"v1",
-												"aspsp-profile",
-												"for-debug",
-												"sca-approaches"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "2. Enable PIIS consent support in ASPSP profile",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "78788b44-8b02-430b-a39d-56adfff42d86",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": false,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"BOOKED\",\n                \"PENDING\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        }\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"TPP_CONSENT_SUPPORTED\",\n        \"redirectLinkToOnlineBanking\": {\n            \"piisRedirectUrlToAspsp\": \"http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}\"\n        }\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"REDIRECT\",\n        \"startAuthorisationMode\": \"auto\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"authorisationConfirmationRequestMandated\": true,\n    \t\"authorisationConfirmationCheckByXs2a\": true, \n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_aspsp_profile}}/api/v1/aspsp-profile/for-debug/aspsp-settings",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_aspsp_profile}}"
-											],
-											"path": [
-												"api",
-												"v1",
-												"aspsp-profile",
-												"for-debug",
-												"aspsp-settings"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "3. Create PIIS consent in XS2A",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "fb1db221-b8b5-404f-8bdf-1b4508351cf4",
-												"exec": [
-													"pm.test(\"Status code is 201\", () => {",
-													"    pm.response.to.have.status(201);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"PIIS consent ID exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('consentId');",
-													"});",
-													"",
-													"pm.globals.set(\"piis_consent_id\", jsonData.consentId);",
-													"",
-													"const scaRedirectLink = jsonData._links.scaRedirect.href;",
-													"",
-													"if (scaRedirectLink !== undefined) {",
-													"    var a = scaRedirectLink.split('/');",
-													"    a.pop();",
-													"    const authorisationId = a.pop();",
-													"    pm.globals.set(\"authorisation_id\", authorisationId);",
-													"}",
-													"",
-													"const scaStatusParts = jsonData._links.scaStatus.href.split('/');",
-													"const redirectId = scaStatusParts.pop() || scaStatusParts.pop();",
-													"pm.globals.set(\"redirect_id\", redirectId);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "psu-id",
-												"value": "{{psu_id_single}}",
-												"type": "text"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											},
-											{
-												"key": "X-Request-ID",
-												"value": "{{x_request_id}}",
-												"type": "text"
-											},
-											{
-												"key": "TPP-Explicit-Authorisation-Preferred",
-												"value": "true",
-												"type": "text"
-											},
-											{
-												"key": "TPP-Redirect-URI",
-												"value": "TPP-Redirect-URI",
-												"type": "text"
-											},
-											{
-												"key": "TPP-Nok-Redirect-URI",
-												"value": "TPP-Nok-Redirect-URI",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"account\": {\n    \"iban\": \"{{iban_single}}\",\n    \"currency\": \"EUR\"\n  },\n  \"cardNumber\": \"cardNumber\",\n  \"cardExpiryDate\": \"2030-10-10\",\n  \"cardInformation\": \"cardInformation\",\n  \"registrationInformation\": \"registrationInformation\"\n\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_xs2a}}"
-											],
-											"path": [
-												"v2",
-												"consents",
-												"confirmation-of-funds"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "8. Get consent response object by redirect id",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "80aa5839-1d4a-4bc3-9985-f209013b4278",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Authorisation id is present\", () => {",
-													"    pm.expect(jsonData).to.have.property(\"authorisationId\");",
-													"});",
-													"",
-													"pm.test(\"Redirect URLs are present\", () => {",
-													"    pm.expect(jsonData).to.have.property(\"tppOkRedirectUri\");",
-													"    pm.expect(jsonData).to.have.property(\"tppNokRedirectUri\");",
-													"});",
-													"",
-													"const authorisationId = jsonData.authorisationId;",
-													"pm.test(\"Authorisation id is correct\", () => {",
-													"    pm.expect(authorisationId).to.eql(pm.globals.get(\"redirect_id\"));",
-													"});",
-													"",
-													"pm.test(\"Consent id is present\", () => {",
-													"    pm.expect(jsonData.consent).to.have.property(\"id\");",
-													"});",
-													"",
-													"pm.globals.set(\"internal_consent_id\", jsonData.consent.id);",
-													"pm.globals.set(\"authorisation_id\", authorisationId);"
-												],
-												"type": "text/javascript"
-											}
-										},
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "8cef36a9-7c56-4302-bbef-b266ce2a5f33",
-												"exec": [
-													"pm.globals.unset(\"internal_consent_id\");",
-													"pm.globals.unset(\"authorisation_id\");"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "GET",
-										"header": [],
-										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consent/redirect/{{redirect_id}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_cms}}"
-											],
-											"path": [
-												"psu-api",
-												"v2",
-												"piis",
-												"consent",
-												"redirect",
-												"{{redirect_id}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "5. Authorise in ledgers for consent processing",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "507d6265-bc4c-403b-b22e-8ae5d5e56b92",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});",
-													"",
-													"const tokenWithoutQuotes = JSON.stringify(jsonData.bearerToken.access_token).replace(/\"/g,\"\");",
-													"pm.globals.set(\"ledgersBearerToken\", tokenWithoutQuotes);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "psu-id",
-												"type": "text",
-												"value": "{{psu_id_none}}",
-												"disabled": true
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/users/loginForConsent?login={{psu_id_single}}&pin={{psu_id_password}}&consentId={{internal_consent_id}}&authorisationId={{authorisation_id}}&opType=CONSENT",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"users",
-												"loginForConsent"
-											],
-											"query": [
-												{
-													"key": "login",
-													"value": "{{psu_id_single}}"
-												},
-												{
-													"key": "pin",
-													"value": "{{psu_id_password}}"
-												},
-												{
-													"key": "consentId",
-													"value": "{{internal_consent_id}}"
-												},
-												{
-													"key": "authorisationId",
-													"value": "{{authorisation_id}}"
-												},
-												{
-													"key": "opType",
-													"value": "CONSENT"
-												}
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "6. Start SCA in ledgers",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "8e7f68eb-696f-4394-93cb-7dfe23f1f065",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test(\"SCA methods exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('scaMethods');",
-													"});",
-													"",
-													"pm.globals.set(\"authenticationMethodId\", jsonData.scaMethods[0].id);",
-													"",
-													"pm.test(\"Consent ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('consentId');",
-													"    pm.expect(jsonData.consentId).to.eq(pm.globals.get('internal_consent_id'));",
-													"});",
-													"",
-													"pm.test(\"Authorisation ID matches ID in CMS\", () => {",
-													"    pm.expect(jsonData).to.have.property('authorisationId');",
-													"    pm.expect(jsonData.authorisationId).to.eq(pm.globals.get('authorisation_id'));",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{ledgersBearerToken}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"id\": \"{{internal_consent_id}}\",\n\t\"tppId\": \"{{tpp_id}}\",\n\t\"frequencyPerDay\": 400,\n\t\"access\": {\n    \t\"accounts\": [\"{{iban_single}}\"],\n    \t\"balances\": [\"{{iban_single}}\"],\n    \t\"transactions\": [\"{{iban_single}}\"]\n\t},\n\t\"validUntil\": \"2021-12-31\",\n\t\"recurringIndicator\": true\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "7. Select SCA method",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "e742f701-3b9a-4a39-af74-d6b4c67b7ebd",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{ledgersBearerToken}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/scaMethods/{{authenticationMethodId}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations",
-												"{{authorisation_id}}",
-												"scaMethods",
-												"{{authenticationMethodId}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "8. Authorise consent in ledgers",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "ab40a043-7b59-4405-81af-11bb98f01c00",
-												"exec": [
-													"const jsonData = pm.response.json();",
-													"pm.globals.set(\"authorisation_code\", jsonData.authConfirmationCode);",
-													"",
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													"",
-													"pm.test(\"Bearer token exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('bearerToken');",
-													"});",
-													"",
-													"var token = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersBearerToken\", token);",
-													"",
-													"const consentResponse = JSON.stringify(jsonData);",
-													"pm.globals.set(\"ledgersConsentResponse\", consentResponse);",
-													"",
-													"pm.test(\"SCA status is unconfirmed\", () => {",
-													"   pm.expect(jsonData.scaStatus).to.eq('unconfirmed');",
-													"});",
-													"",
-													"pm.test(\"Auth confirmation code exists\", () => {",
-													"   pm.expect(jsonData).to.have.property('authConfirmationCode');",
-													"});",
-													"",
-													"const authConfirmationCode = jsonData.authConfirmationCode;",
-													"pm.globals.set(\"authConfirmationCode\", authConfirmationCode);"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"auth": {
-											"type": "bearer",
-											"bearer": [
-												{
-													"key": "token",
-													"value": "{{ledgersBearerToken}}",
-													"type": "string"
-												}
-											]
-										},
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_ledgers}}/consents/{{internal_consent_id}}/authorisations/{{authorisation_id}}/authCode?authCode={{tan}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_ledgers}}"
-											],
-											"path": [
-												"consents",
-												"{{internal_consent_id}}",
-												"authorisations",
-												"{{authorisation_id}}",
-												"authCode"
-											],
-											"query": [
-												{
-													"key": "authCode",
-													"value": "{{tan}}"
-												}
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "9. Update ASPSP consent data for the given PIIS consent in CMS-PSU-API",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "7bf16963-0f9d-4b68-a04b-db1595bf778d",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										},
-										{
-											"listen": "prerequest",
-											"script": {
-												"id": "ba19b3b4-1fe5-430d-8d4c-d5b6a2fd0f06",
-												"exec": [
-													"const ledgersConsentResponse = pm.globals.get(\"ledgersConsentResponse\");",
-													"var utf8string = CryptoJS.enc.Utf8.parse(ledgersConsentResponse);",
-													"",
-													"pm.globals.set(\"encodedLedgersConsentResponse\", CryptoJS.enc.Base64.stringify(utf8string));"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"aspspConsentDataBase64\": \"{{encodedLedgersConsentResponse}}\",\n  \"consentId\": \"{{consent_id}}\"\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/psu-api/v1/aspsp-consent-data/consents/{{piis_consent_id}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_cms}}"
-											],
-											"path": [
-												"psu-api",
-												"v1",
-												"aspsp-consent-data",
-												"consents",
-												"{{piis_consent_id}}"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "10. Update status of authorisation to UNCONFIRMED",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "d4356662-aebc-4ec5-a33c-f9aa00e83e81",
-												"exec": [
-													"pm.test(\"Status code is 200\", () => {",
-													"    pm.response.to.have.status(200);",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "PSU-ID",
-												"type": "text",
-												"value": "{{psu_id_none}}"
-											},
-											{
-												"key": "Content-Type",
-												"name": "Content-Type",
-												"type": "text",
-												"value": "application/json"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"authenticationMethodId\": \"SMS\",\n\t\"authenticationData\": \"{{authConfirmationCode}}\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_cms}}/psu-api/v2/piis/consent/{{internal_consent_id}}/authorisation/{{authorisation_id}}/status/UNCONFIRMED",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_cms}}"
-											],
-											"path": [
-												"psu-api",
-												"v2",
-												"piis",
-												"consent",
-												"{{internal_consent_id}}",
-												"authorisation",
-												"{{authorisation_id}}",
-												"status",
-												"UNCONFIRMED"
-											]
-										}
-									},
-									"response": []
-								},
-								{
-									"name": "11. Update PSU Data for consents finalization - provide code",
-									"event": [
-										{
-											"listen": "test",
-											"script": {
-												"id": "d43b70d1-b54e-4d25-892e-5b4123a9c422",
-												"exec": [
-													"pm.test('Status code is 200', () => {",
-													"  pm.response.to.have.status(200);",
-													"});",
-													"",
-													"const jsonData = pm.response.json();",
-													"",
-													"pm.test('Sca status is finalised', () => {",
-													"  pm.expect(jsonData.scaStatus).to.eql('finalised');",
-													"});",
-													"",
-													"pm.test(\"Select scaStatus link exists\", () => {",
-													"    pm.expect(jsonData).to.have.property('_links');",
-													"    const _links = jsonData._links;",
-													"    pm.expect(_links).to.have.property('scaStatus');",
-													"});"
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "PUT",
-										"header": [
-											{
-												"key": "Accept",
-												"value": "application/json"
-											},
-											{
-												"key": "Content-Type",
-												"value": "application/json"
-											},
-											{
-												"key": "PSU-ID",
-												"value": "{{psu_id_single}}"
-											},
-											{
-												"key": "X-Request-ID",
-												"value": "{{x_request_id}}"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\t\"confirmationCode\": \"{{authConfirmationCode}}\"\n}",
-											"options": {
-												"raw": {}
-											}
-										},
-										"url": {
-											"raw": "{{protocol}}://{{url_xs2a}}/v2/consents/confirmation-of-funds/{{piis_consent_id}}/authorisations/{{authorisation_id}}",
-											"protocol": "{{protocol}}",
-											"host": [
-												"{{url_xs2a}}"
-											],
-											"path": [
-												"v2",
-												"consents",
-												"confirmation-of-funds",
-												"{{piis_consent_id}}",
-												"authorisations",
-												"{{authorisation_id}}"
-											]
-										},
-										"description": "This method update PSU data on the consents  resource if needed.  It may authorise a consent within the Embedded SCA Approach where needed.  Independently from the SCA Approach it supports e.g. the selection of  the authentication method and a non-SCA PSU authentication.  This methods updates PSU data on the cancellation authorisation resource if needed.   There are several possible Update PSU Data requests in the context of a consent request if needed,  which depends on the SCA approach:  * Redirect SCA Approach:   A specific Update PSU Data Request is applicable for      * the selection of authentication methods, before choosing the actual SCA approach. * Decoupled SCA Approach:   A specific Update PSU Data Request is only applicable for   * adding the PSU Identification, if not provided yet in the Payment Initiation Request or the Account Information Consent Request, or if no OAuth2 access token is used, or   * the selection of authentication methods. * Embedded SCA Approach:    The Update PSU Data Request might be used    * to add credentials as a first factor authentication data of the PSU and   * to select the authentication method and   * transaction authorisation.  The SCA Approach might depend on the chosen SCA method.  For that reason, the following possible Update PSU Data request can apply to all SCA approaches:  * Select an SCA method in case of several SCA methods are available for the customer.  There are the following request types on this access path:   * Update PSU Identification   * Update PSU Authentication   * Select PSU Autorization Method      WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change.   * Transaction Authorisation     WARNING: This method need a reduced header,      therefore many optional elements are not present.      Maybe in a later version the access path will change. "
-									},
-									"response": []
-								}
-							],
-							"protocolProfileBehavior": {},
-							"_postman_isSubFolder": true
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				}
-			],
-			"protocolProfileBehavior": {}
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "835c1911-c454-4a72-836a-9e6537f18477",
+				"id": "6405618b-1426-404b-9df7-dca9f31762f1",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -7483,7 +6572,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "5cb7191a-bc69-4f01-b4bc-a7d6b8cae88e",
+				"id": "62d620f9-346d-483c-aa3b-bfc7fa6cf2f0",
 				"type": "text/javascript",
 				"exec": [
 					""
