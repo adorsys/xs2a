@@ -40,6 +40,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -69,8 +70,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsPsuPisControllerIT {
-
+class CmsPsuPisControllerIT {
     private static final String AUTHORISATION_ID = "9d7effac-da7f-43c7-9fcc-d66166839c62";
     private static final String REDIRECT_ID = "9d7effac-da7f-43c7-9fcc-d66166839c62";
     private static final String PAYMENT_ID = "cea9dda3-5154-420d-b1a7-6b4798fccb4b";

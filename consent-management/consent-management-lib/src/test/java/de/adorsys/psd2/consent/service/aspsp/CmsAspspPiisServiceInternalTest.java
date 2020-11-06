@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
@@ -44,6 +45,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -86,6 +89,8 @@ class CmsAspspPiisServiceInternalTest {
     private PiisConsentMapper piisConsentMapper;
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
+    @Mock
+    private PageRequestBuilder pageRequestBuilder;
     @InjectMocks
     private CmsAspspPiisServiceInternal cmsAspspPiisServiceInternal;
     private PsuIdData psuIdData;
@@ -320,7 +325,31 @@ class CmsAspspPiisServiceInternalTest {
         CmsPiisConsent expected = buildCmsPiisConsent();
 
         // When
-        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+
+        // Then
+        assertFalse(actual.isEmpty());
+        assertEquals(expected, actual.get(0));
+        verify(piisConsentEntitySpecification, times(1))
+            .byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+    }
+
+    @Test
+    void getConsentsForPsu_SuccessPagination() {
+        // Given
+        PsuIdData psuIdData = buildPsuIdData(PSU_ID);
+        when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        List<ConsentEntity> piisConsentEntities = Collections.singletonList(buildPiisConsentEntity());
+        when(consentJpaRepository.findAll(any(Specification.class), any(PageRequest.class)))
+            .thenReturn(new PageImpl<>(piisConsentEntities));
+        when(piisConsentLazyMigrationService.migrateIfNeeded(buildPiisConsentEntity())).thenReturn(buildPiisConsentEntity());
+        when(piisConsentMapper.mapToCmsPiisConsent(buildPiisConsentEntity())).thenReturn(buildCmsPiisConsent());
+        CmsPiisConsent expected = buildCmsPiisConsent();
+        when(pageRequestBuilder.getPageParams(0, 20)).thenReturn(PageRequest.of(0, 20));
+
+        // When
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, 0, 20);
 
         // Then
         assertFalse(actual.isEmpty());
@@ -335,7 +364,7 @@ class CmsAspspPiisServiceInternalTest {
         PsuIdData psuIdData = buildPsuIdData(PSU_ID_WRONG);
 
         // When
-        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
         assertTrue(actual.isEmpty());
@@ -349,7 +378,7 @@ class CmsAspspPiisServiceInternalTest {
         PsuIdData emptyPsuIdData = buildPsuIdData(null);
 
         // When
-        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> actual = cmsAspspPiisServiceInternal.getConsentsForPsu(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
         assertTrue(actual.isEmpty());

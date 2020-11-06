@@ -136,8 +136,8 @@ public class CmsPsuPisController implements CmsPsuPisApi {
     }
 
     @Override
-    public ResponseEntity<List<CmsPisPsuDataAuthorisation>> psuAuthorisationStatuses(String paymentId, String instanceId) {
-        return cmsPsuPisService.getPsuDataAuthorisations(paymentId, instanceId)
+    public ResponseEntity<List<CmsPisPsuDataAuthorisation>> psuAuthorisationStatuses(String paymentId, String instanceId, Integer pageIndex, Integer itemsPerPage) {
+        return cmsPsuPisService.getPsuDataAuthorisations(paymentId, instanceId, pageIndex, itemsPerPage)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }

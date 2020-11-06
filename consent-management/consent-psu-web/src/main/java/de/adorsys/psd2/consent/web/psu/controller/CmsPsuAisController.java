@@ -97,9 +97,9 @@ public class CmsPsuAisController implements CmsPsuAisApi {
     }
 
     @Override
-    public ResponseEntity<List<CmsAisAccountConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId) {
+    public ResponseEntity<List<CmsAisAccountConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType, String instanceId, Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsPsuAisService.getConsentsForPsu(psuIdData, instanceId), HttpStatus.OK);
+        return new ResponseEntity<>(cmsPsuAisService.getConsentsForPsu(psuIdData, instanceId, pageIndex, itemsPerPage), HttpStatus.OK);
     }
 
     @Override
@@ -167,8 +167,8 @@ public class CmsPsuAisController implements CmsPsuAisApi {
     }
 
     @Override
-    public ResponseEntity<List<CmsAisPsuDataAuthorisation>> psuDataAuthorisations(String consentId, String instanceId) {
-        return cmsPsuAisService.getPsuDataAuthorisations(consentId, instanceId)
+    public ResponseEntity<List<CmsAisPsuDataAuthorisation>> psuDataAuthorisations(String consentId, String instanceId, Integer pageIndex, Integer itemsPerPage) {
+        return cmsPsuAisService.getPsuDataAuthorisations(consentId, instanceId, pageIndex, itemsPerPage)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
