@@ -93,13 +93,30 @@ a|
 
 a|* Add pagination at call GET /psu-api/v1/ais/consent/consents
 
-a|* All fixes and updates from v.8.2
+a|* Add pagination at call GET /psu-api/v1/ais/consent/consents
+
+a|
+|20.11.2020| |8.3|9.2|
+
+a|
+
+a|
+
+a|* Add Confirmation Code step to Oauth flow
+
+* Bugfix: SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request
+
+a|* Add Confirmation Code step to Oauth flow
+
+* Bugfix: SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request 
 
 a|
 
 | | | | |Signing Basket plugin for XS2A
 
 | | | | |Single card account plugin for XS2A
+
+| | | | |Multiple consents plugin
 
 | | | | |Resource Notification Push Service
 
