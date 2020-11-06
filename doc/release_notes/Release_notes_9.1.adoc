@@ -14,3 +14,18 @@ retrieving performs without pagination.
 * `GET /psu-api/v1/ais/consent/{consent-id}/authorisation/psus`
 * `GET /psu-api/v1/piis/consents`
 * `GET /psu-api/v1/payment/{payment-id}/authorisation/psus`
+
+* `GET aspsp-api/v1/ais/consents/tpp/{tpp-id}`
+* `GET aspsp-api/v1/ais/consents/psu`
+* `GET aspsp-api/v1/ais/consents/account/{account-id}`
+
+* `GET aspsp-api/v1/piis/consents/tpp/{tpp-id}`
+* `GET aspsp-api/v1/piis/consents/psu`
+* `GET aspsp-api/v1/piis/consents/account/{account-id}`
+
+* `GET aspsp-api/v1/pis/payments/tpp/{tpp-id}`
+* `GET aspsp-api/v1/pis/payments/psu`
+* `GET aspsp-api/v1/pis/payments/account/{account-id}`
+
+* `GET psu-api/v1/piis/consents`
+
