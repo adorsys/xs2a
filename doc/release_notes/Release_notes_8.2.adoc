@@ -33,4 +33,3 @@ If none of the parameters passed, retrieving performs without pagination.
 == Fixed postman tests
 
 Passed dates were replaced with ones in future for get transaction list test.
-Fixed other tests to work with keycloak.
