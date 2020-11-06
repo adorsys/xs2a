@@ -104,10 +104,12 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData  PSU credentials data
      * @param instanceId optional ID of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".
@@ -145,9 +147,11 @@ public interface CmsPsuAisService {
      *
      * @param consentId  ID of Consent
      * @param instanceId optional ID of particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return list of info objects about psu data and authorisation scaStatuses
      */
-    Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId);
+    Optional<List<CmsAisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String consentId, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Puts a Status of AIS Consent object by its ID and PSU ID to PARTIALLY_AUTHORISED

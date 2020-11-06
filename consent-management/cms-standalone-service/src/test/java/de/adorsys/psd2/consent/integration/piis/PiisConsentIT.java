@@ -117,15 +117,15 @@ public class PiisConsentIT {
         flushAndClearPersistenceContext();
 
         //Then
-        List<CmsPiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID, null, null);
         assertEquals(1, consentsAspsp.size());
         assertEquals(aspsp, consentsAspsp.get(0).getPsuData());
 
-        List<CmsPiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID, null, null);
         assertEquals(1, consentsAspsp1.size());
         assertEquals(aspsp1, consentsAspsp1.get(0).getPsuData());
 
-        List<CmsPiisConsent> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsPiisConsent> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID, null, null);
         assertEquals(2, consentsAspsp1NoCorporateId.size());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuData().getPsuId());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuData().getPsuId());

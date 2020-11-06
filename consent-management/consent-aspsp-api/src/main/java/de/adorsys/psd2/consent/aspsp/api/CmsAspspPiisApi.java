@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.aspsp.api;
 
+import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
@@ -65,7 +66,9 @@ public interface CmsAspspPiisApi {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, required = false) Integer pageIndex,
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, required = false) Integer itemsPerPage);
 
     @DeleteMapping(path = "/{consent-id}")
     @ApiOperation(value = "Terminates PIIS Consent object by its ID")

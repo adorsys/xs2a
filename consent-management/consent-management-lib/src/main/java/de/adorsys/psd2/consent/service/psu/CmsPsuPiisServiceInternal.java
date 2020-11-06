@@ -24,11 +24,13 @@ import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecifi
 import de.adorsys.psd2.consent.service.mapper.PiisConsentMapper;
 import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
 import de.adorsys.psd2.consent.service.migration.PiisConsentLazyMigrationService;
+import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +50,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     private final PsuDataMapper psuDataMapper;
     private final PiisConsentEntitySpecification piisConsentEntitySpecification;
     private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
+    private final PageRequestBuilder pageRequestBuilder;
 
     @Override
     public @NotNull Optional<CmsPiisConsent> getConsent(@NotNull PsuIdData psuIdData, @NotNull String consentId, @NotNull String instanceId) {
@@ -58,8 +61,16 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
     }
 
     @Override
-    public @NotNull List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
-        return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId)).stream()
+    public @NotNull List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
+        if (pageIndex == null && itemsPerPage == null) {
+            return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId)).stream()
+                       .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
+                       .map(piisConsentLazyMigrationService::migrateIfNeeded)
+                       .map(piisConsentMapper::mapToCmsPiisConsent)
+                       .collect(Collectors.toList());
+        }
+        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+        return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId), pageRequest).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentLazyMigrationService::migrateIfNeeded)
                    .map(piisConsentMapper::mapToCmsPiisConsent)

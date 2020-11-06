@@ -48,8 +48,10 @@ public interface CmsAspspPiisService {
      *
      * @param psuIdData  PSU credentials data
      * @param instanceId ID of the particular service instance
+     * @param pageIndex index of current page
+     * @param itemsPerPage quantity of consents on one page
      * @return List of PIIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
 }

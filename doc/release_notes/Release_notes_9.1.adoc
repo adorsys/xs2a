@@ -1,0 +1,36 @@
+= Release notes v.9.1
+
+== Table of Contents
+
+* Added pagination to CMS
+* Fixed postman tests
+
+== Added pagination to CMS
+
+From now on, following CMS endpoints  has two new query parameters: `pageIndex` and `itemsPerPage`.
+They are optional and default values are `pageIndex=0` and `itemsPerPage=50`. If none of the parameters passed,
+retrieving performs without pagination.
+
+* `GET /psu-api/v1/ais/consent/consents`
+* `GET /psu-api/v1/ais/consent/{consent-id}/authorisation/psus`
+* `GET /psu-api/v1/piis/consents`
+* `GET /psu-api/v1/payment/{payment-id}/authorisation/psus`
+
+* `GET aspsp-api/v1/ais/consents/tpp/{tpp-id}`
+* `GET aspsp-api/v1/ais/consents/psu`
+* `GET aspsp-api/v1/ais/consents/account/{account-id}`
+
+* `GET aspsp-api/v1/piis/consents/tpp/{tpp-id}`
+* `GET aspsp-api/v1/piis/consents/psu`
+* `GET aspsp-api/v1/piis/consents/account/{account-id}`
+
+* `GET aspsp-api/v1/pis/payments/tpp/{tpp-id}`
+* `GET aspsp-api/v1/pis/payments/psu`
+* `GET aspsp-api/v1/pis/payments/account/{account-id}`
+
+* `GET psu-api/v1/piis/consents`
+
+== Fixed postman tests
+
+Passed dates were replaced with ones in future for get transaction list test.
+Fixed other tests to work with keycloak.
