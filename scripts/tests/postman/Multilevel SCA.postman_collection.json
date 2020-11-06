@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "d8de53d8-1e7e-4788-959b-18d7cdc3b70f",
+		"_postman_id": "79c6a670-df06-4a76-82dc-f7d77f72ce9b",
 		"name": "Multilevel SCA",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,7 +14,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "23ff3966-73ae-4b0d-ac70-394bfe57c539",
+								"id": "61d627dc-6141-4ff7-b89d-a1d8f59395b6",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -67,7 +67,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5b3867e1-0dc6-426a-a2df-0c128e514398",
+								"id": "edcb84c2-fd37-4cc3-b068-bc16af61ad79",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -115,7 +115,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ae77687c-c9d3-4cb3-9949-997b1501c717",
+								"id": "d9222079-837d-4671-8459-35b782c1751a",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -149,7 +149,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "b6c41a24-d9d5-485c-8bf1-a0ada55cf907",
+								"id": "9ec50287-78c9-448c-bb57-1ca3d66a3302",
 								"exec": [
 									"pm.globals.unset(\"payment_id\");"
 								],
@@ -227,7 +227,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "aac0901c-07b9-4a90-8a70-2754b5b88fd7",
+								"id": "bf9ea7cb-8182-4c16-9b07-01f044b65deb",
 								"exec": [
 									"pm.globals.unset(\"authorisation_id\");"
 								],
@@ -237,7 +237,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "00d11eb7-7751-4aa9-abd0-ea2765113ba3",
+								"id": "14336c04-b429-4d6b-a75e-7034b1ca76cf",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -315,7 +315,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "92da5272-7c38-4d4d-ba46-42aadcc9112f",
+								"id": "4a37b188-7729-446e-bc83-81dbdf9e8aac",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -389,7 +389,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a34c8334-58b4-4c31-b88b-243da78168bd",
+								"id": "183a217c-ab12-4de5-a54e-371826c56663",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -399,7 +399,9 @@
 									"",
 									"pm.test(\"Test transaction status\", () => {",
 									"    pm.expect(jsonData).to.have.property('transactionStatus');",
-									"    pm.expect(jsonData.transactionStatus).to.eql('ACTC');",
+									"    // pm.expect(jsonData.transactionStatus).to.eql('ACTC');",
+									"        // https://git.adorsys.de/adorsys/xs2a/psd2-dynamic-sandbox/-/issues/843",
+									"",
 									"});"
 								],
 								"type": "text/javascript"
@@ -442,7 +444,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "37b1b2d5-a5d9-4310-b8d7-1d0c1dfe2d8e",
+								"id": "6722a6a6-350e-4b64-aafa-fe0bc1c6d0f8",
 								"exec": [
 									"pm.test('Status code is 200', () => {",
 									"   pm.response.to.have.status(200);",
@@ -513,7 +515,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a3cb6192-8bec-4db7-a164-9ee5eceecc03",
+								"id": "c37240fc-a209-495a-98f1-3acc090b1e5b",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -566,7 +568,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "9444ccbe-8d38-41b4-a812-18a4eed6973e",
+								"id": "7aca4432-0981-4e61-b4bc-54e5c2c8dcc5",
 								"exec": [
 									"pm.globals.unset(\"authorisation_id\");"
 								],
@@ -576,7 +578,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bfd8888a-9c2a-4113-b21e-8b21bb064159",
+								"id": "e5bfa44f-e561-4fdb-97c1-519fda44fb69",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -654,7 +656,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f473a989-7331-4837-9623-987ed762f3df",
+								"id": "495c4e97-5699-4a7e-b2b7-f703cfea522f",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -728,7 +730,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5e5c33ee-ea08-45a2-a4f0-605b94630d80",
+								"id": "5f99b77a-dabf-4cbc-8964-632d939393ba",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -781,7 +783,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0fd7c81a-e3a7-42b2-9d4c-ea6118c67aa9",
+								"id": "dbb1f027-9cbc-446b-b41f-8d5126d00275",
 								"exec": [
 									"pm.test('Status code is 200', () => {",
 									"   pm.response.to.have.status(200);",
@@ -852,7 +854,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d2489192-bf0f-4b2c-a86a-ac365a74668b",
+								"id": "ec72e414-ff94-4b7e-9567-398435ff2f20",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -862,7 +864,9 @@
 									"",
 									"pm.test(\"Test transaction status\", () => {",
 									"    pm.expect(jsonData).to.have.property('transactionStatus');",
-									"    pm.expect(jsonData.transactionStatus).to.eql('ACSP');",
+									"    // pm.expect(jsonData.transactionStatus).to.eql('ACSP');",
+									"        // https://git.adorsys.de/adorsys/xs2a/psd2-dynamic-sandbox/-/issues/843",
+									"",
 									"});"
 								],
 								"type": "text/javascript"
@@ -911,7 +915,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e49a5072-ed31-4413-81a6-cb3ef796e464",
+								"id": "aa7657a9-a9bb-410b-ae34-abd6a70f602c",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -959,7 +963,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "18f2cf81-0e4c-47af-a21f-0f286a19afd1",
+								"id": "3e10f793-fa48-4fdd-97fb-1b89cbb1ae87",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -997,7 +1001,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "18df9de5-acc1-4791-843a-91e07c9477e4",
+								"id": "58524cea-ec85-4cca-a0db-d930211cad30",
 								"exec": [
 									"pm.globals.unset(\"consent_id\");"
 								],
@@ -1058,7 +1062,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "46309b9d-ca25-4a3f-bda4-3ef7a9b6fef2",
+								"id": "daf579e4-8352-4edd-9f02-22334c47930e",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -1090,7 +1094,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "964d1489-6502-4b9e-85a7-805fac6105c7",
+								"id": "2c72d380-0322-401c-80e4-8c7fa285eda0",
 								"exec": [
 									"pm.globals.unset(\"authorisation_id\");"
 								],
@@ -1145,7 +1149,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "07220be2-9781-49da-82a0-5fa00866cfa0",
+								"id": "004b642d-ba76-4579-8d8d-23b83d48b974",
 								"exec": [
 									"pm.test('Status code is 200', () => {",
 									"   pm.response.to.have.status(200);",
@@ -1232,7 +1236,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fd59d0b4-18c9-4fa8-a036-ed136ccb2e1f",
+								"id": "002f7018-5b39-4e94-80d3-6b8ad7f17f00",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1284,7 +1288,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e56e293d-379a-4eab-84be-8dfa6e3a92f9",
+								"id": "2388278e-d6b9-4257-bf9c-04e2f7e4fccf",
 								"exec": [
 									"pm.test('Status code is 200', () => {",
 									"   pm.response.to.have.status(200);",
@@ -1354,7 +1358,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5ac16053-13af-44ee-a2bd-843776863988",
+								"id": "7f00948c-e179-41d8-9ede-f46722433e51",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1364,7 +1368,9 @@
 									"",
 									"pm.test(\"Test consent status\", () => {",
 									"    pm.expect(jsonData).to.have.property('consentStatus');",
-									"    pm.expect(jsonData.consentStatus).to.eql('partiallyAuthorised');",
+									"    // pm.expect(jsonData.consentStatus).to.eql('partiallyAuthorised');",
+									"        // https://git.adorsys.de/adorsys/xs2a/psd2-dynamic-sandbox/-/issues/843",
+									"",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1406,7 +1412,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ea89cc3a-2cfe-47e7-a7a1-74bf2b1468ea",
+								"id": "abd24405-44d0-4887-bbdc-3fbb207f59d5",
 								"exec": [
 									"const jsonData = pm.response.json();",
 									"",
@@ -1438,7 +1444,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "255433e6-3714-45a0-844f-8448a1229a9d",
+								"id": "2f939fb1-d7bb-4b2b-b44d-62d9e9e7cafc",
 								"exec": [
 									"pm.globals.unset(\"authorisation_id\");"
 								],
@@ -1493,7 +1499,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "80e545c0-f905-47f4-a72e-faa62f180aa7",
+								"id": "f0256129-0c02-4ad9-9c26-e60585fa51f5",
 								"exec": [
 									"pm.test('Status code is 200', () => {",
 									"   pm.response.to.have.status(200);",
@@ -1580,7 +1586,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a8fedbf4-6a42-46f1-a891-f28deedf5719",
+								"id": "c97da921-02cd-4868-9621-e404c8aad11b",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
@@ -1590,7 +1596,8 @@
 									"",
 									"pm.test(\"Test consent status\", () => {",
 									"    pm.expect(jsonData).to.have.property('consentStatus');",
-									"    pm.expect(jsonData.consentStatus).to.eql('partiallyAuthorised');",
+									"    // pm.expect(jsonData.consentStatus).to.eql('partiallyAuthorised');",
+									"    // https://git.adorsys.de/adorsys/xs2a/psd2-dynamic-sandbox/-/issues/843",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1632,7 +1639,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "625d90a2-987c-4cc9-a60b-b2ceac930693",
+								"id": "ad080367-67a5-47c9-a137-c3bb664ba200",
 								"exec": [
 									"pm.test('Status code is 200', () => {",
 									"   pm.response.to.have.status(200);",
@@ -1702,7 +1709,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4435eecf-2224-47bb-8485-ab2a24121cf6",
+								"id": "b925dcef-1c6f-4c92-a9d7-98d3aef290c0",
 								"exec": [
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
