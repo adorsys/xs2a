@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Added pagination to CMS
+* Fixed postman tests
 
 == Added pagination to CMS
 
@@ -28,3 +29,8 @@ If none of the parameters passed, retrieving performs without pagination.
 * `GET aspsp-api/v1/pis/payments/account/{account-id}`
 
 * `GET psu-api/v1/piis/consents`
+
+== Fixed postman tests
+
+Passed dates were replaced with ones in future for get transaction list test.
+Fixed other tests to work with keycloak.
