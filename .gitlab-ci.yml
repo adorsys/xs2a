@@ -364,7 +364,7 @@ Push to DockerHub (master):
     - master
   variables:
     DOCKER_TAG: latest
-  <<: *build_dockerhub_imag
+  <<: *build_dockerhub_image
 
 # Build RELEASE image and deploy (manual) to DEMO
 
