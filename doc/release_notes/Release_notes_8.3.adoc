@@ -2,3 +2,8 @@
 
 == Table of Contents
 
+* Fixed SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request
+
+== Fixed SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request
+
+From now on, SCA redirect approach with authorisation confirmation request works correctly (authorisation is updated) with no PSU-ID http header is available in request
