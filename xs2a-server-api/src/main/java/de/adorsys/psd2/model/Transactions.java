@@ -24,9 +24,9 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
-public class TransactionDetails   {
+public class Transactions   {
   @JsonProperty("transactionId")
   private String transactionId = null;
 
@@ -114,7 +114,7 @@ public class TransactionDetails   {
   @JsonProperty("_links")
   private Map _links = null;
 
-  public TransactionDetails transactionId(String transactionId) {
+  public Transactions transactionId(String transactionId) {
     this.transactionId = transactionId;
     return this;
   }
@@ -136,7 +136,7 @@ public class TransactionDetails   {
     this.transactionId = transactionId;
   }
 
-  public TransactionDetails entryReference(String entryReference) {
+  public Transactions entryReference(String entryReference) {
     this.entryReference = entryReference;
     return this;
   }
@@ -158,7 +158,7 @@ public class TransactionDetails   {
     this.entryReference = entryReference;
   }
 
-  public TransactionDetails endToEndId(String endToEndId) {
+  public Transactions endToEndId(String endToEndId) {
     this.endToEndId = endToEndId;
     return this;
   }
@@ -180,7 +180,7 @@ public class TransactionDetails   {
     this.endToEndId = endToEndId;
   }
 
-  public TransactionDetails mandateId(String mandateId) {
+  public Transactions mandateId(String mandateId) {
     this.mandateId = mandateId;
     return this;
   }
@@ -202,7 +202,7 @@ public class TransactionDetails   {
     this.mandateId = mandateId;
   }
 
-  public TransactionDetails checkId(String checkId) {
+  public Transactions checkId(String checkId) {
     this.checkId = checkId;
     return this;
   }
@@ -224,7 +224,7 @@ public class TransactionDetails   {
     this.checkId = checkId;
   }
 
-  public TransactionDetails creditorId(String creditorId) {
+  public Transactions creditorId(String creditorId) {
     this.creditorId = creditorId;
     return this;
   }
@@ -246,7 +246,7 @@ public class TransactionDetails   {
     this.creditorId = creditorId;
   }
 
-  public TransactionDetails bookingDate(LocalDate bookingDate) {
+  public Transactions bookingDate(LocalDate bookingDate) {
     this.bookingDate = bookingDate;
     return this;
   }
@@ -269,7 +269,7 @@ public class TransactionDetails   {
     this.bookingDate = bookingDate;
   }
 
-  public TransactionDetails valueDate(LocalDate valueDate) {
+  public Transactions valueDate(LocalDate valueDate) {
     this.valueDate = valueDate;
     return this;
   }
@@ -292,7 +292,7 @@ public class TransactionDetails   {
     this.valueDate = valueDate;
   }
 
-  public TransactionDetails transactionAmount(Amount transactionAmount) {
+  public Transactions transactionAmount(Amount transactionAmount) {
     this.transactionAmount = transactionAmount;
     return this;
   }
@@ -316,7 +316,7 @@ public class TransactionDetails   {
     this.transactionAmount = transactionAmount;
   }
 
-  public TransactionDetails currencyExchange(ReportExchangeRateList currencyExchange) {
+  public Transactions currencyExchange(ReportExchangeRateList currencyExchange) {
     this.currencyExchange = currencyExchange;
     return this;
   }
@@ -339,7 +339,7 @@ public class TransactionDetails   {
     this.currencyExchange = currencyExchange;
   }
 
-  public TransactionDetails creditorName(String creditorName) {
+  public Transactions creditorName(String creditorName) {
     this.creditorName = creditorName;
     return this;
   }
@@ -361,7 +361,7 @@ public class TransactionDetails   {
     this.creditorName = creditorName;
   }
 
-  public TransactionDetails creditorAccount(AccountReference creditorAccount) {
+  public Transactions creditorAccount(AccountReference creditorAccount) {
     this.creditorAccount = creditorAccount;
     return this;
   }
@@ -384,7 +384,7 @@ public class TransactionDetails   {
     this.creditorAccount = creditorAccount;
   }
 
-  public TransactionDetails creditorAgent(String creditorAgent) {
+  public Transactions creditorAgent(String creditorAgent) {
     this.creditorAgent = creditorAgent;
     return this;
   }
@@ -406,7 +406,7 @@ public class TransactionDetails   {
     this.creditorAgent = creditorAgent;
   }
 
-  public TransactionDetails ultimateCreditor(String ultimateCreditor) {
+  public Transactions ultimateCreditor(String ultimateCreditor) {
     this.ultimateCreditor = ultimateCreditor;
     return this;
   }
@@ -428,7 +428,7 @@ public class TransactionDetails   {
     this.ultimateCreditor = ultimateCreditor;
   }
 
-  public TransactionDetails debtorName(String debtorName) {
+  public Transactions debtorName(String debtorName) {
     this.debtorName = debtorName;
     return this;
   }
@@ -450,7 +450,7 @@ public class TransactionDetails   {
     this.debtorName = debtorName;
   }
 
-  public TransactionDetails debtorAccount(AccountReference debtorAccount) {
+  public Transactions debtorAccount(AccountReference debtorAccount) {
     this.debtorAccount = debtorAccount;
     return this;
   }
@@ -473,7 +473,7 @@ public class TransactionDetails   {
     this.debtorAccount = debtorAccount;
   }
 
-  public TransactionDetails debtorAgent(String debtorAgent) {
+  public Transactions debtorAgent(String debtorAgent) {
     this.debtorAgent = debtorAgent;
     return this;
   }
@@ -495,7 +495,7 @@ public class TransactionDetails   {
     this.debtorAgent = debtorAgent;
   }
 
-  public TransactionDetails ultimateDebtor(String ultimateDebtor) {
+  public Transactions ultimateDebtor(String ultimateDebtor) {
     this.ultimateDebtor = ultimateDebtor;
     return this;
   }
@@ -517,7 +517,7 @@ public class TransactionDetails   {
     this.ultimateDebtor = ultimateDebtor;
   }
 
-  public TransactionDetails remittanceInformationUnstructured(String remittanceInformationUnstructured) {
+  public Transactions remittanceInformationUnstructured(String remittanceInformationUnstructured) {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
     return this;
   }
@@ -539,7 +539,7 @@ public class TransactionDetails   {
     this.remittanceInformationUnstructured = remittanceInformationUnstructured;
   }
 
-  public TransactionDetails remittanceInformationUnstructuredArray(RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray) {
+  public Transactions remittanceInformationUnstructuredArray(RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray) {
     this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
     return this;
   }
@@ -562,7 +562,7 @@ public class TransactionDetails   {
     this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
   }
 
-  public TransactionDetails remittanceInformationStructured(String remittanceInformationStructured) {
+  public Transactions remittanceInformationStructured(String remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
     return this;
   }
@@ -584,7 +584,7 @@ public class TransactionDetails   {
     this.remittanceInformationStructured = remittanceInformationStructured;
   }
 
-  public TransactionDetails remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+  public Transactions remittanceInformationStructuredArray(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
     this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
     return this;
   }
@@ -607,7 +607,7 @@ public class TransactionDetails   {
     this.remittanceInformationStructuredArray = remittanceInformationStructuredArray;
   }
 
-  public TransactionDetails additionalInformation(String additionalInformation) {
+  public Transactions additionalInformation(String additionalInformation) {
     this.additionalInformation = additionalInformation;
     return this;
   }
@@ -629,7 +629,7 @@ public class TransactionDetails   {
     this.additionalInformation = additionalInformation;
   }
 
-  public TransactionDetails additionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
+  public Transactions additionalInformationStructured(AdditionalInformationStructured additionalInformationStructured) {
     this.additionalInformationStructured = additionalInformationStructured;
     return this;
   }
@@ -652,7 +652,7 @@ public class TransactionDetails   {
     this.additionalInformationStructured = additionalInformationStructured;
   }
 
-  public TransactionDetails purposeCode(PurposeCode purposeCode) {
+  public Transactions purposeCode(PurposeCode purposeCode) {
     this.purposeCode = purposeCode;
     return this;
   }
@@ -675,7 +675,7 @@ public class TransactionDetails   {
     this.purposeCode = purposeCode;
   }
 
-  public TransactionDetails bankTransactionCode(String bankTransactionCode) {
+  public Transactions bankTransactionCode(String bankTransactionCode) {
     this.bankTransactionCode = bankTransactionCode;
     return this;
   }
@@ -697,7 +697,7 @@ public class TransactionDetails   {
     this.bankTransactionCode = bankTransactionCode;
   }
 
-  public TransactionDetails proprietaryBankTransactionCode(String proprietaryBankTransactionCode) {
+  public Transactions proprietaryBankTransactionCode(String proprietaryBankTransactionCode) {
     this.proprietaryBankTransactionCode = proprietaryBankTransactionCode;
     return this;
   }
@@ -719,7 +719,7 @@ public class TransactionDetails   {
     this.proprietaryBankTransactionCode = proprietaryBankTransactionCode;
   }
 
-  public TransactionDetails balanceAfterTransaction(Balance balanceAfterTransaction) {
+  public Transactions balanceAfterTransaction(Balance balanceAfterTransaction) {
     this.balanceAfterTransaction = balanceAfterTransaction;
     return this;
   }
@@ -742,7 +742,7 @@ public class TransactionDetails   {
     this.balanceAfterTransaction = balanceAfterTransaction;
   }
 
-  public TransactionDetails _links(Map _links) {
+  public Transactions _links(Map _links) {
     this._links = _links;
     return this;
   }
@@ -773,36 +773,36 @@ public class TransactionDetails   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-}    TransactionDetails transactionDetails = (TransactionDetails) o;
-    return Objects.equals(this.transactionId, transactionDetails.transactionId) &&
-    Objects.equals(this.entryReference, transactionDetails.entryReference) &&
-    Objects.equals(this.endToEndId, transactionDetails.endToEndId) &&
-    Objects.equals(this.mandateId, transactionDetails.mandateId) &&
-    Objects.equals(this.checkId, transactionDetails.checkId) &&
-    Objects.equals(this.creditorId, transactionDetails.creditorId) &&
-    Objects.equals(this.bookingDate, transactionDetails.bookingDate) &&
-    Objects.equals(this.valueDate, transactionDetails.valueDate) &&
-    Objects.equals(this.transactionAmount, transactionDetails.transactionAmount) &&
-    Objects.equals(this.currencyExchange, transactionDetails.currencyExchange) &&
-    Objects.equals(this.creditorName, transactionDetails.creditorName) &&
-    Objects.equals(this.creditorAccount, transactionDetails.creditorAccount) &&
-    Objects.equals(this.creditorAgent, transactionDetails.creditorAgent) &&
-    Objects.equals(this.ultimateCreditor, transactionDetails.ultimateCreditor) &&
-    Objects.equals(this.debtorName, transactionDetails.debtorName) &&
-    Objects.equals(this.debtorAccount, transactionDetails.debtorAccount) &&
-    Objects.equals(this.debtorAgent, transactionDetails.debtorAgent) &&
-    Objects.equals(this.ultimateDebtor, transactionDetails.ultimateDebtor) &&
-    Objects.equals(this.remittanceInformationUnstructured, transactionDetails.remittanceInformationUnstructured) &&
-    Objects.equals(this.remittanceInformationUnstructuredArray, transactionDetails.remittanceInformationUnstructuredArray) &&
-    Objects.equals(this.remittanceInformationStructured, transactionDetails.remittanceInformationStructured) &&
-    Objects.equals(this.remittanceInformationStructuredArray, transactionDetails.remittanceInformationStructuredArray) &&
-    Objects.equals(this.additionalInformation, transactionDetails.additionalInformation) &&
-    Objects.equals(this.additionalInformationStructured, transactionDetails.additionalInformationStructured) &&
-    Objects.equals(this.purposeCode, transactionDetails.purposeCode) &&
-    Objects.equals(this.bankTransactionCode, transactionDetails.bankTransactionCode) &&
-    Objects.equals(this.proprietaryBankTransactionCode, transactionDetails.proprietaryBankTransactionCode) &&
-    Objects.equals(this.balanceAfterTransaction, transactionDetails.balanceAfterTransaction) &&
-    Objects.equals(this._links, transactionDetails._links);
+}    Transactions transactions = (Transactions) o;
+    return Objects.equals(this.transactionId, transactions.transactionId) &&
+    Objects.equals(this.entryReference, transactions.entryReference) &&
+    Objects.equals(this.endToEndId, transactions.endToEndId) &&
+    Objects.equals(this.mandateId, transactions.mandateId) &&
+    Objects.equals(this.checkId, transactions.checkId) &&
+    Objects.equals(this.creditorId, transactions.creditorId) &&
+    Objects.equals(this.bookingDate, transactions.bookingDate) &&
+    Objects.equals(this.valueDate, transactions.valueDate) &&
+    Objects.equals(this.transactionAmount, transactions.transactionAmount) &&
+    Objects.equals(this.currencyExchange, transactions.currencyExchange) &&
+    Objects.equals(this.creditorName, transactions.creditorName) &&
+    Objects.equals(this.creditorAccount, transactions.creditorAccount) &&
+    Objects.equals(this.creditorAgent, transactions.creditorAgent) &&
+    Objects.equals(this.ultimateCreditor, transactions.ultimateCreditor) &&
+    Objects.equals(this.debtorName, transactions.debtorName) &&
+    Objects.equals(this.debtorAccount, transactions.debtorAccount) &&
+    Objects.equals(this.debtorAgent, transactions.debtorAgent) &&
+    Objects.equals(this.ultimateDebtor, transactions.ultimateDebtor) &&
+    Objects.equals(this.remittanceInformationUnstructured, transactions.remittanceInformationUnstructured) &&
+    Objects.equals(this.remittanceInformationUnstructuredArray, transactions.remittanceInformationUnstructuredArray) &&
+    Objects.equals(this.remittanceInformationStructured, transactions.remittanceInformationStructured) &&
+    Objects.equals(this.remittanceInformationStructuredArray, transactions.remittanceInformationStructuredArray) &&
+    Objects.equals(this.additionalInformation, transactions.additionalInformation) &&
+    Objects.equals(this.additionalInformationStructured, transactions.additionalInformationStructured) &&
+    Objects.equals(this.purposeCode, transactions.purposeCode) &&
+    Objects.equals(this.bankTransactionCode, transactions.bankTransactionCode) &&
+    Objects.equals(this.proprietaryBankTransactionCode, transactions.proprietaryBankTransactionCode) &&
+    Objects.equals(this.balanceAfterTransaction, transactions.balanceAfterTransaction) &&
+    Objects.equals(this._links, transactions._links);
   }
 
   @Override
@@ -813,7 +813,7 @@ public class TransactionDetails   {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TransactionDetails {\n");
+    sb.append("class Transactions {\n");
 
     sb.append("    transactionId: ").append(toIndentedString(transactionId)).append("\n");
     sb.append("    entryReference: ").append(toIndentedString(entryReference)).append("\n");

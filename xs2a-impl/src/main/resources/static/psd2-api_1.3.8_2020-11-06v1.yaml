@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: NextGenPSD2 XS2A Framework
-  version: "1.3.6_2020-08-14"
+  version: "1.3.8_2020-10-22v1"
   description: |
     # Summary
     The **NextGenPSD2** *Framework Version 1.3.6* (with several errata) offers a modern, open, harmonised and interoperable set of
@@ -19,7 +19,7 @@ info:
       * Embedded SCA Approach with only one SCA method available
       * Embedded SCA Approach with Selection of a SCA method
 
-      Not every message defined in this API definition is necessary for all approaches. 
+      Not every message defined in this API definition is necessary for all approaches.
       Furthermore this API definition does not differ between methods which are mandatory, conditional, or optional.
       Therefore for a particular implementation of a Berlin Group PSD2 compliant API it is only necessary to support 
       a certain subset of the methods defined in this API definition.
@@ -3041,7 +3041,7 @@ paths:
         - $ref: "#/components/parameters/piisConsentId_HEADER_optional"
         - $ref: "#/components/parameters/Authorization"
           #method specific header elements
-          #- $ref: "#/components/parameters/consentId_HEADER_optional" # Consent-Id for usage of extended services
+#        - $ref: "#/components/parameters/consentId_HEADER_optional" # Consent-Id for usage of extended services
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
         - $ref: "#/components/parameters/Signature"
@@ -3090,7 +3090,7 @@ paths:
       summary: Create a signing basket resource
       description: |
         Create a signing basket resource for authorising several transactions with one SCA method. 
-        The resource identifications of these transactions are contained in the  payload of this access method
+        The resource identifications of these transactions are contained in the payload of this access method
       operationId: createSigningBasket
       tags:
         - Signing Baskets Service (SBS)
@@ -3886,48 +3886,6 @@ components:
   # Predefined Schemas
   #####################################################
 
-    paymentId:
-      description: 
-        Resource identification of the generated payment initiation resource.
-      type: string
-      example: "1234-wertiq-983"
-
-
-    paymentIdList:
-      description: A list of paymentIds.
-      type: array
-      minItems: 1
-      items:
-        $ref: "#/components/schemas/paymentId"
-
-
-    basketId:
-      description: 
-        Resource identification of the generated signing basket resource.
-      type: string
-      example: "1234-basket-567"
-
-
-    authorisationId:
-      description: Resource identification of the related SCA.
-      type: string
-      example: "123auth456"
-
-
-    authenticationMethodId:
-      description: |
-            An identification provided by the ASPSP for the later identification of the authentication method selection.
-      type: string
-      maxLength: 35
-      example: "myAuthenticationID"
-
-
-    accountId:
-      description: This identification is denoting the addressed account, where the transaction has been performed. 
-      type: string
-      example: "qwer3456tzui7890"
-
-
     trustedBeneficiariesList:
       description: Array of Trusted Beneficiaries..
       type: array
@@ -3975,6 +3933,456 @@ components:
       type: string
       pattern: '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
       example: "74a55404-4ad0-4432-bcf4-93fb94b81e94"
+
+    creditorAlias:
+      description: An alias for the creditor as defined by the PSU as an alias when displaying the list of trusted beneficiaries in online channels of the ASPSP.
+      type: string
+      maxLength: 70
+      example: "Creditor Alias"
+
+    Error400_NG_LTB:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 400.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage400_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    Error400_LTB:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 400 for Trusted Beneficiaries.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode400_LTB"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode400_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    Error401_LTB:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 401 for Trusted Beneficiaries.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode401_LTB"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode401_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    Error403_LTB:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 403 for Trusted Beneficiaries.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode403_LTB"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode403_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    Error401_NG_LTB:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage401_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    tppMessage401_LTB:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode401_LTB"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+    Error403_NG_LTB:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 403.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage403_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    tppMessage403_LTB:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode403_LTB"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+    Error404_NG_LTB:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 404.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage404_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    tppMessage404_LTB:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode404_LTB"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+    Error404_LTB:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 404 for Trusted Beneficiaries.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode404_LTB"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode404_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    Error405_NG_LTB:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage405_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+    tppMessage405_LTB:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode405_LTB"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+    Error405_LTB:
+      description: |
+        Standardised definition of reporting error information according to [RFC7807]
+        in case of a HTTP error code 405 for Trusted Beneficiaries.
+      type: object
+      required:
+        - type
+        - code
+      properties:
+        type:
+          description: |
+            A URI reference [RFC3986] that identifies the problem type.
+            Remark For Future: These URI will be provided by NextGenPSD2 in future.
+          type: string
+          format: uri
+          maxLength: 70
+        title:
+          description: |
+            Short human readable description of error type.
+            Could be in local language.
+            To be provided by ASPSPs.
+          type: string
+          maxLength: 70
+        detail:
+          description: |
+            Detailed human readable text specific to this instance of the error.
+            XPath might be used to point to the issue generating the error in addition.
+            Remark for Future: In future, a dedicated field might be introduced for the XPath.
+          type: string
+          maxLength: 500
+        code:
+          $ref: "#/components/schemas/MessageCode405_LTB"
+        additionalErrors:
+          description: |
+            Array of Error Information Blocks.
+
+            Might be used if more than one error is to be communicated
+          type: array
+          items: #ErrorInformation
+            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
+            type: object
+            required:
+              - code
+            properties:
+              title:
+                $ref: "#/components/schemas/tppErrorTitle"
+              detail:
+                $ref: "#/components/schemas/tppErrorDetail"
+              code:
+                $ref: "#/components/schemas/MessageCode405_LTB"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
+      #####################################################
+      # Content of Request Bodies
+      #####################################################
+
+      #####################################################
+      # Content of Request Bodies - JSON
+      #####################################################
+
+
+
+      #####################################################
+      # Content of Request Bodies - XML
+      #####################################################
+
+      #####################################################
+      # Content of Request Bodies - Single Part
+      #####################################################
+
+    paymentId:
+      description: 
+        Resource identification of the generated payment initiation resource.
+      type: string
+      example: "1234-wertiq-983"
+
+
+    paymentIdList:
+      description: A list of paymentIds.
+      type: array
+      minItems: 1
+      items:
+        $ref: "#/components/schemas/paymentId"
+
+
+    basketId:
+      description: 
+        Resource identification of the generated signing basket resource.
+      type: string
+      example: "1234-basket-567"
+
+
+    authorisationId:
+      description: Resource identification of the related SCA.
+      type: string
+      example: "123auth456"
+
+
+    authenticationMethodId:
+      description: |
+            An identification provided by the ASPSP for the later identification of the authentication method selection.
+      type: string
+      maxLength: 35
+      example: "myAuthenticationID"
+
+
+    accountId:
+      description: This identification is denoting the addressed account, where the transaction has been performed. 
+      type: string
+      example: "qwer3456tzui7890"
 
 
     consentId:
@@ -4281,6 +4689,7 @@ components:
             The device resp. the specific app than derives an OTP from the visual challenge data and displays 
             the OTP to the PSU.
           - 'PUSH_OTP': An OTP is pushed to a dedicated authentication APP and displayed to the PSU.
+          - 'SMTP_OTP': An OTP is sent via email to the PSU.
         
       type: string
 
@@ -4621,12 +5030,47 @@ components:
           enum:
             - "allAccounts"
             - "allAccountsWithOwnerName"
+        restrictedTo:
+          description: |
+            If the TPP requests access to accounts via availableAccounts (List of available accounts), global 
+            or bank driven consents, the TPP may include this element to restrict access to the referred 
+            account types. Absence of the element is interpreted as "no restriction" (therefore access to 
+            accounts of all types is requested). The element may only occur, if each of the elements 
+              - accounts 
+              - balances 
+              - transactions 
+            is either not present or contains an empty array. 
+          type: array
+          items:
+            $ref: "#/components/schemas/cashAccountType"
 
 
     cashAccountType:
       description: |
         ExternalCashAccountType1Code from ISO 20022.
       type: string
+#      enum:
+#        - "CACC"
+#        - "CARD"
+#        - "CASH"
+#        - "CHAR"
+#        - "CISH"
+#        - "COMM"
+#        - "CPAC"
+#        - "LLSV"
+#        - "LOAN"
+#        - "MGLD"
+#        - "MOMA"
+#        - "NREX"
+#        - "ODFT"
+#        - "ONDP"
+#        - "OTHR"
+#        - "SACC"
+#        - "SLRY"
+#        - "SVGS"
+#        - "TAXE"
+#        - "TRAN"
+#        - "TRAS"
 
     accountStatus:
       description: |
@@ -4807,7 +5251,9 @@ components:
 
         'booked' shall be contained if bookingStatus parameter is set to "booked" or "both".
         
-        'pending' is not contained if the bookingStatus parameter is set to "booked".
+        'pending' is not contained if the bookingStatus parameter is set to "booked" or "information".
+
+        'information' Only contained if the bookingStatus is set to "information" and if supported by ASPSP.
       type: object
       required:
         - _links
@@ -4844,7 +5290,7 @@ components:
       description: Array of transaction details.
       type: array
       items: 
-        $ref: "#/components/schemas/transactionDetails"
+        $ref: "#/components/schemas/transactions"
 
 
     cardTransactionList:
@@ -4854,7 +5300,16 @@ components:
         $ref: "#/components/schemas/cardTransaction"
 
 
-    transactionDetails:
+    transactionDetailsBody:
+      description: Transaction details.
+      type: object
+      required:
+        - transactionDetails
+      properties:
+        transactionDetails:
+          $ref: "#/components/schemas/transactions"
+      
+    transactions:
       description: Transaction details.
       type: object
       required:
@@ -5054,7 +5509,7 @@ components:
           type: string
           format: date-time
         referenceDate:
-          description: Reference date of the balance.
+          description: Indicates the date of the balance.
           type: string
           format: date
         lastCommittedTransaction:
@@ -5894,12 +6349,6 @@ components:
       maxLength: 70
       example: "Creditor Name"
 
-    creditorAlias:
-      description: An alias for the creditor as defined by the PSU as an alias when displaying the list of trusted beneficiaries in online channels of the ASPSP.
-      type: string
-      maxLength: 70
-      example: "Creditor Alias"
-
     creditorId:
       description: Identification of Creditors, e.g. a SEPA Creditor ID.
       type: string
@@ -6424,6 +6873,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/paymentInitiationBulkElement_json"
+        debtorName:
+          type: string
+          maxLength: 70
 
 
     confirmationOfFunds:
@@ -7959,6 +8411,81 @@ components:
 #####################################################
 
 
+    tppMessage400_LTB:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode400_LTB"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
+
+    MessageCode400_LTB:
+      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 400 (BAD_REQUEST).
+      type: string
+      enum:
+        - "FORMAT_ERROR"              #gen
+        - "PARAMETER_NOT_CONSISTENT"  #gen
+        - "PARAMETER_NOT_SUPPORTED"   #gen
+        - "SERVICE_INVALID"           #gen
+        - "RESOURCE_UNKNOWN"          #gen
+        - "RESOURCE_EXPIRED"          #gen
+        - "RESOURCE_BLOCKED"          #gen
+        - "TIMESTAMP_INVALID"         #gen
+        - "PERIOD_INVALID"            #gen
+        - "SCA_METHOD_UNKNOWN"        #gen
+        - "SCA_INVALID"               #gen
+        - "CONSENT_UNKNOWN"           #gen
+        - "SESSIONS_NOT_SUPPORTED"    #AIS
+
+    MessageCode401_LTB:
+      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 401 (UNAUTHORIZED).
+      type: string
+      enum:
+        - "CERTIFICATE_INVALID"       #gen
+        - "ROLE_INVALID"              #gen
+        - "CERTIFICATE_EXPIRED"       #gen
+        - "CERTIFICATE_BLOCKED"       #gen
+        - "CERTIFICATE_REVOKE"        #gen
+        - "CERTIFICATE_MISSING"       #gen
+        - "SIGNATURE_INVALID"         #gen
+        - "SIGNATURE_MISSING"         #gen
+        - "CORPORATE_ID_INVALID"      #gen
+        - "PSU_CREDENTIALS_INVALID"   #gen
+        - "CONSENT_INVALID"           #gen, AIS
+        - "CONSENT_EXPIRED"           #gen
+        - "TOKEN_UNKNOWN"             #gen
+        - "TOKEN_INVALID"             #gen
+        - "TOKEN_EXPIRED"             #gen
+
+    MessageCode403_LTB:
+      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 403 (FORBIDDEN).
+      type: string
+      enum:
+        - "CONSENT_UNKNOWN"           #gen
+        - "SERVICE_BLOCKED"           #gen
+        - "RESOURCE_UNKNOWN"          #gen
+        - "RESOURCE_EXPIRED"          #gen
+
+
+    MessageCode404_LTB:
+      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 404 (NOT FOUND).
+      type: string
+      enum:
+        - "RESOURCE_UNKNOWN"          #gens
+
+    MessageCode405_LTB:
+      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 405 (METHOD NOT ALLOWED).
+      type: string
+      enum:
+        - "SERVICE_INVALID"           #gens
+
   #####################################################
   # Generic Elements
   #####################################################
@@ -7996,9 +8523,14 @@ components:
       description: Message codes defined for signing baskets for HTTP Error code 400 (BAD_REQUEST).
       type: string
 
-    MessageCode400_LTB:
-      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 400 (BAD_REQUEST).
+    MessageCode406_PIS:
+      description: Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
       type: string
+
+    MessageCode406_PIIS:
+      description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
+      type: string
+
 
     MessageCode401_PIS: 
       description: Message codes defined for PIS for HTTP Error code 401 (UNAUTHORIZED).
@@ -8019,10 +8551,7 @@ components:
       description: Message codes defined for signing baskets for HTTP Error code 401 (UNAUTHORIZED).
       type: string
         
-    MessageCode401_LTB:
-      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 401 (UNAUTHORIZED).
-      type: string
-
+        
     MessageCode403_PIS: 
       description: Message codes defined defined for PIS for PIS for HTTP Error code 403 (FORBIDDEN).
       type: string
@@ -8041,9 +8570,6 @@ components:
       description: Message codes defined for signing baskets for HTTP Error code 403 (FORBIDDEN).
       type: string
 
-    MessageCode403_LTB:
-      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 403 (FORBIDDEN).
-      type: string
 
     MessageCode404_PIS: 
       description: Message codes defined for PIS for HTTP Error code 404 (NOT FOUND).
@@ -8064,9 +8590,6 @@ components:
       description: Message codes defined for signing baskets for HTTP Error code 404 (NOT FOUND).
       type: string
 
-    MessageCode404_LTB:
-      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 404 (NOT FOUND).
-      type: string
 
     MessageCode405_PIS: 
       description: Message codes defined for payment cancelations PIS for HTTP Error code 405 (METHOD NOT ALLOWED).
@@ -8089,19 +8612,8 @@ components:
       description: Message codes defined for SBS for HTTP Error code 405 (METHOD NOT ALLOWED).
       type: string
 
-    MessageCode405_LTB:
-      description: Message codes defined for Trusted Beneficiaries for HTTP Error code 405 (METHOD NOT ALLOWED).
-      type: string
 
     MessageCode406_AIS: 
-      description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
-      type: string
-
-    MessageCode406_PIS:
-      description: Message codes defined for PIS for HTTP Error code 406 (NOT ACCEPTABLE).
-      type: string
-
-    MessageCode406_PIIS:
       description: Message codes defined for AIS for HTTP Error code 406 (NOT ACCEPTABLE).
       type: string
 
@@ -8148,81 +8660,6 @@ components:
            $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode2XX"
-        path:
-          type: string
-        text:
-          $ref: "#/components/schemas/tppMessageText"
-
-    tppMessage400_LTB:
-      type: object
-      required:
-        - category
-        - code
-      properties:
-        category:
-          $ref: "#/components/schemas/tppMessageCategory"
-        code:
-          $ref: "#/components/schemas/MessageCode400_LTB"
-        path:
-          type: string
-        text:
-          $ref: "#/components/schemas/tppMessageText"
-
-    tppMessage401_LTB:
-      type: object
-      required:
-        - category
-        - code
-      properties:
-        category:
-          $ref: "#/components/schemas/tppMessageCategory"
-        code:
-          $ref: "#/components/schemas/MessageCode401_LTB"
-        path:
-          type: string
-        text:
-          $ref: "#/components/schemas/tppMessageText"
-
-    tppMessage403_LTB:
-      type: object
-      required:
-        - category
-        - code
-      properties:
-        category:
-          $ref: "#/components/schemas/tppMessageCategory"
-        code:
-          $ref: "#/components/schemas/MessageCode403_LTB"
-        path:
-          type: string
-        text:
-          $ref: "#/components/schemas/tppMessageText"
-
-    tppMessage404_LTB:
-      type: object
-      required:
-        - category
-        - code
-      properties:
-        category:
-          $ref: "#/components/schemas/tppMessageCategory"
-        code:
-          $ref: "#/components/schemas/MessageCode404_LTB"
-        path:
-          type: string
-        text:
-          $ref: "#/components/schemas/tppMessageText"
-
-    tppMessage405_LTB:
-      type: object
-      required:
-        - category
-        - code
-      properties:
-        category:
-          $ref: "#/components/schemas/tppMessageCategory"
-        code:
-          $ref: "#/components/schemas/MessageCode405_LTB"
         path:
           type: string
         text:
@@ -8561,6 +8998,20 @@ components:
         text:
           $ref: "#/components/schemas/tppMessageText"
 
+    tppMessage406_PIIS:
+      type: object
+      required:
+        - category
+        - code
+      properties:
+        category:
+          $ref: "#/components/schemas/tppMessageCategory"
+        code:
+          $ref: "#/components/schemas/MessageCode406_PIIS"
+        path:
+          type: string
+        text:
+          $ref: "#/components/schemas/tppMessageText"
 
     tppMessage405_SBS:
       type: object
@@ -8922,70 +9373,6 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
-    Error400_LTB:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 400 for Trusted Beneficiaries.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 500
-        code:
-          $ref: "#/components/schemas/MessageCode400_LTB"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode400_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-    Error400_NG_LTB:
-      description: |
-        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 400.
-      type: object
-      properties:
-        tppMessages:
-          type: array
-          items:
-            $ref: "#/components/schemas/tppMessage400_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
 
     Error401_PIS: 
       description: |
@@ -9202,72 +9589,8 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
-    Error401_LTB:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 401 for Trusted Beneficiaries.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 500
-        code:
-          $ref: "#/components/schemas/MessageCode401_LTB"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
 
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode401_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-    Error401_NG_LTB:
-      description: |
-        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
-      type: object
-      properties:
-        tppMessages:
-          type: array
-          items:
-            $ref: "#/components/schemas/tppMessage401_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-    Error403_PIS:
+    Error403_PIS: 
       description: |
         Standardised definition of reporting error information according to [RFC7807] 
         in case of a HTTP error code 403 for PIS.
@@ -9482,70 +9805,6 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
-    Error403_LTB:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 403 for Trusted Beneficiaries.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 500
-        code:
-          $ref: "#/components/schemas/MessageCode403_LTB"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode403_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-    Error403_NG_LTB:
-      description: |
-        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 403.
-      type: object
-      properties:
-        tppMessages:
-          type: array
-          items:
-            $ref: "#/components/schemas/tppMessage403_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
 
     Error404_PIS: 
       description: |
@@ -9762,72 +10021,8 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
-    Error404_LTB:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 404 for Trusted Beneficiaries.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 500
-        code:
-          $ref: "#/components/schemas/MessageCode404_LTB"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
 
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode404_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-    Error404_NG_LTB:
-      description: |
-        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 404.
-      type: object
-      properties:
-        tppMessages:
-          type: array
-          items:
-            $ref: "#/components/schemas/tppMessage404_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-    Error405_PIS:
+    Error405_PIS: 
       description: |
         Standardised definition of reporting error information according to [RFC7807] 
         in case of a HTTP error code 405 for PIS.
@@ -10096,88 +10291,6 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
-    Error405_LTB:
-      description: |
-        Standardised definition of reporting error information according to [RFC7807]
-        in case of a HTTP error code 405 for Trusted Beneficiaries.
-      type: object
-      required:
-        - type
-        - code
-      properties:
-        type:
-          description: |
-            A URI reference [RFC3986] that identifies the problem type.
-            Remark For Future: These URI will be provided by NextGenPSD2 in future.
-          type: string
-          format: uri
-          maxLength: 70
-        title:
-          description: |
-            Short human readable description of error type.
-            Could be in local language.
-            To be provided by ASPSPs.
-          type: string
-          maxLength: 70
-        detail:
-          description: |
-            Detailed human readable text specific to this instance of the error.
-            XPath might be used to point to the issue generating the error in addition.
-            Remark for Future: In future, a dedicated field might be introduced for the XPath.
-          type: string
-          maxLength: 500
-        code:
-          $ref: "#/components/schemas/MessageCode405_LTB"
-        additionalErrors:
-          description: |
-            Array of Error Information Blocks.
-
-            Might be used if more than one error is to be communicated
-          type: array
-          items: #ErrorInformation
-            description: This is a data element to support the declaration of additional errors in the context of [RFC7807].
-            type: object
-            required:
-              - code
-            properties:
-              title:
-                $ref: "#/components/schemas/tppErrorTitle"
-              detail:
-                $ref: "#/components/schemas/tppErrorDetail"
-              code:
-                $ref: "#/components/schemas/MessageCode405_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
-
-      #####################################################
-      # Content of Request Bodies
-      #####################################################
-
-      #####################################################
-      # Content of Request Bodies - JSON
-      #####################################################
-
-
-
-      #####################################################
-      # Content of Request Bodies - XML
-      #####################################################
-
-      #####################################################
-      # Content of Request Bodies - Single Part
-      #####################################################
-
-    Error405_NG_LTB:
-      description: |
-        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 401.
-      type: object
-      properties:
-        tppMessages:
-          type: array
-          items:
-            $ref: "#/components/schemas/tppMessage405_LTB"
-        _links:
-          $ref: "#/components/schemas/_linksAll"
 
     Error406_AIS:
       description: |
@@ -10820,6 +10933,18 @@ components:
         _links:
           $ref: "#/components/schemas/_linksAll"
 
+    Error406_NG_PIIS:
+      description: |
+        NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 406.
+      type: object
+      properties:
+        tppMessages:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessage406_PIIS"
+        _links:
+          $ref: "#/components/schemas/_linksAll"
+
 
     Error405_NG_SBS: 
       description: |
@@ -11145,7 +11270,7 @@ components:
       in: query
       description: |
         Conditional: Starting date (inclusive the date dateFrom) of the transaction list, mandated if no delta access is required
-        and if bookingStatus does not equal "information.
+        and if bookingStatus does not equal "information".
         
         For booked transactions, the relevant date is the booking date. 
         
@@ -11767,6 +11892,20 @@ components:
         format: url
       required: false
       
+      
+    #conditional for extended service multiple Consent
+    ASPSP-Multiple-Consent-Support:
+      description: |
+        true if the ASPSP supports the Multiple Consent Service.
+    
+        false if the ASPSP does not support the Multiple Consent Service.
+    
+        If not provided, this also implies that the ASPSP does not support the Multiple Consent Service.
+      schema:
+        type: boolean       
+      required: false
+
+
     #conditional for extended service lean push
     ASPSP-Notification-Support:
       description: |
@@ -11996,7 +12135,7 @@ components:
               - transactionsDetails
             properties:
               transactionsDetails:
-                $ref: "#/components/schemas/transactionDetails"
+                $ref: "#/components/schemas/transactionDetailsBody"
           examples:
             Example:
               $ref: "#/components/examples/transactionDetailsExample"
@@ -12018,7 +12157,8 @@ components:
               $ref: "#/components/examples/balancesExample1_RegularAccount"
             "Example 2: Multicurrency Account":
               $ref: "#/components/examples/balancesExample2_MulticurrencyAcount"
-
+            "Example 3:":
+              $ref: "#/components/examples/balancesExample3_RegularAccount"
 
     OK_200_CardAccountBalances:
       description: OK
@@ -12096,8 +12236,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/cardAccountsTransactionsResponse200"
-
-
+          
+          
     OK_200_ConsentInformation:
       description: OK
       
@@ -12301,6 +12441,9 @@ components:
           $ref: "#/components/headers/X-Request-ID"
         ASPSP-SCA-Approach:
           $ref: "#/components/headers/ASPSP-SCA-Approach"
+        #conditional for Multiple Consents
+        #ASPSP-Multiple-Consent-Support:
+        #  $ref: "#/components/headers/ASPSP-Multiple-Consent-Support"
         #conditional for extended service lean Push
         ASPSP-Notification-Support:
           $ref: "#/components/headers/ASPSP-Notification-Support"
@@ -13243,6 +13386,27 @@ components:
   # Predefined Examples
   #####################################################
 
+    trustedBeneficiariesExample:
+      summary: Trusted Beneficiaries Example
+      description: Response in case of a GET-Request on the  resource (...)/v1/trusted-beneficiaries.
+      value:
+        { "trustedBeneficiaries":
+            [
+              {
+                "trustedBeneficiaryId": "12345678-fr33-50df-1234567890bc",
+                "debtorAccount": "DE2310010010123456789",
+                "creditorAccount": "FR7612345987650123456789014",
+                "creditorName": "Merchant1Name"
+              },
+              {
+                "trustedBeneficiaryId": "87654321-fr33-50df-1234567890bc",
+                "debtorAccount": "DE2310010010123456789",
+                "creditorAccount": "FR7412345987650123456789012",
+                "creditorName": "Merchant2Name"
+              }
+            ]
+        }
+
     ibanExampleDe_01:
       value: "DE02100100109307118603"
 
@@ -13611,26 +13775,6 @@ components:
           }
       }
 
-    trustedBeneficiariesExample:
-      summary: Trusted Beneficiaries Example
-      description: Response in case of a GET-Request on the  resource (...)/v1/trusted-beneficiaries.
-      value:
-        { "trustedBeneficiaries":
-            [
-              {
-                "trustedBeneficiaryId": "12345678-fr33-50df-1234567890bc",
-                "debtorAccount": "DE2310010010123456789",
-                "creditorAccount": "FR7612345987650123456789014",
-                "creditorName": "Merchant1Name"
-              },
-              {
-                "trustedBeneficiaryId": "87654321-fr33-50df-1234567890bc",
-                "debtorAccount": "DE2310010010123456789",
-                "creditorAccount": "FR7412345987650123456789012",
-                "creditorName": "Merchant2Name"
-              }
-            ]
-        }
 
     startScaProcessResponseExample1:
       value:
@@ -14030,6 +14174,63 @@ components:
           "instructedAmount": {"currency": "EUR", "amount": "123"}
         }
 
+
+    confirmationOfFundsResponseExample:
+      description: Response for a confirmation of funds request.
+      value:
+        {
+          "fundsAvailable": "true"
+        }
+
+
+    balancesExample1_RegularAccount:
+      description: Response for a read balance request in case of a regular account.
+      value: 
+        {
+          "account": {"iban": "FR7612345987650123456789014"},
+          "balances":
+              [{
+                "balanceAmount": {"currency": "EUR", "amount": "500.00"},
+                "balanceType": "closingBooked",
+                "referenceDate": "2017-10-25"
+                   },
+               {
+               "balanceAmount": {"currency": "EUR","amount": "900.00"},
+               "balanceType": "expected", 
+                "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
+               }]
+        }
+
+
+
+
+
+    balancesExample2_MulticurrencyAcount:
+      description: |
+        Response in case of a multicurrency account with one account in EUR, 
+        one in USD, where the ASPSP has delivered a link to the balance endpoint relative to the aggregated 
+        multicurrency account (aggregation level).
+      value: 
+        {
+          "balances":
+              [{"balanceAmount": {"currency": "EUR", "amount": "500.00"},
+            "balanceType": "closingBooked",        
+                "referenceDate": "2017-10-25"
+               },
+               {"balanceAmount": {"currency": "EUR", "amount": "900.00"},
+            "balanceType": "expected",      
+                "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
+               },
+           {"balanceAmount": {"currency": "USD", "amount": "350.00"},
+                "balanceType": "closingBooked", 
+                "referenceDate": "2017-10-25"
+               },
+               {"balanceAmount": {"currency": "USD", "amount": "350.00"},
+                "balanceType": "expected",
+                "lastChangeDateTime": "2017-10-24T14:30:21Z"
+                   }]
+        }
+
     transactionsResponse200JsonExample:
       description: Example for a Standing Order Report.
       value:
@@ -14064,55 +14265,25 @@ components:
           }
         }
 
-    confirmationOfFundsResponseExample:
-      description: Response for a confirmation of funds request.
-      value:
-        {
-          "fundsAvailable": "true"
-        }
-
-
-    balancesExample1_RegularAccount:
-      description: Response for a read balance request in case of a regular account.
+    balancesExample3_RegularAccount:
+      description: Response in case of a regular account where the corresponding balances in the online channel is reported independently from account statements with fixed dates, i.e. always displaying running balance for current time.
       value: 
         {
-          "account": {"iban": "FR7612345987650123456789014"},
-          "balances":
-              [{"balanceType": "closingBooked",
-            "balanceAmount": {"currency": "EUR", "amount": "500.00"},
-                "referenceDate": "2017-10-25"
-                   },
-               {"balanceType": "expected", 
-                "balanceAmount": {"currency": "EUR","amount": "900.00"},
-               "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
-               }]
-        }
-
-
-    balancesExample2_MulticurrencyAcount:
-      description: |
-        Response in case of a multicurrency account with one account in EUR, 
-        one in USD, where the ASPSP has delivered a link to the balance endpoint relative to the aggregated 
-        multicurrency account (aggregation level).
-      value: 
-        {
-          "balances":
-              [{"balanceType": "closingBooked",
-                "balanceAmount": {"currency": "EUR", "amount": "500.00"},
-                "referenceDate": "2017-10-25"
-                   },
-              {"balanceType": "expected",
-              "balanceAmount": {"currency": "EUR", "amount": "900.00"},
-              "lastChangeDateTime": "2017-10-25T15:30:35.035Z"
+           "balances":[      
+              {
+               "balanceAmount":{"currency":"EUR", "amount": "1000.00"},
+               "balanceType":"interimBooked"
+                 },     
+              {
+                 "balanceAmount":{"currency": "EUR", "amount": "300.00"},
+                 "balanceType":"interimAvailable"
               },
-           {"balanceType": "closingBooked", 
-                "balanceAmount": {"currency": "USD", "amount": "350.00"},
-                "referenceDate": "2017-10-25"
-                   },
-              {"balanceType": "expected",
-               "balanceAmount": {"currency": "USD", "amount": "350.00"},
-               "lastChangeDateTime": "2017-10-24T14:30:21Z"
-                   }]
+              {
+                 "balanceAmount":{"currency":"EUR", "amount": "5300.00"},
+                 "balanceType": "interimAvailable",
+                 "creditLimitIncluded": true
+              }
+           ]
         }
 
     balancesExample_CardAccount:
@@ -14131,6 +14302,7 @@ components:
             }
           ]
         }
+
 
 
     transactionsExample1_RegularAccount_json:
