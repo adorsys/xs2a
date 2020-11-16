@@ -40,7 +40,6 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidat
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -82,7 +81,6 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
         Authorisation authorisation = authorisationCmsResponse.getPayload();
 
         ScaStatus currentStatus = authorisation.getScaStatus();
-
         boolean processIsAllowed = currentStatus == ScaStatus.UNCONFIRMED;
 
         UpdateConsentPsuDataResponse response = processIsAllowed
@@ -105,25 +103,26 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
     private UpdateConsentPsuDataResponse checkAuthorisationConfirmationXs2a(UpdateConsentPsuDataReq request, String confirmationCodeFromDb) {
         String consentId = request.getConsentId();
         String authorisationId = request.getAuthorisationId();
-        Optional<T> consentOptional = getConsentById(consentId);
         PsuIdData psuData = request.getPsuData();
+
+        Optional<T> consentOptional = getConsentById(consentId);
         if (consentOptional.isEmpty()) {
             return buildConsentNotFoundErrorResponse(consentId, authorisationId, psuData);
         }
 
-        boolean codeCorrect = StringUtils.equals(request.getConfirmationCode(), confirmationCodeFromDb);
+        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
+        boolean codeCorrect = checkConfirmationCodeInternally(authorisationId, request.getConfirmationCode(), confirmationCodeFromDb, aspspConsentDataProvider);
 
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse =
             notifyConfirmationCodeValidation(spiContextDataProvider.provideWithPsuIdData(psuData),
                                              codeCorrect, consentOptional.get(),
-                                             aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+                                             aspspConsentDataProvider);
 
         if (spiResponse.hasError()) {
             return buildConfirmationCodeSpiErrorResponse(spiResponse, consentId, authorisationId, psuData);
         }
 
         SpiConsentConfirmationCodeValidationResponse confirmationCodeValidationResponse = spiResponse.getPayload();
-
         UpdateConsentPsuDataResponse response = codeCorrect
                                                     ? new UpdateConsentPsuDataResponse(confirmationCodeValidationResponse.getScaStatus(),
                                                                                        consentId,
@@ -132,9 +131,8 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
                                                     : buildScaConfirmationCodeErrorResponse(consentId, authorisationId, psuData);
 
         if (spiResponse.isSuccessful()) {
-            SpiConsentConfirmationCodeValidationResponse payload = spiResponse.getPayload();
-            authorisationService.updateAuthorisationStatus(authorisationId, payload.getScaStatus());
-            updateConsentStatus(consentId, payload.getConsentStatus());
+            authorisationService.updateAuthorisationStatus(authorisationId, confirmationCodeValidationResponse.getScaStatus());
+            updateConsentStatus(consentId, confirmationCodeValidationResponse.getConsentStatus());
         }
 
         return response;
@@ -209,6 +207,8 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
     protected abstract Optional<T> getConsentById(String consentId);
 
     protected abstract SpiResponse<SpiConsentConfirmationCodeValidationResponse> checkConfirmationCode(SpiContextData spiContextData, SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest, SpiAspspConsentDataProvider spiAspspConsentDataProvider);
+
+    protected abstract boolean checkConfirmationCodeInternally(String authorisationId, String confirmationCode, String scaAuthenticationData, SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     protected abstract ServiceType getServiceType();
 

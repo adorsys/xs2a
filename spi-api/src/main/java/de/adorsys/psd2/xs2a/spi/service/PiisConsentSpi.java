@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -111,6 +112,21 @@ public interface PiisConsentSpi extends AuthorisationSpi<SpiPiisConsent> {
     default SpiResponse<SpiConsentConfirmationCodeValidationResponse> checkConfirmationCode(@NotNull SpiContextData contextData, @NotNull SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
+
+    /**
+     * Checks confirmation data internally in case of XS2A supports validation of this data. Used only with redirect SCA Approach.
+     *
+     * @param authorisationId          authorisation id
+     * @param confirmationCode         confirmation code
+     * @param scaAuthenticationData    SCA authentication data
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return confirmation code check result
+     */
+    default boolean checkConfirmationCodeInternally(String authorisationId, String confirmationCode, String scaAuthenticationData,
+                                                    @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return StringUtils.equals(confirmationCode, scaAuthenticationData);
+    }
+
 
     @Override
     default SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull SpiPsuData psuLoginData, String password, SpiPiisConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {

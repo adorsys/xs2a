@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.authorization.ais;
+package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorisationConfirmationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -66,6 +65,8 @@ import static org.mockito.Mockito.*;
 class PiisAuthorisationConfirmationServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
+    private static final String CONFIRMATION_CODE = "12345";
+    private static final String SCA_AUTHENTICATION_DATA = "54321";
     private final static JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
@@ -135,11 +136,13 @@ class PiisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_checkOnXs2a_success() {
         // given
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        request.setConfirmationCode(CONFIRMATION_CODE);
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, buildPsuIdData());
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
         Authorisation authorisationResponse = getConsentAuthorisationResponse();
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);
+        when(piisConsentSpi.checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider)).thenReturn(true);
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<Authorisation>builder()
                             .payload(authorisationResponse)
@@ -156,6 +159,7 @@ class PiisAuthorisationConfirmationServiceTest {
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
         verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
         verify(piisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
+        verify(piisConsentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
     }
 
     @Test
@@ -371,6 +375,12 @@ class PiisAuthorisationConfirmationServiceTest {
         verify(authorisationService, times(0)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
+    @Test
+    void checkConfirmationCodeInternally() {
+        piisAuthorisationConfirmationService.checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
+        verify(piisConsentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
+    }
+
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {
         UpdateConsentPsuDataReq request = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
                                                                        UpdateConsentPsuDataReq.class);
@@ -395,6 +405,7 @@ class PiisAuthorisationConfirmationServiceTest {
         authorizationResponse.setParentId(CONSENT_ID);
         authorizationResponse.setPsuIdData(buildPsuIdData());
         authorizationResponse.setScaStatus(ScaStatus.UNCONFIRMED);
+        authorizationResponse.setScaAuthenticationData(SCA_AUTHENTICATION_DATA);
 
         return authorizationResponse;
     }
