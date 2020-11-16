@@ -3,6 +3,7 @@ package de.adorsys.psd2.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.MessageCode403LTB;
 import de.adorsys.psd2.model.TppMessageCategory;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -14,14 +15,14 @@ import javax.validation.constraints.*;
  * TppMessage403LTB
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class TppMessage403LTB   {
   @JsonProperty("category")
   private TppMessageCategory category = null;
 
   @JsonProperty("code")
-  private String code = null;
+  private MessageCode403LTB code = null;
 
   @JsonProperty("path")
   private String path = null;
@@ -53,7 +54,7 @@ public class TppMessage403LTB   {
     this.category = category;
   }
 
-  public TppMessage403LTB code(String code) {
+  public TppMessage403LTB code(MessageCode403LTB code) {
     this.code = code;
     return this;
   }
@@ -65,14 +66,15 @@ public class TppMessage403LTB   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
+  @Valid
 
 
   @JsonProperty("code")
-  public String getCode() {
+  public MessageCode403LTB getCode() {
     return code;
   }
 
-  public void setCode(String code) {
+  public void setCode(MessageCode403LTB code) {
     this.code = code;
   }
 

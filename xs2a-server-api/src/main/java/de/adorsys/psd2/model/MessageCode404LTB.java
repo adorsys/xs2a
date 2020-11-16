@@ -2,53 +2,40 @@ package de.adorsys.psd2.model;
 
 import java.util.Objects;
 import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * Message codes defined for Trusted Beneficiaries for HTTP Error code 404 (NOT FOUND).
  */
-@ApiModel(description = "Message codes defined for Trusted Beneficiaries for HTTP Error code 404 (NOT FOUND).")
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+public enum MessageCode404LTB {
 
-public class MessageCode404LTB   {
+  UNKNOWN("RESOURCE_UNKNOWN");
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}
-    return true;
+  private String value;
+
+  MessageCode404LTB(String value) {
+    this.value = value;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash();
-  }
-
-  @Override
+  @JsonValue
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class MessageCode404LTB {\n");
-
-    sb.append("}");
-    return sb.toString();
+    return String.valueOf(value);
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+  @JsonCreator
+  public static MessageCode404LTB fromValue(String text) {
+    for (MessageCode404LTB b : MessageCode404LTB.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
-    return o.toString().replace("\n", "\n    ");
+    return null;
   }
 }
 

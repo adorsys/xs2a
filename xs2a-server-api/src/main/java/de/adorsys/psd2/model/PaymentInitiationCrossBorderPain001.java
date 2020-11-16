@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "A pain.001 structure corresponding to the cross-border schema.  For cross-border payments only community wide pain.001 schemes do exist. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class PaymentInitiationCrossBorderPain001   {
 
