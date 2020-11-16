@@ -86,6 +86,11 @@ public class AisAuthorisationConfirmationService extends ConsentAuthorisationCon
     }
 
     @Override
+    protected boolean checkConfirmationCodeInternally(String authorisationId, String confirmationCode, String scaAuthenticationData, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return aisConsentSpi.checkConfirmationCodeInternally(authorisationId, confirmationCode, scaAuthenticationData, aspspConsentDataProvider);
+    }
+
+    @Override
     protected ErrorType getErrorType400() {
         return ErrorType.AIS_400;
     }
