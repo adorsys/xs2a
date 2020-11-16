@@ -4,6 +4,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.adorsys.psd2.model.Error405LTBAdditionalErrors;
+import de.adorsys.psd2.model.MessageCode405LTB;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Standardised definition of reporting error information according to [RFC7807] in case of a HTTP error code 405 for Trusted Beneficiaries. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class Error405LTB   {
   @JsonProperty("type")
@@ -31,7 +32,7 @@ public class Error405LTB   {
   private String detail = null;
 
   @JsonProperty("code")
-  private String code = null;
+  private MessageCode405LTB code = null;
 
   @JsonProperty("additionalErrors")
   @Valid
@@ -107,7 +108,7 @@ public class Error405LTB   {
     this.detail = detail;
   }
 
-  public Error405LTB code(String code) {
+  public Error405LTB code(MessageCode405LTB code) {
     this.code = code;
     return this;
   }
@@ -119,14 +120,15 @@ public class Error405LTB   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
+  @Valid
 
 
   @JsonProperty("code")
-  public String getCode() {
+  public MessageCode405LTB getCode() {
     return code;
   }
 
-  public void setCode(String code) {
+  public void setCode(MessageCode405LTB code) {
     this.code = code;
   }
 

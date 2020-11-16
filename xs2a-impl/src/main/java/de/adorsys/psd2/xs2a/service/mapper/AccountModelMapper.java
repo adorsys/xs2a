@@ -105,11 +105,13 @@ public abstract class AccountModelMapper {
     @Mapping(target = "transactionAmount", source = "amount")
     @Mapping(target = "links", ignore = true)
     @Mapping(target = "_links", ignore = true)
-    public abstract TransactionDetails mapToTransaction(Transactions transactions);
+    public abstract de.adorsys.psd2.model.Transactions mapToTransactions(Transactions transactions);
 
     public InlineResponse2001 mapToTransactionDetails(Transactions transactions) {
         InlineResponse2001 inlineResponse2001 = new InlineResponse2001();
-        inlineResponse2001.setTransactionsDetails(mapToTransaction(transactions));
+        TransactionDetailsBody transactionDetailsBody = new TransactionDetailsBody();
+        transactionDetailsBody.setTransactionDetails(mapToTransactions(transactions));
+        inlineResponse2001.setTransactionsDetails(transactionDetailsBody);
         return inlineResponse2001;
     }
 
@@ -147,8 +149,8 @@ public abstract class AccountModelMapper {
             return null;
         }
 
-        List<TransactionDetails> transactionDetails = transactions.stream()
-                                                          .map(this::mapToTransaction)
+        List<de.adorsys.psd2.model.Transactions> transactionDetails = transactions.stream()
+                                                          .map(this::mapToTransactions)
                                                           .collect(Collectors.toList());
 
         TransactionList transactionList = new TransactionList();
