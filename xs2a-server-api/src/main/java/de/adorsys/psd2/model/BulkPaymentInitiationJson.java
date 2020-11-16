@@ -20,7 +20,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Generic Body for a bulk payment initation via JSON.  paymentInformationId is contained in code but commented since it is n.a.  and not all ASPSP are able to support this field now. In a later version the field will be mandatory. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class BulkPaymentInitiationJson   {
   @JsonProperty("batchBookingPreferred")
@@ -38,6 +38,9 @@ public class BulkPaymentInitiationJson   {
   @JsonProperty("payments")
   @Valid
   private List<PaymentInitiationBulkElementJson> payments = new ArrayList<>();
+
+  @JsonProperty("debtorName")
+  private String debtorName = null;
 
   public BulkPaymentInitiationJson batchBookingPreferred(Boolean batchBookingPreferred) {
     this.batchBookingPreferred = batchBookingPreferred;
@@ -160,6 +163,28 @@ public class BulkPaymentInitiationJson   {
     this.payments = payments;
   }
 
+  public BulkPaymentInitiationJson debtorName(String debtorName) {
+    this.debtorName = debtorName;
+    return this;
+  }
+
+  /**
+   * Get debtorName
+   * @return debtorName
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=70)
+
+  @JsonProperty("debtorName")
+  public String getDebtorName() {
+    return debtorName;
+  }
+
+  public void setDebtorName(String debtorName) {
+    this.debtorName = debtorName;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -173,12 +198,13 @@ public class BulkPaymentInitiationJson   {
     Objects.equals(this.debtorAccount, bulkPaymentInitiationJson.debtorAccount) &&
     Objects.equals(this.requestedExecutionDate, bulkPaymentInitiationJson.requestedExecutionDate) &&
     Objects.equals(this.requestedExecutionTime, bulkPaymentInitiationJson.requestedExecutionTime) &&
-    Objects.equals(this.payments, bulkPaymentInitiationJson.payments);
+    Objects.equals(this.payments, bulkPaymentInitiationJson.payments) &&
+    Objects.equals(this.debtorName, bulkPaymentInitiationJson.debtorName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(batchBookingPreferred, debtorAccount, requestedExecutionDate, requestedExecutionTime, payments);
+    return Objects.hash(batchBookingPreferred, debtorAccount, requestedExecutionDate, requestedExecutionTime, payments, debtorName);
   }
 
   @Override
@@ -191,6 +217,7 @@ public class BulkPaymentInitiationJson   {
     sb.append("    requestedExecutionDate: ").append(toIndentedString(requestedExecutionDate)).append("\n");
     sb.append("    requestedExecutionTime: ").append(toIndentedString(requestedExecutionTime)).append("\n");
     sb.append("    payments: ").append(toIndentedString(payments)).append("\n");
+    sb.append("    debtorName: ").append(toIndentedString(debtorName)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -36,7 +36,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-28T17:58:21.648494+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T16:52:53.861403+02:00[Europe/Kiev]")
 
 @Api(value = "v1", description = "consent API")
 public interface ConsentApi {
@@ -88,6 +88,7 @@ public interface ConsentApi {
         }
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
+
 
     @ApiOperation(value = "Delete consent", nickname = "deleteConsent", notes = "The TPP can delete an account information consent object if needed.", authorizations = {
         @Authorization(value = "BearerAuthOAuth")

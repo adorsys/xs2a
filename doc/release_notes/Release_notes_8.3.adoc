@@ -3,7 +3,12 @@
 == Table of Contents
 
 * Fixed SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request
+* Migrate to .yaml open API ver 1.3.8 2020-11-06v1
 
 == Fixed SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request
 
 From now on, SCA redirect approach with authorisation confirmation request works correctly (authorisation is updated) with no PSU-ID http header is available in request
+
+== Migrate to .yaml open API ver 1.3.8 2020-11-06v1
+
+From now on, XS2A uses version `1.3.8 2020-11-06v1` of OpenAPI file provided by the Berlin Group.

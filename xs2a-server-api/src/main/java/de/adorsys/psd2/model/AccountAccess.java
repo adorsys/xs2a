@@ -19,7 +19,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Requested access services for a consent. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class AccountAccess   {
   @JsonProperty("accounts")
@@ -138,6 +138,10 @@ public class AccountAccess   {
 
   @JsonProperty("allPsd2")
   private AllPsd2Enum allPsd2 = null;
+
+  @JsonProperty("restrictedTo")
+  @Valid
+  private List<String> restrictedTo = null;
 
   public AccountAccess accounts(List<AccountReference> accounts) {
     this.accounts = accounts;
@@ -321,6 +325,36 @@ public class AccountAccess   {
     this.allPsd2 = allPsd2;
   }
 
+  public AccountAccess restrictedTo(List<String> restrictedTo) {
+    this.restrictedTo = restrictedTo;
+    return this;
+  }
+
+  public AccountAccess addRestrictedToItem(String restrictedToItem) {
+    if (this.restrictedTo == null) {
+      this.restrictedTo = new ArrayList<>();
+    }
+    this.restrictedTo.add(restrictedToItem);
+    return this;
+  }
+
+  /**
+   * If the TPP requests access to accounts via availableAccounts (List of available accounts), global  or bank driven consents, the TPP may include this element to restrict access to the referred  account types. Absence of the element is interpreted as \"no restriction\" (therefore access to  accounts of all types is requested). The element may only occur, if each of the elements    - accounts    - balances    - transactions  is either not present or contains an empty array.
+   * @return restrictedTo
+  **/
+  @ApiModelProperty(value = "If the TPP requests access to accounts via availableAccounts (List of available accounts), global  or bank driven consents, the TPP may include this element to restrict access to the referred  account types. Absence of the element is interpreted as \"no restriction\" (therefore access to  accounts of all types is requested). The element may only occur, if each of the elements    - accounts    - balances    - transactions  is either not present or contains an empty array.  ")
+
+
+
+  @JsonProperty("restrictedTo")
+  public List<String> getRestrictedTo() {
+    return restrictedTo;
+  }
+
+  public void setRestrictedTo(List<String> restrictedTo) {
+    this.restrictedTo = restrictedTo;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -336,12 +370,13 @@ public class AccountAccess   {
     Objects.equals(this.additionalInformation, accountAccess.additionalInformation) &&
     Objects.equals(this.availableAccounts, accountAccess.availableAccounts) &&
     Objects.equals(this.availableAccountsWithBalance, accountAccess.availableAccountsWithBalance) &&
-    Objects.equals(this.allPsd2, accountAccess.allPsd2);
+    Objects.equals(this.allPsd2, accountAccess.allPsd2) &&
+    Objects.equals(this.restrictedTo, accountAccess.restrictedTo);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(accounts, balances, transactions, additionalInformation, availableAccounts, availableAccountsWithBalance, allPsd2);
+    return Objects.hash(accounts, balances, transactions, additionalInformation, availableAccounts, availableAccountsWithBalance, allPsd2, restrictedTo);
   }
 
   @Override
@@ -356,6 +391,7 @@ public class AccountAccess   {
     sb.append("    availableAccounts: ").append(toIndentedString(availableAccounts)).append("\n");
     sb.append("    availableAccountsWithBalance: ").append(toIndentedString(availableAccountsWithBalance)).append("\n");
     sb.append("    allPsd2: ").append(toIndentedString(allPsd2)).append("\n");
+    sb.append("    restrictedTo: ").append(toIndentedString(restrictedTo)).append("\n");
     sb.append("}");
     return sb.toString();
   }
