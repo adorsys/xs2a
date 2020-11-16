@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiGetPaymentStatusRespo
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentConfirmationCodeValidationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public interface PaymentSpi<T extends SpiPayment, R> {
@@ -111,4 +112,18 @@ public interface PaymentSpi<T extends SpiPayment, R> {
      */
     @NotNull
     SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull T payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    /**
+     * Checks confirmation data internally in case of XS2A supports validation of this data. Used only with redirect SCA Approach.
+     *
+     * @param authorisationId          authorisation id
+     * @param confirmationCode         confirmation code
+     * @param scaAuthenticationData    SCA authentication data
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return confirmation code check result
+     */
+    default boolean checkConfirmationCodeInternally(String authorisationId, String confirmationCode, String scaAuthenticationData,
+                                                    @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return StringUtils.equals(confirmationCode, scaAuthenticationData);
+    }
 }

@@ -21,12 +21,13 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiCheckConfirmationCodeRequest;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
-import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentConfirmationCodeValidationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -104,4 +105,17 @@ public interface AisConsentSpi extends AuthorisationSpi<SpiAccountConsent> {
     @NotNull
     SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
+    /**
+     * Checks confirmation data internally in case of XS2A supports validation of this data. Used only with redirect SCA Approach.
+     *
+     * @param authorisationId          authorisation id
+     * @param confirmationCode         confirmation code
+     * @param scaAuthenticationData    SCA authentication data
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system
+     * @return confirmation code check result
+     */
+    default boolean checkConfirmationCodeInternally(String authorisationId, String confirmationCode, String scaAuthenticationData,
+                                                    @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return StringUtils.equals(confirmationCode, scaAuthenticationData);
+    }
 }

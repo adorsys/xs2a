@@ -42,4 +42,9 @@ public class PisCheckAuthorisationConfirmationServiceCommonImpl implements PisCh
     public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(SpiContextData contextData, boolean confirmationCodeValidationResult, SpiPayment payment, boolean isCancellation, SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return commonPaymentSpi.notifyConfirmationCodeValidation(contextData, confirmationCodeValidationResult, (SpiPaymentInfo) payment, isCancellation, aspspConsentDataProvider);
     }
+
+    @Override
+    public boolean checkConfirmationCodeInternally(String authorisationId, String confirmationCode, String scaAuthenticationData, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return commonPaymentSpi.checkConfirmationCodeInternally(authorisationId, confirmationCode, scaAuthenticationData, aspspConsentDataProvider);
+    }
 }

@@ -1,0 +1,13 @@
+= Release notes v.9.2
+
+== Table of Contents
+
+* Added Confirmation Code step to OAuth Integrated flow
+
+== Fixed SCA redirect approach with authorisation confirmation request fails if no PSU-ID http header is available in request
+
+From now on, SCA redirect approach with authorisation confirmation request works correctly (authorisation is updated) with no PSU-ID http header is available in request
+
+== Added Confirmation Code step to OAuth Integrated flow
+
+From now on, Confirmation Code step is supported in OAuth Integrated flow.
