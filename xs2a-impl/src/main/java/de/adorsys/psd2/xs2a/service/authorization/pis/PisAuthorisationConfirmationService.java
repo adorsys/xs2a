@@ -51,7 +51,6 @@ import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -115,13 +114,16 @@ public class PisAuthorisationConfirmationService {
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse checkAuthorisationConfirmationXs2a(Xs2aUpdatePisCommonPaymentPsuDataRequest request, Authorisation authorisation) {
-        boolean codeCorrect = StringUtils.equals(request.getConfirmationCode(), authorisation.getScaAuthenticationData());
+        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
+        boolean codeCorrect = pisCheckAuthorisationConfirmationService.checkConfirmationCodeInternally(request.getAuthorisationId(),
+                                                                                                       request.getConfirmationCode(),
+                                                                                                       authorisation.getScaAuthenticationData(),
+                                                                                                       aspspConsentDataProvider);
 
         CmsResponse<PisCommonPaymentResponse> pisCommonPaymentResponseCmsResponse = pisCommonPaymentServiceEncrypted.getCommonPaymentById(request.getPaymentId());
         SpiPayment payment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponseCmsResponse.getPayload());
 
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(request.getPsuData());
-        SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
 
         AuthorisationType authorisationType = authorisation.getAuthorisationType();
         boolean isCancellation = AuthorisationType.PIS_CANCELLATION == authorisationType;
