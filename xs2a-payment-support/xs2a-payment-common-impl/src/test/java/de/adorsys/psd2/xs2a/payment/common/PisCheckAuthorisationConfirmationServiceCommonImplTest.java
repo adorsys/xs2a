@@ -32,12 +32,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PisCheckAuthorisationConfirmationServiceCommonImplTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
+    private static final String CONFIRMATION_CODE = "12345";
+    private static final String SCA_AUTHENTICATION_DATA = "54321";
 
     @Mock
     private CommonPaymentSpi commonPaymentSpi;
@@ -66,5 +68,20 @@ class PisCheckAuthorisationConfirmationServiceCommonImplTest {
 
         // Then
         assertEquals(commonServiceResponse, actualResponse);
+    }
+
+    @Test
+    void checkConfirmationCodeInternally() {
+        pisCheckAuthorisationConfirmationServiceCommon.checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, spiAspspConsentDataProvider);
+        verify(commonPaymentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, spiAspspConsentDataProvider);
+    }
+
+    @Test
+    void notifyConfirmationCodeValidation() {
+        SpiContextData spiContextData = TestSpiDataProvider.defaultSpiContextData();
+        SpiPaymentInfo payment = new SpiPaymentInfo(PAYMENT_PRODUCT);
+
+        pisCheckAuthorisationConfirmationServiceCommon.notifyConfirmationCodeValidation(spiContextData, true,  payment, false, spiAspspConsentDataProvider);
+        verify(commonPaymentSpi, times(1)).notifyConfirmationCodeValidation(spiContextData, true,  payment, false, spiAspspConsentDataProvider);
     }
 }

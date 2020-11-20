@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.*;
+import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
@@ -213,10 +214,10 @@ class AccountModelMapperTest {
         when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
 
         Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
-        TransactionDetails actualTransactionDetails = mapper.mapToTransaction(transactions);
+        de.adorsys.psd2.model.Transactions actualTransactionDetails = mapper.mapToTransactions(transactions);
 
-        TransactionDetails expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
-                                                                                           TransactionDetails.class);
+        de.adorsys.psd2.model.Transactions expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
+                                                                                                           de.adorsys.psd2.model.Transactions.class);
         assertEquals(expectedReportTransactionDetails, actualTransactionDetails);
 
     }
@@ -232,11 +233,11 @@ class AccountModelMapperTest {
 
         InlineResponse2001 actualInlineResponse2001 = mapper.mapToTransactionDetails(transactions);
 
-        TransactionDetails expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
-                                                                                     TransactionDetails.class);
+        de.adorsys.psd2.model.Transactions expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
+                                                                                                     de.adorsys.psd2.model.Transactions.class);
 
         assertNotNull(actualInlineResponse2001);
-        assertEquals(expectedTransactionDetails, actualInlineResponse2001.getTransactionsDetails());
+        assertEquals(expectedTransactionDetails, actualInlineResponse2001.getTransactionsDetails().getTransactionDetails());
     }
 
     @Test

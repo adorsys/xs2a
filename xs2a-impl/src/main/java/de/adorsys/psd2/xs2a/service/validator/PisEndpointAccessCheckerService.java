@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,13 @@ public class PisEndpointAccessCheckerService extends EndpointAccessChecker {
      * @return <code>true</code> if accessible. <code>false</code> otherwise.
      */
     public boolean isEndpointAccessible(String authorisationId, boolean confirmationCodeReceived) {
+        boolean authorisationConfirmationRequestMandated = aspspProfileService.isAuthorisationConfirmationRequestMandated();
+        if (aspspProfileService.getScaRedirectFlow() == ScaRedirectFlow.OAUTH
+                && authorisationConfirmationRequestMandated) {
+            return true;
+        }
         boolean confirmationCodeCase = confirmationCodeReceived
-                                           && aspspProfileService.isAuthorisationConfirmationRequestMandated();
+                                           && authorisationConfirmationRequestMandated;
 
         CmsResponse<Authorisation> authorisationResponse = authorisationServiceEncrypted.getAuthorisationById(authorisationId);
 

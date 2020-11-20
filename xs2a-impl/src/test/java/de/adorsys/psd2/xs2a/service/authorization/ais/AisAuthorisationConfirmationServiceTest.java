@@ -64,6 +64,8 @@ import static org.mockito.Mockito.*;
 class AisAuthorisationConfirmationServiceTest {
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
+    private static final String CONFIRMATION_CODE = "12345";
+    private static final String SCA_AUTHENTICATION_DATA = "54321";
     private final static JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
@@ -133,11 +135,14 @@ class AisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_checkOnXs2a_success() {
         // given
         UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        request.setConfirmationCode(CONFIRMATION_CODE);
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, buildPsuIdData());
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
         Authorisation aisConsentAuthorizationResponse = getConsentAuthorisationResponse();
+        aisConsentAuthorizationResponse.setScaAuthenticationData(SCA_AUTHENTICATION_DATA);
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);
+        when(aisConsentSpi.checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider)).thenReturn(true);
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<Authorisation>builder()
                             .payload(aisConsentAuthorizationResponse)
@@ -154,6 +159,7 @@ class AisAuthorisationConfirmationServiceTest {
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
         verify(authorisationService, times(1)).updateAuthorisationStatus(AUTHORISATION_ID, spiConsentConfirmationCodeValidationResponse.getScaStatus());
         verify(aisConsentService, times(1)).updateConsentStatus(CONSENT_ID, spiConsentConfirmationCodeValidationResponse.getConsentStatus());
+        verify(aisConsentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
     }
 
     @Test
@@ -367,6 +373,12 @@ class AisAuthorisationConfirmationServiceTest {
         // then
         assertThat(actualResult).isEqualToComparingFieldByField(expectedResult);
         verify(authorisationService, times(0)).updateAuthorisationStatus(AUTHORISATION_ID, ScaStatus.FINALISED);
+    }
+
+    @Test
+    void checkConfirmationCodeInternally() {
+        aisAuthorisationConfirmationService.checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
+        verify(aisConsentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
     }
 
     private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {

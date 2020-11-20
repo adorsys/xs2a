@@ -101,8 +101,7 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
             }
         } else {
             boolean isPsuCorrect = Objects.nonNull(authorisationEntity.getPsuData())
-                                       && Objects.nonNull(psuRequest)
-                                       && authorisationEntity.getPsuData().contentEquals(psuRequest);
+                                       && isPsuDataCorrectIfPresent(psuRequest, authorisationEntity);
             if (!isPsuCorrect) {
                 log.info("Authorisation ID: [{}], SCA status: [{}]. Update authorisation failed, because PSU data request does not match stored PSU data",
                          authorisationEntity.getExternalId(), authorisationEntity.getScaStatus().getValue());
@@ -116,6 +115,14 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
 
         authorisationEntity.setScaStatus(updateAuthorisationRequest.getScaStatus());
         return authorisationRepository.save(authorisationEntity);
+    }
+
+    private boolean isPsuDataCorrectIfPresent(PsuData psuRequest, AuthorisationEntity authorisationEntity) {
+        if (psuRequest != null) {
+            return authorisationEntity.getPsuData().contentEquals(psuRequest);
+        } else {
+            return true;
+        }
     }
 
     @Override
