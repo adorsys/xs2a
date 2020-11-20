@@ -2,53 +2,64 @@ package de.adorsys.psd2.model;
 
 import java.util.Objects;
 import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * Message codes defined for Trusted Beneficiaries for HTTP Error code 400 (BAD_REQUEST).
  */
-@ApiModel(description = "Message codes defined for Trusted Beneficiaries for HTTP Error code 400 (BAD_REQUEST).")
-@Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+public enum MessageCode400LTB {
 
-public class MessageCode400LTB   {
+  FORMAT_ERROR("FORMAT_ERROR"),
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-}
-    return true;
+  PARAMETER_NOT_CONSISTENT("PARAMETER_NOT_CONSISTENT"),
+
+  PARAMETER_NOT_SUPPORTED("PARAMETER_NOT_SUPPORTED"),
+
+  SERVICE_INVALID("SERVICE_INVALID"),
+
+  RESOURCE_UNKNOWN("RESOURCE_UNKNOWN"),
+
+  RESOURCE_EXPIRED("RESOURCE_EXPIRED"),
+
+  RESOURCE_BLOCKED("RESOURCE_BLOCKED"),
+
+  TIMESTAMP_INVALID("TIMESTAMP_INVALID"),
+
+  PERIOD_INVALID("PERIOD_INVALID"),
+
+  SCA_METHOD_UNKNOWN("SCA_METHOD_UNKNOWN"),
+
+  SCA_INVALID("SCA_INVALID"),
+
+  CONSENT_UNKNOWN("CONSENT_UNKNOWN"),
+
+  SESSIONS_NOT_SUPPORTED("SESSIONS_NOT_SUPPORTED");
+
+  private String value;
+
+  MessageCode400LTB(String value) {
+    this.value = value;
   }
 
   @Override
-  public int hashCode() {
-    return Objects.hash();
-  }
-
-  @Override
+  @JsonValue
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class MessageCode400LTB {\n");
-
-    sb.append("}");
-    return sb.toString();
+    return String.valueOf(value);
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
+  @JsonCreator
+  public static MessageCode400LTB fromValue(String text) {
+    for (MessageCode400LTB b : MessageCode400LTB.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
-    return o.toString().replace("\n", "\n    ");
+    return null;
   }
 }
 

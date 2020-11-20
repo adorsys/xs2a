@@ -3,6 +3,7 @@ package de.adorsys.psd2.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.MessageCode401LTB;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +15,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "This is a data element to support the declaration of additional errors in the context of [RFC7807].")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class Error401LTBAdditionalErrors   {
   @JsonProperty("title")
@@ -24,7 +25,7 @@ public class Error401LTBAdditionalErrors   {
   private String detail = null;
 
   @JsonProperty("code")
-  private String code = null;
+  private MessageCode401LTB code = null;
 
   public Error401LTBAdditionalErrors title(String title) {
     this.title = title;
@@ -70,7 +71,7 @@ public class Error401LTBAdditionalErrors   {
     this.detail = detail;
   }
 
-  public Error401LTBAdditionalErrors code(String code) {
+  public Error401LTBAdditionalErrors code(MessageCode401LTB code) {
     this.code = code;
     return this;
   }
@@ -81,14 +82,15 @@ public class Error401LTBAdditionalErrors   {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
 
   @JsonProperty("code")
-  public String getCode() {
+  public MessageCode401LTB getCode() {
     return code;
   }
 
-  public void setCode(String code) {
+  public void setCode(MessageCode401LTB code) {
     this.code = code;
   }
 

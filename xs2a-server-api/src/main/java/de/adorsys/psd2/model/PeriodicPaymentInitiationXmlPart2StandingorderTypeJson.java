@@ -18,7 +18,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-08-31T16:39:54.348465+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @JsonProperty("startDate")
@@ -142,6 +142,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @ApiModelProperty(value = "")
 
   @Valid
+@Size(max=2)
 
   @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
