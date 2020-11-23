@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.integration.config.IntegrationTestConfiguration;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -163,6 +164,7 @@ public class PisCommonPaymentIT {
         pisPaymentInfo.setPsuDataList(buildPsuIdDataList());
         pisPaymentInfo.setPaymentId(PAYMENT_ID);
         pisPaymentInfo.setTransactionStatus(TransactionStatus.RCVD);
+        pisPaymentInfo.setInternalPaymentStatus(InternalPaymentStatus.INITIATED);
         pisPaymentInfo.setInstanceId(DEFAULT_SERVICE_INSTANCE_ID);
         return pisPaymentInfo;
     }

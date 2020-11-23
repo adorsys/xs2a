@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,22 @@ public class UpdatePaymentAfterSpiServiceInternalEncrypted implements UpdatePaym
         }
 
         return updatePaymentStatusAfterSpiService.updatePaymentStatus(decryptIdOptional.get(), status);
+    }
+
+    @Override
+    @Transactional
+    public CmsResponse<Boolean> updateInternalPaymentStatus(@NotNull String encryptedPaymentId, @NotNull InternalPaymentStatus status) {
+        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedPaymentId);
+
+        if (decryptIdOptional.isEmpty()) {
+            log.info("Encrypted Payment ID [{}]. Update payment status by id failed, couldn't decrypt payment id",
+                     encryptedPaymentId);
+            return CmsResponse.<Boolean>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
+        }
+
+        return updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(decryptIdOptional.get(), status);
     }
 
     @Override

@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -154,6 +155,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
         }
 
         updatePaymentAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.CANC);
+        updatePaymentAfterSpiService.updateInternalPaymentStatus(paymentId, InternalPaymentStatus.CANCELLED_FINALISED);
 
         return Xs2aUpdatePisCommonPaymentPsuDataResponse
                    .buildWithCurrencyConversionInfo(ScaStatus.FINALISED, paymentId, authorisationId, psuData, null);
@@ -167,6 +169,7 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
     @Override
     void updatePaymentDataByPaymentResponse(String paymentId, SpiResponse<SpiPaymentExecutionResponse> spiResponse) {
         updatePaymentAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.CANC);
+        updatePaymentAfterSpiService.updateInternalPaymentStatus(paymentId, InternalPaymentStatus.CANCELLED_FINALISED);
     }
 
     @Override
