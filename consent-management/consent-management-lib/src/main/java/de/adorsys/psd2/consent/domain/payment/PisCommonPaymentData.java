@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.domain.payment;
 
 import de.adorsys.psd2.consent.domain.*;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -54,6 +55,10 @@ public class PisCommonPaymentData extends InstanceDependableEntity implements Au
     @Column(name = "transaction_status", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private TransactionStatus transactionStatus;
+
+    @Column(name = "internal_payment_status", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private InternalPaymentStatus internalPaymentStatus;
 
     @Lob
     @Column(name = "payment")

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.payment.create;
 
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentInfo;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -81,6 +82,7 @@ public abstract class AbstractCreatePaymentService<P extends CommonPayment, S ex
         String contentType = requestProviderService.getContentTypeHeader();
         PisPaymentInfo pisPaymentInfo = xs2aToCmsPisCommonPaymentRequestMapper.mapToPisPaymentInfo(new PisPaymentInfoCreationObject(paymentInitiationParameters, tppInfo, response, paymentRequest.getPaymentData(), internalRequestId, creationTimestamp, contentType));
         response.setInternalRequestId(internalRequestId);
+        pisPaymentInfo.setInternalPaymentStatus(InternalPaymentStatus.INITIATED);
         CreatePisCommonPaymentResponse cmsResponse = pisCommonPaymentService.createCommonPayment(pisPaymentInfo);
         response.setTppNotificationContentPreferred(cmsResponse.getTppNotificationContentPreferred());
 

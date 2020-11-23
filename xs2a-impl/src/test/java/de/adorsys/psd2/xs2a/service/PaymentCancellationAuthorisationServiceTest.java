@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -83,6 +84,7 @@ class PaymentCancellationAuthorisationServiceTest {
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final MessageError AUTHORISATION_SERVICE_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404));
     private static final MessageError UNKNOWN_PAYMENT_ERROR = new MessageError(ErrorType.PIS_404, TppMessageInformation.of(RESOURCE_UNKNOWN_404_NO_PAYMENT));
+    private static final MessageError INVALID_FLOW_ERROR = new MessageError(ErrorType.PIS_403, TppMessageInformation.of(FORBIDDEN_INCORRECT_FLOW));
     private static final MessageError SCA_STATUS_ERROR = new MessageError(ErrorType.PIS_403, of(RESOURCE_UNKNOWN_403));
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
 
@@ -205,6 +207,23 @@ class PaymentCancellationAuthorisationServiceTest {
         // Then
         assertThat(pisCancellationAuthorisation.hasError()).isTrue();
         assertThat(pisCancellationAuthorisation.getError()).isEqualTo(UNKNOWN_PAYMENT_ERROR);
+
+        verify(pisScaAuthorisationServiceResolver, never()).getService(anyString());
+        verify(pisScaAuthorisationService, never()).createCommonPaymentCancellationAuthorisation(anyString(), any(PaymentType.class), any(PsuIdData.class));
+    }
+
+    @Test
+    void createPisCancellationAuthorisation_withNotCancelledPayment_shouldReturnError() {
+        // Given
+        when(xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID)).thenReturn(Optional.of(buildPisCommonPaymentResponseNotCancelled()));
+
+        // When
+        ResponseObject<CancellationAuthorisationResponse> pisCancellationAuthorisation =
+            paymentCancellationAuthorisationService.createPisCancellationAuthorisation(new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, PSU_ID_DATA, PAYMENT_PRODUCT, PaymentType.SINGLE, null));
+
+        // Then
+        assertThat(pisCancellationAuthorisation.hasError()).isTrue();
+        assertThat(pisCancellationAuthorisation.getError()).isEqualTo(INVALID_FLOW_ERROR);
 
         verify(pisScaAuthorisationServiceResolver, never()).getService(anyString());
         verify(pisScaAuthorisationService, never()).createCommonPaymentCancellationAuthorisation(anyString(), any(PaymentType.class), any(PsuIdData.class));
@@ -673,6 +692,17 @@ class PaymentCancellationAuthorisationServiceTest {
         response.setTransactionStatus(TRANSACTION_STATUS);
         response.setPaymentProduct(PAYMENT_PRODUCT);
         response.setPaymentType(SINGLE);
+        response.setInternalPaymentStatus(InternalPaymentStatus.CANCELLED_INITIATED);
+        return response;
+    }
+
+    private static PisCommonPaymentResponse buildPisCommonPaymentResponseNotCancelled() {
+        PisCommonPaymentResponse response = new PisCommonPaymentResponse();
+        response.setPsuData(Collections.singletonList(PSU_ID_DATA));
+        response.setTransactionStatus(TRANSACTION_STATUS);
+        response.setPaymentProduct(PAYMENT_PRODUCT);
+        response.setPaymentType(SINGLE);
+        response.setInternalPaymentStatus(InternalPaymentStatus.INITIATED);
         return response;
     }
 

@@ -20,15 +20,18 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.PisPaymentApi;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentServiceEncrypted;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PisPaymentController implements PisPaymentApi {
@@ -52,6 +55,21 @@ public class PisPaymentController implements PisPaymentApi {
 
         if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
             return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateInternalPaymentStatusAfterSpiService(String paymentId, String status) {
+        try {
+            InternalPaymentStatus paymentStatus = InternalPaymentStatus.valueOf(status);
+            CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(paymentId, paymentStatus);
+            if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (IllegalArgumentException illegalArgumentException) {
+            log.error("Invalid internal payment status: [{}] for payment-ID [{}]", status, paymentId);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

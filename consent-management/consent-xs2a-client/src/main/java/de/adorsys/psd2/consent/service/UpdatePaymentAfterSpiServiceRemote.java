@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.PisPaymentRemoteUrls;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,22 @@ public class UpdatePaymentAfterSpiServiceRemote implements UpdatePaymentAfterSpi
     public CmsResponse<Boolean> updatePaymentStatus(@NotNull String encryptedPaymentId, @NotNull TransactionStatus status) {
         try {
             consentRestTemplate.exchange(pisPaymentRemoteUrls.updatePaymentStatus(), HttpMethod.PUT, null, Void.class, encryptedPaymentId, status.name());
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
+        } catch (CmsRestException e) {
+            log.error(PAYMENT_NOT_FOUND_MESSAGE, encryptedPaymentId);
+        }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<Boolean> updateInternalPaymentStatus(@NotNull String encryptedPaymentId, @NotNull InternalPaymentStatus status) {
+        try {
+            consentRestTemplate.exchange(pisPaymentRemoteUrls.updateInternalPaymentStatus(), HttpMethod.PUT, null, Void.class, encryptedPaymentId, status.name());
             return CmsResponse.<Boolean>builder()
                        .payload(true)
                        .build();
