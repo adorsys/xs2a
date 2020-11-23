@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
+* Added check for not valid payment status in PisPaymentController
 
 == Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
 
-From now on, NPE on POST cancellation-authorisations immediately after payment-initiation is fixed and
-error SERVICE_BLOCKED_INVALID_FLOW returned instead.
+From now on, NPE on POST cancellation-authorisations immediately after payment-initiation is fixed and error SERVICE_BLOCKED_INVALID_FLOW returned instead.
+
+== Added check for not valid payment status in PisPaymentController
+
+From now on, transaction status incorrect value in `PisPaymentController#updatePaymentStatusAfterSpiService`
+will be handled with bad request response.
