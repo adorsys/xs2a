@@ -1,3 +1,10 @@
 = Release notes v.8.4
 
 == Table of Contents
+
+* Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
+
+== Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
+
+From now on, NPE on POST cancellation-authorisations immediately after payment-initiation is fixed and
+error SERVICE_BLOCKED_INVALID_FLOW returned instead.

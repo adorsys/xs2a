@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -265,6 +266,15 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
                      paymentId);
             return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
                        .fail(PIS_404, of(RESOURCE_UNKNOWN_404_NO_PAYMENT))
+                       .build();
+        }
+
+        PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
+        if (pisCommonPaymentResponse.getInternalPaymentStatus() != InternalPaymentStatus.CANCELLED_INITIATED) {
+            log.info("Payment-ID [{}]. Create PIS Cancellation Authorization has failed. Invalid flow: payment wasn't cancelled.",
+                     paymentId);
+            return ResponseObject.<Xs2aCreatePisCancellationAuthorisationResponse>builder()
+                       .fail(PIS_403, of(FORBIDDEN_INCORRECT_FLOW))
                        .build();
         }
 
