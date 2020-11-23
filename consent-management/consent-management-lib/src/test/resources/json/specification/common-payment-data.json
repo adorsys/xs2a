@@ -5,6 +5,7 @@
   "paymentType": "payments",
   "paymentProduct": "sepa-credit-transfers",
   "transactionStatus": "RCVD",
+  "internalPaymentStatus": "INITIATED",
   "payment": "c29tZSBwYXltZW50IGNvbnRlbnQ=",
   "psuDataList": [
     {

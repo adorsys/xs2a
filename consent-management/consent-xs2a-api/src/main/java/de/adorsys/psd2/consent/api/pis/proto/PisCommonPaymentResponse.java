@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api.pis.proto;
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -58,6 +59,9 @@ public class PisCommonPaymentResponse implements CommonPaymentData {
 
     @ApiModelProperty(value = "Transaction status", required = true)
     private TransactionStatus transactionStatus;
+
+    @ApiModelProperty(value = "Internal payment status", required = true)
+    private InternalPaymentStatus internalPaymentStatus;
 
     @ApiModelProperty(value = "Timestamp of the last payment transaction status changing")
     private OffsetDateTime statusChangeTimestamp;

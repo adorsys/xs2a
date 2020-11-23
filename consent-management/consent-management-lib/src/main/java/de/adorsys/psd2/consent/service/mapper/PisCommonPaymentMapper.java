@@ -49,6 +49,7 @@ public class PisCommonPaymentMapper {
         commonPaymentData.setPaymentType(paymentInfo.getPaymentType());
         commonPaymentData.setPaymentProduct(paymentInfo.getPaymentProduct());
         commonPaymentData.setTransactionStatus(paymentInfo.getTransactionStatus());
+        commonPaymentData.setInternalPaymentStatus(paymentInfo.getInternalPaymentStatus());
         commonPaymentData.setPayment(paymentInfo.getPaymentData());
         commonPaymentData.setTppInfo(tppInfoMapper.mapToTppInfoEntity(paymentInfo.getTppInfo()));
         commonPaymentData.setPsuDataList(psuDataMapper.mapToPsuDataList(paymentInfo.getPsuDataList(), paymentInfo.getInstanceId()));
@@ -86,6 +87,7 @@ public class PisCommonPaymentMapper {
                        response.setPsuData(psuDataMapper.mapToPsuIdDataList(cmd.getPsuDataList()));
                        response.setPaymentData(cmd.getPayment());
                        response.setTransactionStatus(cmd.getTransactionStatus());
+                       response.setInternalPaymentStatus(cmd.getInternalPaymentStatus());
                        response.setStatusChangeTimestamp(cmd.getStatusChangeTimestamp());
                        response.setMultilevelScaRequired(cmd.isMultilevelScaRequired());
                        response.setAuthorisations(authorisationMapper.mapToAuthorisations(authorisations));

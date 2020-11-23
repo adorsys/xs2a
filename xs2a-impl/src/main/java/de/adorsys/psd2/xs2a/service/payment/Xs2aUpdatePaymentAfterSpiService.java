@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.payment;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiServiceEncrypted;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,11 @@ public class Xs2aUpdatePaymentAfterSpiService {
         }
 
         return statusUpdated;
+    }
+
+    public boolean updateInternalPaymentStatus(@NotNull String paymentId, @NotNull InternalPaymentStatus status) {
+        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(paymentId, status);
+        return response.isSuccessful() && response.getPayload();
     }
 
     public boolean updatePaymentCancellationTppRedirectUri(@NotNull String paymentId, @NotNull TppRedirectUri tppRedirectUri) {

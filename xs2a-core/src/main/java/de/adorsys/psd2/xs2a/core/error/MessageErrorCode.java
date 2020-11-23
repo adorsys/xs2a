@@ -54,6 +54,13 @@ public enum MessageErrorCode {
     SIGNATURE_MISSING(401),  // Application layer eIDAS Signature for TPP authentication is mandated by the ASPSP but is missing
 
     FORBIDDEN(403), // Token is not valid for the addressed service/resource
+    // This service is not reachable for the addressed PSU due to incorrect flow
+    FORBIDDEN_INCORRECT_FLOW(403) {
+        @Override
+        public String getName() {
+            return "FORBIDDEN";
+        }
+    },
 
     FORMAT_ERROR(400),  // Format of certain request fields are not matching the XS2A requirements
 
@@ -416,7 +423,7 @@ public enum MessageErrorCode {
             return "PAYMENT_FAILED";
         }
     },
-    //
+    // Couldn't get payment by ID
     PAYMENT_FAILED_INCORRECT_ID(400) {
         @Override
         public String getName() {
@@ -489,8 +496,8 @@ public enum MessageErrorCode {
             return SERVICE_INVALID_NAME;
         }
     },
-
-    SERVICE_BLOCKED(403),  // This service is not reachable for the addressed PSU due to a channel independent blocking by the ASPSP
+    // This service is not reachable for the addressed PSU due to a channel independent blocking by the ASPSP
+    SERVICE_BLOCKED(403),
 
     // The consent-ID cannot be matched by the ASPSP relative to the TPP because of path
     CONSENT_UNKNOWN_403(403) {

@@ -52,6 +52,21 @@ public interface PisPaymentApi {
             required = true)
         @PathVariable("status") String status);
 
+    @PutMapping(path = "/payment/{payment-id}/internal-status/{status}")
+    @ApiOperation(value = "Updates payment status after SPI service. Should not be used for any other purposes!")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 400, message = "Bad Request")})
+    ResponseEntity<Void> updateInternalPaymentStatusAfterSpiService(
+        @ApiParam(name = "payment-id",
+            value = "The payment identification assigned to the created payment.",
+            required = true)
+        @PathVariable("payment-id") String paymentId,
+        @ApiParam(value = "The following code values are permitted 'INITIATED', 'CANCELLED_INITIATED', 'CANCELLED_FINALISED', 'FINALISED', 'REJECTED'. These values might be extended by ASPSP by more values.",
+            allowableValues = "INITIATED, CANCELLED_INITIATED, CANCELLED_FINALISED, FINALISED, REJECTED",
+            required = true)
+        @PathVariable("status") String status);
+
     @PutMapping(path = "/payment/{payment-id}/cancellation/redirects")
     @ApiOperation(value = "Updates payment cancellation redirect URIs after SPI service. Should not be used for any other purposes!")
     @ApiResponses(value = {

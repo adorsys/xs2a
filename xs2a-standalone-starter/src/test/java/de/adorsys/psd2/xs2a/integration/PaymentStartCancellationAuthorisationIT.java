@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.config.WebConfig;
 import de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant;
 import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -204,6 +205,7 @@ class PaymentStartCancellationAuthorisationIT {
         pisCommonPaymentResponse.setPaymentType(SINGLE_PAYMENT_TYPE);
         pisCommonPaymentResponse.setPaymentProduct(SEPA_PAYMENT_PRODUCT);
         pisCommonPaymentResponse.setTransactionStatus(TransactionStatus.ACSP);
+        pisCommonPaymentResponse.setInternalPaymentStatus(InternalPaymentStatus.CANCELLED_INITIATED);
         return pisCommonPaymentResponse;
     }
 }
