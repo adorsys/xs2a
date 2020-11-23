@@ -51,10 +51,13 @@ public class PisPaymentController implements PisPaymentApi {
 
     @Override
     public ResponseEntity<Void> updatePaymentStatusAfterSpiService(String paymentId, String status) {
-        CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
-
-        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            CmsResponse<Boolean> response = updatePaymentStatusAfterSpiService.updatePaymentStatus(paymentId, TransactionStatus.valueOf(status));
+            if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (IllegalArgumentException illegalArgumentException) {
+            log.error("Invalid transaction status: [{}] for payment-ID [{}]", status, paymentId);
         }
 
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
