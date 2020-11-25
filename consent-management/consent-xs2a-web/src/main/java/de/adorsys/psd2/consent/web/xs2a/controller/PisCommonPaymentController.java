@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PisCommonPaymentController implements PisCommonPaymentApi {
@@ -80,12 +82,14 @@ public class PisCommonPaymentController implements PisCommonPaymentApi {
 
     @Override
     public ResponseEntity<Void> updateCommonPaymentStatus(String paymentId, String status) {
-        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(paymentId, TransactionStatus.getByValue(status));
-
-        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(paymentId, TransactionStatus.getByValue(status));
+            if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (IllegalArgumentException illegalArgumentException) {
+            log.error("Invalid transaction status: [{}] for payment-ID [{}]", status, paymentId);
         }
-
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
