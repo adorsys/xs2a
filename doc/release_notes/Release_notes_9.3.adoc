@@ -5,6 +5,7 @@
 * Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
 * Added check for not valid payment status in PisPaymentController
 * Fixed XS2A security Hot Spot
+* Added check for not valid payment status in PisCommonPaymentController
 
 == Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
 
@@ -18,3 +19,8 @@ will be handled with bad request response.
 == Fixed XS2A security Hot Spot
 
 Use SecureRandom generator instead of insecure Random
+
+== Added check for not valid payment status in PisCommonPaymentController
+
+From now on, transaction status incorrect value in `PisCommonPaymentController#updateCommonPaymentStatus`
+will be handled with bad request response.
