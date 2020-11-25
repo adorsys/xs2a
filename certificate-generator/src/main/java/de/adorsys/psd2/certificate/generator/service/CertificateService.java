@@ -33,7 +33,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 
 @Slf4j
@@ -42,7 +41,7 @@ import java.util.Random;
 public class CertificateService {
     private static final String NCA_SHORT_NAME = "FAKENCA";
     private static final ASN1ObjectIdentifier ETSI_QC_STATEMENT = new ASN1ObjectIdentifier("0.4.0.19495.2");
-    private static final Random random = new Random();
+    private static final SecureRandom random = new SecureRandom();
 
     private final IssuerDataService issuerDataService;
 
