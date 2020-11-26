@@ -52,9 +52,10 @@ public class CommonSpecification<T> {
                                                                       @Nullable LocalDate createDateFrom,
                                                                       @Nullable LocalDate createDateTo,
                                                                       @Nullable String instanceId) {
-        return Specification.where(byPsuIdDataInList(psuIdData))
-                   .and(byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(byInstanceId(instanceId));
+        return Optional.of(Specification.where(byPsuIdDataInList(psuIdData)))
+                   .map(s -> s.and(byCreationTimestamp(createDateFrom, createDateTo)))
+                   .map(s -> s.and(byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     /**
@@ -66,21 +67,22 @@ public class CommonSpecification<T> {
      * @return resulting specification, or <code>null</code> if PSU ID data was omitted
      */
     protected Specification<T> byPsuIdDataInList(@Nullable PsuIdData psuIdData) {
-        return byPsuIdData(psuIdData, PSU_DATA_LIST_ATTRIBUTE);
+        return byPsuIdData(psuIdData);
     }
 
-    private Specification<T> byPsuIdData(@Nullable PsuIdData psuIdData, String psuAttribute) {
+    private Specification<T> byPsuIdData(@Nullable PsuIdData psuIdData) {
         if (psuIdData == null) {
             return null;
         }
 
         return (root, query, cb) -> {
-            Join<T, PsuData> psuDataJoin = root.join(psuAttribute);
-            return Specification.where(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_ATTRIBUTE, psuIdData.getPsuId()))
-                       .and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_TYPE_ATTRIBUTE, psuIdData.getPsuIdType()))
-                       .and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_CORPORATE_ID_ATTRIBUTE, psuIdData.getPsuCorporateId()))
-                       .and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_CORPORATE_ID_TYPE_ATTRIBUTE, psuIdData.getPsuCorporateIdType()))
-                       .toPredicate(root, query, cb);
+            Join<T, PsuData> psuDataJoin = root.join(PSU_DATA_LIST_ATTRIBUTE);
+            return Optional.of(Specification.where(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_ATTRIBUTE, psuIdData.getPsuId())))
+                       .map(s -> s.and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_ID_TYPE_ATTRIBUTE, psuIdData.getPsuIdType())))
+                       .map(s -> s.and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_CORPORATE_ID_ATTRIBUTE, psuIdData.getPsuCorporateId())))
+                       .map(s -> s.and(provideSpecificationForJoinedEntityAttribute(psuDataJoin, PSU_CORPORATE_ID_TYPE_ATTRIBUTE, psuIdData.getPsuCorporateIdType())))
+                       .map(s -> s.toPredicate(root, query, cb))
+                       .orElse(null);
         };
     }
 
