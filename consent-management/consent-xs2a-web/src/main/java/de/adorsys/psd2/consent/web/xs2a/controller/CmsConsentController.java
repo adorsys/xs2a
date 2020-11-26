@@ -26,12 +26,14 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CmsConsentController implements CmsConsentApi {
@@ -78,16 +80,15 @@ public class CmsConsentController implements CmsConsentApi {
 
     @Override
     public ResponseEntity<Object> updateConsentStatus(String encryptedConsentId, String status) {
-        CmsResponse<Boolean> response;
-
         try {
-            response = consentServiceEncrypted.updateConsentStatusById(encryptedConsentId, ConsentStatus.valueOf(status));
+            CmsResponse<Boolean> response = consentServiceEncrypted.updateConsentStatusById(encryptedConsentId, ConsentStatus.valueOf(status));
+            if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
         } catch (WrongChecksumException e) {
             return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
-        }
-
-        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException i) {
+            log.error("Invalid consent status: [{}] for consent-ID [{}]", status, encryptedConsentId);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
