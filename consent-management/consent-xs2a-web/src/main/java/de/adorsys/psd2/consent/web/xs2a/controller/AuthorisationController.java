@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AuthorisationController implements AuthorisationApi {
@@ -77,12 +79,14 @@ public class AuthorisationController implements AuthorisationApi {
 
     @Override
     public ResponseEntity<Void> updateAuthorisationStatus(String authorisationId, String scaStatus) {
-        CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
-
-        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
+            if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        } catch (IllegalArgumentException illegalArgumentException) {
+            log.error("Invalid sca status: [{}] for authorisation-ID [{}]", scaStatus, authorisationId);
         }
-
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
