@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Join;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
@@ -42,8 +43,10 @@ public class PisCommonPaymentDataSpecification {
     }
 
     public Specification<PisCommonPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
-        return Specification.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(PAYMENT_ID_ATTRIBUTE, paymentId))
-                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
+        return Optional.of(Specification.<PisCommonPaymentData>where(provideSpecificationForEntityAttribute(PAYMENT_ID_ATTRIBUTE, paymentId)))
+                   .map(s -> s.and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId)))
+                   .orElse(null)
+            ;
     }
 
     /**
@@ -61,10 +64,11 @@ public class PisCommonPaymentDataSpecification {
                                                                                                  @Nullable LocalDate createDateTo,
                                                                                                  @Nullable PsuIdData psuIdData,
                                                                                                  @Nullable String instanceId) {
-        return Specification.where(byTppAuthorisationNumber(tppAuthorisationNumber))
-                   .and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(commonSpecification.byPsuIdDataInList(psuIdData))
-                   .and(commonSpecification.byInstanceId(instanceId));
+        return Optional.of(Specification.where(byTppAuthorisationNumber(tppAuthorisationNumber)))
+                   .map(s -> s.and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo)))
+                   .map(s -> s.and(commonSpecification.byPsuIdDataInList(psuIdData)))
+                   .map(s -> s.and(commonSpecification.byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     /**
@@ -96,9 +100,10 @@ public class PisCommonPaymentDataSpecification {
                                                                                               @Nullable LocalDate createDateFrom,
                                                                                               @Nullable LocalDate createDateTo,
                                                                                               @Nullable String instanceId) {
-        return Specification.where(byAspspAccountId(aspspAccountId))
-                   .and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(commonSpecification.byInstanceId(instanceId));
+        return Optional.of(Specification.where(byAspspAccountId(aspspAccountId)))
+                   .map(s -> s.and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo)))
+                   .map(s -> s.and(commonSpecification.byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     private Specification<PisCommonPaymentData> byAspspAccountId(@Nullable String aspspAccountId) {

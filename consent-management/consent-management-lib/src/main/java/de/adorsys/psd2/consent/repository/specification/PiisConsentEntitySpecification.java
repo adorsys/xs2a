@@ -32,6 +32,7 @@ import javax.persistence.criteria.Join;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
@@ -73,14 +74,15 @@ public class PiisConsentEntitySpecification extends ConsentFilterableSpecificati
      * @return resulting specification for ConsentEntity
      */
     public Specification<ConsentEntity> byPsuIdDataAndAuthorisationNumberAndAccountReferenceAndInstanceId(@NotNull PsuIdData psuIdData,
-                                                                                             @NotNull String tppAuthorisationNumber,
-                                                                                             @NotNull AccountReference accountReference,
-                                                                                             @NotNull String instanceId) {
-        return Specification.where(commonSpecification.byPsuIdDataInList(psuIdData))
-                   .and(consentSpecification.byTpp(tppAuthorisationNumber))
-                   .and(byAccountReference(accountReference))
-                   .and(byConsentType())
-                   .and(commonSpecification.byInstanceId(instanceId));
+                                                                                                          @NotNull String tppAuthorisationNumber,
+                                                                                                          @NotNull AccountReference accountReference,
+                                                                                                          @NotNull String instanceId) {
+        return Optional.of(Specification.where(commonSpecification.byPsuIdDataInList(psuIdData)))
+                   .map(s -> s.and(consentSpecification.byTpp(tppAuthorisationNumber)))
+                   .map(s -> s.and(byAccountReference(accountReference)))
+                   .map(s -> s.and(byConsentType()))
+                   .map(s -> s.and(commonSpecification.byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     /**
@@ -94,11 +96,11 @@ public class PiisConsentEntitySpecification extends ConsentFilterableSpecificati
         return (root, query, cb) -> {
             Join<ConsentEntity, List<AspspAccountAccess>> aspspAccountAccessesJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
 
-            return Specification
-                       .where(provideSpecificationForJoinedEntityAttribute(aspspAccountAccessesJoin, ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER, selector.getAccountValue()))
-                       .and(provideSpecificationForJoinedEntityAttribute(aspspAccountAccessesJoin, CURRENCY_ATTRIBUTE, currency))
-                       .and(byConsentType())
-                       .toPredicate(root, query, cb);
+            return Optional.of(Specification.where(provideSpecificationForJoinedEntityAttribute(aspspAccountAccessesJoin, ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER, selector.getAccountValue())))
+                       .map(s -> s.and(provideSpecificationForJoinedEntityAttribute(aspspAccountAccessesJoin, CURRENCY_ATTRIBUTE, currency)))
+                       .map(s -> s.and(byConsentType()))
+                       .map(s -> s.toPredicate(root, query, cb))
+                       .orElse(null);
         };
     }
 
@@ -112,10 +114,10 @@ public class PiisConsentEntitySpecification extends ConsentFilterableSpecificati
         return (root, query, cb) -> {
             Join<ConsentEntity, AccountReferenceEntity> aspspAccountAccessesJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
 
-            return Specification
-                       .where(provideSpecificationForJoinedEntityAttribute(aspspAccountAccessesJoin, ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER, selector.getAccountValue()))
-                       .and(byConsentType())
-                       .toPredicate(root, query, cb);
+            return Optional.of(Specification.where(provideSpecificationForJoinedEntityAttribute(aspspAccountAccessesJoin, ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER, selector.getAccountValue())))
+                       .map(s -> s.and(byConsentType()))
+                       .map(s -> s.toPredicate(root, query, cb))
+                       .orElse(null);
         };
     }
 
