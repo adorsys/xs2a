@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Join;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
@@ -53,9 +54,10 @@ public class ConsentSpecification {
                                                                                        @Nullable LocalDate createDateFrom,
                                                                                        @Nullable LocalDate createDateTo,
                                                                                        @Nullable String instanceId) {
-        return Specification.where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
-                   .and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(commonSpecification.byInstanceId(instanceId));
+        return Optional.of(Specification.where(byAspspAccountIdInAspspAccountAccess(aspspAccountId)))
+                   .map(s -> s.and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo)))
+                   .map(s -> s.and(commonSpecification.byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     /**
@@ -69,9 +71,10 @@ public class ConsentSpecification {
     public Specification<ConsentEntity> byPsuIdDataAndAspspAccountIdAndInstanceId(@NotNull PsuIdData psuIdData,
                                                                                   @Nullable String aspspAccountId,
                                                                                   @Nullable String instanceId) {
-        return Specification.where(byAspspAccountIdInAspspAccountAccess(aspspAccountId))
-                   .and(commonSpecification.byPsuIdDataInList(psuIdData))
-                   .and(commonSpecification.byInstanceId(instanceId));
+        return Optional.of(Specification.where(byAspspAccountIdInAspspAccountAccess(aspspAccountId)))
+                   .map(s -> s.and(commonSpecification.byPsuIdDataInList(psuIdData)))
+                   .map(s -> s.and(commonSpecification.byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     /**
@@ -82,8 +85,9 @@ public class ConsentSpecification {
      * @return specification for ConsentEntity entity
      */
     public Specification<ConsentEntity> byConsentIdAndInstanceId(String consentId, String instanceId) {
-        return Specification.where(commonSpecification.byInstanceId(instanceId))
-                   .and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, consentId));
+        return Optional.of(Specification.where(commonSpecification.byInstanceId(instanceId)))
+                   .map(s -> s.and(provideSpecificationForEntityAttribute(CONSENT_EXTERNAL_ID_ATTRIBUTE, consentId)))
+                   .orElse(null);
     }
 
     /**
@@ -101,10 +105,11 @@ public class ConsentSpecification {
                                                                                           @Nullable LocalDate createDateTo,
                                                                                           @Nullable PsuIdData psuIdData,
                                                                                           @Nullable String instanceId) {
-        return Specification.where(byTpp(tppAuthorisationNumber))
-                   .and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo))
-                   .and(commonSpecification.byPsuIdDataInList(psuIdData))
-                   .and(commonSpecification.byInstanceId(instanceId));
+        return Optional.of(Specification.where(byTpp(tppAuthorisationNumber)))
+                   .map(s -> s.and(commonSpecification.byCreationTimestamp(createDateFrom, createDateTo)))
+                   .map(s -> s.and(commonSpecification.byPsuIdDataInList(psuIdData)))
+                   .map(s -> s.and(commonSpecification.byInstanceId(instanceId)))
+                   .orElse(null);
     }
 
     /**
