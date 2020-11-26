@@ -20,6 +20,8 @@ import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.AUTHORISATION_EXTERNAL_ID_ATTRIBUTE;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.INSTANCE_ID_ATTRIBUTE;
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
@@ -27,7 +29,8 @@ import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSp
 @Service
 public class AuthorisationSpecification {
     public Specification<AuthorisationEntity> byExternalIdAndInstanceId(String externalId, String instanceId) {
-        return Specification.<AuthorisationEntity>where(provideSpecificationForEntityAttribute(AUTHORISATION_EXTERNAL_ID_ATTRIBUTE, externalId))
-                   .and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId));
+        return Optional.of(Specification.<AuthorisationEntity>where(provideSpecificationForEntityAttribute(AUTHORISATION_EXTERNAL_ID_ATTRIBUTE, externalId)))
+                   .map(s -> s.and(provideSpecificationForEntityAttribute(INSTANCE_ID_ATTRIBUTE, instanceId)))
+                   .orElse(null);
     }
 }
