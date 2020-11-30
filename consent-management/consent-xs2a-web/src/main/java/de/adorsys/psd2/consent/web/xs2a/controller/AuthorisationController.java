@@ -80,12 +80,13 @@ public class AuthorisationController implements AuthorisationApi {
     @Override
     public ResponseEntity<Void> updateAuthorisationStatus(String authorisationId, String scaStatus) {
         try {
-            CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, ScaStatus.fromValue(scaStatus));
+            CmsResponse<Boolean> response = authorisationServiceEncrypted.updateAuthorisationStatus(authorisationId, ScaStatus.valueOf(scaStatus));
             if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         } catch (IllegalArgumentException illegalArgumentException) {
             log.error("Invalid sca status: [{}] for authorisation-ID [{}]", scaStatus, authorisationId);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
