@@ -82,13 +82,14 @@ public class PisCommonPaymentController implements PisCommonPaymentApi {
 
     @Override
     public ResponseEntity<Void> updateCommonPaymentStatus(String paymentId, String status) {
-        try {
-            CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(paymentId, TransactionStatus.getByValue(status));
-            if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-        } catch (IllegalArgumentException illegalArgumentException) {
+        TransactionStatus transactionStatus = TransactionStatus.getByValue(status);
+        if (transactionStatus == null) {
             log.error("Invalid transaction status: [{}] for payment-ID [{}]", status, paymentId);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        CmsResponse<Boolean> response = pisCommonPaymentServiceEncrypted.updateCommonPaymentStatusById(paymentId, transactionStatus);
+        if (response.isSuccessful() && BooleanUtils.isTrue(response.getPayload())) {
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
