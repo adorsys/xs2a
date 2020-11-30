@@ -89,6 +89,7 @@ public class CmsConsentController implements CmsConsentApi {
             return new ResponseEntity<>(CmsError.CHECKSUM_ERROR, HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException i) {
             log.error("Invalid consent status: [{}] for consent-ID [{}]", status, encryptedConsentId);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
