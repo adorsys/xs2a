@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +40,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -145,29 +150,45 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
             return Collections.emptyList();
         }
 
-        Specification<ConsentEntity> specification = aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId,
-                                                                                                                            createDateFrom,
-                                                                                                                            createDateTo,
-                                                                                                                            instanceId);
         List<ConsentEntity> consents;
         if (pageIndex == null && itemsPerPage == null) {
+            Specification<ConsentEntity> specification = aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId,
+                                                                                                                                createDateFrom,
+                                                                                                                                createDateTo,
+                                                                                                                                instanceId);
             consents = consentJpaRepository.findAll(specification)
                            .stream()
                            .distinct()
                            .collect(Collectors.toList());
         } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            consents = consentJpaRepository.findAll(specification, pageRequest)
-                           .stream()
-                           // TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1373
-                           .distinct()
-                           .collect(Collectors.toList());
+            consents = getConsentsWithPagination(aspspAccountId, createDateFrom, createDateTo,
+                                                 instanceId, pageIndex, itemsPerPage);
         }
 
         return consents
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)
+                   .collect(Collectors.toList());
+    }
+
+    private List<ConsentEntity> getConsentsWithPagination(String aspspAccountId, LocalDate createDateFrom,
+                                                          LocalDate createDateTo, String instanceId,
+                                                          Integer pageIndex, Integer itemsPerPage) {
+        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+
+        ZoneOffset currentOffset = OffsetDateTime.now().getOffset();
+        OffsetDateTime startOffsetDateTime = Optional.ofNullable(createDateFrom)
+                                                 .map(odt -> OffsetDateTime.of(odt, LocalTime.MIN, currentOffset))
+                                                 .orElse(OffsetDateTime.now().minusYears(10));
+        OffsetDateTime endOffsetDateTime = Optional.ofNullable(createDateTo)
+                                               .map(odt -> OffsetDateTime.of(odt, LocalTime.MAX, currentOffset))
+                                               .orElse(OffsetDateTime.now().plusYears(10));
+
+        return consentJpaRepository
+                   .findAllWithPagination(Collections.singleton(ConsentType.AIS.getName()), aspspAccountId, startOffsetDateTime,
+                                          endOffsetDateTime, instanceId, pageRequest)
+                   .stream()
                    .collect(Collectors.toList());
     }
 
