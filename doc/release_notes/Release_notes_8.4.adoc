@@ -1,0 +1,43 @@
+= Release notes v.8.4
+
+== Table of Contents
+
+* Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
+* Added check for not valid payment status in PisPaymentController
+* Fixed XS2A security Hot Spot
+* Added check for not valid payment status in PisCommonPaymentController
+* Fixed XS2A alerts on Sonar Cloud
+* Added check for not valid payment status in AuthorisationController
+* Added check for not valid payment status in CmsConsentController
+
+== Fixed NPE on POST cancellation-authorisations immediately after payment-initiation
+
+From now on, NPE on POST cancellation-authorisations immediately after payment-initiation is fixed and error SERVICE_BLOCKED_INVALID_FLOW returned instead.
+
+== Added check for not valid payment status in PisPaymentController
+
+From now on, transaction status incorrect value in `PisPaymentController#updatePaymentStatusAfterSpiService`
+will be handled with bad request response.
+
+== Fixed XS2A security Hot Spot
+
+Use SecureRandom generator instead of insecure Random
+
+== Added check for not valid payment status in PisCommonPaymentController
+
+From now on, transaction status incorrect value in `PisCommonPaymentController#updateCommonPaymentStatus`
+will be handled with bad request response.
+
+== Fixed XS2A alerts on Sonar Cloud
+
+From now on, Specification methods are wrapped with Optional.
+
+== Added check for not valid payment status in AuthorisationController
+
+From now on, transaction status incorrect value in `AuthorisationController#updateAuthorisationStatus`
+will be handled with bad request response.
+
+== Added check for not valid payment status in CmsConsentController
+
+From now on, transaction status incorrect value in `CmsConsentController#updateConsentStatus`
+will be handled with bad request response.

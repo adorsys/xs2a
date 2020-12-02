@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Optional;
-import java.util.Random;
 
 @Slf4j
 @Service
@@ -40,7 +39,7 @@ public class SecurityDataService {
     private String serverKey;
 
     private final CryptoProviderHolder cryptoProviderHolder;
-    private final Random random = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
 
     @Autowired
     public SecurityDataService(Environment environment, CryptoProviderHolder cryptoProviderHolder) {

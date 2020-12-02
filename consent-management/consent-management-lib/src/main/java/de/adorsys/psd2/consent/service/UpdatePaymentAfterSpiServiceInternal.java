@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.service;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.service.UpdatePaymentAfterSpiService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,24 @@ public class UpdatePaymentAfterSpiServiceInternal implements UpdatePaymentAfterS
         }
 
         boolean updated = commonPaymentDataService.updateStatusInPaymentData(paymentDataOptional.get(), status);
+        return CmsResponse.<Boolean>builder()
+                   .payload(updated)
+                   .build();
+    }
+
+    @Override
+    @Transactional
+    public CmsResponse<Boolean> updateInternalPaymentStatus(@NotNull String paymentId, @NotNull InternalPaymentStatus status) {
+        Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(paymentId, null);
+        if (paymentDataOptional.isEmpty()) {
+            log.info("Payment ID [{}]. Update internal payment status by id failed, because pis payment data not found or payment is finalized",
+                     paymentId);
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
+        }
+
+        boolean updated = commonPaymentDataService.updateInternalStatusInPaymentData(paymentDataOptional.get(), status);
         return CmsResponse.<Boolean>builder()
                    .payload(updated)
                    .build();

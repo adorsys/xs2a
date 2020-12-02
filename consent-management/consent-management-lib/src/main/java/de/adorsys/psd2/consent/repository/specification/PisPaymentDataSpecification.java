@@ -20,12 +20,15 @@ import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
 
 @Service
 public class PisPaymentDataSpecification {
     public Specification<PisPaymentData> byPaymentIdAndInstanceId(String paymentId, String instanceId) {
-        return Specification.<PisPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId))
-                   .and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId));
+        return Optional.of(Specification.<PisPaymentData>where(provideSpecificationForEntityAttribute(EntityAttribute.PAYMENT_ID_ATTRIBUTE, paymentId)))
+                   .map(s -> s.and(provideSpecificationForEntityAttribute(EntityAttribute.INSTANCE_ID_ATTRIBUTE, instanceId)))
+                   .orElse(null);
     }
 }

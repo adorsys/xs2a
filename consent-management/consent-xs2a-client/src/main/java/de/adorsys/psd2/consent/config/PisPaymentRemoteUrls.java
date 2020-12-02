@@ -33,6 +33,10 @@ public class PisPaymentRemoteUrls {
         return paymentServiceBaseUrl + "/pis/payment/{payment-id}/status/{status}";
     }
 
+    public String updateInternalPaymentStatus() {
+        return paymentServiceBaseUrl + "/pis/payment/{payment-id}/internal-status/{status}";
+    }
+
     public String updatePaymentCancellationRedirectURIs() {
         return paymentServiceBaseUrl + "/pis/payment/{payment-id}/cancellation/redirects";
     }
