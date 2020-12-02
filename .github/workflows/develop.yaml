@@ -143,7 +143,7 @@ jobs:
           ruby-version: 2.7
 
       - name: Install AsciiDoctor
-        uses: reitzig/actions-asciidoctor@v1.1.0
+        uses: reitzig/actions-asciidoctor@v1.0.1
 
       - name: Convert adoc to html
         run: cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
