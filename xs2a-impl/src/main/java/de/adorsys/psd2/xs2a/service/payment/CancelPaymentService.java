@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
@@ -110,6 +111,7 @@ public class CancelPaymentService {
 
         if (resultStatus == TransactionStatus.CANC) {
             log.info("Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment status - CANCELED", encryptedPaymentId);
+            updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(encryptedPaymentId, InternalPaymentStatus.CANCELLED_FINALISED);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .body(cancelPaymentResponse)
                        .build();
@@ -117,6 +119,7 @@ public class CancelPaymentService {
 
         if (resultStatus.isFinalisedStatus()) {
             log.info("Payment-ID [{}]. Initiate Payment Cancellation has failed. Payment has finalised status", encryptedPaymentId);
+            updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(encryptedPaymentId, InternalPaymentStatus.FINALISED);
             return ResponseObject.<CancelPaymentResponse>builder()
                        .fail(ErrorType.PIS_400, of(MessageErrorCode.RESOURCE_BLOCKED))
                        .build();
@@ -130,6 +133,7 @@ public class CancelPaymentService {
 
         // in payment cancellation case 'multilevelScaRequired' is always false
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, false);
+        updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(encryptedPaymentId, InternalPaymentStatus.CANCELLED_INITIATED);
         if (implicitMethod) {
             Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null, null), payment.getPaymentProduct(), payment.getPaymentType(), null);
             ResponseObject<CancellationAuthorisationResponse> authorisationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request);
@@ -166,6 +170,7 @@ public class CancelPaymentService {
         }
 
         updatePaymentStatusAfterSpiService.updatePaymentStatus(encryptedPaymentId, TransactionStatus.CANC);
+        updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(encryptedPaymentId, InternalPaymentStatus.CANCELLED_FINALISED);
         CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
         cancelPaymentResponse.setTransactionStatus(TransactionStatus.CANC);
         cancelPaymentResponse.setInternalRequestId(requestProviderService.getInternalRequestIdString());
