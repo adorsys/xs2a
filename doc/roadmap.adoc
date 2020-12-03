@@ -130,7 +130,37 @@ a| * Bugfix: POST on cancellation-authorisations immediately after payment-intia
 
 * Bugfix: Add check for not valid authorisation status in AuthorisationController
 
+* Fix XS2A / Connector Security Hot Spots
+
+* Increase code coverage for Connector
+
 a| * All fixes and updates from v.8.4
+
+a|
+
+|17.12.2020| |8.5|9.4|
+
+a|
+
+a|
+
+a| * Fix pagination for get consents by account id
+
+* Fix XS2A Security Hot Spots
+
+
+a| * All fixes and updates from v.8.5
+
+
+a| Signing Basket plugin for XS2A
+
+a|
+
+a|
+
+a|
+
+a|
 
 a|
 
