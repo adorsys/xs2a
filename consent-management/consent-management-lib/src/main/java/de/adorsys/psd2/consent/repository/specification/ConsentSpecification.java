@@ -146,5 +146,4 @@ public class ConsentSpecification {
                        .toPredicate(root, query, cb);
         };
     }
-
 }
