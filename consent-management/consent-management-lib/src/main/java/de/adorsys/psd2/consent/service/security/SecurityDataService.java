@@ -58,7 +58,7 @@ public class SecurityDataService {
      * @return String encrypted external consent ID
      */
     public Optional<String> encryptId(String originalId) {
-        String consentKey = RandomStringUtils.random(16, 0, 0, true, true, null, random);
+        String consentKey = RandomStringUtils.random(16, 0, 0, true, true, null, random); //NOSONAR
 
         String compositeConsentId = concatWithSeparator(originalId, consentKey, cryptoProviderHolder.getDefaultDataProvider().getCryptoProviderId());
 
