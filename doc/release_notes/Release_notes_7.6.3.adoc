@@ -3,8 +3,12 @@
 == Table of Contents
 
 * Added field `otherAccountIdentification` to AccountReference
+* Fixed - Optional "instance-id" in "scaRedirect"
 
 == Added field `otherAccountIdentification` to AccountReference
 
 From now on, AccountReference contains field `otherAccountIdentification` for other account identifier.
 
+== Fixed - Optional "instance-id" in "scaRedirect"
+
+From now on, `{instance-id}` placeholder in redirect link will be replaced with `instance-id` in REDIRECT approach.
