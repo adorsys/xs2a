@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +39,9 @@ public class TransactionListBodyValidatorImpl extends AbstractBodyValidatorImpl 
     static final String BOOKING_STATUS_PARAM = "bookingStatus";
 
     @Autowired
-    public TransactionListBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper) {
-        super(errorBuildingService, xs2aObjectMapper);
+    public TransactionListBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
+                                            FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
     }
 
     @Override

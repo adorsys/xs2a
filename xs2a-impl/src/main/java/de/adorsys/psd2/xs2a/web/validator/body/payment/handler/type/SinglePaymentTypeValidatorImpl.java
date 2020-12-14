@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.PaymentValidationConfig;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.service.CustomPaymentValidationService;
@@ -55,8 +56,9 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                           PaymentMapper paymentMapper, AmountValidator amountValidator,
-                                          IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService) {
-        super(errorBuildingService, xs2aObjectMapper);
+                                          IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService,
+                                          FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
         this.ibanValidator = ibanValidator;

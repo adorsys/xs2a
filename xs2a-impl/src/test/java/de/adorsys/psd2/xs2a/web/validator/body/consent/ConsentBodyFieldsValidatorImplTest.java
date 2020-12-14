@@ -23,7 +23,9 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields;
@@ -75,7 +77,11 @@ class ConsentBodyFieldsValidatorImplTest {
         byte[] requestContent = jsonReader.getBytesFromFile("json/validation/ais/consents.json");
         this.request = buildRequestWithContent(requestContent);
 
-        validator = new ConsentBodyFieldsValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), xs2aObjectMapper, tppRedirectUriBodyValidator, dateFieldValidator, fieldExtractor);
+        ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
+        validator =
+            new ConsentBodyFieldsValidatorImpl(errorBuildingServiceMock, xs2aObjectMapper, tppRedirectUriBodyValidator,
+                                               dateFieldValidator, fieldExtractor,
+                                               new FieldLengthValidator(errorBuildingServiceMock));
     }
 
     @Test

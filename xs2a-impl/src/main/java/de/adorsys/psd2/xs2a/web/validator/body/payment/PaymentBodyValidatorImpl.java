@@ -26,10 +26,7 @@ import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
-import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
+import de.adorsys.psd2.xs2a.web.validator.body.*;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -74,8 +71,9 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
                                     TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
                                     DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor,
                                     CurrencyValidator currencyValidator,
-                                    PathParameterExtractor pathParameterExtractor, CountryPaymentValidatorResolver countryPaymentValidatorResolver) {
-        super(errorBuildingService, xs2aObjectMapper);
+                                    PathParameterExtractor pathParameterExtractor, CountryPaymentValidatorResolver countryPaymentValidatorResolver,
+                                    FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.standardPaymentProductsResolver = standardPaymentProductsResolver;
         this.dateFieldValidator = dateFieldValidator;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;

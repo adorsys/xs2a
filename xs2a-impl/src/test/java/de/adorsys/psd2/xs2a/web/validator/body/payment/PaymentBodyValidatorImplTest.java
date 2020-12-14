@@ -28,6 +28,7 @@ import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aRequestBodyDateFields;
@@ -112,7 +113,8 @@ class PaymentBodyValidatorImplTest {
         messageError = new MessageError(ErrorType.PIS_400);
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
         validator = new PaymentBodyValidatorImpl(errorService, xs2aObjectMapper, standardPaymentProductsResolver, tppRedirectUriBodyValidator,
-                                                 dateFieldValidator, fieldExtractor, currencyValidator, pathParameterExtractor, countryPaymentValidatorResolver);
+                                                 dateFieldValidator, fieldExtractor, currencyValidator, pathParameterExtractor, countryPaymentValidatorResolver,
+                                                 new FieldLengthValidator(errorService));
     }
 
     @Test
