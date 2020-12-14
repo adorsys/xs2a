@@ -275,15 +275,20 @@ class AccountAccessValidatorImplTest {
     }
 
     private AccountAccessValidatorImpl createValidator(Consents consents) {
-        return new AccountAccessValidatorImpl(new ErrorBuildingServiceMock(ErrorType.AIS_400), new Xs2aObjectMapper(),
-                                              accountReferenceValidator, dateFieldValidator, new FieldExtractor(null, null) {
-            @SuppressWarnings("unchecked")
-            @Override
-            public <T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
-                assertEquals(Consents.class, clazz);
-                return (Optional<T>) Optional.of(consents);
-            }
-        }) {
-        };
+        ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
+        return new AccountAccessValidatorImpl(errorBuildingServiceMock, new Xs2aObjectMapper(),
+                                              accountReferenceValidator, dateFieldValidator,
+                                              new FieldExtractor(null, null) {
+                                                  @SuppressWarnings("unchecked")
+                                                  @Override
+                                                  public <
+                                                             T> Optional<T> mapBodyToInstance(HttpServletRequest request, MessageError messageError, Class<T> clazz) {
+                                                      assertEquals(Consents.class, clazz);
+                                                      return (Optional<T>) Optional.of(consents);
+                                                  }
+                                              },
+                                              new FieldLengthValidator(errorBuildingServiceMock)) {
+        }
+            ;
     }
 }

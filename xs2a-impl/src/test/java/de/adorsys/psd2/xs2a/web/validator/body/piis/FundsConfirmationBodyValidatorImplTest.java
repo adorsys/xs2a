@@ -24,9 +24,11 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -64,7 +66,11 @@ class FundsConfirmationBodyValidatorImplTest {
 
     @BeforeEach
     void setUp() {
-        fundsConfirmationBodyValidator = new FundsConfirmationBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIIS_400), xs2aObjectMapper, accountReferenceValidator, amountValidator, currencyValidator, fieldExtractor);
+        ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.PIIS_400);
+        fundsConfirmationBodyValidator =
+            new FundsConfirmationBodyValidatorImpl(errorBuildingServiceMock, xs2aObjectMapper, accountReferenceValidator,
+                                                   amountValidator, currencyValidator, fieldExtractor,
+                                                   new FieldLengthValidator(errorBuildingServiceMock));
     }
 
     @Test

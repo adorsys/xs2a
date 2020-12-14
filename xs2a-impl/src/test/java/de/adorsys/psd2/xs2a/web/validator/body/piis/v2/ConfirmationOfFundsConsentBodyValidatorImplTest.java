@@ -21,7 +21,9 @@ import de.adorsys.psd2.model.ConsentsConfirmationOfFunds;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -53,10 +55,14 @@ class ConfirmationOfFundsConsentBodyValidatorImplTest {
 
     @BeforeEach
     void setUp() {
-        validator = new ConfirmationOfFundsConsentBodyValidatorImpl(new ErrorBuildingServiceMock(ErrorType.PIIS_400), xs2aObjectMapper, accountReferenceValidator, fieldExtractor);
+        ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.PIIS_400);
+        validator =
+            new ConfirmationOfFundsConsentBodyValidatorImpl(errorBuildingServiceMock, xs2aObjectMapper,
+                                                            accountReferenceValidator, fieldExtractor,
+                                                            new FieldLengthValidator(errorBuildingServiceMock));
     }
 
-      @Test
+    @Test
     void validate_success() {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();

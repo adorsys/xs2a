@@ -2,7 +2,57 @@
 
 == Table of Contents
 
+* Fixed pagination for getting consents by account id
+* Fixed - Optional "instance-id" in "scaRedirect"
+* Added field `otherAccountIdentification` to AccountReference
+* Fixed TPP stop list saving data into DB
+* Fixed sonar alerts
+* Extracted methods for field max length check from AbstractBodyValidatorImpl into separate class
 * Fixed performance issue with CMS scheduler tasks
+
+== Fixed pagination for getting consents by account id
+
+From now on, pagination on `GET aspsp-api/v1/ais/consents/account/{account-id}` works correctly
+with expected items on page.
+
+== Fixed - Optional "instance-id" in "scaRedirect"
+
+From now on, `{instance-id}` placeholder in redirect link will be replaced with `instance-id` in REDIRECT approach.
+
+== Added field `otherAccountIdentification` to AccountReference
+
+From now on, AccountReference contains field `otherAccountIdentification` for other account identifier.
+
+== Fixed TPP stop list saving data into DB
+
+From now on, tpp stop list saved into database as expected.
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- CmsAspspStopListControllerIT
+- CmsAspspTppInfoControllerIT
+- PiisConsentIT
+- CmsAspspEventControllerIT
+- CmsAspspPiisControllerIT
+- CmsAspspPiisExportControllerIT
+- CmsAspspPisExportControllerIT
+- CmsAspspPisTransactionControllerIT
+- CmsAspspPsuConsentManagementControllerIT
+- CommonAspspProfileSetting
+- AspspProfileUpdateControllerTest
+- BankProfileReadingService
+- AspspProfileUpdateServiceImplTest
+- OldBankProfileSetting
+- WebConfig
+- AspspProfileController
+- CertificateControllerTest
+- ExportUtil
+
+== Extracted methods for field max length check from AbstractBodyValidatorImpl into separate class
+
+From now on, there is separate FieldLengthValidator for max length checks.
 
 == Fixed performance issue with CMS scheduler tasks
 

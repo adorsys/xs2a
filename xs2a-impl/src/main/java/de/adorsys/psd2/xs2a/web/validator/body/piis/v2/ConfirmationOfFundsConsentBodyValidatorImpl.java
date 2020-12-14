@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +40,9 @@ public class ConfirmationOfFundsConsentBodyValidatorImpl extends AbstractBodyVal
     private final FieldExtractor fieldExtractor;
 
     public ConfirmationOfFundsConsentBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
-                                                       AccountReferenceValidator accountReferenceValidator, FieldExtractor fieldExtractor) {
-        super(errorBuildingService, xs2aObjectMapper);
+                                                       AccountReferenceValidator accountReferenceValidator, FieldExtractor fieldExtractor,
+                                                       FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.accountReferenceValidator = accountReferenceValidator;
         this.fieldExtractor = fieldExtractor;
     }
