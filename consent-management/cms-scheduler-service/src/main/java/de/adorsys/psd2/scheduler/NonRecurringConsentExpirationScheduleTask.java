@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +23,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.EnumSet;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
 
 @Slf4j
 @Component
@@ -40,19 +37,9 @@ public class NonRecurringConsentExpirationScheduleTask {
     @Scheduled(cron = "${xs2a.cms.used-non-recurring-consent-expiration.cron.expression}")
     @Transactional
     public void expireUsedNonRecurringConsent() {
+        long start = System.currentTimeMillis();
         log.info("Non-recurring consent expiration task has started!");
-        List<ConsentEntity> consents = consentJpaRepository.findUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID),
-                                                                                      LocalDate.now())
-                                        .stream()
-                                        .distinct()
-                                        .map(this::expireConsent)
-                                        .collect(Collectors.toList());
-
-        consentJpaRepository.saveAll(consents);
-    }
-
-    private ConsentEntity expireConsent(ConsentEntity consent) {
-        consent.setConsentStatus(EXPIRED);
-        return consent;
+        consentJpaRepository.expireUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID));
+        log.info("Non-recurring consent expiration task completed in {}ms!", System.currentTimeMillis() - start);
     }
 }

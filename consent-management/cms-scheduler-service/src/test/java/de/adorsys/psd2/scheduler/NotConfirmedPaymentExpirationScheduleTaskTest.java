@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.service.PisCommonPaymentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +28,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +56,11 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
     @Captor
     private ArgumentCaptor<ArrayList<PisCommonPaymentData>> commonPaymentDataCaptor;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(scheduleTask, "pageSize", 100);
+    }
+
     @Test
     void obsoleteNotConfirmedPaymentIfExpired() {
         // Given
@@ -59,7 +68,9 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
         pisCommonPaymentDataList.add(new PisCommonPaymentData());
         pisCommonPaymentDataList.add(new PisCommonPaymentData());
 
-        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
+        when(paymentDataRepository.countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
+            .thenReturn(10L);
+        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC), PageRequest.of(0, 100)))
             .thenReturn(pisCommonPaymentDataList);
         when(pisCommonPaymentConfirmationExpirationService.isConfirmationExpired(any(PisCommonPaymentData.class)))
             .thenReturn(true, false);
@@ -70,7 +81,10 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
         scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
 
         // Then
-        verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
+        verify(paymentDataRepository, times(1))
+            .countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
+        verify(paymentDataRepository, times(1))
+            .findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC), PageRequest.of(0, 100));
         verify(pisCommonPaymentConfirmationExpirationService, times(2)).isConfirmationExpired(any(PisCommonPaymentData.class));
         verify(pisCommonPaymentConfirmationExpirationService, times(1)).updatePaymentDataListOnConfirmationExpiration(anyList());
 
@@ -80,14 +94,15 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
     @Test
     void obsoleteNotConfirmedPaymentIfExpired_emptyList() {
         // Given
-        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
-            .thenReturn(Collections.emptyList());
+        when(paymentDataRepository.countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
+            .thenReturn(0L);
 
         // When
         scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
 
         // Then
-        verify(paymentDataRepository, times(1)).findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
+        verify(paymentDataRepository, times(1)).countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
+        verify(paymentDataRepository, never()).findByTransactionStatusIn(anySet(), any(Pageable.class));
         verify(pisCommonPaymentConfirmationExpirationService, never()).isConfirmationExpired(any(PisCommonPaymentData.class));
         verify(pisCommonPaymentConfirmationExpirationService, never()).updatePaymentDataListOnConfirmationExpiration(anyList());
     }

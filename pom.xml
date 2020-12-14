@@ -217,7 +217,7 @@
 
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <mockito.version>3.2.4</mockito.version>
-        <testcontainers.version>1.11.2</testcontainers.version>
+        <testcontainers.version>1.15.1</testcontainers.version>
 
         <!--Sonar -->
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>
