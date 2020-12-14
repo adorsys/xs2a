@@ -25,6 +25,7 @@
 |xs2a.cms.used-non-recurring-consent-expiration.cron.expression|Cron expression to expire non-recurring consents|0 0 * * * *
 |xs2a.cms.consent.cron.expression|Cron expression to expire consents with statuses (VALID and RECEIVED)|0 0 1 * * ?
 |xs2a.cms.scheduler.pool.size|Size of CMS scheduler pool|30
+|xs2a.cms.scheduler.processing.page-size|Size of processed page|100
 |xs2a.cms.encryption.defaultProvider.dataProvider|Crypto provider for Data encryption|JcHZwvJMuc
 |xs2a.cms.encryption.defaultProvider.idProvider|Crypto provider for ID encryption|psGLvQpt9Q
 |===

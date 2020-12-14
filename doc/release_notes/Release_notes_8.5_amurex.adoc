@@ -1,0 +1,11 @@
+= Release notes v.8.5
+
+== Table of Contents
+
+* Fixed performance issue with CMS scheduler tasks
+
+== Fixed performance issue with CMS scheduler tasks
+
+From now on, database requests which need data from ASPSP profile perform page by page.
+Configuration property that defines page size  is `xs2a.cms.scheduler.processing.page-size` (default value - 100).
+The rest database requests (get/update) were combined into one (update).

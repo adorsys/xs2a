@@ -16,18 +16,12 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,24 +32,9 @@ public class TppStopListScheduleTask {
     @Scheduled(cron = "${xs2a.cms.stoplist.cron.expression}")
     @Transactional
     public void unblockTppIfBlockingExpired() {
+        long start = System.currentTimeMillis();
         log.info("Tpp Stop List schedule task is run!");
-
-        List<TppStopListEntity> blockedWithExpirationTpps = tppStopListRepository.findAllByStatusAndBlockingExpirationTimestampLessThanEqual(TppStatus.BLOCKED, OffsetDateTime.now());
-        List<TppStopListEntity> unblockedTpps = unblockTpps(blockedWithExpirationTpps);
-
-        if (!unblockedTpps.isEmpty()) {
-            tppStopListRepository.saveAll(unblockedTpps);
-        }
-    }
-
-    private List<TppStopListEntity> unblockTpps(List<TppStopListEntity> blockedWithExpirationTpps) {
-        return blockedWithExpirationTpps.stream()
-                   .map(this::unblockTpp)
-                   .collect(Collectors.toList());
-    }
-
-    private TppStopListEntity unblockTpp(TppStopListEntity tppStopListEntity) {
-        tppStopListEntity.unblock();
-        return tppStopListEntity;
+        tppStopListRepository.unblockExpiredBlockedTpp();
+        log.info("Tpp Stop List schedule task completed in {}ms!", System.currentTimeMillis() - start);
     }
 }
