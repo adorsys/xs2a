@@ -204,6 +204,7 @@ class CreatePiisConsentAuthorisationValidatorTest {
         consentTppInformation.setTppInfo(tppInfo);
         piisConsent.setConsentTppInformation(consentTppInformation);
         piisConsent.setAuthorisations(Collections.emptyList());
+        piisConsent.setPsuIdDataList(Collections.emptyList());
         return piisConsent;
     }
 

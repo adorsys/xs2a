@@ -226,9 +226,31 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.moduleName>${project.artifactId}</sonar.moduleName>
         <sonar.language>java</sonar.language>
-        <sonar.coverage.exclusions>**/*Entity.java,**/*TO.java,**/*BO.java,**/*PO.java,**/*Application.java,**/*Exception.java,
-            **/*Config.java,pom.xml,/xs2a-server-api/**/*,/xs2a-core-payments/**/*,**/consent-psu-api/**/*,**/consent-core-web/**/*,
-            **/consent-aspsp-api/**/*,**/spi-stub/**/*
+        <sonar.exclusions>
+            **/xs2a-server-api/**/*
+        </sonar.exclusions>
+        <sonar.coverage.exclusions>
+            **/*Entity.java,
+            **/*TO.java,
+            **/*BO.java,
+            **/*PO.java,
+            **/*Application.java,
+            **/*Exception.java,
+            **/*Config.java,
+            **/*.xml,
+            **/xs2a-server-api/**/*,
+            **/xs2a-core-payments/**/*,
+            **/consent-psu-api/**/*,
+            **/consent-core-api/**/*,
+            **/consent-core-web/**/*,
+            **/consent-aspsp-api/**/*,
+            **/spi-stub/**/*,
+            **/aspsp-profile-api/**/*,
+            **/aspsp-profile-internal-api/**/*,
+            **/cms-db-schema/**/*
+            **/event-service-aspsp-api/**/*
+            **/event-service-persist-api/**/*
+            **/event-service-xs2a-api/**/*
         </sonar.coverage.exclusions>
 
         <!--Javadoc-->

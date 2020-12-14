@@ -203,6 +203,7 @@ class CreateConsentAuthorisationValidatorTest {
         consentTppInformation.setTppInfo(tppInfo);
         aisConsent.setConsentTppInformation(consentTppInformation);
         aisConsent.setAuthorisations(Collections.emptyList());
+        aisConsent.setPsuIdDataList(Collections.emptyList());
         return aisConsent;
     }
 
