@@ -16,29 +16,19 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
-import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.RECEIVED;
+import static de.adorsys.psd2.xs2a.core.consent.ConsentStatus.VALID;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class NonRecurringConsentExpirationScheduleTaskTest {
@@ -49,32 +39,9 @@ class NonRecurringConsentExpirationScheduleTaskTest {
     @Mock
     private ConsentJpaRepository consentJpaRepository;
 
-    @Captor
-    private ArgumentCaptor<ArrayList<ConsentEntity>> consentsCaptor;
-
     @Test
     void expireUsedNonRecurringConsent() {
-        List<ConsentEntity> aisConsents = new ArrayList<>();
-        aisConsents.add(createConsent(RECEIVED));
-        aisConsents.add(createConsent(VALID));
-
-        when(consentJpaRepository.findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class)))
-            .thenReturn(aisConsents);
-        when(consentJpaRepository.saveAll(consentsCaptor.capture())).thenReturn(Collections.emptyList());
-
         scheduleTask.expireUsedNonRecurringConsent();
-
-        verify(consentJpaRepository, times(1)).findUsedNonRecurringConsents(eq(EnumSet.of(RECEIVED, VALID)), any(LocalDate.class));
-        verify(consentJpaRepository, times(1)).saveAll(anyList());
-
-        assertEquals(2, consentsCaptor.getValue().size());
-        consentsCaptor.getValue().forEach(c -> assertEquals(EXPIRED, c.getConsentStatus()));
-    }
-
-    @NotNull
-    private ConsentEntity createConsent(ConsentStatus consentStatus) {
-        ConsentEntity aisConsent = new ConsentEntity();
-        aisConsent.setConsentStatus(consentStatus);
-        return aisConsent;
+        verify(consentJpaRepository, times(1)).expireUsedNonRecurringConsents(EnumSet.of(RECEIVED, VALID));
     }
 }
