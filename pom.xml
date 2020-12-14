@@ -217,7 +217,7 @@
 
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
         <mockito.version>3.2.4</mockito.version>
-        <testcontainers.version>1.11.2</testcontainers.version>
+        <testcontainers.version>1.15.1</testcontainers.version>
 
         <!--Sonar -->
         <sonar.core.coveragePlugin>jacoco</sonar.core.coveragePlugin>
@@ -876,7 +876,7 @@ Use it manually to generate javadocs. Don't commit it
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
                                     </gpgArguments>
-                                </configuration>                           
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

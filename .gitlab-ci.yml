@@ -163,6 +163,7 @@ Lint:XS2A_PMD_CPD_Report:
   script:
     - apt update && apt install make -yq
     - echo "Test java code for PMD and CPD"
+    - echo "DOCKER_HOST=$DOCKER_HOST"
     - mvn -ntp -Dmaven.test.skip=true package pmd:check # commented cause many duplications pmd:cpd-check
   cache: {}
   artifacts:
@@ -217,16 +218,19 @@ Build:XS2A_Java11:
 
 Test:IT_Java11:
   stage: "Test"
+  image: maven:3.6.3-jdk-11
   except:
     - schedules
   script:
-    - jabba use ${JAVA_VERSION}
+#    - jabba use ${JAVA_VERSION}
+    - echo "DOCKER_HOST=$DOCKER_HOST"
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+    TESTCONTAINERS_RYUK_DISABLED: "true"
 
 Test:DOCKER_test_image_build:
   stage: "Test"
@@ -272,8 +276,10 @@ Test:Sonarcube:
     - jabba use system@1.11
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp --fail-at-end clean install
-    - mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
+    - mvn -ntp -e --fail-at-end clean install
+    - mvn -ntp -e sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
+  variables:
+    TESTCONTAINERS_RYUK_DISABLED: "true"
 
 Test:AsciiDoc:
   stage: "Test"

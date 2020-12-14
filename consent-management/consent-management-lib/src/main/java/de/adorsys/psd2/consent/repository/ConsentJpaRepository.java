@@ -21,20 +21,31 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long>, JpaSpecificationExecutor<ConsentEntity> {
-    List<ConsentEntity> findByConsentStatusIn(Set<ConsentStatus> statuses);
+
+    List<ConsentEntity> findByConsentStatusIn(Set<ConsentStatus> statuses, Pageable pageable);
+
+    Long countByConsentStatusIn(Set<ConsentStatus> statuses);
 
     Optional<ConsentEntity> findByExternalId(String externalId);
+
+    @Query(
+        "UPDATE consent " +
+            "SET consentStatus = 'EXPIRED', expireDate = CURRENT_TIMESTAMP " +
+            "WHERE consentStatus IN :consentStatuses AND validUntil < CURRENT_DATE"
+    )
+    @Modifying
+    void expireByConsentStatusIn(@Param("consentStatuses") Set<ConsentStatus> consentStatuses);
 
     @Query(
         "select c from consent c " +
@@ -52,14 +63,14 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
                                                           @Param("consentStatuses") Set<ConsentStatus> consentStatuses);
 
     @Query(
-        "select c from consent c " +
-            "join c.usages u " +
-            "where c.recurringIndicator = false " +
-            "and c.consentStatus in :consentStatuses " +
-            "and u.usageDate < :currentDate"
+        "UPDATE consent " +
+            "SET consentStatus = 'EXPIRED', expireDate = CURRENT_TIMESTAMP " +
+            "WHERE recurringIndicator = false " +
+            "AND consentStatus IN :consentStatuses " +
+            "AND id IN (SELECT cu.consent.id FROM consent_usage cu WHERE cu.usageDate < CURRENT_DATE)"
     )
-    List<ConsentEntity> findUsedNonRecurringConsents(@Param("consentStatuses") Set<ConsentStatus> consentStatuses,
-                                                     @Param("currentDate") LocalDate currentDate);
+    @Modifying
+    void expireUsedNonRecurringConsents(@Param("consentStatuses") Set<ConsentStatus> consentStatuses);
 
     @Query(
         value = "select * from {h-schema}consent c " +
