@@ -22,8 +22,8 @@
     "streetName": "WBG Straße"
   },
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-  "startDate": "2020-12-01",
-  "endDate": "2021-02-01",
+  "startDate": "2025-12-01",
+  "endDate": "2026-02-01",
   "executionRule": "preceding",
   "frequency": "Annual",
   "dayOfExecution": "2"

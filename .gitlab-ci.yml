@@ -132,16 +132,19 @@ Compile Java11:
 
 IT Java11:
   stage: "Test"
+  image: maven:3.6.3-jdk-11
   dependencies:
     - "Compile Java11"
   script:
-    - jabba use ${JAVA_VERSION}
+#    - jabba use ${JAVA_VERSION}
+    - echo "DOCKER_HOST=$DOCKER_HOST"
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
     - mvn -ntp failsafe:integration-test failsafe:verify
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
+    TESTCONTAINERS_RYUK_DISABLED: "true"
 
 PMD Report:
   stage: "Compile"
@@ -183,6 +186,7 @@ PMD Check Java11:
     - jabba use ${JAVA_VERSION}
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
+    - echo "DOCKER_HOST=$DOCKER_HOST"
     - mvn -ntp -Dmaven.test.skip=true package pmd:check
 
 Doc Check Java11:
@@ -211,8 +215,10 @@ Sonarcube Tests:
     - jabba use system@1.11
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
     - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp --fail-at-end clean install
-    - mvn sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
+    - mvn -ntp -e --fail-at-end clean install
+    - mvn -ntp -e sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
+  variables:
+    TESTCONTAINERS_RYUK_DISABLED: "true"
 
 AsciiDoc Test:
   stage: "Test"
