@@ -5,6 +5,7 @@
 * Fixed pagination for getting consents by account id
 * Fixed - Optional "instance-id" in "scaRedirect"
 * Added field `otherAccountIdentification` to AccountReference
+* Fixed TPP stop list saving data into DB
 
 == Fixed pagination for getting consents by account id
 
@@ -18,3 +19,7 @@ From now on, `{instance-id}` placeholder in redirect link will be replaced with 
 == Added field `otherAccountIdentification` to AccountReference
 
 From now on, AccountReference contains field `otherAccountIdentification` for other account identifier.
+
+== Fixed TPP stop list saving data into DB
+
+From now on, tpp stop list saved into database as expected.
