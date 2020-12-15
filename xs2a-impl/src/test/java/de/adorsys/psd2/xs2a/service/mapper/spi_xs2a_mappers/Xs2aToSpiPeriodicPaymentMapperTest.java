@@ -216,7 +216,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     }
 
     private SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(RESOURCE_ID, IBAN, null, null, null, null, EUR_CURRENCY);
+        return new SpiAccountReference(RESOURCE_ID, IBAN, null, null, null, null, EUR_CURRENCY, null);
     }
 
     private PsuIdData buildPsu(String psuId) {

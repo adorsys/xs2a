@@ -150,7 +150,8 @@ public class CmsConsentBuilder {
         return new AccountReference(null, null, psd2AccountReference.getIban(),
                                     psd2AccountReference.getBban(), psd2AccountReference.getPan(),
                                     psd2AccountReference.getMaskedPan(), psd2AccountReference.getMsisdn(),
-                                    mapToCurrency(psd2AccountReference.getCurrency()));
+                                    mapToCurrency(psd2AccountReference.getCurrency()),
+                                    psd2AccountReference.getOtherAccountIdentification());
     }
 
     private static Currency mapToCurrency(String currencyCode) {

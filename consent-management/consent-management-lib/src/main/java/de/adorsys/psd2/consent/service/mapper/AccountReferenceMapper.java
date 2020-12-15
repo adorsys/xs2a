@@ -29,12 +29,13 @@ public class AccountReferenceMapper {
     AccountReference mapToAccountReference(AccountReferenceEntity accountReferenceEntity) {
         return Optional.ofNullable(accountReferenceEntity)
                    .map(ref -> new AccountReference(null, null,
-                                                       ref.getIban(),
-                                                       ref.getBban(),
-                                                       ref.getPan(),
-                                                       ref.getMaskedPan(),
-                                                       ref.getMsisdn(),
-                                                       ref.getCurrency())
+                                                    ref.getIban(),
+                                                    ref.getBban(),
+                                                    ref.getPan(),
+                                                    ref.getMaskedPan(),
+                                                    ref.getMsisdn(),
+                                                    ref.getCurrency(),
+                                                    null)
                    ).orElse(null);
     }
 }

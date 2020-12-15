@@ -165,10 +165,10 @@ class AccountHelperServiceTest {
     }
 
     private static AccountReference buildXs2aAccountReference() {
-        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY, null);
     }
 
     private static SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null);
+        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null, null);
     }
 }

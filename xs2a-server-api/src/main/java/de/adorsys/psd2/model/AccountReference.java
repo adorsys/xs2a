@@ -1,20 +1,20 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
- * Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN).
+ * Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or   * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN).
  */
-@ApiModel(description = "Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
+@ApiModel(description = "Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or   * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-02T13:19:35.447690+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-08T13:47:38.074029+02:00[Europe/Kiev]")
 
 public class AccountReference   {
   @JsonProperty("iban")
@@ -34,6 +34,9 @@ public class AccountReference   {
 
   @JsonProperty("currency")
   private String currency = null;
+
+  @JsonProperty("otherAccountIdentification")
+  private String otherAccountIdentification = null;
 
   public AccountReference iban(String iban) {
     this.iban = iban;
@@ -167,27 +170,49 @@ public class AccountReference   {
     this.currency = currency;
   }
 
+  public AccountReference otherAccountIdentification(String otherAccountIdentification) {
+    this.otherAccountIdentification = otherAccountIdentification;
+    return this;
+  }
+
+  /**
+   * Get otherAccountIdentification
+   * @return otherAccountIdentification
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("otherAccountIdentification")
+  public String getOtherAccountIdentification() {
+    return otherAccountIdentification;
+  }
+
+  public void setOtherAccountIdentification(String otherAccountIdentification) {
+    this.otherAccountIdentification = otherAccountIdentification;
+  }
+
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    AccountReference accountReference = (AccountReference) o;
+}    AccountReference accountReference = (AccountReference) o;
     return Objects.equals(this.iban, accountReference.iban) &&
-        Objects.equals(this.bban, accountReference.bban) &&
-        Objects.equals(this.pan, accountReference.pan) &&
-        Objects.equals(this.maskedPan, accountReference.maskedPan) &&
-        Objects.equals(this.msisdn, accountReference.msisdn) &&
-        Objects.equals(this.currency, accountReference.currency);
+    Objects.equals(this.bban, accountReference.bban) &&
+    Objects.equals(this.pan, accountReference.pan) &&
+    Objects.equals(this.maskedPan, accountReference.maskedPan) &&
+    Objects.equals(this.msisdn, accountReference.msisdn) &&
+    Objects.equals(this.currency, accountReference.currency) &&
+    Objects.equals(this.otherAccountIdentification, accountReference.otherAccountIdentification);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(iban, bban, pan, maskedPan, msisdn, currency);
+    return Objects.hash(iban, bban, pan, maskedPan, msisdn, currency, otherAccountIdentification);
   }
 
   @Override
@@ -201,6 +226,7 @@ public class AccountReference   {
     sb.append("    maskedPan: ").append(toIndentedString(maskedPan)).append("\n");
     sb.append("    msisdn: ").append(toIndentedString(msisdn)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
+    sb.append("    otherAccountIdentification: ").append(toIndentedString(otherAccountIdentification)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -209,7 +235,7 @@ public class AccountReference   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }
