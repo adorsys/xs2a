@@ -125,7 +125,7 @@ class AspspProfileUpdateServiceImplTest {
     }
 
     @Test
-    void updateAspspSettings_success() {
+    void updateAspspSettings_success_ais() {
         //When:
         aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
 
@@ -144,6 +144,15 @@ class AspspProfileUpdateServiceImplTest {
         assertEquals(DELTA_LIST_SUPPORTED, setting.getAis().getDeltaReportSettings().isDeltaListSupported());
         assertEquals(ENTRY_REFERENCE_FROM_SUPPORTED, setting.getAis().getDeltaReportSettings().isEntryReferenceFromSupported());
         assertEquals(SCA_BY_ONE_TIME_AVAILABLE_CONSENT_REQUIRED, setting.getAis().getScaRequirementsForOneTimeConsents().isScaByOneTimeAvailableAccountsConsentRequired());
+    }
+
+    @Test
+    void updateAspspSettings_success_pis() {
+        //When:
+        aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
+
+        //Then:
+        BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(MAX_TRANSACTION_VALIDITY_DAYS, setting.getPis().getMaxTransactionValidityDays());
         assertEquals(PAYMENT_CANCELLATION_AUTHORISATION_MANDATED, setting.getPis().isPaymentCancellationAuthorisationMandated());
         assertEquals(NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS, setting.getPis().getNotConfirmedPaymentExpirationTimeMs());
@@ -153,7 +162,25 @@ class AspspProfileUpdateServiceImplTest {
         assertEquals(PIS_REDIRECT_LINK, setting.getPis().getRedirectLinkToOnlineBanking().getPisRedirectUrlToAspsp());
         assertEquals(COUNTRY_VALIDATION_SUPPORTED, setting.getPis().getCountryValidationSupported());
         assertEquals(SUPPORTED_TRANSACTION_STATUS_FORMATS, setting.getPis().getSupportedTransactionStatusFormats());
+    }
+
+    @Test
+    void updateAspspSettings_success_piis() {
+        //When:
+        aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
+
+        //Then:
+        BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(PIIS_CONSENT_SUPPORTED, setting.getPiis().getPiisConsentSupported());
+    }
+
+    @Test
+    void updateAspspSettings_success_common() {
+        //When:
+        aspspProfileUpdateService.updateAspspSettings(buildAspspSettings(), INSTANCE_ID);
+
+        //Then:
+        BankProfileSetting setting = profileConfigurations.getSetting(INSTANCE_ID);
         assertEquals(PSU_IN_INITIAL_REQUEST_MANDATED, setting.getCommon().isPsuInInitialRequestMandated());
         assertEquals(FORCE_XS2A_BASE_LINKS_URL, setting.getCommon().isForceXs2aBaseLinksUrl());
         assertEquals(AUTHORISATION_EXPIRATION_TIME_MS, setting.getCommon().getAuthorisationExpirationTimeMs());
