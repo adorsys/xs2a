@@ -25,6 +25,7 @@ public class BankProfileReadingService implements ResourceLoaderAware {
     private static final String DEFAULT_BANK_PROFILE = "classpath:bank_profile.yml";
     private static final String CLASSPATH_PREFIX = "classpath:";
     private static final String FILE_PREFIX = "file:";
+    private static final String FILE_NOT_FOUND_ERROR_MESSAGE = "PSD2 api file is not found";
 
     @Value("${xs2a.bank_profile.path:}")
     private String customBankProfile;
@@ -64,8 +65,8 @@ public class BankProfileReadingService implements ResourceLoaderAware {
         try {
             return resource.getInputStream();
         } catch (IOException e) {
-            log.error("PSD2 api file is not found", e);
-            throw new IllegalArgumentException("PSD2 api file is not found");
+            log.error(FILE_NOT_FOUND_ERROR_MESSAGE, e);
+            throw new IllegalArgumentException(FILE_NOT_FOUND_ERROR_MESSAGE);
         }
     }
 
@@ -74,7 +75,7 @@ public class BankProfileReadingService implements ResourceLoaderAware {
         try {
             return resource.getInputStream();
         } catch (IOException e) {
-            log.error("PSD2 api file is not found", e);
+            log.error(FILE_NOT_FOUND_ERROR_MESSAGE, e);
             throw new IllegalArgumentException("PSD2 api file for `instance-id` " + instanceId + "is not found");
         }
     }

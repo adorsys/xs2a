@@ -58,6 +58,7 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @SuppressWarnings("common-java:DuplicatedBlocks")
     public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
         CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues(); //NOSONAR
         config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
