@@ -49,7 +49,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         log.info("AccountSpi#initiateAisConsent: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
         SpiAccountAccess access = new SpiAccountAccess();
         SpiAccountReference accountReference = new SpiAccountReference("11111-11118", "10023-999999999", "DE52500105173911841934",
-                                                                       null, null, null, null, Currency.getInstance("EUR"));
+                                                                       null, null, null, null, Currency.getInstance("EUR"), null);
         access.setAccounts(Collections.singletonList(accountReference));
         access.setBalances(Collections.singletonList(accountReference));
         access.setTransactions(Collections.singletonList(accountReference));

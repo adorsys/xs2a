@@ -4842,6 +4842,8 @@ components:
           $ref: "#/components/schemas/msisdn"
         currency:
           $ref: "#/components/schemas/currencyCode"
+        otherAccountIdentification:
+          $ref: "#/components/schemas/otherAccountIdentification"
 
 #    accountReferenceIban:
 #      type: object
@@ -5722,6 +5724,10 @@ components:
       pattern: '[A-Z]{3}'
       example: "EUR"
 
+    otherAccountIdentification:
+     type: string
+     description: other account identificator.
+     example: "30-163033-7"
 
     amountValue:
       description: |
