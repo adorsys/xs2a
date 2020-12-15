@@ -230,7 +230,8 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
                                                                                       ref.getPan(),
                                                                                       ref.getMaskedPan(),
                                                                                       ref.getMsisdn(),
-                                                                                      mapToCurrency(ref.getCurrency()))
+                                                                                      mapToCurrency(ref.getCurrency()),
+                                                                                      null)
                    ).orElse(null);
     }
 

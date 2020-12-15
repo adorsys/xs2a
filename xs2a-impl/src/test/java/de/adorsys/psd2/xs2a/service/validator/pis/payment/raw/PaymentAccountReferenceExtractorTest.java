@@ -78,8 +78,8 @@ class PaymentAccountReferenceExtractorTest {
         when(paymentModelMapper.mapToXs2aPayment(paymentInitiationJson)).thenReturn(xs2aSinglePayment);
 
         Set<AccountReference> expected = new HashSet<>();
-        expected.add(new AccountReference(null, null, "DE52500105173911841934", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR")));
-        expected.add(new AccountReference(null, null, "DE15500105172295759744", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR")));
+        expected.add(new AccountReference(null, null, "DE52500105173911841934", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR"), null));
+        expected.add(new AccountReference(null, null, "DE15500105172295759744", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR"), null));
 
         // When
         Set<AccountReference> accountReferences = paymentAccountReferenceExtractor.extractAccountReferences(rawBody, PaymentType.SINGLE);
@@ -98,8 +98,8 @@ class PaymentAccountReferenceExtractorTest {
         when(paymentModelMapper.mapToXs2aPayment(periodicPaymentInitiationJson)).thenReturn(xs2aPeriodicPayment);
 
         Set<AccountReference> expected = new HashSet<>();
-        expected.add(new AccountReference(null, null, "DE89370400440532013000", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR")));
-        expected.add(new AccountReference(null, null, "LU280019400644750000", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR")));
+        expected.add(new AccountReference(null, null, "DE89370400440532013000", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR"), null));
+        expected.add(new AccountReference(null, null, "LU280019400644750000", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR"), null));
 
         // When
         Set<AccountReference> accountReferences = paymentAccountReferenceExtractor.extractAccountReferences(rawBody, PaymentType.PERIODIC);
@@ -118,8 +118,8 @@ class PaymentAccountReferenceExtractorTest {
         when(paymentModelMapper.mapToXs2aPayment(bulkPaymentInitiationJson)).thenReturn(xs2aBulkPayment);
 
         Set<AccountReference> expected = new HashSet<>();
-        expected.add(new AccountReference(null, null, "DE52500105173911841934", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR")));
-        expected.add(new AccountReference(null, null, "DE15500105172295759744", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR")));
+        expected.add(new AccountReference(null, null, "DE52500105173911841934", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR"), null));
+        expected.add(new AccountReference(null, null, "DE15500105172295759744", null, "1111", "23456xxxxxx1234", "0172/1111111", Currency.getInstance("EUR"), null));
 
         // When
         Set<AccountReference> accountReferences = paymentAccountReferenceExtractor.extractAccountReferences(rawBody, PaymentType.BULK);
