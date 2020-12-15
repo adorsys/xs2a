@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
-public class PiisConsentIT {
+class PiisConsentIT {
     private static final String PSU_ID = "ID";
     private static final String PSU_ID_TYPE = "TYPE";
     private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
@@ -79,7 +79,7 @@ public class PiisConsentIT {
     private PiisConsentService piisConsentService;
 
     @Test
-    public void createPiisConsent_successWithNewStatus() {
+    void createPiisConsent_successWithNewStatus() {
         // When
         cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest(), DEFAULT_SERVICE_INSTANCE_ID);
         flushAndClearPersistenceContext();
@@ -103,7 +103,7 @@ public class PiisConsentIT {
     }
 
     @Test
-    public void getConsentsForPsu_successWithDifferentPsu() {
+    void getConsentsForPsu_successWithDifferentPsu() {
         //Given
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest();
         PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
@@ -132,7 +132,7 @@ public class PiisConsentIT {
     }
 
     @Test
-    public void getPiisConsentListByAccountIdentifier_Success() {
+    void getPiisConsentListByAccountIdentifier_Success() {
         // Given
         Set<AccountReferenceSelector> selectors = new HashSet<>();
         selectors.add(createConsentAndGetSelector(AccountReferenceType.IBAN, "DE2310010010123456789"));

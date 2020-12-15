@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspPiisExportControllerIT {
+class CmsAspspPiisExportControllerIT {
 
     private static final String TPP_AUTHORISATION_NUMBER = "12345987";
     private static final String START_DATE = "2010-01-01";
