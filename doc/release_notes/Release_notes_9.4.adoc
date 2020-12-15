@@ -6,6 +6,7 @@
 * Fixed - Optional "instance-id" in "scaRedirect"
 * Added field `otherAccountIdentification` to AccountReference
 * Fixed TPP stop list saving data into DB
+* Fixed sonar alerts
 
 == Fixed pagination for getting consents by account id
 
@@ -23,3 +24,26 @@ From now on, AccountReference contains field `otherAccountIdentification` for ot
 == Fixed TPP stop list saving data into DB
 
 From now on, tpp stop list saved into database as expected.
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- CmsAspspStopListControllerIT
+- CmsAspspTppInfoControllerIT
+- PiisConsentIT
+- CmsAspspEventControllerIT
+- CmsAspspPiisControllerIT
+- CmsAspspPiisExportControllerIT
+- CmsAspspPisExportControllerIT
+- CmsAspspPisTransactionControllerIT
+- CmsAspspPsuConsentManagementControllerIT
+- CommonAspspProfileSetting
+- AspspProfileUpdateControllerTest
+- BankProfileReadingService
+- AspspProfileUpdateServiceImplTest
+- OldBankProfileSetting
+- WebConfig
+- AspspProfileController
+- CertificateControllerTest
+- ExportUtil
