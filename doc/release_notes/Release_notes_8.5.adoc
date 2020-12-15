@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Fixed pagination for getting consents by account id
+* Fixed - Optional "instance-id" in "scaRedirect"
 
 == Fixed pagination for getting consents by account id
 
 From now on, pagination on `GET aspsp-api/v1/ais/consents/account/{account-id}` works correctly
 with expected items on page.
+
+== Fixed - Optional "instance-id" in "scaRedirect"
+
+From now on, `{instance-id}` placeholder in redirect link will be replaced with `instance-id` in REDIRECT approach.
