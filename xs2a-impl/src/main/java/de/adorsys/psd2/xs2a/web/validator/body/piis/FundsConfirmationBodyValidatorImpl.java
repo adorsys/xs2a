@@ -23,10 +23,7 @@ import de.adorsys.psd2.validator.payment.config.ValidationObject;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
-import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
-import de.adorsys.psd2.xs2a.web.validator.body.CurrencyValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.*;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.springframework.stereotype.Component;
 
@@ -45,8 +42,9 @@ public class FundsConfirmationBodyValidatorImpl extends AbstractBodyValidatorImp
 
     public FundsConfirmationBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                               AccountReferenceValidator accountReferenceValidator, AmountValidator amountValidator,
-                                              CurrencyValidator currencyValidator, FieldExtractor fieldExtractor) {
-        super(errorBuildingService, xs2aObjectMapper);
+                                              CurrencyValidator currencyValidator, FieldExtractor fieldExtractor,
+                                              FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.accountReferenceValidator = accountReferenceValidator;
         this.amountValidator = amountValidator;
         this.currencyValidator = currencyValidator;

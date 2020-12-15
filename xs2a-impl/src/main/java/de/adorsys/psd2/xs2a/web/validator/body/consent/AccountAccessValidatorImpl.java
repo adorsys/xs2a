@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AccountReferenceValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ public class AccountAccessValidatorImpl extends AbstractBodyValidatorImpl implem
     @Autowired
     public AccountAccessValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                       AccountReferenceValidator accountReferenceValidator, DateFieldValidator dateFieldValidator,
-                                      FieldExtractor fieldExtractor) {
-        super(errorBuildingService, xs2aObjectMapper);
+                                      FieldExtractor fieldExtractor, FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.accountReferenceValidator = accountReferenceValidator;
         this.dateFieldValidator = dateFieldValidator;
         this.fieldExtractor = fieldExtractor;

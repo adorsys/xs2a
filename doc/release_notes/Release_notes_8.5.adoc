@@ -7,6 +7,7 @@
 * Added field `otherAccountIdentification` to AccountReference
 * Fixed TPP stop list saving data into DB
 * Fixed sonar alerts
+* Extracted methods for field max length check from AbstractBodyValidatorImpl into separate class
 
 == Fixed pagination for getting consents by account id
 
@@ -47,3 +48,7 @@ Sonar alerts were fixed for classes:
 - AspspProfileController
 - CertificateControllerTest
 - ExportUtil
+
+== Extracted methods for field max length check from AbstractBodyValidatorImpl into separate class
+
+From now on, there is separate FieldLengthValidator for max length checks.
