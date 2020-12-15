@@ -64,6 +64,6 @@ public class AspspProfileController {
     @ApiOperation(value = "Reads multitenncy supporting flag")
     @ApiResponse(code = 200, message = "Ok", response = ScaApproach.class)
     public ResponseEntity<Boolean> isMultitenancyEnabled() {
-        return new ResponseEntity<Boolean>(aspspProfileService.isMultitenancyEnabled(), HttpStatus.OK);
+        return new ResponseEntity<>(aspspProfileService.isMultitenancyEnabled(), HttpStatus.OK);
     }
 }
