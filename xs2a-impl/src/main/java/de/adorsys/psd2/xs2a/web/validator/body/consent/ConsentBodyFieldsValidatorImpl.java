@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.DateFieldValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.TppRedirectUriBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.raw.FieldExtractor;
 import org.jetbrains.annotations.NotNull;
@@ -57,8 +58,9 @@ public class ConsentBodyFieldsValidatorImpl extends AbstractBodyValidatorImpl im
     public ConsentBodyFieldsValidatorImpl(ErrorBuildingService errorBuildingService,
                                           Xs2aObjectMapper xs2aObjectMapper,
                                           TppRedirectUriBodyValidatorImpl tppRedirectUriBodyValidator,
-                                          DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor) {
-        super(errorBuildingService, xs2aObjectMapper);
+                                          DateFieldValidator dateFieldValidator, FieldExtractor fieldExtractor,
+                                          FieldLengthValidator fieldLengthValidator) {
+        super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.dateFieldValidator = dateFieldValidator;
         this.tppRedirectUriBodyValidator = tppRedirectUriBodyValidator;
         this.fieldExtractor = fieldExtractor;

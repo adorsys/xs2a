@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.IbanValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.DefaultPaymentValidationConfigImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config.PaymentValidationConfig;
@@ -83,7 +84,8 @@ class BulkPaymentTypeValidatorImplTest {
                                                      new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
                                                      new AmountValidator(errorBuildingServiceMock),
                                                      new IbanValidator(errorBuildingServiceMock),
-                                                     new CustomPaymentValidationService());
+                                                     new CustomPaymentValidationService(),
+                                                     new FieldLengthValidator(errorBuildingServiceMock));
     }
 
     @Test

@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
+import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,9 @@ class TransactionListBodyValidatorImplTest {
         request = new MockHttpServletRequest();
 
         ErrorBuildingService errorBuildingService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
-        transactionListBodyValidatorImpl = new TransactionListBodyValidatorImpl(errorBuildingService, new Xs2aObjectMapper());
+        transactionListBodyValidatorImpl = new TransactionListBodyValidatorImpl(errorBuildingService,
+                                                                                new Xs2aObjectMapper(),
+                                                                                new FieldLengthValidator(errorBuildingService));
     }
 
     @Test
