@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspStopListControllerIT {
+class CmsAspspStopListControllerIT {
 
     private static final String TPP_AUTHORISATION_NUMBER = "12345987";
     private static final String INSTANCE_ID = "bank-instance-id";
