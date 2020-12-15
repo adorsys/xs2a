@@ -48,11 +48,20 @@ class RedirectLinkBuilderTest {
 
     @Test
     void buildConsentScaRedirectLinkWithInstanceId() {
-        doReturn("something/{redirect-id}/{encrypted-consent-id}/{encrypted-payment-id}/{encrypted-consent-id}/{redirect-id}/{encrypted-payment-id}/something-else").when(aspspProfileService).getAisRedirectUrlToAspsp();
+        doReturn("something/{redirect-id}/{encrypted-consent-id}/{encrypted-payment-id}/{encrypted-consent-id}/{redirect-id}/{encrypted-payment-id}/something-else?instanceId={instance-id}").when(aspspProfileService).getAisRedirectUrlToAspsp();
 
         String redirectLink = redirectLinkBuilder.buildConsentScaRedirectLink("Consent123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1");
 
         assertEquals("something/Authorisation123/Consent123/{encrypted-payment-id}/Consent123/Authorisation123/{encrypted-payment-id}/something-else?instanceId=bank1", redirectLink);
+    }
+
+    @Test
+    void buildConsentScaRedirectLinkWithoutInstanceId() {
+        doReturn("something/{redirect-id}/{encrypted-consent-id}/{encrypted-payment-id}/{encrypted-consent-id}/{redirect-id}/{encrypted-payment-id}/something-else").when(aspspProfileService).getAisRedirectUrlToAspsp();
+
+        String redirectLink = redirectLinkBuilder.buildConsentScaRedirectLink("Consent123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1");
+
+        assertEquals("something/Authorisation123/Consent123/{encrypted-payment-id}/Consent123/Authorisation123/{encrypted-payment-id}/something-else", redirectLink);
     }
 
     @Test
@@ -70,7 +79,7 @@ class RedirectLinkBuilderTest {
 
         String redirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink("Payment123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1");
 
-        assertEquals("something/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else?instanceId=bank1", redirectLink);
+        assertEquals("something/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else", redirectLink);
     }
 
     @Test
@@ -88,7 +97,7 @@ class RedirectLinkBuilderTest {
 
         String redirectLink = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink("Payment123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1");
 
-        assertEquals("cancellation/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else?instanceId=bank1", redirectLink);
+        assertEquals("cancellation/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else", redirectLink);
     }
 
     @Test
@@ -115,7 +124,7 @@ class RedirectLinkBuilderTest {
 
         String redirectLink = redirectLinkBuilder.buildPaymentScaRedirectLink("Payment123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1");
 
-        assertEquals("something/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else/" + INTERNAL_REQUEST_ID + "?instanceId=bank1", redirectLink);
+        assertEquals("something/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else/" + INTERNAL_REQUEST_ID, redirectLink);
     }
 
     @Test
@@ -133,7 +142,7 @@ class RedirectLinkBuilderTest {
 
         String redirectLink = redirectLinkBuilder.buildPaymentCancellationScaRedirectLink("Payment123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1");
 
-        assertEquals("cancellation/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else/" + INTERNAL_REQUEST_ID + "?instanceId=bank1", redirectLink);
+        assertEquals("cancellation/Authorisation123/{encrypted-consent-id}/Payment123/{encrypted-consent-id}/Authorisation123/Payment123/something-else/" + INTERNAL_REQUEST_ID, redirectLink);
     }
 
     @Test

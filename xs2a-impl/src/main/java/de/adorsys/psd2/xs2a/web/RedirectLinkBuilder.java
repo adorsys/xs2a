@@ -19,8 +19,9 @@ package de.adorsys.psd2.xs2a.web;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.link.UrlHolder;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -34,6 +35,8 @@ public class RedirectLinkBuilder {
     private static final String PAYMENT_ID = "{payment-id}";
     private static final String CONSENT_ID = "{consentId}";
     private static final String AUTHORISATION_ID = "{authorisation-id}";
+    private static final String INSTANCE_ID = "{instance-id}";
+    private static final String DEFAULT_INSTANCE_ID = "UNDEFINED";
 
     private final AspspProfileServiceWrapper aspspProfileService;
 
@@ -187,8 +190,6 @@ public class RedirectLinkBuilder {
     }
 
     private String enrichByInstanceId(String link, String instanceId) {
-        return link + (StringUtils.isNotBlank(instanceId) ?
-                           "?instanceId=" + instanceId :
-                           StringUtils.EMPTY);
+        return link.replace(INSTANCE_ID, Objects.requireNonNullElse(instanceId, DEFAULT_INSTANCE_ID));
     }
 }
