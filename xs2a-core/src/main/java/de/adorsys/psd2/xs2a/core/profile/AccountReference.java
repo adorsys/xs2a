@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,9 @@ public class AccountReference {
 
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
+
+    @ApiModelProperty(value = "Other account identifier", example = "30-163033-7")
+    private String otherAccountIdentification;
 
     /**
      * This constructor should be used for storing initial accounts data (as it was requested by TPP)

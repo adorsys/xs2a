@@ -201,6 +201,6 @@ public class AccountSpiMockImpl implements AccountSpi {
 
     private SpiAccountReference buildSpiAccountReference() {
         return new SpiAccountReference(ASPSP_ACCOUNT_ID, RESOURCE_ID, IBAN,
-                                       "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"));
+                                       "52500105173911841934", "AEYPM5403H", "PM5403H****", null, Currency.getInstance("EUR"), null);
     }
 }

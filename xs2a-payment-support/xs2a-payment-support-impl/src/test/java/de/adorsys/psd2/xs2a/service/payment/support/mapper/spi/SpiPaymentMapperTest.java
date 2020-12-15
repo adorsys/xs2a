@@ -161,9 +161,9 @@ class SpiPaymentMapperTest {
     private SpiSinglePayment buildBaseSpiSinglePayment() {
         SpiSinglePayment singlePayment = new SpiSinglePayment(PAYMENT_PRODUCT);
         singlePayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
-        singlePayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY));
+        singlePayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
         singlePayment.setInstructedAmount(INSTRUCTED_AMOUNT);
-        singlePayment.setCreditorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY));
+        singlePayment.setCreditorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
         singlePayment.setCreditorAgent("BCENECEQ");
         singlePayment.setCreditorName("Telekom");
         singlePayment.setCreditorAddress(ADDRESS);
@@ -184,12 +184,12 @@ class SpiPaymentMapperTest {
 
     private SpiPeriodicPayment buildBaseSpiPeriodicPayment() {
         SpiPeriodicPayment periodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
-        periodicPayment.setCreditorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY));
+        periodicPayment.setCreditorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
         periodicPayment.setCreditorAgent("BCENECEQ");
         periodicPayment.setCreditorName("Telekom");
         periodicPayment.setCreditorAddress(ADDRESS);
         periodicPayment.setDayOfExecution(PisDayOfExecution._14);
-        periodicPayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY));
+        periodicPayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
         periodicPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
         periodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
         periodicPayment.setFrequency(FrequencyCode.ANNUAL);
@@ -214,11 +214,11 @@ class SpiPaymentMapperTest {
     private SpiBulkPayment buildBaseSpiBulkPayment() {
         SpiBulkPayment bulkPayment = new SpiBulkPayment();
         bulkPayment.setBatchBookingPreferred(true);
-        bulkPayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY));
+        bulkPayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
 
         SpiSinglePayment bulkPaymentPart = new SpiSinglePayment(PAYMENT_PRODUCT);
         bulkPaymentPart.setInstructedAmount(INSTRUCTED_AMOUNT);
-        bulkPaymentPart.setCreditorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY));
+        bulkPaymentPart.setCreditorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
         bulkPaymentPart.setCreditorAgent("AAAADEBBXXX");
         bulkPaymentPart.setCreditorName("WBG");
         bulkPaymentPart.setCreditorAddress(ADDRESS);

@@ -1,0 +1,10 @@
+= Release notes v.7.6.3
+
+== Table of Contents
+
+* Added field `otherAccountIdentification` to AccountReference
+
+== Added field `otherAccountIdentification` to AccountReference
+
+From now on, AccountReference contains field `otherAccountIdentification` for other account identifier.
+
