@@ -59,6 +59,8 @@ public class AccountReference {
     @ApiModelProperty(value = "Codes following ISO 4217", example = "EUR")
     private Currency currency;
 
+    @ApiModelProperty(value = "Other account identifier", example = "30-163033-7")
+    private String otherAccountIdentification;
     /**
      * This constructor should be used for storing initial accounts data (as it was requested by TPP)
      *

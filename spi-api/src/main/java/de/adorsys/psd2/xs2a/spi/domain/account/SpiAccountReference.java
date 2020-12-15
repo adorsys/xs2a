@@ -34,6 +34,7 @@ public class SpiAccountReference {
     private String maskedPan;
     private String msisdn;
     private Currency currency;
+    private String otherAccountIdentification;
 
     public SpiAccountReference(@NotNull SpiAccountDetails accountDetails) {
         this.aspspAccountId = accountDetails.getAspspAccountId();
@@ -46,7 +47,7 @@ public class SpiAccountReference {
         this.currency = accountDetails.getCurrency();
     }
 
-    public SpiAccountReference(String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency) {
+    public SpiAccountReference(String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency, String otherAccountIdentification) {
         this.resourceId = resourceId;
         this.iban = iban;
         this.bban = bban;
@@ -54,5 +55,6 @@ public class SpiAccountReference {
         this.maskedPan = maskedPan;
         this.msisdn = msisdn;
         this.currency = currency;
+        this.otherAccountIdentification = otherAccountIdentification;
     }
 }

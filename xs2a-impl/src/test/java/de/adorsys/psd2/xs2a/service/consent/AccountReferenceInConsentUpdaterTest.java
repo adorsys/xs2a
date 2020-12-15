@@ -525,10 +525,10 @@ class AccountReferenceInConsentUpdaterTest {
     }
 
     private AccountReference buildAccountReferenceWithIban(String iban) {
-        return new AccountReference(null, null, iban, null, null, null, null, CURRENCY);
+        return new AccountReference(null, null, iban, null, null, null, null, CURRENCY, null);
     }
 
     private AccountReference buildAccountReferenceWithMaskedPan(String maskedPan) {
-        return new AccountReference(null, null, null, null, null, maskedPan, null, CURRENCY);
+        return new AccountReference(null, null, null, null, null, maskedPan, null, CURRENCY, null);
     }
 }
