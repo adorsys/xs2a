@@ -61,7 +61,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspPsuConsentManagementControllerIT {
+class CmsAspspPsuConsentManagementControllerIT {
 
     private static final String INSTANCE_ID = "bank-instance-id";
     private static final String ACCOUNT_ID = "123-DEDE89370400440532013000-EUR";
