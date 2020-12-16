@@ -31,6 +31,14 @@ public interface PisCommonPaymentDataRepository extends CrudRepository<PisCommon
 
     Optional<PisCommonPaymentData> findByPaymentId(String paymentId);
 
+    /**
+     * Gets payment list by payment ids. Uses in signing basket plugin (don't remove).
+     *
+     * @param externalIds external payment ids
+     * @return list of payments
+     */
+    List<PisCommonPaymentData> findAllByPaymentIdIn(List<String> externalIds);
+
     Long countByTransactionStatusIn(Set<TransactionStatus> statuses);
 
     List<PisCommonPaymentData> findByTransactionStatusIn(Set<TransactionStatus> statuses, Pageable pageable);
