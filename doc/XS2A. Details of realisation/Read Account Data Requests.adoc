@@ -107,13 +107,13 @@ Might be ignored if a delta function is used or if bookingStatus equals "inform
 |pageIndex
 
 |Optional
-|If contained, corresponding transactions page returned. This parameter might be ignored by the ASPSP.
+|If contained, corresponding transactions page returned. Default value is 0.
 |
 
 |itemsPerPage
 
 |Optional
-|If contained, corresponding transactions number on page returned. This parameter might be ignored by the ASPSP.
+|If contained, corresponding transactions number on page returned. Default value is 20.
 |
 |===
 

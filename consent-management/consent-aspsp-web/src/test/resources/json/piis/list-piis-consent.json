@@ -1,19 +1,26 @@
-[
-  {
-    "id": "5d88bfa3-2803-45d8-8913-f82f08a81821",
-    "recurringIndicator": false,
-    "requestDateTime": "2019-08-12T15:09:48.321Z",
-    "expireDate": "2020-10-10",
-    "psuData": {
-      "psuId": "marion.mueller"
-    },
-    "consentStatus": "REVOKED_BY_PSU",
-    "account": {
-      "iban": "DE69760700240340283600"
-    },
-    "creationTimestamp": "2019-08-12T15:09:48.321Z",
-    "instanceId": "UNDEFINED",
-    "statusChangeTimestamp": "2019-08-12T15:23:33.863Z",
-    "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC"
+{
+  "data": [
+    {
+      "id": "5d88bfa3-2803-45d8-8913-f82f08a81821",
+      "recurringIndicator": false,
+      "requestDateTime": "2019-08-12T15:09:48.321Z",
+      "expireDate": "2020-10-10",
+      "psuData": {
+        "psuId": "marion.mueller"
+      },
+      "consentStatus": "REVOKED_BY_PSU",
+      "account": {
+        "iban": "DE69760700240340283600"
+      },
+      "creationTimestamp": "2019-08-12T15:09:48.321Z",
+      "instanceId": "UNDEFINED",
+      "statusChangeTimestamp": "2019-08-12T15:23:33.863Z",
+      "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC"
+    }
+  ],
+  "pageInfo": {
+    "pageIndex": 0,
+    "itemsPerPage": 20,
+    "total": 1
   }
-]
+}

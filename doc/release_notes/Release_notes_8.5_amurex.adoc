@@ -3,9 +3,27 @@
 == Table of Contents
 
 * Fixed performance issue with CMS scheduler tasks
+* Added page information to `CMS-ASPSP-API` export responses
 
 == Fixed performance issue with CMS scheduler tasks
 
 From now on, database requests which need data from ASPSP profile perform page by page.
 Configuration property that defines page size  is `xs2a.cms.scheduler.processing.page-size` (default value - 100).
 The rest database requests (get/update) were combined into one (update).
+
+== Added page information to `CMS-ASPSP-API` export responses
+
+From now on, all `CMS-ASPSP-API` exporting responses will contain page information:
+
+```
+{
+"data": [requested data],
+"pageInfo": {
+   "pageIndex": 1,
+   "itemsPerPage": 20,
+   "totalItems": 1234
+    }
+}
+```
+where `data` it is a list of requested objects and `pageInfo` - page information.
+Default values for request parameters are `pageIndex` - 0, `itemsPerPage` - 20.

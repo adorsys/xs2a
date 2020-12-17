@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -54,6 +55,8 @@ class CmsAspspPiisExportControllerTest {
     private final LocalDate END_DATE = LocalDate.of(2020, 7, 22);
     private final String INSTANCE_ID = "UNDEFINED";
     private final String LIST_OF_PIIS_CONSENTS_PATH = "json/piis/list-piis-consent.json";
+    private static final Integer PAGE_INDEX = 0;
+    private static final Integer ITEMS_PER_PAGE = 20;
 
     private MockMvc mockMvc;
     private final JsonReader jsonReader = new JsonReader();
@@ -89,8 +92,8 @@ class CmsAspspPiisExportControllerTest {
 
     @Test
     void getConsentsByTpp_Success() throws Exception {
-        when(cmsAspspPiisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null))
-            .thenReturn(cmsPiisConsents);
+        when(cmsAspspPiisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(cmsPiisConsents, 0, 20, cmsPiisConsents.size()));
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_TPP)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -98,13 +101,13 @@ class CmsAspspPiisExportControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPiisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null);
+        verify(cmsAspspPiisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     @Test
     void getConsentsByPsu_Success() throws Exception {
-        when(cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null))
-            .thenReturn(cmsPiisConsents);
+        when(cmsAspspPiisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(cmsPiisConsents, 0, 20, cmsPiisConsents.size()));
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_PSU)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -112,13 +115,13 @@ class CmsAspspPiisExportControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPiisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null);
+        verify(cmsAspspPiisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     @Test
     void getConsentsByAccount_Success() throws Exception {
-        when(cmsAspspPiisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null))
-            .thenReturn(cmsPiisConsents);
+        when(cmsAspspPiisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(cmsPiisConsents, 0, 20, cmsPiisConsents.size()));
 
         mockMvc.perform(get(EXPORT_PIIS_CONSENT_BY_ACCOUNT)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -126,6 +129,6 @@ class CmsAspspPiisExportControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPiisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null);
+        verify(cmsAspspPiisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 }

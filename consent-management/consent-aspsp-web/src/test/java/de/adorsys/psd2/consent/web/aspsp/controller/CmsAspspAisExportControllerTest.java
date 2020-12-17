@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -55,6 +56,8 @@ class CmsAspspAisExportControllerTest {
     private final LocalDate END_DATE = LocalDate.of(2020, 7, 22);
     private final String INSTANCE_ID = "UNDEFINED";
     private final String LIST_OF_AIS_ACCOUNT_CONSENT_PATH = "json/ais/list-ais-account-consent.json";
+    private static final Integer PAGE_INDEX = 0;
+    private static final Integer ITEMS_PER_PAGE = 20;
 
     private MockMvc mockMvc;
     private JsonReader jsonReader = new JsonReader();
@@ -90,8 +93,8 @@ class CmsAspspAisExportControllerTest {
 
     @Test
     void getConsentsByTpp_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null))
-            .thenReturn(consents);
+        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(consents, 0, 20, consents.size()));
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_TPP)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -99,13 +102,13 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, 0, 20);
     }
 
     @Test
     void getConsentsByPsu_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null))
-            .thenReturn(consents);
+        when(cmsAspspAisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(consents, 0, 20, 1));
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_PSU)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -113,13 +116,13 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     @Test
     void getConsentsByAccount_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null))
-            .thenReturn(consents);
+        when(cmsAspspAisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(consents, 0, 20, consents.size()));
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_ACCOUNT)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -127,6 +130,6 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 }

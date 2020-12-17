@@ -62,7 +62,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -216,7 +216,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
                        .map(this::mapToCmsAisAccountConsentWithAuthorisations)
                        .collect(Collectors.toList());
         }
-        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+        Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
         return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId), pageRequest)
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
@@ -261,7 +261,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
             consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndType(aisConsentOptional.get().getExternalId(),
                                                                                              AuthorisationType.CONSENT);
         } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+            Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
             consentAuthorisations = authorisationRepository.findAllByParentExternalIdAndType(aisConsentOptional.get().getExternalId(),
                                                                                              AuthorisationType.CONSENT,
                                                                                              pageRequest);
