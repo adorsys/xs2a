@@ -24,5 +24,6 @@
   "cardInformation": "MyMerchant Loyalty Card",
   "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
   "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
-  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC"
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "consentType": "PIIS_TPP"
 }

@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +28,9 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,6 +55,11 @@ class NotConfirmedConsentExpirationScheduleTaskTest {
     @Captor
     private ArgumentCaptor<ArrayList<ConsentEntity>> consentsCaptor;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(scheduleTask, "pageSize", 100);
+    }
+
     @Test
     void obsoleteNotConfirmedConsentIfExpired() {
         // Given
@@ -58,7 +67,9 @@ class NotConfirmedConsentExpirationScheduleTaskTest {
         aisConsents.add(new ConsentEntity());
         aisConsents.add(new ConsentEntity());
 
-        when(consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED)))
+        when(consentJpaRepository.countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED)))
+            .thenReturn(10L);
+        when(consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED), PageRequest.of(0, 100)))
             .thenReturn(aisConsents);
         when(aisConsentConfirmationExpirationService.isConfirmationExpired(any(ConsentEntity.class)))
             .thenReturn(true, false);
@@ -69,7 +80,10 @@ class NotConfirmedConsentExpirationScheduleTaskTest {
         scheduleTask.obsoleteNotConfirmedConsentIfExpired();
 
         // Then
-        verify(consentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED));
+        verify(consentJpaRepository, times(1))
+            .countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED));
+        verify(consentJpaRepository, times(1))
+            .findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED), PageRequest.of(0, 100));
         verify(aisConsentConfirmationExpirationService, times(2)).isConfirmationExpired(any(ConsentEntity.class));
         verify(aisConsentConfirmationExpirationService, times(1)).updateConsentListOnConfirmationExpiration(anyList());
 
@@ -79,14 +93,15 @@ class NotConfirmedConsentExpirationScheduleTaskTest {
     @Test
     void obsoleteNotConfirmedConsentIfExpired_emptyList() {
         // Given
-        when(consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED)))
-            .thenReturn(Collections.emptyList());
+        when(consentJpaRepository.countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED)))
+            .thenReturn(0L);
 
         // When
         scheduleTask.obsoleteNotConfirmedConsentIfExpired();
 
         // Then
-        verify(consentJpaRepository, times(1)).findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED));
+        verify(consentJpaRepository, times(1)).countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED));
+        verify(consentJpaRepository, never()).findByConsentStatusIn(anySet(), any(Pageable.class));
         verify(aisConsentConfirmationExpirationService, never()).isConfirmationExpired(any(ConsentEntity.class));
         verify(aisConsentConfirmationExpirationService, never()).updateConsentListOnConfirmationExpiration(anyList());
     }

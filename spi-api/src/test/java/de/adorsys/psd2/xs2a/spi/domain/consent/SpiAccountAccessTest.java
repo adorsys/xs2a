@@ -61,6 +61,6 @@ class SpiAccountAccessTest {
     }
 
     private SpiAccountReference getReference() {
-        return new SpiAccountReference("rscId", "IBAN", null, null, null, null, Currency.getInstance("EUR"));
+        return new SpiAccountReference("rscId", "IBAN", null, null, null, null, Currency.getInstance("EUR"), null);
     }
 }

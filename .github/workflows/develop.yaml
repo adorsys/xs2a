@@ -1,6 +1,6 @@
 name: Develop CI
 
-on: 
+on:
   push:
     branches:
       - develop
@@ -38,17 +38,17 @@ jobs:
       - name: Build XS2A
         run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
 
-      - name: Check pmd  
+      - name: Check pmd
         run: mvn -ntp pmd:check
 
-      - name: Generate javadocs 
+      - name: Generate javadocs
         run: mvn -ntp javadoc:javadoc
 
-      - name: Run UI tests 
+      - name: Run UI tests
         run: mvn -ntp -DskipITs --fail-at-end clean install
 
-      - name: Run IT tests 
-        run: mvn -ntp failsafe:integration-test failsafe:verify 
+      - name: Run IT tests
+        run: mvn -ntp failsafe:integration-test failsafe:verify
 
   sonar:
     name: Publish code coverage to Sonar Cloud
@@ -112,7 +112,7 @@ jobs:
         run: |
           gpg --version
           export GPG_TTY="$( tty )" #need to run to sign artifacts with maven
-          echo ${{ secrets.GPG_SECRET_KEY }} | base64 --decode | gpg --import --batch 
+          echo ${{ secrets.GPG_SECRET_KEY }} | base64 --decode | gpg --import --batch
           echo ${{ secrets.GPG_OWNERTRUST }} | base64 --decode | gpg --batch --import-ownertrust
           mvn -ntp --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -U deploy
 
@@ -128,7 +128,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install make plantuml rsync tree -y
 
       - name: prepare pages and diagramms
-        run: | 
+        run: |
             mkdir -p pages/html/doc
             rsync -armR --include="*/" --include="*."{adoc,puml,png} --exclude="*" doc/ pages
 
@@ -143,7 +143,7 @@ jobs:
           ruby-version: 2.7
 
       - name: Install AsciiDoctor
-        uses: reitzig/actions-asciidoctor@v1.1.0
+        uses: reitzig/actions-asciidoctor@v2.0.0
 
       - name: Convert adoc to html
         run: cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
@@ -159,4 +159,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./pages/html
-

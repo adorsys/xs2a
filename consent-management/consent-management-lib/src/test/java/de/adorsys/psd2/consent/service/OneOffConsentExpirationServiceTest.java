@@ -31,7 +31,6 @@ import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -327,7 +326,6 @@ class OneOffConsentExpirationServiceTest {
         assertTrue(isExpired);
     }
 
-    @Disabled
     @Test
     void isConsentExpired_GlobalConsent_shouldReturnTrue() {
         // Given

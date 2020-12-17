@@ -1403,11 +1403,11 @@ class ConsentServiceTest {
     }
 
     private AccountReference getXs2aReference() {
-        return new AccountReference(ASPSP_ACCOUNT_ID, null, CORRECT_IBAN_2, null, null, null, null, CURRENCY_1);
+        return new AccountReference(ASPSP_ACCOUNT_ID, null, CORRECT_IBAN_2, null, null, null, null, CURRENCY_1, null);
     }
 
     private SpiAccountAccess getSpiAccountAccess() {
-        return new SpiAccountAccess(Collections.singletonList(new SpiAccountReference(null, CORRECT_IBAN_2, null, null, null, null, CURRENCY_1)), null, null, null, null, null, null);
+        return new SpiAccountAccess(Collections.singletonList(new SpiAccountReference(null, CORRECT_IBAN_2, null, null, null, null, CURRENCY_1, null)), null, null, null, null, null, null);
     }
 
     private AccountAccess getXs2aAccountAccess(List<AccountReference> accounts) {

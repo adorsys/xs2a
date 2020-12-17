@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
@@ -26,6 +27,7 @@ import de.adorsys.psd2.consent.service.mapper.AisConsentMapper;
 import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,13 +35,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -81,8 +87,8 @@ class CmsAspspAisExportServiceInternalTest {
     private AuthorisationRepository authorisationRepository;
     @Mock
     private AisConsentLazyMigrationService aisConsentLazyMigrationService;
-    @Mock
-    private PageRequestBuilder pageRequestBuilder;
+    @Spy
+    private PageRequestBuilder pageRequestBuilder = new PageRequestBuilder();
 
     @BeforeEach
     void setUp() {
@@ -103,8 +109,8 @@ class CmsAspspAisExportServiceInternalTest {
             DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(consentJpaRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(consentEntity));
+        when(consentJpaRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
@@ -116,13 +122,13 @@ class CmsAspspAisExportServiceInternalTest {
             .thenReturn(buildAisAccountConsent());
 
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertFalse(aisConsents.isEmpty());
-        assertTrue(aisConsents.contains(expectedConsent));
+        assertFalse(aisConsents.getData().isEmpty());
+        assertTrue(aisConsents.getData().contains(expectedConsent));
         verify(aisConsentSpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -142,9 +148,8 @@ class CmsAspspAisExportServiceInternalTest {
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
         when(consentJpaRepository.findAll(any(Specification.class), eq(pageRequest)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity)));
+            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity), pageRequest, 1));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
@@ -156,13 +161,13 @@ class CmsAspspAisExportServiceInternalTest {
             .thenReturn(buildAisAccountConsent());
 
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertFalse(aisConsents.isEmpty());
-        assertTrue(aisConsents.contains(expectedConsent));
+        assertFalse(aisConsents.getData().isEmpty());
+        assertTrue(aisConsents.getData().contains(expectedConsent));
         verify(aisConsentSpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -171,13 +176,24 @@ class CmsAspspAisExportServiceInternalTest {
     @Test
     void exportConsentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
+        when(aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(
+            WRONG_TPP_AUTHORISATION_NUMBER,
+            CREATION_DATE_FROM,
+            CREATION_DATE_TO,
+            psuIdData,
+            DEFAULT_SERVICE_INSTANCE_ID
+        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(consentJpaRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
+
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertTrue(aisConsents.isEmpty());
+        assertTrue(aisConsents.getData().isEmpty());
         verify(aisConsentSpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -186,12 +202,12 @@ class CmsAspspAisExportServiceInternalTest {
     @Test
     void exportConsentsByTpp_failure_nullTppAuthorisationNumber() {
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(null, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(aisConsents.isEmpty());
+        assertTrue(aisConsents.getData().isEmpty());
         verify(aisConsentSpecification, never())
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any());
     }
@@ -206,7 +222,8 @@ class CmsAspspAisExportServiceInternalTest {
                                                                                CREATION_DATE_TO,
                                                                                DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        when(consentJpaRepository.findAll(any())).thenReturn(Collections.singletonList(consentEntity));
+        when(consentJpaRepository.findAll(any(), eq(Pageable.unpaged()))).thenReturn(new PageImpl(Collections.singletonList(consentEntity),
+                                                                                                  PageRequest.of(0, 20), 1));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
@@ -218,13 +235,13 @@ class CmsAspspAisExportServiceInternalTest {
             .thenReturn(consentEntity);
 
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(psuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertFalse(aisConsents.isEmpty());
-        assertTrue(aisConsents.contains(expectedConsent));
+        assertFalse(aisConsents.getData().isEmpty());
+        assertTrue(aisConsents.getData().contains(expectedConsent));
         verify(aisConsentSpecification, times(1))
             .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
     }
@@ -241,9 +258,8 @@ class CmsAspspAisExportServiceInternalTest {
                                                                                DEFAULT_SERVICE_INSTANCE_ID
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
 
-        when(consentJpaRepository.findAll(any(), eq(pageRequest))).thenReturn(new PageImpl<>(Collections.singletonList(consentEntity)));
+        when(consentJpaRepository.findAll(any(Specification.class), eq(pageRequest))).thenReturn(new PageImpl<>(Collections.singletonList(consentEntity), pageRequest, 1));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
@@ -255,13 +271,13 @@ class CmsAspspAisExportServiceInternalTest {
             .thenReturn(consentEntity);
 
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(psuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertFalse(aisConsents.isEmpty());
-        assertTrue(aisConsents.contains(expectedConsent));
+        assertFalse(aisConsents.getData().isEmpty());
+        assertTrue(aisConsents.getData().contains(expectedConsent));
         verify(aisConsentSpecification, times(1))
             .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
     }
@@ -269,13 +285,23 @@ class CmsAspspAisExportServiceInternalTest {
     @Test
     void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
+        when(aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(wrongPsuIdData,
+                                                                               CREATION_DATE_FROM,
+                                                                               CREATION_DATE_TO,
+                                                                               DEFAULT_SERVICE_INSTANCE_ID
+        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
+
+        when(consentJpaRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.emptyList(), pageRequest, 0));
+
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(wrongPsuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertTrue(aisConsents.isEmpty());
+        assertTrue(aisConsents.getData().isEmpty());
         verify(aisConsentSpecification, times(1))
             .byPsuIdDataAndCreationPeriodAndInstanceId(wrongPsuIdData, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
     }
@@ -283,12 +309,12 @@ class CmsAspspAisExportServiceInternalTest {
     @Test
     void exportConsentsByPsu_failure_nullPsuIdData() {
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(null, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(aisConsents.isEmpty());
+        assertTrue(aisConsents.getData().isEmpty());
         verify(aisConsentSpecification, never())
             .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
     }
@@ -299,25 +325,25 @@ class CmsAspspAisExportServiceInternalTest {
         PsuIdData emptyPsuIdData = new PsuIdData(null, null, null, null, null);
 
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByPsu(emptyPsuIdData, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(aisConsents.isEmpty());
+        assertTrue(aisConsents.getData().isEmpty());
         verify(aisConsentSpecification, never()).byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
     }
 
     @Test
     void exportConsentsByAccountId_success() {
         // Given
-        when(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                                                    CREATION_DATE_TO,
-                                                                                    DEFAULT_SERVICE_INSTANCE_ID
-        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        ZoneOffset currentOffset = OffsetDateTime.now().getOffset();
         ConsentEntity consentEntity = buildConsentEntity();
-        when(consentJpaRepository.findAll(any()))
-            .thenReturn(Collections.singletonList(consentEntity));
+        when(consentJpaRepository.findAllWithPagination(Collections.singleton(ConsentType.AIS.getName()), ASPSP_ACCOUNT_ID,
+                                                        OffsetDateTime.of(CREATION_DATE_FROM, LocalTime.MIN, currentOffset),
+                                                        OffsetDateTime.of(CREATION_DATE_TO, LocalTime.MAX, currentOffset),
+                                                        DEFAULT_SERVICE_INSTANCE_ID, Pageable.unpaged()))
+            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
         when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(authorisations);
@@ -329,69 +355,38 @@ class CmsAspspAisExportServiceInternalTest {
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertFalse(aisConsents.isEmpty());
-        assertTrue(aisConsents.contains(expectedConsent));
-        verify(aisConsentSpecification, times(1))
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
-    }
-
-    @Test
-    void exportConsentsByAccountId_successPagination() {
-        // Given
-        when(aisConsentSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                                                    CREATION_DATE_TO,
-                                                                                    DEFAULT_SERVICE_INSTANCE_ID
-        )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
-        ConsentEntity consentEntity = buildConsentEntity();
-        PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
-        when(consentJpaRepository.findAll(any(), eq(pageRequest)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity)));
-        List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
-        when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT))
-            .thenReturn(authorisations);
-        when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))
-            .thenReturn(consentEntity);
-
-        when(aisConsentMapper.mapToCmsAisAccountConsent(consentEntity, authorisations))
-            .thenReturn(buildAisAccountConsent());
-        CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
-
-        // When
-        Collection<CmsAisAccountConsent> aisConsents =
-            cmsAspspAisExportServiceInternal.exportConsentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
-
-        // Then
-        assertFalse(aisConsents.isEmpty());
-        assertTrue(aisConsents.contains(expectedConsent));
-        verify(aisConsentSpecification, times(1))
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+        assertFalse(aisConsents.getData().isEmpty());
+        assertTrue(aisConsents.getData().contains(expectedConsent));
     }
 
     @Test
     void exportConsentsByAccountId_success_withNoInstanceId() {
-        Collection<CmsAisAccountConsent> cmsAisAccountConsents = cmsAspspAisExportServiceInternal.exportConsentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, "", null, null);
+        PageData<Collection<CmsAisAccountConsent>> cmsAisAccountConsents = cmsAspspAisExportServiceInternal.exportConsentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, "", PAGE_INDEX, ITEMS_PER_PAGE);
 
-        assertEquals(Collections.emptyList(), cmsAisAccountConsents);
+        assertEquals(Collections.emptyList(), cmsAisAccountConsents.getData());
     }
 
     @Test
     void exportConsentsByAccountId_failure_wrongAspspAccountId() {
+        ZoneOffset currentOffset = OffsetDateTime.now().getOffset();
+        when(consentJpaRepository.findAllWithPagination(Collections.singleton(ConsentType.AIS.getName()), WRONG_ASPSP_ACCOUNT_ID,
+                                                        OffsetDateTime.of(CREATION_DATE_FROM, LocalTime.MIN, currentOffset),
+                                                        OffsetDateTime.of(CREATION_DATE_TO, LocalTime.MAX, currentOffset),
+                                                        DEFAULT_SERVICE_INSTANCE_ID, Pageable.unpaged()))
+            .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 0));
+
         // When
-        Collection<CmsAisAccountConsent> aisConsents =
+        PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertTrue(aisConsents.isEmpty());
-        verify(aisConsentSpecification, times(1))
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM, CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+        assertTrue(aisConsents.getData().isEmpty());
     }
 
     private PsuIdData buildPsuIdData(String psuId) {

@@ -490,7 +490,7 @@ class AccountListServiceTest {
     }
 
     private static AccountReference buildXs2aAccountReference() {
-        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY, null);
     }
 
     private AisConsent createConsent(boolean recurringIndicator) {

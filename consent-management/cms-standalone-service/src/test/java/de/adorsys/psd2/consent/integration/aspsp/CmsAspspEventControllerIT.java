@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspEventControllerIT /*extends ApiIntegrationTest*/ {
+class CmsAspspEventControllerIT {
 
     private static final String INSTANCE_ID = "bank-instance-id";
     private static final String START_DATE = "2010-01-01T00:00:00Z";

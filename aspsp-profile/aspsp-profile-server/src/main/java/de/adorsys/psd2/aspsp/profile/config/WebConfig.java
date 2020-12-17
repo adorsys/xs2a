@@ -58,9 +58,9 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public FilterRegistrationBean corsFilterRegistrationBean() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.applyPermitDefaultValues();
+    @SuppressWarnings("common-java:DuplicatedBlocks")
+    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
+        CorsConfiguration config = new CorsConfiguration().applyPermitDefaultValues(); //NOSONAR
         config.setAllowCredentials(corsConfigProperties.getAllowCredentials());
         config.setAllowedOrigins(corsConfigProperties.getAllowedOrigins());
         config.setAllowedHeaders(corsConfigProperties.getAllowedHeaders());
@@ -69,6 +69,6 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
-        return new FilterRegistrationBean(new CorsFilter(source));
+        return new FilterRegistrationBean<>(new CorsFilter(source));
     }
 }

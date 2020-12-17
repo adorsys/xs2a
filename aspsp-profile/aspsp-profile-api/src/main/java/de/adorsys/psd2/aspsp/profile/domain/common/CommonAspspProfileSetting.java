@@ -34,6 +34,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class CommonAspspProfileSetting {
     private ScaRedirectFlow scaRedirectFlow;
     private String oauthConfigurationUrl;

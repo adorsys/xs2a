@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
@@ -33,9 +34,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -80,8 +83,8 @@ class CmsAspspPisExportServiceInternalTest {
     private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
     @Mock
     private CmsPsuPisMapper cmsPsuPisMapper;
-    @Mock
-    private PageRequestBuilder pageRequestBuilder;
+    @Spy
+    private PageRequestBuilder pageRequestBuilder = new PageRequestBuilder();
 
     @BeforeEach
     void setUp() {
@@ -98,20 +101,20 @@ class CmsAspspPisExportServiceInternalTest {
                                                                                                  psuIdData,
                                                                                                  DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(0, 20), 1));
         CmsPayment expectedPayment = buildCmsPayment();
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
+            .thenReturn(buildCmsPayment());
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertFalse(payments.isEmpty());
-        assertTrue(payments.contains(expectedPayment));
+        assertFalse(payments.getData().isEmpty());
+        assertTrue(payments.getData().contains(expectedPayment));
         verify(pisCommonPaymentDataSpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -126,21 +129,20 @@ class CmsAspspPisExportServiceInternalTest {
                                                                                                  psuIdData,
                                                                                                  DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), any(PageRequest.class)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData())));
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE))))
+            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
         CmsPayment expectedPayment = buildCmsPayment();
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE));
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
+            .thenReturn(buildCmsPayment());
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertFalse(payments.isEmpty());
-        assertTrue(payments.contains(expectedPayment));
+        assertFalse(payments.getData().isEmpty());
+        assertTrue(payments.getData().contains(expectedPayment));
         verify(pisCommonPaymentDataSpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -149,14 +151,22 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByTpp_failure_wrongTppAuthorisationNumber() {
         // Given
+        when(pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(WRONG_TPP_AUTHORISATION_NUMBER,
+                                                                                                 CREATION_DATE_FROM,
+                                                                                                 CREATION_DATE_TO,
+                                                                                                 psuIdData,
+                                                                                                 DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 0));
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -167,12 +177,12 @@ class CmsAspspPisExportServiceInternalTest {
         // Given
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(null, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, never())
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
@@ -186,20 +196,20 @@ class CmsAspspPisExportServiceInternalTest {
                                                                                          CREATION_DATE_TO,
                                                                                          DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(0, ITEMS_PER_PAGE), 1));
         CmsPayment expectedPayment = buildCmsPayment();
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
+            .thenReturn(buildCmsPayment());
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(psuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertFalse(payments.isEmpty());
-        assertTrue(payments.contains(expectedPayment));
+        assertFalse(payments.getData().isEmpty());
+        assertTrue(payments.getData().contains(expectedPayment));
         verify(pisCommonPaymentDataSpecification, times(1))
             .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, CREATION_DATE_FROM,
                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
@@ -213,21 +223,20 @@ class CmsAspspPisExportServiceInternalTest {
                                                                                          CREATION_DATE_TO,
                                                                                          DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), any(PageRequest.class)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData())));
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE))))
+            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
         CmsPayment expectedPayment = buildCmsPayment();
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE));
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
+            .thenReturn(buildCmsPayment());
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(psuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertFalse(payments.isEmpty());
-        assertTrue(payments.contains(expectedPayment));
+        assertFalse(payments.getData().isEmpty());
+        assertTrue(payments.getData().contains(expectedPayment));
         verify(pisCommonPaymentDataSpecification, times(1))
             .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, CREATION_DATE_FROM,
                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
@@ -236,14 +245,21 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByPsu_failure_wrongPsuIdData() {
         // Given
+        when(pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(wrongPsuIdData,
+                                                                                         CREATION_DATE_FROM,
+                                                                                         CREATION_DATE_TO,
+                                                                                         DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        //noinspection unchecked
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(0, ITEMS_PER_PAGE), 0));
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(wrongPsuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, times(1))
             .byPsuIdDataAndCreationPeriodAndInstanceId(wrongPsuIdData, CREATION_DATE_FROM,
                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
@@ -252,12 +268,12 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByPsu_failure_nullPsuIdData() {
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(null, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, never())
             .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
     }
@@ -268,12 +284,12 @@ class CmsAspspPisExportServiceInternalTest {
         PsuIdData emptyPsuIdData = buildEmptyPsuIdData();
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(emptyPsuIdData, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                 CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, never())
             .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
     }
@@ -286,20 +302,20 @@ class CmsAspspPisExportServiceInternalTest {
                                                                                               CREATION_DATE_TO,
                                                                                               DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class)))
-            .thenReturn(Collections.singletonList(buildPisCommonPaymentData()));
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
         CmsPayment expectedPayment = buildCmsPayment();
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
+            .thenReturn(buildCmsPayment());
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertFalse(payments.isEmpty());
-        assertTrue(payments.contains(expectedPayment));
+        assertFalse(payments.getData().isEmpty());
+        assertTrue(payments.getData().contains(expectedPayment));
         verify(pisCommonPaymentDataSpecification, times(1))
             .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                             CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
@@ -313,21 +329,20 @@ class CmsAspspPisExportServiceInternalTest {
                                                                                               CREATION_DATE_TO,
                                                                                               DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
-        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), any(PageRequest.class)))
-            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData())));
+        when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE))))
+            .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
         CmsPayment expectedPayment = buildCmsPayment();
-        when(cmsPsuPisMapper.mapPaymentDataToCmsPayments(Collections.singletonList(buildPisCommonPaymentData())))
-            .thenReturn(Collections.singletonList(buildCmsPayment()));
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE));
+        when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
+            .thenReturn(buildCmsPayment());
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertFalse(payments.isEmpty());
-        assertTrue(payments.contains(expectedPayment));
+        assertFalse(payments.getData().isEmpty());
+        assertTrue(payments.getData().contains(expectedPayment));
         verify(pisCommonPaymentDataSpecification, times(1))
             .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                             CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
@@ -336,14 +351,20 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByAccountId_failure_wrongAspspAccountId() {
         // Given
+        when(pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID,
+                                                                                              CREATION_DATE_FROM,
+                                                                                              CREATION_DATE_TO,
+                                                                                              DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
+            .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 0));
 
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, times(1))
             .byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                             CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
@@ -352,12 +373,12 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByAccountId_failure_blankAspspAccountId() {
         // When
-        Collection<CmsPayment> payments =
+        PageData<Collection<CmsPayment>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(" ", CREATION_DATE_FROM,
-                                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
+                                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
         // Then
-        assertTrue(payments.isEmpty());
+        assertTrue(payments.getData().isEmpty());
         verify(pisCommonPaymentDataSpecification, never())
             .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
     }

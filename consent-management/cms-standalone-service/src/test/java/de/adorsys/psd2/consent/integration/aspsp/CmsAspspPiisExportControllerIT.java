@@ -32,6 +32,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -57,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspPiisExportControllerIT {
+class CmsAspspPiisExportControllerIT {
 
     private static final String TPP_AUTHORISATION_NUMBER = "12345987";
     private static final String START_DATE = "2010-01-01";
@@ -95,7 +98,8 @@ public class CmsAspspPiisExportControllerIT {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/consent/integration/aspsp/consent-entity.json", ConsentEntity.class);
         consentEntity.setData(jsonReader.getBytesFromFile("json/consent/integration/aspsp/piis-consent-data.json"));
 
-        given(consentJpaRepository.findAll(any(Specification.class))).willReturn(Collections.singletonList(consentEntity));
+        given(consentJpaRepository.findAll(any(Specification.class), any(Pageable.class)))
+            .willReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(0, 20), 1));
     }
 
     @Test

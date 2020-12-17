@@ -1,9 +1,15 @@
 name: Develop pull-request CI
 
-on: 
+on:
   pull_request:
     branches:
       - develop
+  push:
+    branches-ignore:
+      - 'develop'
+      - 'master'
+      - 'master-*'
+      - 'support-*'
 
 jobs:
   build_and_test:
@@ -29,15 +35,52 @@ jobs:
       - name: Build XS2A
         run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
 
-      - name: Check pmd  
+      - name: Check pmd
         run: mvn -ntp pmd:check
 
-      - name: Generate javadocs 
+      - name: Generate javadocs
         run: mvn -ntp javadoc:javadoc
 
-      - name: Run UI tests 
+      - name: Run UI tests
         run: mvn -ntp -DskipITs --fail-at-end clean install
 
-      - name: Run IT tests 
-        run: mvn -ntp failsafe:integration-test failsafe:verify 
+      - name: Run IT tests
+        run: mvn -ntp failsafe:integration-test failsafe:verify
 
+  testGithubPages:
+    name: test github pages
+    runs-on: ubuntu-latest
+    needs: [build_and_test]
+    steps:
+      - name: Clone XS2A develop repository
+        uses: actions/checkout@v2
+
+      - name: install Make plantuml asciidoctor
+        run: sudo apt-get update && sudo apt-get install make plantuml rsync tree -y
+
+      - name: prepare pages and diagramms
+        run: |
+            mkdir -p pages/html/doc
+            rsync -armR --include="*/" --include="*."{adoc,puml,png} --exclude="*" doc/ pages
+
+      - name: plantuml
+        uses: Timmy/plantuml-action@v1
+        with:
+           args: '**/*.puml -DPLANTUML_LIMIT_SIZE=8192'
+
+      - name:  Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+
+      - name: Install AsciiDoctor
+        uses: reitzig/actions-asciidoctor@v2.0.0
+
+      - name: Convert adoc to html
+        run: cd pages && asciidoctor --failure-level WARN -R doc -D html '**/*.adoc'
+
+      - name: Rsync diagrams and pictures
+        run: cd  pages/doc && rsync -amvR --include="*/" --include="*.png" --exclude="*" . ../html
+
+      - name: check pages html tree
+        run: cd pages && rm -rf doc && tree html

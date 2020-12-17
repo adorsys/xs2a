@@ -58,6 +58,7 @@ public abstract class Xs2aToSpiPiisConsentMapper {
             account.getPan(),
             account.getMaskedPan(),
             account.getMsisdn(),
-            account.getCurrency());
+            account.getCurrency(),
+            account.getOtherAccountIdentification());
     }
 }

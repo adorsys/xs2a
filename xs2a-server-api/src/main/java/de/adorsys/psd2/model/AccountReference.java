@@ -14,7 +14,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-15T15:15:03.911267+02:00[Europe/Kiev]")
 
 public class AccountReference   {
   @JsonProperty("iban")
@@ -34,6 +34,9 @@ public class AccountReference   {
 
   @JsonProperty("currency")
   private String currency = null;
+
+  @JsonProperty("otherAccountIdentification")
+  private String otherAccountIdentification = null;
 
   public AccountReference iban(String iban) {
     this.iban = iban;
@@ -167,6 +170,28 @@ public class AccountReference   {
     this.currency = currency;
   }
 
+  public AccountReference otherAccountIdentification(String otherAccountIdentification) {
+    this.otherAccountIdentification = otherAccountIdentification;
+    return this;
+  }
+
+  /**
+   * Get otherAccountIdentification
+   * @return otherAccountIdentification
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("otherAccountIdentification")
+  public String getOtherAccountIdentification() {
+    return otherAccountIdentification;
+  }
+
+  public void setOtherAccountIdentification(String otherAccountIdentification) {
+    this.otherAccountIdentification = otherAccountIdentification;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -181,12 +206,13 @@ public class AccountReference   {
     Objects.equals(this.pan, accountReference.pan) &&
     Objects.equals(this.maskedPan, accountReference.maskedPan) &&
     Objects.equals(this.msisdn, accountReference.msisdn) &&
-    Objects.equals(this.currency, accountReference.currency);
+    Objects.equals(this.currency, accountReference.currency) &&
+    Objects.equals(this.otherAccountIdentification, accountReference.otherAccountIdentification);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(iban, bban, pan, maskedPan, msisdn, currency);
+    return Objects.hash(iban, bban, pan, maskedPan, msisdn, currency, otherAccountIdentification);
   }
 
   @Override
@@ -200,6 +226,7 @@ public class AccountReference   {
     sb.append("    maskedPan: ").append(toIndentedString(maskedPan)).append("\n");
     sb.append("    msisdn: ").append(toIndentedString(msisdn)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
+    sb.append("    otherAccountIdentification: ").append(toIndentedString(otherAccountIdentification)).append("\n");
     sb.append("}");
     return sb.toString();
   }

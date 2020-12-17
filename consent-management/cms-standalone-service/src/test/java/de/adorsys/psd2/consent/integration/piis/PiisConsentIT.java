@@ -21,6 +21,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.api.service.PiisConsentService;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
-public class PiisConsentIT {
+class PiisConsentIT {
     private static final String PSU_ID = "ID";
     private static final String PSU_ID_TYPE = "TYPE";
     private static final String PSU_CORPORATE_ID = "CORPORATE_ID";
@@ -68,6 +69,8 @@ public class PiisConsentIT {
     private static final Currency EUR_CURRENCY = Currency.getInstance("EUR");
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu", null, "corpId", null, null);
+    private static final Integer PAGE_INDEX = 0;
+    private static final Integer ITEMS_PER_PAGE = 20;
 
     @Autowired
     private CmsAspspPiisService cmsAspspPiisServiceInternal;
@@ -79,7 +82,7 @@ public class PiisConsentIT {
     private PiisConsentService piisConsentService;
 
     @Test
-    public void createPiisConsent_successWithNewStatus() {
+    void createPiisConsent_successWithNewStatus() {
         // When
         cmsAspspPiisServiceInternal.createConsent(buildPsuIdData(), buildCreatePiisConsentRequest(), DEFAULT_SERVICE_INSTANCE_ID);
         flushAndClearPersistenceContext();
@@ -103,7 +106,7 @@ public class PiisConsentIT {
     }
 
     @Test
-    public void getConsentsForPsu_successWithDifferentPsu() {
+    void getConsentsForPsu_successWithDifferentPsu() {
         //Given
         CreatePiisConsentRequest request = buildCreatePiisConsentRequest();
         PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
@@ -117,22 +120,22 @@ public class PiisConsentIT {
         flushAndClearPersistenceContext();
 
         //Then
-        List<CmsPiisConsent> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID, null, null);
-        assertEquals(1, consentsAspsp.size());
-        assertEquals(aspsp, consentsAspsp.get(0).getPsuData());
+        PageData<List<CmsPiisConsent>> consentsAspsp = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
+        assertEquals(1, consentsAspsp.getData().size());
+        assertEquals(aspsp, consentsAspsp.getData().get(0).getPsuData());
 
-        List<CmsPiisConsent> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID, null, null);
-        assertEquals(1, consentsAspsp1.size());
-        assertEquals(aspsp1, consentsAspsp1.get(0).getPsuData());
+        PageData<List<CmsPiisConsent>> consentsAspsp1 = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
+        assertEquals(1, consentsAspsp1.getData().size());
+        assertEquals(aspsp1, consentsAspsp1.getData().get(0).getPsuData());
 
-        List<CmsPiisConsent> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID, null, null);
-        assertEquals(2, consentsAspsp1NoCorporateId.size());
-        assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuData().getPsuId());
-        assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuData().getPsuId());
+        PageData<List<CmsPiisConsent>> consentsAspsp1NoCorporateId = cmsAspspPiisServiceInternal.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
+        assertEquals(2, consentsAspsp1NoCorporateId.getData().size());
+        assertEquals("aspsp1", consentsAspsp1NoCorporateId.getData().get(0).getPsuData().getPsuId());
+        assertEquals("aspsp1", consentsAspsp1NoCorporateId.getData().get(1).getPsuData().getPsuId());
     }
 
     @Test
-    public void getPiisConsentListByAccountIdentifier_Success() {
+    void getPiisConsentListByAccountIdentifier_Success() {
         // Given
         Set<AccountReferenceSelector> selectors = new HashSet<>();
         selectors.add(createConsentAndGetSelector(AccountReferenceType.IBAN, "DE2310010010123456789"));
@@ -185,7 +188,7 @@ public class PiisConsentIT {
     }
 
     private AccountReference buildAccountReference() {
-        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY);
+        return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY, null);
     }
 
     /**

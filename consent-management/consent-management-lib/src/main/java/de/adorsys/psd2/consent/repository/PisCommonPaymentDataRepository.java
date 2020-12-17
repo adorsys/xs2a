@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.repository;
 
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
@@ -30,7 +31,15 @@ public interface PisCommonPaymentDataRepository extends CrudRepository<PisCommon
 
     Optional<PisCommonPaymentData> findByPaymentId(String paymentId);
 
+    /**
+     * Gets payment list by payment ids. Uses in signing basket plugin (don't remove).
+     *
+     * @param externalIds external payment ids
+     * @return list of payments
+     */
     List<PisCommonPaymentData> findAllByPaymentIdIn(List<String> externalIds);
 
-    List<PisCommonPaymentData> findByTransactionStatusIn(Set<TransactionStatus> statuses);
+    Long countByTransactionStatusIn(Set<TransactionStatus> statuses);
+
+    List<PisCommonPaymentData> findByTransactionStatusIn(Set<TransactionStatus> statuses, Pageable pageable);
 }

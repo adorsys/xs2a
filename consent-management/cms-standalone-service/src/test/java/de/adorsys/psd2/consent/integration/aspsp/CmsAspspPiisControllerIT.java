@@ -34,6 +34,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -62,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspPiisControllerIT {
+class CmsAspspPiisControllerIT {
 
     private static final String TPP_AUTHORISATION_NUMBER = "PSDDE-FAKENCA-87B2AC";
     private static final String CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
@@ -128,7 +131,8 @@ public class CmsAspspPiisControllerIT {
 
     @Test
     void getConsentsForPsu() throws Exception {
-        given(consentJpaRepository.findAll(any(Specification.class))).willReturn(Collections.singletonList(consentEntity));
+        given(consentJpaRepository.findAll(any(Specification.class), any(Pageable.class)))
+            .willReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(0, 20), 1));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getPiisConsentsByPsuUrl());
         requestBuilder.headers(httpHeaders);

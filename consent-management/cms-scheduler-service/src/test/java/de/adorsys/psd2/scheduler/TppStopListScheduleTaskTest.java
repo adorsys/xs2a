@@ -16,27 +16,15 @@
 
 package de.adorsys.psd2.scheduler;
 
-import de.adorsys.psd2.consent.domain.TppStopListEntity;
 import de.adorsys.psd2.consent.repository.TppStopListRepository;
-import de.adorsys.psd2.xs2a.core.tpp.TppStatus;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TppStopListScheduleTaskTest {
@@ -47,50 +35,9 @@ class TppStopListScheduleTaskTest {
     @Mock
     private TppStopListRepository tppStopListRepository;
 
-    @Captor
-    private ArgumentCaptor<ArrayList<TppStopListEntity>> unblockedTppsCaptor;
-
     @Test
     void unblockTppIfBlockingExpired() {
-        List<TppStopListEntity> tppStopList = new ArrayList<>();
-        tppStopList.add(createTppStopEntity());
-        tppStopList.add(createTppStopEntity());
-
-        when(tppStopListRepository.findAllByStatusAndBlockingExpirationTimestampLessThanEqual(eq(TppStatus.BLOCKED), any(OffsetDateTime.class)))
-            .thenReturn(tppStopList);
-        when(tppStopListRepository.saveAll(unblockedTppsCaptor.capture())).thenReturn(Collections.emptyList());
-
         scheduleTask.unblockTppIfBlockingExpired();
-
-        verify(tppStopListRepository, times(1)).findAllByStatusAndBlockingExpirationTimestampLessThanEqual(eq(TppStatus.BLOCKED), any(OffsetDateTime.class));
-        verify(tppStopListRepository, times(1)).saveAll(anyList());
-
-        assertEquals(2, unblockedTppsCaptor.getValue().size());
-        unblockedTppsCaptor.getValue().forEach(tpp -> {
-            assertEquals(TppStatus.ENABLED, tpp.getStatus());
-            assertNull(tpp.getBlockingExpirationTimestamp());
-        });
-    }
-
-    @Test
-    void unblockTppIfBlockingExpired_emptyList() {
-        List<TppStopListEntity> tppStopList = new ArrayList<>();
-        tppStopList.add(createTppStopEntity());
-        tppStopList.add(createTppStopEntity());
-
-        when(tppStopListRepository.findAllByStatusAndBlockingExpirationTimestampLessThanEqual(eq(TppStatus.BLOCKED), any(OffsetDateTime.class)))
-            .thenReturn(Collections.emptyList());
-
-        scheduleTask.unblockTppIfBlockingExpired();
-
-        verify(tppStopListRepository, times(1)).findAllByStatusAndBlockingExpirationTimestampLessThanEqual(eq(TppStatus.BLOCKED), any(OffsetDateTime.class));
-        verify(tppStopListRepository, never()).saveAll(anyList());
-    }
-
-    @NotNull
-    private TppStopListEntity createTppStopEntity() {
-        TppStopListEntity tppStopListEntity = new TppStopListEntity();
-        tppStopListEntity.block(Duration.ofDays(1));
-        return tppStopListEntity;
+        verify(tppStopListRepository, times(1)).unblockExpiredBlockedTpp();
     }
 }
