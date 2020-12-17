@@ -16,13 +16,15 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.api.CmsPageInfo;
+import de.adorsys.psd2.consent.api.ResponseData;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.aspsp.api.CmsAspspPisExportApi;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
@@ -34,30 +36,39 @@ public class CmsAspspPisExportController implements CmsAspspPisExportApi {
     private final CmsAspspPisExportService cmsAspspPisExportService;
 
     @Override
-    public ResponseEntity<Collection<CmsPayment>> getPaymentsByTpp(String tppId, LocalDate start, LocalDate end,
+    public ResponseData<Collection<CmsPayment>> getPaymentsByTpp(String tppId, LocalDate start, LocalDate end,
                                                                    String psuId, String psuIdType,
                                                                    String psuCorporateId, String psuCorporateIdType,
                                                                    String instanceId, Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex, itemsPerPage);
-        return new ResponseEntity<>(payments, HttpStatus.OK);
+        PageData<Collection<CmsPayment>> payments = cmsAspspPisExportService.exportPaymentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex, itemsPerPage);
+        return ResponseData.list(
+            payments.getData(),
+            new CmsPageInfo(payments.getPage(), payments.getPageSize(), payments.getTotal()),
+            HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Collection<CmsPayment>> getPaymentsByPsu(LocalDate start, LocalDate end,
+    public ResponseData<Collection<CmsPayment>> getPaymentsByPsu(LocalDate start, LocalDate end,
                                                                    String psuId, String psuIdType,
                                                                    String psuCorporateId, String psuCorporateIdType,
                                                                    String instanceId, Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, start, end, instanceId, pageIndex, itemsPerPage);
-        return new ResponseEntity<>(payments, HttpStatus.OK);
+        PageData<Collection<CmsPayment>> payments = cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, start, end, instanceId, pageIndex, itemsPerPage);
+        return ResponseData.list(
+            payments.getData(),
+            new CmsPageInfo(payments.getPage(), payments.getPageSize(), payments.getTotal()),
+            HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<Collection<CmsPayment>> getPaymentsByAccountId(String aspspAccountId, LocalDate start,
+    public ResponseData<Collection<CmsPayment>> getPaymentsByAccountId(String aspspAccountId, LocalDate start,
                                                                          LocalDate end, String instanceId,
                                                                          Integer pageIndex, Integer itemsPerPage) {
-        Collection<CmsPayment> payments = cmsAspspPisExportService.exportPaymentsByAccountId(aspspAccountId, start, end, instanceId, pageIndex, itemsPerPage);
-        return new ResponseEntity<>(payments, HttpStatus.OK);
+        PageData<Collection<CmsPayment>> payments = cmsAspspPisExportService.exportPaymentsByAccountId(aspspAccountId, start, end, instanceId, pageIndex, itemsPerPage);
+        return ResponseData.list(
+            payments.getData(),
+            new CmsPageInfo(payments.getPage(), payments.getPageSize(), payments.getTotal()),
+            HttpStatus.OK);
     }
 }

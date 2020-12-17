@@ -54,8 +54,8 @@ import static org.mockito.Mockito.when;
 @DataJpaTest
 public class AisConsentIT {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
-    public static final Integer DEFAULT_PAGE_INDEX = 0;
-    public static final Integer DEFAULT_ITEMS_PER_PAGE = 20;
+    private static final Integer DEFAULT_PAGE_INDEX = 0;
+    private static final Integer DEFAULT_ITEMS_PER_PAGE = 20;
 
     @Autowired
     private ConsentService consentService;

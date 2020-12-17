@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsAddress;
 import de.adorsys.psd2.consent.api.pis.CmsAmount;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -60,6 +61,8 @@ class CmsAspspPisExportControllerTest {
     private final LocalDate END_DATE = LocalDate.of(2020, 7, 22);
     private final String INSTANCE_ID = "UNDEFINED";
     private final String LIST_OF_PIIS_CONSENTS_PATH = "json/pis/list-pis-payment.json";
+    private static final Integer PAGE_INDEX = 0;
+    private static final Integer ITEMS_PER_PAGE = 20;
 
     private MockMvc mockMvc;
     private JsonReader jsonReader = new JsonReader();
@@ -94,8 +97,8 @@ class CmsAspspPisExportControllerTest {
 
     @Test
     void getPaymentsByTpp() throws Exception {
-        when(cmsAspspPisExportService.exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null))
-            .thenReturn(cmsPayments);
+        when(cmsAspspPisExportService.exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(cmsPayments, 0, 20, cmsPayments.size()));
 
         mockMvc.perform(get(EXPORT_PIS_CONSENT_BY_TPP)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -103,13 +106,13 @@ class CmsAspspPisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPisExportService, times(1)).exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null, null);
+        verify(cmsAspspPisExportService, times(1)).exportPaymentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     @Test
     void getPaymentsByPsu() throws Exception {
-        when(cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null))
-            .thenReturn(cmsPayments);
+        when(cmsAspspPisExportService.exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(cmsPayments, 0, 20, cmsPayments.size()));
 
         mockMvc.perform(get(EXPORT_PIS_CONSENT_BY_PSU)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -117,13 +120,13 @@ class CmsAspspPisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPisExportService, times(1)).exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null, null);
+        verify(cmsAspspPisExportService, times(1)).exportPaymentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     @Test
     void getPaymentsByAccountId() throws Exception {
-        when(cmsAspspPisExportService.exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null))
-            .thenReturn(cmsPayments);
+        when(cmsAspspPisExportService.exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(cmsPayments, 0, 20, cmsPayments.size()));
 
         mockMvc.perform(get(EXPORT_PIS_CONSENT_BY_ACCOUNT)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -131,7 +134,7 @@ class CmsAspspPisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPisExportService, times(1)).exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null, null);
+        verify(cmsAspspPisExportService, times(1)).exportPaymentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     private CmsPayment getCmsPayment() {

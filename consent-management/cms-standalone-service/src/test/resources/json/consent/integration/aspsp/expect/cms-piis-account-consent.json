@@ -1,30 +1,37 @@
-[
-  {
-    "id": "4b112130-6a96-4941-a220-2da8a4af2c65",
-    "recurringIndicator": true,
-    "requestDateTime": "2020-01-01T12:30:35.034188Z",
-    "lastActionDate": "2020-01-13",
-    "expireDate": "2021-03-14",
-    "psuData": {
-      "psuId": "PSU ID",
-      "psuIdType": "PSU ID TYPE",
-      "psuCorporateId": "PSU CORPORATE ID",
-      "psuCorporateIdType": "PSU CORPORATE ID TYPE",
-      "psuIpAddress": "PSU IP ADDRESS"
-    },
-    "consentStatus": "RECEIVED",
-    "account": {
-      "aspspAccountId": "123-DEDE89370400440532013000-EUR",
-      "resourceId": "33333-999999999",
-      "iban": "DE15500105172295759744",
-      "currency": "EUR"
-    },
-    "creationTimestamp": "2020-04-15T16:00:22.087585Z",
-    "instanceId": "UNDEFINED",
-    "cardNumber": "1234567891234",
-    "cardExpiryDate": "2020-12-31",
-    "cardInformation": "MyMerchant Loyalty Card",
-    "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
-    "tppAuthorisationNumber": "12345987"
+{
+  "data": [
+    {
+      "id": "4b112130-6a96-4941-a220-2da8a4af2c65",
+      "recurringIndicator": true,
+      "requestDateTime": "2020-01-01T12:30:35.034188Z",
+      "lastActionDate": "2020-01-13",
+      "expireDate": "2021-03-14",
+      "psuData": {
+        "psuId": "PSU ID",
+        "psuIdType": "PSU ID TYPE",
+        "psuCorporateId": "PSU CORPORATE ID",
+        "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+        "psuIpAddress": "PSU IP ADDRESS"
+      },
+      "consentStatus": "RECEIVED",
+      "account": {
+        "aspspAccountId": "123-DEDE89370400440532013000-EUR",
+        "resourceId": "33333-999999999",
+        "iban": "DE15500105172295759744",
+        "currency": "EUR"
+      },
+      "creationTimestamp": "2020-04-15T16:00:22.087585Z",
+      "instanceId": "UNDEFINED",
+      "cardNumber": "1234567891234",
+      "cardExpiryDate": "2020-12-31",
+      "cardInformation": "MyMerchant Loyalty Card",
+      "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
+      "tppAuthorisationNumber": "12345987"
+    }
+  ],
+  "pageInfo": {
+    "pageIndex": 0,
+    "itemsPerPage": 20,
+    "total": 1
   }
-]
+}

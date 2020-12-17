@@ -561,7 +561,7 @@ class CmsPsuPisServiceInternalTest {
             .thenReturn(Optional.of(buildPisCommonPaymentData()));
 
         PageRequest pageRequest = PageRequest.of(DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE)).thenReturn(pageRequest);
         when(authorisationRepository.findAllByParentExternalIdAndTypeIn(PAYMENT_ID, EnumSet.of(AuthorisationType.PIS_CREATION, AuthorisationType.PIS_CANCELLATION), pageRequest))
             .thenReturn(Collections.singletonList(buildPisAuthorisation()));
 

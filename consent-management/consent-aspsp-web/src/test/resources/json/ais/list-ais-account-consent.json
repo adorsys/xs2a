@@ -1,61 +1,68 @@
-[
-  {
-    "id": "1d9d92bf-988f-4ae2-8695-167e51626c60",
-    "access": {
-      "availableAccounts": "ALL_ACCOUNTS"
-    },
-    "recurringIndicator": true,
-    "validUntil": "2021-10-10",
-    "frequencyPerDay": 5,
-    "lastActionDate": "2019-09-03",
-    "consentStatus": "EXPIRED",
-    "withBalance": false,
-    "tppRedirectPreferred": false,
-    "aisConsentRequestType": "ALL_AVAILABLE_ACCOUNTS",
-    "psuIdDataList": [
-      {
-        "psuId": "marion.mueller"
-      }
-    ],
-    "tppInfo": {
-      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
-      "tppName": "",
-      "tppRoles": [
-        "AISP",
-        "PISP",
-        "PIISP"
-      ],
-      "authorityId": "DE-FAKENCA",
-      "authorityName": "Trust Service Provider AG",
-      "country": "Germany",
-      "organisation": "Fictional Corporation AG",
-      "organisationUnit": "Information Technology",
-      "city": "Nuremberg",
-      "state": "Bayern"
-    },
-    "authorisationTemplate": {
-      "tppRedirectUri": {
-        "uri": "http://test.com",
-        "nokUri": "http://test.nok.com"
-      }
-    },
-    "multilevelScaRequired": false,
-    "accountConsentAuthorizations": [
-      {
-        "psuIdData": {
-          "psuId": "marion.mueller"
-        },
-        "scaStatus": "failed"
+{
+  "data": [
+    {
+      "id": "1d9d92bf-988f-4ae2-8695-167e51626c60",
+      "access": {
+        "availableAccounts": "ALL_ACCOUNTS"
       },
-      {
-        "psuIdData": {
+      "recurringIndicator": true,
+      "validUntil": "2021-10-10",
+      "frequencyPerDay": 5,
+      "lastActionDate": "2019-09-03",
+      "consentStatus": "EXPIRED",
+      "withBalance": false,
+      "tppRedirectPreferred": false,
+      "aisConsentRequestType": "ALL_AVAILABLE_ACCOUNTS",
+      "psuIdDataList": [
+        {
           "psuId": "marion.mueller"
+        }
+      ],
+      "tppInfo": {
+        "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+        "tppName": "",
+        "tppRoles": [
+          "AISP",
+          "PISP",
+          "PIISP"
+        ],
+        "authorityId": "DE-FAKENCA",
+        "authorityName": "Trust Service Provider AG",
+        "country": "Germany",
+        "organisation": "Fictional Corporation AG",
+        "organisationUnit": "Information Technology",
+        "city": "Nuremberg",
+        "state": "Bayern"
+      },
+      "authorisationTemplate": {
+        "tppRedirectUri": {
+          "uri": "http://test.com",
+          "nokUri": "http://test.nok.com"
+        }
+      },
+      "multilevelScaRequired": false,
+      "accountConsentAuthorizations": [
+        {
+          "psuIdData": {
+            "psuId": "marion.mueller"
+          },
+          "scaStatus": "failed"
         },
-        "scaStatus": "failed"
-      }
-    ],
-    "usageCounterMap": {},
-    "creationTimestamp": "2019-09-02T08:16:00.031Z",
-    "statusChangeTimestamp": "2019-09-03T09:10:47.421Z"
+        {
+          "psuIdData": {
+            "psuId": "marion.mueller"
+          },
+          "scaStatus": "failed"
+        }
+      ],
+      "usageCounterMap": {},
+      "creationTimestamp": "2019-09-02T08:16:00.031Z",
+      "statusChangeTimestamp": "2019-09-03T09:10:47.421Z"
+    }
+  ],
+  "pageInfo": {
+    "pageIndex": 0,
+    "itemsPerPage": 20,
+    "total": 1
   }
-]
+}

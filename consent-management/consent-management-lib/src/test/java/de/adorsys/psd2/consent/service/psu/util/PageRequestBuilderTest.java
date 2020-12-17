@@ -16,53 +16,62 @@
 
 package de.adorsys.psd2.consent.service.psu.util;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class PageRequestBuilderTest {
-    public static final Integer PAGE_INDEX = 5;
-    public static final Integer ITEMS_PER_PAGE = 28;
+    private static final int DEFAULT_PAGE_INDEX = 0;
+    private static final int DEFAULT_ITEMS_PER_PAGE = 50;
 
     @InjectMocks
     private PageRequestBuilder pageRequestBuilder;
 
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(pageRequestBuilder,
+                                     "defaultPageIndex",
+                                     DEFAULT_PAGE_INDEX);
+        ReflectionTestUtils.setField(pageRequestBuilder,
+                                     "defaultItemsPerPage",
+                                     DEFAULT_ITEMS_PER_PAGE);
+    }
+
     @Test
-    void getPageParams_nonDefault() {
+    void getPageable_nonDefault() {
         // Given
-        PageRequest expected = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
+        PageRequest expected = PageRequest.of(5, 28);
 
         // When
-        PageRequest actual = pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE);
+        Pageable actual = pageRequestBuilder.getPageable(5, 28);
 
         // Then
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void getPageParams_defaults() {
+    void getPageable_defaults() {
         // Given
-        PageRequest expected = PageRequest.of(0, 50);
-
-        ReflectionTestUtils.setField(pageRequestBuilder,
-                                     "defaultPageIndex",
-                                     0);
-
-        ReflectionTestUtils.setField(pageRequestBuilder,
-                                     "defaultItemsPerPage",
-                                     50);
-
         // When
-        PageRequest actual = pageRequestBuilder.getPageParams(null, null);
+        Pageable actual = pageRequestBuilder.getPageable(null, null);
 
         // Then
+        assertThat(actual).isEqualTo(Pageable.unpaged());
+    }
+
+    @Test
+    void getPageable_negativeValues() {
+        Pageable actual = pageRequestBuilder.getPageable(-1, -1);
+
+        PageRequest expected = PageRequest.of(DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
         assertThat(actual).isEqualTo(expected);
     }
 }

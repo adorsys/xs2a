@@ -32,6 +32,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -94,7 +97,8 @@ class CmsAspspPisExportControllerIT {
 
         PisCommonPaymentData pisCommonPaymentData = jsonReader.getObjectFromFile("json/consent/integration/aspsp/common-payment-data.json", PisCommonPaymentData.class);
         pisCommonPaymentData.getPayments().forEach(p -> p.setPaymentData(pisCommonPaymentData));
-        given(pisCommonPaymentDataRepository.findAll(any(Specification.class))).willReturn(Collections.singletonList(pisCommonPaymentData));
+        given(pisCommonPaymentDataRepository.findAll(any(Specification.class), any(Pageable.class)))
+            .willReturn(new PageImpl<>(Collections.singletonList(pisCommonPaymentData), PageRequest.of(0, 20), 1));
     }
 
     @Test
