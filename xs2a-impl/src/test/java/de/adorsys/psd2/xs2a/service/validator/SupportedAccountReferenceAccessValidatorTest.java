@@ -58,7 +58,7 @@ class SupportedAccountReferenceAccessValidatorTest {
     private static final AccountReference ACCOUNT_REFERENCE_BBAN =
         new AccountReference(AccountReferenceType.BBAN, "bban value", Currency.getInstance("EUR"));
     private static final AccountReference ACCOUNT_REFERENCE_ALL =
-        new AccountReference("account ID", "resource ID", "iban value", "bban value", "pan value", "maskedpan value", "msisdn value", Currency.getInstance("EUR"));
+        new AccountReference("account ID", "resource ID", "iban value", "bban value", "pan value", "maskedpan value", "msisdn value", Currency.getInstance("EUR"), null);
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;

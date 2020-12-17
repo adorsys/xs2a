@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2020 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.aspsp.profile.domain.migration;
+package de.adorsys.psd2.consent.api;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
-public class OldProfileConfiguration {
-    private OldBankProfileSetting setting;
+@Data
+@AllArgsConstructor
+public class CmsPageInfo {
+    private final long pageIndex;
+    private final long itemsPerPage;
+    private final long total;
 }

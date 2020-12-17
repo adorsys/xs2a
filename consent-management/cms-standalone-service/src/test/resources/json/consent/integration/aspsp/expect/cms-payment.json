@@ -1,49 +1,56 @@
-[
-  {
-    "paymentId": "cea9dda3-5154-420d-b1a7-6b4798fccb4b",
-    "paymentProduct": "sepa-credit-transfers",
-    "psuIdDatas": [
-      {
-        "psuId": "PSU ID",
-        "psuIdType": "PSU ID TYPE",
-        "psuCorporateId": "PSU CORPORATE ID",
-        "psuCorporateIdType": "PSU CORPORATE ID TYPE",
-        "psuIpAddress": "PSU IP ADDRESS"
-      }
-    ],
-    "tppInfo": {
-      "authorisationNumber": "12345987",
-      "tppName": "Tpp company",
-      "tppRoles": [
-        "PISP"
+{
+  "data": [
+    {
+      "paymentId": "cea9dda3-5154-420d-b1a7-6b4798fccb4b",
+      "paymentProduct": "sepa-credit-transfers",
+      "psuIdDatas": [
+        {
+          "psuId": "PSU ID",
+          "psuIdType": "PSU ID TYPE",
+          "psuCorporateId": "PSU CORPORATE ID",
+          "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+          "psuIpAddress": "PSU IP ADDRESS"
+        }
       ],
-      "authorityId": "authority id",
-      "authorityName": "authority name",
-      "country": "Germany",
-      "organisation": "Organisation",
-      "organisationUnit": "Organisation unit",
-      "city": "Nuremberg",
-      "state": "Bayern"
-    },
-    "creationTimestamp": "2019-08-22T11:00:00Z",
-    "statusChangeTimestamp": "2019-08-22T11:01:27Z",
-    "endToEndIdentification": "RI-123456789",
-    "instructedAmount": {
-      "currency": "EUR",
-      "amount": 1000.00
-    },
-    "creditorAgent": "BCENECEQ",
-    "creditorName": "Telekom",
-    "creditorAddress": {
-      "streetName": "WBG Straße",
-      "buildingNumber": "56",
-      "townName": "Nürnberg",
-      "postCode": "90543",
-      "country": "DE"
-    },
-    "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
-    "paymentStatus": "RCVD",
-    "purposeCode": "",
-    "paymentType": "payments"
+      "tppInfo": {
+        "authorisationNumber": "12345987",
+        "tppName": "Tpp company",
+        "tppRoles": [
+          "PISP"
+        ],
+        "authorityId": "authority id",
+        "authorityName": "authority name",
+        "country": "Germany",
+        "organisation": "Organisation",
+        "organisationUnit": "Organisation unit",
+        "city": "Nuremberg",
+        "state": "Bayern"
+      },
+      "creationTimestamp": "2019-08-22T11:00:00Z",
+      "statusChangeTimestamp": "2019-08-22T11:01:27Z",
+      "endToEndIdentification": "RI-123456789",
+      "instructedAmount": {
+        "currency": "EUR",
+        "amount": 1000.00
+      },
+      "creditorAgent": "BCENECEQ",
+      "creditorName": "Telekom",
+      "creditorAddress": {
+        "streetName": "WBG Straße",
+        "buildingNumber": "56",
+        "townName": "Nürnberg",
+        "postCode": "90543",
+        "country": "DE"
+      },
+      "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222",
+      "paymentStatus": "RCVD",
+      "purposeCode": "",
+      "paymentType": "payments"
+    }
+  ],
+  "pageInfo": {
+    "pageIndex": 0,
+    "itemsPerPage": 20,
+    "total": 1
   }
-]
+}

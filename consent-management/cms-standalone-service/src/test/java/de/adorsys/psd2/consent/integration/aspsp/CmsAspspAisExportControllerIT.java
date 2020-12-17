@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -46,6 +50,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -61,7 +68,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsAspspAisExportControllerIT {
+class CmsAspspAisExportControllerIT {
 
     private static final String TPP_AUTHORISATION_NUMBER = "12345987";
     private static final String START_DATE = "2010-01-01";
@@ -84,6 +91,7 @@ public class CmsAspspAisExportControllerIT {
     private final JsonReader jsonReader = new JsonReader();
     private HttpHeaders httpHeaders;
     private PsuIdData psuIdData;
+    private ConsentEntity consentEntity;
 
     @BeforeEach
     void setUp() {
@@ -100,10 +108,11 @@ public class CmsAspspAisExportControllerIT {
 
         psuIdData = jsonReader.getObjectFromFile("json/consent/integration/aspsp/psu-id-data.json", PsuIdData.class);
 
-        ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/consent/integration/aspsp/consent-entity.json", ConsentEntity.class);
+        consentEntity = jsonReader.getObjectFromFile("json/consent/integration/aspsp/consent-entity.json", ConsentEntity.class);
         consentEntity.setData(jsonReader.getBytesFromFile("json/consent/integration/ais/ais-consent-data.json"));
 
-        given(consentJpaRepository.findAll(any(Specification.class))).willReturn(Collections.singletonList(consentEntity));
+        given(consentJpaRepository.findAll(any(Specification.class), any(Pageable.class)))
+            .willReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(0, 20), 1));
         given(authorisationRepository.findAllByParentExternalIdAndType(consentEntity.getExternalId(), AuthorisationType.CONSENT))
             .willReturn(Collections.emptyList());
         given(aisConsentUsageRepository.findReadByConsentAndUsageDate(eq(consentEntity), any(LocalDate.class)))
@@ -138,6 +147,13 @@ public class CmsAspspAisExportControllerIT {
 
     @Test
     void getConsentsByAccount() throws Exception {
+        ZoneOffset currentOffset = OffsetDateTime.now().getOffset();
+        given(consentJpaRepository.findAllWithPagination(Collections.singleton(ConsentType.AIS.getName()), ACCOUNT_ID,
+                                                         OffsetDateTime.of(LocalDate.parse(START_DATE), LocalTime.MIN, currentOffset),
+                                                         OffsetDateTime.of(LocalDate.parse(END_DATE), LocalTime.MAX, currentOffset),
+                                                         INSTANCE_ID, PageRequest.of(0, 20)))
+            .willReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(0, 20), 1));
+
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getConsentsByAccountUrl(ACCOUNT_ID));
         requestBuilder.headers(httpHeaders);
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -145,7 +161,5 @@ public class CmsAspspAisExportControllerIT {
         resultActions.andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-ais-account-consent.json")));
-
-        verify(aisConsentSpecification).byAspspAccountIdAndCreationPeriodAndInstanceId(ACCOUNT_ID, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID);
     }
 }

@@ -126,7 +126,7 @@ public class AccountDetailsService {
                                                           String accountId, boolean withBalance) {
         AccountAccess access = aisConsent.getAspspAccountAccesses();
         SpiAccountReference requestedAccountReference = aisConsent.isGlobalConsent() ?
-                                                            new SpiAccountReference(accountId, null, null, null, null, null, null) :
+                                                            new SpiAccountReference(accountId, null, null, null, null, null, null, null) :
                                                             accountHelperService.findAccountReference(access.getAccounts(), accountId);
 
         return accountSpi.requestAccountDetailForAccount(accountHelperService.getSpiContextData(),

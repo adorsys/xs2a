@@ -15,7 +15,7 @@ public class ExportUtil {
         try (StringWriter writer = new StringWriter(); JcaPEMWriter pemWriter = new JcaPEMWriter(writer)) {
             pemWriter.writeObject(obj);
             pemWriter.flush();
-            return writer.toString().replaceAll("\n", "");
+            return writer.toString().replace("\n", "");
         } catch (IOException ex) {
             throw new CertificateGeneratorException("Could not export certificate", ex);
         }

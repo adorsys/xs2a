@@ -180,7 +180,8 @@ public class CmsPsuPisMapper {
                                                     ref.getPan(),
                                                     ref.getMaskedPan(),
                                                     ref.getMsisdn(),
-                                                    ref.getCurrency())
+                                                    ref.getCurrency(),
+                                                    null)
                    ).orElse(null);
     }
 }

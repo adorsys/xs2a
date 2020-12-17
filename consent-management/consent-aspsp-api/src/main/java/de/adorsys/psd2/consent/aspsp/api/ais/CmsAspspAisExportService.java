@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.aspsp.api.ais;
 
 
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.TooManyResultsException;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.jetbrains.annotations.NotNull;
@@ -37,17 +38,17 @@ public interface CmsAspspAisExportService {
      * @param createDateTo           Optional ending creation date criteria
      * @param psuIdData              Optional Psu information criteria
      * @param instanceId             Mandatory id of particular service instance
-     * @param pageIndex index of current page
-     * @param itemsPerPage quantity of consents on one page
+     * @param pageIndex              index of current page
+     * @param itemsPerPage           quantity of consents on one page
      * @return Collection of consents for TPP by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<CmsAisAccountConsent> exportConsentsByTpp(String tppAuthorisationNumber,
-                                                         @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                         @Nullable PsuIdData psuIdData, @NotNull String instanceId,
-                                                         Integer pageIndex, Integer itemsPerPage);
+    PageData<Collection<CmsAisAccountConsent>> exportConsentsByTpp(String tppAuthorisationNumber,
+                                                                   @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                                   @Nullable PsuIdData psuIdData, @NotNull String instanceId,
+                                                                   Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Returns list of consents by given criteria.
@@ -56,17 +57,17 @@ public interface CmsAspspAisExportService {
      * @param createDateFrom Optional starting creation date criteria
      * @param createDateTo   Optional ending creation date criteria
      * @param instanceId     Mandatory id of particular service instance
-     * @param pageIndex index of current page
-     * @param itemsPerPage quantity of consents on one page
+     * @param pageIndex      index of current page
+     * @param itemsPerPage   quantity of consents on one page
      * @return Collection of consents for PSU by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<CmsAisAccountConsent> exportConsentsByPsu(PsuIdData psuIdData,
-                                                         @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                         @NotNull String instanceId,
-                                                         Integer pageIndex, Integer itemsPerPage);
+    PageData<Collection<CmsAisAccountConsent>> exportConsentsByPsu(PsuIdData psuIdData,
+                                                                   @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                                   @NotNull String instanceId,
+                                                                   Integer pageIndex, Integer itemsPerPage);
 
     /**
      * Returns list of consents by given criteria.
@@ -75,15 +76,15 @@ public interface CmsAspspAisExportService {
      * @param createDateFrom Optional starting creation date criteria
      * @param createDateTo   Optional ending creation date criteria
      * @param instanceId     Mandatory id of particular service instance
-     * @param pageIndex index of current page
-     * @param itemsPerPage quantity of consents on one page
+     * @param pageIndex      index of current page
+     * @param itemsPerPage   quantity of consents on one page
      * @return Collection of consents for PSU by given criteria.
      * By inconsistent criteria an empty list will be returned
      * @throws TooManyResultsException If CMS is not able to provide result due to overflow,
      *                                 developer shall limit his/her request, making pagination by dates.
      */
-    Collection<CmsAisAccountConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
-                                                               @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
-                                                               @NotNull String instanceId,
-                                                               Integer pageIndex, Integer itemsPerPage);
+    PageData<Collection<CmsAisAccountConsent>> exportConsentsByAccountId(@NotNull String aspspAccountId,
+                                                                         @Nullable LocalDate createDateFrom, @Nullable LocalDate createDateTo,
+                                                                         @NotNull String instanceId,
+                                                                         Integer pageIndex, Integer itemsPerPage);
 }

@@ -63,6 +63,9 @@ public class CmsAspspTppServiceInternal implements CmsAspspTppService {
                                                       return entity;
                                                   });
         entityToBeBlocked.block(lockPeriod);
+        if (stopListEntityOptional.isEmpty()) {
+            stopListRepository.save(entityToBeBlocked);
+        }
         return true;
     }
 
