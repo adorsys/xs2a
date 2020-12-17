@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
@@ -55,6 +56,8 @@ class CmsAspspPiisControllerTest {
     private final String LIST_OF_PIIS_CONSENTS_PATH = "json/piis/list-piis-consent.json";
     private final String INSTANCE_ID = "UNDEFINED";
     private final String TRUE = "true";
+    private static final Integer PAGE_INDEX = 0;
+    private static final Integer ITEMS_PER_PAGE = 20;
 
     private MockMvc mockMvc;
     private JsonReader jsonReader = new JsonReader();
@@ -119,8 +122,8 @@ class CmsAspspPiisControllerTest {
     @Test
     void getConsentsForPsu_Success() throws Exception {
         List<CmsPiisConsent> consents = Collections.singletonList(cmsPiisConsent);
-        when(cmsAspspPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID, null, null))
-            .thenReturn(consents);
+        when(cmsAspspPiisService.getConsentsForPsu(psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+            .thenReturn(new PageData<>(consents, 0, 20, consents.size()));
 
         mockMvc.perform(get(CREATE_PIIS_CONSENT_URL)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -128,7 +131,7 @@ class CmsAspspPiisControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_PIIS_CONSENTS_PATH)));
 
-        verify(cmsAspspPiisService, times(1)).getConsentsForPsu(psuIdData, INSTANCE_ID, null, null);
+        verify(cmsAspspPiisService, times(1)).getConsentsForPsu(psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
     }
 
     @Test

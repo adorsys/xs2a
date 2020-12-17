@@ -191,7 +191,7 @@ class CmsPsuPiisServiceInternalTest {
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
 
         when(consentJpaRepository.findAll(any(), eq(pageRequest))).thenReturn(new PageImpl<>(Collections.singletonList(piisConsentEntity)));
 
@@ -211,7 +211,7 @@ class CmsPsuPiisServiceInternalTest {
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdDataWithIp, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
         when(consentJpaRepository.findAll(any(), eq(pageRequest))).thenReturn(new PageImpl(Collections.singletonList(piisConsentEntity)));
 
         // When
@@ -225,7 +225,7 @@ class CmsPsuPiisServiceInternalTest {
     @Test
     void getConsentsForPsu_fail() {
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
 
         when(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdDataNotExist, "UNDEFINED")).thenReturn(specification);
         when(consentJpaRepository.findAll(specification, pageRequest)).thenReturn(Page.empty());

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
@@ -29,14 +30,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -51,71 +51,57 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
 
 
     @Override
-    public Collection<CmsPayment> exportPaymentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom,
-                                                      @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
-                                                      @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsPayment>> exportPaymentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom,
+                                                                @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
+                                                                @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}], TPP ID: [{}]. Export payments by TPP failed, TPP ID or instanceId is empty or null.", instanceId,
                      tppAuthorisationNumber);
-            return Collections.emptyList();
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
-        List<PisCommonPaymentData> commonPayments;
-        if (pageIndex == null && itemsPerPage == null) {
-            commonPayments = pisCommonPaymentDataRepository.findAll(
-                pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId));
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            commonPayments = pisCommonPaymentDataRepository.findAll(
-                pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId), pageRequest)
-                                 .stream()
-                                 .collect(Collectors.toList());
-        }
-        return cmsPsuPisMapper.mapPaymentDataToCmsPayments(commonPayments);
+        return mapToPageData(pisCommonPaymentDataRepository.findAll(
+            pisCommonPaymentDataSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
-    public Collection<CmsPayment> exportPaymentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
-                                                      @Nullable LocalDate createDateTo, @NotNull String instanceId,
-                                                      Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsPayment>> exportPaymentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
+                                                                @Nullable LocalDate createDateTo, @NotNull String instanceId,
+                                                                Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}]. Export payments by psu failed, psuIdData or instanceId is empty or null.",
                      instanceId);
-            return Collections.emptyList();
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
-        List<PisCommonPaymentData> commonPayments;
-        if (pageIndex == null && itemsPerPage == null) {
-            commonPayments = pisCommonPaymentDataRepository.findAll(pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId));
-
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            commonPayments = pisCommonPaymentDataRepository.findAll(pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId), pageRequest)
-                                 .stream()
-                                 .collect(Collectors.toList());
-        }
-        return cmsPsuPisMapper.mapPaymentDataToCmsPayments(commonPayments);
+        return mapToPageData(pisCommonPaymentDataRepository.findAll(
+            pisCommonPaymentDataSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
-    public Collection<CmsPayment> exportPaymentsByAccountId(@NotNull String aspspAccountId, @Nullable LocalDate createDateFrom,
-                                                            @Nullable LocalDate createDateTo, @NotNull String instanceId,
-                                                            Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsPayment>> exportPaymentsByAccountId(@NotNull String aspspAccountId, @Nullable LocalDate createDateFrom,
+                                                                      @Nullable LocalDate createDateTo, @NotNull String instanceId,
+                                                                      Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(aspspAccountId) || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}], aspspAccountId: [{}]. Export payments by accountId failed, aspspAccountId or instanceId is empty or null.",
                      instanceId, aspspAccountId);
-            return Collections.emptyList();
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
-        List<PisCommonPaymentData> commonPayments;
-        if (pageIndex == null && itemsPerPage == null) {
-            commonPayments = pisCommonPaymentDataRepository.findAll(pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, instanceId));
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            commonPayments = pisCommonPaymentDataRepository.findAll(pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, instanceId), pageRequest)
-                                 .stream()
-                                 .collect(Collectors.toList());
-        }
-        return cmsPsuPisMapper.mapPaymentDataToCmsPayments(commonPayments);
+        return mapToPageData(pisCommonPaymentDataRepository.findAll(
+            pisCommonPaymentDataSpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, instanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
+    }
+
+    private PageData<Collection<CmsPayment>> mapToPageData(Page<PisCommonPaymentData> entities) {
+        return new PageData<>(entities
+                                  .stream()
+                                  .map(cmsPsuPisMapper::mapPaymentDataToCmsPayment)
+                                  .collect(Collectors.toList()),
+                              entities.getPageable().getPageNumber(),
+                              entities.getPageable().getPageSize(),
+                              entities.getTotalElements());
     }
 }

@@ -18,19 +18,28 @@ package de.adorsys.psd2.consent.service.psu.util;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class PageRequestBuilder {
-    @Value("${cms.defaultPageIndex}")
+    @Value("${cms.defaultPageIndex:0}")
     private int defaultPageIndex;
-    @Value("${cms.defaultItemsPerPage}")
+    @Value("${cms.defaultItemsPerPage:20}")
     private int defaultItemsPerPage;
 
-    public PageRequest getPageParams(Integer pageIndex, Integer itemsPerPage) {
-        return PageRequest.of(Optional.ofNullable(pageIndex).orElse(defaultPageIndex),
-                              Optional.ofNullable(itemsPerPage).orElse(defaultItemsPerPage));
+    public Pageable getPageable(Integer pageIndex, Integer itemsPerPage) {
+        if (pageIndex == null && itemsPerPage == null) {
+            return Pageable.unpaged();
+        }
+        return PageRequest.of(getValueOrDefault(pageIndex, defaultPageIndex),
+                              getValueOrDefault(itemsPerPage, defaultItemsPerPage));
+    }
+
+    private int getValueOrDefault(Integer value, int defaultValue) {
+        if (value == null || value < 0) {
+            return defaultValue;
+        }
+        return value;
     }
 }

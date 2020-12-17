@@ -51,7 +51,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -233,7 +233,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                                                                                                        AuthorisationType.PIS_CANCELLATION)))
                        .map(this::getPsuDataAuthorisations);
         }
-        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+        Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
         return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
                    .map(p -> authorisationRepository.findAllByParentExternalIdAndTypeIn(paymentId,
                                                                                         EnumSet.of(AuthorisationType.PIS_CREATION,

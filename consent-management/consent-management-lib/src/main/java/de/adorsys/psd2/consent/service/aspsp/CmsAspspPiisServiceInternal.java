@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -34,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,26 +86,16 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
 
     @Override
     @Transactional
-    public @NotNull List<CmsPiisConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
-                                                           Integer pageIndex, Integer itemsPerPage) {
+    public @NotNull PageData<List<CmsPiisConsent>> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
+                                                                     Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData.isEmpty()) {
-            return Collections.emptyList();
+            log.info("InstanceId: [{}]. Export PIIS consents by psu failed, psuIdData is empty or null.", instanceId);
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
-        if (pageIndex == null && itemsPerPage == null) {
-            return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId))
-                       .stream()
-                       .map(piisConsentLazyMigrationService::migrateIfNeeded)
-                       .map(piisConsentMapper::mapToCmsPiisConsent)
-                       .collect(Collectors.toList());
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId), pageRequest)
-                       .stream()
-                       .map(piisConsentLazyMigrationService::migrateIfNeeded)
-                       .map(piisConsentMapper::mapToCmsPiisConsent)
-                       .collect(Collectors.toList());
-        }
+        return mapToPageData(consentJpaRepository.findAll(
+            piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
@@ -165,5 +156,16 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
                    || request.getValidUntil() == null
                    || request.getValidUntil().isBefore(LocalDate.now())
                    || request.getCardExpiryDate() != null && request.getCardExpiryDate().isBefore(LocalDate.now());
+    }
+
+    private PageData<List<CmsPiisConsent>> mapToPageData(Page<ConsentEntity> entities) {
+        return new PageData<>(entities
+                                  .stream()
+                                  .map(piisConsentLazyMigrationService::migrateIfNeeded)
+                                  .map(piisConsentMapper::mapToCmsPiisConsent)
+                                  .collect(Collectors.toList()),
+                              entities.getPageable().getPageNumber(),
+                              entities.getPageable().getPageSize(),
+                              entities.getTotalElements());
     }
 }

@@ -1,14 +1,21 @@
-[
-  {
-    "paymentProduct": "paymentProduct",
-    "endToEndIdentification": "RI-1234567890",
-    "instructedAmount": {
-      "currency": "EUR",
-      "amount": 1000
-    },
-    "creditorAgent": "agent",
-    "creditorName": "name",
-    "remittanceInformationUnstructured": "remittanceInformationUnstructured",
-    "paymentType": "payments"
+{
+  "data": [
+    {
+      "paymentProduct": "paymentProduct",
+      "endToEndIdentification": "RI-1234567890",
+      "instructedAmount": {
+        "currency": "EUR",
+        "amount": 1000
+      },
+      "creditorAgent": "agent",
+      "creditorName": "name",
+      "remittanceInformationUnstructured": "remittanceInformationUnstructured",
+      "paymentType": "payments"
+    }
+  ],
+  "pageInfo": {
+    "pageIndex": 0,
+    "itemsPerPage": 20,
+    "total": 1
   }
-]
+}
