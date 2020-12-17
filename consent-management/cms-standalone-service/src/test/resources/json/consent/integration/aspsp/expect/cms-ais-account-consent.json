@@ -1,54 +1,61 @@
-[
-  {
-    "id": "4b112130-6a96-4941-a220-2da8a4af2c65",
-    "access": {
-      "accounts": [],
-      "balances": [],
-      "transactions": [],
-      "allPsd2": "ALL_ACCOUNTS",
-      "accountAdditionalInformationAccess": {}
-    },
-    "recurringIndicator": true,
-    "validUntil": "2021-03-14",
-    "expireDate": "2021-01-21",
-    "frequencyPerDay": 4,
-    "lastActionDate": "2020-01-13",
-    "consentStatus": "RECEIVED",
-    "withBalance": true,
-    "tppRedirectPreferred": true,
-    "aisConsentRequestType": "GLOBAL",
-    "psuIdDataList": [
-      {
-        "psuId": "PSU ID",
-        "psuIdType": "PSU ID TYPE",
-        "psuCorporateId": "PSU CORPORATE ID",
-        "psuCorporateIdType": "PSU CORPORATE ID TYPE",
-        "psuIpAddress": "PSU IP ADDRESS"
-      }
-    ],
-    "tppInfo": {
-      "authorisationNumber": "12345987",
-      "tppName": "Tpp company",
-      "tppRoles": [
-        "PISP"
+{
+  "data": [
+    {
+      "id": "4b112130-6a96-4941-a220-2da8a4af2c65",
+      "access": {
+        "accounts": [],
+        "balances": [],
+        "transactions": [],
+        "allPsd2": "ALL_ACCOUNTS",
+        "accountAdditionalInformationAccess": {}
+      },
+      "recurringIndicator": true,
+      "validUntil": "2021-03-14",
+      "expireDate": "2021-01-21",
+      "frequencyPerDay": 4,
+      "lastActionDate": "2020-01-13",
+      "consentStatus": "RECEIVED",
+      "withBalance": true,
+      "tppRedirectPreferred": true,
+      "aisConsentRequestType": "GLOBAL",
+      "psuIdDataList": [
+        {
+          "psuId": "PSU ID",
+          "psuIdType": "PSU ID TYPE",
+          "psuCorporateId": "PSU CORPORATE ID",
+          "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+          "psuIpAddress": "PSU IP ADDRESS"
+        }
       ],
-      "authorityId": "authority id",
-      "authorityName": "authority name",
-      "country": "Germany",
-      "organisation": "Organisation",
-      "organisationUnit": "Organisation unit",
-      "city": "Nuremberg",
-      "state": "Bayern"
-    },
-    "authorisationTemplate": {
-      "tppRedirectUri": {
-        "uri": "Mock tppOkRedirectUri",
-        "nokUri": "Mock tppNokRedirectUri"
-      }
-    },
-    "multilevelScaRequired": true,
-    "accountConsentAuthorizations": [],
-    "usageCounterMap": {},
-    "creationTimestamp": "2020-04-15T16:00:22.087585Z"
+      "tppInfo": {
+        "authorisationNumber": "12345987",
+        "tppName": "Tpp company",
+        "tppRoles": [
+          "PISP"
+        ],
+        "authorityId": "authority id",
+        "authorityName": "authority name",
+        "country": "Germany",
+        "organisation": "Organisation",
+        "organisationUnit": "Organisation unit",
+        "city": "Nuremberg",
+        "state": "Bayern"
+      },
+      "authorisationTemplate": {
+        "tppRedirectUri": {
+          "uri": "Mock tppOkRedirectUri",
+          "nokUri": "Mock tppNokRedirectUri"
+        }
+      },
+      "multilevelScaRequired": true,
+      "accountConsentAuthorizations": [],
+      "usageCounterMap": {},
+      "creationTimestamp": "2020-04-15T16:00:22.087585Z"
+    }
+  ],
+  "pageInfo": {
+    "pageIndex": 0,
+    "itemsPerPage": 20,
+    "total": 1
   }
-]
+}

@@ -16,8 +16,11 @@
 
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
+import de.adorsys.psd2.consent.api.CmsPageInfo;
+import de.adorsys.psd2.consent.api.ResponseData;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.CmsAspspPiisApi;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentResponse;
@@ -45,11 +48,15 @@ public class CmsAspspPiisController implements CmsAspspPiisApi {
     }
 
     @Override
-    public ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId,
-                                                                  String psuCorporateIdType, String instanceId,
-                                                                  Integer pageIndex, Integer itemsPerPage) {
+    public ResponseData<List<CmsPiisConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId,
+                                                                String psuCorporateIdType, String instanceId,
+                                                                Integer pageIndex, Integer itemsPerPage) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsAspspPiisService.getConsentsForPsu(psuIdData, instanceId, pageIndex, itemsPerPage), HttpStatus.OK);
+        PageData<List<CmsPiisConsent>> consents = cmsAspspPiisService.getConsentsForPsu(psuIdData, instanceId, pageIndex, itemsPerPage);
+        return ResponseData.list(
+            consents.getData(),
+            new CmsPageInfo(consents.getPage(), consents.getPageSize(), consents.getTotal()),
+            HttpStatus.OK);
     }
 
     @Override

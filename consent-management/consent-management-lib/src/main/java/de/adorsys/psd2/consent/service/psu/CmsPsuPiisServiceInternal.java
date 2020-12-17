@@ -30,7 +30,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,7 +69,7 @@ public class CmsPsuPiisServiceInternal implements CmsPsuPiisService {
                        .map(piisConsentMapper::mapToCmsPiisConsent)
                        .collect(Collectors.toList());
         }
-        PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
+        Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
         return consentJpaRepository.findAll(piisConsentEntitySpecification.byPsuDataAndInstanceId(psuIdData, instanceId), pageRequest).stream()
                    .filter(con -> isPsuIdDataContentEquals(con, psuIdData))
                    .map(piisConsentLazyMigrationService::migrateIfNeeded)

@@ -17,11 +17,11 @@
 package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
+import de.adorsys.psd2.consent.api.ResponseData;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import io.swagger.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -35,7 +35,7 @@ public interface CmsAspspPiisExportApi {
     @ApiOperation(value = "Returns a list of consents by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    ResponseEntity<Collection<CmsPiisConsent>> getConsentsByTpp(
+    ResponseData<Collection<CmsPiisConsent>> getConsentsByTpp(
         @ApiParam(value = "TPP ID", required = true, example = "12345987")
         @PathVariable("tpp-id") String tppId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -55,14 +55,16 @@ public interface CmsAspspPiisExportApi {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId,
-        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, required = false) Integer pageIndex,
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, required = false) Integer itemsPerPage);
+        @ApiParam(value = "Index of current page", example = "0")
+        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
+        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
 
     @GetMapping(path = "/psu")
     @ApiOperation(value = "Returns a list of consents by given mandatory PSU ID Data, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    ResponseEntity<Collection<CmsPiisConsent>> getConsentsByPsu(
+    ResponseData<Collection<CmsPiisConsent>> getConsentsByPsu(
         @ApiParam(value = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -79,14 +81,16 @@ public interface CmsAspspPiisExportApi {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId,
-        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, required = false) Integer pageIndex,
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, required = false) Integer itemsPerPage);
+        @ApiParam(value = "Index of current page", example = "0")
+        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
+        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
 
     @GetMapping(path = "/account/{account-id}")
     @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    ResponseEntity<Collection<CmsPiisConsent>> getConsentsByAccountId(
+    ResponseData<Collection<CmsPiisConsent>> getConsentsByAccountId(
         @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
         @PathVariable("account-id") String aspspAccountId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -97,6 +101,8 @@ public interface CmsAspspPiisExportApi {
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false) String instanceId,
-        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, required = false) Integer pageIndex,
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, required = false) Integer itemsPerPage);
+        @ApiParam(value = "Index of current page", example = "0")
+        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
+        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
 }

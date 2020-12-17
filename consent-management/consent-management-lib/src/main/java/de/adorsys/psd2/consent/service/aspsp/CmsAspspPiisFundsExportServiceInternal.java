@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.service.aspsp;
 
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
+import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisFundsExportService;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
@@ -30,16 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -57,79 +55,65 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
     @Override
     @Transactional
-    public Collection<CmsPiisConsent> exportConsentsByTpp(String tppAuthorisationNumber,
-                                                          @Nullable LocalDate createDateFrom,
-                                                          @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
-                                                          @Nullable String instanceId,
-                                                          Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsPiisConsent>> exportConsentsByTpp(String tppAuthorisationNumber,
+                                                                    @Nullable LocalDate createDateFrom,
+                                                                    @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
+                                                                    @Nullable String instanceId,
+                                                                    Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(tppAuthorisationNumber)) {
             log.info("TPP ID: [{}], instanceId: [{}]. Export consents by TPP failed, TPP ID is empty or null.",
                      tppAuthorisationNumber, instanceId);
-            return Collections.emptyList();
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
-
-        if (pageIndex == null && itemsPerPage == null) {
-            return findAllBySpecification(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId));
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            return findAllBySpecification(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId), pageRequest);
-        }
+        return mapToPageData(consentJpaRepository.findAll(
+            piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
     @Transactional
-    public Collection<CmsPiisConsent> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
-                                                          @Nullable LocalDate createDateTo, @Nullable String instanceId,
-                                                          Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsPiisConsent>> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
+                                                                    @Nullable LocalDate createDateTo, @Nullable String instanceId,
+                                                                    Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData == null || psuIdData.isEmpty()) {
             log.info("InstanceId: [{}]. Export consents by psu failed, psuIdData is empty or null.", instanceId);
-            return Collections.emptyList();
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
-
-        if (pageIndex == null && itemsPerPage == null) {
-            return findAllBySpecification(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, actualInstanceId));
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            return findAllBySpecification(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, actualInstanceId), pageRequest);
-        }
+        return mapToPageData(consentJpaRepository.findAll(
+            piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, actualInstanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
     @Transactional
-    public Collection<CmsPiisConsent> exportConsentsByAccountId(@NotNull String aspspAccountId,
-                                                                @Nullable LocalDate createDateFrom,
-                                                                @Nullable LocalDate createDateTo,
-                                                                @Nullable String instanceId,
-                                                                Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsPiisConsent>> exportConsentsByAccountId(@NotNull String aspspAccountId,
+                                                                          @Nullable LocalDate createDateFrom,
+                                                                          @Nullable LocalDate createDateTo,
+                                                                          @Nullable String instanceId,
+                                                                          Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(aspspAccountId)) {
             log.info("InstanceId: [{}]. Export consents by accountId failed, aspspAccountId is empty or null.", instanceId);
-            return Collections.emptyList();
+            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
-        if (pageIndex == null && itemsPerPage == null) {
-            return findAllBySpecification(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId));
-        } else {
-            PageRequest pageRequest = pageRequestBuilder.getPageParams(pageIndex, itemsPerPage);
-            return findAllBySpecification(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId), pageRequest);
-        }
+        return mapToPageData(consentJpaRepository.findAll(
+            piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId),
+            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
-    private Collection<CmsPiisConsent> findAllBySpecification(Specification<ConsentEntity> specification) {
-        List<ConsentEntity> piisConsentEntities = consentJpaRepository.findAll(specification);
-        piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities);
-        return piisConsentMapper.mapToCmsPiisConsentList(piisConsentEntities);
-    }
-
-    private Collection<CmsPiisConsent> findAllBySpecification(Specification<ConsentEntity> specification, Pageable pageable) {
-        List<ConsentEntity> piisConsentEntities = consentJpaRepository.findAll(specification, pageable)
-                                                      .stream()
-                                                      .collect(Collectors.toList());
-        piisConsentLazyMigrationService.migrateIfNeeded(piisConsentEntities);
-        return piisConsentMapper.mapToCmsPiisConsentList(piisConsentEntities);
+    private PageData<Collection<CmsPiisConsent>> mapToPageData(Page<ConsentEntity> entities) {
+        return new PageData<>(entities
+                                  .stream()
+                                  .map(piisConsentLazyMigrationService::migrateIfNeeded)
+                                  .map(piisConsentMapper::mapToCmsPiisConsent)
+                                  .collect(Collectors.toList()),
+                              entities.getPageable().getPageNumber(),
+                              entities.getPageable().getPageSize(),
+                              entities.getTotalElements());
     }
 }

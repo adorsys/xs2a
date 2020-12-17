@@ -23,7 +23,7 @@ import springfox.documentation.swagger.web.SwaggerResource;
 
 @Component
 public class SwaggerResourceBuilder {
-    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api_1.3.6_2020-08-14.yaml";
+    private static final String DEFAULT_PSD2_API_LOCATION = "/psd2-api_1.3.8_2020-11-06v1.yaml";
     private static final String DEFAULT_PSD2_API_FUNDS_CONFIRMATION_LOCATION = "/psd2-confirmation-of-funds-consent-2.0-20190607.yaml";
 
     @Value("${xs2a.swagger.psd2.api.location:}")

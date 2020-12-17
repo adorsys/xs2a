@@ -535,7 +535,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
         when(consentJpaRepository.findAll(any(Specification.class), eq(pageRequest)))
             .thenReturn(consentEntityPage);
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
@@ -559,7 +559,7 @@ class CmsPsuAisServiceInternalTest {
     void getConsentsForPsuFail() {
         // Given
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
         when(consentJpaRepository.findAll(null, pageRequest)).thenReturn(Page.empty());
 
         // When
@@ -1081,7 +1081,7 @@ class CmsPsuAisServiceInternalTest {
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consent));
         PageRequest pageRequest = PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE);
-        when(pageRequestBuilder.getPageParams(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
+        when(pageRequestBuilder.getPageable(PAGE_INDEX, ITEMS_PER_PAGE)).thenReturn(pageRequest);
         when(authorisationRepository.findAllByParentExternalIdAndType(EXTERNAL_CONSENT_ID, AuthorisationType.CONSENT, pageRequest))
             .thenReturn(Collections.singletonList(buildFinalisedAuthorisation()));
         when(aisConsentLazyMigrationService.migrateIfNeeded(consentEntity))

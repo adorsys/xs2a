@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
+import de.adorsys.psd2.consent.api.ResponseData;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
@@ -56,7 +57,7 @@ public interface CmsAspspPiisApi {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    ResponseEntity<List<CmsPiisConsent>> getConsentsForPsu(
+    ResponseData<List<CmsPiisConsent>> getConsentsForPsu(
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
@@ -67,8 +68,10 @@ public interface CmsAspspPiisApi {
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
         @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
-        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, required = false) Integer pageIndex,
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, required = false) Integer itemsPerPage);
+        @ApiParam(value = "Index of current page", example = "0")
+        @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
+        @ApiParam(value = "Quantity of consents on one page", example = "20")
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
 
     @DeleteMapping(path = "/{consent-id}")
     @ApiOperation(value = "Terminates PIIS Consent object by its ID")
