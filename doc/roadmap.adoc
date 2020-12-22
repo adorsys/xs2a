@@ -146,6 +146,8 @@ a|
 
 a| * Fix pagination for get consents by account id
 
+* Fix perfomance issue
+
 * Fix XS2A Security Hot Spots
 
 
@@ -153,6 +155,38 @@ a| * All fixes and updates from v.8.5
 
 
 a| Signing Basket plugin for XS2A
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+|31.12.2020| |8.6|9.5|
+
+a|
+
+a|
+
+a| * Add page information to CMS export requests
+
+* Fix bugs with TPP stop list in DB
+
+* Fix perfomance issue
+
+* Fix XS2A Security Hot Spots
+
+
+a| * All fixes and updates from v.8.5
+
+* Fix connector-examples for multilevel SCA
+
+
+a|
 
 a|
 
