@@ -31,25 +31,26 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ChecksumCalculatingFactory {
-    private MultiKeyMap<MultiKey, ChecksumCalculatingService> services = new MultiKeyMap();
+    private final MultiKeyMap<String, ChecksumCalculatingService> services = new MultiKeyMap<>();
 
     @Autowired
     private AisChecksumCalculatingServiceV3 aisV3;
     @Autowired
-    private NoProcessingChecksumService  noProcessingService;
+    private NoProcessingChecksumService noProcessingService;
 
     @PostConstruct
     public void init() {
         // for deprecated services will use noProcessingService
-        services.put(new MultiKey("001", ConsentType.AIS), noProcessingService);
-        services.put(new MultiKey("002", ConsentType.AIS), noProcessingService);
+        services.put(new MultiKey<>("001", ConsentType.AIS.getName()), noProcessingService);
+        services.put(new MultiKey<>("002", ConsentType.AIS.getName()), noProcessingService);
 
-        services.put(new MultiKey(aisV3.getVersion(), ConsentType.AIS), aisV3);
+        services.put(new MultiKey<>(aisV3.getVersion(), ConsentType.AIS.getName()), aisV3);
     }
 
-    /** Provides an appropriate checksum calculator by checksum and consent type
+    /**
+     * Provides an appropriate checksum calculator by checksum and consent type
      *
-     * @param checksum Data with calculator version info
+     * @param checksum    Data with calculator version info
      * @param consentType Type of consent
      * @return Optional value  of  checksum calculating service
      */
@@ -67,7 +68,7 @@ public class ChecksumCalculatingFactory {
 
         String versionSting = elements[ChecksumConstant.VERSION_START_POSITION];
 
-        return Optional.ofNullable(services.get(new MultiKey(versionSting, consentType)));
+        return Optional.ofNullable(services.get(new MultiKey<>(versionSting, consentType.getName())));
     }
 
     private Optional<ChecksumCalculatingService> getDefaultService(ConsentType consentType) {

@@ -1,3 +1,16 @@
 = Release notes v.8.6
 
 == Table of Contents
+
+* Fixed sonar alerts
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- AesEcbInstanceFactoryImpl
+- JweCryptoProviderImpl
+- JweGsmInstanceFactoryImpl
+- ChecksumCalculatingFactory
+- OneOffConsentExpirationServiceTest
+- AisConsentMapperTest
