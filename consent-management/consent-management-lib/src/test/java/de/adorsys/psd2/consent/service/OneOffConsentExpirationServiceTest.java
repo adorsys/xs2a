@@ -66,9 +66,9 @@ class OneOffConsentExpirationServiceTest {
     private AspspProfileService aspspProfileService;
 
     @Spy
-    private ConsentDataMapper consentDataMapper = new ConsentDataMapper();
+    private final ConsentDataMapper consentDataMapper = new ConsentDataMapper();
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private AisConsentTransaction aisConsentTransaction;
     private CmsConsent cmsConsent;
     private AccountReference accountReference;
@@ -350,7 +350,7 @@ class OneOffConsentExpirationServiceTest {
                                        AccountReference balance,
                                        AccountReference transaction,
                                        AccountAccessType availableAccounts,
-                                       AccountAccessType allPsd2){
+                                       AccountAccessType allPsd2) {
         AisConsent aisConsent = new AisConsent();
 
         AccountAccess accountAccess = new AccountAccess(
