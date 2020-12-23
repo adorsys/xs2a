@@ -28,6 +28,7 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+@SuppressWarnings("rawtypes")
 public class AbstractContainerDatabaseTest {
     private static Connection connection;
 

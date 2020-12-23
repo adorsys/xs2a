@@ -25,6 +25,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
 @ActiveProfiles("integration-test")
+@SuppressWarnings("rawtypes")
 public class BaseTest extends AbstractContainerDatabaseTest {
 
     protected JsonReader jsonReader = new JsonReader();
