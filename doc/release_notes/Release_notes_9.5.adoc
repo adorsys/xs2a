@@ -34,3 +34,7 @@ Sonar alerts were fixed for classes:
 - CmsPsuApiDefaultValue
 - CmsConstant
 - CryptoConfig
+- AisConsentIT
+- AbstractContainerDatabaseTest
+- BaseTest
+- ServiceInstanceIdEventListener
