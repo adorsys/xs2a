@@ -37,24 +37,9 @@ public class CmsCorePaymentMapper {
         return Optional.ofNullable(pisPayment)
                    .map(ref -> {
                        PaymentInitiationJson payment = new PaymentInitiationJson();
-                       payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
-                       payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
-                       payment.setCreditorAgent(pisPayment.getCreditorAgent());
-                       payment.setCreditorName(pisPayment.getCreditorName());
-                       payment.setCreditorAccount(mapToAccountReference(pisPayment.getCreditorAccount()));
                        payment.setDebtorAccount(mapToAccountReference(pisPayment.getDebtorAccount()));
-                       payment.setEndToEndIdentification(pisPayment.getEndToEndIdentification());
-                       payment.setInstructionIdentification(pisPayment.getInstructionIdentification());
-                       Amount amount = new Amount();
-                       amount.setAmount(pisPayment.getAmount().toPlainString());
-                       amount.setCurrency(mapToCurrency(pisPayment.getCurrency()));
-                       payment.setInstructedAmount(amount);
-                       payment.setPurposeCode(PurposeCode.fromValue(pisPayment.getPurposeCode()));
-                       payment.setRemittanceInformationUnstructured(pisPayment.getRemittanceInformationUnstructured());
                        payment.setRequestedExecutionDate(pisPayment.getRequestedExecutionDate());
-                       payment.setUltimateCreditor(pisPayment.getUltimateCreditor());
-                       payment.setUltimateDebtor(pisPayment.getUltimateDebtor());
-
+                       setCommonFields(payment, pisPayment);
                        return payment;
                    }).orElse(null);
     }
@@ -93,21 +78,7 @@ public class CmsCorePaymentMapper {
         PeriodicPaymentInitiationJson payment = new PeriodicPaymentInitiationJson();
 
         payment.setDebtorAccount(mapToAccountReference(pisPayment.getDebtorAccount()));
-        payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
-        payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
-        payment.setCreditorAgent(pisPayment.getCreditorAgent());
-        payment.setCreditorName(pisPayment.getCreditorName());
-        payment.setCreditorAccount(mapToAccountReference(pisPayment.getCreditorAccount()));
-        payment.setEndToEndIdentification(pisPayment.getEndToEndIdentification());
-        payment.setInstructionIdentification(pisPayment.getInstructionIdentification());
-        Amount amount = new Amount();
-        amount.setAmount(pisPayment.getAmount().toPlainString());
-        amount.setCurrency(mapToCurrency(pisPayment.getCurrency()));
-        payment.setInstructedAmount(amount);
-        payment.setPurposeCode(PurposeCode.fromValue(pisPayment.getPurposeCode()));
-        payment.setRemittanceInformationUnstructured(pisPayment.getRemittanceInformationUnstructured());
-        payment.setUltimateCreditor(pisPayment.getUltimateCreditor());
-        payment.setUltimateDebtor(pisPayment.getUltimateDebtor());
+        setCommonFields(payment, pisPayment);
 
         //Periodic
         payment.setStartDate(pisPayment.getStartDate());
@@ -121,6 +92,12 @@ public class CmsCorePaymentMapper {
 
     private PaymentInitiationBulkElementJson mapToPaymentInitiationBulkElementJson(PisPayment pisPayment) {
         PaymentInitiationBulkElementJson payment = new PaymentInitiationBulkElementJson();
+        setCommonFields(payment, pisPayment);
+
+        return payment;
+    }
+
+    private void setCommonFields(PaymentInitiationJson payment, PisPayment pisPayment) {
         payment.setCreditorAddress(cmsAddressMapper.mapToAddress(pisPayment.getCreditorAddress()));
         payment.setRemittanceInformationStructured(mapToRemittanceInformationStructured(pisPayment.getRemittanceInformationStructured()));
         payment.setCreditorAgent(pisPayment.getCreditorAgent());
@@ -136,8 +113,6 @@ public class CmsCorePaymentMapper {
         payment.setRemittanceInformationUnstructured(pisPayment.getRemittanceInformationUnstructured());
         payment.setUltimateCreditor(pisPayment.getUltimateCreditor());
         payment.setUltimateDebtor(pisPayment.getUltimateDebtor());
-
-        return payment;
     }
 
     private RemittanceInformationStructured mapToRemittanceInformationStructured(CmsRemittance remittanceInformationStructured) {

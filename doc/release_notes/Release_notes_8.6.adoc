@@ -14,3 +14,7 @@ Sonar alerts were fixed for classes:
 - ChecksumCalculatingFactory
 - OneOffConsentExpirationServiceTest
 - AisConsentMapperTest
+- CmsCorePaymentMapper
+- CmsPsuPisServiceInternal
+- SecurityDataService
+- AesEcbCryptoProviderImpl

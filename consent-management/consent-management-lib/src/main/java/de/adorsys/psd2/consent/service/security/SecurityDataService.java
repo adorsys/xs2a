@@ -171,7 +171,7 @@ public class SecurityDataService {
             return Base64.getUrlDecoder().decode(raw);
         } catch (IllegalArgumentException ex) {
             log.info("ID: [{}]. Input id has wrong format", raw);
-            return null;
+            return new byte[0];
         }
     }
 
