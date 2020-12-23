@@ -17,18 +17,9 @@
 package de.adorsys.psd2.consent.service.authorisation;
 
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
-import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.domain.Authorisable;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
-import de.adorsys.psd2.consent.repository.AuthorisationRepository;
-import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
-import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
-import de.adorsys.psd2.consent.service.PisCommonPaymentConfirmationExpirationService;
-import de.adorsys.psd2.consent.service.mapper.AuthorisationMapper;
-import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.consent.service.ConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,49 +28,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.PATC;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RCVD;
 
 @Slf4j
 @Service
-public class PisAuthService extends CmsAuthorisationService<PisCommonPaymentData> {
-    protected PisPaymentDataRepository pisPaymentDataRepository;
-    protected PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
-    private PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
-    private PisCommonPaymentMapper pisCommonPaymentMapper;
-    private CorePaymentsConvertService corePaymentsConvertService;
+public class PisAuthService extends PisAbstractAuthService {
+    private final CommonPaymentService commonPaymentService;
 
     @Autowired
-    public PisAuthService(CmsPsuService cmsPsuService, PsuDataMapper psuDataMapper, AspspProfileService aspspProfileService,
-                          AuthorisationRepository authorisationRepository,
-                          PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService,
-                          PisPaymentDataRepository pisPaymentDataRepository,
-                          AuthorisationMapper authorisationMapper, PisCommonPaymentDataRepository pisCommonPaymentDataRepository,
-                          PisCommonPaymentMapper pisCommonPaymentMapper, CorePaymentsConvertService corePaymentsConvertService) {
-        super(cmsPsuService, psuDataMapper, aspspProfileService, authorisationMapper, authorisationRepository, pisCommonPaymentConfirmationExpirationService);
-        this.pisPaymentDataRepository = pisPaymentDataRepository;
-        this.pisCommonPaymentConfirmationExpirationService = pisCommonPaymentConfirmationExpirationService;
-        this.pisCommonPaymentDataRepository = pisCommonPaymentDataRepository;
-        this.pisCommonPaymentMapper = pisCommonPaymentMapper;
-        this.corePaymentsConvertService = corePaymentsConvertService;
+    public PisAuthService(PsuService psuService, AspspProfileService aspspProfileService,
+                          AuthorisationService authorisationService,
+                          ConfirmationExpirationService<PisCommonPaymentData> confirmationExpirationService,
+                          CommonPaymentService commonPaymentService) {
+        super(psuService, aspspProfileService, authorisationService, confirmationExpirationService, commonPaymentService);
+        this.commonPaymentService = commonPaymentService;
     }
 
     @Override
     public Optional<Authorisable> getNotFinalisedAuthorisationParent(String parentId) {
         // todo implementation should be changed https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1143
-        Optional<PisCommonPaymentData> commonPaymentData = pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(parentId, Arrays.asList(RCVD, PATC))
+        Optional<PisCommonPaymentData> commonPaymentData = commonPaymentService.findByPaymentIdAndPaymentDataTransactionStatusIn(parentId, Arrays.asList(RCVD, PATC))
                                                                .filter(CollectionUtils::isNotEmpty)
                                                                .map(list -> list.get(0).getPaymentData())
-                                                               .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+                                                               .map(commonPaymentService::checkAndUpdateOnConfirmationExpiration)
                                                                .filter(p -> EnumSet.of(RCVD, PATC).contains(p.getTransactionStatus()));
 
         if (commonPaymentData.isEmpty()) {
-            commonPaymentData = pisCommonPaymentDataRepository.findByPaymentIdAndTransactionStatusIn(parentId, Arrays.asList(RCVD, PATC))
-                                    .map(pisCommonPaymentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
+            commonPaymentData = commonPaymentService.findByPaymentIdAndTransactionStatusIn(parentId, Arrays.asList(RCVD, PATC))
+                                    .map(commonPaymentService::checkAndUpdateOnConfirmationExpiration)
                                     .filter(p -> EnumSet.of(RCVD, PATC).contains(p.getTransactionStatus()));
         }
 
@@ -88,34 +67,12 @@ public class PisAuthService extends CmsAuthorisationService<PisCommonPaymentData
 
     @Override
     public Optional<Authorisable> getAuthorisationParent(String parentId) {
-        return pisCommonPaymentDataRepository.findByPaymentId(parentId)
+        return commonPaymentService.findOneByPaymentId(parentId)
                    .map(con -> con);
     }
 
     @Override
     AuthorisationType getAuthorisationType() {
         return AuthorisationType.PIS_CREATION;
-    }
-
-    @Override
-    PisCommonPaymentData castToParent(Authorisable authorisable) {
-        return (PisCommonPaymentData) authorisable;
-    }
-
-    private PisCommonPaymentData convertToCommonPayment(PisCommonPaymentData pisCommonPaymentData) {
-        if (pisCommonPaymentData == null || pisCommonPaymentData.getPayment() != null) {
-            return pisCommonPaymentData;
-        }
-
-        List<PisPayment> pisPayments = pisCommonPaymentData.getPayments().stream()
-                                           .map(pisCommonPaymentMapper::mapToPisPayment)
-                                           .collect(Collectors.toList());
-        byte[] paymentData = corePaymentsConvertService.buildPaymentData(pisPayments, pisCommonPaymentData.getPaymentType());
-        if (paymentData != null) {
-            pisCommonPaymentData.setPayment(paymentData);
-            return pisCommonPaymentDataRepository.save(pisCommonPaymentData);
-        }
-
-        return pisCommonPaymentData;
     }
 }
