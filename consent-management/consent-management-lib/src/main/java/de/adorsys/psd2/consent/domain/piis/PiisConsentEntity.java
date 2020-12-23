@@ -31,7 +31,8 @@ import java.util.Objects;
 /**
  * @deprecated since 5.11, use {@link de.adorsys.psd2.consent.domain.consent.ConsentEntity} for new consents instead
  */
-@Deprecated // TODO: complete PIIS consent migration https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1216
+// TODO: complete PIIS consent migration https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1216
+@Deprecated(since = "5.11", forRemoval = true)
 @Data
 @Entity(name = "piis_consent")
 @EqualsAndHashCode(callSuper = true)

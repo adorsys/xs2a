@@ -83,17 +83,17 @@ public class PsuDataMapper {
         return Optional.ofNullable(additionalPsuIdData)
                    .filter(AdditionalPsuIdData::isNotEmpty)
                    .map(dta ->
-                            new AdditionalPsuData(
-                                dta.getPsuIpPort(),
-                                dta.getPsuUserAgent(),
-                                dta.getPsuGeoLocation(),
-                                dta.getPsuAccept(),
-                                dta.getPsuAcceptCharset(),
-                                dta.getPsuAcceptEncoding(),
-                                dta.getPsuAcceptLanguage(),
-                                dta.getPsuHttpMethod(),
-                                Optional.ofNullable(dta.getPsuDeviceId()).map(UUID::toString).orElse(null)
-                            ))
+                            new AdditionalPsuData()
+                                .psuIpPort(dta.getPsuIpPort())
+                                .psuUserAgent(dta.getPsuUserAgent())
+                                .psuGeoLocation(dta.getPsuGeoLocation())
+                                .psuAccept(dta.getPsuAccept())
+                                .psuAcceptCharset(dta.getPsuAcceptCharset())
+                                .psuAcceptEncoding(dta.getPsuAcceptEncoding())
+                                .psuAcceptLanguage(dta.getPsuAcceptLanguage())
+                                .psuHttpMethod(dta.getPsuHttpMethod())
+                                .psuDeviceId(Optional.ofNullable(dta.getPsuDeviceId()).map(UUID::toString).orElse(null))
+                   )
                    .orElse(null);
     }
 

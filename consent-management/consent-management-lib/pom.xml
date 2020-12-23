@@ -43,6 +43,12 @@
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-common-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
             <artifactId>consent-aspsp-api</artifactId>
             <version>${project.version}</version>
         </dependency>

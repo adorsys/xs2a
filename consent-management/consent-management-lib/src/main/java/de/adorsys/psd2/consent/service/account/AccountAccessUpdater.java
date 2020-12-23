@@ -23,6 +23,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -78,7 +79,7 @@ public class AccountAccessUpdater {
                        .map(ref -> updateAccountReference(ref, requested))
                        .collect(Collectors.toList());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     private boolean isAdditionalInformationAbsent(AdditionalInformationAccess additionalInformationAccess) {

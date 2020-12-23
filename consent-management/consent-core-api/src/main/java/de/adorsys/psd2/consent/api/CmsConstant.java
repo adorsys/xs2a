@@ -26,6 +26,8 @@ public class CmsConstant {
         public static final String STATUS = "status";
         public static final String AUTHORISATION_ID = "authorisation-id";
         public static final String REDIRECT_ID = "redirect-id";
+
+        private PATH() {}
     }
 
     public static final class HEADERS {
@@ -34,10 +36,14 @@ public class CmsConstant {
         public static final String PSU_CORPORATE_ID = "psu-corporate-id";
         public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
         public static final String INSTANCE_ID = "instance-id";
+
+        private HEADERS() {}
     }
 
     public static final class QUERY {
         public static final String PAGE_INDEX = "pageIndex";
         public static final String ITEMS_PER_PAGE = "itemsPerPage";
+
+        private QUERY() {}
     }
 }

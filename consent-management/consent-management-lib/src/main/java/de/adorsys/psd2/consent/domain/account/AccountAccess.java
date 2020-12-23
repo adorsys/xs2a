@@ -50,7 +50,7 @@ public abstract class AccountAccess {
     @ApiModelProperty(value = "Type of the account: IBAN, BBAN, IBAN, BBAN, PAN, MASKED_PAN, MSISDN", required = true, example = "IBAN")
     private AccountReferenceType accountReferenceType;
 
-    public AccountAccess(String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType, Currency currency) {
+    protected AccountAccess(String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType, Currency currency) {
         this.accountIdentifier = accountIdentifier;
         this.typeAccess = typeAccess;
         this.accountReferenceType = accountReferenceType;

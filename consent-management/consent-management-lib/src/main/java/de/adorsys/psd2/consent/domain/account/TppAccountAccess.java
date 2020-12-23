@@ -34,6 +34,7 @@ import java.util.Currency;
 public class TppAccountAccess extends AccountAccess {
 
     public TppAccountAccess(String accountIdentifier, TypeAccess typeAccess, AccountReferenceType accountReferenceType, Currency currency) {
+
         super(accountIdentifier, typeAccess, accountReferenceType, currency);
     }
 }
