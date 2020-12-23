@@ -24,11 +24,7 @@ import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
-import de.adorsys.psd2.consent.repository.AuthorisationRepository;
-import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
-import de.adorsys.psd2.consent.service.mapper.AuthorisationMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.consent.service.ConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -57,17 +53,15 @@ class CmsAuthorisationServiceTest {
     private PisAuthService service;
 
     @Mock
-    private AuthorisationRepository authorisationRepository;
-    @Mock
-    private PsuDataMapper psuDataMapper;
-    @Mock
-    private CmsPsuService cmsPsuService;
+    private PsuService psuService;
     @Mock
     private AspspProfileService aspspProfileService;
     @Mock
-    private AuthorisationMapper authorisationMapper;
+    private AuthorisationService authorisationService;
     @Mock
-    private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    private ConfirmationExpirationService<PisCommonPaymentData> confirmationExpirationService;
+    @Mock
+    private CommonPaymentService commonPaymentService;
 
     @Mock
     private AspspSettings aspspSettings;
@@ -77,13 +71,13 @@ class CmsAuthorisationServiceTest {
     @Test
     void getAuthorisationsByParentId() {
         service.getAuthorisationsByParentId(PARENT_ID);
-        verify(authorisationRepository, times(1)).findAllByParentExternalIdAndType(PARENT_ID, AuthorisationType.PIS_CREATION);
+        verify(authorisationService, times(1)).findAllByParentExternalIdAndType(PARENT_ID, AuthorisationType.PIS_CREATION);
     }
 
     @Test
     void getAuthorisationById() {
         service.getAuthorisationById(AUTHORISATION_ID);
-        verify(authorisationRepository, times(1)).findByExternalIdAndType(AUTHORISATION_ID, AuthorisationType.PIS_CREATION);
+        verify(authorisationService, times(1)).findByExternalIdAndType(AUTHORISATION_ID, AuthorisationType.PIS_CREATION);
     }
 
     @Test
@@ -93,8 +87,8 @@ class CmsAuthorisationServiceTest {
         CreateAuthorisationRequest request = new CreateAuthorisationRequest();
         request.setPsuData(PSU_ID_DATA);
 
-        when(psuDataMapper.mapToPsuData(request.getPsuData(), DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
-        when(cmsPsuService.definePsuDataForAuthorisation(PSU_DATA, Collections.singletonList(PSU_DATA)))
+        when(psuService.mapToPsuData(request.getPsuData(), DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
+        when(psuService.definePsuDataForAuthorisation(PSU_DATA, Collections.singletonList(PSU_DATA)))
             .thenReturn(Optional.of(PSU_DATA));
         when(aspspProfileService.getAspspSettings(authorisationParent.getInstanceId())).thenReturn(aspspSettings);
         when(aspspSettings.getCommon()).thenReturn(commonAspspProfileSetting);
@@ -102,12 +96,12 @@ class CmsAuthorisationServiceTest {
         when(commonAspspProfileSetting.getAuthorisationExpirationTimeMs()).thenReturn(200L);
 
         AuthorisationEntity entity = new AuthorisationEntity();
-        when(authorisationMapper.prepareAuthorisationEntity(authorisationParent, request, Optional.of(PSU_DATA), AuthorisationType.PIS_CREATION, 100L, 200L))
+        when(authorisationService.prepareAuthorisationEntity(authorisationParent, request, Optional.of(PSU_DATA), AuthorisationType.PIS_CREATION, 100L, 200L))
             .thenReturn(entity);
 
         service.saveAuthorisation(request, authorisationParent);
 
-        verify(authorisationRepository, times(1)).save(entity);
+        verify(authorisationService, times(1)).save(entity);
     }
 
     @Test
@@ -126,20 +120,20 @@ class CmsAuthorisationServiceTest {
         assertNotEquals(request.getScaStatus(), entity.getScaStatus());
         assertNotEquals(request.getAuthenticationMethodId(), entity.getAuthenticationMethodId());
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
-        when(cmsPsuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(true);
+        when(psuService.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
+        when(psuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(true);
 
         PisCommonPaymentData authorisationParent = new PisCommonPaymentData();
         authorisationParent.setPsuDataList(Collections.singletonList(PSU_DATA));
-        when(pisCommonPaymentDataRepository.findByPaymentId(PARENT_ID)).thenReturn(Optional.of(authorisationParent));
-        when(cmsPsuService.definePsuDataForAuthorisation(PSU_DATA, Collections.singletonList(PSU_DATA)))
+        when(commonPaymentService.findOneByPaymentId(PARENT_ID)).thenReturn(Optional.of(authorisationParent));
+        when(psuService.definePsuDataForAuthorisation(PSU_DATA, Collections.singletonList(PSU_DATA)))
             .thenReturn(Optional.of(PSU_DATA));
-        when(cmsPsuService.enrichPsuData(PSU_DATA, Collections.singletonList(PSU_DATA)))
+        when(psuService.enrichPsuData(PSU_DATA, Collections.singletonList(PSU_DATA)))
             .thenReturn(Collections.singletonList(PSU_DATA));
 
         service.doUpdateAuthorisation(entity, request);
 
-        verify(authorisationRepository, times(1)).save(entity);
+        verify(authorisationService, times(1)).save(entity);
 
         assertEquals(request.getScaStatus(), entity.getScaStatus());
         assertEquals("222", entity.getAuthenticationMethodId());
@@ -157,16 +151,16 @@ class CmsAuthorisationServiceTest {
         request.setScaStatus(ScaStatus.PSUIDENTIFIED);
         assertNotEquals(request.getScaStatus(), entity.getScaStatus());
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
-        when(cmsPsuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(true);
+        when(psuService.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
+        when(psuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(true);
 
         PisCommonPaymentData authorisationParent = new PisCommonPaymentData();
         authorisationParent.setPsuDataList(Collections.singletonList(PSU_DATA));
-        when(pisCommonPaymentDataRepository.findByPaymentId(PARENT_ID)).thenReturn(Optional.empty());
+        when(commonPaymentService.findOneByPaymentId(PARENT_ID)).thenReturn(Optional.empty());
 
         service.doUpdateAuthorisation(entity, request);
 
-        verify(authorisationRepository, never()).save(entity);
+        verify(authorisationService, never()).save(entity);
     }
 
     @Test
@@ -178,12 +172,12 @@ class CmsAuthorisationServiceTest {
         UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
         request.setPsuData(PSU_ID_DATA);
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
-        when(cmsPsuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(false);
+        when(psuService.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
+        when(psuService.isPsuDataRequestCorrect(PSU_DATA, PSU_DATA)).thenReturn(false);
 
         service.doUpdateAuthorisation(entity, request);
 
-        verify(authorisationRepository, never()).save(entity);
+        verify(authorisationService, never()).save(entity);
     }
 
     @Test
@@ -194,10 +188,10 @@ class CmsAuthorisationServiceTest {
         UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
         request.setPsuData(PSU_ID_DATA);
 
-        when(psuDataMapper.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
+        when(psuService.mapToPsuData(PSU_ID_DATA, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn(PSU_DATA);
 
         service.doUpdateAuthorisation(entity, request);
 
-        verify(authorisationRepository, never()).save(entity);
+        verify(authorisationService, never()).save(entity);
     }
 }

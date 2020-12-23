@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.event.persist.entity;
 
+import de.adorsys.psd2.consent.domain.PsuDataEmbeddable;
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
 import lombok.Data;

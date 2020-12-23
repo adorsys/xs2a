@@ -32,15 +32,48 @@ public class AdditionalPsuData {
     @Column
     private String psuDeviceId;
 
-    public AdditionalPsuData(String psuIpPort, String psuUserAgent, String psuGeoLocation, String psuAccept, String psuAcceptCharset, String psuAcceptEncoding, String psuAcceptLanguage, String psuHttpMethod, String psuDeviceId) {
+    public AdditionalPsuData psuIpPort(String psuIpPort) {
         this.psuIpPort = psuIpPort;
+        return this;
+    }
+
+    public AdditionalPsuData psuUserAgent(String psuUserAgent) {
         this.psuUserAgent = psuUserAgent;
+        return this;
+    }
+
+    public AdditionalPsuData psuGeoLocation(String psuGeoLocation) {
         this.psuGeoLocation = psuGeoLocation;
+        return this;
+    }
+
+    public AdditionalPsuData psuAccept(String psuAccept) {
         this.psuAccept = psuAccept;
+        return this;
+    }
+
+    public AdditionalPsuData psuAcceptCharset(String psuAcceptCharset) {
         this.psuAcceptCharset = psuAcceptCharset;
+        return this;
+    }
+
+    public AdditionalPsuData psuAcceptEncoding(String psuAcceptEncoding) {
         this.psuAcceptEncoding = psuAcceptEncoding;
+        return this;
+    }
+
+    public AdditionalPsuData psuAcceptLanguage(String psuAcceptLanguage) {
         this.psuAcceptLanguage = psuAcceptLanguage;
+        return this;
+    }
+
+    public AdditionalPsuData psuHttpMethod(String psuHttpMethod) {
         this.psuHttpMethod = psuHttpMethod;
+        return this;
+    }
+
+    public AdditionalPsuData psuDeviceId(String psuDeviceId) {
         this.psuDeviceId = psuDeviceId;
+        return this;
     }
 }

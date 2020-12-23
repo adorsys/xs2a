@@ -19,12 +19,8 @@ package de.adorsys.psd2.consent.service.authorisation;
 import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.domain.Authorisable;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
-import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
-import de.adorsys.psd2.consent.service.AisConsentConfirmationExpirationService;
-import de.adorsys.psd2.consent.service.mapper.AuthorisationMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.psu.CmsPsuService;
+import de.adorsys.psd2.consent.service.ConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,16 +31,15 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class AisAuthService extends CmsAuthorisationService<ConsentEntity> {
-    private ConsentJpaRepository consentJpaRepository;
+    private final ConsentJpaRepository consentJpaRepository;
 
     @Autowired
-    public AisAuthService(CmsPsuService cmsPsuService, PsuDataMapper psuDataMapper, AspspProfileService aspspProfileService,
-                          AuthorisationRepository authorisationRepository,
-                          AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService,
-                          ConsentJpaRepository aisConsentJpaRepository,
-                          AuthorisationMapper authorisationMapper) {
-        super(cmsPsuService, psuDataMapper, aspspProfileService, authorisationMapper, authorisationRepository, aisConsentConfirmationExpirationService);
-        this.consentJpaRepository = aisConsentJpaRepository;
+    public AisAuthService(PsuService psuService, AspspProfileService aspspProfileService,
+                          AuthorisationService authorisationService,
+                          ConfirmationExpirationService<ConsentEntity> confirmationExpirationService,
+                          ConsentJpaRepository consentJpaRepository) {
+        super(psuService, aspspProfileService, authorisationService, confirmationExpirationService);
+        this.consentJpaRepository = consentJpaRepository;
     }
 
     @Override
