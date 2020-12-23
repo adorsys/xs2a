@@ -16,15 +16,12 @@
 
 package de.adorsys.psd2.consent.service.authorisation;
 
+import de.adorsys.psd2.aspsp.profile.service.AspspProfileService;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.domain.Authorisable;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.domain.payment.PisPaymentData;
-import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
-import de.adorsys.psd2.consent.repository.PisPaymentDataRepository;
-import de.adorsys.psd2.consent.service.CorePaymentsConvertService;
-import de.adorsys.psd2.consent.service.PisCommonPaymentConfirmationExpirationService;
-import de.adorsys.psd2.consent.service.mapper.PisCommonPaymentMapper;
+import de.adorsys.psd2.consent.service.ConfirmationExpirationService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -53,15 +50,15 @@ class PisAuthServiceTest {
     private PisAuthService service;
 
     @Mock
-    private PisPaymentDataRepository pisPaymentDataRepository;
+    private PsuService psuService;
     @Mock
-    private PisCommonPaymentDataRepository pisCommonPaymentDataRepository;
+    private AspspProfileService aspspProfileService;
     @Mock
-    private PisCommonPaymentConfirmationExpirationService pisCommonPaymentConfirmationExpirationService;
+    private AuthorisationService authorisationService;
     @Mock
-    private PisCommonPaymentMapper pisCommonPaymentMapper;
+    private ConfirmationExpirationService<PisCommonPaymentData> confirmationExpirationService;
     @Mock
-    private CorePaymentsConvertService corePaymentsConvertService;
+    private CommonPaymentService commonPaymentService;
 
     @Test
     void getInteractableAuthorisationParent_success() {
@@ -73,23 +70,23 @@ class PisAuthServiceTest {
         pisCommonPaymentData.setPayments(Collections.singletonList(paymentData));
         pisPaymentData.setPaymentData(pisCommonPaymentData);
 
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC)))
+        when(commonPaymentService.findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC)))
             .thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
+        when(commonPaymentService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
 
         PisPayment pisPayment = new PisPayment();
-        when(pisCommonPaymentMapper.mapToPisPayment(paymentData)).thenReturn(pisPayment);
-        when(corePaymentsConvertService.buildPaymentData(Collections.singletonList(pisPayment), PaymentType.SINGLE))
+        when(commonPaymentService.mapToPisPayment(paymentData)).thenReturn(pisPayment);
+        when(commonPaymentService.buildPaymentData(Collections.singletonList(pisPayment), PaymentType.SINGLE))
             .thenReturn(PAYMENT_DATA_BYTES);
 
         service.getNotFinalisedAuthorisationParent(PARENT_ID);
 
-        verify(pisPaymentDataRepository, times(1)).findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC));
-        verify(pisCommonPaymentConfirmationExpirationService, times(1)).checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData);
-        verify(pisCommonPaymentMapper, times(1)).mapToPisPayment(paymentData);
-        verify(corePaymentsConvertService, times(1)).buildPaymentData(Collections.singletonList(pisPayment), PaymentType.SINGLE);
-        verify(pisCommonPaymentDataRepository, times(1)).save(pisCommonPaymentData);
+        verify(commonPaymentService, times(1)).findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC));
+        verify(commonPaymentService, times(1)).checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData);
+        verify(commonPaymentService, times(1)).mapToPisPayment(paymentData);
+        verify(commonPaymentService, times(1)).buildPaymentData(Collections.singletonList(pisPayment), PaymentType.SINGLE);
+        verify(commonPaymentService, times(1)).save(pisCommonPaymentData);
     }
 
     @Test
@@ -102,77 +99,77 @@ class PisAuthServiceTest {
         pisCommonPaymentData.setPayments(Collections.singletonList(paymentData));
         pisPaymentData.setPaymentData(pisCommonPaymentData);
 
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC)))
+        when(commonPaymentService.findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC)))
             .thenReturn(Optional.of(Collections.singletonList(pisPaymentData)));
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
+        when(commonPaymentService.checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData))
             .thenReturn(pisCommonPaymentData);
 
         service.getNotFinalisedAuthorisationParent(PARENT_ID);
 
-        verify(pisPaymentDataRepository, times(1)).findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC));
-        verify(pisCommonPaymentConfirmationExpirationService, times(1)).checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData);
-        verify(pisCommonPaymentMapper, never()).mapToPisPayment(any());
-        verify(corePaymentsConvertService, never()).buildPaymentData(any(), any());
-        verify(pisCommonPaymentDataRepository, never()).save(any());
+        verify(commonPaymentService, times(1)).findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC));
+        verify(commonPaymentService, times(1)).checkAndUpdateOnConfirmationExpiration(pisCommonPaymentData);
+        verify(commonPaymentService, never()).mapToPisPayment(any());
+        verify(commonPaymentService, never()).buildPaymentData(any(), any());
+        verify(commonPaymentService, never()).save(any());
     }
 
     @Test
     void getInteractableAuthorisationParent_emptyPaymentCommonData() {
-        when(pisPaymentDataRepository.findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC)))
+        when(commonPaymentService.findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC)))
             .thenReturn(Optional.of(Collections.emptyList()));
 
         service.getNotFinalisedAuthorisationParent(PARENT_ID);
 
-        verify(pisPaymentDataRepository, times(1)).findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC));
-        verify(pisCommonPaymentConfirmationExpirationService, never()).checkAndUpdateOnConfirmationExpiration(any());
-        verify(pisCommonPaymentMapper, never()).mapToPisPayment(any());
-        verify(corePaymentsConvertService, never()).buildPaymentData(any(), any());
-        verify(pisCommonPaymentDataRepository, never()).save(any());
+        verify(commonPaymentService, times(1)).findByPaymentIdAndPaymentDataTransactionStatusIn(PARENT_ID, Arrays.asList(RCVD, PATC));
+        verify(commonPaymentService, never()).checkAndUpdateOnConfirmationExpiration(any());
+        verify(commonPaymentService, never()).mapToPisPayment(any());
+        verify(commonPaymentService, never()).buildPaymentData(any(), any());
+        verify(commonPaymentService, never()).save(any());
     }
 
     @Test
     void getAuthorisationParent() {
         PisCommonPaymentData payment = new PisCommonPaymentData();
-        when(pisCommonPaymentDataRepository.findByPaymentId(PARENT_ID)).thenReturn(Optional.of(payment));
+        when(commonPaymentService.findOneByPaymentId(PARENT_ID)).thenReturn(Optional.of(payment));
 
         assertEquals(Optional.of(payment), service.getAuthorisationParent(PARENT_ID));
 
-        verify(pisCommonPaymentDataRepository, times(1)).findByPaymentId(PARENT_ID);
+        verify(commonPaymentService, times(1)).findOneByPaymentId(PARENT_ID);
     }
 
     @Test
     void checkAndUpdateOnConfirmationExpiration() {
         PisCommonPaymentData initialPayment = new PisCommonPaymentData();
         PisCommonPaymentData updatedPayment = new PisCommonPaymentData();
-        when(pisCommonPaymentConfirmationExpirationService.checkAndUpdateOnConfirmationExpiration(initialPayment)).thenReturn(updatedPayment);
+        when(confirmationExpirationService.checkAndUpdateOnConfirmationExpiration(initialPayment)).thenReturn(updatedPayment);
 
         Authorisable response = service.checkAndUpdateOnConfirmationExpiration(initialPayment);
 
         assertEquals(updatedPayment, response);
-        verify(pisCommonPaymentConfirmationExpirationService).checkAndUpdateOnConfirmationExpiration(initialPayment);
+        verify(confirmationExpirationService).checkAndUpdateOnConfirmationExpiration(initialPayment);
     }
 
     @Test
     void isConfirmationExpired() {
         PisCommonPaymentData initialPayment = new PisCommonPaymentData();
-        when(pisCommonPaymentConfirmationExpirationService.isConfirmationExpired(initialPayment)).thenReturn(true);
+        when(confirmationExpirationService.isConfirmationExpired(initialPayment)).thenReturn(true);
 
         boolean response = service.isConfirmationExpired(initialPayment);
 
         assertTrue(response);
-        verify(pisCommonPaymentConfirmationExpirationService).isConfirmationExpired(initialPayment);
+        verify(confirmationExpirationService).isConfirmationExpired(initialPayment);
     }
 
     @Test
     void updateOnConfirmationExpiration() {
         PisCommonPaymentData initialPayment = new PisCommonPaymentData();
         PisCommonPaymentData updatedPayment = new PisCommonPaymentData();
-        when(pisCommonPaymentConfirmationExpirationService.updateOnConfirmationExpiration(initialPayment)).thenReturn(updatedPayment);
+        when(confirmationExpirationService.updateOnConfirmationExpiration(initialPayment)).thenReturn(updatedPayment);
 
         Authorisable response = service.updateOnConfirmationExpiration(initialPayment);
 
         assertEquals(updatedPayment, response);
-        verify(pisCommonPaymentConfirmationExpirationService).updateOnConfirmationExpiration(initialPayment);
+        verify(confirmationExpirationService).updateOnConfirmationExpiration(initialPayment);
     }
 
     @Test

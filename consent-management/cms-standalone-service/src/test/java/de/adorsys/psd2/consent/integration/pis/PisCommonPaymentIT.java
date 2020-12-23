@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
-public class PisCommonPaymentIT {
+class PisCommonPaymentIT {
     private static final String TPP_ID = "Test TppId";
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final PaymentType PAYMENT_SERVICE = PaymentType.SINGLE;
@@ -69,7 +69,7 @@ public class PisCommonPaymentIT {
     @MockBean
     private AspspProfileService aspspProfileService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     public void setUp() {
@@ -79,7 +79,7 @@ public class PisCommonPaymentIT {
     }
 
     @Test
-    public void createPisCommonPayment_successWithNewStatus() {
+    void createPisCommonPayment_successWithNewStatus() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
 
@@ -106,7 +106,7 @@ public class PisCommonPaymentIT {
     }
 
     @Test
-    public void createPisCommonPayment_successWithTheSameStatus() {
+    void createPisCommonPayment_successWithTheSameStatus() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
 
@@ -133,7 +133,7 @@ public class PisCommonPaymentIT {
     }
 
     @Test
-    public void createPisCommonPayment_failShouldThrowException() {
+    void createPisCommonPayment_failShouldThrowException() {
         // Given
         PisPaymentInfo pisPaymentInfo = buildPisPaymentInfo();
 

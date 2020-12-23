@@ -59,6 +59,7 @@
         <module>cms-payment-support</module>
 
         <module>cms-integration-test-base</module>
+        <module>consent-common-model</module>
     </modules>
 
 </project>

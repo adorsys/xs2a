@@ -27,10 +27,11 @@ import javax.persistence.*;
 /**
  * @deprecated since 5.11, use {@link de.adorsys.psd2.consent.domain.consent.ConsentEntity} instead
  */
-@Deprecated // TODO: complete AIS consent migration https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1209
+// TODO: complete AIS consent migration https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/issues/1209
+@Deprecated(since = "5.11", forRemoval = true)
 @Data
-@ToString(exclude = "accesses")
-@EqualsAndHashCode
+@ToString
+@EqualsAndHashCode(callSuper = true)
 @Entity(name = "ais_consent")
 public class AisConsent extends InstanceDependableEntity {
     @Id
