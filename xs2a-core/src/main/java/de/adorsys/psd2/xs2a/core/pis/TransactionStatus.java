@@ -34,7 +34,8 @@ public enum TransactionStatus {
     RJCT("Rejected", true),  //Payment initiation or individual transaction included in the payment initiation has been rejected
     CANC("Canceled", true), //Canceled
     ACFC("AcceptedFundsChecked", false), //Preceding check of technical validation and customer profile was successful and an automatic funds check was positive
-    PATC("PartiallyAcceptedTechnicalCorrect", false); // The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.
+    PATC("PartiallyAcceptedTechnicalCorrect", false), // The payment initiation needs multiple authentications, where some but not yet all have been performed. Syntactical and semantical validations are successful.
+    PART("PartiallyAccepted", false); // A number of transactions have been accepted, whereas another number of transactions have not yet achieved 'accepted' status.
 
     private static Map<String, TransactionStatus> container = new HashMap<>();
 

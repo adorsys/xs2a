@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Fixed sonar alerts
+* Bugfix: added missing PART transaction status
 
 == Fixed sonar alerts
 
@@ -38,3 +39,7 @@ Sonar alerts were fixed for classes:
 - AbstractContainerDatabaseTest
 - BaseTest
 - ServiceInstanceIdEventListener
+
+== Bugfix: added missing PART transaction status
+
+From now on, transaction status contains value PART
