@@ -4,6 +4,7 @@
 
 * Fixed sonar alerts
 * Bugfix: added missing PART transaction status
+* Refactored xs2a-core-payments
 
 == Fixed sonar alerts
 
@@ -43,3 +44,7 @@ Sonar alerts were fixed for classes:
 == Bugfix: added missing PART transaction status
 
 From now on, transaction status contains value PART
+
+== Refactored xs2a-core-payments
+
+From now on, xs2a-core-payments contains not generated models.
