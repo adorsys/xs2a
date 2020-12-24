@@ -54,7 +54,7 @@ class CorePaymentsConvertServiceTest {
     private CmsCommonPaymentMapper cmsCommonPaymentMapper;
     private PaymentMapperResolver paymentMapperResolver;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private PisPayment pisPayment;
     private CmsCommonPayment cmsCommonPayment;
 
