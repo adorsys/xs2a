@@ -90,8 +90,8 @@ public class CmsCorePaymentMapper {
         return payment;
     }
 
-    private PaymentInitiationBulkElementJson mapToPaymentInitiationBulkElementJson(PisPayment pisPayment) {
-        PaymentInitiationBulkElementJson payment = new PaymentInitiationBulkElementJson();
+    private PaymentInitiationJson mapToPaymentInitiationBulkElementJson(PisPayment pisPayment) {
+        PaymentInitiationJson payment = new PaymentInitiationJson();
         setCommonFields(payment, pisPayment);
 
         return payment;
