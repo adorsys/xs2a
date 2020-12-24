@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -183,6 +183,7 @@ class CreateConsentAuthorisationValidatorTest {
         consentTppInformation.setTppInfo(tppInfo);
         aisConsent.setConsentTppInformation(consentTppInformation);
         aisConsent.setAuthorisations(Collections.emptyList());
+        aisConsent.setPsuIdDataList(Collections.emptyList());
         return aisConsent;
     }
 
