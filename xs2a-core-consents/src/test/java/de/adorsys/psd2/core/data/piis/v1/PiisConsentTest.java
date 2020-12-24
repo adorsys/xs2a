@@ -28,8 +28,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PiisConsentTest {
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
@@ -76,12 +75,6 @@ class PiisConsentTest {
         assertEquals(psuIdData, piisConsent.getPsuIdData());
     }
 
-    @ParameterizedTest
-    @EnumSource(ConsentType.class)
-    void getPsuIdData_emptyCollection(ConsentType consentType) {
-        assertNull(new PiisConsent(consentType).getPsuIdData());
-    }
-
     @Test
     void findAuthorisationInConsent_success() {
         //Given
@@ -89,7 +82,7 @@ class PiisConsentTest {
         //When
         Optional<ConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent(AUTHORISATION_ID);
         //Then
-        assert(authorisationInConsent).isPresent();
+        assertTrue(authorisationInConsent.isPresent());
     }
 
     @Test
@@ -99,6 +92,6 @@ class PiisConsentTest {
         //When
         Optional<ConsentAuthorization> authorisationInConsent = piisConsent.findAuthorisationInConsent("wrong authorisation id");
         //Then
-        assert(authorisationInConsent).isEmpty();
+        assertTrue(authorisationInConsent.isEmpty());
     }
 }

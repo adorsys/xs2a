@@ -58,5 +58,6 @@
     ]
   },
   "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
-  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00"
+  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
+  "consentType": "PIIS_TPP"
 }
