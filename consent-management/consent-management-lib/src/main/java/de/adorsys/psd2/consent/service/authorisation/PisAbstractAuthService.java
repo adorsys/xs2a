@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public abstract class PisAbstractAuthService extends CmsAuthorisationService<PisCommonPaymentData> {
     private final CommonPaymentService commonPaymentService;
 
-    public PisAbstractAuthService(PsuService psuService, AspspProfileService aspspProfileService,
+    protected PisAbstractAuthService(PsuService psuService, AspspProfileService aspspProfileService,
                                   AuthorisationService authorisationService,
                                   ConfirmationExpirationService<PisCommonPaymentData> confirmationExpirationService,
                                   CommonPaymentService commonPaymentService) {
