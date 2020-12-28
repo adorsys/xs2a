@@ -44,6 +44,6 @@ public class ConsentRestErrorHandler extends DefaultResponseErrorHandler {
         if (statusCode.value() == 404) {
             throw new CmsRestException(statusCode);
         }
-        throw new CmsRestException(statusCode, new String(textInBytes).replaceAll("\"", ""));
+        throw new CmsRestException(statusCode, new String(textInBytes).replace("\"", ""));
     }
 }
