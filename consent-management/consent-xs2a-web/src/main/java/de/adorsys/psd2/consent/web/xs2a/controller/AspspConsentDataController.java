@@ -45,7 +45,7 @@ public class AspspConsentDataController implements AspspConsentDataApi {
     }
 
     @Override
-    public ResponseEntity updateAspspConsentData(String encryptedConsentId,
+    public ResponseEntity<Boolean> updateAspspConsentData(String encryptedConsentId,
         @RequestBody CmsAspspConsentDataBase64 request) {
         byte[] data = Optional.ofNullable(request.getAspspConsentDataBase64())
                           .map(Base64.getDecoder()::decode)
@@ -62,7 +62,7 @@ public class AspspConsentDataController implements AspspConsentDataApi {
     }
 
     @Override
-    public ResponseEntity deleteAspspConsentData(String encryptedConsentId) {
+    public ResponseEntity<Boolean> deleteAspspConsentData(String encryptedConsentId) {
         boolean deleted = aspspDataService.deleteAspspConsentData(encryptedConsentId);
 
         if (!deleted) {

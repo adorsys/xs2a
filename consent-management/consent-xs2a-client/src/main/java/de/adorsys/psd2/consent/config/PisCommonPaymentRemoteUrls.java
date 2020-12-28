@@ -61,53 +61,6 @@ public class PisCommonPaymentRemoteUrls {
     }
 
     /**
-     * @return String paymentId
-     * Method: POST
-     * PathVariables: String paymentId
-     */
-    public String createPisAuthorisation() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/authorisations";
-    }
-
-    /**
-     * @return Returns URL-string to CMS endpoint that create pis authorisation cancellation
-     * Method: POST
-     * PathVariables: String paymentId
-     */
-    public String createPisAuthorisationCancellation() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/cancellation-authorisations";
-    }
-
-    /**
-     * @return String authorisation ID
-     * Method: GET
-     * PathVariables: String paymentId
-     */
-    public String getCancellationAuthorisationSubResources() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/cancellation-authorisations";
-    }
-
-    public String updatePisAuthorisation() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}";
-    }
-
-    public String updatePisAuthorisationStatus() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/status/{status}";
-    }
-
-    public String updatePisCancellationAuthorisation() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/cancellation-authorisations/{authorisation-id}";
-    }
-
-    public String getPisAuthorisationById() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}";
-    }
-
-    public String getPisCancellationAuthorisationById() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/cancellation-authorisations/{authorisation-id}";
-    }
-
-    /**
      * Returns URL-string to CMS endpoint that gets decrypted payment id from encrypted string
      *
      * @return String
@@ -141,72 +94,6 @@ public class PisCommonPaymentRemoteUrls {
      */
     public String getPsuDataByPaymentId() {
         return commonPaymentServiceBaseUrl + "/pis/payment/{payment-id}/psu-data";
-    }
-
-    /**
-     * @return String authorisation ID
-     * Method: GET
-     * PathVariables: String paymentId
-     */
-    public String getAuthorisationSubResources() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/authorisations";
-    }
-
-    /**
-     * @return ScaStatus authorisation status
-     * Method: GET
-     * PathVariables: String paymentId
-     * PathVariables: String authorisationId
-     */
-    public String getAuthorisationScaStatus() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/authorisations/{authorisation-id}/status";
-    }
-
-    /**
-     * @return ScaStatus cancellation authorisation status
-     * Method: GET
-     * PathVariables: String paymentId
-     * PathVariables: String authorisationId
-     */
-    public String getCancellationAuthorisationScaStatus() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/{payment-id}/cancellation-authorisations/{authorisation-id}/status";
-    }
-
-    /**
-     * @return <code>true</code>, if authentication method is decoupled and <code>false</code> otherwise.
-     * Method: GET
-     * PathVariables: String authorisationId
-     * PathVariables: String authenticationMethodId
-     */
-    public String isAuthenticationMethodDecoupled() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/authentication-methods/{authentication-method-id}";
-    }
-
-    /**
-     * @return <code>true</code> if authorisation was found and updated, <code>false</code> otherwise
-     * Method: POST
-     * PathVariables: String authorisationId
-     */
-    public String saveAuthenticationMethods() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/authentication-methods";
-    }
-
-    /**
-     * @return <code>true</code> if authorisation was found and sca approach updated, <code>false</code> otherwise
-     * Method: PUT
-     * PathVariables: String authorisationId
-     * PathVariables: String sca-approach
-     */
-    public String updateScaApproach() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/sca-approach/{sca-approach}";
-    }
-
-    public String getAuthorisationScaApproach() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/authorisations/{authorisation-id}/sca-approach";
-    }
-
-    public String getCancellationAuthorisationScaApproach() {
-        return commonPaymentServiceBaseUrl + "/pis/common-payments/cancellation-authorisations/{authorisation-id}/sca-approach";
     }
 
     /**

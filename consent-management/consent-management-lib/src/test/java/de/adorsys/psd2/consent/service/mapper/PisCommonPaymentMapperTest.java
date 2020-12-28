@@ -106,7 +106,7 @@ class PisCommonPaymentMapperTest {
     }
 
     @Test
-    public void mapToPisCommonPaymentData() {
+    void mapToPisCommonPaymentData() {
         //Given
         PsuData psuDataEntity = jsonReader.getObjectFromFile("json/service/mapper/psu-data.json", PsuData.class);
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
