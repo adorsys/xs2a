@@ -19,28 +19,28 @@ package de.adorsys.psd2.consent.api;
 import lombok.Data;
 
 @Data
-public class ResponseData<DATA> {
+public class ResponseData<D> {
 
-    private DATA data;
+    private D data;
     private CmsPageInfo pageInfo;
     private Object status;
 
-    public ResponseData(DATA data, Object status) {
+    public ResponseData(D data, Object status) {
         this.data = data;
         this.status = status;
     }
 
-    public ResponseData(DATA data, CmsPageInfo pageInfo, Object status) {
+    public ResponseData(D data, CmsPageInfo pageInfo, Object status) {
         this.data = data;
         this.pageInfo = pageInfo;
         this.status = status;
     }
 
-    public static <DATA> ResponseData<DATA> entity(DATA data, Object status) {
+    public static <D> ResponseData<D> entity(D data, Object status) {
         return new ResponseData<>(data, status);
     }
 
-    public static <DATA> ResponseData<DATA> list(DATA data, CmsPageInfo info, Object status) {
+    public static <D> ResponseData<D> list(D data, CmsPageInfo info, Object status) {
         return new ResponseData<>(data, info, status);
     }
 }
