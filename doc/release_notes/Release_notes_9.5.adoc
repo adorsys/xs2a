@@ -52,6 +52,8 @@ Sonar alerts were fixed for classes:
 - AuthorisationController
 - PisCommonPaymentController
 - CmsConsentControllerTest
+- PageData
+- ResponseData
 
 == Bugfix: added missing PART transaction status
 
