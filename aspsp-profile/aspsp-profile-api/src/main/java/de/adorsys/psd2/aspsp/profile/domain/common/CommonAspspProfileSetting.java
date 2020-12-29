@@ -27,7 +27,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -36,22 +35,22 @@ import java.util.List;
 @EqualsAndHashCode
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class CommonAspspProfileSetting {
-    private ScaRedirectFlow scaRedirectFlow;
-    private String oauthConfigurationUrl;
-    private StartAuthorisationMode startAuthorisationMode;
-    private boolean tppSignatureRequired;
-    private boolean psuInInitialRequestMandated;
-    private long redirectUrlExpirationTimeMs;
-    private long authorisationExpirationTimeMs;
-    private boolean forceXs2aBaseLinksUrl;
-    private String xs2aBaseLinksUrl;
-    private List<SupportedAccountReferenceField> supportedAccountReferenceFields = new ArrayList<>();
-    private MulticurrencyAccountLevel multicurrencyAccountLevelSupported;
-    private boolean aisPisSessionsSupported;
-    private boolean checkTppRolesFromCertificateSupported;
-    private List<NotificationSupportedMode> aspspNotificationsSupported = new ArrayList<>();
-    private boolean authorisationConfirmationRequestMandated;
-    private boolean authorisationConfirmationCheckByXs2a;
-    private boolean checkUriComplianceToDomainSupported;
-    private TppUriCompliance tppUriComplianceResponse;
+    private final ScaRedirectFlow scaRedirectFlow;
+    private final String oauthConfigurationUrl;
+    private final StartAuthorisationMode startAuthorisationMode;
+    private final boolean tppSignatureRequired;
+    private final boolean psuInInitialRequestMandated;
+    private final long redirectUrlExpirationTimeMs;
+    private final long authorisationExpirationTimeMs;
+    private final boolean forceXs2aBaseLinksUrl;
+    private final String xs2aBaseLinksUrl;
+    private final List<SupportedAccountReferenceField> supportedAccountReferenceFields;
+    private final MulticurrencyAccountLevel multicurrencyAccountLevelSupported;
+    private final boolean aisPisSessionsSupported;
+    private final boolean checkTppRolesFromCertificateSupported;
+    private final List<NotificationSupportedMode> aspspNotificationsSupported;
+    private final boolean authorisationConfirmationRequestMandated;
+    private final boolean authorisationConfirmationCheckByXs2a;
+    private final boolean checkUriComplianceToDomainSupported;
+    private final TppUriCompliance tppUriComplianceResponse;
 }

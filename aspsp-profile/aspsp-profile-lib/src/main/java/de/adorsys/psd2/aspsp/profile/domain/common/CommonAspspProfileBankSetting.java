@@ -32,6 +32,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class CommonAspspProfileBankSetting {
 
     /**
