@@ -227,7 +227,8 @@
         <sonar.moduleName>${project.artifactId}</sonar.moduleName>
         <sonar.language>java</sonar.language>
         <sonar.exclusions>
-            **/xs2a-server-api/**/*
+            **/xs2a-server-api/**/*,
+            **/*.xml
         </sonar.exclusions>
         <sonar.coverage.exclusions>
             **/*Entity.java,
