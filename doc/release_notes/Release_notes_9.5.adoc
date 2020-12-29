@@ -54,6 +54,8 @@ Sonar alerts were fixed for classes:
 - CmsConsentControllerTest
 - PageData
 - ResponseData
+- CommonAspspProfileSetting
+- CommonAspspProfileBankSetting
 
 == Bugfix: added missing PART transaction status
 
