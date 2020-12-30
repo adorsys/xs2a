@@ -43,7 +43,7 @@ public interface AspspConsentDataApi {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    ResponseEntity updateAspspConsentData(
+    ResponseEntity<Boolean> updateAspspConsentData(
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",
@@ -57,7 +57,7 @@ public interface AspspConsentDataApi {
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "No Content"),
         @ApiResponse(code = 404, message = "Not Found")})
-    ResponseEntity deleteAspspConsentData(
+    ResponseEntity<Boolean> deleteAspspConsentData(
         @ApiParam(
             name = "consent-id",
             value = "The account consent identification assigned to the created account consent / payment identification assigned to the created payment.",

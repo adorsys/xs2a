@@ -18,35 +18,23 @@ package de.adorsys.psd2.consent.service.security.provider.aes;
 
 import de.adorsys.psd2.consent.service.security.DecryptedData;
 import de.adorsys.psd2.consent.service.security.EncryptedData;
+import de.adorsys.psd2.consent.service.security.provider.AbstractCryptoProvider;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.GeneralSecurityException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 @Slf4j
-public class AesEcbCryptoProviderImpl implements CryptoProvider {
-    private final String cryptoProviderId;
+public class AesEcbCryptoProviderImpl extends AbstractCryptoProvider implements CryptoProvider {
     private final String algorithm;
-    private final int keyLength;
-    private final int hashIterations;
-    private final String skfAlgorithm;
 
     public AesEcbCryptoProviderImpl(String cryptoProviderId, String algorithm, int keyLength, int hashIterations, String skfAlgorithm) {
-        this.cryptoProviderId = cryptoProviderId;
+        super(keyLength, hashIterations, skfAlgorithm, cryptoProviderId);
         this.algorithm = algorithm;
-        this.keyLength = keyLength;
-        this.hashIterations = hashIterations;
-        this.skfAlgorithm = skfAlgorithm;
     }
 
     @Override
@@ -61,7 +49,7 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
             return Optional.of(new EncryptedData(encryptedData));
 
         } catch (GeneralSecurityException e) {
-            log.info("Error encryption data: {}", e);
+            log.info("Error encryption data: ", e);
             return Optional.empty();
         }
     }
@@ -79,26 +67,9 @@ public class AesEcbCryptoProviderImpl implements CryptoProvider {
         } catch (BadPaddingException e) {
             log.info("Error decryption data. Wrong password");
         } catch (GeneralSecurityException e) {
-            log.info("Error decryption data: {}", e);
+            log.info("Error decryption data: ", e);
         }
 
         return Optional.empty();
-    }
-
-    @Override
-    public String getCryptoProviderId() {
-        return cryptoProviderId;
-    }
-
-    private SecretKey getSecretKey(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        byte[] salt = new byte[16];
-        PBEKeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, hashIterations, keyLength);
-        try {
-            SecretKeyFactory factory = SecretKeyFactory.getInstance(skfAlgorithm);
-            SecretKey secretKey = factory.generateSecret(keySpec);
-            return new SecretKeySpec(secretKey.getEncoded(), "AES");
-        } finally {
-            keySpec.clearPassword();
-        }
     }
 }

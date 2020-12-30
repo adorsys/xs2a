@@ -124,7 +124,7 @@ class CmsPsuPisMapperTest {
     @Mock
     private PsuDataMapper psuDataMapper;
     @Spy
-    private CmsRemittanceMapper cmsRemittanceMapper = Mappers.getMapper(CmsRemittanceMapper.class);
+    private final CmsRemittanceMapper cmsRemittanceMapper = Mappers.getMapper(CmsRemittanceMapper.class);
 
     @BeforeEach
     void setUp() {
@@ -226,7 +226,6 @@ class CmsPsuPisMapperTest {
 
         CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_BULK_LIST);
 
-        assertNotNull(cmsPayment);
         assertTrue(cmsPayment instanceof CmsBulkPayment);
 
         CmsBulkPayment bulkPayment = (CmsBulkPayment) cmsPayment;
@@ -235,17 +234,13 @@ class CmsPsuPisMapperTest {
         assertFalse(bulkPayment.isBatchBookingPreferred());
 
         List<CmsSinglePayment> payments = bulkPayment.getPayments();
-        assertTrue(CollectionUtils.isNotEmpty(payments));
-
         CmsSinglePayment singlePayment = payments.get(0);
-        assertNotNull(singlePayment);
         assertEquals(PAYMENT_ID, singlePayment.getPaymentId());
         assertEquals(END_TO_END_IDENTIFICATION, singlePayment.getEndToEndIdentification());
         assertEquals(INSTRUCTION_IDENTIFICATION, singlePayment.getInstructionIdentification());
         assertEquals(DEBTOR_CMS_ACCOUNT, singlePayment.getDebtorAccount());
 
         CmsAmount instructedAmount = singlePayment.getInstructedAmount();
-        assertNotNull(instructedAmount);
         assertEquals(AMOUNT, instructedAmount.getAmount());
         assertEquals(CURRENCY, instructedAmount.getCurrency());
 

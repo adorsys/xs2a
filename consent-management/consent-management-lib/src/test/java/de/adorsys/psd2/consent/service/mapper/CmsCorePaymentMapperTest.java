@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class CmsCorePaymentMapperTest {
 
     private CmsCorePaymentMapper mapper;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private static final CmsAddressMapper cmsAddressMapper = new CmsAddressMapperImpl();
 
     @BeforeEach

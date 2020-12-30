@@ -23,11 +23,7 @@ import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.domain.Authorisable;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
-import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.service.ConfirmationExpirationService;
-import de.adorsys.psd2.consent.service.mapper.AuthorisationMapper;
-import de.adorsys.psd2.consent.service.mapper.PsuDataMapper;
-import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.AllArgsConstructor;
@@ -40,44 +36,42 @@ import java.util.Optional;
 @Slf4j
 @AllArgsConstructor
 public abstract class CmsAuthorisationService<T extends Authorisable> implements AuthService {
-    protected final CmsPsuService cmsPsuService;
-    protected final PsuDataMapper psuDataMapper;
+    protected final PsuService psuService;
     protected final AspspProfileService aspspProfileService;
-    protected final AuthorisationMapper authorisationMapper;
-    protected final AuthorisationRepository authorisationRepository;
+    protected final AuthorisationService authorisationService;
     protected final ConfirmationExpirationService<T> confirmationExpirationService;
 
     @Override
     public List<AuthorisationEntity> getAuthorisationsByParentId(String parentId) {
-        return authorisationRepository.findAllByParentExternalIdAndType(parentId, getAuthorisationType());
+        return authorisationService.findAllByParentExternalIdAndType(parentId, getAuthorisationType());
     }
 
     @Override
     public Optional<AuthorisationEntity> getAuthorisationById(String authorisationId) {
-        return authorisationRepository.findByExternalIdAndType(authorisationId, getAuthorisationType());
+        return authorisationService.findByExternalIdAndType(authorisationId, getAuthorisationType());
     }
 
     @Override
     public AuthorisationEntity saveAuthorisation(CreateAuthorisationRequest request, Authorisable authorisationParent) {
         List<PsuData> psuDataList = authorisationParent.getPsuDataList();
-        Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuDataMapper.mapToPsuData(request.getPsuData(), authorisationParent.getInstanceId()), psuDataList);
+        Optional<PsuData> psuDataOptional = psuService.definePsuDataForAuthorisation(psuService.mapToPsuData(request.getPsuData(), authorisationParent.getInstanceId()), psuDataList);
 
-        psuDataOptional.ifPresent(psuData -> authorisationParent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, psuDataList)));
+        psuDataOptional.ifPresent(psuData -> authorisationParent.setPsuDataList(psuService.enrichPsuData(psuData, psuDataList)));
         authorisationParent.setPsuDataList(psuDataList);
 
         CommonAspspProfileSetting commonAspspProfileSetting = aspspProfileService.getAspspSettings(authorisationParent.getInstanceId()).getCommon();
-        AuthorisationEntity entity = authorisationMapper.prepareAuthorisationEntity(authorisationParent, request, psuDataOptional, getAuthorisationType(),
+        AuthorisationEntity entity = authorisationService.prepareAuthorisationEntity(authorisationParent, request, psuDataOptional, getAuthorisationType(),
                                                                                     commonAspspProfileSetting.getRedirectUrlExpirationTimeMs(),
                                                                                     commonAspspProfileSetting.getAuthorisationExpirationTimeMs());
-        return authorisationRepository.save(entity);
+        return authorisationService.save(entity);
     }
 
     @Override
     public AuthorisationEntity doUpdateAuthorisation(AuthorisationEntity authorisationEntity, UpdateAuthorisationRequest updateAuthorisationRequest) {
-        PsuData psuRequest = psuDataMapper.mapToPsuData(updateAuthorisationRequest.getPsuData(), authorisationEntity.getInstanceId());
+        PsuData psuRequest = psuService.mapToPsuData(updateAuthorisationRequest.getPsuData(), authorisationEntity.getInstanceId());
         if (ScaStatus.RECEIVED == authorisationEntity.getScaStatus()) {
 
-            if (!cmsPsuService.isPsuDataRequestCorrect(psuRequest, authorisationEntity.getPsuData())) {
+            if (!psuService.isPsuDataRequestCorrect(psuRequest, authorisationEntity.getPsuData())) {
                 log.info("Authorisation ID: [{}], SCA status: [{}]. Update authorisation failed, because psu data request does not match stored psu data",
                          authorisationEntity.getExternalId(), authorisationEntity.getScaStatus().getValue());
                 return authorisationEntity;
@@ -91,11 +85,11 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
             }
 
             Authorisable authorisationParent = aisConsentOptional.get();
-            Optional<PsuData> psuDataOptional = cmsPsuService.definePsuDataForAuthorisation(psuRequest, authorisationParent.getPsuDataList());
+            Optional<PsuData> psuDataOptional = psuService.definePsuDataForAuthorisation(psuRequest, authorisationParent.getPsuDataList());
 
             if (psuDataOptional.isPresent()) {
                 PsuData psuData = psuDataOptional.get();
-                authorisationParent.setPsuDataList(cmsPsuService.enrichPsuData(psuData, authorisationParent.getPsuDataList()));
+                authorisationParent.setPsuDataList(psuService.enrichPsuData(psuData, authorisationParent.getPsuDataList()));
                 authorisationEntity.setPsuData(psuData);
                 updateAuthorisable(authorisationParent);
             }
@@ -114,7 +108,7 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
         }
 
         authorisationEntity.setScaStatus(updateAuthorisationRequest.getScaStatus());
-        return authorisationRepository.save(authorisationEntity);
+        return authorisationService.save(authorisationEntity);
     }
 
     private boolean isPsuDataCorrectIfPresent(PsuData psuRequest, AuthorisationEntity authorisationEntity) {
