@@ -23,11 +23,13 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class CmsRestException extends RuntimeException {
     private final HttpStatus httpStatus;
-    private String message;
-    private CmsError cmsError;
+    private final String message;
+    private final CmsError cmsError;
 
     CmsRestException(HttpStatus httpStatus) {
         this.httpStatus = httpStatus;
+        this.message = null;
+        this.cmsError = null;
     }
 
     CmsRestException(HttpStatus httpStatus, String message) {

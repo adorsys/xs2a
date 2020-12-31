@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>9.4</version>
+    <version>9.5</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -227,7 +227,8 @@
         <sonar.moduleName>${project.artifactId}</sonar.moduleName>
         <sonar.language>java</sonar.language>
         <sonar.exclusions>
-            **/xs2a-server-api/**/*
+            **/xs2a-server-api/**/*,
+            **/*.xml
         </sonar.exclusions>
         <sonar.coverage.exclusions>
             **/*Entity.java,

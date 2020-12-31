@@ -21,10 +21,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PageData<DATA> {
-    private DATA data;
+public class PageData<D> {
+    private D data;
     private long page;
     private long pageSize;
     private long total;
-
 }

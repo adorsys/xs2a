@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = IntegrationTestConfiguration.class)
 @DataJpaTest
-public class AisConsentIT {
+class AisConsentIT {
     private static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
     private static final Integer DEFAULT_PAGE_INDEX = 0;
     private static final Integer DEFAULT_ITEMS_PER_PAGE = 20;
@@ -69,7 +69,7 @@ public class AisConsentIT {
     @MockBean
     private AspspProfileService aspspProfileService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     public void setUp() {
@@ -78,7 +78,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void createAisConsent_successWithNewStatus() throws WrongChecksumException {
+    void createAisConsent_successWithNewStatus() throws WrongChecksumException {
         // Given
         CmsConsent createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -105,7 +105,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void createAisConsent_successWithTheSameStatus() throws WrongChecksumException {
+    void createAisConsent_successWithTheSameStatus() throws WrongChecksumException {
         // Given
         CmsConsent createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -132,7 +132,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void createAisConsent_failShouldThrowException() throws WrongChecksumException {
+    void createAisConsent_failShouldThrowException() throws WrongChecksumException {
         // Given
         CmsConsent createAisConsentRequest = buildCreateAisConsentRequest();
 
@@ -156,7 +156,7 @@ public class AisConsentIT {
     }
 
     @Test
-    public void getConsentsForPsu_successWithDifferentPsu() throws WrongChecksumException {
+    void getConsentsForPsu_successWithDifferentPsu() throws WrongChecksumException {
         //Given
         PsuIdData aspsp = buildPsuIdData("aspsp", "aspsp corporate id");
         PsuIdData aspsp1 = buildPsuIdData("aspsp1", "aspsp1 corporate id");

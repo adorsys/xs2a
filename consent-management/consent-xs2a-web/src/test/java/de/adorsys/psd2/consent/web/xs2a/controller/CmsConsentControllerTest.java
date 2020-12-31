@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class CmsConsentControllerTest {
+class CmsConsentControllerTest {
     private static final String EXTERNAL_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
 
     private static final String CMS_CONSENT_PATH = "json/controller/cms-consent.json";
@@ -43,7 +43,7 @@ public class CmsConsentControllerTest {
     private ConsentServiceEncrypted consentServiceEncrypted;
 
     private MockMvc mockMvc;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {

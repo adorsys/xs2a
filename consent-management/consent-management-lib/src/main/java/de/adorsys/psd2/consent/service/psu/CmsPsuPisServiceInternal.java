@@ -131,7 +131,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             } else {
                 return commonPaymentDataService.getPisCommonPaymentData(paymentId, instanceId)
                            .map(cmsPsuPisMapper::mapToCmsPayment)
-                           .map(payment -> (CmsCommonPayment) payment)
+                           .map(CmsCommonPayment.class::cast)
                            .map(corePaymentsConvertService::expandCommonPaymentWithCorePayment);
             }
         }

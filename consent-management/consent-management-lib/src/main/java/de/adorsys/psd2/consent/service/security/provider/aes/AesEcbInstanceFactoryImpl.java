@@ -18,15 +18,16 @@ package de.adorsys.psd2.consent.service.security.provider.aes;
 
 import de.adorsys.psd2.consent.service.security.provider.CryptoInstanceFactory;
 import de.adorsys.psd2.consent.service.security.provider.CryptoProvider;
+import de.adorsys.psd2.consent.service.security.provider.AbstractInstanceFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
-public class AesEcbInstanceFactoryImpl implements CryptoInstanceFactory {
+public class AesEcbInstanceFactoryImpl extends AbstractInstanceFactory implements CryptoInstanceFactory {
     private static final String SEPARATOR = "_#_";
 
     @Override
-    public CryptoProvider initProvider(String cryptoProviderId, String parameters) throws IllegalArgumentException {
+    public CryptoProvider initProvider(String cryptoProviderId, String parameters) {
         String[] paramsArr = StringUtils.split(parameters, SEPARATOR);
 
         String algorithm = getStringValueByIndex(paramsArr, 0, "AES/ECB/PKCS5Padding");
@@ -35,27 +36,5 @@ public class AesEcbInstanceFactoryImpl implements CryptoInstanceFactory {
         String skfAlgorithm = getStringValueByIndex(paramsArr, 4, "PBKDF2WithHmacSHA256");
 
         return new AesEcbCryptoProviderImpl(cryptoProviderId, algorithm, keyLength, hashIterations, skfAlgorithm);
-    }
-
-    private String getStringValueByIndex(String[] paramsArr, int index, String defaultValue) {
-        if (paramsArr == null) {
-            return defaultValue;
-        }
-
-        if (paramsArr.length > index) {
-            return paramsArr[index];
-        }
-        return defaultValue;
-    }
-
-    private Integer getIntegerValueByIndex(String[] paramsArr, int index, Integer defaultValue) {
-        if (paramsArr == null) {
-            return defaultValue;
-        }
-
-        if (paramsArr.length > index) {
-            return Integer.valueOf(paramsArr[index]);
-        }
-        return defaultValue;
     }
 }

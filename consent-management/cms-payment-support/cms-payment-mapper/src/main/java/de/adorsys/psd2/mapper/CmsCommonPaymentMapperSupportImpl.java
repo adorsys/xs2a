@@ -116,30 +116,6 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         return bulkPayment;
     }
 
-    private CmsSinglePayment mapToCmsSinglePayment(PaymentInitiationBulkElementJson paymentInitiationBulkElementJson, CmsCommonPayment cmsCommonPayment) {
-        CmsSinglePayment singlePayment = new CmsSinglePayment(cmsCommonPayment.getPaymentProduct());
-        fillBasePaymentFields(singlePayment, cmsCommonPayment);
-        singlePayment.setEndToEndIdentification(paymentInitiationBulkElementJson.getEndToEndIdentification());
-        singlePayment.setInstructionIdentification(paymentInitiationBulkElementJson.getInstructionIdentification());
-        Amount instructedAmount = paymentInitiationBulkElementJson.getInstructedAmount();
-        singlePayment.setInstructedAmount(new CmsAmount(mapToCurrency(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
-        singlePayment.setCreditorAccount(mapToAccountReference(paymentInitiationBulkElementJson.getCreditorAccount()));
-        singlePayment.setCreditorAgent(paymentInitiationBulkElementJson.getCreditorAgent());
-        singlePayment.setCreditorName(paymentInitiationBulkElementJson.getCreditorName());
-        singlePayment.setCreditorAddress(mapToCmsAddress(paymentInitiationBulkElementJson.getCreditorAddress()));
-        singlePayment.setRemittanceInformationUnstructured(paymentInitiationBulkElementJson.getRemittanceInformationUnstructured());
-        singlePayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
-        singlePayment.setUltimateDebtor(paymentInitiationBulkElementJson.getUltimateDebtor());
-        singlePayment.setUltimateCreditor(paymentInitiationBulkElementJson.getUltimateCreditor());
-        singlePayment.setPurposeCode(mapToPurposeCode(paymentInitiationBulkElementJson.getPurposeCode()));
-        singlePayment.setRemittanceInformationStructured(mapToCmsRemittance(paymentInitiationBulkElementJson.getRemittanceInformationStructured()));
-        singlePayment.setRemittanceInformationStructuredArray(mapToCmsRemittanceList(paymentInitiationBulkElementJson.getRemittanceInformationStructuredArray()));
-        singlePayment.setChargeBearer(Optional.ofNullable(paymentInitiationBulkElementJson.getChargeBearer())
-                                          .map(ChargeBearer::toString)
-                                          .orElse(null));
-        return singlePayment;
-    }
-
     private CmsSinglePayment mapToCmsSinglePayment(PaymentInitiationJson paymentInitiationJson, CmsCommonPayment cmsCommonPayment) {
         CmsSinglePayment singlePayment = new CmsSinglePayment(cmsCommonPayment.getPaymentProduct());
         fillBasePaymentFields(singlePayment, cmsCommonPayment);
@@ -198,7 +174,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         return cmsRemittance;
     }
 
-    private List<CmsRemittance> mapToCmsRemittanceList(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+    private List<CmsRemittance> mapToCmsRemittanceList(List<RemittanceInformationStructured> remittanceInformationStructuredArray) {
         if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
             return Collections.emptyList();
         }
