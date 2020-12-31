@@ -203,7 +203,7 @@ public class CardAccountService {
                                                                             String consentId, String accountId) {
         AccountAccess access = aisConsent.getAccess();
         SpiAccountReference requestedAccountReference = aisConsent.isGlobalConsent() ?
-                                                            new SpiAccountReference(accountId, null, null, null, null, null, null, null) :
+                                                            SpiAccountReference.builder().resourceId(accountId).build() :
                                                             accountHelperService.findAccountReference(access.getAccounts(), accountId);
 
         return cardAccountSpi.requestCardAccountDetailsForAccount(accountHelperService.getSpiContextData(),

@@ -19,15 +19,14 @@ package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class SpiPaymentResponse {
     /**
      * Indicates whether the PSU was authorised (SUCCESS, ATTEMPT_FAILURE, FAILURE)
      */
     private SpiAuthorisationStatus spiAuthorisationStatus;
-
-    public SpiPaymentResponse() {
-    }
 }
