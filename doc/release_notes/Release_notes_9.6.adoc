@@ -1,3 +1,16 @@
 = Release notes v.9.6
 
 == Table of Contents
+
+* Fixed sonar alerts
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- FailedCertValidationException
+- CertificateExtractorUtil
+- URLDecodingUtil
+- RolesOfPSP
+- TppRoles
+- URLDecodingUtilTest

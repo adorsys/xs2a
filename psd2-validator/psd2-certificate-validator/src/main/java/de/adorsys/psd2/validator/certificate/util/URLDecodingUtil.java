@@ -6,12 +6,14 @@ import org.apache.commons.codec.net.URLCodec;
 
 @Slf4j
 public class URLDecodingUtil {
+    private URLDecodingUtil() {}
+
     public static byte[] decode(byte[] encodedCert) {
         try {
             return URLCodec.decodeUrl(encodedCert);
         } catch (DecoderException e) {
             log.debug("Error URL-decoding the data");
         }
-        return null;
+        return new byte[0];
     }
 }
