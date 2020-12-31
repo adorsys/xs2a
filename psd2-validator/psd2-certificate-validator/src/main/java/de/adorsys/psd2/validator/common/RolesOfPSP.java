@@ -17,39 +17,39 @@
 package de.adorsys.psd2.validator.common;
 
 import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 
 import java.util.Arrays;
 
 public class RolesOfPSP {
-	private final RoleOfPSP[] roles;
-	private final DERSequence sequence;
+    private final RoleOfPSP[] roles;
+    private final DERSequence sequence;
 
-	public RolesOfPSP(RoleOfPSP... roles) {
-		this.roles = roles.clone();
-		this.sequence = new DERSequence(
-				Arrays.stream(roles).map(RoleOfPSP::toDERSequence).toArray(ASN1Encodable[]::new));
+    public RolesOfPSP(RoleOfPSP... roles) {
+        this.roles = roles.clone();
+        this.sequence = new DERSequence(
+            Arrays.stream(roles).map(RoleOfPSP::toDERSequence).toArray(ASN1Encodable[]::new));
 
-	}
+    }
 
-	public static RolesOfPSP getInstance(Object obj) {
-		if (obj instanceof RolesOfPSP) {
-			return (RolesOfPSP) obj;
-		}
+    public static RolesOfPSP getInstance(Object obj) {
+        if (obj instanceof RolesOfPSP) {
+            return (RolesOfPSP) obj;
+        }
 
-		ASN1Encodable[] array = DERSequence.getInstance(obj).toArray();
+        ASN1Encodable[] array = ASN1Sequence.getInstance(obj).toArray();
 
-		RoleOfPSP[] roles = Arrays.stream(array).map(RoleOfPSP::getInstance).toArray(RoleOfPSP[]::new);
+        RoleOfPSP[] roles = Arrays.stream(array).map(RoleOfPSP::getInstance).toArray(RoleOfPSP[]::new);
 
-		return new RolesOfPSP(roles);
-	}
+        return new RolesOfPSP(roles);
+    }
 
-	public DERSequence toDERSequence() {
-		return sequence;
-	}
+    public DERSequence toDERSequence() {
+        return sequence;
+    }
 
-	public RoleOfPSP[] getRoles() {
-		return roles.clone();
-	}
-
+    public RoleOfPSP[] getRoles() {
+        return roles.clone();
+    }
 }

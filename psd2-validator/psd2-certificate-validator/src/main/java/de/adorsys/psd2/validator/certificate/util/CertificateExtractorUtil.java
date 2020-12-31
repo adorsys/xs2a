@@ -95,7 +95,7 @@ public class CertificateExtractorUtil {
             throw new CertificateValidationException(CertificateErrorMsgCode.CERTIFICATE_INVALID.toString());
         }
 
-        tppCertData.setDnsList(getSubjectAltNames(cert, GeneralName.dNSName));
+        tppCertData.setDnsList(getSubjectAltNames(cert));
         return tppCertData;
 
     }
@@ -132,7 +132,7 @@ public class CertificateExtractorUtil {
         }
     }
 
-    private static List<String> getSubjectAltNames(X509Certificate certificate, int type) {
+    private static List<String> getSubjectAltNames(X509Certificate certificate) {
         try {
             Collection<?> subjectAltNames = certificate.getSubjectAlternativeNames();
             if (CollectionUtils.isEmpty(subjectAltNames)) {
@@ -140,9 +140,9 @@ public class CertificateExtractorUtil {
             }
 
             return certificate.getSubjectAlternativeNames().stream()
-                       .map(entry -> (List<?>) entry)
+                       .map(List.class::cast)
                        .filter(CertificateExtractorUtil::isValidSubjectAltName)
-                       .filter(e -> (Integer) e.get(0) == type)
+                       .filter(e -> (Integer) e.get(0) == GeneralName.dNSName)
                        .map(e -> (String) e.get(1))
                        .filter(Objects::nonNull)
                        .collect(Collectors.toList());
@@ -156,5 +156,4 @@ public class CertificateExtractorUtil {
                    && entry.size() >= 2
                    && entry.get(0) != null;
     }
-
 }

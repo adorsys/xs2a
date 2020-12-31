@@ -17,10 +17,10 @@
 package de.adorsys.psd2.validator.common;
 
 public class TppRoles {
-    public final static String ASPSP = "ASPSP";
-    public final static String PISP = "PISP";
-    public final static String AISP = "AISP";
-    public final static String PIISP = "PIISP";
+    public static final String ASPSP = "ASPSP";
+    public static final String PISP = "PISP";
+    public static final String AISP = "AISP";
+    public static final String PIISP = "PIISP";
 
     private TppRoles() {
     }
