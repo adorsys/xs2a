@@ -26,6 +26,8 @@ Sonar alerts were fixed for classes:
 - PeriodicPaymentSpiMockImpl
 - PiisConsentSpiMockImpl
 - SinglePaymentSpiMockImpl
+- AisConsent
+- AisConsentDataTest
 
 == Fixed failing consent for multiple accounts without currency
 

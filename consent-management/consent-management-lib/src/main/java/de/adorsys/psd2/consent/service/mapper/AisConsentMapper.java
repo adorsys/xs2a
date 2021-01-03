@@ -29,6 +29,7 @@ import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
+import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -96,30 +97,35 @@ public class AisConsentMapper {
 
         Map<String, Integer> usageCounterMap = aisConsentUsageService.getUsageCounterMap(entity);
 
-        return new AisConsent(aisConsentData,
-                              entity.getExternalId(),
-                              entity.getInternalRequestId(),
-                              entity.getConsentStatus(),
-                              entity.getFrequencyPerDay(),
-                              entity.isRecurringIndicator(),
-                              entity.isMultilevelScaRequired(),
-                              entity.getValidUntil(),
-                              entity.getExpireDate(),
-                              entity.getLastActionDate(),
-                              entity.getCreationTimestamp(),
-                              entity.getStatusChangeTimestamp(),
-                              consentTppInformationMapper.mapToConsentTppInformation(entity.getTppInformation()),
-                              authorisationTemplateMapper.mapToAuthorisationTemplate(entity.getAuthorisationTemplate()),
-                              psuDataMapper.mapToPsuIdDataList(entity.getPsuDataList()),
-                              mapToAccountConsentAuthorisations(authorisations),
-                              usageCounterMap,
-                              accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(),
-                                                                         entity.getOwnerNameType(),
-                                                                         entity.getTrustedBeneficiariesType()),
-                              accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
-                                                                           entity.getOwnerNameType(),
-                                                                           entity.getTrustedBeneficiariesType()),
-                              entity.getInstanceId(), entity.isSigningBasketBlocked(), entity.isSigningBasketAuthorised());
+        return AisConsent.builder()
+                   .consentData(aisConsentData)
+                   .id(entity.getExternalId())
+                   .internalRequestId(entity.getInternalRequestId())
+                   .consentStatus(entity.getConsentStatus())
+                   .frequencyPerDay(entity.getFrequencyPerDay())
+                   .recurringIndicator(entity.isRecurringIndicator())
+                   .multilevelScaRequired(entity.isMultilevelScaRequired())
+                   .validUntil(entity.getValidUntil())
+                   .expireDate(entity.getExpireDate())
+                   .lastActionDate(entity.getLastActionDate())
+                   .creationTimestamp(entity.getCreationTimestamp())
+                   .statusChangeTimestamp(entity.getStatusChangeTimestamp())
+                   .consentTppInformation(consentTppInformationMapper.mapToConsentTppInformation(entity.getTppInformation()))
+                   .authorisationTemplate(authorisationTemplateMapper.mapToAuthorisationTemplate(entity.getAuthorisationTemplate()))
+                   .psuIdDataList(psuDataMapper.mapToPsuIdDataList(entity.getPsuDataList()))
+                   .authorisations(mapToAccountConsentAuthorisations(authorisations))
+                   .usages(usageCounterMap)
+                   .tppAccountAccesses(accessMapper.mapTppAccessesToAccountAccess(entity.getTppAccountAccesses(),
+                                                                                  entity.getOwnerNameType(),
+                                                                                  entity.getTrustedBeneficiariesType()))
+                   .aspspAccountAccesses(accessMapper.mapAspspAccessesToAccountAccess(entity.getAspspAccountAccesses(),
+                                                                                      entity.getOwnerNameType(),
+                                                                                      entity.getTrustedBeneficiariesType()))
+                   .instanceId(entity.getInstanceId())
+                   .consentType(ConsentType.AIS)
+                   .signingBasketBlocked(entity.isSigningBasketBlocked())
+                   .signingBasketAuthorised(entity.isSigningBasketAuthorised())
+                   .build();
     }
 
     public AccountAccess mapToAccountAccess(AisAccountAccess accountAccess) {

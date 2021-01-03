@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Data
+@SuperBuilder
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
@@ -83,7 +85,7 @@ public abstract class Consent<T> {
     private boolean signingBasketAuthorised;
 
     public TppInfo getTppInfo() {
-        return Optional.ofNullable(consentTppInformation)
+        return Optional.of(consentTppInformation)
                    .map(ConsentTppInformation::getTppInfo)
                    .orElse(null);
     }
