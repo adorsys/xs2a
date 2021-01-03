@@ -23,15 +23,19 @@ import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AccountReferenceType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AisConsentDataTest {
-    private JsonReader jsonReader = new JsonReader();
+    private static final JsonReader jsonReader = new JsonReader();
 
     @Test
     void getConsentType() {
@@ -52,36 +56,28 @@ class AisConsentDataTest {
         assertEquals(AisConsentRequestType.BANK_OFFERED, aisConsent.getConsentRequestType());
     }
 
-    @Test
-    void getConsentRequestType_tpp_allAvailableAccounts() {
+    @ParameterizedTest
+    @MethodSource("consents")
+    void getConsentRequestType(AisConsent aisConsent) {
+        assertEquals(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS, aisConsent.getConsentRequestType());
+    }
+
+    private static Stream<Arguments> consents() {
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available.json",
                                                              AisConsent.class);
+        AisConsent aisConsentWithOwnerName = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available-owner-name.json",
+                                                                          AisConsent.class);
+        AisConsent aisConsentWithBalance = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available-with-balance.json",
+                                                                        AisConsent.class);
+        AisConsent aisConsentWithBalanceAndOwnerName = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available-with-balance-owner-name.json",
+                                                                                    AisConsent.class);
 
-        assertEquals(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS, aisConsent.getConsentRequestType());
-    }
-
-    @Test
-    void getConsentRequestType_tpp_allAvailableAccountsWithOwnerName() {
-        AisConsent aisConsent = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available-owner-name.json",
-                                                             AisConsent.class);
-
-        assertEquals(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS, aisConsent.getConsentRequestType());
-    }
-
-    @Test
-    void getConsentRequestType_tpp_allAvailableAccountsWithBalance() {
-        AisConsent aisConsent = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available-with-balance.json",
-                                                             AisConsent.class);
-
-        assertEquals(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS, aisConsent.getConsentRequestType());
-    }
-
-    @Test
-    void getConsentRequestType_tpp_allAvailableAccountsWithBalanceAndOwnerName() {
-        AisConsent aisConsent = jsonReader.getObjectFromFile("json/data/ais/ais-consent-all-available-with-balance-owner-name.json",
-                                                             AisConsent.class);
-
-        assertEquals(AisConsentRequestType.ALL_AVAILABLE_ACCOUNTS, aisConsent.getConsentRequestType());
+        return Stream.of(
+            Arguments.arguments(aisConsent),
+            Arguments.arguments(aisConsentWithOwnerName),
+            Arguments.arguments(aisConsentWithBalance),
+            Arguments.arguments(aisConsentWithBalanceAndOwnerName)
+        );
     }
 
     @Test

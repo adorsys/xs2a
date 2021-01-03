@@ -20,35 +20,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.Consent;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
-import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.consent.AisConsentRequestType;
-import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+@SuperBuilder
 public class AisConsent extends Consent<AisConsentData> {
 
     public AisConsent() {
         setConsentType(ConsentType.AIS);
-    }
-
-    public AisConsent(AisConsentData consentData, String id, String internalRequestId, ConsentStatus consentStatus, Integer frequencyPerDay, boolean recurringIndicator, boolean multilevelScaRequired,
-                      LocalDate validUntil, LocalDate expireDate, LocalDate lastActionDate, OffsetDateTime creationTimestamp, OffsetDateTime statusChangeTimestamp, ConsentTppInformation consentTppInformation,
-                      AuthorisationTemplate authorisationTemplate, List<PsuIdData> psuIdDataList, List<ConsentAuthorization> authorisations, Map<String, Integer> usages,
-                      AccountAccess tppAccountAccess, AccountAccess aspspAccountAccess, String instanceId) {
-
-        super(consentData, id, internalRequestId, consentStatus, frequencyPerDay, recurringIndicator, multilevelScaRequired,
-              validUntil, expireDate, lastActionDate, creationTimestamp, statusChangeTimestamp, consentTppInformation,
-              authorisationTemplate, psuIdDataList, authorisations, usages, tppAccountAccess, aspspAccountAccess, instanceId, ConsentType.AIS);
     }
 
     @JsonIgnore
