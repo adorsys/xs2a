@@ -144,9 +144,15 @@ public class BulkPaymentSpiMockImpl implements BulkPaymentSpi {
         SpiSinglePayment payment = new SpiSinglePayment("sepa-credit-transfers");
         payment.setPaymentId(paymentId);
         payment.setEndToEndIdentification("WBG-123456789");
-        payment.setDebtorAccount(new SpiAccountReference(null, "DE89370400440532013000", null, null, null, null, Currency.getInstance("EUR"), null));
+        payment.setDebtorAccount(SpiAccountReference.builder()
+                                     .iban("DE89370400440532013000")
+                                     .currency(Currency.getInstance("EUR"))
+                                     .build());
         payment.setInstructedAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(50)));
-        payment.setCreditorAccount(new SpiAccountReference(null, "DE52500105173911841934", null, null, null, null, Currency.getInstance("EUR"), null));
+        payment.setCreditorAccount(SpiAccountReference.builder()
+                                       .iban("DE52500105173911841934")
+                                       .currency(Currency.getInstance("EUR"))
+                                       .build());
         payment.setCreditorAgent("FSDFSASGSGF");
         payment.setCreditorName("WBG");
         payment.setCreditorAddress(new SpiAddress("Herrnstraße", "123-34", "Nürnberg", "90431", "DE"));
