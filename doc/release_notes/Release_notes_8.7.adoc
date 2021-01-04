@@ -16,3 +16,11 @@ Sonar alerts were fixed for classes:
 - URLDecodingUtilTest
 - SpiAccountReference
 - SpiPaymentResponse
+- AisConsentSpiMockImpl
+- BulkPaymentSpiMockImpl
+- CommonPaymentSpiMockImpl
+- PaymentAuthorisationSpiMockImpl
+- PaymentCancellationSpiMockImpl
+- PeriodicPaymentSpiMockImpl
+- PiisConsentSpiMockImpl
+- SinglePaymentSpiMockImpl

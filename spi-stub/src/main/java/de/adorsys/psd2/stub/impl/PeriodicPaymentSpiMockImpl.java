@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.stub.impl;
 
+import de.adorsys.psd2.stub.impl.service.PaymentServiceMock;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -30,6 +31,7 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionRespo
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PeriodicPaymentSpi;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -40,9 +42,11 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final String PSU_MESSAGE = "Message from ASPSP to PSU";
+    private final PaymentServiceMock paymentService;
 
     @Override
     @NotNull
@@ -114,16 +118,8 @@ public class PeriodicPaymentSpiMockImpl implements PeriodicPaymentSpi {
 
 
     @Override
-    public @NotNull SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiPeriodicPayment payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        ScaStatus scaStatus = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
-        TransactionStatus transactionStatus = isCancellation
-                                                  ? confirmationCodeValidationResult ? TransactionStatus.CANC : payment.getPaymentStatus()
-                                                  : confirmationCodeValidationResult ? TransactionStatus.ACSP : TransactionStatus.RJCT;
-
-        SpiPaymentConfirmationCodeValidationResponse response = new SpiPaymentConfirmationCodeValidationResponse(scaStatus, transactionStatus);
-
-        return SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
-                   .payload(response)
-                   .build();
+    @NotNull
+    public SpiResponse<SpiPaymentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiPeriodicPayment payment, boolean isCancellation, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return paymentService.notifyConfirmationCodeValidation(confirmationCodeValidationResult, payment, isCancellation);
     }
 }
