@@ -91,9 +91,9 @@ class ConsentCreationNotSuccessfulIT {
     private static final String PSU_IP_ADDRESS_MISSING_ERROR_MESSAGE_JSON_PATH = "/json/account/res/PsuIpAddressMissingErrorMessage.json";
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
 
-    private HttpHeaders httpHeadersImplicit = new HttpHeaders();
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
-    private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
+    private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;

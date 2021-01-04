@@ -125,7 +125,7 @@ class PaymentStartCancellationAuthorisationIT {
     private ArgumentCaptor<PisCancellationAuthorisationParentHolder> pisCancellationAuthorisationParentHolderCaptor;
 
 
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     @BeforeEach
     void setUp() {

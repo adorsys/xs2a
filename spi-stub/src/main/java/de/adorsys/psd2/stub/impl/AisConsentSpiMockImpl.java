@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.stub.impl;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -29,20 +28,21 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
-import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class AisConsentSpiMockImpl implements AisConsentSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+    private final AuthorisationServiceMock authorisationService;
 
     @Override
     public SpiResponse<SpiInitiateAisConsentResponse> initiateAisConsent(@NotNull SpiContextData contextData, SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
@@ -97,15 +97,9 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     }
 
     @Override
-    public @NotNull SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, @NotNull boolean confirmationCodeValidationResult, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        ScaStatus scaStatus = confirmationCodeValidationResult ? ScaStatus.FINALISED : ScaStatus.FAILED;
-        ConsentStatus consentStatus = confirmationCodeValidationResult ? ConsentStatus.VALID : ConsentStatus.REJECTED;
-
-        SpiConsentConfirmationCodeValidationResponse response = new SpiConsentConfirmationCodeValidationResponse(scaStatus, consentStatus);
-
-        return SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder()
-                   .payload(response)
-                   .build();
+    @NotNull
+    public SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(@NotNull SpiContextData contextData, boolean confirmationCodeValidationResult, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return authorisationService.notifyConfirmationCodeValidation(confirmationCodeValidationResult);
     }
 
     @Override
@@ -120,37 +114,14 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     @Override
     public SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#requestAvailableScaMethods: contextData {}, businessObject-id {}", contextData, businessObject.getId());
-        List<AuthenticationObject> spiScaMethods = new ArrayList<>();
-        AuthenticationObject sms = new AuthenticationObject();
-        sms.setAuthenticationType("SMS_OTP");
-        sms.setAuthenticationMethodId("sms");
-        sms.setName("some-sms-name");
-        spiScaMethods.add(sms);
-        AuthenticationObject push = new AuthenticationObject();
-        push.setAuthenticationType("PUSH_OTP");
-        push.setAuthenticationMethodId("push");
-        push.setDecoupled(true);
-        spiScaMethods.add(push);
-
-        return SpiResponse.<SpiAvailableScaMethodsResponse>builder()
-                   .payload(new SpiAvailableScaMethodsResponse(false, spiScaMethods))
-                   .build();
+        return authorisationService.requestAvailableScaMethods();
     }
 
     @Override
     @NotNull
     public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull SpiAccountConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("AisConsentSpi#requestAuthorisationCode: contextData {}, authenticationMethodId {}, businessObject-id {}", contextData, authenticationMethodId, businessObject.getId());
-        SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        AuthenticationObject method = new AuthenticationObject();
-        method.setAuthenticationMethodId("sms");
-        method.setAuthenticationType("SMS_OTP");
-        spiAuthorizationCodeResult.setSelectedScaMethod(method);
-        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, Collections.singletonList("some data"), "some link", 100, null, "info"));
-
-        return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .payload(spiAuthorizationCodeResult)
-                   .build();
+        return authorisationService.requestAuthorisationCode();
     }
 
     @Override

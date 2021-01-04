@@ -70,7 +70,7 @@ class LoggingContextServiceIT {
     private static final String ASPSP_PROFILE_BASE_URL = "http://localhost:48080/api/v1";
     private static final String CMS_BASE_URL = "http://localhost:38080/api/v1";
 
-    private HttpHeaders httpHeadersImplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;
@@ -85,7 +85,7 @@ class LoggingContextServiceIT {
     @Autowired
     private RestTemplate consentRestTemplate;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void init() {
