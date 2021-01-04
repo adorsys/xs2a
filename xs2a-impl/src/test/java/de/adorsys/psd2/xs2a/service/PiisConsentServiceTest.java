@@ -142,7 +142,10 @@ class PiisConsentServiceTest {
         Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = new Xs2aCreatePiisConsentResponse(CONSENT_ID, piisConsent);
         when(xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, TPP_INFO))
             .thenReturn(Optional.of(xs2aCreatePiisConsentResponse));
-        SpiAccountReference spiAccountReference = new SpiAccountReference(null, "DE15500105172295759744", null, null, null, null, Currency.getInstance("EUR"), null);
+        SpiAccountReference spiAccountReference = SpiAccountReference.builder()
+                                                      .iban("DE15500105172295759744")
+                                                      .currency(Currency.getInstance("EUR"))
+                                                      .build();
         SpiInitiatePiisConsentResponse spiInitiatePiisConsentResponse = new SpiInitiatePiisConsentResponse(spiAccountReference, true, PSU_MESSAGE);
         when(piisConsentSpi.initiatePiisConsent(SPI_CONTEXT_DATA, spiPiisConsent, aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiInitiatePiisConsentResponse>builder().payload(spiInitiatePiisConsentResponse).build());

@@ -545,7 +545,7 @@ class CardTransactionServiceTest {
     }
 
     private static SpiAccountReference buildSpiAccountReferenceGlobal() {
-        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null, null);
+        return SpiAccountReference.builder().resourceId(ACCOUNT_ID).build();
     }
 
     private static AccountReference buildXs2aAccountReference() {
