@@ -99,7 +99,7 @@ class PaymentTransactionStatusIT {
     private static final String TRANSACTION_STATUS_RESPONSE_PATH = "/json/payment/res/status/payment_initiation_status_resp.json";
     private static final String TRANSACTION_STATUS_SPI_XML_PATH = "/xml/payment/spi/res/payment_initiation_status_raw.xml";
 
-    private HttpHeaders httpHeaders = new HttpHeaders();
+    private final HttpHeaders httpHeaders = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;

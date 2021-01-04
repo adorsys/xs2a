@@ -16,8 +16,7 @@
 
 package de.adorsys.psd2.stub.impl;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
@@ -25,19 +24,18 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @Slf4j
 @Service
+@AllArgsConstructor
 public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+    private final AuthorisationServiceMock authorisationService;
 
     @Override
     public SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(@NotNull SpiContextData contextData, @NotNull String authorisationId, @NotNull SpiPsuData psuLoginData, String password, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
@@ -51,36 +49,14 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
     @Override
     public SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentAuthorisationSpi#requestAvailableScaMethods: contextData {}, businessObject {}", contextData, businessObject);
-        List<AuthenticationObject> spiScaMethods = new ArrayList<>();
-        AuthenticationObject sms = new AuthenticationObject();
-        sms.setAuthenticationType("SMS_OTP");
-        sms.setAuthenticationMethodId("sms");
-        spiScaMethods.add(sms);
-        AuthenticationObject push = new AuthenticationObject();
-        push.setAuthenticationType("PUSH_OTP");
-        push.setAuthenticationMethodId("push");
-        push.setDecoupled(true);
-        spiScaMethods.add(push);
-
-        return SpiResponse.<SpiAvailableScaMethodsResponse>builder()
-                   .payload(new SpiAvailableScaMethodsResponse(false, spiScaMethods))
-                   .build();
+        return authorisationService.requestAvailableScaMethods();
     }
 
     @Override
     @NotNull
     public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentAuthorisationSpi#requestAuthorisationCode: contextData {}, authenticationMethodId {}, businessObject {}", contextData, authenticationMethodId, businessObject);
-        SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        AuthenticationObject method = new AuthenticationObject();
-        method.setAuthenticationMethodId("sms");
-        method.setAuthenticationType("SMS_OTP");
-        spiAuthorizationCodeResult.setSelectedScaMethod(method);
-        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, Collections.singletonList("some data"), "some link", 100, null, "info"));
-
-        return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .payload(spiAuthorizationCodeResult)
-                   .build();
+        return authorisationService.requestAuthorisationCode();
     }
 
     @Override

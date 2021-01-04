@@ -100,13 +100,13 @@ class AccountControllerIT {
     private static final String ACCOUNT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final String CONSENT_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
-    private HttpHeaders httpHeaders = new HttpHeaders();
-    private HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
+    private final HttpHeaders httpHeaders = new HttpHeaders();
+    private final HttpHeaders httpHeadersWithoutPsuIpAddress = new HttpHeaders();
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
     private static final String ACCESS_EXCEEDED_JSON_PATH = "/json/account/res/AccessExceededResponse.json";
     private static final UUID X_REQUEST_ID = UUID.randomUUID();
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Autowired
     private MockMvc mockMvc;
@@ -151,8 +151,8 @@ class AccountControllerIT {
         given(eventServiceEncrypted.recordEvent(any(EventBO.class)))
             .willReturn(true);
         given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
-                                                                                    .payload(new CmsConsent())
-                                                                                    .build());
+                                                                                 .payload(new CmsConsent())
+                                                                                 .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
         given(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID)).willReturn(aspspConsentDataProvider);
@@ -235,7 +235,7 @@ class AccountControllerIT {
 
         CmsConsent cmsConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
-                                                                                    .payload(cmsConsent)
+                                                                                 .payload(cmsConsent)
                                                                                  .build());
         given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(CONSENT_ID), any()))
             .willReturn(CmsResponse.<CmsConsent>builder()
@@ -268,7 +268,7 @@ class AccountControllerIT {
 
         CmsConsent cmsConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", 0));
         given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
-                                                                                    .payload(cmsConsent)
+                                                                                 .payload(cmsConsent)
                                                                                  .build());
 
         given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(CONSENT_ID), any()))
@@ -305,7 +305,7 @@ class AccountControllerIT {
         for (int usage = 2; usage >= 0; usage--) {
             CmsConsent cmsConsent = buildAisAccountConsent(Collections.singletonMap("/v1/accounts", usage));
             given(consentServiceEncrypted.getConsentById(CONSENT_ID)).willReturn(CmsResponse.<CmsConsent>builder()
-                                                                                        .payload(cmsConsent)
+                                                                                     .payload(cmsConsent)
                                                                                      .build());
             given(aisConsentServiceEncrypted.updateAspspAccountAccess(eq(CONSENT_ID), any()))
                 .willReturn(CmsResponse.<CmsConsent>builder()
