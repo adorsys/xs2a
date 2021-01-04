@@ -5869,6 +5869,60 @@ components:
         limitAmount:
           $ref: "#/components/schemas/amount"
 
+    entryDetails:
+      description: |
+        This data type describe entry details of a batch booking entry.
+        The details are restricted to data attributes relevant in this case.
+      type: object
+      required:
+        - transactionAmount
+      properties:
+        endToEndId:
+          description: Unique end to end identity.
+          type: string
+          maxLength: 35
+        mandateId:
+          description: Identification of Mandates, e.g. a SEPA Mandate ID.
+          type: string
+          maxLength: 35
+        checkId:
+          description: Identification of a Cheque
+          type: string
+          maxLength: 35
+        creditorId:
+          $ref: "#/components/schemas/creditorId"
+        transactionAmount:
+          $ref: "#/components/schemas/amount"
+        currencyExchange:
+          type: array
+          items:
+            $ref: "#/components/schemas/reportExchangeRate"
+        creditorName:
+          $ref: "#/components/schemas/creditorName"
+        creditorAccount:
+          $ref: "#/components/schemas/accountReference"
+        creditorAgent:
+          $ref: "#/components/schemas/bicfi"
+        ultimateCreditor:
+          $ref: "#/components/schemas/ultimateCreditor"
+        debtorName:
+          $ref: "#/components/schemas/debtorName"
+        debtorAccount:
+          $ref: "#/components/schemas/accountReference"
+        debtorAgent:
+          $ref: "#/components/schemas/bicfi"
+        ultimateDebtor:
+          $ref: "#/components/schemas/ultimateDebtor"
+        remittanceInformationUnstructured:
+          $ref: "#/components/schemas/remittanceInformationUnstructured"
+        remittanceInformationUnstructuredArray:
+          $ref: "#/components/schemas/remittanceInformationUnstructuredArray"
+        remittanceInformationStructured: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructuredMax140"
+        remittanceInformationStructuredArray: # N.A. for all, but can be used by ASPSP if needed
+          $ref: "#/components/schemas/remittanceInformationStructuredArray"
+        purposeCode:
+          $ref: "#/components/schemas/purposeCode"
 
     #####################################################
     # Predefined Text Formats
