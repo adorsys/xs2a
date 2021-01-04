@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.spi.domain.account;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +25,7 @@ import java.util.Currency;
 
 @Data
 @NotNull
+@Builder
 @AllArgsConstructor
 public class SpiAccountReference {
     private String aspspAccountId;
@@ -45,16 +47,5 @@ public class SpiAccountReference {
         this.maskedPan = accountDetails.getMaskedPan();
         this.msisdn = accountDetails.getMsisdn();
         this.currency = accountDetails.getCurrency();
-    }
-
-    public SpiAccountReference(String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency, String otherAccountIdentification) {
-        this.resourceId = resourceId;
-        this.iban = iban;
-        this.bban = bban;
-        this.pan = pan;
-        this.maskedPan = maskedPan;
-        this.msisdn = msisdn;
-        this.currency = currency;
-        this.otherAccountIdentification = otherAccountIdentification;
     }
 }

@@ -95,7 +95,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     @Mock
     private Xs2aToSpiAccountReferenceMapper xs2aToSpiAccountReferenceMapper;
     @Spy
-    private RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
+    private final RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
     @BeforeEach
     void setUp() {
@@ -107,8 +107,8 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
             .thenReturn(buildSpiAccountReference());
         when(xs2aToSpiAccountReferenceMapper.mapToSpiAccountReference(buildAccountReference(CRED_ACCOUNT_ID)))
             .thenReturn(buildSpiAccountReference());
-        when(xs2aToSpiAmountMapper.mapToSpiAmount(buildXs2aAmount(EUR_CURRENCY, "100")))
-            .thenReturn(buildSpiAmount(EUR_CURRENCY, "100"));
+        when(xs2aToSpiAmountMapper.mapToSpiAmount(buildXs2aAmount(EUR_CURRENCY)))
+            .thenReturn(buildSpiAmount(EUR_CURRENCY));
         when(xs2aToSpiAddressMapper.mapToSpiAddress(buildXs2aAddress()))
             .thenReturn(buildSpiAddress());
     }
@@ -130,7 +130,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         assertEquals(INSTRUCTION_IDENTIFICATION, spiPeriodicPayment.getInstructionIdentification());
         assertEquals(buildSpiAccountReference(), spiPeriodicPayment.getDebtorAccount());
         assertEquals(buildSpiAccountReference(), spiPeriodicPayment.getCreditorAccount());
-        assertEquals(buildSpiAmount(EUR_CURRENCY, "100"), spiPeriodicPayment.getInstructedAmount());
+        assertEquals(buildSpiAmount(EUR_CURRENCY), spiPeriodicPayment.getInstructedAmount());
         assertEquals(CREDITOR_AGENT, spiPeriodicPayment.getCreditorAgent());
         assertEquals(CREDITOR_NAME, spiPeriodicPayment.getCreditorName());
         assertEquals(buildSpiAddress(), spiPeriodicPayment.getCreditorAddress());
@@ -162,7 +162,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         periodicPayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
         periodicPayment.setDebtorAccount(buildAccountReference(DEB_ACCOUNT_ID));
         periodicPayment.setCreditorAccount(buildAccountReference(CRED_ACCOUNT_ID));
-        periodicPayment.setInstructedAmount(buildXs2aAmount(EUR_CURRENCY, "100"));
+        periodicPayment.setInstructedAmount(buildXs2aAmount(EUR_CURRENCY));
         periodicPayment.setCreditorAgent(CREDITOR_AGENT);
         periodicPayment.setCreditorName(CREDITOR_NAME);
         periodicPayment.setCreditorAddress(buildXs2aAddress());
@@ -196,12 +196,12 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         return xs2aAddress;
     }
 
-    private Xs2aAmount buildXs2aAmount(Currency currency, String sum) {
-        return new Xs2aAmount(currency, sum);
+    private Xs2aAmount buildXs2aAmount(Currency currency) {
+        return new Xs2aAmount(currency, "100");
     }
 
-    private SpiAmount buildSpiAmount(Currency currency, String sum) {
-        return new SpiAmount(currency, new BigDecimal(sum));
+    private SpiAmount buildSpiAmount(Currency currency) {
+        return new SpiAmount(currency, new BigDecimal("100"));
     }
 
     private AccountReference buildAccountReference(String accountId) {
@@ -214,7 +214,7 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
     }
 
     private SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(RESOURCE_ID, IBAN, null, null, null, null, EUR_CURRENCY, null);
+        return SpiAccountReference.builder().resourceId(RESOURCE_ID).iban(IBAN).currency(EUR_CURRENCY).build();
     }
 
     private PsuIdData buildPsu(String psuId) {

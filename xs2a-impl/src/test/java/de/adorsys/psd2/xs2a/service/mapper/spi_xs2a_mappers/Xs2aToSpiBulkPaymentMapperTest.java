@@ -147,7 +147,7 @@ class Xs2aToSpiBulkPaymentMapperTest {
     }
 
     private SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(RESOURCE_ID, IBAN, null, null, null, null, EUR_CURRENCY, null);
+        return SpiAccountReference.builder().resourceId(RESOURCE_ID).iban(IBAN).currency(EUR_CURRENCY).build();
     }
 
     private PsuIdData buildPsu(String psuId) {
