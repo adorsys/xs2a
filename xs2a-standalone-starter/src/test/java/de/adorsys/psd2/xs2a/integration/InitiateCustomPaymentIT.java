@@ -75,7 +75,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     Xs2aEndpointPathConstant.class,
     Xs2aInterfaceConfig.class
 })
-public class InitiateCustomPaymentIT extends CustomPaymentTestParent {
+class InitiateCustomPaymentIT extends CustomPaymentTestParent {
     @BeforeEach
     protected void init() {
         super.init();

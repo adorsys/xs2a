@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.stub.impl;
 
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
+import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
-import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
@@ -28,19 +27,18 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 @Slf4j
 @Service
+@AllArgsConstructor
 public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+    private final AuthorisationServiceMock authorisationService;
 
     @Override
     @NotNull
@@ -85,37 +83,15 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
 
     @Override
     public SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("PaymentCancellationSpi#requestAvailableScaMethods: contextData {}, businessObject {}, aspspConsentData ()", contextData, businessObject, aspspConsentDataProvider.loadAspspConsentData());
-        List<AuthenticationObject> spiScaMethods = new ArrayList<>();
-        AuthenticationObject sms = new AuthenticationObject();
-        sms.setAuthenticationType("SMS_OTP");
-        sms.setAuthenticationMethodId("sms");
-        spiScaMethods.add(sms);
-        AuthenticationObject push = new AuthenticationObject();
-        push.setAuthenticationType("PUSH_OTP");
-        push.setAuthenticationMethodId("push");
-        push.setDecoupled(true);
-        spiScaMethods.add(push);
-
-        return SpiResponse.<SpiAvailableScaMethodsResponse>builder()
-                   .payload(new SpiAvailableScaMethodsResponse(false, spiScaMethods))
-                   .build();
+        log.info("PaymentCancellationSpi#requestAvailableScaMethods: contextData {}, businessObject {}, aspspConsentData {}", contextData, businessObject, aspspConsentDataProvider.loadAspspConsentData());
+        return authorisationService.requestAvailableScaMethods();
     }
 
     @Override
     @NotNull
     public SpiResponse<SpiAuthorizationCodeResult> requestAuthorisationCode(@NotNull SpiContextData contextData, @NotNull String authenticationMethodId, @NotNull SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         log.info("PaymentCancellationSpi#requestAuthorisationCode: contextData {}, authenticationMethodId {}, businessObject {}, aspspConsentData {}", contextData, authenticationMethodId, businessObject, aspspConsentDataProvider.loadAspspConsentData());
-        SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
-        AuthenticationObject method = new AuthenticationObject();
-        method.setAuthenticationMethodId("sms");
-        method.setAuthenticationType("SMS_OTP");
-        spiAuthorizationCodeResult.setSelectedScaMethod(method);
-        spiAuthorizationCodeResult.setChallengeData(new ChallengeData(null, Collections.singletonList("some data"), "some link", 100, null, "info"));
-
-        return SpiResponse.<SpiAuthorizationCodeResult>builder()
-                   .payload(spiAuthorizationCodeResult)
-                   .build();
+        return authorisationService.requestAuthorisationCode();
     }
 
     @Override
@@ -129,7 +105,8 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     }
 
     @Override
-    public @NotNull SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+    @NotNull
+    public SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<Boolean>builder()
                    .payload(true)
                    .build();

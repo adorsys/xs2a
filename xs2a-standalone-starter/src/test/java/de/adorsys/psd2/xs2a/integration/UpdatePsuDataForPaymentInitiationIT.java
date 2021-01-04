@@ -125,9 +125,9 @@ class UpdatePsuDataForPaymentInitiationIT {
     @MockBean
     private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
-    private HttpHeaders httpHeaders = new HttpHeaders();
+    private final HttpHeaders httpHeaders = new HttpHeaders();
 
     @BeforeEach
     void setUp() {
