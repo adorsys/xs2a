@@ -8420,6 +8420,8 @@ components:
           $ref: "#/components/schemas/hrefType"
         last:
           $ref: "#/components/schemas/hrefType"
+        card:
+          $ref: "#/components/schemas/hrefType"
 
 
     _linksTransactionDetails:

@@ -95,4 +95,7 @@ public class Links {
 
     @ApiModelProperty(value = "The link, which should be used by for storing the confirmation code in CMS.")
     private HrefType confirmation;
+
+    @ApiModelProperty(value = "The link for Card Account Report data type")
+    private HrefType card;
 }
