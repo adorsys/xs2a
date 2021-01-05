@@ -183,9 +183,11 @@ public class AisChecksumCalculatingServiceV3 implements ChecksumCalculatingServi
                                               .filter(acc -> acc.getUsedAccountReferenceSelector().getAccountReferenceType() == type)
                                               .filter(acc -> StringUtils.isNotBlank(acc.getResourceId()) || StringUtils.isNotBlank(acc.getAspspAccountId()))
                                               .sorted(Comparator.comparing(AccountReference::getAccountReferenceType)
+
                                                           .thenComparing(acc -> Optional.ofNullable(acc.getCurrency())
                                                                                     .map(Currency::getCurrencyCode)
-                                                                                    .orElse(null)))
+                                                                                    .orElse(StringUtils.EMPTY))
+                                              )
                                               .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(filtered)) {
