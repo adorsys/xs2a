@@ -3,6 +3,7 @@
 == Table of Contents
 
 * Fixed sonar alerts
+* Fixed failing consent for multiple accounts without currency
 
 == Fixed sonar alerts
 
@@ -24,3 +25,7 @@ Sonar alerts were fixed for classes:
 - PeriodicPaymentSpiMockImpl
 - PiisConsentSpiMockImpl
 - SinglePaymentSpiMockImpl
+
+== Fixed failing consent for multiple accounts without currency
+
+From now on, consent for multiple accounts without currency could be successfully created.
