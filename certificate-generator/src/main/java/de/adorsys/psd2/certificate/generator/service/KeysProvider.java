@@ -7,21 +7,24 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.Optional;
 
 @Component
 public class KeysProvider {
-    private static final String ISSUER_PRIVATE_KEY = "MyRootCA.key";
-    private static final String ISSUER_CERTIFICATE = "MyRootCA.pem";
+
+    @Value("${xs2a.certificate-generator.template.public.key:certificates/MyRootCA.key}")
+    private String issuerPrivateKey;
+
+    @Value("${xs2a.certificate-generator.template.private.key:certificates/MyRootCA.pem}")
+    private String issuerCertificate;
 
     /**
      * Load private key from classpath.
@@ -29,9 +32,9 @@ public class KeysProvider {
      * @return PrivateKey
      */
     public PrivateKey loadPrivateKey() {
-        InputStream stream = getResourceAsStream(ISSUER_PRIVATE_KEY);
+        InputStream stream = getResourceAsStream(issuerPrivateKey);
         if (stream == null) {
-            throw new CertificateGeneratorException("Could not read private key from classpath:" + "certificates/" + ISSUER_PRIVATE_KEY);
+            throw new CertificateGeneratorException("Could not read private key from classpath:" + "certificates/" + issuerPrivateKey);
         }
         BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         try {
@@ -52,7 +55,7 @@ public class KeysProvider {
      * @return X509Certificate
      */
     public X509Certificate loadCertificate() {
-        InputStream is = getResourceAsStream(ISSUER_CERTIFICATE);
+        InputStream is = getResourceAsStream(issuerCertificate);
 
         if (is == null) {
             throw new CertificateGeneratorException("Could not find certificate in classpath");
@@ -66,8 +69,28 @@ public class KeysProvider {
         }
     }
 
-    private InputStream getResourceAsStream(String filename) {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        return loader.getResourceAsStream("certificates/" + filename);
+    private InputStream getResourceAsStream(String path) {
+        InputStream resourceAsStream = getResourceFromPath(path);
+        if (resourceAsStream == null) {
+            resourceAsStream = getFromGlobalPath(path);
+        }
+        return resourceAsStream;
+    }
+
+    private InputStream getResourceFromPath(String path) {
+        return Optional.ofNullable(getClass().getClassLoader().getResourceAsStream(path)).orElse(getFromInnerPath(path));
+    }
+
+    private InputStream getFromInnerPath(String path) {
+        return Optional.ofNullable(getClass().getResourceAsStream(path)).orElse(null);
+    }
+
+    private InputStream getFromGlobalPath(String path) {
+        File initialFile = new File(path);
+        try {
+            return new FileInputStream(initialFile);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 }

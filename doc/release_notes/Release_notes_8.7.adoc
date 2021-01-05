@@ -4,6 +4,7 @@
 
 * Fixed sonar alerts
 * Fixed failing consent for multiple accounts without currency
+* Improved Certificate generator
 
 == Fixed sonar alerts
 
@@ -29,3 +30,12 @@ Sonar alerts were fixed for classes:
 == Fixed failing consent for multiple accounts without currency
 
 From now on, consent for multiple accounts without currency could be successfully created.
+
+== Improved Certificate generator
+
+From now on, Certificate generator has two yml properties:
+
+- `xs2a.certificate-generator.template.public.key`
+- `xs2a.certificate-generator.template.private.key`
+
+Those parameters set path for `.key` and `.pem`.
