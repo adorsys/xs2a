@@ -2,3 +2,8 @@
 
 == Table of Contents
 
+* Fixed failing consent for multiple accounts without currency
+
+== Fixed failing consent for multiple accounts without currency
+
+From now on, consent for multiple accounts without currency could be successfully created.
