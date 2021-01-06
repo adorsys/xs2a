@@ -5,6 +5,7 @@
 * Fixed sonar alerts
 * Fixed failing consent for multiple accounts without currency
 * Improved Certificate generator
+* Added new data type Entry Details
 
 == Fixed sonar alerts
 
@@ -41,3 +42,7 @@ From now on, Certificate generator has two yml properties:
 - `xs2a.certificate-generator.template.private.key`
 
 Those parameters set path for `.key` and `.pem`.
+
+== Added new data type Entry Details
+
+Fron now on, `xs2a-server-api` contains new model - `EntryDetails`
