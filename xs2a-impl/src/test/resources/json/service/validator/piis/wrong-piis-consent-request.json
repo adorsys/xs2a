@@ -1,5 +1,8 @@
 {
   "id": "test consent id",
   "recurringIndicator": false,
-  "consentStatus": "VALID"
+  "consentStatus": "VALID",
+  "consentTppInformation": {
+    "tppRedirectPreferred": true
+  }
 }
