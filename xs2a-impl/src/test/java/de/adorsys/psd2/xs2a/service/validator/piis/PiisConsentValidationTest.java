@@ -51,7 +51,7 @@ class PiisConsentValidationTest {
     private static final String AUTHORISATION_NUMBER = "12345987";
     private static final String DIFFERENT_AUTHORISATION_NUMBER = "different authorisation number";
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private PiisConsentValidation piisConsentValidation;
@@ -192,12 +192,5 @@ class PiisConsentValidationTest {
         tppInfo.setAuthorisationNumber(authorisationNumber);
         consentTppInformation.setTppInfo(tppInfo);
         return consentTppInformation;
-    }
-
-    private void assertThatErrorIs(PiisConsentValidationResult validationResult, MessageErrorCode consentUnknown400) {
-        assertNotNull(validationResult);
-        assertTrue(validationResult.hasError());
-        assertEquals(consentUnknown400, validationResult.getErrorHolder().getTppMessageInformationList().iterator().next().getMessageErrorCode());
-        assertEquals(PIIS_400, validationResult.getErrorHolder().getErrorType());
     }
 }
