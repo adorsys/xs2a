@@ -6,6 +6,7 @@
 * Fixed failing consent for multiple accounts without currency
 * Improved Certificate generator
 * Added new data type Entry Details
+* Added link of type "card" to the Card Account Report
 
 == Fixed sonar alerts
 
@@ -46,3 +47,7 @@ Those parameters set path for `.key` and `.pem`.
 == Added new data type Entry Details
 
 Fron now on, `xs2a-server-api` contains new model - `EntryDetails`
+
+== Added link of type "card" to the Card Account Report
+
+From now on, Card Account Report could contain link of type "card"
