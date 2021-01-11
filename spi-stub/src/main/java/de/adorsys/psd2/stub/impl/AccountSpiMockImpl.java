@@ -49,7 +49,7 @@ public class AccountSpiMockImpl implements AccountSpi {
     private static final String NAME = "Müller";
     private static final String REMITTANCE = "PMNT-ICDT-STDO";
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Override
     public SpiResponse<List<SpiAccountDetails>> requestAccountList(@NotNull SpiContextData contextData, boolean withBalance, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
@@ -172,7 +172,17 @@ public class AccountSpiMockImpl implements AccountSpi {
                                   NAME, buildSpiAccountReference(), NAME, NAME, NAME, buildSpiAccountReference(),
                                   NAME, NAME, "", Collections.singletonList("remittance information unstructured"),
                                   REMITTANCE, Collections.singletonList(REMITTANCE), "", "",
-                                  "some additional information", null, null, buildSpiAccountBalance());
+                                  "some additional information", null, null, buildSpiAccountBalance(),
+                                  false, 10, Collections.singletonList(buildSpiEntryDetails()));
+    }
+
+    private SpiEntryDetails buildSpiEntryDetails() {
+        return new SpiEntryDetails("endToEndId", "mandateId", "checkId", "creditorId",
+                                   new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(345)),
+                                   Collections.emptyList(), "creditorName", buildSpiAccountReference(),
+                                   "creditorAgent", "ultimateCreditor", "debtorName", buildSpiAccountReference(),
+                                   "debtorAgent", "ultimateDebtor", "remittanceInformationUnstructured", Collections.singletonList("remittanceInformationUnstructuredArray"),
+                                   "remittanceInformationStructured", Collections.singletonList("remittanceInformationStructuredArray"), "CDCB");
     }
 
     private SpiTransaction buildInformationSpiTransaction() {
@@ -189,7 +199,8 @@ public class AccountSpiMockImpl implements AccountSpi {
                                   "", null, null,
                                   REMITTANCE, Collections.singletonList(REMITTANCE),
                                   null, null, null,
-                                  null, additionalInformationStructured, buildSpiAccountBalance());
+                                  null, additionalInformationStructured, buildSpiAccountBalance(),
+                                  false, 15, Collections.singletonList(buildSpiEntryDetails()));
     }
 
     private SpiAccountReference buildSpiAccountReference() {

@@ -7,6 +7,7 @@
 * Improved Certificate generator
 * Added new data type Entry Details
 * Added link of type "card" to the Card Account Report
+* Added optional attributes to the Transactions data type
 
 == Fixed sonar alerts
 
@@ -51,3 +52,11 @@ Fron now on, `xs2a-server-api` contains new model - `EntryDetails`
 == Added link of type "card" to the Card Account Report
 
 From now on, Card Account Report could contain link of type "card"
+
+== Added optional attributes to the Transactions data type
+
+From now on, Transactions contain three new fields:
+
+- batchIndicator (Boolean),
+- batchNumberOfTransactions (Integer),
+- entryDetails (Array of Entry Details)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,58 +19,30 @@ package de.adorsys.psd2.xs2a.domain;
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
-import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import lombok.Data;
 
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class Transactions {
-    @Size(max = 35)
-    private String transactionId;
-    @Size(max = 35)
-    private String entryReference;
-    @Size(max = 35)
+public class EntryDetails {
     private String endToEndId;
-    @Size(max = 35)
     private String mandateId;
-    @Size(max = 35)
     private String checkId;
-    @Size(max = 35)
     private String creditorId;
-    private LocalDate bookingDate;
-    private LocalDate valueDate;
-    private Xs2aAmount amount;
-    private List<Xs2aExchangeRate> exchangeRate;
-    @Size(max = 70)
+    private Xs2aAmount transactionAmount;
+    private List<Xs2aExchangeRate> currencyExchange;
     private String creditorName;
     private AccountReference creditorAccount;
     private String creditorAgent;
-    @Size(max = 70)
     private String ultimateCreditor;
     private String debtorName;
     private AccountReference debtorAccount;
     private String debtorAgent;
-    @Size(max = 70)
     private String ultimateDebtor;
-    @Size(max = 140)
     private String remittanceInformationUnstructured;
     private List<String> remittanceInformationUnstructuredArray;
-    @Size(max = 140)
     private String remittanceInformationStructured;
     private List<String> remittanceInformationStructuredArray;
     private PurposeCode purposeCode;
-    private BankTransactionCode bankTransactionCodeCode;
-    @Size(max = 35)
-    private String proprietaryBankTransactionCode;
-    private String additionalInformation;
-    private Xs2aAdditionalInformationStructured additionalInformationStructured;
-    private Xs2aBalance balanceAfterTransaction;
-    private Boolean batchIndicator;
-    private Integer batchNumberOfTransactions;
-    private List<EntryDetails> entryDetails;
-    private Links links = new Links();
 }
+
