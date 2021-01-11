@@ -18,6 +18,7 @@ package de.adorsys.psd2.event.service.model;
 
 import de.adorsys.psd2.event.core.model.EventOrigin;
 import de.adorsys.psd2.event.core.model.EventType;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +31,7 @@ import java.util.UUID;
  */
 @Setter
 @Getter
+@Builder
 @EqualsAndHashCode
 public class EventBO {
     /**
@@ -95,99 +97,4 @@ public class EventBO {
      * Can be null if the event doesn't provide any additional information.
      */
     private Object payload;
-
-    private EventBO() {
-    }
-
-    public static EventBuilder builder() {
-        return new EventBuilder();
-    }
-
-    public static final class EventBuilder {
-        private OffsetDateTime timestamp;
-        private String consentId;
-        private String paymentId;
-        private Object payload;
-        private EventOrigin eventOrigin;
-        private EventType eventType;
-        private String instanceId;
-        private String tppAuthorisationNumber;
-        private UUID xRequestId;
-        private PsuIdDataBO psuIdData;
-        private UUID internalRequestId;
-
-        private EventBuilder() {
-        }
-
-        public EventBuilder timestamp(OffsetDateTime timestamp) {
-            this.timestamp = timestamp;
-            return this;
-        }
-
-        public EventBuilder consentId(String consentId) {
-            this.consentId = consentId;
-            return this;
-        }
-
-        public EventBuilder paymentId(String paymentId) {
-            this.paymentId = paymentId;
-            return this;
-        }
-
-        public EventBuilder payload(Object payload) {
-            this.payload = payload;
-            return this;
-        }
-
-        public EventBuilder eventOrigin(EventOrigin eventOrigin) {
-            this.eventOrigin = eventOrigin;
-            return this;
-        }
-
-        public EventBuilder eventType(EventType eventType) {
-            this.eventType = eventType;
-            return this;
-        }
-
-        public EventBuilder instanceId(String instanceId) {
-            this.instanceId = instanceId;
-            return this;
-        }
-
-        public EventBuilder psuIdData(PsuIdDataBO psuIdData) {
-            this.psuIdData = psuIdData;
-            return this;
-        }
-
-        public EventBuilder tppAuthorisationNumber(String tppAuthorisationNumber) {
-            this.tppAuthorisationNumber = tppAuthorisationNumber;
-            return this;
-        }
-
-        public EventBuilder xRequestId(UUID xRequestId) {
-            this.xRequestId = xRequestId;
-            return this;
-        }
-
-        public EventBuilder internalRequestId(UUID inRId) {
-            this.internalRequestId = inRId;
-            return this;
-        }
-
-        public EventBO build() {
-            EventBO event = new EventBO();
-            event.setTimestamp(timestamp);
-            event.setConsentId(consentId);
-            event.setPaymentId(paymentId);
-            event.setPayload(payload);
-            event.setEventOrigin(eventOrigin);
-            event.setEventType(eventType);
-            event.setInstanceId(instanceId);
-            event.setPsuIdData(psuIdData);
-            event.setTppAuthorisationNumber(tppAuthorisationNumber);
-            event.setXRequestId(xRequestId);
-            event.setInternalRequestId(internalRequestId);
-            return event;
-        }
-    }
 }

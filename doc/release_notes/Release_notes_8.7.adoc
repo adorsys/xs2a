@@ -28,6 +28,10 @@ Sonar alerts were fixed for classes:
 - SinglePaymentSpiMockImpl
 - AisConsent
 - AisConsentDataTest
+- SqlEventReportBuilder
+- Xs2aEventBOMapper
+- AspspEvent
+- EventBO
 
 == Fixed failing consent for multiple accounts without currency
 
