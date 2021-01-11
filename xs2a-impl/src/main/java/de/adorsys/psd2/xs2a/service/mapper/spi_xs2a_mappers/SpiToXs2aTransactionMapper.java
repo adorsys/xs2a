@@ -17,8 +17,10 @@
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.xs2a.domain.EntryDetails;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiEntryDetails;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTransaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -36,4 +38,9 @@ public interface SpiToXs2aTransactionMapper {
     Transactions mapToXs2aTransaction(SpiTransaction spiTransaction);
 
     List<Transactions> mapToXs2aTransactionList(List<SpiTransaction> spiTransactions);
+
+    @Mapping(target = "purposeCode", expression = "java(PurposeCode.fromValue(spiEntryDetails.getPurposeCode()))")
+    EntryDetails mapToEntryDetails(SpiEntryDetails spiEntryDetails);
+
+    List<EntryDetails> mapToEntryDetailsList(List<SpiEntryDetails> spiEntryDetails);
 }
