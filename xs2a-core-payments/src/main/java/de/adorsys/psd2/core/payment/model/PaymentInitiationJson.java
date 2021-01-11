@@ -12,7 +12,7 @@ public class PaymentInitiationJson {
     private String debtorName;
     private AccountReference debtorAccount;
     private String ultimateDebtor;
-    private Amount instructedAmount;
+    private Xs2aAmount instructedAmount;
     private AccountReference creditorAccount;
     private String creditorAgent;
     private String creditorAgentName;
