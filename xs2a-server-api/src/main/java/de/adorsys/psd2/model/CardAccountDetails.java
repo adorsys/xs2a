@@ -19,7 +19,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-06T16:59:56.172067+02:00[Europe/Kiev]")
 
 public class CardAccountDetails   {
   @JsonProperty("resourceId")
@@ -88,6 +88,9 @@ public class CardAccountDetails   {
 
   @JsonProperty("balances")
   private BalanceList balances = null;
+
+  @JsonProperty("debitAccounting")
+  private Boolean debitAccounting = null;
 
   @JsonProperty("_links")
   private Map _links = null;
@@ -361,6 +364,28 @@ public class CardAccountDetails   {
     this.balances = balances;
   }
 
+  public CardAccountDetails debitAccounting(Boolean debitAccounting) {
+    this.debitAccounting = debitAccounting;
+    return this;
+  }
+
+  /**
+   * If true, the amounts of debits on the reports and balances are quoted positive. If false, the amount of debits on the reports and balances are quoted negative.
+   * @return debitAccounting
+  **/
+  @ApiModelProperty(value = "If true, the amounts of debits on the reports and balances are quoted positive. If false, the amount of debits on the reports and balances are quoted negative. ")
+
+
+
+  @JsonProperty("debitAccounting")
+  public Boolean isDebitAccounting() {
+    return debitAccounting;
+  }
+
+  public void setDebitAccounting(Boolean debitAccounting) {
+    this.debitAccounting = debitAccounting;
+  }
+
   public CardAccountDetails _links(Map _links) {
     this._links = _links;
     return this;
@@ -405,12 +430,13 @@ public class CardAccountDetails   {
     Objects.equals(this.details, cardAccountDetails.details) &&
     Objects.equals(this.creditLimit, cardAccountDetails.creditLimit) &&
     Objects.equals(this.balances, cardAccountDetails.balances) &&
+    Objects.equals(this.debitAccounting, cardAccountDetails.debitAccounting) &&
     Objects.equals(this._links, cardAccountDetails._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(resourceId, maskedPan, currency, ownerName, name, displayName, product, status, usage, details, creditLimit, balances, _links);
+    return Objects.hash(resourceId, maskedPan, currency, ownerName, name, displayName, product, status, usage, details, creditLimit, balances, debitAccounting, _links);
   }
 
   @Override
@@ -430,6 +456,7 @@ public class CardAccountDetails   {
     sb.append("    details: ").append(toIndentedString(details)).append("\n");
     sb.append("    creditLimit: ").append(toIndentedString(creditLimit)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
+    sb.append("    debitAccounting: ").append(toIndentedString(debitAccounting)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();

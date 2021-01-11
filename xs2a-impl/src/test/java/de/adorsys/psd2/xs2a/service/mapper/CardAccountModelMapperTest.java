@@ -75,7 +75,7 @@ class CardAccountModelMapperTest {
     @MockBean
     private AspspProfileServiceWrapper aspspProfileService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @AfterEach
     void resetMocks() {
@@ -288,7 +288,7 @@ class CardAccountModelMapperTest {
     private Xs2aCardAccountDetails buildXs2aCardAccountDetails(Currency currency) {
         return new Xs2aCardAccountDetails(null, null, null, currency,
                                           null, null, null, null, AccountStatus.ENABLED,
-                                          null, null, null, null, null);
+                                          null, null, null, null, null, null);
     }
 
     private void assertLinks(Map<?, ?> expectedLinks, Map<?, ?> actualLinks) {

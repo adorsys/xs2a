@@ -96,7 +96,7 @@ class CardAccountHandlerTest {
 
         return new Xs2aCardAccountDetails(null, null, CardAccountHandlerTest.MASKED_PAN, Currency.getInstance("EUR"), null, null, null,
                                           null, AccountStatus.ENABLED, Xs2aUsageType.PRIV, "details",
-                                          null, creditLimit, null);
+                                          null, creditLimit, null, null);
     }
 
     private AccountReference getAccountReference(AccountReferenceType accountReferenceType, String accountReferenceValue) {

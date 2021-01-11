@@ -521,7 +521,7 @@ class AccountReferenceInConsentUpdaterTest {
         return new Xs2aCardAccountDetails(aspspAccountId, resourceId, maskedPan,
                                           CURRENCY, null, null, null, null,
                                           null, null, null, Collections.emptyList(),
-                                          null, null);
+                                          null, null, null);
     }
 
     private AccountReference buildAccountReferenceWithIban(String iban) {

@@ -82,7 +82,8 @@ public class SpiToXs2aAccountDetailsMapper {
                             ad.getDetails(),
                             balanceMapper.mapToXs2aBalanceList(ad.getBalances()),
                             Optional.ofNullable(ad.getCreditLimit()).map(spiToXs2aAmountMapper::mapToXs2aAmount).orElse(null),
-                            ad.getOwnerName()
+                            ad.getOwnerName(),
+                            ad.getDebitAccounting()
                         )
                    )
                    .orElse(null);
