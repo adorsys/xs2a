@@ -7,6 +7,7 @@ import de.adorsys.psd2.model.AccountReference;
 import de.adorsys.psd2.model.AdditionalInformationStructured;
 import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.Balance;
+import de.adorsys.psd2.model.EntryDetails;
 import de.adorsys.psd2.model.PurposeCode;
 import de.adorsys.psd2.model.RemittanceInformationStructuredArray;
 import de.adorsys.psd2.model.RemittanceInformationUnstructuredArray;
@@ -14,6 +15,8 @@ import de.adorsys.psd2.model.ReportExchangeRateList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
@@ -24,7 +27,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "Transaction details.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-05T15:02:10.547006+02:00[Europe/Kiev]")
 
 public class Transactions   {
   @JsonProperty("transactionId")
@@ -110,6 +113,16 @@ public class Transactions   {
 
   @JsonProperty("balanceAfterTransaction")
   private Balance balanceAfterTransaction = null;
+
+  @JsonProperty("batchIndicator")
+  private Boolean batchIndicator = null;
+
+  @JsonProperty("batchNumberOfTransactions")
+  private Integer batchNumberOfTransactions = null;
+
+  @JsonProperty("entryDetails")
+  @Valid
+  private List<EntryDetails> entryDetails = null;
 
   @JsonProperty("_links")
   private Map _links = null;
@@ -742,6 +755,81 @@ public class Transactions   {
     this.balanceAfterTransaction = balanceAfterTransaction;
   }
 
+  public Transactions batchIndicator(Boolean batchIndicator) {
+    this.batchIndicator = batchIndicator;
+    return this;
+  }
+
+  /**
+   * Get batchIndicator
+   * @return batchIndicator
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("batchIndicator")
+  public Boolean isBatchIndicator() {
+    return batchIndicator;
+  }
+
+  public void setBatchIndicator(Boolean batchIndicator) {
+    this.batchIndicator = batchIndicator;
+  }
+
+  public Transactions batchNumberOfTransactions(Integer batchNumberOfTransactions) {
+    this.batchNumberOfTransactions = batchNumberOfTransactions;
+    return this;
+  }
+
+  /**
+   * Get batchNumberOfTransactions
+   * @return batchNumberOfTransactions
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("batchNumberOfTransactions")
+  public Integer getBatchNumberOfTransactions() {
+    return batchNumberOfTransactions;
+  }
+
+  public void setBatchNumberOfTransactions(Integer batchNumberOfTransactions) {
+    this.batchNumberOfTransactions = batchNumberOfTransactions;
+  }
+
+  public Transactions entryDetails(List<EntryDetails> entryDetails) {
+    this.entryDetails = entryDetails;
+    return this;
+  }
+
+  public Transactions addEntryDetailsItem(EntryDetails entryDetailsItem) {
+    if (this.entryDetails == null) {
+      this.entryDetails = new ArrayList<>();
+    }
+    this.entryDetails.add(entryDetailsItem);
+    return this;
+  }
+
+  /**
+   * Get entryDetails
+   * @return entryDetails
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("entryDetails")
+  public List<EntryDetails> getEntryDetails() {
+    return entryDetails;
+  }
+
+  public void setEntryDetails(List<EntryDetails> entryDetails) {
+    this.entryDetails = entryDetails;
+  }
+
   public Transactions _links(Map _links) {
     this._links = _links;
     return this;
@@ -802,12 +890,15 @@ public class Transactions   {
     Objects.equals(this.bankTransactionCode, transactions.bankTransactionCode) &&
     Objects.equals(this.proprietaryBankTransactionCode, transactions.proprietaryBankTransactionCode) &&
     Objects.equals(this.balanceAfterTransaction, transactions.balanceAfterTransaction) &&
+    Objects.equals(this.batchIndicator, transactions.batchIndicator) &&
+    Objects.equals(this.batchNumberOfTransactions, transactions.batchNumberOfTransactions) &&
+    Objects.equals(this.entryDetails, transactions.entryDetails) &&
     Objects.equals(this._links, transactions._links);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, creditorAgent, ultimateCreditor, debtorName, debtorAccount, debtorAgent, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, additionalInformation, additionalInformationStructured, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, balanceAfterTransaction, _links);
+    return Objects.hash(transactionId, entryReference, endToEndId, mandateId, checkId, creditorId, bookingDate, valueDate, transactionAmount, currencyExchange, creditorName, creditorAccount, creditorAgent, ultimateCreditor, debtorName, debtorAccount, debtorAgent, ultimateDebtor, remittanceInformationUnstructured, remittanceInformationUnstructuredArray, remittanceInformationStructured, remittanceInformationStructuredArray, additionalInformation, additionalInformationStructured, purposeCode, bankTransactionCode, proprietaryBankTransactionCode, balanceAfterTransaction, batchIndicator, batchNumberOfTransactions, entryDetails, _links);
   }
 
   @Override
@@ -843,6 +934,9 @@ public class Transactions   {
     sb.append("    bankTransactionCode: ").append(toIndentedString(bankTransactionCode)).append("\n");
     sb.append("    proprietaryBankTransactionCode: ").append(toIndentedString(proprietaryBankTransactionCode)).append("\n");
     sb.append("    balanceAfterTransaction: ").append(toIndentedString(balanceAfterTransaction)).append("\n");
+    sb.append("    batchIndicator: ").append(toIndentedString(batchIndicator)).append("\n");
+    sb.append("    batchNumberOfTransactions: ").append(toIndentedString(batchNumberOfTransactions)).append("\n");
+    sb.append("    entryDetails: ").append(toIndentedString(entryDetails)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("}");
     return sb.toString();
