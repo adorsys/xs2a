@@ -45,7 +45,7 @@ public abstract class Xs2aEventBOMapper {
             return xs2aObjectMapper.writeValueAsBytes(object);
         } catch (IOException e) {
             log.info("Can't convert json to object: {}", e.getMessage());
-            return null;
+            return new byte[0];
         }
     }
 

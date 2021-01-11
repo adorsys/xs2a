@@ -23,6 +23,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -37,7 +39,7 @@ public class SqlEventReportBuilder extends MapSqlParameterSource {
     private StringBuilder filterRequest;
 
     public String getBasePartOfRequest() throws IOException {
-        return IOUtils.toString(getClass().getClassLoader().getResource(sqlRequestFileName).openStream()).replace(PLACEHOLDER, schemaName);
+        return IOUtils.toString(Objects.requireNonNull(getClass().getClassLoader().getResource(sqlRequestFileName)).openStream(), Charset.defaultCharset()).replace(PLACEHOLDER, schemaName);
     }
 
     public SqlEventReportBuilder baseRequest() {
