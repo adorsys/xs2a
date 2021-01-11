@@ -77,7 +77,7 @@ class CardAccountControllerTest {
     @InjectMocks
     private CardAccountController cardAccountController;
 
-    private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
+    private final Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Mock
     private CardAccountBalanceService cardAccountBalanceService;
@@ -255,7 +255,7 @@ class CardAccountControllerTest {
         List<Xs2aCardAccountDetails> accountDetails = Collections.singletonList(
             new Xs2aCardAccountDetails(ASPSP_ACCOUNT_ID, "33333-999999999", "DE371234599997", null, null, null,
                                        null, null, AccountStatus.ENABLED, Xs2aUsageType.PRIV, "details",
-                                       null, creditLimit, null));
+                                       null, creditLimit, null, null));
         Xs2aCardAccountListHolder xs2aAccountListHolder = new Xs2aCardAccountListHolder(accountDetails, null);
         return ResponseObject.<Xs2aCardAccountListHolder>builder()
                    .body(xs2aAccountListHolder).build();

@@ -65,6 +65,8 @@ public class Xs2aCardAccountDetails {
 
     private final String ownerName;
 
+    private final Boolean debitAccounting;
+
     @JsonProperty("_links")
     private Links links = new Links();
 }
