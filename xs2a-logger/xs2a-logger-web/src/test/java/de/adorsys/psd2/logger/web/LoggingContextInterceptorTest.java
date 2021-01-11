@@ -83,8 +83,8 @@ class LoggingContextInterceptorTest {
         verify(mockClientHttpRequestExecution).execute(httpRequestArgumentCaptor.capture(), eq(REQUEST_BODY));
 
         HttpHeaders capturedHeaders = httpRequestArgumentCaptor.getValue().getHeaders();
-        assertEquals(capturedHeaders.getFirst(INTERNAL_REQUEST_ID_HEADER_NAME), INTERNAL_REQUEST_ID);
-        assertEquals(capturedHeaders.getFirst(X_REQUEST_ID_HEADER_NAME), X_REQUEST_ID);
+        assertEquals(INTERNAL_REQUEST_ID, capturedHeaders.getFirst(INTERNAL_REQUEST_ID_HEADER_NAME));
+        assertEquals(X_REQUEST_ID, capturedHeaders.getFirst(X_REQUEST_ID_HEADER_NAME));
     }
 
     @Test
