@@ -73,11 +73,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SPI_SINGLE_PAYMENT);
+        assertThat(actualResponse).isPresent().contains(SPI_SINGLE_PAYMENT);
     }
 
     @Test
@@ -88,11 +87,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -105,11 +103,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_PERIODIC_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SPI_PERIODIC_PAYMENT);
+        assertThat(actualResponse).isPresent().contains(SPI_PERIODIC_PAYMENT);
     }
 
     @Test
@@ -120,11 +117,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -137,11 +133,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_BULK_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SPI_BULK_PAYMENT);
+        assertThat(actualResponse).isPresent().contains(SPI_BULK_PAYMENT);
     }
 
     @Test
@@ -152,11 +147,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -169,11 +163,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SPI_SINGLE_PAYMENT);
+        assertThat(actualResponse).isPresent().contains(SPI_SINGLE_PAYMENT);
     }
 
     @Test
@@ -184,11 +177,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -201,11 +193,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_PERIODIC_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SPI_PERIODIC_PAYMENT);
+        assertThat(actualResponse).isPresent().contains(SPI_PERIODIC_PAYMENT);
     }
 
     @Test
@@ -216,11 +207,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(null);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -233,11 +223,10 @@ class SpiPaymentFactoryTest {
             .thenReturn(SPI_BULK_PAYMENT);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SPI_BULK_PAYMENT);
+        assertThat(actualResponse).isPresent().contains(SPI_BULK_PAYMENT);
     }
 
     @Test
@@ -246,11 +235,10 @@ class SpiPaymentFactoryTest {
         CommonPaymentData commonPaymentData = buildCommonPaymentData(PaymentType.PERIODIC);
 
         //When
-        Optional<? extends SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
+        Optional<SpiPayment> actualResponse = spiPaymentFactory.getSpiPayment(commonPaymentData);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
-        assertThat(actualResponse).isEqualTo(Optional.empty());
+        assertThat(actualResponse).isEmpty();
     }
 
     private CommonPaymentData buildCommonPaymentData(PaymentType paymentType) {
