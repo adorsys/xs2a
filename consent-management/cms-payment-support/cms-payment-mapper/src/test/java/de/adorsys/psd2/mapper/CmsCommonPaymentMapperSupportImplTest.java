@@ -146,7 +146,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         payment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         payment.setDebtorAccount(getAccount(paymentInitiationJson.getDebtorAccount()));
-        Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
+        Xs2aAmount instructedAmount = paymentInitiationJson.getInstructedAmount();
         payment.setInstructedAmount(new CmsAmount(Currency.getInstance(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
         payment.setCreditorAccount(getAccount(paymentInitiationJson.getCreditorAccount()));
         payment.setCreditorAgent(paymentInitiationJson.getCreditorAgent());
@@ -197,7 +197,7 @@ class CmsCommonPaymentMapperSupportImplTest {
 
     private List<CmsSinglePayment> getBulkPayments(PaymentInitiationJson paymentInitiationJson, CmsPayment parent) {
         CmsSinglePayment singlePayment = new CmsSinglePayment(PAYMENT_PRODUCT);
-        Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
+        Xs2aAmount instructedAmount = paymentInitiationJson.getInstructedAmount();
         singlePayment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         singlePayment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         singlePayment.setInstructedAmount(new CmsAmount(Currency.getInstance("EUR"), new BigDecimal(instructedAmount.getAmount())));
@@ -249,7 +249,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         payment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         payment.setDebtorAccount(getAccount(paymentInitiationJson.getDebtorAccount()));
-        Amount instructedAmount = paymentInitiationJson.getInstructedAmount();
+        Xs2aAmount instructedAmount = paymentInitiationJson.getInstructedAmount();
         payment.setInstructedAmount(new CmsAmount(Currency.getInstance("EUR"), new BigDecimal(instructedAmount.getAmount())));
         payment.setCreditorAccount(getAccount(paymentInitiationJson.getCreditorAccount()));
         payment.setCreditorAgent(paymentInitiationJson.getCreditorAgent());
