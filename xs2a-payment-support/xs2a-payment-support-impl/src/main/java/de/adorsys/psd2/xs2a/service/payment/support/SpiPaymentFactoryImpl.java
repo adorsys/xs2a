@@ -26,9 +26,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiBulkPayment
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPeriodicPaymentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiSinglePaymentMapper;
 import de.adorsys.psd2.xs2a.service.payment.support.mapper.CmsToXs2aPaymentSupportMapper;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiBulkPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPeriodicPayment;
-import de.adorsys.psd2.xs2a.spi.domain.payment.SpiSinglePayment;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +54,7 @@ public class SpiPaymentFactoryImpl implements SpiPaymentFactory {
      * @return Optional of SpiPayment subclass of requested payment type or throws IllegalArgumentException for unknown payment type
      */
     @Override
-    public Optional<? extends SpiPayment> getSpiPayment(CommonPaymentData commonPaymentData) {
+    public Optional<SpiPayment> getSpiPayment(CommonPaymentData commonPaymentData) {
         PaymentType paymentType = commonPaymentData.getPaymentType();
 
         switch (paymentType) {
@@ -80,7 +77,7 @@ public class SpiPaymentFactoryImpl implements SpiPaymentFactory {
      *
      * @return Optional of SpiSinglePayment from PisPayment
      */
-    private Optional<SpiSinglePayment> createSpiSinglePayment(CommonPaymentData commonPaymentData) {
+    private Optional<SpiPayment> createSpiSinglePayment(CommonPaymentData commonPaymentData) {
         String paymentProduct = commonPaymentData.getPaymentProduct();
         SinglePayment singlePayment = cmsToXs2aPaymentSupportMapper.mapToSinglePayment(commonPaymentData);
 
@@ -99,7 +96,7 @@ public class SpiPaymentFactoryImpl implements SpiPaymentFactory {
      *
      * @return Optional of SpiPeriodicPayment from PisPayment
      */
-    private Optional<SpiPeriodicPayment> createSpiPeriodicPayment(CommonPaymentData commonPaymentData) {
+    private Optional<SpiPayment> createSpiPeriodicPayment(CommonPaymentData commonPaymentData) {
         String paymentProduct = commonPaymentData.getPaymentProduct();
         PeriodicPayment periodicPayment = cmsToXs2aPaymentSupportMapper.mapToPeriodicPayment(commonPaymentData);
 
@@ -118,7 +115,7 @@ public class SpiPaymentFactoryImpl implements SpiPaymentFactory {
      *
      * @return Optional of SpiBulkPayment from PisPayment
      */
-    private Optional<SpiBulkPayment> createSpiBulkPayment(CommonPaymentData commonPaymentData) {
+    private Optional<SpiPayment> createSpiBulkPayment(CommonPaymentData commonPaymentData) {
         String paymentProduct = commonPaymentData.getPaymentProduct();
         BulkPayment bulkPayment = cmsToXs2aPaymentSupportMapper.mapToBulkPayment(commonPaymentData);
 
