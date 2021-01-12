@@ -19,7 +19,7 @@ package de.adorsys.psd2.core.payment.model;
 import lombok.Data;
 
 @Data
-public class Amount {
+public class Xs2aAmount {
     private String currency;
     private String amount;
 }
