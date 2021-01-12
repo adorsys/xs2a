@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

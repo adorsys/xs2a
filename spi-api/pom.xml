@@ -48,6 +48,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>xs2a-core-payments</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- other dependencies -->
 
         <dependency>

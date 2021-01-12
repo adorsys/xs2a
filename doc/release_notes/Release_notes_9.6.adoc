@@ -36,6 +36,9 @@ Sonar alerts were fixed for classes:
 - Xs2aEventBOMapper
 - AspspEvent
 - EventBO
+- de.adorsys.psd2.core.payment.model.Xs2aAmount
+- de.adorsys.psd2.core.payment.model.PurposeCode
+- de.adorsys.psd2.core.payment.model.DayOfExecution
 
 == Fixed failing consent for multiple accounts without currency
 

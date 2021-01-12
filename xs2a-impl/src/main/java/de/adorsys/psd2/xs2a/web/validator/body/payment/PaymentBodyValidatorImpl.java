@@ -16,12 +16,12 @@
 
 package de.adorsys.psd2.xs2a.web.validator.body.payment;
 
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.ChargeBearer;
 import de.adorsys.psd2.model.FrequencyCode;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import de.adorsys.psd2.xs2a.web.PathParameterExtractor;
