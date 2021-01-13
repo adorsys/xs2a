@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
@@ -55,15 +54,13 @@ class RequestProviderServiceTest {
     private static final String TPP_ROLES_ALLOWED_HEADER_VALUE = "AISP, PISP, PIISP, ASPSP";
     private static final String ACCEPT_HEADER_JSON = "application/json";
     private static final String ACCEPT_HEADER_ANY = "*/*";
+    private static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
     private static final String TPP_QWAC_CERTIFICATE_HEADER_VALUE = "-----BEGIN CERTIFICATE-----MIIFNjCCAx6gAwIBAgIERd3y8TANBgkqhkiG9w0BAQsFADB4MQswCQYDVQQGEwJERTEQMA4GA1UECAwHQkFWQVJJQTESMBAGA1UEBwwJTnVyZW1iZXJnMSIwIAYDVQQKDBlUcnVzdCBTZXJ2aWNlIFByb3ZpZGVyIEFHMR8wHQYDVQQLDBZJbmZvcm1hdGlvbiBUZWNobm9sb2d5MB4XDTIwMDMwNTEzMzk1MFoXDTMwMDMwMzAwMDAwMFowgcExITAfBgNVBAoMGEZpY3Rpb25hbCBDb3Jwb3JhdGlvbiBBRzElMCMGCgmSJomT8ixkARkWFXB1YmxpYy5jb3Jwb3JhdGlvbi5kZTEfMB0GA1UECwwWSW5mb3JtYXRpb24gVGVjaG5vbG9neTEQMA4GA1UEBhMHR2VybWFueTEPMA0GA1UECAwGQmF5ZXJuMRIwEAYDVQQHDAlOdXJlbWJlcmcxHTAbBgNVBGEMFFBTRERFLUZBS0VOQ0EtODdCMkFDMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsHAdLWn7pEAlD5daEjKv7hE4FW+vMJRrA/Bw2M/Zsu8VFfW1ARmbTgTy7rGLFBK/Y2SToEj60+5GEkCgCvi+vI/Bdykk8XqjpVsJjTW67np1b2Av8F61zvCnn2UOxBtXBHCzR1j2yz2om1IMYieGu/cDTWLNkbuoGSnj0dq4CbHp2f8ch++goffqLRXr642j8cVlqZYsapB8y+Z8IydbtNBd/XAmRTAprmdRv9B4PC7P+lIYX8QbXw77f+9/2Kty7oVHtjle+GnTR8wH5nCiMQsA9V564/34lKwuEkzuryV1HzitQ/X7FSZoiSQRTxbxjVO+xdzI3hjF2FZjVvkqywIDAQABo34wfDB6BggrBgEFBQcBAwRuMGwGBgQAgZgnAjBiMDkwEQYHBACBmCcBAwwGUFNQX0FJMBEGBwQAgZgnAQIMBlBTUF9QSTARBgcEAIGYJwEEDAZQU1BfSUMMGVRydXN0IFNlcnZpY2UgUHJvdmlkZXIgQUcMCkRFLUZBS0VOQ0EwDQYJKoZIhvcNAQELBQADggIBACKUQc3O3TOFG8tWk4sQd3f9SGlOcBOMekSXCxRgskcYkjhWW4+EN1FYzlGuXPfq1yngKaM3ss9yCDVep0MFa4hDJ/hzSSD5upExzwWDkUa97AHCjZd39W6kLaCMAc5vTbR9r7zBvMKBcAmhZ9mWCvrvbHUOURv5yBfrrEk4AM1Vakf5l+fWP4JhA779+7JlwpQRpy5dgqROwKQ2L634d2osgXUV4CkqhSUQ5LcYI4uBFyKnM0pyGaNYdKhBC95J0y5GYa7NpKJNZXf+clTbe33gCt2SFSOMa7CV5NYpnohS201uNd/ffWLzGtFBnHLNpX8qTfFc16mtIcJo6Iiof2CYgfYAyJByBC1gZHf1wAtfQzAn6JcEaJzmehXKKl9x7X62aaGan7l+MblUT65Gd+Yed+rXLF6svefbrcIbZwt/W+v1fbfnip9QEFPV3VLjg0vk9Y30ftZCcFRSHLD3mdxcVEtmVxDDxyzDUwXF7J/mi4RQhZBb3OtwwEIWC2zUaycNMZWJRI+RqfLvanlDFFMoYeSZKTFf8jS/PPcfpKOAiTGu21iuuv+gYxh/rgjW419w26ya+Q3jabaz3E9Im/opSU5sQ9W92ALA14J9VZs6v8BVmqKTB5APKfeTYoXg9MjP9fjVM/hP26kIgQVs5Bz15ov8uQlQC+OTO+2y5ozs-----END CERTIFICATE-----";
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
     private static final String CONTENT_TYPE_VALUE = MediaType.APPLICATION_JSON;
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
     private static final String TPP_BRAND_LOGGING_INFORMATION_VALUE = "tppBrandLoggingInformation";
     private static final String INSTANCE_ID = "bank1";
-
-    @Value("${xs2a.tpp_qwac_certificate_header_name:tpp-qwac-certificate}")
-    private String tppQwacCertificateHeader;
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -151,7 +148,7 @@ class RequestProviderServiceTest {
 
     @Test
     void getEncodedTppQwacCert() {
-        when(httpServletRequest.getHeader(tppQwacCertificateHeader)).thenReturn(TPP_QWAC_CERTIFICATE_HEADER_VALUE);
+        when(httpServletRequest.getHeader(TPP_QWAC_CERTIFICATE_HEADER)).thenReturn(TPP_QWAC_CERTIFICATE_HEADER_VALUE);
         // When
         String encodedTppQwacCert = requestProviderService.getEncodedTppQwacCert();
 
