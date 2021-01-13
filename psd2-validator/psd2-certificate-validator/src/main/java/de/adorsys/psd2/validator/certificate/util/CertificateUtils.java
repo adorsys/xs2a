@@ -89,6 +89,8 @@ public class CertificateUtils {
         return certificate.replace(" ", "")
                    .replace("\n", "")
                    .replace("-----BEGINCERTIFICATE-----", "")
-                   .replace("-----ENDCERTIFICATE-----", "");
+                   .replace("-----ENDCERTIFICATE-----", "")
+                   .replace(BEGIN_CERTIFICATE, "")
+                   .replace(END_CERTIFICATE, "");
     }
 }

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.consent.api.service.TppService;
 import de.adorsys.psd2.validator.certificate.util.CertificateExtractorUtil;
+import de.adorsys.psd2.validator.certificate.util.CertificateUtils;
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -81,7 +82,7 @@ public class QwacCertificateFilter extends AbstractXs2aFilter {
 
         if (StringUtils.isNotBlank(encodedTppQwacCert)) {
             try {
-                TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(encodedTppQwacCert);
+                TppCertificateData tppCertificateData = CertificateExtractorUtil.extract(CertificateUtils.normalizeCertificate(encodedTppQwacCert));
                 if (isCertificateExpired(tppCertificateData.getNotAfter())) {
                     buildCertificateExpiredErrorResponse(response);
                     return;

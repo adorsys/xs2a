@@ -24,6 +24,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -58,11 +59,13 @@ public class RequestProviderService {
     private static final String PSU_IP_ADDRESS = "psu-ip-address";
     private static final String TPP_ROLES_ALLOWED_HEADER = "tpp-roles-allowed";
     private static final String ACCEPT_HEADER = "accept";
-    static final String TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
+    private static final String DEFAULT_TPP_QWAC_CERTIFICATE_HEADER = "tpp-qwac-certificate";
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
     private static final String TPP_REJECTION_NO_FUNDS_PREFERRED = "tpp-rejection-nofunds-preferred";
     static final String INSTANCE_ID = "instance-id";
 
+    @Value("${xs2a.tpp_qwac_certificate_header_name:tpp-qwac-certificate}")
+    private String tppQwacCertificateHeaderName;
     private final HttpServletRequest httpServletRequest;
     private final InternalRequestIdService internalRequestIdService;
 
@@ -176,7 +179,7 @@ public class RequestProviderService {
     }
 
     public String getEncodedTppQwacCert() {
-        return getHeader(TPP_QWAC_CERTIFICATE_HEADER);
+        return getHeader(getTppQwacCertificateHeaderName());
     }
 
     public String getTppBrandLoggingInformationHeader() {
@@ -197,5 +200,11 @@ public class RequestProviderService {
         return Collections.list(request.getHeaderNames())
                    .stream()
                    .collect(Collectors.toMap(Function.identity(), request::getHeader));
+    }
+
+    String getTppQwacCertificateHeaderName() {
+        return tppQwacCertificateHeaderName == null ?
+            DEFAULT_TPP_QWAC_CERTIFICATE_HEADER :
+            tppQwacCertificateHeaderName;
     }
 }

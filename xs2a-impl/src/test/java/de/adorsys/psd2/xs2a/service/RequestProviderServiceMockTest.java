@@ -42,7 +42,7 @@ class RequestProviderServiceMockTest {
 
     @Test
     void getEncodedTppQwacCert_headerCertificate() {
-        when(request.getHeader(RequestProviderService.TPP_QWAC_CERTIFICATE_HEADER)).thenReturn(QWAC_CERTIFICATE);
+        when(request.getHeader(requestProviderService.getTppQwacCertificateHeaderName())).thenReturn(QWAC_CERTIFICATE);
 
         String encodedTppQwacCert = requestProviderService.getEncodedTppQwacCert();
         assertEquals(QWAC_CERTIFICATE, encodedTppQwacCert);
@@ -51,7 +51,7 @@ class RequestProviderServiceMockTest {
     @Test
     void getEncodedTppQwacCert_mockCertificate() {
         ReflectionTestUtils.setField(requestProviderService, "qwacCertificateMock", MOCK_QWAC_CERTIFICATE);
-        when(request.getHeader(RequestProviderService.TPP_QWAC_CERTIFICATE_HEADER)).thenReturn(null);
+        when(request.getHeader(requestProviderService.getTppQwacCertificateHeaderName())).thenReturn(null);
 
         String encodedTppQwacCert = requestProviderService.getEncodedTppQwacCert();
         assertEquals(MOCK_QWAC_CERTIFICATE, encodedTppQwacCert);
