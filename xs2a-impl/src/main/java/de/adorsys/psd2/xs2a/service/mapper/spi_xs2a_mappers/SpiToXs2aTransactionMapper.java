@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.domain.EntryDetails;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;

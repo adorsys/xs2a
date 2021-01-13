@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.core.pis.*;

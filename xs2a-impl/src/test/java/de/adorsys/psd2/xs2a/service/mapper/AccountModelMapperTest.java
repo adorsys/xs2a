@@ -18,19 +18,18 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.Transactions;
+import de.adorsys.psd2.xs2a.domain.*;
 import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
-import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -296,7 +295,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountDetailsCurrency_currencyPresent() {
+    void mapToAccountDetailsCurrency_currencyPresent() {
         //Given
         Currency currency = Currency.getInstance("EUR");
         //When
@@ -306,7 +305,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountDetailsCurrency_currencyNull() {
+    void mapToAccountDetailsCurrency_currencyNull() {
         //Given
         //When
         String currencyRepresentation = mapper.mapToAccountDetailsCurrency(null);
@@ -315,7 +314,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountDetailsCurrency_multicurrencySubaccount() {
+    void mapToAccountDetailsCurrency_multicurrencySubaccount() {
         //Given
         when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(MulticurrencyAccountLevel.SUBACCOUNT);
         //When
@@ -325,7 +324,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountDetailsCurrency_multicurrencyAggregations() {
+    void mapToAccountDetailsCurrency_multicurrencyAggregations() {
         Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT).forEach(multicurrencyAccountLevel -> {
             //Given
             when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(multicurrencyAccountLevel);
@@ -337,7 +336,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountList_currencyPresent_multicurrencyLevelSubaccount() {
+    void mapToAccountList_currencyPresent_multicurrencyLevelSubaccount() {
         //Given
         when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(MulticurrencyAccountLevel.SUBACCOUNT);
         Currency currency = Currency.getInstance("EUR");
@@ -351,7 +350,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountList_currencyNull_multicurrencyLevelSubaccount() {
+    void mapToAccountList_currencyNull_multicurrencyLevelSubaccount() {
         //Given
         when(aspspProfileService.getMulticurrencyAccountLevel()).thenReturn(MulticurrencyAccountLevel.SUBACCOUNT);
         Currency currency = null;
@@ -365,7 +364,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountList_currencyPresent_multicurrencyLevelAggregation() {
+    void mapToAccountList_currencyPresent_multicurrencyLevelAggregation() {
         //Given
         Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT).forEach(multicurrencyAccountLevel -> {
             //Given
@@ -382,7 +381,7 @@ class AccountModelMapperTest {
     }
 
     @Test
-    public void mapToAccountList_currencyNull_multicurrencyLevelAggregation() {
+    void mapToAccountList_currencyNull_multicurrencyLevelAggregation() {
         //Given
         Arrays.asList(MulticurrencyAccountLevel.AGGREGATION, MulticurrencyAccountLevel.AGGREGATION_AND_SUBACCOUNT).forEach(multicurrencyAccountLevel -> {
             //Given
