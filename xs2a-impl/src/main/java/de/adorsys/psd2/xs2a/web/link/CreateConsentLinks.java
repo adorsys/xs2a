@@ -56,11 +56,13 @@ public class CreateConsentLinks extends AbstractLinks {
             } else {
                 String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
-                String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
-                                              ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
-                                              : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.AIS);
+                if (scaRedirectFlow == ScaRedirectFlow.OAUTH) {
+                    setScaOAuth(new HrefType(redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())));
 
-                setScaRedirect(new HrefType(consentOauthLink));
+                } else {
+                    setScaRedirect(new HrefType(redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.AIS)));
+                }
+
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
 
                 if (authorisationConfirmationRequestMandated) {
