@@ -181,7 +181,7 @@ a|
   * Fix XS2A Security Hot Spots
 
 
-  a| * All fixes and updates from v.8.5
+  a| * All fixes and updates from v.8.6
 
   * Fix connector-examples for multilevel SCA
 
@@ -200,6 +200,37 @@ a|
 
  |14.01.2021| |8.7|9.6|
 
+    a|
+
+    a|
+
+    a| * Fix XS2A Security Hot Spots
+
+
+    a| * All fixes and updates from v.8.7
+
+    * Add new data type Entry Details
+
+    * Add link of type "card" to the Card Account Report
+
+    * Add optional attributes to the Transactions data type
+
+    * Add attribute debitAccounting to the card account details type
+
+    a|
+
+    a|
+
+    a|
+
+    a|
+
+    a|
+
+    a|
+
+ |27.01.2021| |8.8|9.7|
+
  a|
 
  a|
@@ -207,15 +238,11 @@ a|
  a| * Fix XS2A Security Hot Spots
 
 
- a| * All fixes and updates from v.8.5
+ a| * All fixes and updates from v.8.8
 
- * Add new data type Entry Details
+ * Adjust counting Consent usage for several booking statuses
 
- * Add link of type "card" to the Card Account Report
-
- * Add optional attributes to the Transactions data type
-
- * Add attribute debitAccounting to the card account details type
+ * Added a psuMessage into Get SCA Status Response
 
  a|
 
