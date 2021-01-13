@@ -169,6 +169,8 @@ class AccountHelperServiceTest {
     }
 
     private static SpiAccountReference buildSpiAccountReference() {
-        return new SpiAccountReference(ACCOUNT_ID, null, null, null, null, null, null, null);
+        return SpiAccountReference.builder()
+                   .resourceId(ACCOUNT_ID)
+                   .build();
     }
 }

@@ -98,7 +98,7 @@ class CancelPaymentIT {
     private static final ScaApproach REDIRECT_SCA_APPROACH = ScaApproach.REDIRECT;
     private static final ScaApproach EMBEDDED_SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final AspspConsentData ASPSP_CONSENT_DATA = new AspspConsentData("data".getBytes(), ENCRYPTED_PAYMENT_ID);
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     private static final String REDIRECT_EXPLICIT_CANCELLATION_RESP = "/json/payment/res/explicit/SinglePaymentCancellation_redirect_explicit_response.json";
     private static final String EMBEDDED_EXPLICIT_CANCELLATION_RESP = "/json/payment/res/explicit/SinglePaymentCancellation_embedded_explicit_response.json";

@@ -99,7 +99,7 @@ class ContextPathIT {
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
 
-    private HttpHeaders httpHeadersImplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;

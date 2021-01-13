@@ -142,7 +142,7 @@ class ServiceUnavailableIT {
     private static final String SERVICE_UNAVAILABLE_ERROR_MESSAGE_JSON_PATH = "/json/account/res/ServiceUnavailableErrorMessage.json";
     private static final String HEALTH_CHECK_JSON_PATH = "/json/health.json";
     private static final TppInfo TPP_INFO = TppInfoBuilder.buildTppInfo();
-    private HttpHeaders httpHeadersImplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
 
     @Autowired
     private MockMvc mockMvc;
@@ -184,7 +184,7 @@ class ServiceUnavailableIT {
     private AisConsentSpiMockImpl aisConsentSpiMock;
     @Value("${qwac-certificate-mock}")
     private String qwacCertificateMock;
-    private Supplier<ResourceAccessException> resourceAccessExceptionSupplier = () -> new ResourceAccessException("");
+    private final Supplier<ResourceAccessException> resourceAccessExceptionSupplier = () -> new ResourceAccessException("");
 
     @RegisterExtension
     final BeforeEachCallback resourceAvailableCallback = this::onStartingTest;

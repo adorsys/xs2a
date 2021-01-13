@@ -105,7 +105,7 @@ public class CmsCorePaymentMapper {
         payment.setCreditorAccount(mapToAccountReference(pisPayment.getCreditorAccount()));
         payment.setEndToEndIdentification(pisPayment.getEndToEndIdentification());
         payment.setInstructionIdentification(pisPayment.getInstructionIdentification());
-        Amount amount = new Amount();
+        Xs2aAmount amount = new Xs2aAmount();
         amount.setAmount(pisPayment.getAmount().toPlainString());
         amount.setCurrency(mapToCurrency(pisPayment.getCurrency()));
         payment.setInstructedAmount(amount);

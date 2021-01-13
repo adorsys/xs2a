@@ -1,0 +1,50 @@
+= Release notes v.8.7
+
+== Table of Contents
+
+* Fixed sonar alerts
+* Fixed failing consent for multiple accounts without currency
+* Improved Certificate generator
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- FailedCertValidationException
+- CertificateExtractorUtil
+- URLDecodingUtil
+- RolesOfPSP
+- TppRoles
+- URLDecodingUtilTest
+- SpiAccountReference
+- SpiPaymentResponse
+- AisConsentSpiMockImpl
+- BulkPaymentSpiMockImpl
+- CommonPaymentSpiMockImpl
+- PaymentAuthorisationSpiMockImpl
+- PaymentCancellationSpiMockImpl
+- PeriodicPaymentSpiMockImpl
+- PiisConsentSpiMockImpl
+- SinglePaymentSpiMockImpl
+- AisConsent
+- AisConsentDataTest
+- SqlEventReportBuilder
+- Xs2aEventBOMapper
+- AspspEvent
+- EventBO
+- de.adorsys.psd2.core.payment.model.Xs2aAmount
+- de.adorsys.psd2.core.payment.model.PurposeCode
+- de.adorsys.psd2.core.payment.model.DayOfExecution
+
+== Fixed failing consent for multiple accounts without currency
+
+From now on, consent for multiple accounts without currency could be successfully created.
+
+== Improved Certificate generator
+
+From now on, Certificate generator has two yml properties:
+
+- `xs2a.certificate-generator.template.public.key`
+- `xs2a.certificate-generator.template.private.key`
+
+Those parameters set path for `.key` and `.pem`.

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support.mapper.spi;
 
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.*;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapperImpl;
@@ -56,7 +57,7 @@ class SpiToXs2aPeriodicPaymentMapperTest {
     @Autowired
     private SpiToXs2aPeriodicPaymentMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToXs2aPeriodicPayment() {
