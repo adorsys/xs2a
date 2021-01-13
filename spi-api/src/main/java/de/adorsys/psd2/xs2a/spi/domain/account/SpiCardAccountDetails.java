@@ -44,5 +44,5 @@ public class SpiCardAccountDetails {
     private SpiAmount creditLimit;
     private List<SpiAccountBalance> balances;
     private String ownerName;
-
+    private Boolean debitAccounting;
 }

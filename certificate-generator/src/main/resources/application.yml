@@ -24,6 +24,17 @@ spring:
 
 xs2a.license.url: https://github.com/adorsys/xs2a/blob/master/LICENSE.md
 
+xs2a:
+  certificate-generator:
+    template:
+      public:
+        key:
+          "certificates/MyRootCA.key"
+      private:
+        key:
+          "certificates/MyRootCA.pem"
+
+
 # Cors configuration
 management:
   endpoints:

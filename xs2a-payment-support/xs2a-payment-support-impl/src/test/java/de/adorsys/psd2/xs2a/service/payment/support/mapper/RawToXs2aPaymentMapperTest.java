@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RawToXs2aPaymentMapperTest {
+class RawToXs2aPaymentMapperTest {
     private static final String SINGLE_PAYMENT_PSD2_JSON_PATH = "json/support/mapper/single-payment-initiation.json";
     private static final String SINGLE_PAYMENT_XS2A_JSON_PATH = "json/support/mapper/xs2a-single-payment.json";
     private static final String PERIODIC_PAYMENT_PSD2_JSON_PATH = "json/support/mapper/periodic-payment-initiation.json";
@@ -47,11 +47,11 @@ public class RawToXs2aPaymentMapperTest {
 
     @Mock
     private PaymentModelMapper paymentModelMapper;
-    private Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+    private final Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
 
     private RawToXs2aPaymentMapper rawToXs2aPaymentMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {

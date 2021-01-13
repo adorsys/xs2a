@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support.mapper.spi;
 
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -59,7 +59,7 @@ class SpiToXs2aBulkPaymentMapperTest {
     @Autowired
     private SpiToXs2aBulkPaymentMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToXs2aBulkPayment() {

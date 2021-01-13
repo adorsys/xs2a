@@ -16,12 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support.cancel;
 
-import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.pis.CancelPaymentResponse;
 import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
@@ -43,7 +41,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CancelCertainPaymentServiceTest {
+class CancelCertainPaymentServiceTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
 
     @Mock
@@ -56,7 +54,7 @@ public class CancelCertainPaymentServiceTest {
 
 
     private PisPaymentCancellationRequest paymentCancellationRequest;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private PisCommonPaymentResponse commonPaymentResponse;
 
     @BeforeEach
@@ -105,12 +103,5 @@ public class CancelCertainPaymentServiceTest {
         assertTrue(actualResponse.hasError());
         assertEquals(ErrorType.PIS_404, actualResponse.getError().getErrorType());
         assertEquals(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT, actualResponse.getError().getTppMessage().getMessageErrorCode());
-    }
-
-    public CommonPaymentData buildCommonPaymentData(PaymentType paymentType) {
-        PisCommonPaymentResponse pisCommonPaymentResponse = new PisCommonPaymentResponse();
-        pisCommonPaymentResponse.setPaymentType(paymentType);
-        pisCommonPaymentResponse.setPaymentProduct(PAYMENT_PRODUCT);
-        return pisCommonPaymentResponse;
     }
 }

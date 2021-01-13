@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.payment.support.mapper.spi;
 
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.*;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -74,7 +75,7 @@ class SpiPaymentMapperTest {
     @InjectMocks
     private SpiPaymentMapper spiPaymentMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private static final SpiPsuData SPI_PSU_DATA = SpiPsuData.builder()
                                                        .psuId("psu Id")
                                                        .psuIdType("psuId Type")

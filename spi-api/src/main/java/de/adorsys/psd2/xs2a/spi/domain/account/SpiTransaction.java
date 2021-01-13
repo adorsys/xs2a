@@ -54,6 +54,9 @@ public class SpiTransaction {
     private final String additionalInformation;
     private final SpiAdditionalInformationStructured additionalInformationStructured;
     private final SpiAccountBalance balanceAfterTransaction;
+    private final Boolean batchIndicator;
+    private final Integer batchNumberOfTransactions;
+    private final List<SpiEntryDetails> entryDetails;
 
     public boolean isBookedTransaction() {
         return bookingDate != null;

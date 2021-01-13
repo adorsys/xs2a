@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.mapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -75,7 +74,7 @@ class CardAccountModelMapperTest {
     @MockBean
     private AspspProfileServiceWrapper aspspProfileService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @AfterEach
     void resetMocks() {
@@ -169,7 +168,7 @@ class CardAccountModelMapperTest {
         Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
         Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
         when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
+        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.core.payment.model.PurposeCode.BKDF);
 
         de.adorsys.psd2.xs2a.domain.CardTransaction transaction = jsonReader.getObjectFromFile("json/service/mapper/card-account-model-mapper/CardAccountModelMapper-card-transaction.json", de.adorsys.psd2.xs2a.domain.CardTransaction.class);
 
@@ -288,7 +287,7 @@ class CardAccountModelMapperTest {
     private Xs2aCardAccountDetails buildXs2aCardAccountDetails(Currency currency) {
         return new Xs2aCardAccountDetails(null, null, null, currency,
                                           null, null, null, null, AccountStatus.ENABLED,
-                                          null, null, null, null, null);
+                                          null, null, null, null, null, null);
     }
 
     private void assertLinks(Map<?, ?> expectedLinks, Map<?, ?> actualLinks) {

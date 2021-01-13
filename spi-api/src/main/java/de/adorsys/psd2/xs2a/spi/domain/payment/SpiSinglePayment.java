@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment;
 
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;

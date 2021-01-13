@@ -150,6 +150,10 @@ a| * Fix pagination for get consents by account id
 
 * Fix XS2A Security Hot Spots
 
+* Fix bugs with TPP stop list in DB
+
+* Add page information to CMS export requests
+
 
 a| * All fixes and updates from v.8.5
 
@@ -168,35 +172,89 @@ a|
 
 |31.12.2020| |8.6|9.5|
 
-a|
+  a|
 
-a|
+  a|
 
-a| * Add page information to CMS export requests
+  a| * Fix perfomance issue
 
-* Fix bugs with TPP stop list in DB
-
-* Fix perfomance issue
-
-* Fix XS2A Security Hot Spots
+  * Fix XS2A Security Hot Spots
 
 
-a| * All fixes and updates from v.8.5
+  a| * All fixes and updates from v.8.6
 
-* Fix connector-examples for multilevel SCA
+  * Fix connector-examples for multilevel SCA
 
 
-a|
+  a|
 
-a|
+  a|
 
-a|
+  a|
 
-a|
+  a|
 
-a|
+  a|
 
-a|
+  a|
+
+ |14.01.2021| |8.7|9.6|
+
+    a|
+
+    a|
+
+    a| * Fix XS2A Security Hot Spots
+
+
+    a| * All fixes and updates from v.8.7
+
+    * Add new data type Entry Details
+
+    * Add link of type "card" to the Card Account Report
+
+    * Add optional attributes to the Transactions data type
+
+    * Add attribute debitAccounting to the card account details type
+
+    a|
+
+    a|
+
+    a|
+
+    a|
+
+    a|
+
+    a|
+
+ |27.01.2021| |8.8|9.7|
+
+ a|
+
+ a|
+
+ a| * Fix XS2A Security Hot Spots
+
+
+ a| * All fixes and updates from v.8.8
+
+ * Adjust counting Consent usage for several booking statuses
+
+ * Added a psuMessage into Get SCA Status Response
+
+ a|
+
+ a|
+
+ a|
+
+ a|
+
+ a|
+
+ a|
 
 |*For future development*| |8.x|9.x|
 

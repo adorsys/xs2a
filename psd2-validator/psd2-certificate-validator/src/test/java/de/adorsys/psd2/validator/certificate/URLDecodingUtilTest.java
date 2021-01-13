@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-public class URLDecodingUtilTest {
+class URLDecodingUtilTest {
     public static final String URL_ENCODED_EXAMPLE = "http://example.com/query?q=random%20word%20500%20bank%20%24";
     public static final String URL_DECODED_EXAMPLE = "http://example.com/query?q=random word 500 bank $";
 
@@ -38,13 +38,13 @@ public class URLDecodingUtilTest {
                                                              "-----END CERTIFICATE-----\n";
 
     @Test
-    public void testCertificateDecode() {
+    void testCertificateDecode() {
         byte[] decoded = URLDecodingUtil.decode(URL_ENCODED_CERTIFICATE.getBytes());
         assertArrayEquals(URL_DECODED_CERTIFICATE.getBytes(), decoded);
     }
 
     @Test
-    public void testStringDecode() {
+    void testStringDecode() {
         byte[] decoded = URLDecodingUtil.decode(URL_ENCODED_EXAMPLE.getBytes());
         assertArrayEquals(URL_DECODED_EXAMPLE.getBytes(), decoded);
     }

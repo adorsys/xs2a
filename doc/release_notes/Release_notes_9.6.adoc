@@ -1,0 +1,74 @@
+= Release notes v.9.6
+
+== Table of Contents
+
+* Fixed sonar alerts
+* Fixed failing consent for multiple accounts without currency
+* Improved Certificate generator
+* Added new data type Entry Details
+* Added link of type "card" to the Card Account Report
+* Added optional attributes to the Transactions data type
+* Added attribute debitAccounting to the card account details type
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- FailedCertValidationException
+- CertificateExtractorUtil
+- URLDecodingUtil
+- RolesOfPSP
+- TppRoles
+- URLDecodingUtilTest
+- SpiAccountReference
+- SpiPaymentResponse
+- AisConsentSpiMockImpl
+- BulkPaymentSpiMockImpl
+- CommonPaymentSpiMockImpl
+- PaymentAuthorisationSpiMockImpl
+- PaymentCancellationSpiMockImpl
+- PeriodicPaymentSpiMockImpl
+- PiisConsentSpiMockImpl
+- SinglePaymentSpiMockImpl
+- AisConsent
+- AisConsentDataTest
+- SqlEventReportBuilder
+- Xs2aEventBOMapper
+- AspspEvent
+- EventBO
+- de.adorsys.psd2.core.payment.model.Xs2aAmount
+- de.adorsys.psd2.core.payment.model.PurposeCode
+- de.adorsys.psd2.core.payment.model.DayOfExecution
+
+== Fixed failing consent for multiple accounts without currency
+
+From now on, consent for multiple accounts without currency could be successfully created.
+
+== Improved Certificate generator
+
+From now on, Certificate generator has two yml properties:
+
+- `xs2a.certificate-generator.template.public.key`
+- `xs2a.certificate-generator.template.private.key`
+
+Those parameters set path for `.key` and `.pem`.
+
+== Added new data type Entry Details
+
+Fron now on, `xs2a-server-api` contains new model - `EntryDetails`
+
+== Added link of type "card" to the Card Account Report
+
+From now on, Card Account Report could contain link of type "card"
+
+== Added optional attributes to the Transactions data type
+
+From now on, Transactions contain three new fields:
+
+- batchIndicator (Boolean),
+- batchNumberOfTransactions (Integer),
+- entryDetails (Array of Entry Details)
+
+== Added attribute debitAccounting to the card account details type
+
+From now on, card account details type contains a new field - debitAccounting(Boolean)

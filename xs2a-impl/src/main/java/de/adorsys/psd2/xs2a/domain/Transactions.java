@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.xs2a.core.pis.PurposeCode;
+import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
@@ -69,5 +69,8 @@ public class Transactions {
     private String additionalInformation;
     private Xs2aAdditionalInformationStructured additionalInformationStructured;
     private Xs2aBalance balanceAfterTransaction;
+    private Boolean batchIndicator;
+    private Integer batchNumberOfTransactions;
+    private List<EntryDetails> entryDetails;
     private Links links = new Links();
 }

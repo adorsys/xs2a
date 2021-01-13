@@ -151,7 +151,7 @@ class PaymentStartAuthorisationIT {
     private ArgumentCaptor<PisAuthorisationParentHolder> parentHolderCaptor;
 
 
-    private HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
 
     @BeforeEach
     void setUp() {
