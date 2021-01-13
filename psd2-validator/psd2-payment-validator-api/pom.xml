@@ -22,7 +22,7 @@
 	<parent>
         <artifactId>psd2-validator</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>8.7-SNAPSHOT</version>
+        <version>8.7</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
