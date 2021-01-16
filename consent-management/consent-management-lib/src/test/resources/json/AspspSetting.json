@@ -1,4 +1,15 @@
 {
+  "ais": {
+    "consentTypes": {
+      "trustedBeneficiariesSupported": false
+    },
+    "transactionParameters": {
+      "availableBookingStatuses": [
+        "booked",
+        "information"
+      ]
+    }
+  },
   "pis": {
     "redirectLinkToOnlineBanking": {
       "paymentCancellationRedirectUrlExpirationTimeMs": 100

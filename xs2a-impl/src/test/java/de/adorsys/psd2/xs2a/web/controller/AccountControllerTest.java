@@ -78,6 +78,7 @@ class AccountControllerTest {
     private static final String TRANSACTIONS_JSON = "json/web/controller/transactions.json";
     private static final String REQUEST_URI = "/accounts";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
+    private static final String URI = "request.uri";
     private static final MessageError MESSAGE_ERROR_AIS_404 = new MessageError(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final Currency CURRENCY = Currency.getInstance("EUR");
 
@@ -111,7 +112,7 @@ class AccountControllerTest {
     @Mock
     private TrustedBeneficiariesService trustedBeneficiariesService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void getAccountDetails_withBalance() {
@@ -287,7 +288,7 @@ class AccountControllerTest {
     void getTransactions_ResultTest() {
         // Given
         AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
-
+        when(request.getRequestURI()).thenReturn(URI);
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
 
@@ -337,7 +338,7 @@ class AccountControllerTest {
     void getTransactionList_isRespContentTypeJSON_success() {
         // Given
         AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
-
+        when(request.getRequestURI()).thenReturn(URI);
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();

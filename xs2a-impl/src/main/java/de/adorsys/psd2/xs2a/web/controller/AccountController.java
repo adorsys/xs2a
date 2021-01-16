@@ -97,7 +97,8 @@ public class AccountController implements AccountApi {
 
     @Override
     public ResponseEntity getTransactionList(String accountId, String bookingStatus, UUID xRequestID, String consentID, LocalDate dateFrom, LocalDate dateTo, String entryReferenceFrom, Boolean deltaList, Boolean withBalance, Integer pageIndex, Integer itemsPerPage, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
-        Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest = new Xs2aTransactionsReportByPeriodRequest(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus), trimEndingSlash(request.getRequestURI()), entryReferenceFrom, deltaList, pageIndex, itemsPerPage);
+        String requestUri = trimEndingSlash(request.getRequestURI()).concat("?bookingStatus=").concat(bookingStatus);
+        Xs2aTransactionsReportByPeriodRequest xs2aTransactionsReportByPeriodRequest = new Xs2aTransactionsReportByPeriodRequest(consentID, accountId, request.getHeader("accept"), BooleanUtils.isTrue(withBalance), dateFrom, dateTo, BookingStatus.forValue(bookingStatus), requestUri, entryReferenceFrom, deltaList, pageIndex, itemsPerPage);
         ResponseObject<Xs2aTransactionsReport> transactionsReport = transactionService.getTransactionsReportByPeriod(xs2aTransactionsReportByPeriodRequest);
 
         if (transactionsReport.hasError()) {

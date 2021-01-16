@@ -1,3 +1,11 @@
 = Release notes v.9.7
 
 == Table of Contents
+
+* Adjust counting Consent usage for several booking statuses
+
+== Adjust counting Consent usage for several booking statuses
+
+From now on, the counting of Consent usage is adjusted.
+Access to the Read Transactions endpoint is addressed several times with different
+values for the bookingStatus as query parameter then this is counted as one access.
