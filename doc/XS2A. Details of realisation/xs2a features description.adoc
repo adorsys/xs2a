@@ -22,3 +22,5 @@ include::Funds Confirmation Service.adoc[Funds Confirmation Service]
 include::Resource Status Notification Service.adoc[Resource Status Notification Service]
 
 include::Common features.adoc[Common features]
+
+include::Signing messages at application layer.adoc[Signing messages at application layer (Digest + Signature)]
