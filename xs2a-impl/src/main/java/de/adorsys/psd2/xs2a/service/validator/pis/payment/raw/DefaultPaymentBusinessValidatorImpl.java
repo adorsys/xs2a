@@ -20,7 +20,6 @@ import de.adorsys.psd2.validator.payment.PaymentBusinessValidator;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.service.mapper.ValidationResultMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import de.adorsys.psd2.xs2a.service.validator.SupportedAccountReferenceValidator;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,6 @@ public class DefaultPaymentBusinessValidatorImpl implements PaymentBusinessValid
     private final PaymentAccountReferenceExtractor paymentAccountReferenceExtractor;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final SupportedAccountReferenceValidator supportedAccountReferenceValidator;
-    private final ValidationResultMapper validationResultMapper;
 
     @Override
     public ValidationResult validate(byte[] body, String paymentProduct, PaymentType paymentType) {
@@ -45,8 +43,6 @@ public class DefaultPaymentBusinessValidatorImpl implements PaymentBusinessValid
         }
 
         Set<AccountReference> accountReferences = paymentAccountReferenceExtractor.extractAccountReferences(body, paymentType);
-        de.adorsys.psd2.xs2a.service.validator.ValidationResult supportedAccountReferenceValidationResult = supportedAccountReferenceValidator.validate(accountReferences);
-
-        return validationResultMapper.mapToValidationResult(supportedAccountReferenceValidationResult);
+        return supportedAccountReferenceValidator.validate(accountReferences);
     }
 }

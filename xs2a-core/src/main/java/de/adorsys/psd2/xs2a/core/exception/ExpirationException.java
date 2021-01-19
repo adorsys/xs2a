@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.core.exception;
 
 public class ExpirationException extends Exception {
-    private String nokRedirectUri;
+    private final String nokRedirectUri;
 
     ExpirationException(String nokRedirectUri) {
         this.nokRedirectUri = nokRedirectUri;

@@ -61,7 +61,7 @@ public class AspspDataServiceRemote implements AspspDataService {
             log.warn("Failed to update AspspConsentData. AspspConsentData is empty");
             return false;
         }
-        String base64Payload = base64AspspDataService.encode(aspspConsentData.getAspspConsentData());
+        String base64Payload = base64AspspDataService.encode(aspspConsentData.getAspspConsentDataBytes());
         String consentId = aspspConsentData.getConsentId();
         CmsAspspConsentDataBase64 cmsAspspConsentDataBase64 = new CmsAspspConsentDataBase64(consentId, base64Payload);
         try {
