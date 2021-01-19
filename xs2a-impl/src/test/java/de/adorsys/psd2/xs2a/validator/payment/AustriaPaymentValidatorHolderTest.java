@@ -30,7 +30,7 @@ class AustriaPaymentValidatorHolderTest {
     @BeforeEach
     void setUp() {
         holder = new AustriaPaymentValidatorHolder(new AustriaPaymentBodyFieldsValidatorImpl(null, null),
-                                                   new DefaultPaymentBusinessValidatorImpl(null, null, null, null));
+                                                   new DefaultPaymentBusinessValidatorImpl(null, null, null));
     }
 
     @Test

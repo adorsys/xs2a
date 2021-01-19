@@ -3,9 +3,22 @@
 == Table of Contents
 
 * Adjust counting Consent usage for several booking statuses
+* Fixed sonar alerts
 
 == Adjust counting Consent usage for several booking statuses
 
 From now on, the counting of Consent usage is adjusted.
 Access to the Read Transactions endpoint is addressed several times with different
 values for the bookingStatus as query parameter then this is counted as one access.
+
+== Fixed sonar alerts
+
+Sonar alerts were fixed for classes:
+
+- AspspConsentData
+- TppMessageInformation
+- ExpirationException
+- PisDayOfExecution
+- TransactionStatus
+- OtpFormat
+- ValidationResult

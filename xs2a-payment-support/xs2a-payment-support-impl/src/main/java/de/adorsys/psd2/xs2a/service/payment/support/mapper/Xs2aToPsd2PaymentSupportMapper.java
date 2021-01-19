@@ -17,9 +17,11 @@
 package de.adorsys.psd2.xs2a.service.payment.support.mapper;
 
 import de.adorsys.psd2.model.BulkPaymentInitiationJson;
+import de.adorsys.psd2.model.DayOfExecution;
 import de.adorsys.psd2.model.PaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
@@ -31,11 +33,18 @@ public interface Xs2aToPsd2PaymentSupportMapper {
     @Mapping(target = "creditorAgentName", ignore = true)
     PaymentInitiationJson mapToPaymentInitiationJson(SinglePayment singlePayment);
 
+    @Mapping(target = "dayOfExecution", expression = "java(mapDayOfExecution(xs2aPeriodicPayment.getDayOfExecution()))")
     PeriodicPaymentInitiationJson mapToPeriodicPaymentInitiationJson(PeriodicPayment xs2aPeriodicPayment);
 
     BulkPaymentInitiationJson mapToBulkPaymentInitiationJson(BulkPayment xs2aBulkPayment);
 
     default String mapToCountry(Xs2aCountryCode xs2aCountryCode) {
         return xs2aCountryCode.getCode();
+    }
+
+    default DayOfExecution mapDayOfExecution(PisDayOfExecution dayOfExecution) {
+        return dayOfExecution != null
+                   ? DayOfExecution.fromValue(dayOfExecution.toString())
+                   : null;
     }
 }

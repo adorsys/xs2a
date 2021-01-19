@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationPsuDataChecker;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStatusChecker;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;

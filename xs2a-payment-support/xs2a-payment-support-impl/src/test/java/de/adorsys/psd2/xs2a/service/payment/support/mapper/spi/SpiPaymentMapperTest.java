@@ -189,7 +189,7 @@ class SpiPaymentMapperTest {
         periodicPayment.setCreditorAgent("BCENECEQ");
         periodicPayment.setCreditorName("Telekom");
         periodicPayment.setCreditorAddress(ADDRESS);
-        periodicPayment.setDayOfExecution(PisDayOfExecution._14);
+        periodicPayment.setDayOfExecution(PisDayOfExecution.DAY_14);
         periodicPayment.setDebtorAccount(new SpiAccountReference(null, null, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, CURRENCY, null));
         periodicPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
         periodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);

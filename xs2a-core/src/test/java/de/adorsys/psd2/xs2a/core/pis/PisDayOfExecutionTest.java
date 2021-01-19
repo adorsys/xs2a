@@ -27,8 +27,8 @@ class PisDayOfExecutionTest {
 
     @Test
     void getByValue() {
-        assertEquals(Optional.of(PisDayOfExecution._14), PisDayOfExecution.getByValue("14"));
-        assertEquals(Optional.of(PisDayOfExecution._1), PisDayOfExecution.getByValue("1"));
+        assertEquals(Optional.of(PisDayOfExecution.DAY_14), PisDayOfExecution.getByValue("14"));
+        assertEquals(Optional.of(PisDayOfExecution.DAY_1), PisDayOfExecution.getByValue("1"));
 
         assertEquals(Optional.empty(), PisDayOfExecution.getByValue("234567890"));
         assertEquals(Optional.empty(), PisDayOfExecution.getByValue(""));
@@ -37,8 +37,8 @@ class PisDayOfExecutionTest {
 
     @Test
     void fromValue() {
-        assertEquals(PisDayOfExecution._14, PisDayOfExecution.fromValue("14"));
-        assertEquals(PisDayOfExecution._1, PisDayOfExecution.fromValue("1"));
+        assertEquals(PisDayOfExecution.DAY_14, PisDayOfExecution.fromValue("14"));
+        assertEquals(PisDayOfExecution.DAY_1, PisDayOfExecution.fromValue("1"));
 
         assertNull(PisDayOfExecution.fromValue("234567890"));
         assertNull(PisDayOfExecution.fromValue(""));

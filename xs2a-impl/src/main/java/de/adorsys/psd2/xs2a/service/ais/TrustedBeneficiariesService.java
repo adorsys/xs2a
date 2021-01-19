@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiaries;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiariesList;
@@ -34,7 +35,6 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTrustedBeneficiariesMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetTrustedBeneficiariesListValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetTrustedBeneficiariesListConsentObject;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTrustedBeneficiaries;
@@ -147,8 +147,8 @@ public class TrustedBeneficiariesService {
         Xs2aTrustedBeneficiariesList xs2aTrustedBeneficiariesList = new Xs2aTrustedBeneficiariesList(trustedBeneficiaries);
 
         ResponseObject<Xs2aTrustedBeneficiariesList> response = ResponseObject.<Xs2aTrustedBeneficiariesList>builder()
-                                                                          .body(xs2aTrustedBeneficiariesList)
-                                                                          .build();
+                                                                    .body(xs2aTrustedBeneficiariesList)
+                                                                    .build();
 
         aisConsentService.consentActionLog(tppService.getTppId(), consentId,
                                            accountHelperService.createActionStatus(false, TypeAccess.BENEFICIARIES, response),

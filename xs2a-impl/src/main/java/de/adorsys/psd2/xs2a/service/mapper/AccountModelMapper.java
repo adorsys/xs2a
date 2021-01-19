@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
@@ -103,6 +104,7 @@ public abstract class AccountModelMapper {
     @Mapping(target = "currencyExchange", expression = "java(mapToReportExchanges(transactions.getExchangeRate()))")
     @Mapping(target = "bankTransactionCode", source = "bankTransactionCodeCode.code")
     @Mapping(target = "transactionAmount", source = "amount")
+    @Mapping(target = "additionalInformationStructured.standingOrderDetails.dayOfExecution", expression = "java(mapDayOfExecution(xs2aStandingOrderDetails.getDayOfExecution()))")
     @Mapping(target = "links", ignore = true)
     @Mapping(target = "_links", ignore = true)
     public abstract de.adorsys.psd2.model.Transactions mapToTransactions(Transactions transactions);
@@ -150,8 +152,8 @@ public abstract class AccountModelMapper {
         }
 
         List<de.adorsys.psd2.model.Transactions> transactionDetails = transactions.stream()
-                                                          .map(this::mapToTransactions)
-                                                          .collect(Collectors.toList());
+                                                                          .map(this::mapToTransactions)
+                                                                          .collect(Collectors.toList());
 
         TransactionList transactionList = new TransactionList();
         transactionList.addAll(transactionDetails);
@@ -178,6 +180,12 @@ public abstract class AccountModelMapper {
 
     private String getMulticurrencyRepresentationOrNull() {
         return MULTICURRENCY_ACCOUNT_AGGREGATION_LEVELS.contains(aspspProfileServiceWrapper.getMulticurrencyAccountLevel()) ? "XXX" : null;
+    }
+
+    protected DayOfExecution mapDayOfExecution(PisDayOfExecution dayOfExecution) {
+        return dayOfExecution != null
+                   ? DayOfExecution.fromValue(dayOfExecution.toString())
+                   : null;
     }
 }
 

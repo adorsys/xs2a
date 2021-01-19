@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.authorisation;
 import de.adorsys.psd2.core.data.Consent;
 import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
