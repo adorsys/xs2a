@@ -49,6 +49,11 @@
   "remittanceInformationStructuredArray": [
     "Remittance structured array element reference"
   ],
+  "additionalInformationStructured": {
+    "standingOrderDetails": {
+      "dayOfExecution": 12
+    }
+  },
   "purposeCode": "BKDF",
   "bankTransactionCode": "some bank code",
   "proprietaryBankTransactionCode": "very secret code"

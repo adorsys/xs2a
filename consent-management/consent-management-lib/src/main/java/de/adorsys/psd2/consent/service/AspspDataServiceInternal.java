@@ -60,7 +60,7 @@ public class AspspDataServiceInternal implements AspspDataService {
             return false;
         }
 
-        byte[] data = aspspConsentData.getAspspConsentData();
+        byte[] data = aspspConsentData.getAspspConsentDataBytes();
         if (Objects.isNull(data)) {
             return deleteAspspConsentData(aspspConsentData.getConsentId());
         }

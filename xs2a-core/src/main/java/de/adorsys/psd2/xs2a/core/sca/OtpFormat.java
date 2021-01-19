@@ -26,7 +26,7 @@ public enum OtpFormat {
     CHARACTERS("characters"),
     INTEGER("integer");
 
-    private final static Map<String, OtpFormat> container = new HashMap<>();
+    private static final Map<String, OtpFormat> container = new HashMap<>();
 
     static {
         for (OtpFormat otpFormat : values()) {

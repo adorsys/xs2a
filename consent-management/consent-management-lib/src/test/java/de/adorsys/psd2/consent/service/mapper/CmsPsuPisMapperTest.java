@@ -34,7 +34,6 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -98,7 +97,7 @@ class CmsPsuPisMapperTest {
     private static final String REMITTANCE_INFORMATION_UNSTRUCTURED = "REMITTANCE_INFORMATION_UNSTRUCTURED";
     private static final LocalDate REQUESTED_EXECUTION_DATE = LocalDate.now();
     private static final OffsetDateTime REQUESTED_EXECUTION_TIME = OffsetDateTime.now();
-    private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution._1;
+    private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution.DAY_1;
     private static final LocalDate START_DATE = LocalDate.now().minus(10, ChronoUnit.DAYS);
     private static final LocalDate END_DATE = LocalDate.now();
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
