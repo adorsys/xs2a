@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

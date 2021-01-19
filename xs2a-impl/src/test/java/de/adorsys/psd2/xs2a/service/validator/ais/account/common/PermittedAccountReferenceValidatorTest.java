@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

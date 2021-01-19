@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.pis.PisDayOfExecution;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
@@ -26,16 +27,19 @@ import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring",
     uses = {Xs2aAddressMapper.class, RemittanceMapper.class, PurposeCodeMapper.class},
     imports = RemittanceInformationStructured.class)
 public interface PaymentModelMapper {
 
+    @Mapping(target = "dayOfExecution", expression = "java(mapDayOfExecution(paymentRequest.getDayOfExecution()))")
     PeriodicPayment mapToXs2aPayment(PeriodicPaymentInitiationJson paymentRequest);
 
     SinglePayment mapToXs2aPayment(PaymentInitiationJson paymentRequest);
@@ -58,5 +62,13 @@ public interface PaymentModelMapper {
             bp.setRequestedExecutionTime(requestedExecutionTime);
             bp.setDebtorAccount(debtorAccount);
         });
+    }
+
+    default PisDayOfExecution mapDayOfExecution(DayOfExecution dayOfExecution) {
+        if (dayOfExecution != null) {
+            Optional<PisDayOfExecution> pisDayOfExecutionOptional = PisDayOfExecution.getByValue(dayOfExecution.toString());
+            return pisDayOfExecutionOptional.orElse(null);
+        }
+        return null;
     }
 }

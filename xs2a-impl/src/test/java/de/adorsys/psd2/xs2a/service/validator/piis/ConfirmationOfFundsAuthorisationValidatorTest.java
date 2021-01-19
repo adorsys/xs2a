@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

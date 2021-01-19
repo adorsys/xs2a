@@ -16,10 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais;
 
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoValidator;
 import org.jetbrains.annotations.NotNull;
 

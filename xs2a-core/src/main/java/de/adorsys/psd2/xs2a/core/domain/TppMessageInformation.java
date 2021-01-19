@@ -33,7 +33,7 @@ public class TppMessageInformation {
     private String text;
 
     public static TppMessageInformation buildWithCustomError(MessageErrorCode messageErrorCode, String text) {
-        return new TppMessageInformation(ERROR, messageErrorCode, null, text, null);
+        return new TppMessageInformation(ERROR, messageErrorCode, null, text, (Object) null);
     }
 
     public static TppMessageInformation buildWarning(String text) {
@@ -41,7 +41,7 @@ public class TppMessageInformation {
     }
 
     public static TppMessageInformation of(MessageErrorCode messageErrorCode) { //NOPMD
-        return of(ERROR, messageErrorCode, null);
+        return of(ERROR, messageErrorCode, (Object) null);
     }
 
     public static TppMessageInformation of(MessageErrorCode messageErrorCode, Object... textParameters) { //NOPMD
@@ -49,7 +49,7 @@ public class TppMessageInformation {
     }
 
     public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode) { //NOPMD
-        return of(category, messageErrorCode, null, null);
+        return of(category, messageErrorCode, null, (Object) null);
     }
 
     public static TppMessageInformation of(MessageCategory category, MessageErrorCode messageErrorCode, Object... textParameters) { //NOPMD

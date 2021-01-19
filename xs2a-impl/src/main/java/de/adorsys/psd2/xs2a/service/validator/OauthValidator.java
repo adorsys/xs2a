@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -42,6 +43,7 @@ public abstract class OauthValidator<T> {
     }
 
     protected abstract boolean checkObjectForTokenAbsence(T object);
+
     protected abstract MessageError getMessageError();
 
     private boolean isOauthIntegrated() {

@@ -189,7 +189,7 @@ public class AccountSpiMockImpl implements AccountSpi {
         SpiStandingOrderDetails standingOrderDetails = new SpiStandingOrderDetails(LocalDate.of(2021, Month.JANUARY, 4),
                                                                                    LocalDate.of(2021, Month.MARCH, 12),
                                                                                    PisExecutionRule.PRECEDING, null,
-                                                                                   FrequencyCode.MONTHLY, null, null, PisDayOfExecution._24, null);
+                                                                                   FrequencyCode.MONTHLY, null, null, PisDayOfExecution.DAY_24, null);
 
         SpiAdditionalInformationStructured additionalInformationStructured = new SpiAdditionalInformationStructured(standingOrderDetails);
         return new SpiTransaction(null, null, null, null, null,

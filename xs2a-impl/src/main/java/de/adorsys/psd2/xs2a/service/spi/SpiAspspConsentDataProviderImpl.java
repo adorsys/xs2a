@@ -43,7 +43,7 @@ public class SpiAspspConsentDataProviderImpl implements SpiAspspConsentDataProvi
     @NotNull
     public byte[] loadAspspConsentData() {
         byte[] readData = aspspDataService.readAspspConsentData(encryptedConsentId)
-                                     .map(AspspConsentData::getAspspConsentData)
+                                     .map(AspspConsentData::getAspspConsentDataBytes)
                                      .orElse(EMPTY_BYTE_ARRAY);
         lastKnownData = readData;
         return readData;

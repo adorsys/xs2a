@@ -16,8 +16,8 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.OauthConsentValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

@@ -44,7 +44,7 @@ public enum TransactionStatus {
             .forEach(status -> container.put(status.getTransactionStatus(), status));
     }
 
-    private String transactionStatus;
+    private String transactionStatusString;
     private final boolean finalisedStatus;
 
     public boolean isFinalisedStatus() {
@@ -56,7 +56,7 @@ public enum TransactionStatus {
     }
 
     TransactionStatus(String transactionStatus, boolean finalisedStatus) {
-        this.transactionStatus = transactionStatus;
+        this.transactionStatusString = transactionStatus;
         this.finalisedStatus = finalisedStatus;
     }
 
@@ -65,6 +65,6 @@ public enum TransactionStatus {
     }
 
     public String getTransactionStatus() {
-        return transactionStatus;
+        return transactionStatusString;
     }
 }
