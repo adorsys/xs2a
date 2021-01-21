@@ -61,7 +61,6 @@ class AbstractMethodValidatorTest {
     private MessageError messageError;
     private MockHttpServletRequest request;
 
-    @SuppressWarnings("unchecked")
     @BeforeEach
     void setUp() {
         messageError = new MessageError();
@@ -87,7 +86,7 @@ class AbstractMethodValidatorTest {
         messageError = methodValidator.validate(request, messageError);
 
         verify(headerValidator, times(1)).validate(headersCaptor.capture(), eq(messageError));
-        verify(bodyValidator, times(1)).validate(eq(request), eq(messageError));
+        verify(bodyValidator, times(1)).validate(request, messageError);
         verify(queryParameterValidator, times(1)).validate(queryParametersCaptor.capture(), eq(messageError));
 
         assertEquals(1, headersCaptor.getValue().size());

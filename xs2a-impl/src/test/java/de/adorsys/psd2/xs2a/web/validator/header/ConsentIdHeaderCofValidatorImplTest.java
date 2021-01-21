@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ConsentIdHeaderCofValidatorImplTest {
+class ConsentIdHeaderCofValidatorImplTest {
     private static final String[] CONSENT_ID_HEADER_NAME = {"consent-id"};
     private static final String CONSENT_ID = "consent-id";
 
