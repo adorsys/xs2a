@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2018 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 
 package de.adorsys.psd2.xs2a.config.factory;
 
-/**
- * This is specific factory intended to retrieve specific, stage-dependent SCA update authorisation services for AIS.
- * It is used ServiceLocatorFactoryBean for implementing a factory pattern.
- * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
- */
-public interface AisScaStageAuthorisationFactory extends ServiceFactory {}
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public enum Prefixes {
+    SERVICE_PREFIX("status-");
+
+    private final String value;
+}

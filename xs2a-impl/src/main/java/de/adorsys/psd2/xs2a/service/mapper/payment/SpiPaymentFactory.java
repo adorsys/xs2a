@@ -22,5 +22,5 @@ import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import java.util.Optional;
 
 public interface SpiPaymentFactory {
-    Optional<? extends SpiPayment> getSpiPayment(CommonPaymentData commonPaymentData);
+    Optional<SpiPayment> getSpiPayment(CommonPaymentData commonPaymentData);
 }

@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service
 public class CancelCommonPaymentService extends AbstractCancelPaymentService {
 
-    private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
+    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper;
 
     @Autowired
     public CancelCommonPaymentService(CancelPaymentService cancelPaymentService,
@@ -38,7 +38,7 @@ public class CancelCommonPaymentService extends AbstractCancelPaymentService {
     }
 
     @Override
-    protected Optional<? extends SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData) {
+    protected Optional<SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData) {
         return Optional.of(xs2aToSpiPaymentInfoMapper.mapToSpiPaymentInfo(commonPaymentData));
     }
 }

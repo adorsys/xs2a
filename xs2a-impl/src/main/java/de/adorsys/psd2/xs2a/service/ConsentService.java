@@ -185,7 +185,7 @@ public class ConsentService {
     /**
      * Returns status of requested consent
      *
-     * @param consentId String representation of AccountConsent identification
+     * @param consentId String representation of Consent identification
      * @return ConsentStatus
      */
     public ResponseObject<ConsentStatusResponse> getAccountConsentsStatusById(String consentId) {
@@ -242,7 +242,7 @@ public class ConsentService {
     /**
      * Terminates account consent on PSU request
      *
-     * @param consentId String representation of AccountConsent identification
+     * @param consentId String representation of Consent identification
      * @return VOID
      */
     public ResponseObject<Void> deleteAccountConsentsById(String consentId) {
@@ -292,8 +292,8 @@ public class ConsentService {
     /**
      * Returns account consent by its id
      *
-     * @param consentId String representation of AccountConsent identification
-     * @return AccountConsent requested by consentId
+     * @param consentId String representation of Consent identification
+     * @return AisConsent requested by consentId
      */
     public ResponseObject<AisConsent> getAccountConsentById(String consentId) {
         xs2aEventService.recordConsentTppRequest(consentId, EventType.GET_AIS_CONSENT_REQUEST_RECEIVED);
@@ -349,7 +349,7 @@ public class ConsentService {
      * Creates new authorisation for given consent and updates it if PSU Data or password are present in the request
      *
      * @param psuData   PSU authorisation data, can be empty
-     * @param consentId String representation of AccountConsent identification
+     * @param consentId String representation of Consent identification
      * @param password  PSU password, can be omitted
      * @return authorisation response
      */

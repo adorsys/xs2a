@@ -49,5 +49,5 @@ public abstract class AbstractCancelPaymentService implements CancelPaymentServi
                                                                      paymentCancellationRequest.getTppRedirectUri());
     }
 
-    protected abstract Optional<? extends SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData);
+    protected abstract Optional<SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData);
 }

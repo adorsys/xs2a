@@ -16,7 +16,13 @@
 
 package de.adorsys.psd2.xs2a.config;
 
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Xs2aEndpointPathConstant {
+    // v1
     public static final String ACCOUNTS_PATH = "/v1/accounts/**";
     public static final String BENEFICIARIES_PATH = "/v1/trusted-beneficiaries";
     public static final String CARD_ACCOUNTS_PATH = "/v1/card-accounts/**";
@@ -26,16 +32,11 @@ public class Xs2aEndpointPathConstant {
     public static final String BULK_PAYMENTS_PATH = "/v1/bulk-payments/**";
     public static final String PERIODIC_PAYMENTS_PATH = "/v1/periodic-payments/**";
     public static final String SIGNING_BASKETS_PATH = "/v1/signing-baskets/**";
-    public static final String GLOBAL_PATH= "/v1/**";
-
-    public class V2 { // NOPMD
-        public static final String CONSENTS_V2_PATH = "/v2/consents/**";
-    }
-
-
-    private Xs2aEndpointPathConstant() {}
+    public static final String GLOBAL_PATH = "/v1/**";
+    // v2
+    public static final String CONSENTS_V2_PATH = "/v2/consents/**";
 
     public static String[] getAllXs2aEndpointPaths() {
-        return new String[]{ACCOUNTS_PATH, BENEFICIARIES_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH, V2.CONSENTS_V2_PATH};
+        return new String[]{ACCOUNTS_PATH, BENEFICIARIES_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH, CONSENTS_V2_PATH};
     }
 }

@@ -152,7 +152,7 @@ public class TransactionService {
     /**
      * Gets transaction details by transaction ID
      *
-     * @param consentId     String representing an AccountConsent identification
+     * @param consentId     String representing an Consent identification
      * @param accountId     String representing a PSU`s Account at ASPSP
      * @param transactionId String representing the ASPSP identification of transaction
      * @param requestUri    the URI of incoming request
@@ -196,7 +196,7 @@ public class TransactionService {
     /**
      * Gets stream with transaction list by consent ID, account ID and download ID
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param accountId  String representing a PSU`s Account at ASPSP
      * @param downloadId String representing the download identifier
      * @return Response with transaction list stream.

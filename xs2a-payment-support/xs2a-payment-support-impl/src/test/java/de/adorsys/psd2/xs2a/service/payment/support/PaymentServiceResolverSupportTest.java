@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.payment.support;
 
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.xs2a.config.factory.Prefixes;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -183,7 +184,7 @@ class PaymentServiceResolverSupportTest {
         pisCommonPaymentResponse.setPaymentProduct(STANDARD_PAYMENT_PRODUCT);
         pisCommonPaymentResponse.setPaymentType(PaymentType.SINGLE);
 
-        when(readPaymentStatusFactory.getService(ReadPaymentStatusFactory.SERVICE_PREFIX + "payments")).thenReturn(mockReadPaymentStatusService);
+        when(readPaymentStatusFactory.getService(Prefixes.SERVICE_PREFIX.getValue() + "payments")).thenReturn(mockReadPaymentStatusService);
 
         // When
         ReadPaymentStatusService readPaymentStatusService = paymentServiceResolverSupport.getReadPaymentStatusService(pisCommonPaymentResponse);

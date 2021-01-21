@@ -33,9 +33,6 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 public class BulkPayment extends CommonPayment implements AccountReferenceCollector {
 
-    protected String paymentProduct;
-    protected PaymentType paymentType = PaymentType.BULK;
-
     @NotNull
     private AccountReference debtorAccount;
     private LocalDate requestedExecutionDate;
