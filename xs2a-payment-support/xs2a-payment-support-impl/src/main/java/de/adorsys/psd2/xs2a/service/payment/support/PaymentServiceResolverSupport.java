@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.payment.support;
 import de.adorsys.psd2.consent.api.pis.CommonPaymentData;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
+import de.adorsys.psd2.xs2a.config.factory.Prefixes;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentFactory;
 import de.adorsys.psd2.xs2a.config.factory.ReadPaymentStatusFactory;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -109,7 +110,7 @@ public class PaymentServiceResolverSupport implements PaymentServiceResolver {
             return readCommonPaymentStatusService;
         }
 
-        return readPaymentStatusFactory.getService(ReadPaymentStatusFactory.SERVICE_PREFIX + pisCommonPaymentResponse.getPaymentType().getValue());
+        return readPaymentStatusFactory.getService(Prefixes.SERVICE_PREFIX.getValue() + pisCommonPaymentResponse.getPaymentType().getValue());
     }
 
     /**

@@ -27,7 +27,7 @@ public enum Xs2aUsageType {
     PRIV("PRIV"),
     ORGA("ORGA");
 
-    private final static Map<String, Xs2aUsageType> container = new HashMap<>();
+    private static final Map<String, Xs2aUsageType> container = new HashMap<>();
 
     static {
         for (Xs2aUsageType usageType : values()) {

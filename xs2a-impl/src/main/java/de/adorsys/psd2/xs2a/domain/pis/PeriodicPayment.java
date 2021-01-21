@@ -36,7 +36,6 @@ public class PeriodicPayment extends SinglePayment {
     private LocalDate startDate;
     private PisExecutionRule executionRule;
     private LocalDate endDate;
-    protected PaymentType paymentType = PaymentType.PERIODIC;
 
     @NotNull
     private FrequencyCode frequency;
