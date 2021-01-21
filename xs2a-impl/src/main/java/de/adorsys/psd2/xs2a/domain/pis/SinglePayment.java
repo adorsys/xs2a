@@ -85,9 +85,7 @@ public class SinglePayment extends CommonPayment implements AccountReferenceColl
     private String debtorName;
 
     private ChargeBearer chargeBearer;
-
-    protected PaymentType paymentType = PaymentType.SINGLE;
-
+    
     @JsonIgnore
     @Override
     public Set<AccountReference> getAccountReferences() {

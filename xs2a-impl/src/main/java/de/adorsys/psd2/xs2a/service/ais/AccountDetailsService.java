@@ -75,7 +75,7 @@ public class AccountDetailsService {
      * withBalance variable and
      * AccountAccess in AIS-consent Balances are passed along with AccountDetails.
      *
-     * @param consentId   String representing an AccountConsent identification
+     * @param consentId   String representing an Consent identification
      * @param accountId   String representing a PSU`s Account at ASPSP
      * @param withBalance boolean representing if the responded AccountDetails should contain
      * @param requestUri  the URI of incoming request

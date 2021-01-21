@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
@@ -23,6 +24,7 @@ import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCh
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.AbstractUpdatePisPsuDataValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.UpdatePisPsuDataPO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -46,8 +48,12 @@ public class UpdatePisCancellationPsuDataValidator extends AbstractUpdatePisPsuD
     }
 
     @Override
+    protected ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject) {
+        return ValidationResult.valid();
+    }
+
+    @Override
     protected AuthorisationServiceType getAuthorisationServiceType() {
         return PIS_CANCELLATION;
     }
-
 }

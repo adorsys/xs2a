@@ -28,7 +28,7 @@ import java.util.Optional;
 
 @Service
 public class CancelCertainPaymentService extends AbstractCancelPaymentService {
-    private SpiPaymentFactory spiPaymentFactory;
+    private final SpiPaymentFactory spiPaymentFactory;
 
     @Autowired
     public CancelCertainPaymentService(CancelPaymentService cancelPaymentService, SpiPaymentFactory spiPaymentFactory) {
@@ -37,7 +37,7 @@ public class CancelCertainPaymentService extends AbstractCancelPaymentService {
     }
 
     @Override
-    protected Optional<? extends SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData) {
+    protected Optional<SpiPayment> createSpiPayment(CommonPaymentData commonPaymentData) {
         return spiPaymentFactory.getSpiPayment(commonPaymentData);
     }
 }

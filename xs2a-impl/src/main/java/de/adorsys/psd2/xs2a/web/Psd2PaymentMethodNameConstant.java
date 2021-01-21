@@ -40,7 +40,7 @@ public enum Psd2PaymentMethodNameConstant {
     UPDATE_PAYMENT_CANCELLATION_PSU_DATA("_updatePaymentCancellationPsuData"),
     UPDATE_PAYMENT_PSU_DATA("_updatePaymentPsuData");
 
-    private final static Map<String, Psd2PaymentMethodNameConstant> container = new HashMap<>();
+    private static final Map<String, Psd2PaymentMethodNameConstant> container = new HashMap<>();
 
     static {
         for (Psd2PaymentMethodNameConstant methodName : values()) {
@@ -48,7 +48,7 @@ public enum Psd2PaymentMethodNameConstant {
         }
     }
 
-    private String value;
+    private final String value;
 
     Psd2PaymentMethodNameConstant(String value) {
         this.value = value;

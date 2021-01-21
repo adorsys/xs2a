@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
@@ -44,7 +45,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountRefe
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.piis.CreatePiisConsentValidator;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -82,7 +82,6 @@ public class PiisConsentService {
     private final CreatePiisConsentValidator createPiisConsentValidator;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
-    private final ConsentAuthorisationService consentAuthorisationService;
     private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     private final PiisConsentAuthorisationService piisConsentAuthorisationService;
 
@@ -304,8 +303,6 @@ public class PiisConsentService {
 
     private void proceedImplicitCaseForCreateConsent(Xs2aConfirmationOfFundsResponse response, PsuIdData psuData, String consentId) {
         piisScaAuthorisationServiceResolver.getService().createConsentAuthorization(psuData, consentId)
-            .ifPresent(a -> {
-                response.setAuthorizationId(a.getAuthorisationId());
-            });
+            .ifPresent(a -> response.setAuthorizationId(a.getAuthorisationId()));
     }
 }

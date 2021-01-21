@@ -25,10 +25,10 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.service.*;
 import org.springframework.context.ApplicationContext;
 
 public abstract class AuthorisationProcessor {
-    private ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
     private AuthorisationProcessor nextProcessor;
 
-    public AuthorisationProcessor(ApplicationContext applicationContext) {
+    protected AuthorisationProcessor(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
