@@ -47,6 +47,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 @RestControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
 @RequiredArgsConstructor
 public class GlobalExceptionHandlerController {
+    public static final String STACKTRACE_LOG = "Stacktrace: {}";
     private final ResponseErrorMapper responseErrorMapper;
     private final ServiceTypeDiscoveryService serviceTypeDiscoveryService;
     private final ServiceTypeToErrorTypeMapper errorTypeMapper;
@@ -70,7 +71,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity illegalArgumentException(IllegalArgumentException ex, HandlerMethod handlerMethod) {
         log.warn("Illegal argument exception handled in: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        log.debug("Stacktrace: {}", ex);
+        log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
@@ -100,7 +101,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity restException(RestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        log.debug("Stacktrace: {}", ex);
+        log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateErrorResponse(createMessageError(ex.getMessageErrorCode(), ex.getMessage()));
     }
 
@@ -108,7 +109,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity aspspProfileRestException(AspspProfileRestException ex, HandlerMethod handlerMethod) {
         log.warn("RestException handled in service: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        log.debug("Stacktrace: {}", ex);
+        log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateErrorResponse(createMessageError(INTERNAL_SERVER_ERROR));
     }
 
@@ -116,7 +117,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity resourceAccessException(ResourceAccessException ex, HandlerMethod handlerMethod) {
         log.warn("ResourceAccessException handled in service: {}, message: {}",
                  handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        log.debug("Stacktrace: {}", ex);
+        log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateServiceUnavailableErrorResponse(ex.getMessage());
     }
 
@@ -125,7 +126,7 @@ public class GlobalExceptionHandlerController {
                                                          HandlerMethod handlerMethod) {
         log.warn("RequestBodyValidationException handled in controller: {}, message: {} ",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        log.debug("Stacktrace: {}", ex);
+        log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateErrorResponse(createMessageError(FORMAT_ERROR));
     }
 
@@ -133,7 +134,7 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity getTppIdException(CertificateException ex, HandlerMethod handlerMethod) {
         log.warn("Can't find tpp id in SecurityContextHolder in: {}, message: {}",
             handlerMethod.getMethod().getDeclaringClass().getSimpleName(), ex.getMessage());
-        log.debug("Stacktrace: {}", ex);
+        log.debug(STACKTRACE_LOG, ex.toString());
         return responseErrorMapper.generateErrorResponse(createMessageError(CERTIFICATE_INVALID));
     }
 

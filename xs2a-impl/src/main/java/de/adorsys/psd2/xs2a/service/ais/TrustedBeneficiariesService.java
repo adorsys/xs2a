@@ -71,7 +71,7 @@ public class TrustedBeneficiariesService {
     /**
      * Gets TrustedBeneficiaries based on accountId, beneficiaries get checked with provided AIS-consent
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param accountId  String representing a PSU`s Account at ASPSP
      * @param requestUri the URI of incoming request
      * @return response with {@link Xs2aTrustedBeneficiariesList} based on accountId and granted by consent

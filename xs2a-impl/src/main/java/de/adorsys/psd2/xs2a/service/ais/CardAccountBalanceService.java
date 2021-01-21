@@ -80,7 +80,7 @@ public class CardAccountBalanceService {
     /**
      * Gets card balances report based on consentId and accountId
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param accountId  String representing a PSU`s Account at ASPSP
      * @param requestUri the URI of incoming request
      * @return Balances Report based on consentId and accountId

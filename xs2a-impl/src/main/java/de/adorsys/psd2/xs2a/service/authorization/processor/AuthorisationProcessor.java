@@ -23,9 +23,9 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.service.Authorisatio
 
 public abstract class AuthorisationProcessor {
     private AuthorisationProcessor nextProcessor;
-    private AuthorisationProcessorServiceProvider provider;
+    private final AuthorisationProcessorServiceProvider provider;
 
-    public AuthorisationProcessor(AuthorisationProcessorServiceProvider provider) {
+    protected AuthorisationProcessor(AuthorisationProcessorServiceProvider provider) {
         this.provider = provider;
     }
 

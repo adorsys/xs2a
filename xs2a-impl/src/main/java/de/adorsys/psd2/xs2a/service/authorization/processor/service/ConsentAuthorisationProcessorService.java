@@ -60,7 +60,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
     private final SpiErrorMapper spiErrorMapper;
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
-    public ConsentAuthorisationProcessorService(Xs2aAuthorisationService authorisationService,
+    protected ConsentAuthorisationProcessorService(Xs2aAuthorisationService authorisationService,
                                                 SpiContextDataProvider spiContextDataProvider,
                                                 SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                                 SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper psuDataMapper) {

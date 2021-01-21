@@ -28,7 +28,7 @@ public enum AccountStatus {
     DELETED("deleted"),
     BLOCKED("blocked");
 
-    private final static Map<String, AccountStatus> container = new HashMap<>();
+    private static final Map<String, AccountStatus> container = new HashMap<>();
 
     static {
         for (AccountStatus accountStatus : values()) {
@@ -36,7 +36,7 @@ public enum AccountStatus {
         }
     }
 
-    private String value;
+    private final String value;
 
     AccountStatus(String value) {
         this.value = value;

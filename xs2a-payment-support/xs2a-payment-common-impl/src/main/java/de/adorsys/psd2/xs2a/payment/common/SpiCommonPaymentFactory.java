@@ -43,7 +43,7 @@ public class SpiCommonPaymentFactory implements SpiPaymentFactory {
      * @return Optional of SpiPayment subclass of requested payment type or throws IllegalArgumentException for unknown payment type
      */
     @Override
-    public Optional<? extends SpiPayment> getSpiPayment(CommonPaymentData commonPaymentData) {
+    public Optional<SpiPayment> getSpiPayment(CommonPaymentData commonPaymentData) {
         return Optional.of(commonPaymentData).map(mapper::toSpiCommonPayment);
     }
 }

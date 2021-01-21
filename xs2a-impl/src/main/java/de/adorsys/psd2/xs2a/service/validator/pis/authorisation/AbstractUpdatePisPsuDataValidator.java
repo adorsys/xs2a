@@ -123,9 +123,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
         return ValidationResult.valid();
     }
 
-    protected ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject) {
-        return ValidationResult.valid();
-    }
+    protected abstract ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject);
 
     protected abstract AuthorisationServiceType getAuthorisationServiceType();
 }
