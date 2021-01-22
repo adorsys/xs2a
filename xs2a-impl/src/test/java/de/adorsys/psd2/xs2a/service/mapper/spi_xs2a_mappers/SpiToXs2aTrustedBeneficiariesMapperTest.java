@@ -45,7 +45,7 @@ class SpiToXs2aTrustedBeneficiariesMapperTest {
     @Mock
     private SpiToXs2aAddressMapper addressMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToXs2aTrustedBeneficiaries() {
@@ -67,8 +67,7 @@ class SpiToXs2aTrustedBeneficiariesMapperTest {
         Xs2aTrustedBeneficiaries actual = spiToXs2aTrustedBeneficiariesMapper.mapToXs2aTrustedBeneficiaries(input);
 
         // Then
-        assertThat(actual).isNotNull();
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isNotNull().isEqualTo(expected);
     }
 
     @Test

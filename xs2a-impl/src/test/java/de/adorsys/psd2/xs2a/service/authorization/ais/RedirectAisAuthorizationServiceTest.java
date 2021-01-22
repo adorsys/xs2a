@@ -25,7 +25,6 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
-import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -62,8 +61,6 @@ class RedirectAisAuthorizationServiceTest {
     @Mock
     private AisAuthorisationConfirmationService aisAuthorisationConfirmationService;
 
-    private JsonReader jsonReader = new JsonReader();
-
     @Test
     void createConsentAuthorization_success() {
         // Given
@@ -74,8 +71,7 @@ class RedirectAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(CREATE_CONSENT_AUTHORIZATION_RESPONSE));
+        assertThat(actualResponse).isPresent().contains(CREATE_CONSENT_AUTHORIZATION_RESPONSE);
     }
 
     @Test
@@ -88,7 +84,7 @@ class RedirectAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = redirectAisAuthorisationService.createConsentAuthorization(PSU_ID_DATA, WRONG_CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -97,7 +93,7 @@ class RedirectAisAuthorizationServiceTest {
         Optional<Authorisation> actualResponse = redirectAisAuthorisationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -110,8 +106,7 @@ class RedirectAisAuthorizationServiceTest {
         Optional<ScaStatus> actual = redirectAisAuthorisationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(SCA_STATUS);
+        assertThat(actual).isPresent().contains(SCA_STATUS);
     }
 
     @Test
@@ -124,7 +119,7 @@ class RedirectAisAuthorizationServiceTest {
         Optional<ScaStatus> actual = redirectAisAuthorisationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertThat(actual).isNotPresent();
     }
 
     @Test

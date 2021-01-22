@@ -44,7 +44,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,8 +88,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(XS2A_CREATE_PIS_AUTHORISATION_RESPONSE));
+        assertThat(actualResponse).isPresent().contains(XS2A_CREATE_PIS_AUTHORISATION_RESPONSE);
     }
 
     @Test
@@ -105,7 +103,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentAuthorisation(WRONG_PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -147,8 +145,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE));
+        assertThat(actualResponse).isPresent().contains(XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE);
     }
 
     @Test
@@ -163,7 +160,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = embeddedPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(WRONG_PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -176,8 +173,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = embeddedPisScaAuthorisationService.getCancellationAuthorisationSubResources(PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(XS2A_PAYMENT_CANCELLATION_AUTHORISATION_SUB_RESOURCE));
+        assertThat(actualResponse).isPresent().contains(XS2A_PAYMENT_CANCELLATION_AUTHORISATION_SUB_RESOURCE);
     }
 
     @Test
@@ -190,7 +186,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aPaymentCancellationAuthorisationSubResource> actualResponse = embeddedPisScaAuthorisationService.getCancellationAuthorisationSubResources(WRONG_PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -228,8 +224,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = embeddedPisScaAuthorisationService.getAuthorisationSubResources(PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse).isEqualTo(Optional.of(XS2A_AUTHORISATION_SUB_RESOURCES));
+        assertThat(actualResponse).isPresent().contains(XS2A_AUTHORISATION_SUB_RESOURCES);
     }
 
     @Test
@@ -242,7 +237,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<Xs2aAuthorisationSubResources> actualResponse = embeddedPisScaAuthorisationService.getAuthorisationSubResources(WRONG_PAYMENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -255,8 +250,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<ScaStatus> actual = embeddedPisScaAuthorisationService.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(ScaStatus.RECEIVED, actual.get());
+        assertThat(actual).isPresent().contains(ScaStatus.RECEIVED);
     }
 
     @Test
@@ -269,7 +263,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<ScaStatus> actual = embeddedPisScaAuthorisationService.getAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertThat(actual).isNotPresent();
     }
 
     @Test
@@ -282,8 +276,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<ScaStatus> actual = embeddedPisScaAuthorisationService.getCancellationAuthorisationScaStatus(PAYMENT_ID, CANCELLATION_AUTHORISATION_ID);
 
         // Then
-        assertTrue(actual.isPresent());
-        assertEquals(SCA_STATUS, actual.get());
+        assertThat(actual).isPresent().contains(SCA_STATUS);
     }
 
     @Test
@@ -296,7 +289,7 @@ class EmbeddedPisScaAuthorisationServiceTest {
         Optional<ScaStatus> actual = embeddedPisScaAuthorisationService.getCancellationAuthorisationScaStatus(WRONG_PAYMENT_ID, WRONG_CANCELLATION_AUTHORISATION_ID);
 
         // Then
-        assertFalse(actual.isPresent());
+        assertThat(actual).isNotPresent();
     }
 
     @Test

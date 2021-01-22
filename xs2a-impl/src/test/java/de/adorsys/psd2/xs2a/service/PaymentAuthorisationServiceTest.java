@@ -186,7 +186,7 @@ class PaymentAuthorisationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
-        assertThat(RESOURCE_UNKNOWN_ERROR).isEqualTo(actual.getError());
+        assertThat(actual.getError()).isEqualTo(RESOURCE_UNKNOWN_ERROR);
     }
 
     @Test
@@ -210,7 +210,7 @@ class PaymentAuthorisationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
-        assertThat(PAYMENT_FAILED_ERROR).isEqualTo(actual.getError());
+        assertThat(actual.getError()).isEqualTo(PAYMENT_FAILED_ERROR);
     }
 
 
@@ -239,7 +239,7 @@ class PaymentAuthorisationServiceTest {
         // Then
         verify(xs2aEventService, times(1)).recordPisTppRequest(eq(PAYMENT_ID), argumentCaptor.capture());
         assertThat(argumentCaptor.getValue()).isEqualTo(EventType.START_PAYMENT_AUTHORISATION_REQUEST_RECEIVED);
-        assertThat(PSU_CREDENTIALS_INVALID_ERROR).isEqualTo(actual.getError());
+        assertThat(actual.getError()).isEqualTo(PSU_CREDENTIALS_INVALID_ERROR);
     }
 
     @Test

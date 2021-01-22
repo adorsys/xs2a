@@ -25,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +52,7 @@ class RedirectIdServiceTest {
         redirectIdService.generateRedirectId(AUTHORISATION_ID);
 
         // Then
-        verify(redirectIdHolder).setRedirectId(eq(AUTHORISATION_ID));
+        verify(redirectIdHolder).setRedirectId(AUTHORISATION_ID);
     }
 
     @Test

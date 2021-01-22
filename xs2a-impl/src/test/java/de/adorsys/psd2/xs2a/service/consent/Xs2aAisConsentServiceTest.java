@@ -23,8 +23,6 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.AisConsentActionRequest;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
-import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -36,17 +34,15 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.profile.FrequencyPerDateCalculationService;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +57,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,16 +65,11 @@ class Xs2aAisConsentServiceTest {
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
     private static final String TPP_ID = "Test TppId";
     private static final String REQUEST_URI = "request/uri";
-    private static final String REDIRECT_URI = "request/redirect_uri";
-    private static final String NOK_REDIRECT_URI = "request/nok_redirect_uri";
-    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
-    private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
     private static final CreateConsentReq CREATE_CONSENT_REQ = buildCreateConsentReq();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final CmsConsent CMS_CONSENT = new CmsConsent();
     private static final ConsentStatus CONSENT_STATUS = ConsentStatus.VALID;
-    private static final CreateAuthorisationRequest AIS_CONSENT_AUTHORISATION_REQUEST = buildAisConsentAuthorisationRequest();
 
     @InjectMocks
     private Xs2aAisConsentService xs2aAisConsentService;
@@ -99,7 +89,7 @@ class Xs2aAisConsentServiceTest {
     @Mock
     private LoggingContextService loggingContextService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
 
     @BeforeEach
@@ -127,8 +117,7 @@ class Xs2aAisConsentServiceTest {
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertTrue(actualResponse.isPresent());
-        assertEquals(expected, actualResponse.get());
+        assertThat(actualResponse).isPresent().contains(expected);
     }
 
     @Test
@@ -144,7 +133,7 @@ class Xs2aAisConsentServiceTest {
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertTrue(actualResponse.isEmpty());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -161,7 +150,7 @@ class Xs2aAisConsentServiceTest {
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertFalse(actualResponse.isPresent());
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -176,8 +165,7 @@ class Xs2aAisConsentServiceTest {
         Optional<AisConsent> actualResponse = xs2aAisConsentService.getAccountConsentById(CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(aisConsent);
+        assertThat(actualResponse).isPresent().contains(aisConsent);
     }
 
     @Test
@@ -190,7 +178,7 @@ class Xs2aAisConsentServiceTest {
         Optional<AisConsent> actualResponse = xs2aAisConsentService.getAccountConsentById(CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isEmpty();
     }
 
     @Test
@@ -383,8 +371,8 @@ class Xs2aAisConsentServiceTest {
 
         CmsResponse<AisConsent> actual = xs2aAisConsentService.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
-        assertFalse(actual.hasError());
-        assertEquals(aisConsent, actual.getPayload());
+        assertThat(actual.hasError()).isFalse();
+        assertThat(actual.getPayload()).isEqualTo(aisConsent);
     }
 
     @Test
@@ -396,8 +384,8 @@ class Xs2aAisConsentServiceTest {
 
         CmsResponse<AisConsent> actual = xs2aAisConsentService.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
-        assertTrue(actual.hasError());
-        assertEquals(CmsError.CHECKSUM_ERROR, actual.getError());
+        assertThat(actual.hasError()).isTrue();
+        assertThat(actual.getError()).isEqualTo(CmsError.CHECKSUM_ERROR);
     }
 
     @Test
@@ -409,8 +397,8 @@ class Xs2aAisConsentServiceTest {
 
         CmsResponse<AisConsent> actual = xs2aAisConsentService.updateAspspAccountAccess(CONSENT_ID, accountAccess);
 
-        assertTrue(actual.hasError());
-        assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
+        assertThat(actual.hasError()).isTrue();
+        assertThat(actual.getError()).isEqualTo(CmsError.TECHNICAL_ERROR);
     }
 
     private static TppInfo buildTppInfo() {
@@ -426,17 +414,6 @@ class Xs2aAisConsentServiceTest {
         CreateConsentReq createConsentReq = new CreateConsentReq();
         createConsentReq.setFrequencyPerDay(1);
         return createConsentReq;
-    }
-
-    private static CreateAuthorisationRequest buildAisConsentAuthorisationRequest() {
-        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
-        consentAuthorization.setPsuData(PSU_DATA);
-        consentAuthorization.setScaApproach(SCA_APPROACH);
-        return consentAuthorization;
-    }
-
-    private static CreateAuthorisationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
     }
 
     private CmsConsent getCmsConsentWithNotifications() {

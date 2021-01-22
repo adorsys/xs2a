@@ -230,8 +230,7 @@ class AccountDetailsServiceTest {
 
         Xs2aAccountDetails body = actualResponse.getBody().getAccountDetails();
 
-        assertThat(body).isNotNull();
-        assertThat(body).isEqualTo(xs2aAccountDetails);
+        assertThat(body).isNotNull().isEqualTo(xs2aAccountDetails);
     }
 
     @Test
@@ -258,8 +257,7 @@ class AccountDetailsServiceTest {
 
         Xs2aAccountDetails body = actualResponse.getBody().getAccountDetails();
 
-        assertThat(body).isNotNull();
-        assertThat(body).isEqualTo(xs2aAccountDetails);
+        assertThat(body).isNotNull().isEqualTo(xs2aAccountDetails);
 
         verify(accountHelperService, never()).findAccountReference(any(), any());
         assertThat(spiAccountReferenceCaptor.getValue().getResourceId()).isEqualTo(ACCOUNT_ID);

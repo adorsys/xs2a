@@ -65,7 +65,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TrustedBeneficiariesServiceTest {
+class TrustedBeneficiariesServiceTest {
     private static final String CONSENT_ID = "consentId";
     private static final String ACCOUNT_ID = "accountId";
     private static final String REQUEST_URI = "requestUri";
@@ -105,7 +105,7 @@ public class TrustedBeneficiariesServiceTest {
     private SpiAccountReference spiAccountReference;
     private AisConsent aisConsent;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -188,7 +188,7 @@ public class TrustedBeneficiariesServiceTest {
 
         Xs2aTrustedBeneficiaries xs2aTrustedBeneficiaries =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/trusted-beneficiaries.json",
-                                                                                       Xs2aTrustedBeneficiaries.class);
+                                         Xs2aTrustedBeneficiaries.class);
         List<Xs2aTrustedBeneficiaries> trustedBeneficiaries = Collections.singletonList(xs2aTrustedBeneficiaries);
         when(spiToXs2aTrustedBeneficiariesMapper.mapToXs2aTrustedBeneficiariesList(beneficiaries)).thenReturn(trustedBeneficiaries);
 
@@ -236,8 +236,8 @@ public class TrustedBeneficiariesServiceTest {
 
     private ResponseObject<Xs2aTrustedBeneficiariesList> getConsentUnknownResponse() {
         return ResponseObject.<Xs2aTrustedBeneficiariesList>builder()
-            .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
-            .build();
+                   .fail(AIS_400, TppMessageInformation.of(CONSENT_UNKNOWN_400))
+                   .build();
     }
 
     private SpiResponse<List<SpiTrustedBeneficiaries>> buildSuccessSpiResponse(List<SpiTrustedBeneficiaries> beneficiaries) {

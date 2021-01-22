@@ -117,7 +117,7 @@ class CardTransactionServiceTest {
     private AisConsent accountConsent;
     private CardTransactionsReportByPeriodObject cardTransactionsReportByPeriodObject;
     private SpiAspspConsentDataProvider spiAspspConsentDataProvider;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private CardTransactionService cardTransactionService;
@@ -380,7 +380,7 @@ class CardTransactionServiceTest {
 
         assertThat(body).isNotNull();
         assertThat(body.getCardAccountReport()).isEqualTo(xs2aAccountReport);
-        assertThat(body.getAccountReference()).isEqualTo(null);
+        assertThat(body.getAccountReference()).isNull();
         assertTrue(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList()));
     }
 

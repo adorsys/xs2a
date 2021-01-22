@@ -35,6 +35,8 @@ import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.CreateConsentReque
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -106,31 +108,17 @@ class CreateConsentRequestValidatorTest {
         assertThat(validationResult.getMessageError()).isEqualTo(SUPPORTED_ACCOUNT_REFERENCE_VALIDATION_ERROR);
     }
 
-    @Test
-    void validateSuccess_RecurringIndicatorTrue() {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void validateSuccess_RecurringIndicator(boolean recurringIndicator) {
         //Given
-        CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1, AccountAccessType.ALL_ACCOUNTS, null, null);
+        CreateConsentReq createConsentReq = buildCreateConsentReq(recurringIndicator, 1, AccountAccessType.ALL_ACCOUNTS, null, null);
         when(aspspProfileService.isAvailableAccountsConsentSupported()).thenReturn(true);
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))
             .thenReturn(ValidationResult.valid());
 
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultValid(validationResult);
-    }
-
-    @Test
-    void validateSuccess_RecurringIndicatorFalse() {
-        //Given
-        CreateConsentReq createConsentReq = buildCreateConsentReq(false, 1, AccountAccessType.ALL_ACCOUNTS, null, null);
-        when(aspspProfileService.isAvailableAccountsConsentSupported()).thenReturn(true);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
         //When
         ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
         //Then
@@ -159,22 +147,6 @@ class CreateConsentRequestValidatorTest {
         CreateConsentReq createConsentReq = buildCreateConsentReqWithoutFlagsAndAccesses(true, 1, null, null, null);
         when(aspspProfileService.isBankOfferedConsentSupported()).thenReturn(true);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
-        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
-            .thenReturn(ValidationResult.valid());
-        when(supportedAccountReferenceValidator.validate(anyCollection()))
-            .thenReturn(ValidationResult.valid());
-
-        //When
-        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
-        //Then
-        assertValidationResultValid(validationResult);
-    }
-
-    @Test
-    void validateSuccess_FlagsPresentAccessesEmpty() {
-        //Given
-        CreateConsentReq createConsentReq = buildCreateConsentReq(true, 1, AccountAccessType.ALL_ACCOUNTS, null, null);
-        when(aspspProfileService.isAvailableAccountsConsentSupported()).thenReturn(true);
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class)))
             .thenReturn(ValidationResult.valid());
         when(supportedAccountReferenceValidator.validate(anyCollection()))

@@ -669,7 +669,7 @@ class PaymentServiceTest {
         assertThat(response.getBody()).isNotNull();
         GetPaymentStatusResponse getPaymentResponse = response.getBody();
         assertThat(getPaymentResponse.getTransactionStatus()).isEqualTo(ACCP);
-        assertThat(getPaymentResponse.getFundsAvailable()).isEqualTo(true);
+        assertThat(getPaymentResponse.getFundsAvailable()).isTrue();
     }
 
     @Test
