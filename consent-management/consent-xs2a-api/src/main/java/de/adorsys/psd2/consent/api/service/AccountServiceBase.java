@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.consent.api.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
+
 interface AccountServiceBase {
 
-    boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions);
+    boolean saveTransactionParameters(String consentId, String resourceId, UpdateTransactionParametersRequest transactionParameters);
 
 }

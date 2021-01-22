@@ -16,10 +16,12 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.consent.repository.AisConsentTransactionRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,9 +54,10 @@ class AccountServiceInternalTest {
     void saveNumberOfTransactions_shouldFail() {
         // Given
         when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
 
         // When
-        boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
+        boolean result = accountServiceInternal.saveTransactionParameters(CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
 
         // Then
         assertFalse(result);
@@ -65,13 +68,13 @@ class AccountServiceInternalTest {
     void saveNumberOfTransactions_success() {
         // Given
         when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new ConsentEntity()));
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
 
         // When
-        boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
+        boolean result = accountServiceInternal.saveTransactionParameters(CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
 
         // Then
         assertTrue(result);
         verify(aisConsentTransactionRepository, times(1)).save(any(AisConsentTransaction.class));
     }
-
 }

@@ -105,7 +105,7 @@ public class AccountSpiMockImpl implements AccountSpi {
 
         SpiTransactionLinks spiTransactionLinks = buildSpiTransactionLinks();
         return SpiResponse.<SpiTransactionReport>builder()
-                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null, spiTransactionLinks))
+                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null, spiTransactionLinks, 1))
                    .build();
     }
 

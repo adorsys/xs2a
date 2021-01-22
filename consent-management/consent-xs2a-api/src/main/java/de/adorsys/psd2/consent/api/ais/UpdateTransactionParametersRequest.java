@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.config;
+package de.adorsys.psd2.consent.api.ais;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Component
-public class AccountRemoteUrls {
-    @Value("${xs2a.cms.consent-service.baseurl:http://localhost:38080/api/v1}")
-    private String consentServiceBaseUrl;
-
-    public String saveTransactionParameters() {
-        return consentServiceBaseUrl + "/ais/consent/{consent-id}/{resource-id}";
-    }
+@Data
+@AllArgsConstructor
+public class UpdateTransactionParametersRequest {
+    private int numberOfTransactions;
+    private int totalPages;
+    private BookingStatus bookingStatus;
 }

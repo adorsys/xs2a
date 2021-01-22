@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,12 @@ public interface CmsAccountApi {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")})
-    ResponseEntity<Boolean> saveNumberOfTransactions(
+    ResponseEntity<Boolean> saveTransactionParameters(
         @ApiParam(name = "consent-id",
             value = "Encrypted consent ID",
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId,
         @PathVariable("resource-id") String resourceId,
-        @RequestBody Integer numberOfTransactions);
+        @RequestBody UpdateTransactionParametersRequest updateTransactionParametersRequest);
 }

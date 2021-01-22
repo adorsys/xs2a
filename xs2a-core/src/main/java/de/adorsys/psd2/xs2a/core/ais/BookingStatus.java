@@ -28,7 +28,7 @@ public enum BookingStatus {
     BOOKED("booked"),
     BOTH("both");
 
-    private String value;
+    private final String value;
 
     BookingStatus(String value) {
         this.value = value;

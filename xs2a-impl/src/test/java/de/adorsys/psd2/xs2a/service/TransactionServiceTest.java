@@ -393,7 +393,7 @@ class TransactionServiceTest {
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
 
-        SpiTransactionReport transactionReportWithTransactions = new SpiTransactionReport(DOWNLOAD_ID, Collections.singletonList(spiTransaction), null, SpiTransactionReport.RESPONSE_TYPE_JSON, null, null);
+        SpiTransactionReport transactionReportWithTransactions = new SpiTransactionReport(DOWNLOAD_ID, Collections.singletonList(spiTransaction), null, SpiTransactionReport.RESPONSE_TYPE_JSON, null, null, 3);
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(transactionReportWithTransactions));
 
@@ -431,7 +431,7 @@ class TransactionServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(aspspProfileService.isTransactionsWithoutBalancesSupported())
             .thenReturn(true);
-        SpiTransactionReport transactionReportWithoutTransactions = new SpiTransactionReport(DOWNLOAD_ID, null, null, SpiTransactionReport.RESPONSE_TYPE_JSON, null, null);
+        SpiTransactionReport transactionReportWithoutTransactions = new SpiTransactionReport(DOWNLOAD_ID, null, null, SpiTransactionReport.RESPONSE_TYPE_JSON, null, null, 5);
         when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParameters(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
             .thenReturn(buildSuccessSpiResponse(transactionReportWithoutTransactions));
 
@@ -923,7 +923,7 @@ class TransactionServiceTest {
 
     // Needed because SpiTransactionReport is final, so it's impossible to mock it
     private static SpiTransactionReport buildSpiTransactionReport() {
-        return new SpiTransactionReport(DOWNLOAD_ID, Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null, null);
+        return new SpiTransactionReport(DOWNLOAD_ID, Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null, null, 5);
     }
 
     @NotNull

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountService;
 import de.adorsys.psd2.consent.domain.account.AisConsentTransaction;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
@@ -38,7 +39,7 @@ public class AccountServiceInternal implements AccountService {
 
     @Override
     @Transactional
-    public boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions) {
+    public boolean saveTransactionParameters(String consentId, String resourceId, UpdateTransactionParametersRequest transactionParameters) {
 
         Optional<ConsentEntity> optionalConsent = consentJpaRepository.findByExternalId(consentId);
 
@@ -47,7 +48,9 @@ public class AccountServiceInternal implements AccountService {
             AisConsentTransaction aisConsentTransaction = new AisConsentTransaction();
             aisConsentTransaction.setConsentId(optionalConsent.get());
             aisConsentTransaction.setResourceId(resourceId);
-            aisConsentTransaction.setNumberOfTransactions(numberOfTransactions);
+            aisConsentTransaction.setNumberOfTransactions(transactionParameters.getNumberOfTransactions());
+            aisConsentTransaction.setTotalPages(transactionParameters.getTotalPages());
+            aisConsentTransaction.setBookingStatus(transactionParameters.getBookingStatus());
 
             aisConsentTransactionRepository.save(aisConsentTransaction);
             return true;

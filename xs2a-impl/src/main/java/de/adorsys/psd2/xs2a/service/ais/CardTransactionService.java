@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionParameters;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.CardAccountHandler;
@@ -125,7 +126,7 @@ public class CardTransactionService {
 
         loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
-        xs2aAccountService.saveNumberOfTransaction(request.getConsentId(), request.getAccountId(), spiResponse.getPayload().getCardTransactions().size());
+        xs2aAccountService.saveTransactionParameters(request.getConsentId(), request.getAccountId(), new Xs2aTransactionParameters(spiResponse.getPayload().getCardTransactions().size(), 1, request.getBookingStatus()));
 
         return getXs2aCardTransactionsReportResponseObject(request, aisConsent, spiResponse.getPayload());
     }

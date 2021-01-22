@@ -17,8 +17,10 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,12 +64,13 @@ class CmsAccountControllerTest {
     @Test
     void saveNumberOfTransactions_Success() throws Exception {
         //Given
-        when(accountServiceEncrypted.saveNumberOfTransactions(ENCRYPTED_CONSENT_ID, RESOURCE_ID, NUMBER_OF_TRANSACTIONS))
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
+        when(accountServiceEncrypted.saveTransactionParameters(ENCRYPTED_CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest))
             .thenReturn(true);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(SAVE_NUMBER_OF_TRANSACTIONS)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(JSON_READER.writeValueAsString(NUMBER_OF_TRANSACTIONS)))
+                            .content(JSON_READER.writeValueAsString(updateTransactionParametersRequest)))
             //Then
             .andExpect(status().isOk());
     }
@@ -75,12 +78,13 @@ class CmsAccountControllerTest {
     @Test
     void saveNumberOfTransactions_ConsentNotFound() throws Exception {
         //Given
-        when(accountServiceEncrypted.saveNumberOfTransactions(ENCRYPTED_CONSENT_ID, RESOURCE_ID, NUMBER_OF_TRANSACTIONS))
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
+        when(accountServiceEncrypted.saveTransactionParameters(ENCRYPTED_CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest))
             .thenReturn(false);
         //When
         mockMvc.perform(MockMvcRequestBuilders.put(SAVE_NUMBER_OF_TRANSACTIONS)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .content(JSON_READER.writeValueAsString(NUMBER_OF_TRANSACTIONS)))
+                            .content(JSON_READER.writeValueAsString(updateTransactionParametersRequest)))
             //Then
             .andExpect(status().isNotFound());
     }

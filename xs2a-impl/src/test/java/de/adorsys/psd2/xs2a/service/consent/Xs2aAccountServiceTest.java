@@ -16,7 +16,10 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionParameters;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +41,9 @@ class Xs2aAccountServiceTest {
 
     @Test
     void saveNumberOfTransaction() {
-        xs2aAccountService.saveNumberOfTransaction(CONSENT_ID, ACCOUNT_ID, 5);
-        verify(accountServiceEncrypted).saveNumberOfTransactions(CONSENT_ID, ACCOUNT_ID, 5);
+        Xs2aTransactionParameters transactionParameters = new Xs2aTransactionParameters(5, 1, BookingStatus.BOOKED);
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
+        xs2aAccountService.saveTransactionParameters(CONSENT_ID, ACCOUNT_ID, transactionParameters);
+        verify(accountServiceEncrypted).saveTransactionParameters(CONSENT_ID, ACCOUNT_ID, updateTransactionParametersRequest);
     }
 }
