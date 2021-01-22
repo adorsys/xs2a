@@ -7457,6 +7457,8 @@ components:
           $ref: "#/components/schemas/scaStatus"
         trustedBeneficiaryFlag:
           $ref: "#/components/schemas/trustedBeneficiaryFlag"
+        psuMessage:
+            $ref: "#/components/schemas/psuMessageText"
 
 
 

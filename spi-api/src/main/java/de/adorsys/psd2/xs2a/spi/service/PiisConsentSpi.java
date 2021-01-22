@@ -139,11 +139,6 @@ public interface PiisConsentSpi extends AuthorisationSpi<SpiPiisConsent> {
     }
 
     @Override
-    default  @NotNull SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiPiisConsent businessObject, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
     default SpiResponse<SpiAvailableScaMethodsResponse> requestAvailableScaMethods(@NotNull SpiContextData contextData, SpiPiisConsent businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         throw new UnsupportedOperationException("Unsupported operation");
     }

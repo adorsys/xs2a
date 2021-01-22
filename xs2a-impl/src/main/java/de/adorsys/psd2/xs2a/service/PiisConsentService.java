@@ -50,6 +50,7 @@ import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentRequestO
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
@@ -82,7 +83,6 @@ public class PiisConsentService {
     private final CreatePiisConsentValidator createPiisConsentValidator;
     private final AuthorisationMethodDecider authorisationMethodDecider;
     private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
-    private final ConsentAuthorisationService consentAuthorisationService;
     private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     private final PiisConsentAuthorisationService piisConsentAuthorisationService;
 
@@ -216,15 +216,28 @@ public class PiisConsentService {
     }
 
     public ResponseObject<Xs2aScaStatusResponse> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
-        ResponseObject<ConfirmationOfFundsConsentScaStatus> consentScaStatusResponse = piisConsentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
-        if (consentScaStatusResponse.hasError()) {
+        ResponseObject<ConfirmationOfFundsConsentScaStatus> cmsConsentScaStatusResponse = piisConsentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        if (cmsConsentScaStatusResponse.hasError()) {
             return ResponseObject.<Xs2aScaStatusResponse>builder()
-                       .fail(consentScaStatusResponse.getError())
+                       .fail(cmsConsentScaStatusResponse.getError())
                        .build();
         }
 
-        ConfirmationOfFundsConsentScaStatus consentScaStatus = consentScaStatusResponse.getBody();
-        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(consentScaStatus.getScaStatus(), null);
+        SpiContextData contextData = getSpiContextData();
+        SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(contextData, authorisationId,
+                                                                                             spiAspspConsentDataProvider);
+
+        if (spiScaStatusResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIIS);
+            log.info("Authorisation-ID [{}], PIIS consent-ID [{}]. Get SCA status failed.", authorisationId, consentId);
+            return ResponseObject.<Xs2aScaStatusResponse>builder()
+                       .fail(errorHolder)
+                       .build();
+        }
+
+        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(cmsConsentScaStatusResponse.getBody().getScaStatus(), null,
+                                                                   spiScaStatusResponse.getPayload().getPsuMessage());
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)

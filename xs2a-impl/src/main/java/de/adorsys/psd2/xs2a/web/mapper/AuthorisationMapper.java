@@ -93,7 +93,8 @@ public class AuthorisationMapper {
     public @NotNull ScaStatusResponse mapToScaStatusResponse(@NotNull Xs2aScaStatusResponse xs2aScaStatusResponse) {
         return new ScaStatusResponse()
                    .scaStatus(coreObjectsMapper.mapToModelScaStatus(xs2aScaStatusResponse.getScaStatus()))
-                   .trustedBeneficiaryFlag(xs2aScaStatusResponse.getTrustedBeneficiaryFlag());
+                   .trustedBeneficiaryFlag(xs2aScaStatusResponse.getTrustedBeneficiaryFlag())
+                   .psuMessage(xs2aScaStatusResponse.getPsuMessage());
     }
 
     public UpdatePsuAuthenticationResponse mapToPisUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {

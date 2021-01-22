@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.domain.consent;
+package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value
-@AllArgsConstructor
-public class Xs2aScaStatusResponse {
+public class SpiScaStatusResponse {
+
+    @NotNull
     private ScaStatus scaStatus;
+    @Nullable
     private Boolean trustedBeneficiaryFlag;
     @Nullable
     private String psuMessage;

@@ -1,28 +1,30 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ScaStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
  * Body of the JSON response with SCA Status.
  */
 @ApiModel(description = "Body of the JSON response with SCA Status.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-20T18:14:20.957026+02:00[Europe/Kiev]")
 
-public class ScaStatusResponse   {
+public class ScaStatusResponse {
   @JsonProperty("scaStatus")
   private ScaStatus scaStatus = null;
 
   @JsonProperty("trustedBeneficiaryFlag")
   private Boolean trustedBeneficiaryFlag = null;
+
+  @JsonProperty("psuMessage")
+  private String psuMessage = null;
 
   public ScaStatusResponse scaStatus(ScaStatus scaStatus) {
     this.scaStatus = scaStatus;
@@ -69,6 +71,28 @@ public class ScaStatusResponse   {
     this.trustedBeneficiaryFlag = trustedBeneficiaryFlag;
   }
 
+  public ScaStatusResponse psuMessage(String psuMessage) {
+    this.psuMessage = psuMessage;
+    return this;
+  }
+
+  /**
+   * Get psuMessage
+   * @return psuMessage
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=500)
+
+  @JsonProperty("psuMessage")
+  public String getPsuMessage() {
+    return psuMessage;
+  }
+
+  public void setPsuMessage(String psuMessage) {
+    this.psuMessage = psuMessage;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -79,12 +103,13 @@ public class ScaStatusResponse   {
       return false;
 }    ScaStatusResponse scaStatusResponse = (ScaStatusResponse) o;
     return Objects.equals(this.scaStatus, scaStatusResponse.scaStatus) &&
-    Objects.equals(this.trustedBeneficiaryFlag, scaStatusResponse.trustedBeneficiaryFlag);
+    Objects.equals(this.trustedBeneficiaryFlag, scaStatusResponse.trustedBeneficiaryFlag) &&
+    Objects.equals(this.psuMessage, scaStatusResponse.psuMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaStatus, trustedBeneficiaryFlag);
+    return Objects.hash(scaStatus, trustedBeneficiaryFlag, psuMessage);
   }
 
   @Override
@@ -94,6 +119,7 @@ public class ScaStatusResponse   {
 
     sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
     sb.append("    trustedBeneficiaryFlag: ").append(toIndentedString(trustedBeneficiaryFlag)).append("\n");
+    sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }
