@@ -66,6 +66,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -77,6 +80,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -412,32 +416,16 @@ class CardAccountServiceTest {
         assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
-    @Test
-    void consentActionLog_recurringConsentWithIpAddress_needsToUpdateUsageFalse() {
-        // Given
-        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(accountHelperService.getSpiContextData())
-            .thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
-            .thenReturn(ActionStatus.SUCCESS);
-
-        AisConsent accountConsent = createConsent(true);
-        prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(false);
-
-        // When
-        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
-
-        // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
+    private static Stream<Arguments> params() {
+        return Stream.of(Arguments.arguments(true, false, false),
+                         Arguments.arguments(true, true, true),
+                         Arguments.arguments(false, true, true)
+        );
     }
 
-    @Test
-    void consentActionLog_recurringConsentWithoutIpAddress_needsToUpdateUsageTrue() {
+    @ParameterizedTest
+    @MethodSource("params")
+    void consentActionLog(boolean recurringIndicator, boolean needsToUpdateUsage, boolean updateUsage) {
         // Given
         when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
@@ -448,64 +436,16 @@ class CardAccountServiceTest {
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
 
-        AisConsent accountConsent = createConsent(true);
+        AisConsent accountConsent = createConsent(recurringIndicator);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(true);
+            .thenReturn(needsToUpdateUsage);
 
         // When
         cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
 
         // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
-    }
-
-    @Test
-    void consentActionLog_oneOffConsentWithIpAddress_needsToUpdateUsageTrue() {
-        // Given
-        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(accountHelperService.getSpiContextData())
-            .thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
-            .thenReturn(ActionStatus.SUCCESS);
-
-        AisConsent accountConsent = createConsent(false);
-        prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(true);
-
-        // When
-        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
-
-        // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
-    }
-
-    @Test
-    void consentActionLog_oneOffConsentWithoutIpAddress_needsToUpdateUsageTrue() {
-        // Given
-        when(getCardAccountListValidator.validate(any(GetCardAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(accountHelperService.getSpiContextData())
-            .thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
-            .thenReturn(ActionStatus.SUCCESS);
-
-        AisConsent accountConsent = createConsent(false);
-        prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(true);
-
-        // When
-        cardAccountService.getCardAccountList(CONSENT_ID, REQUEST_URI);
-
-        // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, updateUsage, null, null);
     }
 
     @Test
@@ -595,8 +535,7 @@ class CardAccountServiceTest {
 
         Xs2aCardAccountDetails body = actualResponse.getBody().getCardAccountDetails();
 
-        assertThat(body).isNotNull();
-        assertThat(body).isEqualTo(xs2aAccountDetails);
+        assertThat(body).isNotNull().isEqualTo(xs2aAccountDetails);
     }
 
     @Test
@@ -623,8 +562,7 @@ class CardAccountServiceTest {
 
         Xs2aCardAccountDetails body = actualResponse.getBody().getCardAccountDetails();
 
-        assertThat(body).isNotNull();
-        assertThat(body).isEqualTo(xs2aAccountDetails);
+        assertThat(body).isNotNull().isEqualTo(xs2aAccountDetails);
 
         verify(accountHelperService, never()).findAccountReference(any(), any());
         assertThat(spiAccountReferenceCaptor.getValue().getResourceId()).isEqualTo(ACCOUNT_ID);

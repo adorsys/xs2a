@@ -23,6 +23,9 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -48,27 +51,11 @@ class CountryPaymentValidatorResolverTest {
                                                        Arrays.asList(defaultPaymentValidatorHolder, austriaPaymentValidatorHolder));
     }
 
-    @Test
-    void getValidationConfig_nullValue() {
-        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn(null);
-        assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
-    }
-
-    @Test
-    void getValidationConfig_emptyValue() {
-        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("");
-        assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
-    }
-
-    @Test
-    void getValidationConfig_wrongValue() {
-        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("wrong value");
-        assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
-    }
-
-    @Test
-    void getValidationConfig_DE() {
-        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn("dE");
+    @ParameterizedTest
+    @ValueSource(strings = {"", "wrong value", "dE"})
+    @NullSource
+    void getValidationConfig_default(String value) {
+        when(aspspProfileServiceWrapper.getSupportedPaymentCountryValidation()).thenReturn(value);
         assertTrue(resolver.getCountryValidatorHolder() instanceof DefaultPaymentValidatorHolder);
     }
 

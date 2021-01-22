@@ -60,7 +60,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PiisConsentAuthorisationServiceTest {
+class PiisConsentAuthorisationServiceTest {
     private static final String PASSWORD = "password";
     private static final String CONSENT_ID = "c966f143-f6a2-41db-9036-8abaeeef3af7";
     private static final String WRONG_CONSENT_ID = "wrong_consent_id";
@@ -103,7 +103,7 @@ public class PiisConsentAuthorisationServiceTest {
     @Mock
     private EventTypeService eventTypeService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private PiisConsent piisConsent;
     private CreatePiisConsentAuthorisationObject createPiisConsentAuthorisationObject;
 

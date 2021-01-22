@@ -59,6 +59,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -68,6 +71,7 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -358,8 +362,16 @@ class AccountListServiceTest {
         assertThat(argumentCaptor.getValue()).isEqualTo(ConsentStatus.VALID);
     }
 
-    @Test
-    void consentActionLog_recurringConsentWithIpAddress_needsToUpdateUsageFalse() {
+    private static Stream<Arguments> params() {
+        return Stream.of(Arguments.arguments(true, false, false),
+                         Arguments.arguments(true, true, true),
+                         Arguments.arguments(false, true, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("params")
+    void consentActionLog(boolean recurringIndicator, boolean needsToUpdateUsage, boolean updateUsage) {
         // Given
         when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
             .thenReturn(ValidationResult.valid());
@@ -369,82 +381,16 @@ class AccountListServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
             .thenReturn(ActionStatus.SUCCESS);
-        AisConsent accountConsent = createConsent(true);
+        AisConsent accountConsent = createConsent(recurringIndicator);
         prepationForGetAccountListRequest(accountConsent);
         when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(false);
+            .thenReturn(needsToUpdateUsage);
 
         // When
         accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
 
         // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, false, null, null);
-    }
-
-    @Test
-    void consentActionLog_recurringConsentWithoutIpAddress_needsToUpdateUsageTrue() {
-        // Given
-        when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(accountHelperService.getSpiContextData())
-            .thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
-            .thenReturn(ActionStatus.SUCCESS);
-        AisConsent accountConsent = createConsent(true);
-        prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(true);
-
-        // When
-        accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
-
-        // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
-    }
-
-    @Test
-    void consentActionLog_oneOffConsentWithIpAddress_needsToUpdateUsageTrue() {
-        // Given
-        when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(accountHelperService.getSpiContextData()).thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any())).thenReturn(ActionStatus.SUCCESS);
-        AisConsent accountConsent = createConsent(false);
-        prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent)).thenReturn(true);
-
-        // When
-        accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
-
-        // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
-    }
-
-    @Test
-    void consentActionLog_oneOffConsentWithoutIpAddress_needsToUpdateUsageTrue() {
-        // Given
-        when(getAccountListValidator.validate(any(GetAccountListConsentObject.class)))
-            .thenReturn(ValidationResult.valid());
-        when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(aisConsent));
-        when(accountHelperService.getSpiContextData())
-            .thenReturn(SPI_CONTEXT_DATA);
-        when(accountHelperService.createActionStatus(anyBoolean(), any(), any()))
-            .thenReturn(ActionStatus.SUCCESS);
-        AisConsent accountConsent = createConsent(false);
-        prepationForGetAccountListRequest(accountConsent);
-        when(accountHelperService.needsToUpdateUsage(accountConsent))
-            .thenReturn(true);
-
-        // When
-        accountListService.getAccountList(CONSENT_ID, WITH_BALANCE, REQUEST_URI);
-
-        // Then
-        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, true, null, null);
+        verify(aisConsentService, atLeastOnce()).consentActionLog(null, CONSENT_ID, ActionStatus.SUCCESS, REQUEST_URI, updateUsage, null, null);
     }
 
     private void assertResponseHasNoErrors(ResponseObject actualResponse) {

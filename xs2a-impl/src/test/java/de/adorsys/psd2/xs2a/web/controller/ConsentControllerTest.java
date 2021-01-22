@@ -107,7 +107,7 @@ class ConsentControllerTest {
     @Mock
     private RequestProviderService requestProviderService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void createAccountConsent_Success() {
@@ -131,7 +131,8 @@ class ConsentControllerTest {
 
         //Then:
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getConsentStatus().toString()).isEqualTo(ConsentStatus.RECEIVED.getValue());
+        assertThat(resp).isNotNull();
+        assertThat(resp.getConsentStatus()).hasToString(ConsentStatus.RECEIVED.getValue());
         assertThat(resp.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(resp.getPsuMessage()).isEqualTo(PSU_MESSAGE_RESPONSE);
     }
@@ -175,7 +176,7 @@ class ConsentControllerTest {
     @Test
     void getAccountConsentsStatusById_Success() {
         // Given
-        when(consentService.getAccountConsentsStatusById(eq(CONSENT_ID)))
+        when(consentService.getAccountConsentsStatusById(CONSENT_ID))
             .thenReturn(ResponseObject.<ConsentStatusResponse>builder()
                             .body(new ConsentStatusResponse(ConsentStatus.RECEIVED, PSU_MESSAGE_RESPONSE))
                             .build());
@@ -195,7 +196,7 @@ class ConsentControllerTest {
     @Test
     void getAccountConsentsStatusById_Failure() {
         // Given
-        when(consentService.getAccountConsentsStatusById(eq(WRONG_CONSENT_ID)))
+        when(consentService.getAccountConsentsStatusById(WRONG_CONSENT_ID))
             .thenReturn(ResponseObject.<ConsentStatusResponse>builder()
                             .fail(MESSAGE_ERROR_AIS_404)
                             .build());
@@ -267,7 +268,7 @@ class ConsentControllerTest {
 
     @Test
     void getAccountConsentsInformationById_Success() {
-        when(consentService.getAccountConsentById(eq(CONSENT_ID)))
+        when(consentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(getConsent(CONSENT_ID));
         doReturn(new ResponseEntity<>(getConsentInformationResponse().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -284,7 +285,7 @@ class ConsentControllerTest {
     @Test
     void getAccountConsentsInformationById_Failure() {
         // Given
-        when(consentService.getAccountConsentById(eq(WRONG_CONSENT_ID)))
+        when(consentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(getConsent(WRONG_CONSENT_ID));
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -301,7 +302,7 @@ class ConsentControllerTest {
     @Test
     void deleteAccountConsent_Success() {
         // Given
-        when(consentService.deleteAccountConsentsById(eq(CONSENT_ID)))
+        when(consentService.deleteAccountConsentsById(CONSENT_ID))
             .thenReturn(ResponseObject.<Void>builder().build());
         doReturn(new ResponseEntity<>(HttpStatus.NO_CONTENT))
             .when(responseMapper).delete(any());
@@ -318,7 +319,7 @@ class ConsentControllerTest {
     @Test
     void deleteAccountConsent_Failure() {
         // Given
-        when(consentService.deleteAccountConsentsById(eq(WRONG_CONSENT_ID)))
+        when(consentService.deleteAccountConsentsById(WRONG_CONSENT_ID))
             .thenReturn(ResponseObject.<Void>builder()
                             .fail(MESSAGE_ERROR_AIS_404)
                             .build());
@@ -339,8 +340,8 @@ class ConsentControllerTest {
         // Given
         Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true, "psu message");
         ResponseObject<Xs2aScaStatusResponse> responseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
-                                                       .body(xs2aScaStatusResponse)
-                                                       .build();
+                                                                   .body(xs2aScaStatusResponse)
+                                                                   .build();
         when(consentService.getConsentAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID))
             .thenReturn(responseObject);
         doReturn(ResponseEntity.ok(buildReceivedScaStatusResponse()))

@@ -1,0 +1,69 @@
+{
+  "paymentId": "d6cb50e5-bb88-4bbf-a5c1-42ee1ed1df2c",
+  "endToEndIdentification": "PAYMENT_ID",
+  "instructionIdentification": "INSTRUCTION_IDENTIFICATION",
+  "debtorAccount": {
+    "resourceId": "5c2d20da-f20a-4a5e-bf6d-be5b239e3561",
+    "iban": "DE123456789",
+    "currency": "EUR"
+  },
+  "instructedAmount": {
+    "currency": "EUR",
+    "amount": 100
+  },
+  "creditorAccount": {
+    "resourceId": "5c2d20da-f20a-4a5e-bf6d-be5b239e3561",
+    "iban": "DE123456789",
+    "currency": "EUR"
+  },
+  "creditorAgent": "AAAADEBBXXX",
+  "creditorName": "WBG",
+  "creditorAddress": {
+    "streetName": "Herrnstraße",
+    "buildingNumber": "123-34",
+    "townName": "Nürnberg",
+    "postCode": "90431",
+    "country": "Germany"
+  },
+  "remittanceInformationUnstructured": "Ref Number Merchant",
+  "paymentStatus": "RCVD",
+  "paymentProduct": "sepa-credit-transfers",
+  "requestedExecutionDate": [
+    2021,
+    1,
+    22
+  ],
+  "requestedExecutionTime": 1611316008.561581000,
+  "psuDataList": [
+    {
+      "psuId": "First"
+    },
+    {
+      "psuId": "Second"
+    }
+  ],
+  "statusChangeTimestamp": 1611316800.000000000,
+  "ultimateDebtor": "ultimate debtor",
+  "ultimateCreditor": "ultimate creditor",
+  "purposeCode": "BKDF",
+  "remittanceInformationStructured": "reference",
+  "remittanceInformationStructuredArray": [
+    "reference"
+  ],
+  "creationTimestamp": 1611316009.467557000,
+  "contentType": "application/json",
+  "startDate": [
+    2021,
+    1,
+    21
+  ],
+  "endDate": [
+    2021,
+    1,
+    23
+  ],
+  "executionRule": "preceding",
+  "frequency": "MONTHLY",
+  "dayOfExecution": "13",
+  "paymentType": "periodic-payments"
+}
