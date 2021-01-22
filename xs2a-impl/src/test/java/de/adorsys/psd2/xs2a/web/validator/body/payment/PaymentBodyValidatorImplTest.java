@@ -280,7 +280,7 @@ class PaymentBodyValidatorImplTest {
     @Test
     void validate_rawPaymentProduct_shouldNotBeValidated() throws IOException {
         // Given
-        when(standardPaymentProductsResolver.isRawPaymentProduct(eq(PAIN_PAYMENT_PRODUCT)))
+        when(standardPaymentProductsResolver.isRawPaymentProduct(PAIN_PAYMENT_PRODUCT))
             .thenReturn(true);
 
         Map<String, String> templates = buildTemplateVariables(PAIN_PAYMENT_PRODUCT, PAYMENT_SERVICE);

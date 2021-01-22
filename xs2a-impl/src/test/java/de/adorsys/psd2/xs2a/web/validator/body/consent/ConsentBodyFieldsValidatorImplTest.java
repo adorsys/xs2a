@@ -34,6 +34,9 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -45,6 +48,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -59,7 +63,7 @@ class ConsentBodyFieldsValidatorImplTest {
     private ConsentBodyFieldsValidatorImpl validator;
     private Consents consents;
     private MessageError messageError;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
@@ -109,18 +113,18 @@ class ConsentBodyFieldsValidatorImplTest {
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
-    @Test
-    void validate_allPsd2_success() {
+    @ParameterizedTest
+    @MethodSource("paramsForSuccess")
+    void validate_differentAccesses_success(String path, String access) {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
-        String jsonFilePath = "json/validation/ais/consents-allPsd2.json";
-        consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
+        consents = jsonReader.getObjectFromFile(path, Consents.class);
         when(fieldExtractor.mapBodyToInstance(request, messageError, Consents.class)).thenReturn(Optional.of(consents));
 
         Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("allPsd2", "allAccounts");
+        accessMap.put(access, "allAccounts");
 
         // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
@@ -134,54 +138,11 @@ class ConsentBodyFieldsValidatorImplTest {
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
-    @Test
-    void validate_availableAccounts_success() {
-        // Given
-        when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
-            .thenReturn(messageError);
-
-        String jsonFilePath = "json/validation/ais/consents-availableAccounts.json";
-        consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(fieldExtractor.mapBodyToInstance(request, messageError, Consents.class)).thenReturn(Optional.of(consents));
-
-        Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccounts", "allAccounts");
-
-        // noinspection unchecked
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
-            .thenReturn(Optional.of(accessMap));
-
-        // When
-        validator.validate(request, messageError);
-
-        // Then
-        assertTrue(messageError.getTppMessages().isEmpty());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
-    }
-
-    @Test
-    void validate_availableAccountsWithBalance_success() {
-        // Given
-        when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
-            .thenReturn(messageError);
-
-        String jsonFilePath = "json/validation/ais/consents-availableAccountsWithBalances.json";
-        consents = jsonReader.getObjectFromFile(jsonFilePath, Consents.class);
-        when(fieldExtractor.mapBodyToInstance(request, messageError, Consents.class)).thenReturn(Optional.of(consents));
-
-        Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccountsWithBalance", "allAccounts");
-
-        // noinspection unchecked
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq(ACCESS_FIELD), any(TypeReference.class)))
-            .thenReturn(Optional.of(accessMap));
-
-        // When
-        validator.validate(request, messageError);
-
-        // Then
-        assertTrue(messageError.getTppMessages().isEmpty());
-        verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
+    private static Stream<Arguments> paramsForSuccess() {
+        return Stream.of(Arguments.arguments("json/validation/ais/consents-allPsd2.json", "allPsd2"),
+                         Arguments.arguments("json/validation/ais/consents-availableAccounts.json", "availableAccounts"),
+                         Arguments.arguments("json/validation/ais/consents-availableAccountsWithBalances.json", "availableAccountsWithBalance")
+        );
     }
 
     @Test
@@ -296,14 +257,15 @@ class ConsentBodyFieldsValidatorImplTest {
         verify(tppRedirectUriBodyValidator, times(1)).validate(request, messageError);
     }
 
-    @Test
-    void validate_availableAccounts_invalidValue_error() {
+    @ParameterizedTest
+    @MethodSource("paramsForError")
+    void validate_differentAccesses_error(String access, String value) {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
         Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccounts", "Accounts");
+        accessMap.put(access, value);
 
         // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
@@ -314,38 +276,25 @@ class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new String[]{"availableAccounts"}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new String[]{access}, messageError.getTppMessage().getTextParameters());
     }
 
-    @Test
-    void validate_availableAccounts_invalidType_error() {
-        // Given
-        when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
-            .thenReturn(messageError);
-
-        Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccounts", 1);
-
-        // noinspection unchecked
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
-            .thenReturn(Optional.of(accessMap));
-
-        // When
-        validator.validate(request, messageError);
-
-        // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new String[]{"availableAccounts"}, messageError.getTppMessage().getTextParameters());
+    private static Stream<Arguments> paramsForError() {
+        return Stream.of(Arguments.arguments("availableAccounts", "Accounts"),
+                         Arguments.arguments("allPsd2", "AllAccounts"),
+                         Arguments.arguments("availableAccountsWithBalance", "Accounts")
+        );
     }
 
-    @Test
-    void validate_allPsd2_invalidValue_error() {
+    @ParameterizedTest
+    @MethodSource("paramsForInvalidType")
+    void validate_invalidType_error(String access) {
         // Given
         when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
             .thenReturn(messageError);
 
         Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("allPsd2", "AllAccounts");
+        accessMap.put(access, 1);
 
         // noinspection unchecked
         when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
@@ -356,70 +305,14 @@ class ConsentBodyFieldsValidatorImplTest {
 
         // Then
         assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new String[]{"allPsd2"}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new String[]{access}, messageError.getTppMessage().getTextParameters());
     }
 
-    @Test
-    void validate_allPsd2_invalidType_error() {
-        // Given
-        when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
-            .thenReturn(messageError);
-
-        Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("allPsd2", 1);
-
-        // noinspection unchecked
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
-            .thenReturn(Optional.of(accessMap));
-
-        // When
-        validator.validate(request, messageError);
-
-        // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new String[]{"allPsd2"}, messageError.getTppMessage().getTextParameters());
-    }
-
-    @Test
-    void validate_availableAccountsWithBalance_invalidValue_error() {
-        // Given
-        when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
-            .thenReturn(messageError);
-
-        Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccountsWithBalance", "Accounts");
-
-        // noinspection unchecked
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
-            .thenReturn(Optional.of(accessMap));
-
-        // When
-        validator.validate(request, messageError);
-
-        // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new String[]{"availableAccountsWithBalance"}, messageError.getTppMessage().getTextParameters());
-    }
-
-    @Test
-    void validate_availableAccountsWithBalance_invalidType_error() {
-        // Given
-        when(dateFieldValidator.validateDateFormat(request, Xs2aRequestBodyDateFields.AIS_CONSENT_DATE_FIELDS.getDateFields(), messageError))
-            .thenReturn(messageError);
-
-        Map<String, Object> accessMap = new HashMap<>();
-        accessMap.put("availableAccountsWithBalance", 1);
-
-        // noinspection unchecked
-        when(xs2aObjectMapper.toJsonField(any(InputStream.class), eq("access"), any(TypeReference.class)))
-            .thenReturn(Optional.of(accessMap));
-
-        // When
-        validator.validate(request, messageError);
-
-        // Then
-        assertEquals(MessageErrorCode.FORMAT_ERROR_WRONG_FORMAT_VALUE, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new String[]{"availableAccountsWithBalance"}, messageError.getTppMessage().getTextParameters());
+    private static Stream<Arguments> paramsForInvalidType() {
+        return Stream.of(Arguments.arguments("availableAccounts"),
+                         Arguments.arguments("allPsd2"),
+                         Arguments.arguments("availableAccountsWithBalance")
+        );
     }
 
     @Test

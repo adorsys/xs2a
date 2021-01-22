@@ -65,8 +65,6 @@ class AccountAccessValidatorImplTest {
     private MessageError messageError;
     private JsonReader jsonReader;
     private AccountReferenceValidator accountReferenceValidator;
-    private FieldExtractor fieldExtractor;
-    private CurrencyValidator currencyValidator;
 
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
@@ -78,9 +76,9 @@ class AccountAccessValidatorImplTest {
         messageError = new MessageError(ErrorType.AIS_400);
         request = new MockHttpServletRequest();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.AIS_400);
-        fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
+        FieldExtractor fieldExtractor = new FieldExtractor(errorService, xs2aObjectMapper);
         dateFieldValidator = new DateFieldValidator(errorService, new LocalDateConverter(), fieldExtractor);
-        currencyValidator = new CurrencyValidator(errorService);
+        CurrencyValidator currencyValidator = new CurrencyValidator(errorService);
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
         accountReferenceValidator =
             new AccountReferenceValidator(errorService, stringValidator, currencyValidator, new IbanValidator(errorService));
@@ -205,7 +203,7 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
-    public void validate_account_additionalInformation_ownerName_incorrectIban_error() {
+    void validate_account_additionalInformation_ownerName_incorrectIban_error() {
         // Given
         consents.getAccess().getAdditionalInformation().getOwnerName().get(0).setIban("123");
 
@@ -219,7 +217,7 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
-    public void validate_account_additionalInformation_trustedBeneficiaries_incorrectIban_error() {
+    void validate_account_additionalInformation_trustedBeneficiaries_incorrectIban_error() {
         // Given
         consents.getAccess().getAdditionalInformation().getTrustedBeneficiaries().get(0).setIban("123");
 
@@ -233,7 +231,7 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
-    public void validate_account_additionalInformation_ownerName_twoIbans_error() {
+    void validate_account_additionalInformation_ownerName_twoIbans_error() {
         // Given
         Consents wrongConsents = jsonReader.getObjectFromFile("json/validation/ais/consents_two_ibans_in_owner_name.json", Consents.class);
         AccountAccessValidatorImpl accountAccessValidator = createValidator(wrongConsents);
@@ -246,7 +244,7 @@ class AccountAccessValidatorImplTest {
     }
 
     @Test
-    public void validate_account_additionalInformation_trustedBeneficiaries_twoIbans_error() {
+    void validate_account_additionalInformation_trustedBeneficiaries_twoIbans_error() {
         // Given
         Consents wrongConsents = jsonReader.getObjectFromFile("json/validation/ais/consents_two_ibans_in_trusted_beneficiaries.json", Consents.class);
         AccountAccessValidatorImpl accountAccessValidator = createValidator(wrongConsents);
