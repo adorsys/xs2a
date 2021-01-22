@@ -77,13 +77,15 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
     @Test
     void doScaExempted_success() {
         // When
-        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaExempted(buildAuthorisationProcessorRequest()));
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildAuthorisationProcessorRequest();
+        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaExempted(authorisationProcessorRequest));
     }
 
     @Test
     void doScaStarted_success() {
         // When
-        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest()));
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildEmptyAuthorisationProcessorRequest();
+        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest));
     }
 
     @Test
@@ -109,13 +111,14 @@ class PisCancellationAuthorisationProcessorServiceImplTest {
         assertThat(actual.getScaStatus()).isEqualTo(ScaStatus.FINALISED);
         assertThat(actual.getAuthorisationId()).isEqualTo(TEST_AUTHORISATION_ID);
         assertThat(actual.getPaymentId()).isEqualTo(TEST_PAYMENT_ID);
-        assertThat(((Xs2aUpdatePisCommonPaymentPsuDataResponse) actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
+        assertThat((actual).getPsuData()).isEqualTo(TEST_PSU_DATA);
     }
 
     @Test
     void doScaFailed_success() {
         // When
-        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest()));
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildEmptyAuthorisationProcessorRequest();
+        assertThrows(UnsupportedOperationException.class, () -> pisCancellationAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest));
     }
 
     private AuthorisationProcessorRequest buildEmptyAuthorisationProcessorRequest() {

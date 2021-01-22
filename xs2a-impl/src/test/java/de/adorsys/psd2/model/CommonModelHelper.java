@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.model;
 
-public class CommonModelTest {
+public class CommonModelHelper {
 
     static void checkUltimateDebtorField(Class clazz) throws NoSuchFieldException {
         clazz.getDeclaredField("ultimateDebtor");

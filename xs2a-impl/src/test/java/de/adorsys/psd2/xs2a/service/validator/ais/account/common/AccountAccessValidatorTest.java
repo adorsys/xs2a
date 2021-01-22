@@ -24,6 +24,11 @@ import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,34 +49,21 @@ class AccountAccessValidatorTest {
         jsonReader = new JsonReader();
     }
 
-    @Test
-    void testValidate_allAccountConsentWithBalances_shouldReturnValid(){
-        aisConsent = jsonReader.getObjectFromFile( "json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance.json", AisConsent.class);
+    @ParameterizedTest
+    @MethodSource("params")
+    void testValidate_allAccountConsentWithBalances(String path, boolean withBalance) {
+        aisConsent = jsonReader.getObjectFromFile(path, AisConsent.class);
 
-        ValidationResult actual = accountAccessValidator.validate(aisConsent, true);
-
-        assertTrue(actual.isValid());
-    }
-
-    @Test
-    void testValidate_allAccountConsentWithBalances_withOwnerName_shouldReturnValid(){
-        aisConsent = jsonReader.getObjectFromFile( "json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance_with_owner_name.json", AisConsent.class);
-
-        ValidationResult actual = accountAccessValidator.validate(aisConsent, true);
+        ValidationResult actual = accountAccessValidator.validate(aisConsent, withBalance);
 
         assertTrue(actual.isValid());
     }
 
-    @Test
-    void testValidate_withoutBalance_shouldReturnValid() {
-        // Given
-        aisConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent.json", AisConsent.class);
-
-        // When
-        ValidationResult actual = accountAccessValidator.validate(aisConsent, false);
-
-        // Then
-        assertTrue(actual.isValid());
+    private static Stream<Arguments> params() {
+        return Stream.of(Arguments.arguments("json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance.json", true),
+                         Arguments.arguments("json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance_with_owner_name.json", true),
+                         Arguments.arguments("json/service/validator/ais/account/xs2a-account-consent.json", false)
+        );
     }
 
     @Test

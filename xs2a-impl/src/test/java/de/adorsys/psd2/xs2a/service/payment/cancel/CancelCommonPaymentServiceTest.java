@@ -35,7 +35,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CancelCommonPaymentServiceTest {
+class CancelCommonPaymentServiceTest {
     public static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
 
     @InjectMocks
@@ -44,13 +44,13 @@ public class CancelCommonPaymentServiceTest {
     @Mock
     private CancelPaymentService cancelPaymentService;
     @Spy
-    private Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper = new Xs2aToSpiPaymentInfoMapper(new Xs2aToSpiPsuDataMapper());
+    private final Xs2aToSpiPaymentInfoMapper xs2aToSpiPaymentInfoMapper = new Xs2aToSpiPaymentInfoMapper(new Xs2aToSpiPsuDataMapper());
 
     @Captor
     private ArgumentCaptor<SpiPaymentInfo> spiPaymentInfoCaptor;
 
     private PisPaymentCancellationRequest paymentCancellationRequest;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private PisCommonPaymentResponse commonPaymentResponse;
 
     @BeforeEach

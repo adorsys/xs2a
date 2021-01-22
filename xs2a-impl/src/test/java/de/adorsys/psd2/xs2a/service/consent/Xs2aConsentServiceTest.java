@@ -79,8 +79,7 @@ class Xs2aConsentServiceTest {
         Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(buildCreateAisConsentAuthorizationResponse());
+        assertThat(actualResponse).isPresent().contains(buildCreateAisConsentAuthorizationResponse());
     }
 
     @Test
@@ -100,7 +99,7 @@ class Xs2aConsentServiceTest {
         Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test

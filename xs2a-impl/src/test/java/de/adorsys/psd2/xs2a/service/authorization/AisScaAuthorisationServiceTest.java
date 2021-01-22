@@ -27,6 +27,8 @@ import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -155,35 +157,15 @@ class AisScaAuthorisationServiceTest {
         assertFalse(oneFactorAuthorisation);
     }
 
-    @Test
-    void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredTrue() {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void isOneFactorAuthorisation_DedicatedConsent(boolean oneAccessType) {
         //Given
-        AisConsent consent = buildDedicatedConsent(true);
+        AisConsent consent = buildDedicatedConsent(oneAccessType);
 
         //When
         boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
-        //Then
-        assertFalse(oneFactorAuthorisation);
-    }
 
-    @Test
-    void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeFalse_ScaRequiredTrue() {
-        //Given
-        AisConsent consent = buildDedicatedConsent(false);
-
-        //When
-        boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
-        //Then
-        assertFalse(oneFactorAuthorisation);
-    }
-
-    @Test
-    void isOneFactorAuthorisation_DedicatedConsent_OneAccessTypeTrue_ScaRequiredFalse() {
-        //Given
-        AisConsent consent = buildDedicatedConsent(true);
-
-        //When
-        boolean oneFactorAuthorisation = aisScaAuthorisationService.isOneFactorAuthorisation(consent);
         //Then
         assertFalse(oneFactorAuthorisation);
     }

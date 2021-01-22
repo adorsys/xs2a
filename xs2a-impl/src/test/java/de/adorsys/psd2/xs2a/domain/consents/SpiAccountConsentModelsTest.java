@@ -17,10 +17,10 @@
 package de.adorsys.psd2.xs2a.domain.consents;
 
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.core.data.AccountAccess;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,9 +44,9 @@ class SpiAccountConsentModelsTest {
     private static final String CREATE_CONSENT_REQ_WRONG_JSON_PATH = "/json/CreateAccountConsentReqWrongTest.json";
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
 
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    private Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
+    private final Xs2aObjectMapper xs2aObjectMapper = (Xs2aObjectMapper) new Xs2aObjectMapper().registerModule(new JavaTimeModule());
 
     @Test
     void createConsentReq_jsonTest() throws IOException {
@@ -108,7 +108,7 @@ class SpiAccountConsentModelsTest {
         Set<ConstraintViolation<CreateConsentReq>> actualViolations = validator.validate(actualRequest);
 
         //Then:
-        assertThat(actualViolations.size()).isEqualTo(0);
+        assertThat(actualViolations).isEmpty();
     }
 
     @Test

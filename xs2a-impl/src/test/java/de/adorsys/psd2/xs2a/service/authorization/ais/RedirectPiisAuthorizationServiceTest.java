@@ -34,8 +34,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RedirectPiisAuthorizationServiceTest {
@@ -67,7 +67,7 @@ class RedirectPiisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -79,7 +79,7 @@ class RedirectPiisAuthorizationServiceTest {
         //When
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
         //Then
-        assertThat(actualResponseOptional.isPresent()).isTrue();
+        assertThat(actualResponseOptional).isPresent();
 
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
@@ -92,7 +92,7 @@ class RedirectPiisAuthorizationServiceTest {
 
     @Test
     void getScaApproachServiceType() {
-        assertEquals(ScaApproach.REDIRECT, authorizationService.getScaApproachServiceType());
+        assertThat(authorizationService.getScaApproachServiceType()).isEqualTo(ScaApproach.REDIRECT);
     }
 
     @Test
@@ -105,8 +105,7 @@ class RedirectPiisAuthorizationServiceTest {
         Optional<ScaStatus> authorisationScaStatus = authorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
         //Then
         verify(consentService).getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-        assert(authorisationScaStatus).isPresent();
-        assertEquals(scaStatus, authorisationScaStatus.get());
+        assertThat(authorisationScaStatus).isPresent().contains(scaStatus);
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
