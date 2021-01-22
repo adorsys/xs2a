@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.domain.account;
 
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -41,4 +42,10 @@ public class AisConsentTransaction {
     @Column(name = "resource_id")
     private String resourceId;
 
+    @Column(name = "total_pages")
+    private int totalPages;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "booking_status")
+    private BookingStatus bookingStatus;
 }

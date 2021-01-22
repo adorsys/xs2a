@@ -17,6 +17,7 @@
 package de.adorsys.psd2.consent.web.xs2a.controller;
 
 import de.adorsys.psd2.consent.api.CmsAccountApi;
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,8 @@ public class CmsAccountController implements CmsAccountApi {
     private final AccountServiceEncrypted accountServiceEncrypted;
 
     @Override
-    public ResponseEntity<Boolean> saveNumberOfTransactions(String encryptedConsentId, String resourceId, Integer numberOfTransactions) {
-        return accountServiceEncrypted.saveNumberOfTransactions(encryptedConsentId, resourceId, numberOfTransactions)
+    public ResponseEntity<Boolean> saveTransactionParameters(String encryptedConsentId, String resourceId, UpdateTransactionParametersRequest updateTransactionParametersRequest) {
+        return accountServiceEncrypted.saveTransactionParameters(encryptedConsentId, resourceId, updateTransactionParametersRequest)
                    ? new ResponseEntity<>(true, HttpStatus.OK)
                    : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

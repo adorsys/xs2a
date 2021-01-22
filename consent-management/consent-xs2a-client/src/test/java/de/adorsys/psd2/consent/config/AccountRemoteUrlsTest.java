@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AccountRemoteUrlsTest {
     private static final String BASE_URL = "http://base.url";
 
-    private AccountRemoteUrls accountRemoteUrls = new AccountRemoteUrls();
+    private final AccountRemoteUrls accountRemoteUrls = new AccountRemoteUrls();
 
     @BeforeEach
     void setUp() {
@@ -35,6 +35,6 @@ class AccountRemoteUrlsTest {
     @Test
     void saveNumberOfTransactions() {
         String expected = "http://base.url/ais/consent/{consent-id}/{resource-id}";
-        assertEquals(expected, accountRemoteUrls.saveNumberOfTransactions());
+        assertEquals(expected, accountRemoteUrls.saveTransactionParameters());
     }
 }

@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.config.AccountRemoteUrls;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +38,6 @@ class AccountServiceRemoteTest {
     private static final String URL = "http://ais/consent/transactions/save";
     private static final String CONSENT_ID = "consent ID";
     private static final String RESOURCE_ID = "resource ID";
-    private static final int NUMBER_OF_TRANSACTIONS = 5;
 
     @Mock
     private RestTemplate restTemplate;
@@ -50,12 +51,13 @@ class AccountServiceRemoteTest {
     @Test
     void saveNumberOfTransactions() {
         // Given
-        when(accountRemoteUrls.saveNumberOfTransactions()).thenReturn(URL);
-        when(restTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(NUMBER_OF_TRANSACTIONS), Boolean.class, CONSENT_ID, RESOURCE_ID))
+        when(accountRemoteUrls.saveTransactionParameters()).thenReturn(URL);
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
+        when(restTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(updateTransactionParametersRequest), Boolean.class, CONSENT_ID, RESOURCE_ID))
             .thenReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         // When
-        boolean actualResponse = accountServiceRemote.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, NUMBER_OF_TRANSACTIONS);
+        boolean actualResponse = accountServiceRemote.saveTransactionParameters(CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
 
         // Then
         assertTrue(actualResponse);

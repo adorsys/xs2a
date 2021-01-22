@@ -1,3 +1,4 @@
+
 = Release notes v.9.7
 
 == Table of Contents
@@ -10,6 +11,8 @@
 From now on, the counting of Consent usage is adjusted.
 Access to the Read Transactions endpoint is addressed several times with different
 values for the bookingStatus as query parameter then this is counted as one access.
+Access to the Read Transactions endpoint is addressed several times with different
+values for the pageIndex as query parameter then this is counted as one access.
 
 == Fixed sonar alerts
 

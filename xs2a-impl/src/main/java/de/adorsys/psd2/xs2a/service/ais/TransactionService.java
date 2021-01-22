@@ -31,10 +31,7 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsDownloadResponse;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
+import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -143,7 +140,10 @@ public class TransactionService {
         List<SpiTransaction> spiTransactions = spiTransactionReport.getTransactions();
 
         if (CollectionUtils.isNotEmpty(spiTransactions)) {
-            xs2aAccountService.saveNumberOfTransaction(request.getConsentId(), request.getAccountId(), spiTransactions.size());
+            xs2aAccountService.saveTransactionParameters(request.getConsentId(), request.getAccountId(),
+                                                         new Xs2aTransactionParameters(spiTransactions.size(),
+                                                                                       spiTransactionReport.getTotalPages(),
+                                                                                       request.getBookingStatus()));
         }
 
         return getXs2aTransactionsReportResponseObject(request, aisConsent, spiTransactionReport);

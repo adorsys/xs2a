@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.config.AccountRemoteUrls;
 import de.adorsys.psd2.consent.config.CmsRestException;
@@ -38,10 +39,10 @@ public class AccountServiceRemote implements AccountServiceEncrypted {
     private final AccountRemoteUrls accountRemoteUrls;
 
     @Override
-    public boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions) {
+    public boolean saveTransactionParameters(String consentId, String resourceId, UpdateTransactionParametersRequest transactionParameters) {
         try {
-            ResponseEntity<Boolean> response = consentRestTemplate.exchange(accountRemoteUrls.saveNumberOfTransactions(),
-                                                                            HttpMethod.PUT, new HttpEntity<>(numberOfTransactions), Boolean.class, consentId, resourceId);
+            ResponseEntity<Boolean> response = consentRestTemplate.exchange(accountRemoteUrls.saveTransactionParameters(),
+                                                                            HttpMethod.PUT, new HttpEntity<>(transactionParameters), Boolean.class, consentId, resourceId);
 
             return BooleanUtils.isTrue(response.getBody());
         } catch (CmsRestException cmsRestException) {

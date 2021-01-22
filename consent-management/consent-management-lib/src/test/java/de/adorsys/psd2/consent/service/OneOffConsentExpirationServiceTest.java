@@ -37,7 +37,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -92,7 +92,7 @@ class OneOffConsentExpirationServiceTest {
         cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(0);
@@ -116,7 +116,7 @@ class OneOffConsentExpirationServiceTest {
         cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(1);
@@ -169,7 +169,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(0);
@@ -192,7 +192,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(1);
@@ -215,7 +215,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(2);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(1);
@@ -238,7 +238,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(2);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(2);
@@ -261,7 +261,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(2);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(1);
@@ -283,7 +283,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(2);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(5);
@@ -305,7 +305,7 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         aisConsentTransaction.setNumberOfTransactions(1);
 
-        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, PageRequest.of(0, 1)))
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
         when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
             .thenReturn(4);

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.controller;
 
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -33,8 +34,10 @@ import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
 import de.adorsys.psd2.xs2a.service.mapper.TrustedBeneficiariesModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
+import de.adorsys.psd2.xs2a.web.controller.util.RequestUriHandler;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
 import de.adorsys.xs2a.reader.JsonReader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -77,10 +80,13 @@ class AccountControllerTest {
     private static final String XS2A_BENEFICIARIES_JSON = "json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries-list.json";
     private static final String TRANSACTIONS_JSON = "json/web/controller/transactions.json";
     private static final String REQUEST_URI = "/accounts";
+    private static final String REQUEST_URI_ENRICHED = "/transactions?bookingStatus=pending&pageIndex=4";
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String URI = "request.uri";
     private static final MessageError MESSAGE_ERROR_AIS_404 = new MessageError(ErrorType.AIS_404, of(MessageErrorCode.RESOURCE_UNKNOWN_404));
     private static final Currency CURRENCY = Currency.getInstance("EUR");
+    public static final String PENDING_BOOKING_STATUS = "pending";
+    public static final Integer PAGE_INDEX = 4;
 
     @InjectMocks
     private AccountController accountController;
@@ -111,6 +117,8 @@ class AccountControllerTest {
     private TrustedBeneficiariesModelMapper trustedBeneficiariesModelMapper;
     @Mock
     private TrustedBeneficiariesService trustedBeneficiariesService;
+    @Mock
+    private RequestUriHandler requestUriHandler;
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -119,6 +127,7 @@ class AccountControllerTest {
         // Given
         when(accountDetailsService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         boolean withBalance = true;
         ResponseObject<AccountDetails> expectedResult = getAccountDetails();
@@ -140,6 +149,7 @@ class AccountControllerTest {
         // Given
         when(accountDetailsService.getAccountDetails(anyString(), any(), anyBoolean(), anyString())).thenReturn(getXs2aAccountDetailsHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         boolean withBalance = true;
         ResponseObject<Xs2aAccountDetailsHolder> responseEntity = buildXs2aAccountDetailsWithError();
@@ -162,6 +172,7 @@ class AccountControllerTest {
         // Given
         when(accountListService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         boolean withBalance = true;
         AccountList expectedResult = createAccountDetailsList().getBody();
@@ -184,6 +195,7 @@ class AccountControllerTest {
         // Given
         when(accountListService.getAccountList(anyString(), anyBoolean(), anyString())).thenReturn(getXs2aAccountListHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         boolean withBalance = true;
         ResponseObject<Xs2aAccountListHolder> responseEntity = getXs2aAccountListHolderWithError();
@@ -208,6 +220,7 @@ class AccountControllerTest {
         // Given
         when(balanceService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         ReadAccountBalanceResponse200 expectedResult = jsonReader.getObjectFromFile(BALANCES_JSON, ReadAccountBalanceResponse200.class);
 
@@ -228,6 +241,7 @@ class AccountControllerTest {
         // Given
         when(balanceService.getBalancesReport(anyString(), anyString(), anyString())).thenReturn(getBalanceReport());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         ResponseObject<Xs2aBalancesReport> responseEntity = buildBalanceReportWithError();
         when(balanceService.getBalancesReport(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, REQUEST_URI))
@@ -253,6 +267,7 @@ class AccountControllerTest {
 
         when(trustedBeneficiariesService.getTrustedBeneficiaries(WRONG_CONSENT_ID, WRONG_ACCOUNT_ID, REQUEST_URI)).thenReturn(xs2aResponse);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_AIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
@@ -272,6 +287,7 @@ class AccountControllerTest {
 
         when(trustedBeneficiariesService.getTrustedBeneficiaries(CONSENT_ID, ACCOUNT_ID, REQUEST_URI)).thenReturn(xs2aResponse);
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         TrustedBeneficiariesList expected = jsonReader.getObjectFromFile(BENEFICIARIES_JSON, TrustedBeneficiariesList.class);
 
@@ -289,6 +305,7 @@ class AccountControllerTest {
         // Given
         AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
         when(request.getRequestURI()).thenReturn(URI);
+        when(requestUriHandler.handleTransactionUri(URI, PENDING_BOOKING_STATUS, PAGE_INDEX)).thenReturn(REQUEST_URI_ENRICHED);
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
 
@@ -299,9 +316,9 @@ class AccountControllerTest {
             .when(transactionService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
 
         // When
-        AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
+        AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, PENDING_BOOKING_STATUS,
                                                                                     null, CONSENT_ID, null, null, "both", false,
-                                                                                    false, null, null, null, null, null, null, null,
+                                                                                    false, PAGE_INDEX, null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
 
@@ -313,6 +330,7 @@ class AccountControllerTest {
     void getTransactionList_success() {
         // Given
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.handleTransactionUri(REQUEST_URI, PENDING_BOOKING_STATUS, PAGE_INDEX)).thenReturn(REQUEST_URI_ENRICHED);
 
         AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
 
@@ -325,9 +343,9 @@ class AccountControllerTest {
 
 
         // When
-        AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
+        AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, PENDING_BOOKING_STATUS,
                                                                                     null, CONSENT_ID, null, null, "both", false,
-                                                                                    false, null, null, null, null, null, null, null,
+                                                                                    false, PAGE_INDEX, null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
         // Then
@@ -339,6 +357,7 @@ class AccountControllerTest {
         // Given
         AccountReport expectedResult = jsonReader.getObjectFromFile(ACCOUNT_REPORT_JSON, AccountReport.class);
         when(request.getRequestURI()).thenReturn(URI);
+        when(requestUriHandler.handleTransactionUri(URI, PENDING_BOOKING_STATUS, PAGE_INDEX)).thenReturn(REQUEST_URI_ENRICHED);
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
         Xs2aTransactionsReport transactionsReport = new Xs2aTransactionsReport();
@@ -348,9 +367,9 @@ class AccountControllerTest {
             .when(transactionService).getTransactionsReportByPeriod(any(Xs2aTransactionsReportByPeriodRequest.class));
 
         // When
-        AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, "pending",
+        AccountReport result = (AccountReport) accountController.getTransactionList(ACCOUNT_ID, PENDING_BOOKING_STATUS,
                                                                                     null, CONSENT_ID, null, null, "both", false,
-                                                                                    false, null, null, null, null, null, null, null,
+                                                                                    false, PAGE_INDEX, null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null).getBody();
         // Then
@@ -362,6 +381,7 @@ class AccountControllerTest {
         // Given
         when(transactionService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransaction());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         doReturn(new ResponseEntity<>(createAccountReport().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -382,6 +402,7 @@ class AccountControllerTest {
     void getTransactionDetails_error() {
         // Given
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
+        when(requestUriHandler.trimEndingSlash(REQUEST_URI)).thenReturn(REQUEST_URI);
 
         when(transactionService.getTransactionDetails(eq(CONSENT_ID), eq(ACCOUNT_ID), any(), eq(REQUEST_URI))).thenReturn(buildTransactionWithError());
         doReturn(new ResponseEntity<>(buildAccountReportWithError().getBody(), HttpStatus.OK))

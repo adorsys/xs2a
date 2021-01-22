@@ -16,7 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.consent;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionParameters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,10 @@ public class Xs2aAccountService {
 
     private final AccountServiceEncrypted accountServiceEncrypted;
 
-    public void saveNumberOfTransaction(String consentId, String resourceId, int numberOfTransactions) {
-        accountServiceEncrypted.saveNumberOfTransactions(consentId, resourceId, numberOfTransactions);
+    public void saveTransactionParameters(String consentId, String resourceId, Xs2aTransactionParameters transactionParameters) {
+        accountServiceEncrypted.saveTransactionParameters(consentId, resourceId,
+                                                          new UpdateTransactionParametersRequest(transactionParameters.getNumberOfTransactions(),
+                                                                                                 transactionParameters.getTotalPages(),
+                                                                                                 transactionParameters.getBookingStatus()));
     }
-
 }
