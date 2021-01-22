@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +57,7 @@ class AccountLoggingInterceptorTest {
     @Mock
     private PathParameterExtractor pathParameterExtractor;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -72,11 +71,11 @@ class AccountLoggingInterceptorTest {
         when(request.getHeader(CONSENT_ID_HEADER_NAME)).thenReturn(CONSENT_ID_HEADER_VALUE);
         when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
 
-        interceptor.preHandle(request, response, null);
+        interceptor.preHandle(request, response, new Object());
 
         verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
         verify(tppService).getTppInfo();
-        verify(request).getHeader(eq(CONSENT_ID_HEADER_NAME));
+        verify(request).getHeader(CONSENT_ID_HEADER_NAME);
         verify(request).getRemoteAddr();
         verify(request).getRequestURI();
     }
@@ -89,11 +88,11 @@ class AccountLoggingInterceptorTest {
         when(request.getHeader(CONSENT_ID_HEADER_NAME)).thenReturn(CONSENT_ID_HEADER_VALUE);
         when(pathParameterExtractor.extractParameters(any(HttpServletRequest.class))).thenReturn(Collections.emptyMap());
 
-        interceptor.preHandle(request, response, null);
+        interceptor.preHandle(request, response, new Object());
 
         verify(pathParameterExtractor).extractParameters(any(HttpServletRequest.class));
         verify(tppService).getTppInfo();
-        verify(request).getHeader(eq(CONSENT_ID_HEADER_NAME));
+        verify(request).getHeader(CONSENT_ID_HEADER_NAME);
         verify(request).getRemoteAddr();
         verify(request).getRequestURI();
     }
@@ -102,7 +101,7 @@ class AccountLoggingInterceptorTest {
     void afterCompletion_success() {
         when(response.getStatus()).thenReturn(HttpServletResponse.SC_OK);
 
-        interceptor.afterCompletion(request, response, null, null);
+        interceptor.afterCompletion(request, response, new Object(), null);
 
         verify(tppService).getTppInfo();
         verify(loggingContextService).getConsentStatus();

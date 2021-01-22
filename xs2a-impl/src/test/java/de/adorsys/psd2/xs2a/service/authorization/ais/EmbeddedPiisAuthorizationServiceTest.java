@@ -66,7 +66,7 @@ class EmbeddedPiisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -78,7 +78,7 @@ class EmbeddedPiisAuthorizationServiceTest {
         //When
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
         //Then
-        assertThat(actualResponseOptional.isPresent()).isTrue();
+        assertThat(actualResponseOptional).isPresent();
 
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
@@ -103,7 +103,7 @@ class EmbeddedPiisAuthorizationServiceTest {
         Optional<ScaStatus> authorisationScaStatus = authorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
         //Then
         verify(consentService, atLeastOnce()).getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
-        assert(authorisationScaStatus).isPresent();
+        assert (authorisationScaStatus).isPresent();
         assertEquals(scaStatus, authorisationScaStatus.get());
     }
 

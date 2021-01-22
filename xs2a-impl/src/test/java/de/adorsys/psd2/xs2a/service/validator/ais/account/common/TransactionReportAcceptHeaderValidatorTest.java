@@ -20,12 +20,14 @@ import de.adorsys.psd2.aspsp.profile.domain.AspspSettings;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
-import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,7 +49,7 @@ class TransactionReportAcceptHeaderValidatorTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private AspspSettings aspspSettings;
 
     @BeforeEach
@@ -76,33 +78,16 @@ class TransactionReportAcceptHeaderValidatorTest {
         assertEquals(REQUESTED_FORMATS_INVALID_ERROR, actual.getMessageError());
     }
 
-    @Test
-    void validate_isAtLeastOneAcceptHeaderSupported() {
+    @ParameterizedTest
+    @ValueSource(strings = {"application/xml, application/json", "   application/xml,application/json   ",
+        "APPLICATION/XML,APPLICATION/JSON"
+    })
+    void validate_isAtLeastOneAcceptHeaderSupported(String accept) {
         when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
                                                                                                   .getTransactionParameters()
                                                                                                   .getSupportedTransactionApplicationTypes());
 
-        ValidationResult actual = validator.validate("application/xml, application/json");
-        assertTrue(actual.isValid());
-    }
-
-    @Test
-    void validate_isAtLeastOneAcceptHeaderSupported_extraBlanks() {
-        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
-                                                                                                  .getTransactionParameters()
-                                                                                                  .getSupportedTransactionApplicationTypes());
-
-        ValidationResult actual = validator.validate("   application/xml,application/json   ");
-        assertTrue(actual.isValid());
-    }
-
-    @Test
-    void validate_isAtLeastOneAcceptHeaderSupported_ignoreCaseSensitive() {
-        when(aspspProfileServiceWrapper.getSupportedTransactionApplicationTypes()).thenReturn(aspspSettings.getAis()
-                                                                                                  .getTransactionParameters()
-                                                                                                  .getSupportedTransactionApplicationTypes());
-
-        ValidationResult actual = validator.validate("APPLICATION/XML,APPLICATION/JSON");
+        ValidationResult actual = validator.validate(accept);
         assertTrue(actual.isValid());
     }
 

@@ -103,8 +103,7 @@ class SpiContextDataProviderTest {
         SpiContextData actualResponse = spiContextDataProvider.provide();
 
         //Then
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA);
+        assertThat(actualResponse).isNotNull().isEqualTo(SPI_CONTEXT_DATA);
     }
 
     @Test
@@ -117,8 +116,7 @@ class SpiContextDataProviderTest {
         SpiContextData actualResponse = spiContextDataProvider.provideWithPsuIdData(PSU_DATA);
 
         //Then
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA);
+        assertThat(actualResponse).isNotNull().isEqualTo(SPI_CONTEXT_DATA);
     }
 
     @Test
@@ -131,8 +129,7 @@ class SpiContextDataProviderTest {
         SpiContextData actualResponse = spiContextDataProvider.provide(PSU_DATA, TPP_INFO);
 
         //Then
-        assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse).isEqualTo(SPI_CONTEXT_DATA_WITH_PSU_DATA);
+        assertThat(actualResponse).isNotNull().isEqualTo(SPI_CONTEXT_DATA_WITH_PSU_DATA);
     }
 
     @Test

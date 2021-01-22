@@ -1149,7 +1149,7 @@ class ConsentServiceTest {
         ResponseObject response = consentService.deleteAccountConsentsById(CONSENT_ID);
 
         // Then
-        assertThat(response.hasError()).isEqualTo(false);
+        assertThat(response.hasError()).isFalse();
     }
 
     @Test

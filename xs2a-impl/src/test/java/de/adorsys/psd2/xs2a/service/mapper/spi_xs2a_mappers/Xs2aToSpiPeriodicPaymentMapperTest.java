@@ -46,7 +46,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,35 +120,42 @@ class Xs2aToSpiPeriodicPaymentMapperTest {
         PeriodicPayment periodicPayment = buildPeriodicPayment();
         //When
         SpiPeriodicPayment spiPeriodicPayment = xs2aToSpiPaymentInfoMapper.mapToSpiPeriodicPayment(periodicPayment, PAYMENT_PRODUCT);
+        SpiPeriodicPayment expected = buildSpiPeriodicPayment(periodicPayment);
         //Then
-        assertEquals(START_DATE, spiPeriodicPayment.getStartDate());
-        assertEquals(END_DATE, spiPeriodicPayment.getEndDate());
-        assertEquals(PisExecutionRule.PRECEDING, spiPeriodicPayment.getExecutionRule());
-        assertEquals(FrequencyCode.MONTHLY, spiPeriodicPayment.getFrequency());
-        assertEquals(PisDayOfExecution.DAY_13, spiPeriodicPayment.getDayOfExecution());
-        assertEquals(PAYMENT_ID, spiPeriodicPayment.getPaymentId());
-        assertEquals(END_TO_END_IDENTIFICATION, spiPeriodicPayment.getEndToEndIdentification());
-        assertEquals(INSTRUCTION_IDENTIFICATION, spiPeriodicPayment.getInstructionIdentification());
-        assertEquals(buildSpiAccountReference(), spiPeriodicPayment.getDebtorAccount());
-        assertEquals(buildSpiAccountReference(), spiPeriodicPayment.getCreditorAccount());
-        assertEquals(buildSpiAmount(EUR_CURRENCY), spiPeriodicPayment.getInstructedAmount());
-        assertEquals(CREDITOR_AGENT, spiPeriodicPayment.getCreditorAgent());
-        assertEquals(CREDITOR_NAME, spiPeriodicPayment.getCreditorName());
-        assertEquals(buildSpiAddress(), spiPeriodicPayment.getCreditorAddress());
-        assertEquals(REMITTANCE_INFORMATION_UNSTRUCTURED, spiPeriodicPayment.getRemittanceInformationUnstructured());
-        assertEquals(TRANSACTION_STATUS, spiPeriodicPayment.getPaymentStatus());
-        assertEquals(PAYMENT_PRODUCT, spiPeriodicPayment.getPaymentProduct());
-        assertEquals(REQUESTED_EXECUTION_DATE, spiPeriodicPayment.getRequestedExecutionDate());
-        assertEquals(REQUESTED_EXECUTION_TIME, spiPeriodicPayment.getRequestedExecutionTime());
-        assertEquals(spiPsuDataList, spiPeriodicPayment.getPsuDataList());
-        assertEquals(STATUS_CHANGE_TIMESTAMP, spiPeriodicPayment.getStatusChangeTimestamp());
-        assertEquals(ULTIMATE_DEBTOR, spiPeriodicPayment.getUltimateDebtor());
-        assertEquals(ULTIMATE_CREDITOR, spiPeriodicPayment.getUltimateCreditor());
-        assertEquals(PURPOSE_CODE, spiPeriodicPayment.getPurposeCode());
-        assertEquals(REMITTANCE, spiPeriodicPayment.getRemittanceInformationStructured());
-        assertEquals(Collections.singletonList(REMITTANCE), spiPeriodicPayment.getRemittanceInformationStructuredArray());
-        assertEquals(periodicPayment.getCreationTimestamp(), spiPeriodicPayment.getCreationTimestamp());
-        assertEquals(periodicPayment.getContentType(), spiPeriodicPayment.getContentType());
+        assertThat(spiPeriodicPayment).isEqualTo(expected);
+    }
+
+    private SpiPeriodicPayment buildSpiPeriodicPayment(PeriodicPayment periodicPayment) {
+        SpiPeriodicPayment spiPeriodicPayment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
+        spiPeriodicPayment.setStartDate(START_DATE);
+        spiPeriodicPayment.setEndDate(END_DATE);
+        spiPeriodicPayment.setExecutionRule(PisExecutionRule.PRECEDING);
+        spiPeriodicPayment.setFrequency(FrequencyCode.MONTHLY);
+        spiPeriodicPayment.setDayOfExecution(PisDayOfExecution.DAY_13);
+        spiPeriodicPayment.setPaymentId(PAYMENT_ID);
+        spiPeriodicPayment.setEndToEndIdentification(END_TO_END_IDENTIFICATION);
+        spiPeriodicPayment.setInstructionIdentification(INSTRUCTION_IDENTIFICATION);
+        spiPeriodicPayment.setDebtorAccount(buildSpiAccountReference());
+        spiPeriodicPayment.setCreditorAccount(buildSpiAccountReference());
+        spiPeriodicPayment.setInstructedAmount(buildSpiAmount(EUR_CURRENCY));
+        spiPeriodicPayment.setCreditorAgent(CREDITOR_AGENT);
+        spiPeriodicPayment.setCreditorName(CREDITOR_NAME);
+        spiPeriodicPayment.setCreditorAddress(buildSpiAddress());
+        spiPeriodicPayment.setRemittanceInformationUnstructured(REMITTANCE_INFORMATION_UNSTRUCTURED);
+        spiPeriodicPayment.setPaymentStatus(TRANSACTION_STATUS);
+        spiPeriodicPayment.setPaymentProduct(PAYMENT_PRODUCT);
+        spiPeriodicPayment.setRequestedExecutionDate(REQUESTED_EXECUTION_DATE);
+        spiPeriodicPayment.setRequestedExecutionTime(REQUESTED_EXECUTION_TIME);
+        spiPeriodicPayment.setPsuDataList(spiPsuDataList);
+        spiPeriodicPayment.setStatusChangeTimestamp(STATUS_CHANGE_TIMESTAMP);
+        spiPeriodicPayment.setUltimateDebtor(ULTIMATE_DEBTOR);
+        spiPeriodicPayment.setUltimateCreditor(ULTIMATE_CREDITOR);
+        spiPeriodicPayment.setPurposeCode(PURPOSE_CODE);
+        spiPeriodicPayment.setRemittanceInformationStructured(REMITTANCE);
+        spiPeriodicPayment.setRemittanceInformationStructuredArray(Collections.singletonList(REMITTANCE));
+        spiPeriodicPayment.setCreationTimestamp(periodicPayment.getCreationTimestamp());
+        spiPeriodicPayment.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        return spiPeriodicPayment;
     }
 
     private PeriodicPayment buildPeriodicPayment() {

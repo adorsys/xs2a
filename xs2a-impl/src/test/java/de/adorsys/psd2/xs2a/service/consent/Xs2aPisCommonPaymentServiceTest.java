@@ -47,7 +47,7 @@ class Xs2aPisCommonPaymentServiceTest {
     private static final byte[] PAYMENT_DATA = new byte[16];
     private static final TppInfo TPP_INFO = buildTppInfo();
     private static final PaymentInitiationParameters PAYMENT_INITIATION_PARAMETERS = buildPaymentInitiationParameters();
-    private static final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo(PAYMENT_DATA);
+    private static final PisPaymentInfo PIS_PAYMENT_INFO = buildPisPaymentInfo();
     private static final PsuIdData PSU_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
     private static final CreatePisCommonPaymentResponse CREATE_PIS_COMMON_PAYMENT_RESPONSE = new CreatePisCommonPaymentResponse(PAYMENT_ID, null);
     private static final PisCommonPaymentResponse PIS_COMMON_PAYMENT_RESPONSE = new PisCommonPaymentResponse();
@@ -94,8 +94,7 @@ class Xs2aPisCommonPaymentServiceTest {
         Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
 
         //Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(PIS_COMMON_PAYMENT_RESPONSE);
+        assertThat(actualResponse).isPresent().contains(PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
@@ -108,7 +107,7 @@ class Xs2aPisCommonPaymentServiceTest {
         Optional<PisCommonPaymentResponse> actualResponse = xs2aPisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID);
 
         //Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -133,12 +132,12 @@ class Xs2aPisCommonPaymentServiceTest {
         return tppInfo;
     }
 
-    private static PisPaymentInfo buildPisPaymentInfo(byte[] paymentData) {
+    private static PisPaymentInfo buildPisPaymentInfo() {
         PisPaymentInfo request = new PisPaymentInfo();
         request.setPaymentProduct(PAYMENT_INITIATION_PARAMETERS.getPaymentProduct());
         request.setPaymentType(PAYMENT_INITIATION_PARAMETERS.getPaymentType());
         request.setTransactionStatus(TransactionStatus.RCVD);
-        request.setPaymentData(paymentData);
+        request.setPaymentData(Xs2aPisCommonPaymentServiceTest.PAYMENT_DATA);
         request.setTppInfo(TPP_INFO);
         request.setPsuDataList(Collections.singletonList(PAYMENT_INITIATION_PARAMETERS.getPsuData()));
         return request;

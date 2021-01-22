@@ -50,7 +50,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.autoconfigure.session.NonUniqueSessionRepositoryException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -102,7 +101,7 @@ class ConfirmationOfFundsControllerTest {
     @Mock
     private ConsentModelMapper consentModelMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void createConsentConfirmationOfFunds_piisConsentFromTppNotSupported() {
@@ -115,10 +114,10 @@ class ConfirmationOfFundsControllerTest {
 
         //When
         ResponseEntity responseEntity = confirmationOfFundsController.createConsentConfirmationOfFunds(null, null, null, null, null,
-                                                                                                                   null, null, null, null, null,
-                                                                                                                   null, null, null, null, null,
-                                                                                                                   null, null, null, null, null,
-                                                                                                                   null, null, null);
+                                                                                                       null, null, null, null, null,
+                                                                                                       null, null, null, null, null,
+                                                                                                       null, null, null, null, null,
+                                                                                                       null, null, null);
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(httpStatus);
     }
@@ -155,8 +154,8 @@ class ConfirmationOfFundsControllerTest {
         ConsentsConfirmationOfFunds consentsConfirmationOfFunds = new ConsentsConfirmationOfFunds();
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(piisConsentModelMapper.toCreatePiisConsentRequest(consentsConfirmationOfFunds)).thenReturn(request);
-        when(piisConsentService.createPiisConsentWithResponse(eq(request), eq(PSU_ID_DATA), eq(false)))
-            .thenReturn(createConsentsConfirmationOfFunds(CONSENT_ID));
+        when(piisConsentService.createPiisConsentWithResponse(request, PSU_ID_DATA, false))
+            .thenReturn(createConsentsConfirmationOfFunds());
         when(consentHeadersBuilder.buildCreateConsentHeaders(any(), any()))
             .thenReturn(RESPONSE_HEADERS);
         doReturn(new ResponseEntity<>(createConsentsConfirmationOfFundsResponse().getBody(), HttpStatus.CREATED))
@@ -172,7 +171,8 @@ class ConfirmationOfFundsControllerTest {
         ConsentsConfirmationOfFundsResponse resp = (ConsentsConfirmationOfFundsResponse) responseEntity.getBody();
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(resp.getConsentStatus().toString()).isEqualTo(ConsentStatus.RECEIVED.getValue());
+        assertThat(resp).isNotNull();
+        assertThat(resp.getConsentStatus()).hasToString(ConsentStatus.RECEIVED.getValue());
         assertThat(resp.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(resp.getPsuMessage()).isEqualTo(PSU_MESSAGE_RESPONSE);
     }
@@ -180,16 +180,16 @@ class ConfirmationOfFundsControllerTest {
     @Test
     void getConsentConfirmationOfFunds_Failure() {
         //Given
-        when(piisConsentService.getPiisConsentById(eq(WRONG_CONSENT_ID)))
+        when(piisConsentService.getPiisConsentById(WRONG_CONSENT_ID))
             .thenReturn(getPiisConsent(WRONG_CONSENT_ID));
         when(responseErrorMapper.generateErrorResponse(MESSAGE_ERROR_PIIS_404))
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         //When
         ResponseEntity responseEntity = confirmationOfFundsController.getConsentConfirmationOfFunds(WRONG_CONSENT_ID, null,
-                                                                                null, null, null, null, null, null,
-                                                                                null, null, null, null, null,
-                                                                                null, null);
+                                                                                                    null, null, null, null, null, null,
+                                                                                                    null, null, null, null, null,
+                                                                                                    null, null);
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -197,7 +197,7 @@ class ConfirmationOfFundsControllerTest {
     @Test
     void getConsentConfirmationOfFunds_Success() {
         //Given
-        when(piisConsentService.getPiisConsentById(eq(CONSENT_ID)))
+        when(piisConsentService.getPiisConsentById(CONSENT_ID))
             .thenReturn(getPiisConsent(CONSENT_ID));
         doReturn(new ResponseEntity<>(getConsentConfirmationOfFundsContentResponse().getBody(), HttpStatus.OK))
             .when(responseMapper).ok(any(), any());
@@ -215,7 +215,7 @@ class ConfirmationOfFundsControllerTest {
     @Test
     void getConsentConfirmationOfFundsStatus_Failure() {
         //Given
-        when(piisConsentService.getPiisConsentStatusById(eq(WRONG_CONSENT_ID)))
+        when(piisConsentService.getPiisConsentStatusById(WRONG_CONSENT_ID))
             .thenReturn(ResponseObject.<ConsentStatusResponse>builder()
                             .fail(MESSAGE_ERROR_PIIS_404)
                             .build());
@@ -224,9 +224,9 @@ class ConfirmationOfFundsControllerTest {
 
         //When
         ResponseEntity responseEntity = confirmationOfFundsController.getConsentConfirmationOfFundsStatus(WRONG_CONSENT_ID, null,
-                                                                                                    null, null, null, null, null, null,
-                                                                                                    null, null, null, null, null,
-                                                                                                    null, null);
+                                                                                                          null, null, null, null, null, null,
+                                                                                                          null, null, null, null, null,
+                                                                                                          null, null);
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -234,7 +234,7 @@ class ConfirmationOfFundsControllerTest {
     @Test
     void getConsentConfirmationOfFundsStatus_Success() {
         //Given
-        when(piisConsentService.getPiisConsentStatusById(eq(CONSENT_ID)))
+        when(piisConsentService.getPiisConsentStatusById(CONSENT_ID))
             .thenReturn(ResponseObject.<ConsentStatusResponse>builder()
                             .body(new ConsentStatusResponse(ConsentStatus.RECEIVED, PSU_MESSAGE_RESPONSE))
                             .build());
@@ -286,7 +286,7 @@ class ConfirmationOfFundsControllerTest {
     void getConsentAuthorisation_Success() {
         //Given
         Xs2aAuthorisationSubResources authorisation = new Xs2aAuthorisationSubResources(Collections.singletonList(AUTHORISATION_ID));
-        when(piisConsentService.getConsentInitiationAuthorisations(eq(CONSENT_ID)))
+        when(piisConsentService.getConsentInitiationAuthorisations(CONSENT_ID))
             .thenReturn(ResponseObject.<Xs2aAuthorisationSubResources>builder()
                             .body(authorisation)
                             .build());
@@ -294,9 +294,9 @@ class ConfirmationOfFundsControllerTest {
 
         //When
         ResponseEntity responseEntity = confirmationOfFundsController.getConsentAuthorisation(CONSENT_ID, null,
-                                                                                                          null, null, null, null, null, null,
-                                                                                                          null, null, null, null, null,
-                                                                                                          null, null);
+                                                                                              null, null, null, null, null, null,
+                                                                                              null, null, null, null, null,
+                                                                                              null, null);
         //Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isEqualTo(authorisation);
@@ -306,7 +306,7 @@ class ConfirmationOfFundsControllerTest {
     @Test
     void getConsentAuthorisation_failure() {
         //Given
-        when(piisConsentService.getConsentInitiationAuthorisations(eq(CONSENT_ID)))
+        when(piisConsentService.getConsentInitiationAuthorisations(CONSENT_ID))
             .thenReturn(ResponseObject.<Xs2aAuthorisationSubResources>builder()
                             .fail(MESSAGE_ERROR_PIIS_403)
                             .build());
@@ -344,10 +344,10 @@ class ConfirmationOfFundsControllerTest {
 
         // When
         ResponseEntity responseEntity = confirmationOfFundsController.startConsentAuthorisation(null, CONSENT_ID,
-                                                                                    BODY, null, null, null, CORRECT_PSU_ID, null, null,
-                                                                                    null, null, null, null, null,
-                                                                                    null, null, null, null, null,
-                                                                                    null, null, null, null, null, null);
+                                                                                                BODY, null, null, null, CORRECT_PSU_ID, null, null,
+                                                                                                null, null, null, null, null,
+                                                                                                null, null, null, null, null,
+                                                                                                null, null, null, null, null, null);
 
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -367,10 +367,10 @@ class ConfirmationOfFundsControllerTest {
 
         // When
         ResponseEntity responseEntity = confirmationOfFundsController.startConsentAuthorisation(null, WRONG_CONSENT_ID,
-                                                                                    BODY, null, null, null, CORRECT_PSU_ID, null,
-                                                                                    null, null, null, null, null,
-                                                                                    null, null, null, null, null,
-                                                                                    null, null, null, null, null, null, null);
+                                                                                                BODY, null, null, null, CORRECT_PSU_ID, null,
+                                                                                                null, null, null, null, null,
+                                                                                                null, null, null, null, null,
+                                                                                                null, null, null, null, null, null, null);
 
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -389,8 +389,8 @@ class ConfirmationOfFundsControllerTest {
         UpdateConsentPsuDataResponse updateConsentPsuDataResponse = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, psuIdData);
 
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataServiceResponse = ResponseObject.<UpdateConsentPsuDataResponse>builder()
-                                                                                        .body(updateConsentPsuDataResponse)
-                                                                                        .build();
+                                                                                               .body(updateConsentPsuDataResponse)
+                                                                                               .build();
 
         when(piisConsentService.updateConsentPsuData(updateConsentPsuDataReq)).thenReturn(updateConsentPsuDataServiceResponse);
 
@@ -466,8 +466,8 @@ class ConfirmationOfFundsControllerTest {
 
     private ResponseObject<PiisConsent> getPiisConsent(String consentId) {
         PiisConsent piisConsent = consentId.equals(WRONG_CONSENT_ID)
-                                    ? null
-                                    : buildPiisConsent(consentId);
+                                      ? null
+                                      : buildPiisConsent(consentId);
         return isEmpty(piisConsent)
                    ? ResponseObject.<PiisConsent>builder().fail(MESSAGE_ERROR_PIIS_404).build()
                    : ResponseObject.<PiisConsent>builder().body(piisConsent).build();
@@ -489,8 +489,8 @@ class ConfirmationOfFundsControllerTest {
         return ResponseObject.<ConsentsConfirmationOfFundsResponse>builder().body(response).build();
     }
 
-    private ResponseObject<Xs2aConfirmationOfFundsResponse> createConsentsConfirmationOfFunds(String consentId) {
-        Xs2aConfirmationOfFundsResponse consentResponse = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), consentId, false, null, PSU_MESSAGE_RESPONSE);
+    private ResponseObject<Xs2aConfirmationOfFundsResponse> createConsentsConfirmationOfFunds() {
+        Xs2aConfirmationOfFundsResponse consentResponse = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), ConfirmationOfFundsControllerTest.CONSENT_ID, false, null, PSU_MESSAGE_RESPONSE);
         Links links = new Links();
         links.setSelf(new HrefType("type"));
         consentResponse.setLinks(links);
