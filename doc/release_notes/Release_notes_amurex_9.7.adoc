@@ -1,0 +1,14 @@
+= Release notes v.9.7
+
+== Table of Contents
+
+* Added a psuMessage into Get SCA Status Response
+
+== Added a psuMessage into Get SCA Status Response
+
+From now on, getting SCA status response include `psuMessage` (optional) from ASPSP.
+Moreover, obtaining the SCA status remained from the CMS and obtaining `psuMessage` and `trustedBeneficiaryFlag`
+was combined and moved to SPI level.
+
+New method `AuthorisationSpi#getScaStatus` was added to SPI interface.
+Existing method `AuthorisationSpi#requestTrustedBeneficiaryFlag` was marked as deprecated and will be removed soon.
