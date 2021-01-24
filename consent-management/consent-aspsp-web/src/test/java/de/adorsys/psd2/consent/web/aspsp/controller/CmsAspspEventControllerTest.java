@@ -51,8 +51,8 @@ class CmsAspspEventControllerTest {
     @Mock
     private AspspEventService aspspEventService;
 
-    private JsonReader jsonReader = new JsonReader();
-    private HttpHeaders httpHeaders = new HttpHeaders();
+    private final JsonReader jsonReader = new JsonReader();
+    private final HttpHeaders httpHeaders = new HttpHeaders();
     private MockMvc mockMvc;
     private List<AspspEvent> events;
 
@@ -86,7 +86,7 @@ class CmsAspspEventControllerTest {
             .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
-        verify(aspspEventService, times(1)).getEventsForPeriod(eq(OffsetDateTime.parse(START)), eq(OffsetDateTime.parse(END)), eq(INSTANCE_ID));
+        verify(aspspEventService, times(1)).getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID);
     }
 
     @Test
@@ -101,6 +101,6 @@ class CmsAspspEventControllerTest {
             .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
-        verify(aspspEventService, times(1)).getEventsForPeriod(eq(OffsetDateTime.parse(START)), eq(OffsetDateTime.parse(END)), eq(INSTANCE_ID));
+        verify(aspspEventService, times(1)).getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID);
     }
 }

@@ -48,13 +48,13 @@ class EventServiceRestClientImplTest {
         EventBO event = EventBO.builder().build();
 
         when(eventRemoteUrls.createEvent()).thenReturn(CREATE_URL);
-        when(consentRestTemplate.postForEntity(eq(CREATE_URL), eq(event), eq(Boolean.class))).thenReturn(responseEntity);
+        when(consentRestTemplate.postForEntity(CREATE_URL, event, Boolean.class)).thenReturn(responseEntity);
         when(responseEntity.getBody()).thenReturn(true);
 
         assertTrue(eventServiceRestClient.recordEvent(event));
 
         verify(eventRemoteUrls, times(1)).createEvent();
-        verify(consentRestTemplate, times(1)).postForEntity(eq(CREATE_URL), eq(event), eq(Boolean.class));
+        verify(consentRestTemplate, times(1)).postForEntity(CREATE_URL, event, Boolean.class);
         verify(responseEntity, times(1)).getBody();
     }
 }
