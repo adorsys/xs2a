@@ -31,7 +31,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,7 +47,7 @@ class AspspEventServiceImplTest {
     @Mock
     private EventReportRepository eventReportRepository;
     @Spy
-    private AspspEventMapper mapper = Mappers.getMapper(AspspEventMapper.class);
+    private final AspspEventMapper mapper = Mappers.getMapper(AspspEventMapper.class);
 
     @Test
     void getEventsForPeriod() {
@@ -56,7 +55,7 @@ class AspspEventServiceImplTest {
 
         aspspEventService.getEventsForPeriod(START, END, INSTANCE_ID);
 
-        verify(eventReportRepository, times(1)).getEventsForPeriod(eq(START), eq(END), eq(INSTANCE_ID));
+        verify(eventReportRepository, times(1)).getEventsForPeriod(START, END, INSTANCE_ID);
     }
 
     @Test
@@ -65,7 +64,7 @@ class AspspEventServiceImplTest {
 
         aspspEventService.getEventsForPeriodAndConsentId(START, END, CONSENT_ID, INSTANCE_ID);
 
-        verify(eventReportRepository, times(1)).getEventsForPeriodAndConsentId(eq(START), eq(END), eq(CONSENT_ID), eq(INSTANCE_ID));
+        verify(eventReportRepository, times(1)).getEventsForPeriodAndConsentId(START, END, CONSENT_ID, INSTANCE_ID);
     }
 
     @Test
@@ -74,7 +73,7 @@ class AspspEventServiceImplTest {
 
         aspspEventService.getEventsForPeriodAndPaymentId(START, END, PAYMENT_ID, INSTANCE_ID);
 
-        verify(eventReportRepository, times(1)).getEventsForPeriodAndPaymentId(eq(START), eq(END), eq(PAYMENT_ID), eq(INSTANCE_ID));
+        verify(eventReportRepository, times(1)).getEventsForPeriodAndPaymentId(START, END, PAYMENT_ID, INSTANCE_ID);
     }
 
     @Test
@@ -83,7 +82,7 @@ class AspspEventServiceImplTest {
 
         aspspEventService.getEventsForPeriodAndEventOrigin(START, END, EventOrigin.ASPSP, INSTANCE_ID);
 
-        verify(eventReportRepository, times(1)).getEventsForPeriodAndEventOrigin(eq(START), eq(END), eq(EventOrigin.ASPSP), eq(INSTANCE_ID));
+        verify(eventReportRepository, times(1)).getEventsForPeriodAndEventOrigin(START, END, EventOrigin.ASPSP, INSTANCE_ID);
     }
 
     @Test
@@ -92,6 +91,6 @@ class AspspEventServiceImplTest {
 
         aspspEventService.getEventsForPeriodAndEventType(START, END, EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, INSTANCE_ID);
 
-        verify(eventReportRepository, times(1)).getEventsForPeriodAndEventType(eq(START), eq(END), eq(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED), eq(INSTANCE_ID));
+        verify(eventReportRepository, times(1)).getEventsForPeriodAndEventType(START, END, EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, INSTANCE_ID);
     }
 }

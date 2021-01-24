@@ -124,7 +124,7 @@ class UpdatePaymentAfterSpiServiceInternalTest {
 
         assertTrue(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
-        verify(commonPaymentDataService, times(1)).updateCancelTppRedirectURIs(eq(pisCommonPaymentData), eq(tppRedirectUri));
+        verify(commonPaymentDataService, times(1)).updateCancelTppRedirectURIs(pisCommonPaymentData, tppRedirectUri);
     }
 
     @Test
@@ -177,7 +177,6 @@ class UpdatePaymentAfterSpiServiceInternalTest {
 
         assertTrue(actual.getPayload());
         verify(commonPaymentDataService, times(1)).getPisCommonPaymentData(anyString(), isNull());
-        verify(commonPaymentDataService, times(1)).updatePaymentCancellationInternalRequestId(eq(pisCommonPaymentData), eq(INTERNAL_REQUEST_ID));
+        verify(commonPaymentDataService, times(1)).updatePaymentCancellationInternalRequestId(pisCommonPaymentData, INTERNAL_REQUEST_ID);
     }
-
 }

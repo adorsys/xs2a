@@ -197,7 +197,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void updatePsuDataInConsent_authorisationNotFound() throws AuthorisationIsExpiredException {
         // Given
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID_NOT_EXIST), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
 
         // When
@@ -315,7 +315,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void getConsent_noConsent() {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID_NOT_EXIST), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID_NOT_EXIST, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -334,7 +334,7 @@ class CmsPsuAisServiceInternalTest {
         //Given
         ConsentStatus consentStatus = ConsentStatus.TERMINATED_BY_TPP;
         ConsentEntity aisConsentTerminatedByTpp = buildConsentByStatusAndExpireDate(consentStatus, VALID_UNTIL.minusDays(1));
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -365,7 +365,7 @@ class CmsPsuAisServiceInternalTest {
         LocalDate validUntilInThePast = VALID_UNTIL.minusDays(1);
         ConsentEntity consentToBeExpired = buildConsentByStatusAndExpireDate(ConsentStatus.VALID, validUntilInThePast);
         ConsentEntity expiredConsent = buildConsentByStatusAndExpireDate(ConsentStatus.EXPIRED, validUntilInThePast);
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -393,7 +393,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(authorisationEntity));
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         when(cmsPsuAuthorisationMapper.mapToCmsPsuAuthorisation(authorisationEntity))
             .thenReturn(new CmsPsuAuthorisation());
@@ -411,7 +411,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.empty());
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
 
         // When
@@ -424,7 +424,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void updateAuthorisationStatus() throws AuthorisationIsExpiredException {
         // When
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -445,7 +445,7 @@ class CmsPsuAisServiceInternalTest {
 
     @Test
     void updateAuthorisationStatus_authorisationNotFound() throws AuthorisationIsExpiredException {
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -463,7 +463,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void updateAuthorisationStatus_consentNotFound() throws AuthorisationIsExpiredException {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -479,7 +479,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void updateAuthorisationStatus_expiredAuthorisation_shouldThrowException() throws AuthorisationIsExpiredException {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -797,7 +797,7 @@ class CmsPsuAisServiceInternalTest {
 
     @Test
     void updateAuthorisationStatus_FinalisedStatus_Fail() throws AuthorisationIsExpiredException {
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -832,7 +832,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void getConsentByRedirectId_Fail_RedirectExpire() {
         // Given
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
@@ -852,7 +852,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void getConsentByRedirectId_Fail_NullAisConsent() throws RedirectUrlIsExpiredException {
         // Given
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
@@ -872,7 +872,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void getConsentByRedirectId_Success() throws RedirectUrlIsExpiredException {
         // Given
-        when(authorisationSpecification.byExternalIdAndInstanceId(eq(AUTHORISATION_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(authorisationSpecification.byExternalIdAndInstanceId(AUTHORISATION_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
@@ -1052,7 +1052,7 @@ class CmsPsuAisServiceInternalTest {
     void getPsuDataAuthorisations_Success() {
         // Given
         ConsentEntity consent = buildConsent();
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -1075,7 +1075,7 @@ class CmsPsuAisServiceInternalTest {
     void getPsuDataAuthorisations_SuccessPagination() {
         // Given
         ConsentEntity consent = buildConsent();
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -1099,7 +1099,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void getPsuDataAuthorisations_noConsent_Fail() {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -1116,7 +1116,7 @@ class CmsPsuAisServiceInternalTest {
     void getPsuDataAuthorisationsEmptyPsuData_Success() {
         // Given
         ConsentEntity consent = buildConsent();
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID))).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID)).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(consent));
@@ -1134,7 +1134,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void saveAccountAccessInConsent_Consent_Finalised_Failed() {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq("")))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, ""))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -1153,7 +1153,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void saveAccountAccessInConsent_Consent_Unknown_Failed() {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID_NOT_EXIST), eq("")))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID_NOT_EXIST, ""))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class))).thenReturn(Optional.empty());
@@ -1168,7 +1168,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void saveAccountAccessInConsent_AccessIsNull() {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))
@@ -1187,7 +1187,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void saveAccountAccessInConsent_InvalidValidUntil() {
         // Given
-        when(aisConsentSpecification.byConsentIdAndInstanceId(eq(EXTERNAL_CONSENT_ID), eq(DEFAULT_SERVICE_INSTANCE_ID)))
+        when(aisConsentSpecification.byConsentIdAndInstanceId(EXTERNAL_CONSENT_ID, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findOne(any(Specification.class)))

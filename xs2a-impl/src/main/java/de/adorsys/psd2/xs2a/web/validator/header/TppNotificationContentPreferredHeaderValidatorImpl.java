@@ -51,7 +51,7 @@ public class TppNotificationContentPreferredHeaderValidatorImpl extends Abstract
             return ValidationResult.valid();
         }
 
-        String[] modes = tppNotificationContentPreferredString.replaceAll("status=", "").split(",");
+        String[] modes = tppNotificationContentPreferredString.replace("status=", "").split(",");
 
         for (String mode : modes) {
             String trimmedMode = mode.trim();
