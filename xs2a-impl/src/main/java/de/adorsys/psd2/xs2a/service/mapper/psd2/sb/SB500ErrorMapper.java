@@ -44,16 +44,19 @@ public class SB500ErrorMapper extends Psd2ErrorMapper<MessageError, Error500NGSB
     }
 
     private Error500NGSB mapToPsd2Error(MessageError messageError) {
-        return new Error500NGSB().tppMessages(mapToTppMessage500SB(messageError.getTppMessages()));
+        return Error500NGSB.builder()
+                   .tppMessages(mapToTppMessage500SB(messageError.getTppMessages()))
+                   .build();
     }
 
     private List<TppMessage500SB> mapToTppMessage500SB(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage500SB()
+                   .map(m -> TppMessage500SB.builder()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
                                  .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
+                                 .build()
                    ).collect(Collectors.toList());
     }
 }

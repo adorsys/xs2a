@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.exception.model.error415;
+package de.adorsys.psd2.xs2a.exception.model;
 
-import de.adorsys.psd2.xs2a.exception.model.AbstractErrorNGAIS;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.model.TppMessageCategory;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.validation.annotation.Validated;
 
-/**
- * NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415.
- */
-@ApiModel(description = "NextGenPSD2 specific definition of reporting error information in case of a HTTP error code 415. ")
+@Data
 @SuperBuilder
+@Validated
 @NoArgsConstructor
-public class Error415NGPIS extends AbstractErrorNGAIS<TppMessage415PIS> {
+public abstract class AbstractTppMessage {
+    @JsonProperty("category")
+    private TppMessageCategory category;
+
+    @JsonProperty("code")
+    private String code;
+
+    @JsonProperty("path")
+    private String path;
+
+    @JsonProperty("text")
+    private String text;
 }
 
