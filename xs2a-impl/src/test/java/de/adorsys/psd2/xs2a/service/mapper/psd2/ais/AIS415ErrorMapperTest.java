@@ -46,7 +46,7 @@ class AIS415ErrorMapperTest {
     private static final MessageError MESSAGE_ERROR_WITHOUT_TEXT = new MessageError(ErrorType.AIS_415,
                                                                                     TppMessageInformation.of(UNSUPPORTED_MEDIA_TYPE));
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     @Mock
     private MessageService messageService;
     @InjectMocks

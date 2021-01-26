@@ -44,16 +44,20 @@ public class SB415ErrorMapper extends Psd2ErrorMapper<MessageError, Error415NGSB
     }
 
     private Error415NGSB mapToPsd2Error(MessageError messageError) {
-        return new Error415NGSB().tppMessages(mapToTppMessage415SB(messageError.getTppMessages()));
+        return Error415NGSB.builder()
+                   .tppMessages(mapToTppMessage415SB(messageError.getTppMessages()))
+                   .build();
     }
 
     private List<TppMessage415SB> mapToTppMessage415SB(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage415SB()
+                   .map(m -> TppMessage415SB
+                                 .builder()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
                                  .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
+                                 .build()
                    ).collect(Collectors.toList());
     }
 }
