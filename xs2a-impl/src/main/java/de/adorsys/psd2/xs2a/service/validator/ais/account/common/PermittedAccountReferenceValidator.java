@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.ais.account.common;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

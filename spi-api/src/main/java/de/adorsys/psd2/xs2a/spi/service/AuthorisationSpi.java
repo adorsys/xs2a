@@ -20,10 +20,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationDecoupledScaResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.jetbrains.annotations.NotNull;
@@ -99,5 +96,23 @@ interface AuthorisationSpi<T> {
      * @return returns true if the creditor was part of the related trusted beneficiary list, false otherwise
      */
     @NotNull
-    SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull T businessObject, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    @Deprecated
+    // TODO: remove method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1462
+    default SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull T businessObject,
+                                                               @NotNull String authorisationId,
+                                                               @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<Boolean>builder()
+                   .error(new TppMessage(MessageErrorCode.SERVICE_NOT_SUPPORTED))
+                   .build();
+    }
+
+    /**
+     * Returns authorisation SCA status and PSU message
+     *
+     * @param authorisationId a unique identifier of authorisation process
+     * @return Returns response object, containing a message from ASPSP to PSU and SCA status
+     */
+    SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
+                                                   @NotNull String authorisationId,
+                                                   @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

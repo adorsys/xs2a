@@ -37,7 +37,7 @@ import java.io.IOException;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class Xs2aLoggingContextFilterTest {
+class Xs2aLoggingContextFilterTest {
     private static final String X_REQUEST_ID = "0d7f200e-09b4-46f5-85bd-f4ea89fccace";
     private static final String INTERNAL_REQUEST_ID = "9fe83704-6019-46fa-b8aa-53fb8fa667ea";
     private static final String INSTANCE_ID = "bank1";

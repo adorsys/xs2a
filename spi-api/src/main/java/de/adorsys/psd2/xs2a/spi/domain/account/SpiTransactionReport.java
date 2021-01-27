@@ -47,4 +47,5 @@ public class SpiTransactionReport {
     private byte[] transactionsRaw;
 
     private SpiTransactionLinks spiTransactionLinks;
+    private int totalPages;
 }

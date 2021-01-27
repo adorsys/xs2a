@@ -44,16 +44,19 @@ public class PIIS500ErrorMapper extends Psd2ErrorMapper<MessageError, Error500NG
     }
 
     private Error500NGPIIS mapToPsd2Error(MessageError messageError) {
-        return new Error500NGPIIS().tppMessages(mapToTppMessage500PIIS(messageError.getTppMessages()));
+        return Error500NGPIIS.builder()
+                   .tppMessages(mapToTppMessage500PIIS(messageError.getTppMessages()))
+                   .build();
     }
 
     private List<TppMessage500PIIS> mapToTppMessage500PIIS(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage500PIIS()
+                   .map(m -> TppMessage500PIIS.builder()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
                                  .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
+                                 .build()
                    ).collect(Collectors.toList());
     }
 }

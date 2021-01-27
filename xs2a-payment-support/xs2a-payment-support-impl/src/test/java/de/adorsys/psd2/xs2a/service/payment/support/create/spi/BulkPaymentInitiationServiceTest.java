@@ -105,7 +105,7 @@ class BulkPaymentInitiationServiceTest {
             .thenReturn(SPI_BULK_PAYMENT);
         when(bulkPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_BULK_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_BULK_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_BULK_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(SPI_BULK_PAYMENT_RESPONSE, initialSpiAspspConsentDataProvider))
             .thenReturn(BULK_PAYMENT_RESPONSE);
 
         // When

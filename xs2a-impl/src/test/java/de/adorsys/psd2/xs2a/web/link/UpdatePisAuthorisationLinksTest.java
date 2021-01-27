@@ -33,7 +33,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -86,7 +85,7 @@ class UpdatePisAuthorisationLinksTest {
 
     @Test
     void isScaStatusMethodSelectedAndEmbedded() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
         response.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         response.setChosenScaMethod(authenticationObject);

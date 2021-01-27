@@ -110,7 +110,7 @@ class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
     void updatePaymentCancellationTppRedirectUri_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(DECRYPTED_PAYMENT_ID), eq(tppRedirectUri)))
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(DECRYPTED_PAYMENT_ID, tppRedirectUri))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
@@ -123,14 +123,14 @@ class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
 
         assertTrue(actual.getPayload());
         verify(securityDataService, times(1)).decryptId(ENCRYPTED_PAYMENT_ID);
-        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationTppRedirectUri(eq(DECRYPTED_PAYMENT_ID), eq(tppRedirectUri));
+        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationTppRedirectUri(DECRYPTED_PAYMENT_ID, tppRedirectUri);
     }
 
     @Test
     void updatePaymentCancellationTppRedirectUri_failure_wrongPaymentId() {
         // Given
         when(securityDataService.decryptId(WRONG_ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(WRONG_DECRYPTED_PAYMENT_ID));
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(eq(WRONG_DECRYPTED_PAYMENT_ID), eq(tppRedirectUri)))
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(WRONG_DECRYPTED_PAYMENT_ID, tppRedirectUri))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(false)
                             .build());
@@ -143,7 +143,7 @@ class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
 
         assertFalse(actual.getPayload());
         verify(securityDataService, times(1)).decryptId(WRONG_ENCRYPTED_PAYMENT_ID);
-        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationTppRedirectUri(eq(WRONG_DECRYPTED_PAYMENT_ID), eq(tppRedirectUri));
+        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationTppRedirectUri(WRONG_DECRYPTED_PAYMENT_ID, tppRedirectUri);
     }
 
     @Test
@@ -159,14 +159,14 @@ class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
 
         assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
         verify(securityDataService, times(1)).decryptId(ENCRYPTED_PAYMENT_ID);
-        verify(updatePaymentStatusAfterSpiService, never()).updatePaymentCancellationTppRedirectUri(eq(DECRYPTED_PAYMENT_ID), eq(tppRedirectUri));
+        verify(updatePaymentStatusAfterSpiService, never()).updatePaymentCancellationTppRedirectUri(DECRYPTED_PAYMENT_ID, tppRedirectUri);
     }
 
     @Test
     void updatePaymentCancellationInternalRequestId_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_PAYMENT_ID)).thenReturn(Optional.of(DECRYPTED_PAYMENT_ID));
-        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(eq(DECRYPTED_PAYMENT_ID), eq(INTERNAL_REQUEST_ID)))
+        when(updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(DECRYPTED_PAYMENT_ID, INTERNAL_REQUEST_ID))
             .thenReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
@@ -179,6 +179,6 @@ class UpdatePaymentAfterSpiServiceInternalEncryptedTest {
 
         assertTrue(actual.getPayload());
         verify(securityDataService, times(1)).decryptId(ENCRYPTED_PAYMENT_ID);
-        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationInternalRequestId(eq(DECRYPTED_PAYMENT_ID), eq(INTERNAL_REQUEST_ID));
+        verify(updatePaymentStatusAfterSpiService, times(1)).updatePaymentCancellationInternalRequestId(DECRYPTED_PAYMENT_ID, INTERNAL_REQUEST_ID);
     }
 }

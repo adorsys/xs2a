@@ -21,17 +21,17 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
-import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthorisation{
+public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthorisation {
     private final PaymentAuthorisationSpi paymentAuthorisationSpi;
     private final PaymentAuthorisationService paymentAuthorisationService;
 
@@ -39,19 +39,22 @@ public class PaymentServiceForAuthorisationImpl extends PaymentServiceForAuthori
                                               SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                               SpiErrorMapper spiErrorMapper, PaymentAuthorisationSpi paymentAuthorisationSpi,
                                               PaymentAuthorisationService paymentAuthorisationService,
-                                              Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper) {
-        super(spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, xs2aToSpiPaymentMapper);
+                                              RequestProviderService requestProviderService) {
+        super(spiContextDataProvider, aspspConsentDataProviderFactory, spiErrorMapper, requestProviderService);
         this.paymentAuthorisationSpi = paymentAuthorisationSpi;
         this.paymentAuthorisationService = paymentAuthorisationService;
     }
 
     @Override
-    ResponseObject<PaymentScaStatus> getPaymentScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct) {
-        return paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId, paymentType, paymentProduct);
+    ResponseObject<PaymentScaStatus> getCMSScaStatus(String paymentId, String authorisationId, PaymentType paymentType,
+                                                     String paymentProduct) {
+        return paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(paymentId, authorisationId,
+                                                                                      paymentType, paymentProduct);
     }
 
     @Override
-    SpiResponse<Boolean> getTrustedBeneficiaryFlagFromSpi(SpiContextData contextData, SpiPayment spiPayment, String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return  paymentAuthorisationSpi.requestTrustedBeneficiaryFlag(contextData, spiPayment, authorisationId, aspspConsentDataProvider);
+    SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData, @NotNull String authorisationId,
+                                                   @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return paymentAuthorisationSpi.getScaStatus(contextData, authorisationId, aspspConsentDataProvider);
     }
 }

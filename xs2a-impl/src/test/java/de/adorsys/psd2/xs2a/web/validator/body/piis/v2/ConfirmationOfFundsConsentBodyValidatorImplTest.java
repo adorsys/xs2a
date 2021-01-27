@@ -30,18 +30,22 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ConfirmationOfFundsConsentBodyValidatorImplTest {
-    private MessageError messageError = new MessageError(ErrorType.PIIS_400);
+    private final MessageError messageError = new MessageError(ErrorType.PIIS_400);
 
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
@@ -51,7 +55,7 @@ class ConfirmationOfFundsConsentBodyValidatorImplTest {
     private FieldExtractor fieldExtractor;
 
     private ConfirmationOfFundsConsentBodyValidatorImpl validator;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -114,13 +118,13 @@ class ConfirmationOfFundsConsentBodyValidatorImplTest {
         assertEquals(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, messageError.getTppMessage().getMessageErrorCode());
     }
 
-
-    @Test
-    void validate_oversizedNumber() {
+    @ParameterizedTest
+    @MethodSource("params")
+    void validate_oversizedField(String jsonPath, String fieldName, int size) {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
-        ConsentsConfirmationOfFunds confirmationOfFunds = jsonReader.getObjectFromFile("json/piis/create-piis-consent-oversized-number.json", ConsentsConfirmationOfFunds.class);
+        ConsentsConfirmationOfFunds confirmationOfFunds = jsonReader.getObjectFromFile(jsonPath, ConsentsConfirmationOfFunds.class);
 
         when(fieldExtractor.mapBodyToInstance(mockRequest, this.messageError, ConsentsConfirmationOfFunds.class))
             .thenReturn(Optional.of(confirmationOfFunds));
@@ -131,44 +135,13 @@ class ConfirmationOfFundsConsentBodyValidatorImplTest {
         //Then
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"cardNumber", 35}, messageError.getTppMessage().getTextParameters());
+        assertArrayEquals(new Object[]{fieldName, size}, messageError.getTppMessage().getTextParameters());
     }
 
-    @Test
-    void validate_oversizedInfo() {
-        // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-
-        ConsentsConfirmationOfFunds confirmationOfFunds = jsonReader.getObjectFromFile("json/piis/create-piis-consent-oversized-info.json", ConsentsConfirmationOfFunds.class);
-
-        when(fieldExtractor.mapBodyToInstance(mockRequest, this.messageError, ConsentsConfirmationOfFunds.class))
-            .thenReturn(Optional.of(confirmationOfFunds));
-
-        //When
-        validator.validate(mockRequest, messageError);
-
-        //Then
-        assertFalse(messageError.getTppMessages().isEmpty());
-        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"cardInformation", 140}, messageError.getTppMessage().getTextParameters());
-    }
-
-    @Test
-    void validate_oversizedRegistration() {
-        // Given
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-
-        ConsentsConfirmationOfFunds confirmationOfFunds = jsonReader.getObjectFromFile("json/piis/create-piis-consent-oversized-reg.json", ConsentsConfirmationOfFunds.class);
-
-        when(fieldExtractor.mapBodyToInstance(mockRequest, this.messageError, ConsentsConfirmationOfFunds.class))
-            .thenReturn(Optional.of(confirmationOfFunds));
-
-        //When
-        validator.validate(mockRequest, messageError);
-
-        //Then
-        assertFalse(messageError.getTppMessages().isEmpty());
-        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"registrationInformation", 140}, messageError.getTppMessage().getTextParameters());
+    private static Stream<Arguments> params() {
+        return Stream.of(Arguments.arguments("json/piis/create-piis-consent-oversized-number.json", "cardNumber", 35),
+                         Arguments.arguments("json/piis/create-piis-consent-oversized-info.json", "cardInformation", 140),
+                         Arguments.arguments("json/piis/create-piis-consent-oversized-reg.json", "registrationInformation", 140)
+        );
     }
 }

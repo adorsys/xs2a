@@ -41,6 +41,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PiisConsentSpiMockImpl implements PiisConsentSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+    private static final String PSU_MESSAGE = "Mocked PSU message from SPI for this piis consent";
+
     private final AuthorisationServiceMock authorisationService;
 
     @Override
@@ -68,12 +70,11 @@ public class PiisConsentSpiMockImpl implements PiisConsentSpi {
     }
 
     @Override
-    @NotNull
-    public SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiPiisConsent businessObject, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("PiisConsentSpiImpl#requestTrustedBeneficiaryFlag: contextData {}, businessObject-id {}", contextData, businessObject.getId());
-
-        return SpiResponse.<Boolean>builder()
-                   .payload(true)
+    public SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
+                                                          @NotNull String authorisationId,
+                                                          @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiScaStatusResponse>builder()
+                   .payload(new SpiScaStatusResponse(ScaStatus.RECEIVED, true, PSU_MESSAGE))
                    .build();
     }
 

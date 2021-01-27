@@ -32,7 +32,7 @@ public enum BalanceType {
     NONINVOICED("nonInvoiced");
 
 
-    private final static Map<String, BalanceType> container = new HashMap<>();
+    private static final Map<String, BalanceType> container = new HashMap<>();
 
     static {
         for (BalanceType type : values()) {
@@ -40,7 +40,7 @@ public enum BalanceType {
         }
     }
 
-    private String value;
+    private final String value;
 
     BalanceType(String value) {
         this.value = value;

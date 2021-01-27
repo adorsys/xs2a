@@ -16,7 +16,6 @@
 
 package de.adorsys.psd2.xs2a.service;
 
-import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
@@ -27,14 +26,14 @@ import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
-import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public abstract class PaymentServiceForAuthorisation {
     private final SpiContextDataProvider spiContextDataProvider;
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiErrorMapper spiErrorMapper;
-    private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
+    private final RequestProviderService requestProviderService;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -52,62 +51,49 @@ public abstract class PaymentServiceForAuthorisation {
      * @return Response containing SCA status of the authorisation and optionally trusted beneficiaries flag or corresponding error
      */
     public ResponseObject<Xs2aScaStatusResponse> getAuthorisationScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct) {
-        ResponseObject<PaymentScaStatus> paymentScaStatusResponse = getPaymentScaStatus(paymentId, authorisationId, paymentType, paymentProduct);
+        ResponseObject<PaymentScaStatus> paymentScaStatusResponse = getCMSScaStatus(paymentId, authorisationId,
+                                                                                    paymentType, paymentProduct);
         if (paymentScaStatusResponse.hasError()) {
             return ResponseObject.<Xs2aScaStatusResponse>builder()
                        .fail(paymentScaStatusResponse.getError())
                        .build();
         }
 
-        PaymentScaStatus paymentScaStatus = paymentScaStatusResponse.getBody();
-        ScaStatus scaStatus = paymentScaStatus.getScaStatus();
+        SpiContextData contextData = getSpiContextData();
+        SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId);
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = getScaStatus(contextData, authorisationId, spiAspspConsentDataProvider);
 
-        if (scaStatus.isNotFinalisedStatus()) {
-            Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus, null);
+        if (spiScaStatusResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIS);
+            log.info("Authorisation-ID [{}], Payment-ID [{}]. Get SCA status failed.", authorisationId, paymentId);
             return ResponseObject.<Xs2aScaStatusResponse>builder()
-                       .body(response)
+                       .fail(errorHolder)
                        .build();
         }
 
-        ResponseObject<Boolean> beneficiaryFlagResponse = getTrustedBeneficiaryFlag(paymentScaStatus.getPsuIdData(),
-                                                                                    paymentId, authorisationId,
-                                                                                    paymentScaStatus.getPisCommonPaymentResponse());
-        if (beneficiaryFlagResponse.hasError()) {
-            return ResponseObject.<Xs2aScaStatusResponse>builder()
-                       .fail(beneficiaryFlagResponse.getError())
-                       .build();
-        }
+        SpiScaStatusResponse spiScaStatus = spiScaStatusResponse.getPayload();
+        ScaStatus scaStatus = paymentScaStatusResponse.getBody().getScaStatus();
 
-        Boolean beneficiaryFlag = beneficiaryFlagResponse.getBody();
-        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus, beneficiaryFlag);
+        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaStatus.getTrustedBeneficiaryFlag() : null;
+        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
+                                                                   beneficiaryFlag,
+                                                                   spiScaStatus.getPsuMessage());
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)
                    .build();
     }
 
-    abstract ResponseObject<PaymentScaStatus> getPaymentScaStatus(String paymentId, String authorisationId, PaymentType paymentType, String paymentProduct);
+    abstract ResponseObject<PaymentScaStatus> getCMSScaStatus(String paymentId, String authorisationId,
+                                                                  PaymentType paymentType, String paymentProduct);
 
-    abstract SpiResponse<Boolean> getTrustedBeneficiaryFlagFromSpi(SpiContextData contextData, SpiPayment spiPayment, String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider);
+    abstract SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
+                                                            @NotNull String authorisationId,
+                                                            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
-    private ResponseObject<Boolean> getTrustedBeneficiaryFlag(PsuIdData psuIdData, String paymentId, String authorisationId, PisCommonPaymentResponse pisCommonPaymentResponse) {
-        SpiPayment spiPayment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse);
-        SpiResponse<Boolean> spiResponse = getTrustedBeneficiaryFlagFromSpi(spiContextDataProvider.provideWithPsuIdData(psuIdData),
-                                                                            spiPayment,
-                                                                            authorisationId,
-                                                                            aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId));
-
-        if (spiResponse.hasError()) {
-            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS);
-            log.info("Authorisation-ID [{}], Payment-ID [{}]. Get trusted beneficiaries flag failed.",
-                     authorisationId, paymentId);
-            return ResponseObject.<Boolean>builder()
-                       .fail(errorHolder)
-                       .build();
-        }
-
-        return ResponseObject.<Boolean>builder()
-                   .body(spiResponse.getPayload())
-                   .build();
+    private SpiContextData getSpiContextData() {
+        PsuIdData psuIdData = requestProviderService.getPsuIdData();
+        log.info("Corresponding PSU-ID {} was provided from request.", psuIdData);
+        return spiContextDataProvider.provideWithPsuIdData(psuIdData);
     }
 }

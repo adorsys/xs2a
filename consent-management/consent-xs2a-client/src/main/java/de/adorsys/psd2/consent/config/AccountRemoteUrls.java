@@ -24,7 +24,7 @@ public class AccountRemoteUrls {
     @Value("${xs2a.cms.consent-service.baseurl:http://localhost:38080/api/v1}")
     private String consentServiceBaseUrl;
 
-    public String saveNumberOfTransactions() {
+    public String saveTransactionParameters() {
         return consentServiceBaseUrl + "/ais/consent/{consent-id}/{resource-id}";
     }
 }

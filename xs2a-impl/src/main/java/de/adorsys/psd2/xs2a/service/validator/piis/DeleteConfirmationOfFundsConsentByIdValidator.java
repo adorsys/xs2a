@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 

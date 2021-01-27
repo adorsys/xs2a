@@ -153,7 +153,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         payment.setCreditorName(paymentInitiationJson.getCreditorName());
         payment.setCreditorAddress(getCreditorAddress(paymentInitiationJson.getCreditorAddress()));
         payment.setRemittanceInformationUnstructured(paymentInitiationJson.getRemittanceInformationUnstructured());
-        payment.setDayOfExecution(PisDayOfExecution._14);
+        payment.setDayOfExecution(PisDayOfExecution.DAY_14);
         payment.setStartDate(paymentInitiationJson.getStartDate());
         payment.setEndDate(paymentInitiationJson.getEndDate());
         payment.setExecutionRule(PisExecutionRule.FOLLOWING);

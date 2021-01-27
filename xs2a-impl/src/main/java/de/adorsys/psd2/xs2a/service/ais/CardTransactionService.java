@@ -26,9 +26,11 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionParameters;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.CardAccountHandler;
@@ -41,7 +43,6 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardTransactionsReportValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.CardTransactionsReportByPeriodObject;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -125,7 +126,7 @@ public class CardTransactionService {
 
         loggingContextService.storeConsentStatus(aisConsent.getConsentStatus());
 
-        xs2aAccountService.saveNumberOfTransaction(request.getConsentId(), request.getAccountId(), spiResponse.getPayload().getCardTransactions().size());
+        xs2aAccountService.saveTransactionParameters(request.getConsentId(), request.getAccountId(), new Xs2aTransactionParameters(spiResponse.getPayload().getCardTransactions().size(), 1, request.getBookingStatus()));
 
         return getXs2aCardTransactionsReportResponseObject(request, aisConsent, spiResponse.getPayload());
     }

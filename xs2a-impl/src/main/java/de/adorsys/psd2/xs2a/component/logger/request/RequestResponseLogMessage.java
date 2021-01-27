@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 @Value
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestResponseLogMessage {
-    private String message;
+    String message;
 
     /**
      * Creates new {@link RequestResponseLogMessage} builder from given request and response
@@ -62,7 +62,7 @@ public class RequestResponseLogMessage {
         private static final String MULTIPART_VALUES_SEPARATOR = "&";
         private static final String QUERY_SEPARATOR = "?";
 
-        private Map<String, String> logParams = new LinkedHashMap<>();
+        private final Map<String, String> logParams = new LinkedHashMap<>();
         private final HttpServletRequest request;
         private final HttpServletResponse response;
 
@@ -222,7 +222,7 @@ public class RequestResponseLogMessage {
             return null;
         }
 
-        private String extractHeaders(Collection<String> headerNames, Function<String, String> headerValueExtractor) {
+        private String extractHeaders(Collection<String> headerNames, UnaryOperator<String> headerValueExtractor) {
             return headerNames
                        .stream()
                        .map(header -> header + ": " + headerValueExtractor.apply(header))

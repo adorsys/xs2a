@@ -75,6 +75,7 @@ public class SignatureVerifierImpl implements SignatureVerifier {
                    + CertificateConstants.EQUALS_SIGN_SEPARATOR
                    + certificate.getIssuerX500Principal()
                          .getName()
-                         .replace(CertificateConstants.SPACE_SEPARATOR, CertificateConstants.HEXADECIMAL_SPACE_SEPARATOR);
+                         .replace(CertificateConstants.SPACE_SEPARATOR, CertificateConstants.HEXADECIMAL_SPACE_SEPARATOR)
+                         .replace("\n", "");
     }
 }

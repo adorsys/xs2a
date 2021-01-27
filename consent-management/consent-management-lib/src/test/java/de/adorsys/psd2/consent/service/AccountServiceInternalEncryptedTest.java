@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,29 +50,31 @@ class AccountServiceInternalEncryptedTest {
     private AccountService accountService;
 
     @Test
-    void saveNumberOfTransactions_shouldFail() {
+    void saveTransactionParameters_shouldFail() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
 
         // When
-        boolean result = accountServiceInternalEncrypted.saveNumberOfTransactions(ENCRYPTED_CONSENT_ID, RESOURCE_ID, 10);
+        boolean result = accountServiceInternalEncrypted.saveTransactionParameters(ENCRYPTED_CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
 
         // Then
         assertFalse(result);
-        verify(accountService, never()).saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
+        verify(accountService, never()).saveTransactionParameters(CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
     }
 
     @Test
-    void saveNumberOfTransactions_success() {
+    void saveTransactionParameters_success() {
         // Given
         when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(CONSENT_ID));
-        when(accountService.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10)).thenReturn(Boolean.TRUE);
+        UpdateTransactionParametersRequest updateTransactionParametersRequest = new UpdateTransactionParametersRequest(5, 1, BookingStatus.BOOKED);
+        when(accountService.saveTransactionParameters(CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest)).thenReturn(Boolean.TRUE);
 
         // When
-        boolean result = accountServiceInternalEncrypted.saveNumberOfTransactions(ENCRYPTED_CONSENT_ID, RESOURCE_ID, 10);
+        boolean result = accountServiceInternalEncrypted.saveTransactionParameters(ENCRYPTED_CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
 
         // Then
         assertTrue(result);
-        verify(accountService, times(1)).saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
+        verify(accountService, times(1)).saveTransactionParameters(CONSENT_ID, RESOURCE_ID, updateTransactionParametersRequest);
     }
 }

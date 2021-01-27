@@ -21,15 +21,20 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class AdditionalInformationSupportedServiceTest {
+class AdditionalInformationSupportedServiceTest {
     @InjectMocks
     private AdditionalInformationSupportedService service;
     @Mock
@@ -78,59 +83,22 @@ public class AdditionalInformationSupportedServiceTest {
         assertThat(actual).isEqualTo(input);
     }
 
-
-    @Test
-    void checkSupportedAccountOwnerInformation_ownerNameNotSupported_WithOwnerName() {
-        // Given
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/service/create-consent-req.json", CreateConsentReq.class);
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(false);
-
-        CreateConsentReq inputData = jsonReader.getObjectFromFile("json/service/create-consent-req-with-owner-name.json", CreateConsentReq.class);
-
-        // When
-        CreateConsentReq actual = service.checkIfAdditionalInformationSupported(inputData);
-
-        // Then
-        assertThat(actual).isEqualTo(expected);
+    private static Stream<Arguments> params() {
+        return Stream.of(Arguments.arguments("json/service/create-consent-req.json", "json/service/create-consent-req-with-owner-name.json"),
+                         Arguments.arguments("json/service/create-consent-req-with-available-accounts.json", "json/service/create-consent-req-with-available-accounts-owner-name.json"),
+                         Arguments.arguments("json/service/create-consent-req-with-balance.json", "json/service/create-consent-req-with-available-accounts-with-balance-owner-name.json"),
+                         Arguments.arguments("json/service/create-consent-req-with-all-psd2.json", "json/service/create-consent-req-with-all-psd2-owner-name.json")
+        );
     }
 
-    @Test
-    void checkSupportedAccountOwnerInformation_ownerNameNotSupported_WithAvailableAccounts() {
+    @ParameterizedTest
+    @MethodSource("params")
+    void checkSupportedAccountOwnerInformation(String expectedPath, String inputPath) {
         // Given
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/service/create-consent-req-with-available-accounts.json", CreateConsentReq.class);
+        CreateConsentReq expected = jsonReader.getObjectFromFile(expectedPath, CreateConsentReq.class);
         when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(false);
 
-        CreateConsentReq inputData = jsonReader.getObjectFromFile("json/service/create-consent-req-with-available-accounts-owner-name.json", CreateConsentReq.class);
-
-        // When
-        CreateConsentReq actual = service.checkIfAdditionalInformationSupported(inputData);
-
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void checkSupportedAccountOwnerInformation_ownerNameNotSupported_WithAvailableAccountsWithBalances() {
-        // Given
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/service/create-consent-req-with-balance.json", CreateConsentReq.class);
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(false);
-
-        CreateConsentReq inputData = jsonReader.getObjectFromFile("json/service/create-consent-req-with-available-accounts-with-balance-owner-name.json", CreateConsentReq.class);
-
-        // When
-        CreateConsentReq actual = service.checkIfAdditionalInformationSupported(inputData);
-
-        // Then
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void checkSupportedAccountOwnerInformation_ownerNameNotSupported_WithAllPsd2() {
-        // Given
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/service/create-consent-req-with-all-psd2.json", CreateConsentReq.class);
-        when(aspspProfileService.isAccountOwnerInformationSupported()).thenReturn(false);
-
-        CreateConsentReq inputData = jsonReader.getObjectFromFile("json/service/create-consent-req-with-all-psd2-owner-name.json", CreateConsentReq.class);
+        CreateConsentReq inputData = jsonReader.getObjectFromFile(inputPath, CreateConsentReq.class);
 
         // When
         CreateConsentReq actual = service.checkIfAdditionalInformationSupported(inputData);

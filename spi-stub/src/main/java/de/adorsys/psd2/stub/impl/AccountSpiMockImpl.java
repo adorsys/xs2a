@@ -105,7 +105,7 @@ public class AccountSpiMockImpl implements AccountSpi {
 
         SpiTransactionLinks spiTransactionLinks = buildSpiTransactionLinks();
         return SpiResponse.<SpiTransactionReport>builder()
-                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null, spiTransactionLinks))
+                   .payload(new SpiTransactionReport("dGVzdA==", transactions, Collections.singletonList(buildSpiAccountBalance()), "application/json", null, spiTransactionLinks, 1))
                    .build();
     }
 
@@ -189,7 +189,7 @@ public class AccountSpiMockImpl implements AccountSpi {
         SpiStandingOrderDetails standingOrderDetails = new SpiStandingOrderDetails(LocalDate.of(2021, Month.JANUARY, 4),
                                                                                    LocalDate.of(2021, Month.MARCH, 12),
                                                                                    PisExecutionRule.PRECEDING, null,
-                                                                                   FrequencyCode.MONTHLY, null, null, PisDayOfExecution._24, null);
+                                                                                   FrequencyCode.MONTHLY, null, null, PisDayOfExecution.DAY_24, null);
 
         SpiAdditionalInformationStructured additionalInformationStructured = new SpiAdditionalInformationStructured(standingOrderDetails);
         return new SpiTransaction(null, null, null, null, null,

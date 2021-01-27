@@ -1,0 +1,131 @@
+// toc-title definition MUST follow document title without blank line!
+== Signing messages ar application layer (Digest + Signature)
+
+The ASPSP may require the TPP to sign request messages. This requirement shall be stated
+in the ASPSP documentation.
+
+The signature shall be included in the HTTP header.
+
+The electronic signature of the TPP has to be based on a qualified certificate for electronic
+seals. This qualified certificate has to be issued by a qualified trust service provider according
+to the eIDAS regulation [eIDAS]. The content of the certificate has to be compliant with the
+requirements of [EBA-RTS]. The certificate of the TPP has to indicate all roles the TPP is
+authorised to use.
+
+=== ASPSP Profile
+
+The electronic signature will be enabled if ASPSP supports it:
+
+```
+{
+...
+ "common": {
+        "tppSignatureRequired": true,
+        ...
+}
+```
+
+=== Request Header
+
+|===
+|Attribute |Type |Condition |Description
+
+|Digest |String |Conditional |Is contained if and only if the "Signature"
+element is contained in the header of the request.
+
+|Signature |String |Conditional |A signature of the request by the TPP on
+application level. This might be mandated by ASPSP.
+
+|TPPSignatureCertificate |String |Conditional |The certificate used for signing the request, in
+base64 encoding. Must be contained if a signature is contained, see above.
+
+|===
+
+*Remark:* An ASPSP will ignore signatures on application level used by the TPP if signatures
+are not supported by the ASPSP.
+
+==== Digest header
+
+The "Digest" Header is mandatory and  contains a Hash of the
+message body, if the message does not contain a body, the "Digest" header must contain the
+hash of an empty bytelist. The only hash algorithms that may be used to calculate the Digest
+within the context of this specification are SHA-256 and SHA-512 as defined in [RFC5843].
+
+*Remark:* In case of a multipart message the same method is used to calculate the digest. I.e.
+a hash of the (whole) message body is calculated including all parts of the multipart message
+as well as the separators.
+
+==== Signature header
+
+"Signature" header must be present. The structure of a "Signature" header is defined in the following table lists.
+
+|===
+|Element |Type |Condition |Requirement |Additional Requirement
+
+|keyId |String |Mandatory |The keyId field is a string that the server can use to look up
+the component they need to validate the signature.
+|Serial Number of the TPP's certificate included in the "TPPSignature-Certificate" header
+of this request.
+It shall be formatted as follows:
+keyId="SN=XXX,CA=YYYYYY
+YYYYYYYYYY"
+where “XXX" is the serial
+number of the certificate in
+hexadecimal coding given in
+the TPP-Signature-CertificateHeader and
+"YYYYYYYYYYYYYYYY" is
+the full Distinguished Name of the Certification Authority having produced this certificate.
+
+|Algorithm |String |Mandatory |The "Algorithm " parameter is
+used to specify the digital signature algorithm to use when generating the signature. Valid values for this
+parameter can be found in the Signature Algorithms registry located at http://www.iana.org/assignments/signature-algorithms
+and MUST NOT be marked "deprecated". It is preferred that the algorithm used by an implementation be derived
+from the key metadata identified by the 'keyId' rather than from this field. The 'algorithm' parameter will most likely
+be deprecated in the future.
+|Mandatory
+
+The algorithm must identify the same algorithm for the signature as described for the TPP's public key (Subject
+Public Key Info) in the certificate (Element "TPP-SignatureCertificate") of this Request.
+It must identify SHA-256 or SHA-512 as Hash algorithm.
+
+|Headers |String |Mandatory |The "Headers" parameter is
+used to specify the list of HTTP headers included when generating the signature for
+the message. If specified, it should be a lowercased, quoted list of HTTP header fields, separated by a single
+space character. If not specified, implementations MUST operate as if the field were specified with a single
+value, the `Date` header, in the list of HTTP headers. Note that the list order is important, and MUST be
+specified in the order the HTTP header field-value pairs are concatenated together during signing.
+
+|Mandatory.
+
+Must include
+
+* "digest",
+* "x-request-id",
+
+Must conditionally include
+
+* "psu-id", if and only if "PSU-ID" is included as a header of the HTTP-Request.
+* "psu-corporate-id", if and only if "PSUCorporate-ID" is included as a header of the HTTP-Request.
+* "tpp-redirect-uri", if and nly if "TPP-RedirectURI" is included as a header of the HTTPRequest.
+
+*No other entries may be included.*
+
+*Remark:* It is intended to introduce a new http header in a coming version. This new header shall indicate the
+creation date of a request on the side of the TPP. This new header and will also have to be included in this "Headers"
+element.
+
+|Signature |String |Mandatory
+|The "signature" parameter is
+a base 64 encoded digital signature, as described in RFC 4648 [RFC4648]. The client uses the `algorithm` and `headers`
+signature parameters to form a canonicalised `signing string`. This `signing string` is then signed with the key
+associated with `keyId` and the algorithm corresponding to `algorithm`. The `signature` parameter is then set to the
+base 64 encoding of the signature. |[No additional Requirements]
+
+|===
+
+=== Test data generation
+
+For test data generation use `DigestSignatureHelper` class:
+
+* put response data from certificate generator (encodedCert and privateKey)  to `"helper/key-pair.json"`
+* example how to use `DigestSignatureHelperTest`.

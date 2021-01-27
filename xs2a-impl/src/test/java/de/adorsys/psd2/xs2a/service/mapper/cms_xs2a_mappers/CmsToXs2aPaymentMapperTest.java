@@ -91,7 +91,7 @@ class CmsToXs2aPaymentMapperTest {
     private static final LocalDate END_DATE = LocalDate.of(2019, 2, 28);
     private static final PisExecutionRule EXECUTION_RULE = PisExecutionRule.FOLLOWING;
     private static final String FREQUENCY = "ANNUAL";
-    private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution._2;
+    private static final PisDayOfExecution DAY_OF_EXECUTION = PisDayOfExecution.DAY_2;
     private static final List<PsuIdData> PSU_ID_DATA_LIST = Collections.singletonList(new PsuIdData("psu id", null, null, null, null));
 
     private static final String PAYMENT_PRODUCT = "payment product";

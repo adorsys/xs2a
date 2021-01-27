@@ -74,7 +74,8 @@ class FundsConfirmationControllerTest {
 
         //Then:
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedStatusCode);
-        assertThat(fundsConfirmationResponse.getFundsAvailable()).isEqualTo(true);
+        assertThat(fundsConfirmationResponse).isNotNull();
+        assertThat(fundsConfirmationResponse.getFundsAvailable()).isTrue();
         verify(fundsConfirmationModelMapper, atLeastOnce()).mapToFundsConfirmationRequest(confirmationOfFunds, CONSENT_ID);
     }
 

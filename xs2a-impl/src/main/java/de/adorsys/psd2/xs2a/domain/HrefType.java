@@ -20,5 +20,5 @@ import lombok.Value;
 
 @Value
 public class HrefType {
-    private String href;
+    String href;
 }

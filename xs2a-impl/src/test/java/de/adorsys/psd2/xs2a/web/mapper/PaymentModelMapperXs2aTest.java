@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aObjectMapper.class, MultiPartBoundaryBuilder.class})
-public class PaymentModelMapperXs2aTest {
+class PaymentModelMapperXs2aTest {
 
     private static final String CONTENT = "payment content";
 
@@ -48,7 +48,7 @@ public class PaymentModelMapperXs2aTest {
     private MultiPartBoundaryBuilder multiPartBoundaryBuilder;
 
     private MockHttpServletRequest mockHttpServletRequest;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
 
     @BeforeEach
@@ -106,5 +106,4 @@ public class PaymentModelMapperXs2aTest {
 
         assertThrows(IllegalArgumentException.class, () -> paymentModelMapper.mapToXs2aRawPayment(requestParameters, null, jsonStandingOrderType));
     }
-
 }

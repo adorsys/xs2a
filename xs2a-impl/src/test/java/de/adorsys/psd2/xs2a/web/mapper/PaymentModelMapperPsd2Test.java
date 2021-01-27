@@ -81,7 +81,7 @@ class PaymentModelMapperPsd2Test {
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -197,8 +197,9 @@ class PaymentModelMapperPsd2Test {
     void mapToPaymentRequestParameters_incorrect_payment_type_throw_wrong_payment_type_exception() {
         //Given
         TppNotificationData tppNotificationData = new TppNotificationData(NOTIFICATION_MODES, "notification.uri");
+        byte[] tpPSignatureCertificate = "certificate".getBytes();
         //Then
-        assertThrows(WrongPaymentTypeException.class, () -> mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, "incorrect payment type", "certificate".getBytes(), "ok.uri", "nok.uri",
+        assertThrows(WrongPaymentTypeException.class, () -> mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, "incorrect payment type", tpPSignatureCertificate, "ok.uri", "nok.uri",
                                                                                                                                       true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION, null));
     }
 

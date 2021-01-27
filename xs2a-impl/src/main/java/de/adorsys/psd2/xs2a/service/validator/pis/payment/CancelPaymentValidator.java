@@ -17,8 +17,8 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;

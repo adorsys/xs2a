@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service;
 
+import de.adorsys.psd2.consent.api.ais.UpdateTransactionParametersRequest;
 import de.adorsys.psd2.consent.api.service.AccountService;
 import de.adorsys.psd2.consent.api.service.AccountServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
@@ -36,12 +37,12 @@ public class AccountServiceInternalEncrypted implements AccountServiceEncrypted 
     private final AccountService accountService;
 
     @Override
-    public boolean saveNumberOfTransactions(String encryptedConsentId, String resourceId, int numberOfTransactions) {
+    public boolean saveTransactionParameters(String encryptedConsentId, String resourceId, UpdateTransactionParametersRequest transactionParameters) {
 
         Optional<String> optionalId = securityDataService.decryptId(encryptedConsentId);
 
         if (optionalId.isPresent()) {
-            return accountService.saveNumberOfTransactions(optionalId.get(), resourceId, numberOfTransactions);
+            return accountService.saveTransactionParameters(optionalId.get(), resourceId, transactionParameters);
         } else {
             log.info("Encrypted Consent ID: [{}]. Save number of transactions failed, couldn't decrypt consent ID",
                      encryptedConsentId);

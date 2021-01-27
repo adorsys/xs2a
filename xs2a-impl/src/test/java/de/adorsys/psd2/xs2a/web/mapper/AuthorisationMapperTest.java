@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
@@ -167,6 +168,15 @@ class AuthorisationMapperTest {
         // Then
         assertEquals(expected, actualStartScaProcessResponse);
         verify(authorisationModelMapper).mapToStartScaProcessResponse(createConsentAuthorizationResponse);
+    }
+
+    @Test
+    void mapToScaStatusResponse() {
+        Xs2aScaStatusResponse xs2aScaStatusResponse = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/Xs2aScaStatusResponse.json", Xs2aScaStatusResponse.class);
+        ScaStatusResponse expected = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/ScaStatusResponse-expected.json", ScaStatusResponse.class);
+
+        ScaStatusResponse actual = mapper.mapToScaStatusResponse(xs2aScaStatusResponse);
+        assertEquals(expected, actual);
     }
 
     private Map<String, HrefType> buildLinks() {

@@ -42,6 +42,8 @@ import java.util.Currency;
 @AllArgsConstructor
 public class AisConsentSpiMockImpl implements AisConsentSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+    private static final String PSU_MESSAGE = "Mocked PSU message from SPI for this consent";
+
     private final AuthorisationServiceMock authorisationService;
 
     @Override
@@ -134,9 +136,11 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     }
 
     @Override
-    public @NotNull SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiAccountConsent accountConsent, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<Boolean>builder()
-                   .payload(true)
+    public SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
+                                                          @NotNull String authorisationId,
+                                                          @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiScaStatusResponse>builder()
+                   .payload(new SpiScaStatusResponse(ScaStatus.RECEIVED, true, PSU_MESSAGE))
                    .build();
     }
 }

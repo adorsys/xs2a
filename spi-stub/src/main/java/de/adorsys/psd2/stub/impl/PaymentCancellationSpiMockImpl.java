@@ -18,6 +18,7 @@ package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
@@ -38,6 +39,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     private static final String DECOUPLED_PSU_MESSAGE = "Please use your BankApp for transaction Authorisation";
+    private static final String PSU_MESSAGE = "Mocked PSU message from SPI for this payment";
+
     private final AuthorisationServiceMock authorisationService;
 
     @Override
@@ -105,10 +108,11 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     }
 
     @Override
-    @NotNull
-    public SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull SpiPayment payment, @NotNull String authorisationId, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<Boolean>builder()
-                   .payload(true)
+    public SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
+                                                          @NotNull String authorisationId,
+                                                          @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiScaStatusResponse>builder()
+                   .payload(new SpiScaStatusResponse(ScaStatus.RECEIVED, true, PSU_MESSAGE))
                    .build();
     }
 }

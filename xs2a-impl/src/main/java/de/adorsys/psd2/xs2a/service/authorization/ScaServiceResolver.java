@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,11 +31,11 @@ import java.util.Map;
 public class ScaServiceResolver<T extends ScaApproachServiceTypeProvider> implements InitializingBean {
     private final List<T> services;
     private final ScaApproachResolver scaApproachResolver;
-    private final Map<ScaApproach, T> SERVICE_CONTAINER = new HashMap<>();
+    private final Map<ScaApproach, T> serviceContainer = new EnumMap<>(ScaApproach.class);
 
     @Override
     public void afterPropertiesSet() {
-        services.forEach(service -> SERVICE_CONTAINER.put(service.getScaApproachServiceType(), service));
+        services.forEach(service -> serviceContainer.put(service.getScaApproachServiceType(), service));
     }
 
     /**
@@ -44,7 +44,7 @@ public class ScaServiceResolver<T extends ScaApproachServiceTypeProvider> implem
      * @return particular service for chosen sca approach
      */
     public T getService() {
-        return SERVICE_CONTAINER.get(scaApproachResolver.resolveScaApproach());
+        return serviceContainer.get(scaApproachResolver.resolveScaApproach());
     }
 
     /**
@@ -54,6 +54,6 @@ public class ScaServiceResolver<T extends ScaApproachServiceTypeProvider> implem
      * @return particular service for chosen sca approach
      */
     public T getService(String authorisationId) {
-        return SERVICE_CONTAINER.get(scaApproachResolver.getScaApproach(authorisationId));
+        return serviceContainer.get(scaApproachResolver.getScaApproach(authorisationId));
     }
 }

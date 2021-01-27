@@ -67,7 +67,7 @@ class AspspProfileServiceWrapperTest {
     }
 
     @Test
-    public void getSupportedTransactionStatusFormats() {
+    void getSupportedTransactionStatusFormats() {
         // Given
         List<String> expectedFormats = Collections.singletonList("application/json");
 
