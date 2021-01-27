@@ -66,7 +66,7 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         log.info("AccountSpi#getConsentStatus: contextData {}, accountConsent-id {}", contextData, accountConsent.getId());
 
         return SpiResponse.<SpiConsentStatusResponse>builder()
-                   .payload(new SpiConsentStatusResponse(accountConsent.getConsentStatus(), "Mocked PSU message from SPI for this consent"))
+                   .payload(new SpiConsentStatusResponse(accountConsent.getConsentStatus(), PSU_MESSAGE))
                    .build();
     }
 

@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.filter;
 
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,13 +30,13 @@ import java.io.IOException;
 public abstract class GlobalAbstractExceptionFilter extends OncePerRequestFilter {
     private final TppErrorMessageWriter tppErrorMessageWriter;
 
-    public GlobalAbstractExceptionFilter(TppErrorMessageWriter tppErrorMessageWriter) {
+    protected GlobalAbstractExceptionFilter(TppErrorMessageWriter tppErrorMessageWriter) {
         this.tppErrorMessageWriter = tppErrorMessageWriter;
     }
 
     //This method is final to prevent it's overriding in child classes. Please override doFilterInternalCustom instead.
     @Override
-    protected final void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected final void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         try {
             doFilterInternalCustom(request, response, filterChain);
         } catch (ResourceAccessException e) {
@@ -43,5 +44,5 @@ public abstract class GlobalAbstractExceptionFilter extends OncePerRequestFilter
         }
     }
 
-    protected abstract void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException;
+    protected abstract void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException;
 }
