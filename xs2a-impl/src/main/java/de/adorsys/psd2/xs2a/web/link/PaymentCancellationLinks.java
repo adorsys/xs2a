@@ -30,13 +30,13 @@ import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 public class PaymentCancellationLinks extends AbstractLinks {
-    private ScaApproachResolver scaApproachResolver;
-    private RedirectLinkBuilder redirectLinkBuilder;
-    private RedirectIdService redirectIdService;
-    private boolean isExplicitMethod;
-    private ScaRedirectFlow scaRedirectFlow;
-    private boolean authorisationConfirmationRequestMandated;
-    private String instanceId;
+    private final ScaApproachResolver scaApproachResolver;
+    private final RedirectLinkBuilder redirectLinkBuilder;
+    private final RedirectIdService redirectIdService;
+    private final boolean isExplicitMethod;
+    private final ScaRedirectFlow scaRedirectFlow;
+    private final boolean authorisationConfirmationRequestMandated;
+    private final String instanceId;
 
     public PaymentCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                     RedirectIdService redirectIdService, CancelPaymentResponse response,

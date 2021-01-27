@@ -389,7 +389,7 @@ class ServiceUnavailableIT {
         givenReturnOrThrowException(aspspProfileService.getAspspSettings(null), AspspSettingsBuilder.buildAspspSettings(), throwException);
         givenReturnOrThrowException(aspspProfileService.getScaApproaches(null), Collections.singletonList(scaApproach), throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.isPsuInInitialRequestMandated(), false, throwException);
-        givenReturnOrThrowException(aspspProfileServiceWrapper.getTppSignatureRequired(), false, throwException);
+        givenReturnOrThrowException(aspspProfileServiceWrapper.isTppSignatureRequired(), false, throwException);
         givenReturnOrThrowException(aspspProfileServiceWrapper.isCheckTppRolesFromCertificateSupported(), false, throwException);
     }
 

@@ -34,12 +34,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentCancellationAspectService extends BaseAspectService<PaymentController> {
-    private PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
-    private ScaApproachResolver scaApproachResolver;
-    private RedirectLinkBuilder redirectLinkBuilder;
-    private AuthorisationMethodDecider authorisationMethodDecider;
-    private RedirectIdService redirectIdService;
-    private RequestProviderService requestProviderService;
+    private final PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider;
+    private final ScaApproachResolver scaApproachResolver;
+    private final RedirectLinkBuilder redirectLinkBuilder;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
+    private final RedirectIdService redirectIdService;
+    private final RequestProviderService requestProviderService;
 
     @Autowired
     public PaymentCancellationAspectService(PaymentCancellationAuthorisationNeededDecider cancellationScaNeededDecider,
