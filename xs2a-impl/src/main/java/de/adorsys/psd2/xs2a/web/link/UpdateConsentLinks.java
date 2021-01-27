@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 
 public abstract class UpdateConsentLinks extends AbstractLinks {
 
-    public UpdateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataResponse response) {
+    protected UpdateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver, UpdateConsentPsuDataResponse response) {
         super(httpUrl);
 
         String consentId = response.getConsentId();

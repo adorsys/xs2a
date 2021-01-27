@@ -50,7 +50,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
     private final PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator;
     private final AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
-    public AbstractUpdatePisPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
+    protected AbstractUpdatePisPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
                                              PisAuthorisationValidator pisAuthorisationValidator,
                                              PisAuthorisationStatusValidator pisAuthorisationStatusValidator,
                                              PisPsuDataUpdateAuthorisationCheckerValidator pisPsuDataUpdateAuthorisationCheckerValidator,

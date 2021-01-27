@@ -60,7 +60,7 @@ public class SignatureFilter extends AbstractXs2aFilter {
 
     @Override
     protected void doFilterInternalCustom(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        if (!aspspProfileService.getTppSignatureRequired()) {
+        if (!aspspProfileService.isTppSignatureRequired()) {
             chain.doFilter(request, response);
             return;
         }

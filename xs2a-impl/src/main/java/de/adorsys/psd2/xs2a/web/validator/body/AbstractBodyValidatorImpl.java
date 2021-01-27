@@ -27,11 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Class with common functionality (AIS and PIS) for bodies validating.
  */
-public class AbstractBodyValidatorImpl implements BodyValidator {
+public abstract class AbstractBodyValidatorImpl implements BodyValidator {
 
     protected ErrorBuildingService errorBuildingService;
     protected Xs2aObjectMapper xs2aObjectMapper;
-    private FieldLengthValidator fieldLengthValidator;
+    private final FieldLengthValidator fieldLengthValidator;
 
     protected AbstractBodyValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                         FieldLengthValidator fieldLengthValidator) {

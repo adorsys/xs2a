@@ -29,10 +29,10 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 public class PisAuthorisationCancellationLinks extends AbstractLinks {
 
-    private RedirectLinkBuilder redirectLinkBuilder;
-    private ScaRedirectFlow scaRedirectFlow;
-    private RedirectIdService redirectIdService;
-    private String instanceId;
+    private final RedirectLinkBuilder redirectLinkBuilder;
+    private final ScaRedirectFlow scaRedirectFlow;
+    private final RedirectIdService redirectIdService;
+    private final String instanceId;
 
     public PisAuthorisationCancellationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                              RedirectIdService redirectIdService,
@@ -59,8 +59,8 @@ public class PisAuthorisationCancellationLinks extends AbstractLinks {
         String redirectId = redirectIdService.generateRedirectId(authorizationId);
 
         String paymentCancellationOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
-                                      ? redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
-                                      : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
+                                                  ? redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(paymentId, redirectId, internalRequestId)
+                                                  : redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(paymentId, redirectId, internalRequestId, instanceId);
 
         setScaRedirect(new HrefType(paymentCancellationOauthLink));
 
