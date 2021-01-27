@@ -86,7 +86,7 @@ class SignatureFilterTest {
     @Test
     void doFilter_success() throws IOException, ServletException {
         // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(true);
 
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -106,7 +106,7 @@ class SignatureFilterTest {
     @Test
     void doFilter_invalid_digest() throws IOException, ServletException {
         // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(true);
 
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -125,7 +125,7 @@ class SignatureFilterTest {
     @Test
     void doFilter_invalid_signature() throws IOException, ServletException {
         // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(true);
 
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -146,11 +146,11 @@ class SignatureFilterTest {
     @Test
     void doFilter_SignatureRequired_Off() throws IOException, ServletException {
         // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(true);
 
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(false);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(false);
 
         // when
         signatureFilter.doFilter(mockRequest, mockResponse, chain);
@@ -166,7 +166,7 @@ class SignatureFilterTest {
     @ValueSource(strings = {"x-request-id", "tpp-signature-certificate", "digest","date"})
     void doFilter_HeaderEmpt(String header) throws IOException, ServletException {
         // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(true);
 
         headerMap.remove(header);
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
@@ -186,7 +186,7 @@ class SignatureFilterTest {
     @Test
     void doFilter_HeaderEmpty_signature() throws IOException, ServletException {
         // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
+        when(aspspProfileService.isTppSignatureRequired()).thenReturn(true);
 
         headerMap.remove("signature");
         MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);

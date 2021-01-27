@@ -85,5 +85,4 @@ public abstract class AbstractHeaderValidatorImpl {
         }
         return messageError;
     }
-
 }

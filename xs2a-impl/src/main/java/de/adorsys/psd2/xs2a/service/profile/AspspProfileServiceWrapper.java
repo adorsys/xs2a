@@ -60,7 +60,7 @@ public class AspspProfileServiceWrapper {
      *
      * @return 'true' if tpp signature is required, 'false' if not
      */
-    public Boolean getTppSignatureRequired() {
+    public boolean isTppSignatureRequired() {
         return readAspspSettings().getCommon().isTppSignatureRequired();
     }
 

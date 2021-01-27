@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 
 public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {
 
-    private ScaApproachResolver scaApproachResolver;
+    private final ScaApproachResolver scaApproachResolver;
 
     public UpdatePisCancellationPsuDataLinks(String httpUrl, ScaApproachResolver scaApproachResolver,
                                              Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaStatus scaStatus,
