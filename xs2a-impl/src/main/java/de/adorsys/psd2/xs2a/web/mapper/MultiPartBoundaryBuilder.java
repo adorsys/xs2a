@@ -33,9 +33,9 @@ import java.nio.charset.StandardCharsets;
 public class MultiPartBoundaryBuilder {
     static final String DEFAULT_BOUNDARY = "--AaaBbbCcc";
     private static final String BOUNDARY = "boundary=";
-    private static final String BOUNDARY_PLACEHOLDER = "\\{BOUNDARY}";
-    private static final String XMLPART_PLACEHOLDER = "\\{XML_PART}";
-    private static final String JSONPART_PLACEHOLDER = "\\{JSON_PART}";
+    private static final String BOUNDARY_PLACEHOLDER = "{BOUNDARY}";
+    private static final String XMLPART_PLACEHOLDER = "{XML_PART}";
+    private static final String JSONPART_PLACEHOLDER = "{JSON_PART}";
     private static final String BOUNDARY_PREFIX = "--";
 
     private static String contentTemplate = null;
@@ -59,9 +59,9 @@ public class MultiPartBoundaryBuilder {
             boundary = boundaryValue.startsWith(BOUNDARY_PREFIX) ? boundaryValue : BOUNDARY_PREFIX + boundaryValue;
         }
         return contentTemplate
-                   .replaceAll(BOUNDARY_PLACEHOLDER, boundary)
-                   .replaceAll(XMLPART_PLACEHOLDER, xmlSct)
-                   .replaceAll(JSONPART_PLACEHOLDER, jsonPart)
+                   .replace(BOUNDARY_PLACEHOLDER, boundary)
+                   .replace(XMLPART_PLACEHOLDER, xmlSct)
+                   .replace(JSONPART_PLACEHOLDER, jsonPart)
                    .trim();
     }
 }

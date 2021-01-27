@@ -22,7 +22,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class AustriaValidationConfigImpl extends DefaultPaymentValidationConfigImpl {
-    protected ValidationObject creditorId = new ValidationObject(Occurrence.OPTIONAL, 35);
+    @Override
+    public ValidationObject getCreditorId() {
+        return new ValidationObject(Occurrence.OPTIONAL, 35);
+    }
 }
