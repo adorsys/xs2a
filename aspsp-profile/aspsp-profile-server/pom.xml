@@ -22,7 +22,7 @@
     <parent>
         <artifactId>aspsp-profile</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>8.8-SNAPSHOT</version>
+        <version>8.8</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
