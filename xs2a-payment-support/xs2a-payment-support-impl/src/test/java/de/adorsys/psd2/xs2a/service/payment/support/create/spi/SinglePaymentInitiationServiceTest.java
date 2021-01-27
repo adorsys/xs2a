@@ -47,7 +47,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,7 +101,7 @@ class SinglePaymentInitiationServiceTest {
             .thenReturn(SPI_SINGLE_PAYMENT);
         when(singlePaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_SINGLE_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_SINGLE_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_SINGLE_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(SPI_SINGLE_PAYMENT_RESPONSE, initialSpiAspspConsentDataProvider))
             .thenReturn(SINGLE_PAYMENT_RESPONSE);
 
         //When

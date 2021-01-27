@@ -156,32 +156,30 @@ class RedirectLinkBuilderTest {
     }
 
     @Test
-    public void buildPisConfirmationLink() {
+    void buildPisConfirmationLink() {
         String confirmationLink = redirectLinkBuilder.buildPisConfirmationLink("paymentService", "paymentProduct", "paymentID", "redirectID");
 
         assertEquals("/v1/paymentService/paymentProduct/paymentID/authorisations/redirectID", confirmationLink);
     }
 
     @Test
-    public void buildPisCancellationConfirmationLink() {
+    void buildPisCancellationConfirmationLink() {
         String confirmationLink = redirectLinkBuilder.buildPisCancellationConfirmationLink("paymentService", "paymentProduct", "paymentID", "redirectID");
 
         assertEquals("/v1/paymentService/paymentProduct/paymentID/cancellation-authorisations/redirectID", confirmationLink);
     }
 
     @Test
-    public void buildAisConfirmationLink() {
+    void buildAisConfirmationLink() {
         String confirmationLink = redirectLinkBuilder.buildConfirmationLink("consentID", "redirectID", ConsentType.AIS);
 
         assertEquals("/v1/consents/consentID/authorisations/redirectID", confirmationLink);
     }
 
     @Test
-    public void buildPiisConfirmationLink() {
+    void buildPiisConfirmationLink() {
         String confirmationLink = redirectLinkBuilder.buildConfirmationLink("consentID", "redirectID", ConsentType.PIIS_TPP);
 
         assertEquals("/v2/consents/confirmation-of-funds/consentID/authorisations/redirectID", confirmationLink);
     }
-
-
 }

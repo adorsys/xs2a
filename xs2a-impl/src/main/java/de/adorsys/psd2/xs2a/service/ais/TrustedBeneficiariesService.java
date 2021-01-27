@@ -34,7 +34,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aTrustedBeneficiariesMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetTrustedBeneficiariesListValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetTrustedBeneficiariesListConsentObject;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiTrustedBeneficiaries;
@@ -71,7 +71,7 @@ public class TrustedBeneficiariesService {
     /**
      * Gets TrustedBeneficiaries based on accountId, beneficiaries get checked with provided AIS-consent
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param accountId  String representing a PSU`s Account at ASPSP
      * @param requestUri the URI of incoming request
      * @return response with {@link Xs2aTrustedBeneficiariesList} based on accountId and granted by consent

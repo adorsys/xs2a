@@ -26,10 +26,10 @@ class PeriodicPaymentInitiationWithStatusResponseTest {
     @Test
     void checkFieldsForExistence() {
         try {
-            CommonModelTest.checkUltimateDebtorField(clazz);
-            CommonModelTest.checkUltimateCreditorField(clazz);
-            CommonModelTest.checkPurposeCodeField(clazz);
-            CommonModelTest.checkRemittanceInformationStructuredField(clazz);
+            CommonModelHelper.checkUltimateDebtorField(clazz);
+            CommonModelHelper.checkUltimateCreditorField(clazz);
+            CommonModelHelper.checkPurposeCodeField(clazz);
+            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
         } catch (NoSuchFieldException e) {
             fail();
         }

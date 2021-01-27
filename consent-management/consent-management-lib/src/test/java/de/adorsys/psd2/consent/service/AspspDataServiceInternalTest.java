@@ -118,7 +118,7 @@ class AspspDataServiceInternalTest {
         // Then
         assertTrue(aspspConsentData.isPresent());
         assertEquals(EXTERNAL_CONSENT_ID, aspspConsentData.get().getConsentId());
-        assertEquals(ENCRYPTED_CONSENT_DATA, aspspConsentData.get().getAspspConsentData());
+        assertEquals(ENCRYPTED_CONSENT_DATA, aspspConsentData.get().getAspspConsentDataBytes());
     }
 
     @Test

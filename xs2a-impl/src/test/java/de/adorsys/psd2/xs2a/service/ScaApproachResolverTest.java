@@ -377,7 +377,7 @@ class ScaApproachResolverTest {
 
         assertThat(scaApproach).isEqualTo(REDIRECT);
         verify(xs2aAuthorisationService, times(1))
-            .getAuthorisationScaApproach(eq(AUTHORISATION_ID));
+            .getAuthorisationScaApproach(AUTHORISATION_ID);
     }
 
     private List<ScaApproach> buildScaApproaches(ScaApproach... scaApproaches) {

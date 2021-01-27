@@ -19,9 +19,12 @@ package de.adorsys.psd2.xs2a.service.validator.pis.payment;
 import de.adorsys.psd2.validator.payment.PaymentBusinessValidator;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.service.mapper.ValidationResultMapper;
-import de.adorsys.psd2.xs2a.service.validator.*;
+import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
+import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +44,6 @@ import java.util.Set;
 public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRequestObject> {
     private final PsuDataInInitialRequestValidator psuDataInInitialRequestValidator;
     private final CountryPaymentValidatorResolver countryPaymentValidatorResolver;
-    private final ValidationResultMapper validationResultMapper;
     private final TppUriHeaderValidator tppUriHeaderValidator;
     private final TppNotificationDataValidator tppNotificationDataValidator;
 
@@ -70,8 +72,7 @@ public class CreatePaymentValidator implements BusinessValidator<CreatePaymentRe
         String paymentProduct = paymentInitiationParameters.getPaymentProduct();
 
         PaymentBusinessValidator countrySpecificBusinessValidator = countryPaymentValidatorResolver.getPaymentBusinessValidator();
-        de.adorsys.psd2.xs2a.core.service.validator.ValidationResult countrySpecificValidationResult = countrySpecificBusinessValidator.validate(createPaymentRequestObject.getPayment(), paymentProduct, paymentType);
-        return validationResultMapper.mapToXs2aValidationResult(countrySpecificValidationResult);
+        return countrySpecificBusinessValidator.validate(createPaymentRequestObject.getPayment(), paymentProduct, paymentType);
     }
 
     @Override

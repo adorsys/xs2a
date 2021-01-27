@@ -30,7 +30,7 @@ class DefaultPaymentValidatorHolderTest {
     @BeforeEach
     void setUp() {
         holder = new DefaultPaymentValidatorHolder(new DefaultPaymentBodyFieldsValidatorImpl(null, null),
-                                                   new DefaultPaymentBusinessValidatorImpl(null, null, null, null));
+                                                   new DefaultPaymentBusinessValidatorImpl(null, null, null));
     }
 
     @Test

@@ -61,7 +61,7 @@ class PisAuthorisationCancellationLinksTest {
 
     @Test
     void scaApproachEmbeddedAndPsuDataIsEmpty() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
         links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
@@ -74,7 +74,7 @@ class PisAuthorisationCancellationLinksTest {
 
     @Test
     void scaApproachEmbeddedAndPsuDataIsNotEmpty() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.EMBEDDED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
         links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
@@ -87,7 +87,7 @@ class PisAuthorisationCancellationLinksTest {
 
     @Test
     void scaApproachDecoupledAndPsuDataIsEmpty() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
         links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
@@ -100,7 +100,7 @@ class PisAuthorisationCancellationLinksTest {
 
     @Test
     void scaApproachDecoupledAndPsuDataIsNotEmpty() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.DECOUPLED);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
         links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
@@ -113,9 +113,9 @@ class PisAuthorisationCancellationLinksTest {
 
     @Test
     void scaApproachRedirect() {
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID))).thenReturn(ScaApproach.REDIRECT);
-        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID))).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID), eq(""))).thenReturn(REDIRECT_LINK);
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
+        when(redirectIdService.generateRedirectId(AUTHORISATION_ID)).thenReturn(AUTHORISATION_ID);
+        when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(PAYMENT_ID, AUTHORISATION_ID, INTERNAL_REQUEST_ID, "")).thenReturn(REDIRECT_LINK);
 
         links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
                                                       PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
@@ -129,11 +129,11 @@ class PisAuthorisationCancellationLinksTest {
     @Test
     void scaApproachRedirect_OauthIntegrated_AndImplicitMethod() {
         // Given
-        when(scaApproachResolver.getScaApproach(eq(AUTHORISATION_ID)))
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.REDIRECT);
-        when(redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(eq(PAYMENT_ID), eq(AUTHORISATION_ID), eq(INTERNAL_REQUEST_ID)))
+        when(redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(PAYMENT_ID, AUTHORISATION_ID, INTERNAL_REQUEST_ID))
             .thenReturn(REDIRECT_LINK);
-        when(redirectIdService.generateRedirectId(eq(AUTHORISATION_ID)))
+        when(redirectIdService.generateRedirectId(AUTHORISATION_ID))
             .thenReturn(AUTHORISATION_ID);
 
         // When

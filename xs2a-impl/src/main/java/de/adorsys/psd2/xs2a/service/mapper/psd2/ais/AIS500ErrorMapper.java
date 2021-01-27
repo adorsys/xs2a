@@ -44,16 +44,19 @@ public class AIS500ErrorMapper extends Psd2ErrorMapper<MessageError, Error500NGA
     }
 
     private Error500NGAIS mapToPsd2Error(MessageError messageError) {
-        return new Error500NGAIS().tppMessages(mapToTppMessage500AIS(messageError.getTppMessages()));
+        return Error500NGAIS.builder()
+                   .tppMessages(mapToTppMessage500AIS(messageError.getTppMessages()))
+                   .build();
     }
 
     private List<TppMessage500AIS> mapToTppMessage500AIS(Set<TppMessageInformation> tppMessages) {
         return tppMessages.stream()
-                   .map(m -> new TppMessage500AIS()
+                   .map(m -> TppMessage500AIS.builder()
                                  .category(TppMessageCategory.fromValue(m.getCategory().name()))
                                  .code(m.getMessageErrorCode().getName())
                                  .path(m.getPath())
                                  .text(getErrorText(m))
+                                 .build()
                    ).collect(Collectors.toList());
     }
 }

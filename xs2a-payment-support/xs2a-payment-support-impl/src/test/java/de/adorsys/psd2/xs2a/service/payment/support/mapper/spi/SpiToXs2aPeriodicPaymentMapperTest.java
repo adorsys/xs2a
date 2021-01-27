@@ -79,7 +79,7 @@ class SpiToXs2aPeriodicPaymentMapperTest {
     private SpiPeriodicPayment buildSpiPeriodicPayment() {
         SpiPeriodicPayment payment = new SpiPeriodicPayment(PAYMENT_PRODUCT);
         payment.setPaymentId(PAYMENT_ID);
-        payment.setDayOfExecution(PisDayOfExecution._14);
+        payment.setDayOfExecution(PisDayOfExecution.DAY_14);
         payment.setStartDate(LocalDate.of(2017, 3, 3));
         payment.setEndDate(LocalDate.of(2020, 12, 2));
         payment.setExecutionRule(PisExecutionRule.PRECEDING);

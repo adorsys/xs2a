@@ -19,6 +19,4 @@ package de.adorsys.psd2.xs2a.config.factory;
 /**
  * This is specific factory intended to retrieve specific payment type dependent service, which retrieves payment status by ID
  */
-public interface ReadPaymentStatusFactory extends ServiceFactory {
-    String SERVICE_PREFIX = "status-";
-}
+public interface ReadPaymentStatusFactory extends ServiceFactory {}

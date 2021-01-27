@@ -36,7 +36,7 @@ public class AspspConsentData {
      * May be null if consent does not contain such data, or request isn't done from a workflow with a consent
      */
     @Nullable
-    private final byte[] aspspConsentData;
+    private final byte[] aspspConsentDataBytes;
 
     @NotNull
     private final String consentId;
@@ -47,7 +47,7 @@ public class AspspConsentData {
      * @return <code>true</code> if consent data is empty. <code>false</code> otherwise.
      */
     public boolean isEmptyConsentData() {
-        return aspspConsentData == null && StringUtils.isBlank(consentId);
+        return aspspConsentDataBytes == null && StringUtils.isBlank(consentId);
     }
 
     @Override
@@ -61,12 +61,12 @@ public class AspspConsentData {
 
         AspspConsentData that = (AspspConsentData) o;
 
-        return Arrays.equals(aspspConsentData, that.aspspConsentData) && Objects.equals(consentId, that.getConsentId());
+        return Arrays.equals(aspspConsentDataBytes, that.aspspConsentDataBytes) && Objects.equals(consentId, that.getConsentId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aspspConsentData, consentId);
+        return Objects.hash(aspspConsentDataBytes, consentId);
     }
 }
 

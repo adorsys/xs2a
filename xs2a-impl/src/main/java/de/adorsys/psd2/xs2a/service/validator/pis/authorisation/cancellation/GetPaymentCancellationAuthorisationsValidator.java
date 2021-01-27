@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation;
 
 import de.adorsys.psd2.xs2a.service.validator.OauthPaymentValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import org.springframework.stereotype.Component;

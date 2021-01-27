@@ -26,6 +26,8 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -69,7 +71,7 @@ class SignatureFilterTest {
     @Mock
     private FilterChain chain;
 
-    private Map<String, String> headerMap = new HashMap<>();
+    private final Map<String, String> headerMap = new HashMap<>();
 
     private String body;
 
@@ -86,7 +88,7 @@ class SignatureFilterTest {
         // given
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
 
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
+        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         String fullUrl = mockRequest.getRequestURL().toString();
 
@@ -106,7 +108,7 @@ class SignatureFilterTest {
         // given
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
 
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
+        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         mockResponseCode(mockResponse, HttpServletResponse.SC_BAD_REQUEST);
 
@@ -125,7 +127,7 @@ class SignatureFilterTest {
         // given
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
 
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
+        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         String fullUrl = mockRequest.getRequestURL().toString();
         mockResponseCode(mockResponse, HttpServletResponse.SC_UNAUTHORIZED);
@@ -146,7 +148,7 @@ class SignatureFilterTest {
         // given
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
 
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
+        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(false);
 
@@ -160,13 +162,14 @@ class SignatureFilterTest {
         verify(signatureVerifier, times(0)).verify(any(), any(), any(), any(), any());
     }
 
-    @Test
-    void doFilter_HeaderEmpty_xRequestId() throws IOException, ServletException {
+    @ParameterizedTest
+    @ValueSource(strings = {"x-request-id", "tpp-signature-certificate", "digest","date"})
+    void doFilter_HeaderEmpt(String header) throws IOException, ServletException {
         // given
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
 
-        headerMap.remove("x-request-id");
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
+        headerMap.remove(header);
+        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         mockResponseCode(mockResponse, HttpServletResponse.SC_BAD_REQUEST);
 
@@ -186,7 +189,7 @@ class SignatureFilterTest {
         when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
 
         headerMap.remove("signature");
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
+        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body);
         MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         mockResponseCode(mockResponse, HttpServletResponse.SC_UNAUTHORIZED);
 
@@ -198,66 +201,6 @@ class SignatureFilterTest {
         verify(digestVerifier, times(0)).verify(any(), any());
         verify(signatureVerifier, times(0)).verify(any(), any(), any(), any(), any());
         assertThat(mockResponse.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
-    }
-
-    @Test
-    void doFilter_HeaderEmpty_signature_certificate() throws IOException, ServletException {
-        // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
-
-        headerMap.remove("tpp-signature-certificate");
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
-        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        mockResponseCode(mockResponse, HttpServletResponse.SC_BAD_REQUEST);
-
-        // when
-        signatureFilter.doFilter(mockRequest, mockResponse, chain);
-
-        //Then
-        verify(chain, times(0)).doFilter(any(), any());
-        verify(digestVerifier, times(0)).verify(any(), any());
-        verify(signatureVerifier, times(0)).verify(any(), any(), any(), any(), any());
-        assertThat(mockResponse.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-    @Test
-    void doFilter_HeaderEmpty_signature_digest() throws IOException, ServletException {
-        // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
-
-        headerMap.remove("digest");
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
-        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        mockResponseCode(mockResponse, HttpServletResponse.SC_BAD_REQUEST);
-
-        // when
-        signatureFilter.doFilter(mockRequest, mockResponse, chain);
-
-        //Then
-        verify(chain, times(0)).doFilter(any(), any());
-        verify(digestVerifier, times(0)).verify(any(), any());
-        verify(signatureVerifier, times(0)).verify(any(), any(), any(), any(), any());
-        assertThat(mockResponse.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-    @Test
-    void doFilter_HeaderEmpty_date() throws IOException, ServletException {
-        // given
-        when(aspspProfileService.getTppSignatureRequired()).thenReturn(true);
-
-        headerMap.remove("date");
-        MockHttpServletRequest mockRequest = getCorrectRequest(headerMap, body, POST_METHOD);
-        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        mockResponseCode(mockResponse, HttpServletResponse.SC_BAD_REQUEST);
-
-        // when
-        signatureFilter.doFilter(mockRequest, mockResponse, chain);
-
-        //Then
-        verify(chain, times(0)).doFilter(any(), any());
-        verify(digestVerifier, times(0)).verify(any(), any());
-        verify(signatureVerifier, times(0)).verify(any(), any(), any(), any(), any());
-        assertThat(mockResponse.getStatus()).isEqualTo(HttpServletResponse.SC_BAD_REQUEST);
     }
 
     @Test
@@ -276,10 +219,10 @@ class SignatureFilterTest {
         verifyNoMoreInteractions(aspspProfileService, requestProviderService);
     }
 
-    private MockHttpServletRequest getCorrectRequest(Map<String, String> headerMap, String body, String method) {
+    private MockHttpServletRequest getCorrectRequest(Map<String, String> headerMap, String body) {
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setContent(body.getBytes());
-        mockRequest.setMethod(method);
+        mockRequest.setMethod(SignatureFilterTest.POST_METHOD);
 
         headerMap.forEach(mockRequest::addHeader);
 

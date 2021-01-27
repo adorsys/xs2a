@@ -75,7 +75,7 @@ class AbstractHeaderValidatorImplTest {
         headers.put(validator.getHeaderName(), "wrong_format");
         validator.checkBooleanFormat(headers, messageError);
 
-        verify(errorBuildingService, times(1)).enrichMessageError(eq(messageError),
-                                                                  eq(TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, validator.getHeaderName())));
+        verify(errorBuildingService, times(1)).enrichMessageError(messageError,
+                                                                  TppMessageInformation.of(FORMAT_ERROR_BOOLEAN_VALUE, validator.getHeaderName()));
     }
 }

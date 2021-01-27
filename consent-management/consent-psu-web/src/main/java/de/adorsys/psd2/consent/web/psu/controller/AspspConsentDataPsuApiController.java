@@ -36,7 +36,7 @@ public class AspspConsentDataPsuApiController implements AspspConsentDataPsuApi 
     @Override
     public ResponseEntity<CmsAspspConsentDataBase64> getAspspConsentData(String encryptedConsentId) {
         return aspspDataService.readAspspConsentData(encryptedConsentId)
-            .map(AspspConsentData::getAspspConsentData)
+            .map(AspspConsentData::getAspspConsentDataBytes)
             .map(Base64.getEncoder()::encodeToString)
             .map(aspspConsentDataBase64 -> new CmsAspspConsentDataBase64(encryptedConsentId, aspspConsentDataBase64))
             .map(cmsAspspConsentDataBase64 -> new ResponseEntity<>(cmsAspspConsentDataBase64, HttpStatus.OK))

@@ -60,7 +60,7 @@ class CreateConsentReqTest {
         //When:
         Set<AccountReference> result = req.getAccountReferences();
         //Then:
-        assertThat(result.size()).isEqualTo(0);
+        assertThat(result).isEmpty();
     }
 
     private AccountAccess getAccess(List<AccountReference> accounts, List<AccountReference> balances, List<AccountReference> transactions) {

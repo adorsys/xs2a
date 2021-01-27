@@ -22,12 +22,11 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
-import de.adorsys.psd2.xs2a.service.mapper.ValidationResultMapper;
 import de.adorsys.psd2.xs2a.service.validator.PsuDataInInitialRequestValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.validator.payment.CountryPaymentValidatorResolver;
 import org.junit.jupiter.api.Test;
@@ -66,8 +65,6 @@ class CreatePaymentValidatorTest {
     @Mock
     private CountryPaymentValidatorResolver countryPaymentValidatorResolver;
     @Mock
-    private ValidationResultMapper validationResultMapper;
-    @Mock
     private TppUriHeaderValidator tppUriHeaderValidator;
     @Mock
     private TppNotificationDataValidator tppNotificationDataValidator;
@@ -85,8 +82,6 @@ class CreatePaymentValidatorTest {
             .thenReturn(paymentBusinessValidator);
         when(paymentBusinessValidator.validate(any(), anyString(), any()))
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
-        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -110,8 +105,6 @@ class CreatePaymentValidatorTest {
             .thenReturn(paymentBusinessValidator);
         when(paymentBusinessValidator.validate(any(), anyString(), any()))
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
-        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -135,8 +128,6 @@ class CreatePaymentValidatorTest {
             .thenReturn(paymentBusinessValidator);
         when(paymentBusinessValidator.validate(any(), anyString(), any()))
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
-        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -162,8 +153,6 @@ class CreatePaymentValidatorTest {
             .thenReturn(paymentBusinessValidator);
         when(paymentBusinessValidator.validate(any(), anyString(), any()))
             .thenReturn(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid());
-        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.valid()))
-            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult validationResult = createPaymentValidator.validate(new CreatePaymentRequestObject(buildPayment(), paymentInitiationParameters));
@@ -203,8 +192,6 @@ class CreatePaymentValidatorTest {
             .thenReturn(ValidationResult.valid());
         when(countryPaymentValidatorResolver.getPaymentBusinessValidator())
             .thenReturn(paymentBusinessValidator);
-        when(validationResultMapper.mapToXs2aValidationResult(de.adorsys.psd2.xs2a.core.service.validator.ValidationResult.invalid(BUSINESS_VALIDATION_ERROR)))
-            .thenReturn(ValidationResult.invalid(BUSINESS_VALIDATION_ERROR));
 
         PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(EMPTY_PSU_DATA, PaymentType.SINGLE);
 

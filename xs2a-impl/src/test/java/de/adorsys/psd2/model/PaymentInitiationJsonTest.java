@@ -26,11 +26,11 @@ class PaymentInitiationJsonTest {
     @Test
     void checkFieldsForExistence() {
         try {
-            CommonModelTest.checkUltimateDebtorField(clazz);
-            CommonModelTest.checkUltimateCreditorField(clazz);
-            CommonModelTest.checkPurposeCodeField(clazz);
-            CommonModelTest.checkRemittanceInformationStructuredField(clazz);
-            CommonModelTest.checkRequestedExecutionDate(clazz);
+            CommonModelHelper.checkUltimateDebtorField(clazz);
+            CommonModelHelper.checkUltimateCreditorField(clazz);
+            CommonModelHelper.checkPurposeCodeField(clazz);
+            CommonModelHelper.checkRemittanceInformationStructuredField(clazz);
+            CommonModelHelper.checkRequestedExecutionDate(clazz);
         } catch (NoSuchFieldException e) {
             fail();
         }

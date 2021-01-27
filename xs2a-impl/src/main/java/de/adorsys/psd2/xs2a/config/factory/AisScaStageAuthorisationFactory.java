@@ -21,7 +21,4 @@ package de.adorsys.psd2.xs2a.config.factory;
  * It is used ServiceLocatorFactoryBean for implementing a factory pattern.
  * See <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/config/ServiceLocatorFactoryBean.html">Spring docs</a> for details.
  */
-public interface AisScaStageAuthorisationFactory extends ServiceFactory {
-    String SEPARATOR = "_";
-    String SERVICE_PREFIX = "AIS";
-}
+public interface AisScaStageAuthorisationFactory extends ServiceFactory {}

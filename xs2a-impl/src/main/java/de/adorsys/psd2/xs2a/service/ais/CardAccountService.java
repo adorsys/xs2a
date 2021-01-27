@@ -39,7 +39,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountDetailsMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardAccountDetailsValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardAccountListValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetCardAccountDetailsRequestObject;
@@ -86,7 +86,7 @@ public class CardAccountService {
      * Gets CardAccount list based on card accounts in provided AIS-consent, depending on
      * AccountAccess in AIS-consent Balances are passed al/AccountControllerTestong with CardAccountDetails.
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param requestUri the URI of incoming request
      * @return response with {@link Xs2aCardAccountListHolder} containing the List of CardAccountDetails with Balances and granted by consent
      */
@@ -153,7 +153,7 @@ public class CardAccountService {
      * Gets CardAccount details based on card account ID and provided AIS-consent, depending on
      * AccountAccess in AIS-consent.
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param accountId  identifier of the account
      * @param requestUri the URI of incoming request
      * @return response with {@link Xs2aCardAccountDetailsHolder} containing Xs2aCardAccountDetails object instance

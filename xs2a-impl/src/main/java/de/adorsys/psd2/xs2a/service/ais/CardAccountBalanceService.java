@@ -35,7 +35,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aBalanceReportMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.GetCardBalancesReportValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.GetCardAccountBalanceRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
@@ -80,7 +80,7 @@ public class CardAccountBalanceService {
     /**
      * Gets card balances report based on consentId and accountId
      *
-     * @param consentId  String representing an AccountConsent identification
+     * @param consentId  String representing an Consent identification
      * @param accountId  String representing a PSU`s Account at ASPSP
      * @param requestUri the URI of incoming request
      * @return Balances Report based on consentId and accountId

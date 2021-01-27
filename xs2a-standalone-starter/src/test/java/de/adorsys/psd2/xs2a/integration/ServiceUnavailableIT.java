@@ -53,7 +53,7 @@ import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationRespo
 import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.UpdateConsentPsuDataValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;

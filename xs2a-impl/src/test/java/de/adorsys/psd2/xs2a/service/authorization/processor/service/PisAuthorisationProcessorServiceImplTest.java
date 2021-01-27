@@ -146,8 +146,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_no_sca_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
@@ -186,8 +186,8 @@ class PisAuthorisationProcessorServiceImplTest {
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
             .thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -221,8 +221,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_multiple_sca_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildMultipleScaMethodsResponse())
                                                                                                      .build());
@@ -346,8 +346,8 @@ class PisAuthorisationProcessorServiceImplTest {
         Authorisation authorisation = request.getAuthorisation();
         authorisation.setChosenScaApproach(ScaApproach.DECOUPLED);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
 
         // When
         pisAuthorisationProcessorService.doScaReceived(request);
@@ -360,8 +360,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_request_availableScaMethods_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                                                                      .build());
@@ -380,8 +380,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_request_availableScaMethods_exemption_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         SpiAvailableScaMethodsResponse response = buildSingleScaMethodsResponse();
         response.setScaExempted(true);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -414,8 +414,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_request_availableScaMethods_exemption_payment_execution_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         SpiAvailableScaMethodsResponse response = buildSingleScaMethodsResponse();
         response.setScaExempted(true);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -439,8 +439,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_no_sca_payment_execution_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
@@ -462,8 +462,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_one_sca_decoupled_chosen_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         SpiAvailableScaMethodsResponse response = buildSingleScaMethodsResponse();
         response.getAvailableScaMethods().get(0).setDecoupled(true);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -481,8 +481,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaReceived_authorisation_one_sca_requestAuthorisationCode_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -509,8 +509,8 @@ class PisAuthorisationProcessorServiceImplTest {
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
             .thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -551,8 +551,8 @@ class PisAuthorisationProcessorServiceImplTest {
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
             .thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -615,8 +615,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_no_sca_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
@@ -650,8 +650,8 @@ class PisAuthorisationProcessorServiceImplTest {
 
         TEST_SPI_SINGLE_PAYMENT.setPaymentId(TEST_PAYMENT_ID);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
 
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
@@ -688,8 +688,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_multiple_sca_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildMultipleScaMethodsResponse())
                                                                                                      .build());
@@ -814,8 +814,8 @@ class PisAuthorisationProcessorServiceImplTest {
         Authorisation authorisation = request.getAuthorisation();
         authorisation.setChosenScaApproach(ScaApproach.DECOUPLED);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
 
         // When
         pisAuthorisationProcessorService.doScaPsuIdentified(request);
@@ -828,8 +828,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_request_availableScaMethods_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
                                                                                                      .build());
@@ -848,8 +848,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_request_availableScaMethods_exemption_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         SpiAvailableScaMethodsResponse response = buildSingleScaMethodsResponse();
         response.setScaExempted(true);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -883,8 +883,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_request_availableScaMethods_exemption_payment_execution_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         SpiAvailableScaMethodsResponse response = buildSingleScaMethodsResponse();
         response.setScaExempted(true);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -908,8 +908,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_no_sca_payment_execution_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(new SpiAvailableScaMethodsResponse(false, Collections.emptyList()))
                                                                                                      .build());
@@ -931,8 +931,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_one_sca_decoupled_chosen_success() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         SpiAvailableScaMethodsResponse response = buildSingleScaMethodsResponse();
         response.getAvailableScaMethods().get(0).setDecoupled(true);
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
@@ -950,8 +950,8 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaPsuIdentified_authorisation_one_sca_requestAuthorisationCode_failure() {
         // Given
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -977,8 +977,8 @@ class PisAuthorisationProcessorServiceImplTest {
         when(xs2aPisCommonPaymentService.getPisCommonPaymentById(TEST_PAYMENT_ID)).thenReturn(Optional.of(commonPaymentResponse));
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(any(PisCommonPaymentResponse.class))).thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -1019,8 +1019,8 @@ class PisAuthorisationProcessorServiceImplTest {
         when(xs2aToSpiPaymentMapper.mapToSpiPayment(commonPaymentResponse))
             .thenReturn(TEST_SPI_SINGLE_PAYMENT);
         when(paymentAuthorisationSpi.authorisePsu(any(), any(), any(), any(), any(), any())).thenReturn(SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                                                                     .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
-                                                                                                     .build());
+                                                                                                            .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.SUCCESS))
+                                                                                                            .build());
         when(paymentAuthorisationSpi.requestAvailableScaMethods(any(), any(), any())).thenReturn(SpiResponse.<SpiAvailableScaMethodsResponse>builder()
                                                                                                      .payload(buildSingleScaMethodsResponse())
                                                                                                      .build());
@@ -1371,9 +1371,9 @@ class PisAuthorisationProcessorServiceImplTest {
     void doScaMethodSelected_verifySca_fail_attemptFailure() {
         // Given
         SpiResponse<SpiPaymentExecutionResponse> spiResponse = SpiResponse.<SpiPaymentExecutionResponse>builder()
-                                                          .payload(new SpiPaymentExecutionResponse(SpiAuthorisationStatus.ATTEMPT_FAILURE))
-                                                          .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
-                                                          .build();
+                                                                   .payload(new SpiPaymentExecutionResponse(SpiAuthorisationStatus.ATTEMPT_FAILURE))
+                                                                   .error(new TppMessage(MessageErrorCode.INTERNAL_SERVER_ERROR, "Internal server error"))
+                                                                   .build();
         when(pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(any(), any(), any(), any())).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(eq(spiResponse), any())).thenReturn(ErrorHolder.builder(TEST_ERROR_TYPE_400)
                                                                                      .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))
@@ -1417,8 +1417,9 @@ class PisAuthorisationProcessorServiceImplTest {
 
     @Test
     void doScaStarted_success() {
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildEmptyAuthorisationProcessorRequest();
         assertThrows(UnsupportedOperationException.class,
-                     () -> pisAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest()));
+                     () -> pisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest));
     }
 
     @Test
@@ -1445,8 +1446,10 @@ class PisAuthorisationProcessorServiceImplTest {
 
     @Test
     void doScaFailed_success() {
+        AuthorisationProcessorRequest authorisationProcessorRequest = buildEmptyAuthorisationProcessorRequest();
+
         assertThrows(UnsupportedOperationException.class,
-                     () -> pisAuthorisationProcessorService.doScaStarted(buildEmptyAuthorisationProcessorRequest()));
+                     () -> pisAuthorisationProcessorService.doScaStarted(authorisationProcessorRequest));
     }
 
     private AuthorisationProcessorRequest buildEmptyAuthorisationProcessorRequest() {

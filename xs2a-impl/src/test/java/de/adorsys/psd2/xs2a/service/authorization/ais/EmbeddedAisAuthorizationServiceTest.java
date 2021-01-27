@@ -86,7 +86,7 @@ class EmbeddedAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -99,8 +99,7 @@ class EmbeddedAisAuthorizationServiceTest {
         Optional<Authorisation> actualResponse = authorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(authorisation);
+        assertThat(actualResponse).isPresent().contains(authorisation);
     }
 
     @Test
@@ -113,7 +112,7 @@ class EmbeddedAisAuthorizationServiceTest {
         Optional<Authorisation> actualResponse = authorizationService.getConsentAuthorizationById(WRONG_AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -133,7 +132,7 @@ class EmbeddedAisAuthorizationServiceTest {
 
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
-        assertThat(actualResponseOptional.isPresent()).isTrue();
+        assertThat(actualResponseOptional).isPresent();
 
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
@@ -152,7 +151,7 @@ class EmbeddedAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         // Then
-        assertThat(actualResponseOptional.isPresent()).isFalse();
+        assertThat(actualResponseOptional).isNotPresent();
     }
 
     @Test
@@ -163,7 +162,7 @@ class EmbeddedAisAuthorizationServiceTest {
 
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
-        assertThat(actualResponseOptional.isPresent()).isTrue();
+        assertThat(actualResponseOptional).isPresent();
 
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
@@ -180,7 +179,7 @@ class EmbeddedAisAuthorizationServiceTest {
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);
 
-        assertThat(actualResponseOptional.isPresent()).isTrue();
+        assertThat(actualResponseOptional).isPresent();
 
         CreateConsentAuthorizationResponse actualResponse = actualResponseOptional.get();
 
@@ -198,8 +197,7 @@ class EmbeddedAisAuthorizationServiceTest {
         Optional<ScaStatus> actual = authorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(SCA_STATUS);
+        assertThat(actual).isPresent().contains(SCA_STATUS);
     }
 
     @Test
@@ -208,7 +206,7 @@ class EmbeddedAisAuthorizationServiceTest {
         Optional<ScaStatus> actual = authorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
-        assertThat(actual.isPresent()).isFalse();
+        assertThat(actual).isNotPresent();
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {

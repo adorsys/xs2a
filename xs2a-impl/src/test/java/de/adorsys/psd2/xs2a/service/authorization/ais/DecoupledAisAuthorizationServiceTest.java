@@ -41,7 +41,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -74,7 +73,7 @@ class DecoupledAisAuthorizationServiceTest {
     void createConsentAuthorization_success() {
         // Given
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
-            .thenReturn(Optional.of(buildConsent(CONSENT_ID)));
+            .thenReturn(Optional.of(buildConsent()));
         when(consentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
 
@@ -82,8 +81,7 @@ class DecoupledAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(CREATE_CONSENT_AUTHORIZATION_RESPONSE);
+        assertThat(actualResponse).isPresent().contains(CREATE_CONSENT_AUTHORIZATION_RESPONSE);
     }
 
     @Test
@@ -96,7 +94,7 @@ class DecoupledAisAuthorizationServiceTest {
         Optional<CreateConsentAuthorizationResponse> actualResponse = decoupledAisAuthorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -110,7 +108,7 @@ class DecoupledAisAuthorizationServiceTest {
 
         AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
 
-        assertEquals(processorResponse, actualResponse);
+        assertThat(actualResponse).isEqualTo(processorResponse);
         verify(aisConsentService).updateConsentAuthorisation(mappedUpdatePsuDataRequest);
     }
 
@@ -121,7 +119,7 @@ class DecoupledAisAuthorizationServiceTest {
 
         AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
 
-        assertEquals(processorResponse, actualResponse);
+        assertThat(actualResponse).isEqualTo(processorResponse);
         verify(aisConsentService, never()).updateConsentAuthorisation(any());
     }
 
@@ -135,8 +133,7 @@ class DecoupledAisAuthorizationServiceTest {
         Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getConsentAuthorizationById(AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(ACCOUNT_CONSENT_AUTHORIZATION);
+        assertThat(actualResponse).isPresent().contains(ACCOUNT_CONSENT_AUTHORIZATION);
     }
 
     @Test
@@ -149,7 +146,7 @@ class DecoupledAisAuthorizationServiceTest {
         Optional<Authorisation> actualResponse = decoupledAisAuthorizationService.getConsentAuthorizationById(WRONG_AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -162,8 +159,7 @@ class DecoupledAisAuthorizationServiceTest {
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(CONSENT_ID, AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isTrue();
-        assertThat(actualResponse.get()).isEqualTo(SCA_STATUS);
+        assertThat(actualResponse).isPresent().contains(SCA_STATUS);
     }
 
     @Test
@@ -176,7 +172,7 @@ class DecoupledAisAuthorizationServiceTest {
         Optional<ScaStatus> actualResponse = decoupledAisAuthorizationService.getAuthorisationScaStatus(WRONG_CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
-        assertThat(actualResponse.isPresent()).isFalse();
+        assertThat(actualResponse).isNotPresent();
     }
 
     @Test
@@ -203,9 +199,9 @@ class DecoupledAisAuthorizationServiceTest {
         return authorisation;
     }
 
-    private static AisConsent buildConsent(String id) {
+    private static AisConsent buildConsent() {
         AisConsent aisConsent = new AisConsent();
-        aisConsent.setId(id);
+        aisConsent.setId(CONSENT_ID);
         return aisConsent;
     }
 

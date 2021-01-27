@@ -315,22 +315,22 @@ class PisAuthorisationServiceTest {
     @Test
     void getAuthorisationScaApproach() {
         AuthorisationScaApproachResponse payload = new AuthorisationScaApproachResponse(ScaApproach.DECOUPLED);
-        when(authorisationServiceEncrypted.getAuthorisationScaApproach(eq(AUTHORISATION_ID)))
+        when(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder().payload(payload).build());
 
         Assertions.assertEquals(Optional.of(payload), pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID));
 
-        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
+        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(AUTHORISATION_ID);
     }
 
     @Test
     void getAuthorisationScaApproach_error() {
-        when(authorisationServiceEncrypted.getAuthorisationScaApproach(eq(AUTHORISATION_ID)))
+        when(authorisationServiceEncrypted.getAuthorisationScaApproach(AUTHORISATION_ID))
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         Assertions.assertEquals(Optional.empty(), pisAuthorisationService.getAuthorisationScaApproach(AUTHORISATION_ID));
 
-        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(eq(AUTHORISATION_ID));
+        verify(authorisationServiceEncrypted, times(1)).getAuthorisationScaApproach(AUTHORISATION_ID);
     }
 
     @Test

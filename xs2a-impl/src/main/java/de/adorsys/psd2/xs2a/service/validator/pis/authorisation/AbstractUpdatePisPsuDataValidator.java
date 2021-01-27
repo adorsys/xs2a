@@ -19,11 +19,11 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 import de.adorsys.psd2.consent.api.pis.proto.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
-import de.adorsys.psd2.xs2a.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.AbstractPisValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -123,9 +123,7 @@ public abstract class AbstractUpdatePisPsuDataValidator<T extends UpdatePisPsuDa
         return ValidationResult.valid();
     }
 
-    protected ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject) {
-        return ValidationResult.valid();
-    }
+    protected abstract ValidationResult validateTransactionStatus(UpdatePisPsuDataPO paymentObject);
 
     protected abstract AuthorisationServiceType getAuthorisationServiceType();
 }

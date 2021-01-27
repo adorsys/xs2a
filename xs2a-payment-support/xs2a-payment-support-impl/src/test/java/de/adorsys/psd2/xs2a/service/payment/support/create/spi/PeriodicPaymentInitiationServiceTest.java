@@ -47,7 +47,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -100,7 +99,7 @@ class PeriodicPaymentInitiationServiceTest {
             .thenReturn(SPI_PERIODIC_PAYMENT);
         when(periodicPaymentSpi.initiatePayment(SPI_CONTEXT_DATA, SPI_PERIODIC_PAYMENT, initialSpiAspspConsentDataProvider))
             .thenReturn(SPI_PERIODIC_RESPONSE);
-        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(eq(SPI_PERIODIC_PAYMENT_RESPONSE), eq(initialSpiAspspConsentDataProvider)))
+        when(spiToXs2aPaymentMapper.mapToPaymentInitiateResponse(SPI_PERIODIC_PAYMENT_RESPONSE, initialSpiAspspConsentDataProvider))
             .thenReturn(PERIODIC_PAYMENT_RESPONSE);
 
         // When
