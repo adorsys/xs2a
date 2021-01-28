@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,11 +29,14 @@ import lombok.NoArgsConstructor;
 public class SpiAuthorizationCodeResult extends SpiWithExemptionResponse {
     private ChallengeData challengeData;
     private AuthenticationObject selectedScaMethod;
+    private ScaStatus scaStatus;
 
-    public SpiAuthorizationCodeResult(boolean scaExempted, ChallengeData challengeData, AuthenticationObject selectedScaMethod) {
+    public SpiAuthorizationCodeResult(boolean scaExempted, ChallengeData challengeData,
+                                      AuthenticationObject selectedScaMethod, ScaStatus scaStatus) {
         super(scaExempted);
         this.challengeData = challengeData;
         this.selectedScaMethod = selectedScaMethod;
+        this.scaStatus = scaStatus;
     }
 
     public boolean isEmpty() {

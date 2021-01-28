@@ -43,10 +43,6 @@ public abstract class CommonDecoupledConsentService<T extends SpiConsent> {
     private final SpiContextDataProvider spiContextDataProvider;
     private final Xs2aAuthorisationService authorisationService;
 
-    public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, T spiConsent, PsuIdData psuData) {
-        return proceedDecoupledApproach(consentId, authorisationId, spiConsent, null, psuData);
-    }
-
     public UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, T spiConsent,
                                                                  String authenticationMethodId, PsuIdData psuData) {
         SpiResponse<SpiAuthorisationDecoupledScaResponse> spiResponse =
@@ -66,7 +62,11 @@ public abstract class CommonDecoupledConsentService<T extends SpiConsent> {
             return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuData);
         }
 
-        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.SCAMETHODSELECTED, consentId, authorisationId, psuData);
+        SpiAuthorisationDecoupledScaResponse spiAuthorisationDecoupledScaResponse = spiResponse.getPayload();
+
+        UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(
+            spiAuthorisationDecoupledScaResponse.getScaStatus(),
+            consentId, authorisationId, psuData);
         response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
         return response;
     }
