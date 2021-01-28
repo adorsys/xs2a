@@ -91,23 +91,10 @@ class CommonDecoupledAisServiceTest {
     }
 
     @Test
-    void proceedDecoupledApproach_by_request_spiAccountConsent_psuData_success() {
-        // Given
-        when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
-
-        // When
-        UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, PSU_ID_DATA);
-
-        // Then
-        assertThat(actualResponse).isEqualTo(UPDATE_CONSENT_PSU_DATA_RESPONSE);
-    }
-
-    @Test
     void proceedDecoupledApproach_Success() {
         // Given
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_SUCCESS_MESSAGE)));
+            .thenReturn(buildSuccessSpiResponse(new SpiAuthorisationDecoupledScaResponse(ScaStatus.SCAMETHODSELECTED, PSU_SUCCESS_MESSAGE)));
 
         // When
         UpdateConsentPsuDataResponse actualResponse = commonDecoupledAisService.proceedDecoupledApproach(CONSENT_ID, AUTHORISATION_ID, spiAccountConsent, AUTHENTICATION_METHOD_ID, PSU_ID_DATA);
@@ -121,9 +108,10 @@ class CommonDecoupledAisServiceTest {
     @Test
     void proceedDecoupledApproach_Failure_StartScaDecoupledHasError() {
         // Given
+        SpiAuthorisationDecoupledScaResponse spiAuthorisationDecoupledScaResponse = new SpiAuthorisationDecoupledScaResponse(ScaStatus.SCAMETHODSELECTED, PSU_ERROR_MESSAGE);
         when(aisConsentSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, spiAccountConsent, spiAspspConsentDataProvider))
-            .thenReturn(buildErrorSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_ERROR_MESSAGE)));
-        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(new SpiAuthorisationDecoupledScaResponse(PSU_ERROR_MESSAGE)), ServiceType.AIS))
+            .thenReturn(buildErrorSpiResponse(spiAuthorisationDecoupledScaResponse));
+        when(spiErrorMapper.mapToErrorHolder(buildErrorSpiResponse(spiAuthorisationDecoupledScaResponse), ServiceType.AIS))
             .thenReturn(ErrorHolder
                             .builder(ErrorType.AIS_400)
                             .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR))

@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.pis.Xs2aCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
@@ -133,9 +134,9 @@ public class PisAuthorisationConfirmationService {
             return buildConfirmationCodeSpiErrorResponse(spiResponse, request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
         }
 
-        SpiResponse<SpiCurrencyConversionInfo> conversionSpiResponse = currencyConversionInfoSpi.getCurrencyConversionInfo(contextData, payment, authorisation.getAuthorisationId(), aspspConsentDataProvider);
+        Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = getCurrencyConversionInfo(contextData, payment, authorisation.getAuthorisationId(), aspspConsentDataProvider);
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = resolveResponse(request, codeCorrect, spiResponse.getPayload(), conversionSpiResponse.getPayload());
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = resolveResponse(request, codeCorrect, spiResponse.getPayload(), xs2aCurrencyConversionInfo);
 
         UpdateAuthorisationRequest updatePaymentRequest = pisCommonPaymentMapper.mapToUpdateAuthorisationRequest(response, authorisationType);
 
@@ -151,23 +152,18 @@ public class PisAuthorisationConfirmationService {
     private Xs2aUpdatePisCommonPaymentPsuDataResponse resolveResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
                                                                       boolean codeCorrect,
                                                                       SpiPaymentConfirmationCodeValidationResponse spiResponse,
-                                                                      SpiCurrencyConversionInfo conversionSpiResponse) {
+                                                                      Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
         return codeCorrect
-                   ? buildResponseWithCurrencyConversionInfo(request, spiResponse, conversionSpiResponse)
+                   ? buildResponseWithCurrencyConversionInfo(request, spiResponse, xs2aCurrencyConversionInfo)
                    : buildScaConfirmationCodeErrorResponse(request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse buildResponseWithCurrencyConversionInfo(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
                                                                                               SpiPaymentConfirmationCodeValidationResponse spiConfirmationResponse,
-                                                                                              SpiCurrencyConversionInfo conversionSpiResponse) {
-        return Xs2aUpdatePisCommonPaymentPsuDataResponse
-                   .buildWithCurrencyConversionInfo(spiConfirmationResponse.getScaStatus(),
-                                                    request.getPaymentId(),
-                                                    request.getAuthorisationId(),
-                                                    request.getPsuData(),
-                                                    spiToXs2aCurrencyConversionInfoMapper
-                                                        .toXs2aCurrencyConversionInfo(conversionSpiResponse)
-                   );
+                                                                                              Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
+        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(
+            spiConfirmationResponse.getScaStatus(), request.getPaymentId(), request.getAuthorisationId(),
+            request.getPsuData(), xs2aCurrencyConversionInfo);
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataResponse checkAuthorisationConfirmationOnSpi(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
@@ -189,14 +185,14 @@ public class PisAuthorisationConfirmationService {
         } else {
             SpiPaymentConfirmationCodeValidationResponse codeValidationResponse = spiResponse.getPayload();
             xs2aUpdatePaymentAfterSpiService.updatePaymentStatus(request.getPaymentId(), codeValidationResponse.getTransactionStatus());
-            SpiResponse<SpiCurrencyConversionInfo> conversionInfoSpiResponse = currencyConversionInfoSpi.getCurrencyConversionInfo(contextData, payment, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider);
-            SpiCurrencyConversionInfo spiCurrencyConversionInfo = conversionInfoSpiResponse.getPayload();
-            xs2aUpdatePisCommonPaymentPsuDataResponse = Xs2aUpdatePisCommonPaymentPsuDataResponse.buildWithCurrencyConversionInfo(
+
+            Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = getCurrencyConversionInfo(contextData, payment, authorisationResponse.getAuthorisationId(), aspspConsentDataProvider);
+            xs2aUpdatePisCommonPaymentPsuDataResponse = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
                 codeValidationResponse.getScaStatus(),
                 request.getPaymentId(),
                 request.getAuthorisationId(),
                 request.getPsuData(),
-                spiToXs2aCurrencyConversionInfoMapper.toXs2aCurrencyConversionInfo(spiCurrencyConversionInfo)
+                xs2aCurrencyConversionInfo
             );
         }
 
@@ -222,6 +218,16 @@ public class PisAuthorisationConfirmationService {
                  paymentId, authorisationId);
 
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(errorHolder, paymentId, authorisationId, psuData);
+    }
+
+    private Xs2aCurrencyConversionInfo getCurrencyConversionInfo(SpiContextData contextData, SpiPayment payment,
+                                                                 String authorisationId, SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        SpiResponse<SpiCurrencyConversionInfo> conversionInfoSpiResponse =
+            currencyConversionInfoSpi.getCurrencyConversionInfo(contextData, payment, authorisationId, aspspConsentDataProvider);
+
+        SpiCurrencyConversionInfo spiCurrencyConversionInfo = conversionInfoSpiResponse.getPayload();
+
+        return spiToXs2aCurrencyConversionInfoMapper.toXs2aCurrencyConversionInfo(spiCurrencyConversionInfo);
     }
 
 }

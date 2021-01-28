@@ -68,8 +68,7 @@ class PisCommonDecoupledServiceTest {
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_REQUEST = buildUpdatePisCommonPaymentPsuDataRequest(null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID = buildUpdatePisCommonPaymentPsuDataRequest(AUTHENTICATION_METHOD_ID);
     private static final PsuIdData PSU_DATA = buildPsuIdData();
-    private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST);
-    private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID = buildUpdatePisCommonPaymentPsuDataResponse(UPDATE_PIS_COMMON_PAYMENT_REQUEST_AUTH_METHOD_ID);
+    private static final Xs2aUpdatePisCommonPaymentPsuDataResponse UPDATE_PIS_COMMON_PAYMENT_RESPONSE = buildUpdatePisCommonPaymentPsuDataResponse();
     private static final ErrorHolder EXPECTED_ERROR = ErrorHolder.builder(ErrorType.PIS_404)
                                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_PAYMENT))
                                                           .build();
@@ -114,7 +113,7 @@ class PisCommonDecoupledServiceTest {
                             .build());
 
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT, null);
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
@@ -136,7 +135,7 @@ class PisCommonDecoupledServiceTest {
                             .build());
 
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledInitiation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT, null);
 
         // Then
         assertThat(actualResponse.hasError()).isTrue();
@@ -160,7 +159,7 @@ class PisCommonDecoupledServiceTest {
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID);
+        assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
@@ -186,36 +185,6 @@ class PisCommonDecoupledServiceTest {
     }
 
     @Test
-    void proceedDecoupledCancellation_success() {
-        // Given
-        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
-            .thenReturn(AUTH_DECOUPLED_RESPONSE);
-
-        // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
-
-        // Then
-        assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE);
-    }
-
-    @Test
-    void proceedDecoupledCancellation_failed() {
-        // Given
-        when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, null, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
-            .thenReturn(AUTH_DECOUPLED_RESPONSE_FAIL);
-        when(spiErrorMapper.mapToErrorHolder(AUTH_DECOUPLED_RESPONSE_FAIL, ServiceType.PIS))
-            .thenReturn(EXPECTED_ERROR);
-
-        // When
-        Xs2aUpdatePisCommonPaymentPsuDataResponse actualResponse = pisCommonDecoupledService.proceedDecoupledCancellation(UPDATE_PIS_COMMON_PAYMENT_REQUEST, SPI_SINGLE_PAYMENT);
-
-        // Then
-        assertThat(actualResponse.hasError()).isTrue();
-        assertThat(actualResponse.getErrorHolder()).isEqualToComparingFieldByField(EXPECTED_ERROR);
-    }
-
-    @Test
     void proceedDecoupledCancellation_authenticationMethodId_success() {
         // Given
         when(paymentCancellationSpi.startScaDecoupled(SPI_CONTEXT_DATA, AUTHORISATION_ID, AUTHENTICATION_METHOD_ID, SPI_SINGLE_PAYMENT, spiAspspConsentDataProvider))
@@ -226,7 +195,7 @@ class PisCommonDecoupledServiceTest {
 
         // Then
         assertThat(actualResponse.hasError()).isFalse();
-        assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE_AUTH_METHOD_ID);
+        assertThat(actualResponse).isEqualTo(UPDATE_PIS_COMMON_PAYMENT_RESPONSE);
     }
 
     @Test
@@ -259,7 +228,7 @@ class PisCommonDecoupledServiceTest {
     }
 
     private static SpiResponse<SpiAuthorisationDecoupledScaResponse> buildSpiResponse() {
-        SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE);
+        SpiAuthorisationDecoupledScaResponse response = new SpiAuthorisationDecoupledScaResponse(SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE);
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
                    .payload(response)
                    .build();
@@ -271,9 +240,9 @@ class PisCommonDecoupledServiceTest {
                    .build();
     }
 
-    private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response = Xs2aUpdatePisCommonPaymentPsuDataResponse
-                                                                 .buildWithCurrencyConversionInfo(SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA, null);
+    private static Xs2aUpdatePisCommonPaymentPsuDataResponse buildUpdatePisCommonPaymentPsuDataResponse() {
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
+            SCAMETHODSELECTED, PAYMENT_ID, AUTHORISATION_ID, PSU_DATA, null);
         response.setPsuMessage(AUTH_DECOUPLED_RESPONSE.getPayload().getPsuMessage());
         return response;
     }
