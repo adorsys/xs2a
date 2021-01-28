@@ -36,20 +36,17 @@ import org.jetbrains.annotations.NotNull;
 public class Xs2aUpdatePisCommonPaymentPsuDataResponse extends AuthorisationProcessorResponse implements CancellationAuthorisationResponse {
     private Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo;
 
-    public static Xs2aUpdatePisCommonPaymentPsuDataResponse buildWithCurrencyConversionInfo(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData, Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
-        return new Xs2aUpdatePisCommonPaymentPsuDataResponse(scaStatus, paymentId, authorisationId, psuData, xs2aCurrencyConversionInfo);
-    }
-
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData, Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
-        this(scaStatus, paymentId, authorisationId, psuData);
-        this.xs2aCurrencyConversionInfo = xs2aCurrencyConversionInfo;
-    }
-
     public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId, PsuIdData psuData) {
+        this(scaStatus, paymentId, authorisationId, psuData, null);
+    }
+
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, String paymentId, String authorisationId,
+                                                     PsuIdData psuData, Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
         this.scaStatus = scaStatus;
         this.paymentId = paymentId;
         this.authorisationId = authorisationId;
         this.psuData = psuData;
+        this.xs2aCurrencyConversionInfo = xs2aCurrencyConversionInfo;
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse(ScaStatus scaStatus, ErrorHolder errorHolder, String paymentId, String authorisationId, PsuIdData psuData) {
