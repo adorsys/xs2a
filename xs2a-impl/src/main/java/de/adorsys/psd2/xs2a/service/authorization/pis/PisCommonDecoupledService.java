@@ -45,7 +45,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType.PIS_CREATION;
-import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.SCAMETHODSELECTED;
 
 @Slf4j
 @Service
@@ -60,16 +59,8 @@ public class PisCommonDecoupledService {
     private final CurrencyConversionInfoSpi currencyConversionInfoSpi;
     private final SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
 
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
-        return proceedDecoupledInitiation(request, payment, null);
-    }
-
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
         return proceedDecoupled(request, payment, authenticationMethodId, PIS_CREATION);
-    }
-
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment) {
-        return proceedDecoupledCancellation(request, payment, null);
     }
 
     public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
@@ -114,14 +105,12 @@ public class PisCommonDecoupledService {
                                                                     .map(SpiResponse::getPayload)
                                                                     .map(spiToXs2aCurrencyConversionInfoMapper::toXs2aCurrencyConversionInfo)
                                                                     .orElse(null);
+        SpiAuthorisationDecoupledScaResponse spiAuthorisationDecoupledScaResponse = spiResponse.getPayload();
 
-        Xs2aUpdatePisCommonPaymentPsuDataResponse response =
-            Xs2aUpdatePisCommonPaymentPsuDataResponse.buildWithCurrencyConversionInfo(SCAMETHODSELECTED,
-                                                                                      request.getPaymentId(),
-                                                                                      request.getAuthorisationId(),
-                                                                                      psuData,
-                                                                                      xs2aCurrencyConversionInfo);
-        response.setPsuMessage(spiResponse.getPayload().getPsuMessage());
+        Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
+            spiAuthorisationDecoupledScaResponse.getScaStatus(),
+            request.getPaymentId(), request.getAuthorisationId(), psuData, xs2aCurrencyConversionInfo);
+        response.setPsuMessage(spiAuthorisationDecoupledScaResponse.getPsuMessage());
         return response;
     }
 }

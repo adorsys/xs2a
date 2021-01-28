@@ -112,8 +112,8 @@ class PisAuthorisationConfirmationServiceTest {
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
         TransactionStatus transactionStatus = TransactionStatus.ACSP;
-        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = Xs2aUpdatePisCommonPaymentPsuDataResponse
-                                                                       .buildWithCurrencyConversionInfo(ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
+            ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
 
         SpiCheckConfirmationCodeRequest spiCheckConfirmationCodeRequest = new SpiCheckConfirmationCodeRequest(request.getConfirmationCode(), AUTHORISATION_ID);
@@ -161,8 +161,8 @@ class PisAuthorisationConfirmationServiceTest {
         // given
         PsuIdData psuIdData = buildPsuIdData();
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
-        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = Xs2aUpdatePisCommonPaymentPsuDataResponse
-                                                                       .buildWithCurrencyConversionInfo(ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
+        Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
+            ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
 
         when(aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()).thenReturn(true);

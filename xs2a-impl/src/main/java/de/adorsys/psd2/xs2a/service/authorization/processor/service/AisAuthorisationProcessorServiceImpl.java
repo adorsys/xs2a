@@ -142,11 +142,6 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
     }
 
     @Override
-    UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, AisConsent consent, PsuIdData psuData) {
-        return commonDecoupledAisService.proceedDecoupledApproach(consentId, authorisationId, aisConsentMapper.mapToSpiAccountConsent(consent), psuData);
-    }
-
-    @Override
     boolean isOneFactorAuthorisation(AisConsent consent) {
         return aisScaAuthorisationService.isOneFactorAuthorisation(consent);
     }

@@ -1,0 +1,10 @@
+= Release notes v.9.8
+
+== Table of Contents
+
+* Improved decoupled approach
+
+== Improved decoupled approach
+
+From now on, decoupled approach has the same flow (request SCA methods, select SCA method) with embedded approach until TAN code generation.
+Response SCA status will be retrieved from SPI level.

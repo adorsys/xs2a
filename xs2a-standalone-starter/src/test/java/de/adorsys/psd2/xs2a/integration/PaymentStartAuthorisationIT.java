@@ -209,9 +209,11 @@ class PaymentStartAuthorisationIT {
             .willReturn(CmsResponse.<Boolean>builder()
                             .payload(true)
                             .build());
+        SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
+        spiAuthorizationCodeResult.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         given(paymentAuthorisationSpi.requestAuthorisationCode(any(SpiContextData.class), eq(AUTHORISATION_METHOD_ID), any(SpiPayment.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
-                            .payload(new SpiAuthorizationCodeResult())
+                            .payload(spiAuthorizationCodeResult)
                             .build());
         given(aspspDataService.updateAspspConsentData(any(AspspConsentData.class))).willReturn(true);
 

@@ -70,8 +70,8 @@ class PisAuthorisationServiceTest {
     private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildXs2aUpdatePisCommonPaymentPsuDataRequest();
     private static final Authorisation GET_PIS_AUTHORISATION_RESPONSE = buildGetPisAuthorisationResponse();
-    private static final Xs2aUpdatePisCommonPaymentPsuDataResponse STAGE_RESPONSE = Xs2aUpdatePisCommonPaymentPsuDataResponse
-                                                                                        .buildWithCurrencyConversionInfo(SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA, null);
+    private static final Xs2aUpdatePisCommonPaymentPsuDataResponse STAGE_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
+        SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA, null);
 
     @InjectMocks
     private PisAuthorisationService pisAuthorisationService;

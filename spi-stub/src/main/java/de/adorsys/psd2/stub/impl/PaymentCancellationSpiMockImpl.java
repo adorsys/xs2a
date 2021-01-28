@@ -103,7 +103,7 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
         log.info("PaymentCancellationSpi#startScaDecoupled: contextData {}, authorisationId {}, authenticationMethodId {}, businessObject {}, aspspConsentData {}", contextData, authorisationId, authenticationMethodId, businessObject, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .payload(new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE))
+                   .payload(new SpiAuthorisationDecoupledScaResponse(ScaStatus.SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE))
                    .build();
     }
 
