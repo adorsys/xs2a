@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiAddress;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 import javax.validation.constraints.NotNull;
 
@@ -30,6 +31,7 @@ public interface SpiToXs2aAddressMapper {
     @Mapping(target = "country", source = "address", qualifiedByName = "mapToXs2aCountryCode")
     Xs2aAddress mapToAddress(@NotNull SpiAddress address);
 
+    @Named("mapToXs2aCountryCode")
     default Xs2aCountryCode mapToXs2aCountryCode(SpiAddress address) {
         return new Xs2aCountryCode(address.getCountry());
     }

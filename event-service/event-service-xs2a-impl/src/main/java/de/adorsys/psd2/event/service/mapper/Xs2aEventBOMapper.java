@@ -40,6 +40,7 @@ public abstract class Xs2aEventBOMapper {
     @Mapping(target = "payload", qualifiedByName = "mapToBytes")
     public abstract EventPO toEventPO(EventBO eventBO);
 
+    @Named("mapToBytes")
     protected byte[] mapToBytes(Object object) {
         try {
             return xs2aObjectMapper.writeValueAsBytes(object);

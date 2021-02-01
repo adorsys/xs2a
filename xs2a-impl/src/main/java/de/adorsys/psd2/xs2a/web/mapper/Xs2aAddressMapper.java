@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.NullValueMappingStrategy;
 
 @Mapper(componentModel = "spring",
@@ -33,6 +34,7 @@ public interface Xs2aAddressMapper {
     @Mapping(target = "country", source = "country.code")
     Address mapToAddress(Xs2aAddress address);
 
+    @Named("mapToXs2aCountryCode")
     default Xs2aCountryCode mapToXs2aCountryCode(Address address) {
         return new Xs2aCountryCode(address.getCountry());
     }
