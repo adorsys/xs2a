@@ -16,8 +16,10 @@
 
 package de.adorsys.psd2.event.service.mapper;
 
+import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
 import de.adorsys.psd2.event.service.model.AspspEvent;
+import de.adorsys.psd2.event.service.model.AspspPsuIdData;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,5 +90,33 @@ class EventBOMapperTest {
         List<AspspEvent> actualAspspEventList = mapper.toAspspEventList(null);
         assertNotNull(actualAspspEventList);
         assertTrue(actualAspspEventList.isEmpty());
+    }
+
+    @Test
+    void mapToPduIdDataList() {
+        PsuIdDataPO psuIdDataPO = jsonReader.getObjectFromFile("json/aspsp-psu-id-data.json", PsuIdDataPO.class);
+        Set<PsuIdDataPO> psuIdDataPOSet = new HashSet<>();
+        psuIdDataPOSet.add(psuIdDataPO);
+
+        List<AspspPsuIdData> actual = mapper.mapToPduIdDataList(psuIdDataPOSet);
+
+        AspspPsuIdData expected = jsonReader.getObjectFromFile("json/aspsp-psu-id-data.json", AspspPsuIdData.class);
+        assertEquals(1, actual.size());
+        assertEquals(expected, actual.get(0));
+    }
+
+    @Test
+    void mapToPduIdDataList_nullValue() {
+        assertNull(mapper.mapToPduIdDataList(null));
+    }
+
+    @Test
+    void mapToPduIdData_nullValue() {
+        assertNull(mapper.mapToPduIdData(null));
+    }
+
+    @Test
+    void mapToPayload_wrongContent() {
+        assertNull(mapper.mapToPayload("not json".getBytes(StandardCharsets.UTF_8)));
     }
 }
