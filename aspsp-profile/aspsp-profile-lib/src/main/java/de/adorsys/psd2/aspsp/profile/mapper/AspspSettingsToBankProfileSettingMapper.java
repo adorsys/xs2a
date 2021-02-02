@@ -30,12 +30,14 @@ import de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface AspspSettingsToBankProfileSettingMapper {
 
     void updateBankProfileSetting(AspspSettings aspspSettings, @MappingTarget BankProfileSetting bankProfileSetting);
 
+    @Named("mapStartAuthorisationMode")
     default String mapStartAuthorisationMode(StartAuthorisationMode startAuthorisationMode) {
         return startAuthorisationMode == null ? "AUTO" : startAuthorisationMode.getValue();
     }
