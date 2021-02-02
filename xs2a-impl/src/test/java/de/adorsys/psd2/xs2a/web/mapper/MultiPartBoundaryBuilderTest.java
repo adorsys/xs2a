@@ -23,7 +23,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static de.adorsys.psd2.xs2a.web.mapper.MultiPartBoundaryBuilder.DEFAULT_BOUNDARY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MultiPartBoundaryBuilderTest {
 
@@ -51,8 +51,9 @@ class MultiPartBoundaryBuilderTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "multipart/form-data; boundary=" + boundary);
 
         String actual = builder.getMultiPartContent(request, xmlPart, jsonPart);
+        String expected = content.replace("BOUNDARY", boundary);
 
-        assertEquals(content.replaceAll("BOUNDARY", boundary), actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -60,7 +61,8 @@ class MultiPartBoundaryBuilderTest {
         request.addHeader(HttpHeaders.CONTENT_TYPE, "multipart/form-data;");
 
         String actual = builder.getMultiPartContent(request, xmlPart, jsonPart);
+        String expected = content.replace("BOUNDARY", DEFAULT_BOUNDARY.replace("--", ""));
 
-        assertEquals(content.replaceAll("BOUNDARY", DEFAULT_BOUNDARY.replace("--", "")), actual);
+        assertThat(actual).isEqualTo(expected);
     }
 }

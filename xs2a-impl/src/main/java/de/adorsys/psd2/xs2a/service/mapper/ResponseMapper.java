@@ -44,7 +44,7 @@ public class ResponseMapper {
      * @param <R>      type of the transformed body
      * @return response entity with OK HTTP status and body
      */
-    public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
+    public <T, R> ResponseEntity ok(ResponseObject<T> response, Function<T, R> mapper) { //NOPMD short method name ok corresponds to status code
         return generateResponse(response, OK, mapper);
     }
 
@@ -57,7 +57,7 @@ public class ResponseMapper {
      * @param <R>      type of the transformed body
      * @return response entity with Created HTTP status and body
      */
-    public <T, R> ResponseEntity<?> created(ResponseObject<T> response, Function<T, R> mapper) {
+    public <T, R> ResponseEntity created(ResponseObject<T> response, Function<T, R> mapper) {
         return generateResponse(response, CREATED, mapper);
     }
 
@@ -70,7 +70,7 @@ public class ResponseMapper {
      * @param <R>      type of the transformed body
      * @return response entity with No Content HTTP status and body
      */
-    public <T, R> ResponseEntity<?> delete(ResponseObject<T> response, Function<T, R> mapper) {
+    public <T, R> ResponseEntity delete(ResponseObject<T> response, Function<T, R> mapper) {
         return generateResponse(response, NO_CONTENT, mapper);
     }
 
@@ -84,7 +84,7 @@ public class ResponseMapper {
      * @param <R>             type of the body after applying mapper
      * @return response entity with OK HTTP status, body and headers
      */
-    public <T, R> ResponseEntity<?> ok(ResponseObject<T> response, Function<T, R> mapper, ResponseHeaders responseHeaders) { //NOPMD short method name ok corresponds to status code
+    public <T, R> ResponseEntity ok(ResponseObject<T> response, Function<T, R> mapper, ResponseHeaders responseHeaders) { //NOPMD short method name ok corresponds to status code
         return generateResponse(response, OK, mapper, responseHeaders);
     }
 
@@ -98,7 +98,7 @@ public class ResponseMapper {
      * @param <R>             type of the body after applying mapper
      * @return response entity with Created HTTP status, body and headers
      */
-    public <T, R> ResponseEntity<?> created(ResponseObject<T> response, Function<T, R> mapper, ResponseHeaders responseHeaders) {
+    public <T, R> ResponseEntity created(ResponseObject<T> response, Function<T, R> mapper, ResponseHeaders responseHeaders) {
         return generateResponse(response, CREATED, mapper, responseHeaders);
     }
 

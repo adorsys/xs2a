@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AustriaValidationConfigImplTest {
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private AustriaValidationConfigImpl actual;
 
     @BeforeEach
@@ -37,5 +37,4 @@ class AustriaValidationConfigImplTest {
                                                                             AustriaValidationConfigImpl.class);
         assertEquals(expected, actual);
     }
-
 }
