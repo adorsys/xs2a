@@ -172,89 +172,121 @@ a|
 
 |31.12.2020| |8.6|9.5|
 
-  a|
+a|
 
-  a|
+a|
 
-  a| * Fix perfomance issue
+a| * Fix perfomance issue
 
-  * Fix XS2A Security Hot Spots
-
-
-  a| * All fixes and updates from v.8.6
-
-  * Fix connector-examples for multilevel SCA
+* Fix XS2A Security Hot Spots
 
 
-  a|
+a| * All fixes and updates from v.8.6
 
-  a|
-
-  a|
-
-  a|
-
-  a|
-
-  a|
-
- |14.01.2021| |8.7|9.6|
-
-    a|
-
-    a|
-
-    a| * Fix XS2A Security Hot Spots
+* Fix connector-examples for multilevel SCA
 
 
-    a| * All fixes and updates from v.8.7
+a|
 
-    * Add new data type Entry Details
+a|
 
-    * Add link of type "card" to the Card Account Report
+a|
 
-    * Add optional attributes to the Transactions data type
+a|
 
-    * Add attribute debitAccounting to the card account details type
+a|
 
-    a|
+a|
 
-    a|
+|14.01.2021| |8.7|9.6|
 
-    a|
+a|
 
-    a|
+a|
 
-    a|
-
-    a|
-
- |27.01.2021| |8.8|9.7|
-
- a|
-
- a|
-
- a| * Fix XS2A Security Hot Spots
+a| * Fix XS2A Security Hot Spots
 
 
- a| * All fixes and updates from v.8.8
+a| * All fixes and updates from v.8.7
 
- * Adjust counting Consent usage for several booking statuses
+* Add new data type Entry Details
 
- * Added a psuMessage into Get SCA Status Response
+* Add link of type "card" to the Card Account Report
 
- a|
+* Add optional attributes to the Transactions data type
 
- a|
+* Add attribute debitAccounting to the card account details type
 
- a|
+a|
 
- a|
+a|
 
- a|
+a|
 
- a|
+a|
+
+a|
+
+a|
+
+|27.01.2021| |8.8|9.7|
+
+a|
+
+a|
+
+a| * Fix XS2A Security Hot Spots
+
+
+a| * All fixes and updates from v.8.8
+
+* Adjust counting Consent usage for several booking statuses
+
+* Added a psuMessage into Get SCA Status Response
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+|10.02.2021| |8.9|9.8|
+
+a|
+
+a|
+
+a| * Move to the latest version of Mapstruct
+
+* Improve decoupled approach
+
+* Bugfix: Update authorisation status after ATTEMPT_FAILURE
+
+* Bugfix: expiration of old consnets for confirmation code cases
+
+* Connector: Use get transaction list with pagination
+
+
+a| * All fixes and updates from v.8.9
+
+
+a| Signing Basket plugin for XS2A
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
 
 |*For future development*| |8.x|9.x|
 
