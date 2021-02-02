@@ -71,6 +71,11 @@ public class PiisAuthorisationConfirmationService extends ConsentAuthorisationCo
     }
 
     @Override
+    protected void findAndTerminateOldConsentsByNewConsentId(String consentId) {
+        // this method is empty because one tpp could have more then one valid piis consent
+    }
+
+    @Override
     protected SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(SpiContextData spiContextData, boolean isCodeCorrect, PiisConsent consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return piisConsentSpi.notifyConfirmationCodeValidation(spiContextData, isCodeCorrect, piisConsentMapper.mapToSpiPiisConsent(consent), spiAspspConsentDataProvider);
     }
