@@ -133,6 +133,9 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
         if (spiResponse.isSuccessful()) {
             authorisationService.updateAuthorisationStatus(authorisationId, confirmationCodeValidationResponse.getScaStatus());
             updateConsentStatus(consentId, confirmationCodeValidationResponse.getConsentStatus());
+            if (ConsentStatus.VALID == confirmationCodeValidationResponse.getConsentStatus()) {
+                findAndTerminateOldConsentsByNewConsentId(consentId);
+            }
         }
 
         return response;
@@ -165,6 +168,9 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
                                                                             consentId,
                                                                             authorisationId,
                                                                             request.getPsuData());
+            if (ConsentStatus.VALID == confirmationCodeValidationResponse.getConsentStatus()) {
+                findAndTerminateOldConsentsByNewConsentId(consentId);
+            }
         }
 
         authorisationService.updateAuthorisationStatus(authorisationId, updateConsentPsuDataResponse.getScaStatus());
@@ -201,6 +207,8 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
     }
 
     protected abstract void updateConsentStatus(String consentId, ConsentStatus consentStatus);
+
+    protected abstract void findAndTerminateOldConsentsByNewConsentId(String consentId);
 
     protected abstract SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(SpiContextData spiContextData, boolean isCodeCorrect, T consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 

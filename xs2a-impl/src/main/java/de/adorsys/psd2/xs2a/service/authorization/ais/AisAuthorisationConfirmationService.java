@@ -71,6 +71,11 @@ public class AisAuthorisationConfirmationService extends ConsentAuthorisationCon
     }
 
     @Override
+    protected void findAndTerminateOldConsentsByNewConsentId(String consentId) {
+        aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
+    }
+
+    @Override
     protected SpiResponse<SpiConsentConfirmationCodeValidationResponse> notifyConfirmationCodeValidation(SpiContextData spiContextData, boolean isCodeCorrect, AisConsent consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return aisConsentSpi.notifyConfirmationCodeValidation(spiContextData, isCodeCorrect, aisConsentMapper.mapToSpiAccountConsent(consent), spiAspspConsentDataProvider);
     }
