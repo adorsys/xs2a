@@ -197,7 +197,12 @@ Number of TPP accesses is counted by every endpoint:
 * /accounts/account-id per account-id;
 * /accounts/account-id/transactions per account-id;
 * /accounts/account-id/balances per account-id;
-* /accounts/account-id/transactions/transaction-id per account-id and transaction-id, if applicable.
+* /accounts/account-id/transactions/transaction-id per account-id, transaction-id, per bookingStatus if applicable.
+
+Access to the Read Transactions endpoint is addressed several times with different values for the bookingStatus as query parameter then this is counted as one access.
+
+The recognition of several booking statuses is needed since e.g. standing orders are only retrievable with a dedicated query parameter.
+This enables the TPP to retrieve e.g. the booked transactions as well as standing orders (information transactions) under the same PSU consent.
 
 If the amount of accesses for any of these endpoints is exceeded - *HTTP error 429 ACCESS_EXCEEDED* is returned. All other endpoints are still accessible until their amount is not exceeded.
 
