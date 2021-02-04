@@ -1149,7 +1149,7 @@ class AisAuthorisationProcessorServiceImplTest {
     }
 
     @Test
-    void doScaPsuIdentified_withPsuAuthorisationRequest_withAttemptureFailedPsuAuthorisation_shouldReturnError() {
+    void doScaPsuIdentified_withPsuAuthorisationRequest_withAttemptFailedPsuAuthorisation_shouldReturnError() {
         // Given
         UpdateConsentPsuDataReq updateAuthorisationRequest = buildUpdateConsentPsuDataReq();
         updateAuthorisationRequest.setPassword(PSU_PASSWORD);
@@ -1169,6 +1169,7 @@ class AisAuthorisationProcessorServiceImplTest {
 
         SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
                                                              .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.ATTEMPT_FAILURE))
+                                                             .error(new TppMessage(MessageErrorCode.PSU_CREDENTIALS_INVALID))
                                                              .build();
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
