@@ -1,0 +1,9 @@
+= Release notes v.7.6.5
+
+== Table of Contents
+
+* Added additionalTppInfo for consents
+
+== Added additionalTppInfo for consents
+
+From now on, `ConsentTppInformation` contains a new field - String `additionalTppInfo`, with default value `NONE`.
