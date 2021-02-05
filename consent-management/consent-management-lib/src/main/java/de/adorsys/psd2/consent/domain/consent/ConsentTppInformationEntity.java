@@ -59,4 +59,7 @@ public class ConsentTppInformationEntity {
     @Column(name = "notification_mode", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private List<NotificationSupportedMode> tppNotificationContentPreferred;
+
+    @Column(name = "additional_info", nullable = false)
+    private String additionalInfo;
 }

@@ -537,7 +537,7 @@ class CmsPsuAisServiceInternalTest {
     @Test
     void getConsentsForPsuSuccess() {
         // Given
-        when(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
+        when(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findAll(any(Specification.class)))
@@ -551,30 +551,30 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(consentEntity);
 
         // When
-        List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsu(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null);
 
         // Then
         assertEquals(consentsForPsu.size(), consentEntityList.size());
         verify(aisConsentSpecification, times(1))
-            .byPsuDataInListAndInstanceId(psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null);
     }
 
     @Test
     void getConsentsForPsuFail() {
         // When
-        List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsu(psuIdDataWrong, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(psuIdDataWrong, DEFAULT_SERVICE_INSTANCE_ID, null);
 
         // Then
         assertTrue(consentsForPsu.isEmpty());
         verify(aisConsentSpecification, times(1))
-            .byPsuDataInListAndInstanceId(psuIdDataWrong, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdDataWrong, DEFAULT_SERVICE_INSTANCE_ID, null);
     }
 
     @Test
     void getConsentsForPsu_emptyPsuData() {
         // When
         PsuIdData emptyPsuIdData = new PsuIdData();
-        List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsu(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+        List<CmsAisAccountConsent> consentsForPsu = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(emptyPsuIdData, DEFAULT_SERVICE_INSTANCE_ID, null);
 
         // Then
         assertTrue(consentsForPsu.isEmpty());
@@ -1294,7 +1294,7 @@ class CmsPsuAisServiceInternalTest {
                                         null, null, 0,
                                         null, null,
                                         false, false, null, null, null, null, false, Collections.singletonList(aisAuthorisation), Collections.emptyMap(), OffsetDateTime.now(),
-                                        OffsetDateTime.now(), null);
+                                        OffsetDateTime.now(), null, null);
     }
 }
 

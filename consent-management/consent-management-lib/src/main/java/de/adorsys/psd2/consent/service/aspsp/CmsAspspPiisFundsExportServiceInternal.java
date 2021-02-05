@@ -65,7 +65,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
 
-        return findAllBySpecification(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId));
+        return findAllBySpecification(piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId, null));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
 
-        return findAllBySpecification(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, actualInstanceId));
+        return findAllBySpecification(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, createDateFrom, createDateTo, actualInstanceId, null));
     }
 
     @Override
@@ -95,10 +95,10 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
 
-        return findAllBySpecification(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId))
-            .stream()
-            .distinct()
-            .collect(Collectors.toList());
+        return findAllBySpecification(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(aspspAccountId, createDateFrom, createDateTo, actualInstanceId, null))
+                   .stream()
+                   .distinct()
+                   .collect(Collectors.toList());
     }
 
     private Collection<CmsPiisConsent> findAllBySpecification(Specification<ConsentEntity> specification) {
