@@ -24,6 +24,7 @@ import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJ
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppAttributes;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.NotificationModeResponseHeaders;
@@ -131,9 +132,11 @@ public class PaymentController implements PaymentApi {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tpPNotificationContentPreferred, tpPNotificationURI);
 
-        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate,
-                                                                                                                       tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred),
-                                                                                                                       psuData, tppNotificationData, tppBrandLoggingInformation,
+        TppAttributes tppAttributes = new TppAttributes(tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppNotificationData, tppBrandLoggingInformation);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct,
+                                                                                                                       paymentService,
+                                                                                                                       tppAttributes,
+                                                                                                                       psuData,
                                                                                                                        requestProviderService.getInstanceId());
         ResponseObject<PaymentInitiationResponse> serviceResponse =
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aPayment(), paymentInitiationParameters);
@@ -171,16 +174,11 @@ public class PaymentController implements PaymentApi {
                                                                               UUID psUDeviceID, String psUGeoLocation) {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tpPNotificationContentPreferred, tpPNotificationURI);
-
+        TppAttributes tppAttributes = new TppAttributes(tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppNotificationData, tppBrandLoggingInformation);
         PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct,
                                                                                                                        paymentService,
-                                                                                                                       tpPSignatureCertificate,
-                                                                                                                       tpPRedirectURI,
-                                                                                                                       tpPNokRedirectURI,
-                                                                                                                       BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred),
+                                                                                                                       tppAttributes,
                                                                                                                        psuData,
-                                                                                                                       tppNotificationData,
-                                                                                                                       tppBrandLoggingInformation,
                                                                                                                        requestProviderService.getInstanceId());
         ResponseObject<PaymentInitiationResponse> serviceResponse =
             xs2aPaymentService.createPayment(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, xmlSct, jsonStandingorderType), paymentInitiationParameters);
@@ -218,10 +216,11 @@ public class PaymentController implements PaymentApi {
         PsuIdData psuData = new PsuIdData(psuId, psUIDType, psUCorporateID, psUCorporateIDType, psUIPAddress, new AdditionalPsuIdData(psUIPPort, psUUserAgent, psUGeoLocation, psUAccept, psUAcceptCharset, psUAcceptEncoding, psUAcceptLanguage, psUHttpMethod, psUDeviceID));
 
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tpPNotificationContentPreferred, tpPNotificationURI);
-
-        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct, paymentService, tpPSignatureCertificate,
-                                                                                                                       tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred),
-                                                                                                                       psuData, tppNotificationData, tppBrandLoggingInformation,
+        TppAttributes tppAttributes = new TppAttributes(tpPSignatureCertificate, tpPRedirectURI, tpPNokRedirectURI, BooleanUtils.isTrue(tpPExplicitAuthorisationPreferred), tppNotificationData, tppBrandLoggingInformation);
+        PaymentInitiationParameters paymentInitiationParameters = paymentModelMapperPsd2.mapToPaymentRequestParameters(paymentProduct,
+                                                                                                                       paymentService,
+                                                                                                                       tppAttributes,
+                                                                                                                       psuData,
                                                                                                                        requestProviderService.getInstanceId());
         ResponseObject<PaymentInitiationResponse> serviceResponse =
             xs2aPaymentService.createPayment(body.getBytes(), paymentInitiationParameters);

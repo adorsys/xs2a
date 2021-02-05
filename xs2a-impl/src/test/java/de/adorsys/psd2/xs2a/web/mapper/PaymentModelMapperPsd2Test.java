@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.core.tpp.TppAttributes;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
@@ -51,7 +52,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class,
-    HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class})
+    HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class,
+    TppMessage2XXMapperImpl.class})
 class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String ENCRYPTED_PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
@@ -80,6 +82,8 @@ class PaymentModelMapperPsd2Test {
     private StandardPaymentProductsResolver standardPaymentProductsResolver;
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
+    @Autowired
+    private TppMessage2XXMapper tppMessage2XXMapper;
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -89,7 +93,7 @@ class PaymentModelMapperPsd2Test {
         AmountModelMapper amountModelMapper = new AmountModelMapper(validatorService);
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, tppRedirectUriMapper, amountModelMapper,
                                             hrefLinkMapper, scaMethodsMapper, standardPaymentProductsResolver,
-                                            xs2aObjectMapper);
+                                            xs2aObjectMapper, tppMessage2XXMapper);
     }
 
     @Test
@@ -186,9 +190,9 @@ class PaymentModelMapperPsd2Test {
         expected.setPsuData(PSU_ID_DATA);
         expected.setTppNotificationData(tppNotificationData);
         expected.setTppBrandLoggingInformation(TPP_BRAND_LOGGING_INFORMATION);
+        TppAttributes tppAttributes = new TppAttributes("certificate".getBytes(), "ok.uri", "nok.uri", true, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION);
 
-        PaymentInitiationParameters actual = mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), "certificate".getBytes(), "ok.uri", "nok.uri",
-                                                                                  true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION, null);
+        PaymentInitiationParameters actual = mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), tppAttributes, PSU_ID_DATA, null);
 
         assertEquals(expected, actual);
     }
@@ -199,8 +203,8 @@ class PaymentModelMapperPsd2Test {
         TppNotificationData tppNotificationData = new TppNotificationData(NOTIFICATION_MODES, "notification.uri");
         byte[] tpPSignatureCertificate = "certificate".getBytes();
         //Then
-        assertThrows(WrongPaymentTypeException.class, () -> mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, "incorrect payment type", tpPSignatureCertificate, "ok.uri", "nok.uri",
-                                                                                                                                      true, PSU_ID_DATA, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION, null));
+        TppAttributes tppAttributes = new TppAttributes(tpPSignatureCertificate, "ok.uri", "nok.uri", true, tppNotificationData, TPP_BRAND_LOGGING_INFORMATION);
+        assertThrows(WrongPaymentTypeException.class, () -> mapper.mapToPaymentRequestParameters(PAYMENT_PRODUCT, "incorrect payment type", tppAttributes, PSU_ID_DATA, null));
     }
 
     @Test
