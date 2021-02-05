@@ -20,10 +20,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.consent.api.pis.proto.PisPaymentCancellationRequest;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.*;
-import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
+import de.adorsys.psd2.xs2a.core.tpp.TppAttributes;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.exception.WrongPaymentTypeException;
@@ -31,7 +30,6 @@ import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.StandardPaymentProductsResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
@@ -39,8 +37,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -53,6 +51,7 @@ public class PaymentModelMapperPsd2 {
     private final ScaMethodsMapper scaMethodsMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final Xs2aObjectMapper xs2aObjectMapper;
+    private final TppMessage2XXMapper tppMessage2XXMapper;
 
     public Object mapToGetPaymentResponse(CommonPayment commonPayment) {
         String rawData = convertResponseToRawData(commonPayment.getPaymentData());
@@ -95,7 +94,7 @@ public class PaymentModelMapperPsd2 {
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()));
         response201.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
         response201.setPsuMessage(response.getPsuMessage());
-        response201.setTppMessages(mapToTppMessage2XXList(response.getTppMessageInformation()));
+        response201.setTppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(response.getTppMessageInformation()));
         response201.setCurrencyConversionFee(amountModelMapper.mapToAmount(response.getCurrencyConversionFee()));
         response201.setEstimatedTotalAmount(amountModelMapper.mapToAmount(response.getEstimatedTotalAmount()));
         response201.setEstimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(response.getEstimatedInterbankSettlementAmount()));
@@ -103,18 +102,18 @@ public class PaymentModelMapperPsd2 {
         return response201;
     }
 
-    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService, byte[] tpPSignatureCertificate, String tpPRedirectURI,
-                                                                     String tpPNokRedirectURI, boolean tppExplicitAuthorisationPreferred, PsuIdData psuData,
-                                                                     TppNotificationData tppNotificationData, String tppBrandLoggingInformation, String instanceId) {
+    public PaymentInitiationParameters mapToPaymentRequestParameters(String paymentProduct, String paymentService,
+                                                                     TppAttributes tppAttributes, PsuIdData psuData,
+                                                                     String instanceId) {
         PaymentInitiationParameters parameters = new PaymentInitiationParameters();
         parameters.setPaymentType(PaymentType.getByValue(paymentService).orElseThrow(() -> new WrongPaymentTypeException(paymentService)));
         parameters.setPaymentProduct(Optional.ofNullable(paymentProduct).orElseThrow(() -> new IllegalArgumentException("Unsupported payment product")));
-        parameters.setQwacCertificate(new String(Optional.ofNullable(tpPSignatureCertificate).orElse(new byte[]{}), StandardCharsets.UTF_8));
-        parameters.setTppRedirectUri(tppRedirectUriMapper.mapToTppRedirectUri(tpPRedirectURI, tpPNokRedirectURI));
-        parameters.setTppExplicitAuthorisationPreferred(tppExplicitAuthorisationPreferred);
+        parameters.setQwacCertificate(new String(Optional.ofNullable(tppAttributes.getTppSignatureCertificate()).orElse(new byte[]{}), StandardCharsets.UTF_8));
+        parameters.setTppRedirectUri(tppRedirectUriMapper.mapToTppRedirectUri(tppAttributes.getTppRedirectURI(), tppAttributes.getTppNokRedirectURI()));
+        parameters.setTppExplicitAuthorisationPreferred(tppAttributes.isTppExplicitAuthorisationPreferred());
         parameters.setPsuData(psuData);
-        parameters.setTppNotificationData(tppNotificationData);
-        parameters.setTppBrandLoggingInformation(tppBrandLoggingInformation);
+        parameters.setTppNotificationData(tppAttributes.getTppNotificationData());
+        parameters.setTppBrandLoggingInformation(tppAttributes.getTppBrandLoggingInformation());
         parameters.setInstanceId(instanceId);
 
         return parameters;
@@ -138,7 +137,7 @@ public class PaymentModelMapperPsd2 {
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
-        response.setTppMessages(mapToTppMessage2XXList(cancelPaymentResponse.getTppMessageInformation()));
+        response.setTppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(cancelPaymentResponse.getTppMessageInformation()));
         return response;
     }
 
@@ -165,24 +164,5 @@ public class PaymentModelMapperPsd2 {
             log.warn("Can not convert payment from byte[] ", e);
             return null;
         }
-    }
-
-    private List<TppMessage2XX> mapToTppMessage2XXList(Set<TppMessageInformation> tppMessages) {
-        if (CollectionUtils.isEmpty(tppMessages)) {
-            return null;
-        }
-        return tppMessages.stream()
-                   .map(this::mapToTppMessage2XX)
-                   .collect(Collectors.toList());
-    }
-
-    private TppMessage2XX mapToTppMessage2XX(TppMessageInformation tppMessage) {
-        TppMessage2XX tppMessage2XX = new TppMessage2XX();
-        tppMessage2XX.setCategory(TppMessageCategory.fromValue(tppMessage.getCategory().name()));
-        tppMessage2XX.setCode(MessageCode2XX.WARNING);
-        tppMessage2XX.setPath(tppMessage.getPath());
-        tppMessage2XX.setText(tppMessage.getText());
-
-        return tppMessage2XX;
     }
 }
