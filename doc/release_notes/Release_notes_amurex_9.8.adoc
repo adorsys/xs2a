@@ -4,6 +4,7 @@
 
 * Improved decoupled approach
 * Updated mapstruct version to 1.4.1.RELEASE
+* Bugfix: adjusted `ATTEMPT_FAILURE` processing for consents
 
 == Improved decoupled approach
 
@@ -13,3 +14,7 @@ Response SCA status will be retrieved from SPI level.
 == Updated mapstruct version to 1.4.1.RELEASE
 
 Mapstruct version was updated to 1.4.1.RELEASE.
+
+== Bugfix: adjusted `ATTEMPT_FAILURE` processing for consents
+
+From now on, status `ATTEMPT_FAILURE` is processed correct.
