@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Mapper(componentModel = "spring")
@@ -40,23 +39,15 @@ public abstract class AspspEventMapper {
 
     @Mapping(target = "xRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
     @Mapping(target = "internalRequestId", source = "internalRequestId", qualifiedByName = "mapToInternalRequestId")
-    @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPduIdDataList")
+    @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPsuIdDataList")
     @Mapping(target = "payload", qualifiedByName = "mapToPayload")
     public abstract AspspEvent toAspspEvent(ReportEvent event);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<AspspEvent> toAspspEventList(List<ReportEvent> events);
 
-    @Named("mapToPduIdDataList")
-    protected List<AspspPsuIdData> mapToPduIdDataList(Set<PsuIdDataPO> psuIdData) {
-        if (psuIdData == null) {
-            return null;
-        }
-
-        return psuIdData.stream()
-                   .map(this::mapToPduIdData)
-                   .collect(Collectors.toList());
-    }
+    @Named("mapToPsuIdDataList")
+    protected abstract List<AspspPsuIdData> mapToPsuIdDataList(Set<PsuIdDataPO> psuIdData);
 
     @Named("mapToPayload")
     protected Object mapToPayload(byte[] array) {
@@ -78,7 +69,7 @@ public abstract class AspspEventMapper {
         return internalRequestId != null ? UUID.fromString(internalRequestId) : null;
     }
 
-    protected AspspPsuIdData mapToPduIdData(PsuIdDataPO psuIdDataPO) {
+    protected AspspPsuIdData mapToPsuIdData(PsuIdDataPO psuIdDataPO) {
         if (psuIdDataPO == null) {
             return null;
         }

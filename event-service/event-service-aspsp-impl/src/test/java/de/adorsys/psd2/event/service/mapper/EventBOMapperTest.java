@@ -98,7 +98,7 @@ class EventBOMapperTest {
         Set<PsuIdDataPO> psuIdDataPOSet = new HashSet<>();
         psuIdDataPOSet.add(psuIdDataPO);
 
-        List<AspspPsuIdData> actual = mapper.mapToPduIdDataList(psuIdDataPOSet);
+        List<AspspPsuIdData> actual = mapper.mapToPsuIdDataList(psuIdDataPOSet);
 
         AspspPsuIdData expected = jsonReader.getObjectFromFile("json/aspsp-psu-id-data.json", AspspPsuIdData.class);
         assertEquals(1, actual.size());
@@ -107,12 +107,12 @@ class EventBOMapperTest {
 
     @Test
     void mapToPduIdDataList_nullValue() {
-        assertNull(mapper.mapToPduIdDataList(null));
+        assertNull(mapper.mapToPsuIdDataList(null));
     }
 
     @Test
     void mapToPduIdData_nullValue() {
-        assertNull(mapper.mapToPduIdData(null));
+        assertNull(mapper.mapToPsuIdData(null));
     }
 
     @Test
