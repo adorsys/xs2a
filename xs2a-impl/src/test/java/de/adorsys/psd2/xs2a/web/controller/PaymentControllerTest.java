@@ -30,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppAttributes;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
@@ -635,9 +636,8 @@ class PaymentControllerTest {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
-
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         String rawRequestObject = "some body";
@@ -666,9 +666,8 @@ class PaymentControllerTest {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
-
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         String rawRequestObject = "some body";
@@ -702,9 +701,9 @@ class PaymentControllerTest {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
 
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aPayment())
@@ -734,9 +733,9 @@ class PaymentControllerTest {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
 
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aPayment())
@@ -772,9 +771,9 @@ class PaymentControllerTest {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
 
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -802,9 +801,9 @@ class PaymentControllerTest {
         // Given
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
 
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -838,9 +837,9 @@ class PaymentControllerTest {
     void initiatePayment_XML_WithException() {
         when(notificationSupportedModeService.getTppNotificationData(any(), any()))
             .thenReturn(new TppNotificationData(Collections.singletonList(NotificationSupportedMode.SCA), TPP_NOTIFICATION_URI));
+        TppAttributes tppAttributes = new TppAttributes(null, REDIRECT_LINK, REDIRECT_LINK, true, TPP_NOTIFICATION_DATA, null);
 
-        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, null, REDIRECT_LINK, REDIRECT_LINK, true, buildPsuIdData(),
-                                                                  TPP_NOTIFICATION_DATA, null, null))
+        when(paymentModelMapperPsd2.mapToPaymentRequestParameters(PRODUCT, CORRECT_PAYMENT_SERVICE, tppAttributes, buildPsuIdData(), null))
             .thenReturn(paymentInitiationParameters);
 
         when(paymentModelMapperXs2a.mapToXs2aRawPayment(paymentInitiationParameters, XML_SCT, JSON_STANDING_ORDER_TYPE))
@@ -870,7 +869,7 @@ class PaymentControllerTest {
             .thenReturn(request);
 
         ResponseObject<CancellationAuthorisationResponse> serviceResponse = ResponseObject.<CancellationAuthorisationResponse>builder()
-                                                                                .body(new  Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData, null))
+                                                                                .body(new Xs2aUpdatePisCommonPaymentPsuDataResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.PSUIDENTIFIED, CORRECT_PAYMENT_ID, CANCELLATION_AUTHORISATION_ID, psuIdData, null))
                                                                                 .build();
         when(paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request))
             .thenReturn(serviceResponse);
