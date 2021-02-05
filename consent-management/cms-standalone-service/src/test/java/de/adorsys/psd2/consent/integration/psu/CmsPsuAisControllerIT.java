@@ -60,7 +60,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -221,7 +220,7 @@ public class CmsPsuAisControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/psu/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byPsuDataInListAndInstanceId(psuIdData, INSTANCE_ID);
+        verify(aisConsentSpecification).byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, INSTANCE_ID, null);
     }
 
     @Test

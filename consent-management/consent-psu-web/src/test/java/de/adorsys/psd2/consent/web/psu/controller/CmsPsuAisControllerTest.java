@@ -355,7 +355,7 @@ class CmsPsuAisControllerTest {
         // Given
         String aisConsentListString = jsonReader.getStringFromFile("json/ais/response/ais-consent-list.json");
         List<CmsAisAccountConsent> cmsAisAccountConsentList = jsonReader.getListFromString(aisConsentListString, CmsAisAccountConsent.class);
-        when(cmsPsuAisService.getConsentsForPsu(PSU_ID_DATA, INSTANCE_ID))
+        when(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null))
             .thenReturn(cmsAisAccountConsentList);
 
         // When
@@ -366,13 +366,13 @@ class CmsPsuAisControllerTest {
             .andExpect(content().json(aisConsentListString));
 
         // Then
-        verify(cmsPsuAisService).getConsentsForPsu(PSU_ID_DATA, INSTANCE_ID);
+        verify(cmsPsuAisService).getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null);
     }
 
     @Test
     void getConsentsForPsu_withFalseServiceResponse_shouldReturnOk() throws Exception {
         // Given
-        when(cmsPsuAisService.getConsentsForPsu(PSU_ID_DATA, INSTANCE_ID))
+        when(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null))
             .thenReturn(Collections.emptyList());
 
         // When
@@ -383,7 +383,7 @@ class CmsPsuAisControllerTest {
             .andExpect(content().json("[]"));
 
         // Then
-        verify(cmsPsuAisService).getConsentsForPsu(PSU_ID_DATA, INSTANCE_ID);
+        verify(cmsPsuAisService).getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null);
     }
 
     @Test

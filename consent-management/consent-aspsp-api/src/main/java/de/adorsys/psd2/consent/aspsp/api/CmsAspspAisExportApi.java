@@ -16,15 +16,13 @@
 
 package de.adorsys.psd2.consent.aspsp.api;
 
+import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import io.swagger.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -58,7 +56,8 @@ public interface CmsAspspAisExportApi {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 
     @GetMapping(path = "/psu")
     @ApiOperation(value = "Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID")
@@ -80,7 +79,8 @@ public interface CmsAspspAisExportApi {
         @ApiParam(value = "Might be mandated in the ASPSP's documentation. Only used in a corporate context. ")
         @RequestHeader(value = "psu-corporate-id-type", required = false) String psuCorporateIdType,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 
     @GetMapping(path = "/account/{account-id}")
     @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
@@ -96,5 +96,6 @@ public interface CmsAspspAisExportApi {
         @RequestHeader(value = "end-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
         @ApiParam(value = "ID of the particular service instance")
-        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId);
+        @RequestHeader(value = "instance-id", required = false, defaultValue = DEFAULT_SERVICE_INSTANCE_ID) String instanceId,
+        @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 }

@@ -60,6 +60,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -197,12 +198,13 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     @Override
-    public @NotNull List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId) {
+    public @NotNull List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
+                                                                                     @Nullable String additionalTppInfo) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId))
+        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo))
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)

@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -104,10 +105,11 @@ public interface CmsPsuAisService {
      *
      * @param psuIdData  PSU credentials data
      * @param instanceId optional ID of particular service instance
+     * @param additionalTppInfo additional tpp info
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId);
+    List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData, @NotNull String instanceId, @Nullable String additionalTppInfo);
 
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".

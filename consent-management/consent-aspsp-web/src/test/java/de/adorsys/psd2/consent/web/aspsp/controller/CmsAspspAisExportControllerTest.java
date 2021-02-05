@@ -90,7 +90,7 @@ class CmsAspspAisExportControllerTest {
 
     @Test
     void getConsentsByTpp_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID))
+        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null))
             .thenReturn(consents);
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_TPP)
@@ -99,12 +99,12 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, null);
     }
 
     @Test
     void getConsentsByPsu_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID))
+        when(cmsAspspAisExportService.exportConsentsByPsuAndAdditionalTppInfo(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null))
             .thenReturn(consents);
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_PSU)
@@ -113,12 +113,12 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsuAndAdditionalTppInfo(psuIdData, START_DATE, END_DATE, INSTANCE_ID, null);
     }
 
     @Test
     void getConsentsByAccount_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID))
+        when(cmsAspspAisExportService.exportConsentsByAccountIdAndAdditionalTppInfo(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null))
             .thenReturn(consents);
 
         mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_ACCOUNT)
@@ -127,6 +127,6 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountIdAndAdditionalTppInfo(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, null);
     }
 }

@@ -1,5 +1,6 @@
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.ais.AdditionalTppInfo;
 import de.adorsys.psd2.consent.domain.consent.ConsentTppInformationEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import org.mapstruct.Mapper;
@@ -13,5 +14,6 @@ public interface ConsentTppInformationMapper {
     ConsentTppInformation mapToConsentTppInformation(ConsentTppInformationEntity consentTppInformationEntity);
 
     @Mapping(target = "tppNotificationContentPreferred", source = "tppNotificationSupportedModes")
+    @Mapping(target = "additionalInfo", defaultValue = AdditionalTppInfo.NONE)
     ConsentTppInformationEntity mapToConsentTppInformationEntity(ConsentTppInformation consentTppInformation);
 }

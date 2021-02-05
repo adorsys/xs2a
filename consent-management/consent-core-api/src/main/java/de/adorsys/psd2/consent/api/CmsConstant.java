@@ -35,4 +35,8 @@ public class CmsConstant {
         public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
         public static final String INSTANCE_ID = "instance-id";
     }
+
+    public static final class QUERY {
+        public static final String ADDITIONAL_TPP_INFO = "additionalTppInfo";
+    }
 }

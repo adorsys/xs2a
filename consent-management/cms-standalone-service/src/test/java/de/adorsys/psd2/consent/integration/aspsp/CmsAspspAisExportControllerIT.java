@@ -120,7 +120,7 @@ public class CmsAspspAisExportControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), psuIdData, INSTANCE_ID);
+        verify(aisConsentSpecification).byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), psuIdData, INSTANCE_ID, null);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CmsAspspAisExportControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID);
+        verify(aisConsentSpecification).byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID, null);
     }
 
     @Test
@@ -146,6 +146,6 @@ public class CmsAspspAisExportControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byAspspAccountIdAndCreationPeriodAndInstanceId(ACCOUNT_ID, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID);
+        verify(aisConsentSpecification).byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(ACCOUNT_ID, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID, null);
     }
 }
