@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.ais.AdditionalTppInfo;
 import de.adorsys.psd2.consent.api.piis.v1.CmsPiisConsent;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
@@ -81,7 +82,7 @@ public class PiisConsentMapper {
         consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData, instanceId));
         consent.getAspspAccountAccesses().add(accessMapper.mapToAspspAccountAccess(request.getAccount()));
         consent.getTppInformation().setTppInfo(tppInfoEntity);
-
+        consent.getTppInformation().setAdditionalInfo(AdditionalTppInfo.NONE);
         PiisConsentData consentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(),
                                                           request.getCardInformation(), request.getRegistrationInformation());
         consent.setData(consentDataMapper.getBytesFromConsentData(consentData));

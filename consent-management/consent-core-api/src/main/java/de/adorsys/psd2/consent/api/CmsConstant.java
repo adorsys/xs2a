@@ -16,34 +16,32 @@
 
 package de.adorsys.psd2.consent.api;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CmsConstant {
-
-    private CmsConstant() {
-    }
-
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class PATH {
         public static final String CONSENT_ID = "consent-id";
         public static final String STATUS = "status";
         public static final String AUTHORISATION_ID = "authorisation-id";
         public static final String REDIRECT_ID = "redirect-id";
-
-        private PATH() {}
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class HEADERS {
         public static final String PSU_ID = "psu-id";
         public static final String PSU_ID_TYPE = "psu-id-type";
         public static final String PSU_CORPORATE_ID = "psu-corporate-id";
         public static final String PSU_CORPORATE_ID_TYPE = "psu-corporate-id-type";
         public static final String INSTANCE_ID = "instance-id";
-
-        private HEADERS() {}
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class QUERY {
         public static final String PAGE_INDEX = "pageIndex";
         public static final String ITEMS_PER_PAGE = "itemsPerPage";
-
-        private QUERY() {}
+        public static final String ADDITIONAL_TPP_INFO = "additionalTppInfo";
     }
 }

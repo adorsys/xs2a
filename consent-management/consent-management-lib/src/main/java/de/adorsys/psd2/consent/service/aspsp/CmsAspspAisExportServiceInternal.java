@@ -65,26 +65,28 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
     @Override
     @Transactional
     public PageData<Collection<CmsAisAccountConsent>> exportConsentsByTpp(String tppAuthorisationNumber,
-                                                                @Nullable LocalDate createDateFrom,
-                                                                @Nullable LocalDate createDateTo,
-                                                                @Nullable PsuIdData psuIdData, @NotNull String instanceId,
-                                                                Integer pageIndex, Integer itemsPerPage) {
+                                                                          @Nullable LocalDate createDateFrom,
+                                                                          @Nullable LocalDate createDateTo,
+                                                                          @Nullable PsuIdData psuIdData, @NotNull String instanceId,
+                                                                          Integer pageIndex, Integer itemsPerPage,
+                                                                          @Nullable String additionalTppInfo) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             log.info("TPP ID: [{}], InstanceId: [{}]. Export Consents by TPP: Some of these two values are empty", tppAuthorisationNumber, instanceId);
             return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
         }
 
         return mapToPageData(consentJpaRepository.findAll(
-            aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId),
+            aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId, additionalTppInfo),
             pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
     @Transactional
-    public PageData<Collection<CmsAisAccountConsent>> exportConsentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
-                                                                          @Nullable LocalDate createDateTo,
-                                                                          @NotNull String instanceId,
-                                                                          Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsAisAccountConsent>> exportConsentsByPsuAndAdditionalTppInfo(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
+                                                                                              @Nullable LocalDate createDateTo,
+                                                                                              @NotNull String instanceId,
+                                                                                              Integer pageIndex, Integer itemsPerPage,
+                                                                                              @Nullable String additionalTppInfo) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}]. Export consents by Psu failed, psuIdData or instanceId is empty or null.",
                      instanceId);
@@ -92,17 +94,18 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
         }
 
         return mapToPageData(consentJpaRepository.findAll(
-            aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, instanceId),
+            aisConsentSpecification.byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, createDateFrom, createDateTo, instanceId, additionalTppInfo),
             pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
     @Override
     @Transactional
-    public PageData<Collection<CmsAisAccountConsent>> exportConsentsByAccountId(@NotNull String aspspAccountId,
-                                                                                @Nullable LocalDate createDateFrom,
-                                                                                @Nullable LocalDate createDateTo,
-                                                                                @NotNull String instanceId,
-                                                                                Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsAisAccountConsent>> exportConsentsByAccountIdAndAdditionalTppInfo(@NotNull String aspspAccountId,
+                                                                                                    @Nullable LocalDate createDateFrom,
+                                                                                                    @Nullable LocalDate createDateTo,
+                                                                                                    @NotNull String instanceId,
+                                                                                                    Integer pageIndex, Integer itemsPerPage,
+                                                                                                    @Nullable String additionalTppInfo) {
 
         if (StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}], aspspAccountId: [{}]. Export consents by accountId failed, instanceId is empty or null.",
@@ -119,9 +122,14 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                .orElse(OffsetDateTime.now().plusYears(10));
 
         Pageable pageable = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
-        return mapToPageData(consentJpaRepository
-                                 .findAllWithPagination(Collections.singleton(ConsentType.AIS.getName()), aspspAccountId, startOffsetDateTime,
-                                                        endOffsetDateTime, instanceId, pageable));
+        Page<ConsentEntity> consentEntityPage = additionalTppInfo == null
+                                                    ? consentJpaRepository
+                                                          .findAllWithPagination(Collections.singleton(ConsentType.AIS.getName()), aspspAccountId, startOffsetDateTime,
+                                                                                 endOffsetDateTime, instanceId, pageable)
+                                                    : consentJpaRepository
+                                                          .findAllWithPaginationAndTppInfo(Collections.singleton(ConsentType.AIS.getName()), aspspAccountId, startOffsetDateTime,
+                                                                                           endOffsetDateTime, instanceId, pageable, additionalTppInfo);
+        return mapToPageData(consentEntityPage);
     }
 
     private PageData<Collection<CmsAisAccountConsent>> mapToPageData(Page<ConsentEntity> entities) {

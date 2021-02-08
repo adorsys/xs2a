@@ -15,5 +15,6 @@
   "tppNotificationSupportedModes": [
     "SCA",
     "PROCESS"
-  ]
+  ],
+  "additionalInfo": "NONE"
 }

@@ -148,4 +148,5 @@
     <include relativeToChangelogFile="true" file="migration/0120-add-signing-basket-authorised-column-consent-payment-tables.xml"/>
     <include relativeToChangelogFile="true" file="migration/0121-added-internal-payment-status.xml"/>
     <include relativeToChangelogFile="true" file="migration/0122-added-total-pages-and-booking-status-columns.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0123-add-additional-info-to-consent-tpp-information.xml"/>
 </databaseChangeLog>

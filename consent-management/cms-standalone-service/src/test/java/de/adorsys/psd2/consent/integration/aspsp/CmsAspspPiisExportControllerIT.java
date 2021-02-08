@@ -112,7 +112,7 @@ class CmsAspspPiisExportControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-piis-consent.json")));
 
-        verify(piisConsentEntitySpecification).byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), psuIdData, INSTANCE_ID);
+        verify(piisConsentEntitySpecification).byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), psuIdData, INSTANCE_ID, null);
     }
 
     @Test
@@ -125,7 +125,7 @@ class CmsAspspPiisExportControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-piis-consent.json")));
 
-        verify(piisConsentEntitySpecification).byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID);
+        verify(piisConsentEntitySpecification).byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID, null);
     }
 
     @Test
@@ -138,6 +138,6 @@ class CmsAspspPiisExportControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/aspsp/expect/cms-piis-consent.json")));
 
-        verify(piisConsentEntitySpecification).byAspspAccountIdAndCreationPeriodAndInstanceId(ACCOUNT_ID, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID);
+        verify(piisConsentEntitySpecification).byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(ACCOUNT_ID, LocalDate.parse(START_DATE), LocalDate.parse(END_DATE), INSTANCE_ID, null);
     }
 }
