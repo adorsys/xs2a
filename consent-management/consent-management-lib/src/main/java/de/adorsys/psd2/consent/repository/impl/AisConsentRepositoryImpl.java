@@ -159,6 +159,6 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
 
     private boolean isFinalisedStatus(ConsentEntity entity) {
         ConsentStatus previousConsentStatus = getPreviousConsentStatus(entity);
-        return previousConsentStatus !=null && previousConsentStatus.isFinalisedStatus();
+        return previousConsentStatus != null && previousConsentStatus.isFinalisedStatus();
     }
 }
