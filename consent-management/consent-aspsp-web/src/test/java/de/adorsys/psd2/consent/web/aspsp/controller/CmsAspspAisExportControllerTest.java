@@ -46,12 +46,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(MockitoExtension.class)
 class CmsAspspAisExportControllerTest {
-    private final String PSU_ID = "marion.mueller";
-    private final String TPP_ID = "PSDDE-FAKENCA-87B2AC";
-    private final String ACCOUNT_ID = "account_id";
-    private final String EXPORT_AIS_CONSENT_BY_TPP = "/aspsp-api/v1/ais/consents/tpp/PSDDE-FAKENCA-87B2AC";
-    private final String EXPORT_AIS_CONSENT_BY_PSU = "/aspsp-api/v1/ais/consents/psu/";
-    private final String EXPORT_AIS_CONSENT_BY_ACCOUNT = "/aspsp-api/v1/ais/consents/account/account_id";
     private final LocalDate START_DATE = LocalDate.of(2019, 2, 25);
     private final LocalDate END_DATE = LocalDate.of(2020, 7, 22);
     private final String INSTANCE_ID = "UNDEFINED";
@@ -60,8 +54,8 @@ class CmsAspspAisExportControllerTest {
     private static final Integer ITEMS_PER_PAGE = 20;
 
     private MockMvc mockMvc;
-    private JsonReader jsonReader = new JsonReader();
-    private HttpHeaders httpHeaders = new HttpHeaders();
+    private final JsonReader jsonReader = new JsonReader();
+    private final HttpHeaders httpHeaders = new HttpHeaders();
     private PsuIdData psuIdData;
     private Collection<CmsAisAccountConsent> consents;
 
@@ -79,7 +73,7 @@ class CmsAspspAisExportControllerTest {
         CmsAisAccountConsent aisAccountConsent = jsonReader.getObjectFromFile("json/ais/ais-account-consent.json", CmsAisAccountConsent.class);
         consents = Collections.singletonList(aisAccountConsent);
 
-        httpHeaders.add("psu-id", PSU_ID);
+        httpHeaders.add("psu-id", "marion.mueller");
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("Start-Date", START_DATE.toString());
         httpHeaders.add("End-Date", END_DATE.toString());
@@ -93,43 +87,51 @@ class CmsAspspAisExportControllerTest {
 
     @Test
     void getConsentsByTpp_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+        String TPP_ID = "PSDDE-FAKENCA-87B2AC";
+        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                          null))
             .thenReturn(new PageData<>(consents, 0, 20, consents.size()));
 
-        mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_TPP)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
+        mockMvc.perform(get("/aspsp-api/v1/ais/consents/tpp/PSDDE-FAKENCA-87B2AC")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, 0, 20);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, 0, 20,
+                                                                       null);
     }
 
     @Test
     void getConsentsByPsu_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+        when(cmsAspspAisExportService.exportConsentsByPsuAndAdditionalTppInfo(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                                              null))
             .thenReturn(new PageData<>(consents, 0, 20, 1));
 
-        mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_PSU)
+        mockMvc.perform(get("/aspsp-api/v1/ais/consents/psu/")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsu(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByPsuAndAdditionalTppInfo(psuIdData, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                                                           null);
     }
 
     @Test
     void getConsentsByAccount_Success() throws Exception {
-        when(cmsAspspAisExportService.exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE))
+        String accountId = "account_id";
+        when(cmsAspspAisExportService.exportConsentsByAccountIdAndAdditionalTppInfo(accountId, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                                                    null))
             .thenReturn(new PageData<>(consents, 0, 20, consents.size()));
 
-        mockMvc.perform(get(EXPORT_AIS_CONSENT_BY_ACCOUNT)
+        mockMvc.perform(get("/aspsp-api/v1/ais/consents/account/account_id")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .headers(httpHeaders))
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountId(ACCOUNT_ID, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByAccountIdAndAdditionalTppInfo(accountId, START_DATE, END_DATE, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                                                                 null);
     }
 }

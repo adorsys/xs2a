@@ -144,4 +144,5 @@
     <include relativeToChangelogFile="true" file="migration/0116-changed-owner-name-type-for-piis-consent.xml"/>
     <include relativeToChangelogFile="true" file="migration/0117-removed-authorisation-type-column-from-authorisation-table.xml"/>
     <include relativeToChangelogFile="true" file="migration/0118-added-internal-payment-status.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0119-add-additional-info-to-consent-tpp-information.xml"/>
 </databaseChangeLog>

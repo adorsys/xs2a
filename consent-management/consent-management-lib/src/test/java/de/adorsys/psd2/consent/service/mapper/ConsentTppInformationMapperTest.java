@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.mapper;
 
+import de.adorsys.psd2.consent.api.ais.AdditionalTppInfo;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentTppInformationEntity;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
@@ -33,14 +34,15 @@ import java.util.Arrays;
 
 import static de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode.PROCESS;
 import static de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode.SCA;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ConsentTppInformationMapperImpl.class, TppInfoMapperImpl.class})
 class ConsentTppInformationMapperTest {
     private static final String TPP_NOTIFICATION_URI = "htp://tpp/notification/uri";
     private static final String TPP_AUTHORISATION_NUMBER = "TPP_AUTHORISATION_NUMBER";
-    private static final String TPP_AUTHORITY_ID = "TPP_AUTHORITY_ID";;
+    private static final String TPP_AUTHORITY_ID = "TPP_AUTHORITY_ID";
+    ;
     private JsonReader jsonReader;
 
     @Autowired
@@ -61,7 +63,7 @@ class ConsentTppInformationMapperTest {
         ConsentTppInformation actual = consentTppInformationMapper.mapToConsentTppInformation(consentTppInformationEntity);
 
         // Then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -81,7 +83,7 @@ class ConsentTppInformationMapperTest {
         ConsentTppInformation actual = consentTppInformationMapper.mapToConsentTppInformation(consentTppInformationEntity);
 
         // Then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -94,7 +96,7 @@ class ConsentTppInformationMapperTest {
         ConsentTppInformationEntity actual = consentTppInformationMapper.mapToConsentTppInformationEntity(consentTppInformation);
 
         // Then
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     private ConsentTppInformationEntity buildConsentTppInformationEntity() {
@@ -104,6 +106,7 @@ class ConsentTppInformationMapperTest {
         consentTppInformationEntity.setTppFrequencyPerDay(7);
         consentTppInformationEntity.setTppNotificationUri(TPP_NOTIFICATION_URI);
         consentTppInformationEntity.setTppNotificationContentPreferred(Arrays.asList(SCA, PROCESS));
+        consentTppInformationEntity.setAdditionalInfo(AdditionalTppInfo.NONE);
         return consentTppInformationEntity;
     }
 

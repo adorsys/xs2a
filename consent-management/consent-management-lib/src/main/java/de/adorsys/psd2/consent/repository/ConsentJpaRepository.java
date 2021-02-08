@@ -92,4 +92,30 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
         @Param("instanceId") String instanceId,
         Pageable pageable
     );
+
+    @Query(
+        value = "select * from {h-schema}consent c " +
+                    "join " +
+                    "(select consent_id cid, aspsp_account_id from {h-schema}aspsp_account_access group by consent_id, aspsp_account_id) a " +
+                    "on a.cid = c.consent_id " +
+                    "join " +
+                    "(select consent_tpp_information_id tid, additional_info from {h-schema}consent_tpp_information) t " +
+                    "on t.tid = c.consent_tpp_information_id " +
+                    "where c.consent_type in :consentType " +
+                    "and a.aspsp_account_id = :aspspAccountId " +
+                    "and c.creation_timestamp between :createDateFrom and :createDateTo " +
+                    "and c.instance_id = :instanceId " +
+                    "and t.additional_info = :additionalTppInfo"
+        ,
+        nativeQuery = true
+    )
+    Page<ConsentEntity> findAllWithPaginationAndTppInfo(
+        @Param("consentType") Set<String> consentType,
+        @Param("aspspAccountId") String aspspAccountId,
+        @Param("createDateFrom") OffsetDateTime createDateFrom,
+        @Param("createDateTo") OffsetDateTime createDateTo,
+        @Param("instanceId") String instanceId,
+        Pageable pageable,
+        @Param("additionalTppInfo") String additionalTppInfo
+    );
 }

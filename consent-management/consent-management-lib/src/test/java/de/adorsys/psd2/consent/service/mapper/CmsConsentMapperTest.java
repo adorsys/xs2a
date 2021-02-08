@@ -40,7 +40,7 @@ class CmsConsentMapperTest {
     @Autowired
     private CmsConsentMapper cmsConsentMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToCmsConsent() {

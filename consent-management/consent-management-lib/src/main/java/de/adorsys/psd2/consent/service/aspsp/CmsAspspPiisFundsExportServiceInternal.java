@@ -68,7 +68,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
         return mapToPageData(consentJpaRepository.findAll(
-            piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId),
+            piisConsentEntitySpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, actualInstanceId, null),
             pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
@@ -84,7 +84,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
         return mapToPageData(consentJpaRepository.findAll(
-            piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, createDateFrom, createDateTo, actualInstanceId),
+            piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, createDateFrom, createDateTo, actualInstanceId, null),
             pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
@@ -102,7 +102,7 @@ public class CmsAspspPiisFundsExportServiceInternal implements CmsAspspPiisFunds
 
         String actualInstanceId = StringUtils.defaultIfEmpty(instanceId, DEFAULT_SERVICE_INSTANCE_ID);
         return mapToPageData(consentJpaRepository.findAll(
-            piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(aspspAccountId, createDateFrom, createDateTo, actualInstanceId),
+            piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(aspspAccountId, createDateFrom, createDateTo, actualInstanceId, null),
             pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
