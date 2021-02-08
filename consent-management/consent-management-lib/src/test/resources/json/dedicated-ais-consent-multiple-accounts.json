@@ -1,0 +1,1879 @@
+{
+  "consentData": {
+    "combinedServiceIndicator": false
+  },
+  "tppAccountAccesses": {
+    "accounts": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "resourceId": "11111-999999999",
+        "iban": "DE80760700240271232400",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "aspspAccountAccesses": {
+    "accounts": [
+      {
+        "aspspAccountId": "DE88284064828793518251",
+        "resourceId": "FoPqYFhWNvBBHx8YI3Hx5NoXZBYUKOJ0HnpsQnt5",
+        "iban": "DE88284064828793518251",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86522107850087307186",
+        "resourceId": "9LHjpewL1HUnP1tEHLIt95KlA8B5BP1rJYbyQluH",
+        "iban": "DE86522107850087307186",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE71636674354034030212",
+        "resourceId": "If9LJgjUnNzeQbQePg7JtG3HSqEdUItu0Hw4CsZp",
+        "iban": "DE71636674354034030212",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE26767759226690336908",
+        "resourceId": "LN7WUDje89kQsq0jVyHKYmEXTO04pKRNP9uF1KR0",
+        "iban": "DE26767759226690336908",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43661319343873876444",
+        "resourceId": "uECfGPZk9ESDOwDPv3gDA7ojssEtctavAwVzQpyw",
+        "iban": "DE43661319343873876444",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22470921826771327323",
+        "resourceId": "JDu2hFFSiGBfYJjM3w6Za3H9wffTVQux1KY4dKc9",
+        "iban": "DE22470921826771327323",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22504350045187924246",
+        "resourceId": "vErncTUoS9blpN7neXM3ISTQT4H4ZKWbLn9KG51l",
+        "iban": "DE22504350045187924246",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE70358414143908531445",
+        "resourceId": "hsJF0GZUU160TWtvpNBuhyFq1ISzQaFBacfWii4j",
+        "iban": "DE70358414143908531445",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE91136426040302792615",
+        "resourceId": "QOhrBAxvTiv9ZhfNXYzfheI1PHaxMXYiMisi2vIW",
+        "iban": "DE91136426040302792615",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE02231424174738666585",
+        "resourceId": "Hqja2sYT445ZRD7SRy6zrY8e9dfXaLdJAFOxXeco",
+        "iban": "DE02231424174738666585",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE20067007886539554943",
+        "resourceId": "rehUy7Qr9JyXmrt3z4sCbbtEE146syG3QXQIqeuG",
+        "iban": "DE20067007886539554943",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE74794857077279524028",
+        "resourceId": "ggbO2k3GyFQYs9hSbY1VWgwfKVOfd5QnDFRE3g1i",
+        "iban": "DE74794857077279524028",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE72398606116859562546",
+        "resourceId": "p7B2McSeIUGQw1c526fvzR7QwDZf88OPTX0ozsCW",
+        "iban": "DE72398606116859562546",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE35549479058133551555",
+        "resourceId": "FgnjW0eZJ1ILx0LcbnImWpc8Vkcn0FD51OF7G8PO",
+        "iban": "DE35549479058133551555",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE16844023040662127092",
+        "resourceId": "UEs6yffTbmB0o5qg5UNbvYLItXAkTLW6Sh7k91ZY",
+        "iban": "DE16844023040662127092",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE23192261675449237185",
+        "resourceId": "rMryBrV5lng2giY8PJMjIItpfL2Yzo8gIh7gZCUb",
+        "iban": "DE23192261675449237185",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE73852001136718284177",
+        "resourceId": "JFn1QGWyit4M6kNByaP8KSK1krnlo09J9HFukGbG",
+        "iban": "DE73852001136718284177",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77199096368102783197",
+        "resourceId": "PVH5CvXMWjYBKWm5aZqyDD6DXdGf8mYtO7Thb9Gy",
+        "iban": "DE77199096368102783197",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE53248665257320321510",
+        "resourceId": "T9zllwsVB9DsNNSfqZD8e6qFETa8V6CcJ3idjnCT",
+        "iban": "DE53248665257320321510",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE92471828370249477784",
+        "resourceId": "6J06B3LPxlMTjgmh9Tkhkj4l5SRHFXhlTPgcsYk8",
+        "iban": "DE92471828370249477784",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47040989621547443003",
+        "resourceId": "FJjDNchOdXOhHZp4m1wEl3Vj08rPSr4N81t5qeh1",
+        "iban": "DE47040989621547443003",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE26445530506860299477",
+        "resourceId": "uoMP73quufpG3F2I7vo4AU88PdKESRq0DmE2TM37",
+        "iban": "DE26445530506860299477",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE38402104997054318133",
+        "resourceId": "ojNxPYDj8wR0Zi2mxaJ8QE5k5JV6T7nZiACJIRsb",
+        "iban": "DE38402104997054318133",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE27274594570214436537",
+        "resourceId": "PaklImxcIStMsuudnVgoJYjc3BMT9ojnFfKXGfwh",
+        "iban": "DE27274594570214436537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE07739325175527441286",
+        "resourceId": "cLT8JWyPKrIxUF6wpxCzgWdoNP2mJ9BOt1UjsyT4",
+        "iban": "DE07739325175527441286",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE14805948062830137426",
+        "resourceId": "Emrrcm4hFcMkYHOVpnRL7oov7FxmvaIRI3agsS2M",
+        "iban": "DE14805948062830137426",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE06296312245067172887",
+        "resourceId": "EYe1t2syIpfFHL2qU5J9FR19DIrGQX1s1d1RgNiw",
+        "iban": "DE06296312245067172887",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE73090084243115035578",
+        "resourceId": "5uTsCdUEAdtzRD2wxXIJAml7A2XZRcJwih35hu0j",
+        "iban": "DE73090084243115035578",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43667998941158631528",
+        "resourceId": "rZfPY3YgmDJ9kEcySwNll9NdGHjPhcOWvopO4IPO",
+        "iban": "DE43667998941158631528",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE78860204807850926248",
+        "resourceId": "aIdZm06WsUnCkLycsTR7FE9tUQYxmQ0EIAou7udu",
+        "iban": "DE78860204807850926248",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE18678331131216381518",
+        "resourceId": "UBVAMCIM0AtNcesOoaiF9s7oN3bWJAm4xGbB553Y",
+        "iban": "DE18678331131216381518",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE64343846471729724537",
+        "resourceId": "orxCDbMJHb7eufG0TH1XE5kKq8Mw8Wt34h4XWj4L",
+        "iban": "DE64343846471729724537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE29931030964777672143",
+        "resourceId": "RvFuE62MiAgGWe705LdoxfEuFo8RpjeViAQxNdlR",
+        "iban": "DE29931030964777672143",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47490913613103231032",
+        "resourceId": "JNmE6FRAzRhvemYuk9RkbRKWbwlmAHv9XtrNf7yc",
+        "iban": "DE47490913613103231032",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77820734711030412748",
+        "resourceId": "zw8yHo7aX3W6UNdsP5t9RcTcmrMziA9jKk1oza4g",
+        "iban": "DE77820734711030412748",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86519609957707643143",
+        "resourceId": "Plynqasi18eV3kS4A8fEeugoGg0eOUpsi4XTzxPT",
+        "iban": "DE86519609957707643143",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE12085936833870050330",
+        "resourceId": "yvYsMyxGPOr73d9EbVGugvOv3wOxX1l5EGgv5ie3",
+        "iban": "DE12085936833870050330",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE34797710074416873503",
+        "resourceId": "CLpk7UAnZmdTEjIre5RtrouR5U9EEYA6K3ZgWx3D",
+        "iban": "DE34797710074416873503",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE37996679691074218060",
+        "resourceId": "3Xa6CRBlzPfCqFIVdtWzxF6iyG5l11AFaXaOD8aK",
+        "iban": "DE37996679691074218060",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE50453811191877383982",
+        "resourceId": "tKstHUfokJB8CQsP8l0UztAwSSdGKLV5J4I79Leq",
+        "iban": "DE50453811191877383982",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE50437002717903931522",
+        "resourceId": "spaRc7tA4uX5s6hNoAW53k8uFv0qgmeAXGrbjVTz",
+        "iban": "DE50437002717903931522",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE52029509212953308242",
+        "resourceId": "0DnoG9xnY4uqsxL5tuIjYtmXzPkJoDILHXMT2jqd",
+        "iban": "DE52029509212953308242",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE95000629706994477377",
+        "resourceId": "olBnFadwGEekozgnG5uk694TVyobl2DqbLA8jmxT",
+        "iban": "DE95000629706994477377",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE12210915926123259158",
+        "resourceId": "3IeZdi7U8Z0XAOE5pRzdRYgVFPBFCGILpbYp02OX",
+        "iban": "DE12210915926123259158",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE52933940204096064318",
+        "resourceId": "wxvfTDxU275s7g1N6cUm91HcBHimlKOrS1xXFZm1",
+        "iban": "DE52933940204096064318",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE24155702727652242537",
+        "resourceId": "OvEER7qb9OB5z6D79QpbpRdiN7gYCw1bARMALDuS",
+        "iban": "DE24155702727652242537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE99735797765166678434",
+        "resourceId": "ZYIGKIzWnVme31UykQ2Yz0884kbtoxN1FZXDdjTu",
+        "iban": "DE99735797765166678434",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE84921714716767392411",
+        "resourceId": "U7sjwwn5YGAxaR0l0vdhw1v7MYk6UGSlPL94vFzF",
+        "iban": "DE84921714716767392411",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE28531809527710198424",
+        "resourceId": "3iTBCdzSKVgPj329iGAkRRuQNf6N19t5iRMgYGgP",
+        "iban": "DE28531809527710198424",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE82488973361885903947",
+        "resourceId": "JM1ACMKgdmZxSZyG0L7bbCUNYCN4cF3E5EErkbLE",
+        "iban": "DE82488973361885903947",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE21870119022666902886",
+        "resourceId": "WEDvZKlQZ1U3eiT2bMJxZCmALJdqPJN3mdYVsM1k",
+        "iban": "DE21870119022666902886",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE19411409889925425207",
+        "resourceId": "xCtCWGx5tyP8VbRE5dhOq22l3vjQfKgz04LuYNUd",
+        "iban": "DE19411409889925425207",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE19004852755821349621",
+        "resourceId": "umZilqZZWOK79dInZ5md9LGnWfH0aj9EzNT7eTGz",
+        "iban": "DE19004852755821349621",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE61099865320833380364",
+        "resourceId": "30znYvMXaPs2yq9QyfwTZngyF2VQMaeAbeG1ZuFd",
+        "iban": "DE61099865320833380364",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE91135906071840412990",
+        "resourceId": "NAmG6EsXe8LaAJaV7pVcaqAL1X13Z14SacVO8sT7",
+        "iban": "DE91135906071840412990",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE02982610480958662666",
+        "resourceId": "SOieX7Kz0fM24WO9s6wSZDV7dPNuwD2F4aGfiNRY",
+        "iban": "DE02982610480958662666",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE30378056318787862049",
+        "resourceId": "kiNhmnRf5OEndL6TTKEKkPsn3sBIkq1lSGtE9bxW",
+        "iban": "DE30378056318787862049",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE38546675694867321375",
+        "resourceId": "MpOlumk42ePr0kUjQhAq3ptb8OQ4LMkbpsm0O1LX",
+        "iban": "DE38546675694867321375",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE56629794104834895612",
+        "resourceId": "3xrwaLSZGK8TgQTJc4L1NMrvbpWTgK435S2YFmnu",
+        "iban": "DE56629794104834895612",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE76816387997706980413",
+        "resourceId": "jux8wd23KTr2HSoLwcd9gYWCaVua0qP23CFipYBy",
+        "iban": "DE76816387997706980413",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE00816631250009237442",
+        "resourceId": "J3tiD3WvHPbWzBLjnjSh7ezMM9dbBPQsKYYTBw3Q",
+        "iban": "DE00816631250009237442",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE94931133749706380091",
+        "resourceId": "5KHW926xO6XALioL0pVhC6BCbwRHzo6OTZQea3h5",
+        "iban": "DE94931133749706380091",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE67723335827369947180",
+        "resourceId": "jzoaqF0SAopE6w7vTP5m0GIDlBwdbZ6otlr7ZhG2",
+        "iban": "DE67723335827369947180",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE11511415939710627564",
+        "resourceId": "cVAkvAJv8d3vQvEQbOY7i59Ppywmq2FHQWLSBa4Y",
+        "iban": "DE11511415939710627564",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE25395130259819243345",
+        "resourceId": "nQDnk5eqqeyoxqJvH3vrRfhefNbwNjwavfqhV3HI",
+        "iban": "DE25395130259819243345",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE46306373580475174877",
+        "resourceId": "teFQVeMcHezMI5SWiwQaI67R91yWyFFa5Iff7pI1",
+        "iban": "DE46306373580475174877",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE79663973331593429798",
+        "resourceId": "5JP5qMSTzw8WMsl4G05WdYPBLtGFlcUddlPnuPxk",
+        "iban": "DE79663973331593429798",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE82619703213811752056",
+        "resourceId": "QKYQMjI2HE0pEf9sFe7rcYmZMIHXYVqSF0oyJz2A",
+        "iban": "DE82619703213811752056",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE72223971695739022309",
+        "resourceId": "B3k2mOlf90cB4pwNZOtCMiT98Wwkc5kxhoUem8bu",
+        "iban": "DE72223971695739022309",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22994371752614702295",
+        "resourceId": "vbQFZMzPhpXA0dvTYqiF0jrWphDZ6AkhBBsyuWDd",
+        "iban": "DE22994371752614702295",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77899776815152943399",
+        "resourceId": "0liZ6iMIiESoQmwRiEPkxXiyYAT6ENoiWQ2Nfa2R",
+        "iban": "DE77899776815152943399",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86239785261946379752",
+        "resourceId": "Fn6Fas4aws2oGVZmabTiUbK0x3n5r9FcMTpSlpZe",
+        "iban": "DE86239785261946379752",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47566500378981711135",
+        "resourceId": "dqBqE0AXaKvib5V4rFwhSMDSXPhZHtY7GzgMHJtm",
+        "iban": "DE47566500378981711135",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE03981058210425462842",
+        "resourceId": "wip722v69lNb7Gsj9BPaZXT5c6p420yzStREcSCB",
+        "iban": "DE03981058210425462842",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE62179543027596542394",
+        "resourceId": "oFUOjuAJUj4cEwjvV1GkXSrWhTZlbnu1oSYwLQ2Y",
+        "iban": "DE62179543027596542394",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE92198847923069291189",
+        "resourceId": "MMB7ncJeBjqAlE0SUb1luw6DKUerGmLQiQ0xLyQC",
+        "iban": "DE92198847923069291189",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE95618158847952045823",
+        "resourceId": "nTxfh0RcOfRlTln2sZv6EIjqZKBfABtj3z0mhnvI",
+        "iban": "DE95618158847952045823",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE42688386312768306709",
+        "resourceId": "MvsYc4VeGdtuVa7aVm8AW4SuAXxyCHs5ElWZLldL",
+        "iban": "DE42688386312768306709",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43865111315562776939",
+        "resourceId": "SwQdeHP4nZxikoSuxBINx2uu1OV3AYP9zww1yxs9",
+        "iban": "DE43865111315562776939",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE98429562867215196779",
+        "resourceId": "Qvrrlk8yV5qcOBWGb9kV9MTAXwlY3YKf5tYDDGrM",
+        "iban": "DE98429562867215196779",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE13439005533748955049",
+        "resourceId": "ozsMx7jtduRjATPcKk5kZqpZzwEWLLrBDwxcEazT",
+        "iban": "DE13439005533748955049",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE09172747229864395813",
+        "resourceId": "MOPjaUMf38tfspacQ3mHyyxZIhiGoA2SxWUiYjZ2",
+        "iban": "DE09172747229864395813",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE56333397557425346815",
+        "resourceId": "sSJ5Qo2oQK2ttQ7YT0baZVEKCfxaBGGg5HtgMzGc",
+        "iban": "DE56333397557425346815",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE94517369847035233017",
+        "resourceId": "Qqo5bfWtDXd8I8VmquRDqD1gx8zIRnoGI8ue6NxV",
+        "iban": "DE94517369847035233017",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE90100856439625693401",
+        "resourceId": "LJwej4SiwUAJG5mNCmQJ4vwjm3G2BvbxZg1opmn3",
+        "iban": "DE90100856439625693401",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE16877680927865741371",
+        "resourceId": "twf5faasIgfVAGYTOXZ7NoHmuHTa9IoSIDWgFGS7",
+        "iban": "DE16877680927865741371",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE55948383803263724745",
+        "resourceId": "GD7EhGGfDDWhpVvEmg4BVRlDZmY8Iwg3kHs70qSM",
+        "iban": "DE55948383803263724745",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE05049071552650680847",
+        "resourceId": "Gem7TaVC7u2HDUferdDp9WMAAmqD5XG41dNN2Wju",
+        "iban": "DE05049071552650680847",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE34568659869566140722",
+        "resourceId": "W5KvB8g8JtbVbJilLuBGnqWsR3ZXnlna1C6vTDgx",
+        "iban": "DE34568659869566140722",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE40092751938593799073",
+        "resourceId": "1MW4GKkWUirw2HEDDk0cHWlyxUDlEJSbj4TZbUOv",
+        "iban": "DE40092751938593799073",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE62649893137087717285",
+        "resourceId": "t6sukS5T9nZ7aYQdulqvjaqInGDGRtLojf8x5XoO",
+        "iban": "DE62649893137087717285",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE41428629601577072595",
+        "resourceId": "rLboGPoIJuvXnSaXDtDjZQOqaQS9mSYFmgml8Rmi",
+        "iban": "DE41428629601577072595",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE99949270349601580325",
+        "resourceId": "r2iCEOMNqtfTXN9EHp643lOyi5fDjrxfvYw3ZBmc",
+        "iban": "DE99949270349601580325",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77653478041020236453",
+        "resourceId": "EOcm1hK6Ss5mRpCwOsm2MYpcSFaCn3nUtUDInOaD",
+        "iban": "DE77653478041020236453",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE27528125344656441909",
+        "resourceId": "sOMqA6VkFnOg7fhscjKpLEWX28TZiQ8BCkP2wbn7",
+        "iban": "DE27528125344656441909",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47056337059008299708",
+        "resourceId": "3WWClgAji7vJjQJY8dUpnR2iBo0VfHyzoDaabovO",
+        "iban": "DE47056337059008299708",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE40750155459458279740",
+        "resourceId": "taXaxUoAn5N0pf7cREQ5MYOfxsIuimnWokYgKfbv",
+        "iban": "DE40750155459458279740",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE11487346937849715067",
+        "resourceId": "dPlJXZJrh350o5jPXs2hgx5ajzRId9SeKOJo9noK",
+        "iban": "DE11487346937849715067",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE39628693959420467682",
+        "resourceId": "C4F7RqTohrXXek7d8olSY45vDbr5nkDPcOnLdoHz",
+        "iban": "DE39628693959420467682",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE21142800214496665936",
+        "resourceId": "CQV81lupG4B6QsnG5aZrU0Prbdr7nAe03DByy6BJ",
+        "iban": "DE21142800214496665936",
+        "currency": "EUR"
+      }
+    ],
+    "balances": [
+      {
+        "aspspAccountId": "DE88284064828793518251",
+        "resourceId": "FoPqYFhWNvBBHx8YI3Hx5NoXZBYUKOJ0HnpsQnt5",
+        "iban": "DE88284064828793518251",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86522107850087307186",
+        "resourceId": "9LHjpewL1HUnP1tEHLIt95KlA8B5BP1rJYbyQluH",
+        "iban": "DE86522107850087307186",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE71636674354034030212",
+        "resourceId": "If9LJgjUnNzeQbQePg7JtG3HSqEdUItu0Hw4CsZp",
+        "iban": "DE71636674354034030212",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE26767759226690336908",
+        "resourceId": "LN7WUDje89kQsq0jVyHKYmEXTO04pKRNP9uF1KR0",
+        "iban": "DE26767759226690336908",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43661319343873876444",
+        "resourceId": "uECfGPZk9ESDOwDPv3gDA7ojssEtctavAwVzQpyw",
+        "iban": "DE43661319343873876444",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22470921826771327323",
+        "resourceId": "JDu2hFFSiGBfYJjM3w6Za3H9wffTVQux1KY4dKc9",
+        "iban": "DE22470921826771327323",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22504350045187924246",
+        "resourceId": "vErncTUoS9blpN7neXM3ISTQT4H4ZKWbLn9KG51l",
+        "iban": "DE22504350045187924246",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE70358414143908531445",
+        "resourceId": "hsJF0GZUU160TWtvpNBuhyFq1ISzQaFBacfWii4j",
+        "iban": "DE70358414143908531445",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE91136426040302792615",
+        "resourceId": "QOhrBAxvTiv9ZhfNXYzfheI1PHaxMXYiMisi2vIW",
+        "iban": "DE91136426040302792615",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE02231424174738666585",
+        "resourceId": "Hqja2sYT445ZRD7SRy6zrY8e9dfXaLdJAFOxXeco",
+        "iban": "DE02231424174738666585",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE20067007886539554943",
+        "resourceId": "rehUy7Qr9JyXmrt3z4sCbbtEE146syG3QXQIqeuG",
+        "iban": "DE20067007886539554943",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE74794857077279524028",
+        "resourceId": "ggbO2k3GyFQYs9hSbY1VWgwfKVOfd5QnDFRE3g1i",
+        "iban": "DE74794857077279524028",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE72398606116859562546",
+        "resourceId": "p7B2McSeIUGQw1c526fvzR7QwDZf88OPTX0ozsCW",
+        "iban": "DE72398606116859562546",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE35549479058133551555",
+        "resourceId": "FgnjW0eZJ1ILx0LcbnImWpc8Vkcn0FD51OF7G8PO",
+        "iban": "DE35549479058133551555",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE16844023040662127092",
+        "resourceId": "UEs6yffTbmB0o5qg5UNbvYLItXAkTLW6Sh7k91ZY",
+        "iban": "DE16844023040662127092",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE23192261675449237185",
+        "resourceId": "rMryBrV5lng2giY8PJMjIItpfL2Yzo8gIh7gZCUb",
+        "iban": "DE23192261675449237185",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE73852001136718284177",
+        "resourceId": "JFn1QGWyit4M6kNByaP8KSK1krnlo09J9HFukGbG",
+        "iban": "DE73852001136718284177",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77199096368102783197",
+        "resourceId": "PVH5CvXMWjYBKWm5aZqyDD6DXdGf8mYtO7Thb9Gy",
+        "iban": "DE77199096368102783197",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE53248665257320321510",
+        "resourceId": "T9zllwsVB9DsNNSfqZD8e6qFETa8V6CcJ3idjnCT",
+        "iban": "DE53248665257320321510",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE92471828370249477784",
+        "resourceId": "6J06B3LPxlMTjgmh9Tkhkj4l5SRHFXhlTPgcsYk8",
+        "iban": "DE92471828370249477784",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47040989621547443003",
+        "resourceId": "FJjDNchOdXOhHZp4m1wEl3Vj08rPSr4N81t5qeh1",
+        "iban": "DE47040989621547443003",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE26445530506860299477",
+        "resourceId": "uoMP73quufpG3F2I7vo4AU88PdKESRq0DmE2TM37",
+        "iban": "DE26445530506860299477",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE38402104997054318133",
+        "resourceId": "ojNxPYDj8wR0Zi2mxaJ8QE5k5JV6T7nZiACJIRsb",
+        "iban": "DE38402104997054318133",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE27274594570214436537",
+        "resourceId": "PaklImxcIStMsuudnVgoJYjc3BMT9ojnFfKXGfwh",
+        "iban": "DE27274594570214436537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE07739325175527441286",
+        "resourceId": "cLT8JWyPKrIxUF6wpxCzgWdoNP2mJ9BOt1UjsyT4",
+        "iban": "DE07739325175527441286",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE14805948062830137426",
+        "resourceId": "Emrrcm4hFcMkYHOVpnRL7oov7FxmvaIRI3agsS2M",
+        "iban": "DE14805948062830137426",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE06296312245067172887",
+        "resourceId": "EYe1t2syIpfFHL2qU5J9FR19DIrGQX1s1d1RgNiw",
+        "iban": "DE06296312245067172887",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE73090084243115035578",
+        "resourceId": "5uTsCdUEAdtzRD2wxXIJAml7A2XZRcJwih35hu0j",
+        "iban": "DE73090084243115035578",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43667998941158631528",
+        "resourceId": "rZfPY3YgmDJ9kEcySwNll9NdGHjPhcOWvopO4IPO",
+        "iban": "DE43667998941158631528",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE78860204807850926248",
+        "resourceId": "aIdZm06WsUnCkLycsTR7FE9tUQYxmQ0EIAou7udu",
+        "iban": "DE78860204807850926248",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE18678331131216381518",
+        "resourceId": "UBVAMCIM0AtNcesOoaiF9s7oN3bWJAm4xGbB553Y",
+        "iban": "DE18678331131216381518",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE64343846471729724537",
+        "resourceId": "orxCDbMJHb7eufG0TH1XE5kKq8Mw8Wt34h4XWj4L",
+        "iban": "DE64343846471729724537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE29931030964777672143",
+        "resourceId": "RvFuE62MiAgGWe705LdoxfEuFo8RpjeViAQxNdlR",
+        "iban": "DE29931030964777672143",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47490913613103231032",
+        "resourceId": "JNmE6FRAzRhvemYuk9RkbRKWbwlmAHv9XtrNf7yc",
+        "iban": "DE47490913613103231032",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77820734711030412748",
+        "resourceId": "zw8yHo7aX3W6UNdsP5t9RcTcmrMziA9jKk1oza4g",
+        "iban": "DE77820734711030412748",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86519609957707643143",
+        "resourceId": "Plynqasi18eV3kS4A8fEeugoGg0eOUpsi4XTzxPT",
+        "iban": "DE86519609957707643143",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE12085936833870050330",
+        "resourceId": "yvYsMyxGPOr73d9EbVGugvOv3wOxX1l5EGgv5ie3",
+        "iban": "DE12085936833870050330",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE34797710074416873503",
+        "resourceId": "CLpk7UAnZmdTEjIre5RtrouR5U9EEYA6K3ZgWx3D",
+        "iban": "DE34797710074416873503",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE37996679691074218060",
+        "resourceId": "3Xa6CRBlzPfCqFIVdtWzxF6iyG5l11AFaXaOD8aK",
+        "iban": "DE37996679691074218060",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE50453811191877383982",
+        "resourceId": "tKstHUfokJB8CQsP8l0UztAwSSdGKLV5J4I79Leq",
+        "iban": "DE50453811191877383982",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE50437002717903931522",
+        "resourceId": "spaRc7tA4uX5s6hNoAW53k8uFv0qgmeAXGrbjVTz",
+        "iban": "DE50437002717903931522",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE52029509212953308242",
+        "resourceId": "0DnoG9xnY4uqsxL5tuIjYtmXzPkJoDILHXMT2jqd",
+        "iban": "DE52029509212953308242",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE95000629706994477377",
+        "resourceId": "olBnFadwGEekozgnG5uk694TVyobl2DqbLA8jmxT",
+        "iban": "DE95000629706994477377",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE12210915926123259158",
+        "resourceId": "3IeZdi7U8Z0XAOE5pRzdRYgVFPBFCGILpbYp02OX",
+        "iban": "DE12210915926123259158",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE52933940204096064318",
+        "resourceId": "wxvfTDxU275s7g1N6cUm91HcBHimlKOrS1xXFZm1",
+        "iban": "DE52933940204096064318",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE24155702727652242537",
+        "resourceId": "OvEER7qb9OB5z6D79QpbpRdiN7gYCw1bARMALDuS",
+        "iban": "DE24155702727652242537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE99735797765166678434",
+        "resourceId": "ZYIGKIzWnVme31UykQ2Yz0884kbtoxN1FZXDdjTu",
+        "iban": "DE99735797765166678434",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE84921714716767392411",
+        "resourceId": "U7sjwwn5YGAxaR0l0vdhw1v7MYk6UGSlPL94vFzF",
+        "iban": "DE84921714716767392411",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE28531809527710198424",
+        "resourceId": "3iTBCdzSKVgPj329iGAkRRuQNf6N19t5iRMgYGgP",
+        "iban": "DE28531809527710198424",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE82488973361885903947",
+        "resourceId": "JM1ACMKgdmZxSZyG0L7bbCUNYCN4cF3E5EErkbLE",
+        "iban": "DE82488973361885903947",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE21870119022666902886",
+        "resourceId": "WEDvZKlQZ1U3eiT2bMJxZCmALJdqPJN3mdYVsM1k",
+        "iban": "DE21870119022666902886",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE19411409889925425207",
+        "resourceId": "xCtCWGx5tyP8VbRE5dhOq22l3vjQfKgz04LuYNUd",
+        "iban": "DE19411409889925425207",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE19004852755821349621",
+        "resourceId": "umZilqZZWOK79dInZ5md9LGnWfH0aj9EzNT7eTGz",
+        "iban": "DE19004852755821349621",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE61099865320833380364",
+        "resourceId": "30znYvMXaPs2yq9QyfwTZngyF2VQMaeAbeG1ZuFd",
+        "iban": "DE61099865320833380364",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE91135906071840412990",
+        "resourceId": "NAmG6EsXe8LaAJaV7pVcaqAL1X13Z14SacVO8sT7",
+        "iban": "DE91135906071840412990",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE02982610480958662666",
+        "resourceId": "SOieX7Kz0fM24WO9s6wSZDV7dPNuwD2F4aGfiNRY",
+        "iban": "DE02982610480958662666",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE30378056318787862049",
+        "resourceId": "kiNhmnRf5OEndL6TTKEKkPsn3sBIkq1lSGtE9bxW",
+        "iban": "DE30378056318787862049",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE38546675694867321375",
+        "resourceId": "MpOlumk42ePr0kUjQhAq3ptb8OQ4LMkbpsm0O1LX",
+        "iban": "DE38546675694867321375",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE56629794104834895612",
+        "resourceId": "3xrwaLSZGK8TgQTJc4L1NMrvbpWTgK435S2YFmnu",
+        "iban": "DE56629794104834895612",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE76816387997706980413",
+        "resourceId": "jux8wd23KTr2HSoLwcd9gYWCaVua0qP23CFipYBy",
+        "iban": "DE76816387997706980413",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE00816631250009237442",
+        "resourceId": "J3tiD3WvHPbWzBLjnjSh7ezMM9dbBPQsKYYTBw3Q",
+        "iban": "DE00816631250009237442",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE94931133749706380091",
+        "resourceId": "5KHW926xO6XALioL0pVhC6BCbwRHzo6OTZQea3h5",
+        "iban": "DE94931133749706380091",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE67723335827369947180",
+        "resourceId": "jzoaqF0SAopE6w7vTP5m0GIDlBwdbZ6otlr7ZhG2",
+        "iban": "DE67723335827369947180",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE11511415939710627564",
+        "resourceId": "cVAkvAJv8d3vQvEQbOY7i59Ppywmq2FHQWLSBa4Y",
+        "iban": "DE11511415939710627564",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE25395130259819243345",
+        "resourceId": "nQDnk5eqqeyoxqJvH3vrRfhefNbwNjwavfqhV3HI",
+        "iban": "DE25395130259819243345",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE46306373580475174877",
+        "resourceId": "teFQVeMcHezMI5SWiwQaI67R91yWyFFa5Iff7pI1",
+        "iban": "DE46306373580475174877",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE79663973331593429798",
+        "resourceId": "5JP5qMSTzw8WMsl4G05WdYPBLtGFlcUddlPnuPxk",
+        "iban": "DE79663973331593429798",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE82619703213811752056",
+        "resourceId": "QKYQMjI2HE0pEf9sFe7rcYmZMIHXYVqSF0oyJz2A",
+        "iban": "DE82619703213811752056",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE72223971695739022309",
+        "resourceId": "B3k2mOlf90cB4pwNZOtCMiT98Wwkc5kxhoUem8bu",
+        "iban": "DE72223971695739022309",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22994371752614702295",
+        "resourceId": "vbQFZMzPhpXA0dvTYqiF0jrWphDZ6AkhBBsyuWDd",
+        "iban": "DE22994371752614702295",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77899776815152943399",
+        "resourceId": "0liZ6iMIiESoQmwRiEPkxXiyYAT6ENoiWQ2Nfa2R",
+        "iban": "DE77899776815152943399",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86239785261946379752",
+        "resourceId": "Fn6Fas4aws2oGVZmabTiUbK0x3n5r9FcMTpSlpZe",
+        "iban": "DE86239785261946379752",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47566500378981711135",
+        "resourceId": "dqBqE0AXaKvib5V4rFwhSMDSXPhZHtY7GzgMHJtm",
+        "iban": "DE47566500378981711135",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE03981058210425462842",
+        "resourceId": "wip722v69lNb7Gsj9BPaZXT5c6p420yzStREcSCB",
+        "iban": "DE03981058210425462842",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE62179543027596542394",
+        "resourceId": "oFUOjuAJUj4cEwjvV1GkXSrWhTZlbnu1oSYwLQ2Y",
+        "iban": "DE62179543027596542394",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE92198847923069291189",
+        "resourceId": "MMB7ncJeBjqAlE0SUb1luw6DKUerGmLQiQ0xLyQC",
+        "iban": "DE92198847923069291189",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE95618158847952045823",
+        "resourceId": "nTxfh0RcOfRlTln2sZv6EIjqZKBfABtj3z0mhnvI",
+        "iban": "DE95618158847952045823",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE42688386312768306709",
+        "resourceId": "MvsYc4VeGdtuVa7aVm8AW4SuAXxyCHs5ElWZLldL",
+        "iban": "DE42688386312768306709",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43865111315562776939",
+        "resourceId": "SwQdeHP4nZxikoSuxBINx2uu1OV3AYP9zww1yxs9",
+        "iban": "DE43865111315562776939",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE98429562867215196779",
+        "resourceId": "Qvrrlk8yV5qcOBWGb9kV9MTAXwlY3YKf5tYDDGrM",
+        "iban": "DE98429562867215196779",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE13439005533748955049",
+        "resourceId": "ozsMx7jtduRjATPcKk5kZqpZzwEWLLrBDwxcEazT",
+        "iban": "DE13439005533748955049",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE09172747229864395813",
+        "resourceId": "MOPjaUMf38tfspacQ3mHyyxZIhiGoA2SxWUiYjZ2",
+        "iban": "DE09172747229864395813",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE56333397557425346815",
+        "resourceId": "sSJ5Qo2oQK2ttQ7YT0baZVEKCfxaBGGg5HtgMzGc",
+        "iban": "DE56333397557425346815",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE94517369847035233017",
+        "resourceId": "Qqo5bfWtDXd8I8VmquRDqD1gx8zIRnoGI8ue6NxV",
+        "iban": "DE94517369847035233017",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE90100856439625693401",
+        "resourceId": "LJwej4SiwUAJG5mNCmQJ4vwjm3G2BvbxZg1opmn3",
+        "iban": "DE90100856439625693401",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE16877680927865741371",
+        "resourceId": "twf5faasIgfVAGYTOXZ7NoHmuHTa9IoSIDWgFGS7",
+        "iban": "DE16877680927865741371",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE55948383803263724745",
+        "resourceId": "GD7EhGGfDDWhpVvEmg4BVRlDZmY8Iwg3kHs70qSM",
+        "iban": "DE55948383803263724745",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE05049071552650680847",
+        "resourceId": "Gem7TaVC7u2HDUferdDp9WMAAmqD5XG41dNN2Wju",
+        "iban": "DE05049071552650680847",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE34568659869566140722",
+        "resourceId": "W5KvB8g8JtbVbJilLuBGnqWsR3ZXnlna1C6vTDgx",
+        "iban": "DE34568659869566140722",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE40092751938593799073",
+        "resourceId": "1MW4GKkWUirw2HEDDk0cHWlyxUDlEJSbj4TZbUOv",
+        "iban": "DE40092751938593799073",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE62649893137087717285",
+        "resourceId": "t6sukS5T9nZ7aYQdulqvjaqInGDGRtLojf8x5XoO",
+        "iban": "DE62649893137087717285",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE41428629601577072595",
+        "resourceId": "rLboGPoIJuvXnSaXDtDjZQOqaQS9mSYFmgml8Rmi",
+        "iban": "DE41428629601577072595",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE99949270349601580325",
+        "resourceId": "r2iCEOMNqtfTXN9EHp643lOyi5fDjrxfvYw3ZBmc",
+        "iban": "DE99949270349601580325",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77653478041020236453",
+        "resourceId": "EOcm1hK6Ss5mRpCwOsm2MYpcSFaCn3nUtUDInOaD",
+        "iban": "DE77653478041020236453",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE27528125344656441909",
+        "resourceId": "sOMqA6VkFnOg7fhscjKpLEWX28TZiQ8BCkP2wbn7",
+        "iban": "DE27528125344656441909",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47056337059008299708",
+        "resourceId": "3WWClgAji7vJjQJY8dUpnR2iBo0VfHyzoDaabovO",
+        "iban": "DE47056337059008299708",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE40750155459458279740",
+        "resourceId": "taXaxUoAn5N0pf7cREQ5MYOfxsIuimnWokYgKfbv",
+        "iban": "DE40750155459458279740",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE11487346937849715067",
+        "resourceId": "dPlJXZJrh350o5jPXs2hgx5ajzRId9SeKOJo9noK",
+        "iban": "DE11487346937849715067",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE39628693959420467682",
+        "resourceId": "C4F7RqTohrXXek7d8olSY45vDbr5nkDPcOnLdoHz",
+        "iban": "DE39628693959420467682",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE21142800214496665936",
+        "resourceId": "CQV81lupG4B6QsnG5aZrU0Prbdr7nAe03DByy6BJ",
+        "iban": "DE21142800214496665936",
+        "currency": "EUR"
+      }
+    ],
+    "transactions": [
+      {
+        "aspspAccountId": "DE88284064828793518251",
+        "resourceId": "FoPqYFhWNvBBHx8YI3Hx5NoXZBYUKOJ0HnpsQnt5",
+        "iban": "DE88284064828793518251",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86522107850087307186",
+        "resourceId": "9LHjpewL1HUnP1tEHLIt95KlA8B5BP1rJYbyQluH",
+        "iban": "DE86522107850087307186",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE71636674354034030212",
+        "resourceId": "If9LJgjUnNzeQbQePg7JtG3HSqEdUItu0Hw4CsZp",
+        "iban": "DE71636674354034030212",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE26767759226690336908",
+        "resourceId": "LN7WUDje89kQsq0jVyHKYmEXTO04pKRNP9uF1KR0",
+        "iban": "DE26767759226690336908",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43661319343873876444",
+        "resourceId": "uECfGPZk9ESDOwDPv3gDA7ojssEtctavAwVzQpyw",
+        "iban": "DE43661319343873876444",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22470921826771327323",
+        "resourceId": "JDu2hFFSiGBfYJjM3w6Za3H9wffTVQux1KY4dKc9",
+        "iban": "DE22470921826771327323",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22504350045187924246",
+        "resourceId": "vErncTUoS9blpN7neXM3ISTQT4H4ZKWbLn9KG51l",
+        "iban": "DE22504350045187924246",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE70358414143908531445",
+        "resourceId": "hsJF0GZUU160TWtvpNBuhyFq1ISzQaFBacfWii4j",
+        "iban": "DE70358414143908531445",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE91136426040302792615",
+        "resourceId": "QOhrBAxvTiv9ZhfNXYzfheI1PHaxMXYiMisi2vIW",
+        "iban": "DE91136426040302792615",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE02231424174738666585",
+        "resourceId": "Hqja2sYT445ZRD7SRy6zrY8e9dfXaLdJAFOxXeco",
+        "iban": "DE02231424174738666585",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE20067007886539554943",
+        "resourceId": "rehUy7Qr9JyXmrt3z4sCbbtEE146syG3QXQIqeuG",
+        "iban": "DE20067007886539554943",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE74794857077279524028",
+        "resourceId": "ggbO2k3GyFQYs9hSbY1VWgwfKVOfd5QnDFRE3g1i",
+        "iban": "DE74794857077279524028",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE72398606116859562546",
+        "resourceId": "p7B2McSeIUGQw1c526fvzR7QwDZf88OPTX0ozsCW",
+        "iban": "DE72398606116859562546",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE35549479058133551555",
+        "resourceId": "FgnjW0eZJ1ILx0LcbnImWpc8Vkcn0FD51OF7G8PO",
+        "iban": "DE35549479058133551555",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE16844023040662127092",
+        "resourceId": "UEs6yffTbmB0o5qg5UNbvYLItXAkTLW6Sh7k91ZY",
+        "iban": "DE16844023040662127092",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE23192261675449237185",
+        "resourceId": "rMryBrV5lng2giY8PJMjIItpfL2Yzo8gIh7gZCUb",
+        "iban": "DE23192261675449237185",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE73852001136718284177",
+        "resourceId": "JFn1QGWyit4M6kNByaP8KSK1krnlo09J9HFukGbG",
+        "iban": "DE73852001136718284177",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77199096368102783197",
+        "resourceId": "PVH5CvXMWjYBKWm5aZqyDD6DXdGf8mYtO7Thb9Gy",
+        "iban": "DE77199096368102783197",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE53248665257320321510",
+        "resourceId": "T9zllwsVB9DsNNSfqZD8e6qFETa8V6CcJ3idjnCT",
+        "iban": "DE53248665257320321510",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE92471828370249477784",
+        "resourceId": "6J06B3LPxlMTjgmh9Tkhkj4l5SRHFXhlTPgcsYk8",
+        "iban": "DE92471828370249477784",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47040989621547443003",
+        "resourceId": "FJjDNchOdXOhHZp4m1wEl3Vj08rPSr4N81t5qeh1",
+        "iban": "DE47040989621547443003",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE26445530506860299477",
+        "resourceId": "uoMP73quufpG3F2I7vo4AU88PdKESRq0DmE2TM37",
+        "iban": "DE26445530506860299477",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE38402104997054318133",
+        "resourceId": "ojNxPYDj8wR0Zi2mxaJ8QE5k5JV6T7nZiACJIRsb",
+        "iban": "DE38402104997054318133",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE27274594570214436537",
+        "resourceId": "PaklImxcIStMsuudnVgoJYjc3BMT9ojnFfKXGfwh",
+        "iban": "DE27274594570214436537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE07739325175527441286",
+        "resourceId": "cLT8JWyPKrIxUF6wpxCzgWdoNP2mJ9BOt1UjsyT4",
+        "iban": "DE07739325175527441286",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE14805948062830137426",
+        "resourceId": "Emrrcm4hFcMkYHOVpnRL7oov7FxmvaIRI3agsS2M",
+        "iban": "DE14805948062830137426",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE06296312245067172887",
+        "resourceId": "EYe1t2syIpfFHL2qU5J9FR19DIrGQX1s1d1RgNiw",
+        "iban": "DE06296312245067172887",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE73090084243115035578",
+        "resourceId": "5uTsCdUEAdtzRD2wxXIJAml7A2XZRcJwih35hu0j",
+        "iban": "DE73090084243115035578",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43667998941158631528",
+        "resourceId": "rZfPY3YgmDJ9kEcySwNll9NdGHjPhcOWvopO4IPO",
+        "iban": "DE43667998941158631528",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE78860204807850926248",
+        "resourceId": "aIdZm06WsUnCkLycsTR7FE9tUQYxmQ0EIAou7udu",
+        "iban": "DE78860204807850926248",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE18678331131216381518",
+        "resourceId": "UBVAMCIM0AtNcesOoaiF9s7oN3bWJAm4xGbB553Y",
+        "iban": "DE18678331131216381518",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE64343846471729724537",
+        "resourceId": "orxCDbMJHb7eufG0TH1XE5kKq8Mw8Wt34h4XWj4L",
+        "iban": "DE64343846471729724537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE29931030964777672143",
+        "resourceId": "RvFuE62MiAgGWe705LdoxfEuFo8RpjeViAQxNdlR",
+        "iban": "DE29931030964777672143",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47490913613103231032",
+        "resourceId": "JNmE6FRAzRhvemYuk9RkbRKWbwlmAHv9XtrNf7yc",
+        "iban": "DE47490913613103231032",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77820734711030412748",
+        "resourceId": "zw8yHo7aX3W6UNdsP5t9RcTcmrMziA9jKk1oza4g",
+        "iban": "DE77820734711030412748",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86519609957707643143",
+        "resourceId": "Plynqasi18eV3kS4A8fEeugoGg0eOUpsi4XTzxPT",
+        "iban": "DE86519609957707643143",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE12085936833870050330",
+        "resourceId": "yvYsMyxGPOr73d9EbVGugvOv3wOxX1l5EGgv5ie3",
+        "iban": "DE12085936833870050330",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE34797710074416873503",
+        "resourceId": "CLpk7UAnZmdTEjIre5RtrouR5U9EEYA6K3ZgWx3D",
+        "iban": "DE34797710074416873503",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE37996679691074218060",
+        "resourceId": "3Xa6CRBlzPfCqFIVdtWzxF6iyG5l11AFaXaOD8aK",
+        "iban": "DE37996679691074218060",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE50453811191877383982",
+        "resourceId": "tKstHUfokJB8CQsP8l0UztAwSSdGKLV5J4I79Leq",
+        "iban": "DE50453811191877383982",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE50437002717903931522",
+        "resourceId": "spaRc7tA4uX5s6hNoAW53k8uFv0qgmeAXGrbjVTz",
+        "iban": "DE50437002717903931522",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE52029509212953308242",
+        "resourceId": "0DnoG9xnY4uqsxL5tuIjYtmXzPkJoDILHXMT2jqd",
+        "iban": "DE52029509212953308242",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE95000629706994477377",
+        "resourceId": "olBnFadwGEekozgnG5uk694TVyobl2DqbLA8jmxT",
+        "iban": "DE95000629706994477377",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE12210915926123259158",
+        "resourceId": "3IeZdi7U8Z0XAOE5pRzdRYgVFPBFCGILpbYp02OX",
+        "iban": "DE12210915926123259158",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE52933940204096064318",
+        "resourceId": "wxvfTDxU275s7g1N6cUm91HcBHimlKOrS1xXFZm1",
+        "iban": "DE52933940204096064318",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE24155702727652242537",
+        "resourceId": "OvEER7qb9OB5z6D79QpbpRdiN7gYCw1bARMALDuS",
+        "iban": "DE24155702727652242537",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE99735797765166678434",
+        "resourceId": "ZYIGKIzWnVme31UykQ2Yz0884kbtoxN1FZXDdjTu",
+        "iban": "DE99735797765166678434",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE84921714716767392411",
+        "resourceId": "U7sjwwn5YGAxaR0l0vdhw1v7MYk6UGSlPL94vFzF",
+        "iban": "DE84921714716767392411",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE28531809527710198424",
+        "resourceId": "3iTBCdzSKVgPj329iGAkRRuQNf6N19t5iRMgYGgP",
+        "iban": "DE28531809527710198424",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE82488973361885903947",
+        "resourceId": "JM1ACMKgdmZxSZyG0L7bbCUNYCN4cF3E5EErkbLE",
+        "iban": "DE82488973361885903947",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE21870119022666902886",
+        "resourceId": "WEDvZKlQZ1U3eiT2bMJxZCmALJdqPJN3mdYVsM1k",
+        "iban": "DE21870119022666902886",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE19411409889925425207",
+        "resourceId": "xCtCWGx5tyP8VbRE5dhOq22l3vjQfKgz04LuYNUd",
+        "iban": "DE19411409889925425207",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE19004852755821349621",
+        "resourceId": "umZilqZZWOK79dInZ5md9LGnWfH0aj9EzNT7eTGz",
+        "iban": "DE19004852755821349621",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE61099865320833380364",
+        "resourceId": "30znYvMXaPs2yq9QyfwTZngyF2VQMaeAbeG1ZuFd",
+        "iban": "DE61099865320833380364",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE91135906071840412990",
+        "resourceId": "NAmG6EsXe8LaAJaV7pVcaqAL1X13Z14SacVO8sT7",
+        "iban": "DE91135906071840412990",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE02982610480958662666",
+        "resourceId": "SOieX7Kz0fM24WO9s6wSZDV7dPNuwD2F4aGfiNRY",
+        "iban": "DE02982610480958662666",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE30378056318787862049",
+        "resourceId": "kiNhmnRf5OEndL6TTKEKkPsn3sBIkq1lSGtE9bxW",
+        "iban": "DE30378056318787862049",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE38546675694867321375",
+        "resourceId": "MpOlumk42ePr0kUjQhAq3ptb8OQ4LMkbpsm0O1LX",
+        "iban": "DE38546675694867321375",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE56629794104834895612",
+        "resourceId": "3xrwaLSZGK8TgQTJc4L1NMrvbpWTgK435S2YFmnu",
+        "iban": "DE56629794104834895612",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE76816387997706980413",
+        "resourceId": "jux8wd23KTr2HSoLwcd9gYWCaVua0qP23CFipYBy",
+        "iban": "DE76816387997706980413",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE00816631250009237442",
+        "resourceId": "J3tiD3WvHPbWzBLjnjSh7ezMM9dbBPQsKYYTBw3Q",
+        "iban": "DE00816631250009237442",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE94931133749706380091",
+        "resourceId": "5KHW926xO6XALioL0pVhC6BCbwRHzo6OTZQea3h5",
+        "iban": "DE94931133749706380091",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE67723335827369947180",
+        "resourceId": "jzoaqF0SAopE6w7vTP5m0GIDlBwdbZ6otlr7ZhG2",
+        "iban": "DE67723335827369947180",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE11511415939710627564",
+        "resourceId": "cVAkvAJv8d3vQvEQbOY7i59Ppywmq2FHQWLSBa4Y",
+        "iban": "DE11511415939710627564",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE25395130259819243345",
+        "resourceId": "nQDnk5eqqeyoxqJvH3vrRfhefNbwNjwavfqhV3HI",
+        "iban": "DE25395130259819243345",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE46306373580475174877",
+        "resourceId": "teFQVeMcHezMI5SWiwQaI67R91yWyFFa5Iff7pI1",
+        "iban": "DE46306373580475174877",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE79663973331593429798",
+        "resourceId": "5JP5qMSTzw8WMsl4G05WdYPBLtGFlcUddlPnuPxk",
+        "iban": "DE79663973331593429798",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE82619703213811752056",
+        "resourceId": "QKYQMjI2HE0pEf9sFe7rcYmZMIHXYVqSF0oyJz2A",
+        "iban": "DE82619703213811752056",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE72223971695739022309",
+        "resourceId": "B3k2mOlf90cB4pwNZOtCMiT98Wwkc5kxhoUem8bu",
+        "iban": "DE72223971695739022309",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE22994371752614702295",
+        "resourceId": "vbQFZMzPhpXA0dvTYqiF0jrWphDZ6AkhBBsyuWDd",
+        "iban": "DE22994371752614702295",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77899776815152943399",
+        "resourceId": "0liZ6iMIiESoQmwRiEPkxXiyYAT6ENoiWQ2Nfa2R",
+        "iban": "DE77899776815152943399",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE86239785261946379752",
+        "resourceId": "Fn6Fas4aws2oGVZmabTiUbK0x3n5r9FcMTpSlpZe",
+        "iban": "DE86239785261946379752",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47566500378981711135",
+        "resourceId": "dqBqE0AXaKvib5V4rFwhSMDSXPhZHtY7GzgMHJtm",
+        "iban": "DE47566500378981711135",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE03981058210425462842",
+        "resourceId": "wip722v69lNb7Gsj9BPaZXT5c6p420yzStREcSCB",
+        "iban": "DE03981058210425462842",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE62179543027596542394",
+        "resourceId": "oFUOjuAJUj4cEwjvV1GkXSrWhTZlbnu1oSYwLQ2Y",
+        "iban": "DE62179543027596542394",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE92198847923069291189",
+        "resourceId": "MMB7ncJeBjqAlE0SUb1luw6DKUerGmLQiQ0xLyQC",
+        "iban": "DE92198847923069291189",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE95618158847952045823",
+        "resourceId": "nTxfh0RcOfRlTln2sZv6EIjqZKBfABtj3z0mhnvI",
+        "iban": "DE95618158847952045823",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE42688386312768306709",
+        "resourceId": "MvsYc4VeGdtuVa7aVm8AW4SuAXxyCHs5ElWZLldL",
+        "iban": "DE42688386312768306709",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE43865111315562776939",
+        "resourceId": "SwQdeHP4nZxikoSuxBINx2uu1OV3AYP9zww1yxs9",
+        "iban": "DE43865111315562776939",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE98429562867215196779",
+        "resourceId": "Qvrrlk8yV5qcOBWGb9kV9MTAXwlY3YKf5tYDDGrM",
+        "iban": "DE98429562867215196779",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE13439005533748955049",
+        "resourceId": "ozsMx7jtduRjATPcKk5kZqpZzwEWLLrBDwxcEazT",
+        "iban": "DE13439005533748955049",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE09172747229864395813",
+        "resourceId": "MOPjaUMf38tfspacQ3mHyyxZIhiGoA2SxWUiYjZ2",
+        "iban": "DE09172747229864395813",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE56333397557425346815",
+        "resourceId": "sSJ5Qo2oQK2ttQ7YT0baZVEKCfxaBGGg5HtgMzGc",
+        "iban": "DE56333397557425346815",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE94517369847035233017",
+        "resourceId": "Qqo5bfWtDXd8I8VmquRDqD1gx8zIRnoGI8ue6NxV",
+        "iban": "DE94517369847035233017",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE90100856439625693401",
+        "resourceId": "LJwej4SiwUAJG5mNCmQJ4vwjm3G2BvbxZg1opmn3",
+        "iban": "DE90100856439625693401",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE16877680927865741371",
+        "resourceId": "twf5faasIgfVAGYTOXZ7NoHmuHTa9IoSIDWgFGS7",
+        "iban": "DE16877680927865741371",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE55948383803263724745",
+        "resourceId": "GD7EhGGfDDWhpVvEmg4BVRlDZmY8Iwg3kHs70qSM",
+        "iban": "DE55948383803263724745",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE05049071552650680847",
+        "resourceId": "Gem7TaVC7u2HDUferdDp9WMAAmqD5XG41dNN2Wju",
+        "iban": "DE05049071552650680847",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE34568659869566140722",
+        "resourceId": "W5KvB8g8JtbVbJilLuBGnqWsR3ZXnlna1C6vTDgx",
+        "iban": "DE34568659869566140722",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE40092751938593799073",
+        "resourceId": "1MW4GKkWUirw2HEDDk0cHWlyxUDlEJSbj4TZbUOv",
+        "iban": "DE40092751938593799073",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE62649893137087717285",
+        "resourceId": "t6sukS5T9nZ7aYQdulqvjaqInGDGRtLojf8x5XoO",
+        "iban": "DE62649893137087717285",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE41428629601577072595",
+        "resourceId": "rLboGPoIJuvXnSaXDtDjZQOqaQS9mSYFmgml8Rmi",
+        "iban": "DE41428629601577072595",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE99949270349601580325",
+        "resourceId": "r2iCEOMNqtfTXN9EHp643lOyi5fDjrxfvYw3ZBmc",
+        "iban": "DE99949270349601580325",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE77653478041020236453",
+        "resourceId": "EOcm1hK6Ss5mRpCwOsm2MYpcSFaCn3nUtUDInOaD",
+        "iban": "DE77653478041020236453",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE27528125344656441909",
+        "resourceId": "sOMqA6VkFnOg7fhscjKpLEWX28TZiQ8BCkP2wbn7",
+        "iban": "DE27528125344656441909",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE47056337059008299708",
+        "resourceId": "3WWClgAji7vJjQJY8dUpnR2iBo0VfHyzoDaabovO",
+        "iban": "DE47056337059008299708",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE40750155459458279740",
+        "resourceId": "taXaxUoAn5N0pf7cREQ5MYOfxsIuimnWokYgKfbv",
+        "iban": "DE40750155459458279740",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE11487346937849715067",
+        "resourceId": "dPlJXZJrh350o5jPXs2hgx5ajzRId9SeKOJo9noK",
+        "iban": "DE11487346937849715067",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE39628693959420467682",
+        "resourceId": "C4F7RqTohrXXek7d8olSY45vDbr5nkDPcOnLdoHz",
+        "iban": "DE39628693959420467682",
+        "currency": "EUR"
+      },
+      {
+        "aspspAccountId": "DE21142800214496665936",
+        "resourceId": "CQV81lupG4B6QsnG5aZrU0Prbdr7nAe03DByy6BJ",
+        "iban": "DE21142800214496665936",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "consentTppInformation": {
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppName": "",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppRedirectPreferred": false,
+    "tppNotificationSupportedModes": [],
+    "tppFrequencyPerDay": 15
+  },
+  "recurringIndicator": true,
+  "lastActionDate": "2019-12-06",
+  "validUntil": "2021-10-10",
+  "psuIdDataList": [
+    {
+      "psuId": "anton.brueckner"
+    }
+  ],
+  "authorisationTemplate": {
+    "tppRedirectUri": {
+      "uri": "",
+      "nokUri": ""
+    }
+  },
+  "consentStatus": "VALID",
+  "consentType": "AIS",
+  "frequencyPerDay": 4,
+  "usages": {},
+  "creationTimestamp": "2019-12-06T17:03:13.36+02:00",
+  "multilevelScaRequired": false,
+  "statusChangeTimestamp": "2019-12-06T17:03:32.972+02:00",
+  "internalRequestId": "bdb36439-0e07-4037-a8a1-171c969fb0d7"
+}
