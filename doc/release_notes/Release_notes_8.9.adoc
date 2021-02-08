@@ -1,3 +1,10 @@
 = Release notes v.8.9
 
 == Table of Contents
+
+* Fixed AIS Consent checksum validation
+
+== Fixed AIS Consent checksum validation
+
+From now on, AIS Consent checksum validation works properly for multi-account consents. Changing accounts order inside
+consent doesn't change its checksum.
