@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.domain.consent;
 
+import de.adorsys.psd2.consent.api.ais.AdditionalTppInfo;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import io.swagger.annotations.ApiModel;
@@ -24,6 +25,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity(name = "consent_tpp_information")
@@ -58,4 +60,14 @@ public class ConsentTppInformationEntity {
     @Column(name = "notification_mode", nullable = false)
     @Enumerated(value = EnumType.STRING)
     private List<NotificationSupportedMode> tppNotificationContentPreferred;
+
+    @Column(name = "additional_info", nullable = false)
+    private String additionalInfo;
+
+    @PrePersist
+    public void consentPrePersist() {
+        if (Objects.isNull(additionalInfo)) {
+            additionalInfo = AdditionalTppInfo.NONE;
+        }
+    }
 }

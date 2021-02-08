@@ -42,7 +42,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -124,7 +123,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void updatePsuDataInConsent() throws Exception {
-        given(authorisationRepository.findOne(any(Specification.class))).willReturn(Optional.of(authorisationEntity));
+        given(authorisationRepository.findOne(any())).willReturn(Optional.of(authorisationEntity));
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.updatePsuDataInConsentUrl(CONSENT_ID, AUTHORISATION_ID))
                                                            .content(jsonReader.getStringFromFile("json/consent/integration/psu/psu-id-data.json"));
@@ -139,7 +138,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void updatePsuDataInConsent_badRequest() throws Exception {
-        given(authorisationRepository.findOne(any(Specification.class))).willReturn(Optional.of(authorisationEntity));
+        given(authorisationRepository.findOne(any())).willReturn(Optional.of(authorisationEntity));
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.updatePsuDataInConsentUrl(CONSENT_ID, AUTHORISATION_ID))
                                                            .content("{}");
@@ -154,8 +153,8 @@ class CmsPsuAisControllerIT {
 
     @Test
     void updateAuthorisationStatus() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
-        given(authorisationRepository.findOne(any(Specification.class))).willReturn(Optional.of(authorisationEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
+        given(authorisationRepository.findOne(any())).willReturn(Optional.of(authorisationEntity));
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.updateAuthorisationStatusUrl(CONSENT_ID, AUTHORISATION_ID, STATUS.name()))
                                                            .content(jsonReader.getStringFromFile("json/consent/integration/psu/authorisation-holder.json"));
@@ -174,7 +173,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void confirmConsent() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
         given(consentJpaRepository.findByExternalId(CONSENT_ID)).willReturn(Optional.of(consentEntity));
         given(aisConsentRepository.verifyAndSave(consentEntity)).willReturn(consentEntity);
 
@@ -191,7 +190,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void rejectConsent() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
         given(aisConsentRepository.verifyAndSave(consentEntity)).willReturn(consentEntity);
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.rejectConsentUrl(CONSENT_ID));
@@ -210,7 +209,7 @@ class CmsPsuAisControllerIT {
     void getConsentsForPsu() throws Exception {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/consent/integration/psu/psu-id-data.json", PsuIdData.class);
 
-        given(consentJpaRepository.findAll(any(Specification.class))).willReturn(Collections.singletonList(consentEntity));
+        given(consentJpaRepository.findAll(any())).willReturn(Collections.singletonList(consentEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getConsentsForPsuUrl());
         requestBuilder.headers(httpHeaders);
@@ -220,12 +219,12 @@ class CmsPsuAisControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/psu/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byPsuDataInListAndInstanceId(psuIdData, INSTANCE_ID);
+        verify(aisConsentSpecification).byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, INSTANCE_ID, null);
     }
 
     @Test
     void revokeConsent() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
         given(aisConsentRepository.verifyAndSave(consentEntity)).willReturn(consentEntity);
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.revokeConsentUrl(CONSENT_ID));
@@ -242,7 +241,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void authorisePartiallyConsent() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
         given(aisConsentRepository.verifyAndSave(consentEntity)).willReturn(consentEntity);
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.authorisePartiallyConsentUrl(CONSENT_ID));
@@ -259,7 +258,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void getConsentIdByRedirectId() throws Exception {
-        given(authorisationRepository.findOne(any(Specification.class))).willReturn(Optional.of(authorisationEntity));
+        given(authorisationRepository.findOne(any())).willReturn(Optional.of(authorisationEntity));
         given(consentJpaRepository.findByExternalId(authorisationEntity.getParentExternalId())).willReturn(Optional.of(consentEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getConsentIdByRedirectIdUrl(REDIRECT_ID));
@@ -275,7 +274,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void getConsentByConsentId() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getConsentByConsentIdUrl(CONSENT_ID));
         requestBuilder.headers(httpHeaders);
@@ -290,7 +289,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void getAuthorisationByAuthorisationId() throws Exception {
-        given(authorisationRepository.findOne(any(Specification.class))).willReturn(Optional.of(authorisationEntity));
+        given(authorisationRepository.findOne(any())).willReturn(Optional.of(authorisationEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getAuthorisationByAuthorisationIdUrl(AUTHORISATION_ID));
         requestBuilder.headers(httpHeaders);
@@ -309,7 +308,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void putAccountAccessInConsent() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
         given(aisConsentRepository.verifyAndSave(consentEntity)).willReturn(consentEntity);
 
         AisConsentUsage aisConsentUsage = new AisConsentUsage();
@@ -334,7 +333,7 @@ class CmsPsuAisControllerIT {
 
     @Test
     void psuDataAuthorisations() throws Exception {
-        given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findOne(any())).willReturn(Optional.of(consentEntity));
         given(authorisationRepository.findAllByParentExternalIdAndType(consentEntity.getExternalId(), AuthorisationType.CONSENT))
             .willReturn(Collections.singletonList(authorisationEntity));
 

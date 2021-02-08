@@ -89,7 +89,8 @@ public class AisConsentMapper {
             aisConsent.getUsageCounterMap(),
             consent.getCreationTimestamp(),
             consent.getStatusChangeTimestamp(),
-            tppInformation.getTppBrandLoggingInformation());
+            tppInformation.getTppBrandLoggingInformation(),
+            tppInformation.getAdditionalInfo());
     }
 
     public AisConsent mapToAisConsent(ConsentEntity entity, List<AuthorisationEntity> authorisations) {
