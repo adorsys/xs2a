@@ -15,7 +15,8 @@
     }
   ],
   "tppInformation": {
-    "tppRedirectPreferred": true
+    "tppRedirectPreferred": true,
+    "additionalInfo": "NONE"
   },
   "authorisationTemplate": {
     "redirectUri": "Mock tppOkRedirectUri",

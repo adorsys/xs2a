@@ -170,15 +170,15 @@ class AisConsentIT {
         flushAndClearPersistenceContext();
 
         //Then
-        List<CmsAisAccountConsent> consentsAspsp = cmsPsuAisService.getConsentsForPsu(aspsp, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
+        List<CmsAisAccountConsent> consentsAspsp = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(aspsp, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE, null);
         assertEquals(2, consentsAspsp.size());
         assertEquals(aspsp, consentsAspsp.get(0).getPsuIdDataList().get(0));
 
-        List<CmsAisAccountConsent> consentsAspsp1 = cmsPsuAisService.getConsentsForPsu(aspsp1, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
+        List<CmsAisAccountConsent> consentsAspsp1 = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(aspsp1, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE, null);
         assertEquals(1, consentsAspsp1.size());
         assertEquals(aspsp1, consentsAspsp1.get(0).getPsuIdDataList().get(0));
 
-        List<CmsAisAccountConsent> consentsAspsp1NoCorporateId = cmsPsuAisService.getConsentsForPsu(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE);
+        List<CmsAisAccountConsent> consentsAspsp1NoCorporateId = cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(aspsp1NoCorporateId, DEFAULT_SERVICE_INSTANCE_ID, DEFAULT_PAGE_INDEX, DEFAULT_ITEMS_PER_PAGE, null);
         assertEquals(2, consentsAspsp1NoCorporateId.size());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(0).getPsuIdDataList().get(0).getPsuId());
         assertEquals("aspsp1", consentsAspsp1NoCorporateId.get(1).getPsuIdDataList().get(0).getPsuId());

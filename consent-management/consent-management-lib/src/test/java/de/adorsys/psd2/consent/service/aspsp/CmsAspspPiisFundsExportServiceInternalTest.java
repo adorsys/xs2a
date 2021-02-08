@@ -98,7 +98,8 @@ class CmsAspspPiisFundsExportServiceInternalTest {
                                                                                               CREATION_DATE_FROM,
                                                                                               CREATION_DATE_TO,
                                                                                               psuIdData,
-                                                                                              SERVICE_INSTANCE_ID))
+                                                                                              SERVICE_INSTANCE_ID,
+                                                                                              null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity consentEntity = buildPiisConsentEntity();
         Page<ConsentEntity> page = new PageImpl<>(Collections.singletonList(consentEntity), PAGE_REQUEST, TOTAL);
@@ -119,7 +120,8 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         assertTrue(piisConsents.contains(cmsPiisConsent));
         verify(piisConsentEntitySpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                               CREATION_DATE_TO, psuIdData, SERVICE_INSTANCE_ID);
+                                                               CREATION_DATE_TO, psuIdData, SERVICE_INSTANCE_ID,
+                                                               null);
     }
 
     @Test
@@ -129,7 +131,8 @@ class CmsAspspPiisFundsExportServiceInternalTest {
                                                                                               CREATION_DATE_FROM,
                                                                                               CREATION_DATE_TO,
                                                                                               psuIdData,
-                                                                                              DEFAULT_SERVICE_INSTANCE_ID))
+                                                                                              DEFAULT_SERVICE_INSTANCE_ID,
+                                                                                              null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity consentEntity = buildPiisConsentEntity();
         Page<ConsentEntity> page = new PageImpl<>(Collections.singletonList(consentEntity), PAGE_REQUEST, TOTAL);
@@ -150,7 +153,8 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         assertTrue(piisConsents.contains(cmsPiisConsent));
         verify(piisConsentEntitySpecification, times(1))
             .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                               CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID);
+                                                               CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID,
+                                                               null);
     }
 
     @Test
@@ -160,7 +164,8 @@ class CmsAspspPiisFundsExportServiceInternalTest {
                                                                                               CREATION_DATE_FROM,
                                                                                               CREATION_DATE_TO,
                                                                                               psuIdData,
-                                                                                              SERVICE_INSTANCE_ID))
+                                                                                              SERVICE_INSTANCE_ID,
+                                                                                              null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         Page<ConsentEntity> page = new PageImpl<>(Collections.emptyList(), PAGE_REQUEST, 0);
         when(consentJpaRepository.findAll(any(Specification.class), eq(PAGE_REQUEST))).thenReturn(page);
@@ -176,7 +181,7 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, times(1))
-            .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any());
+            .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -191,7 +196,7 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, never())
-            .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any());
+            .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -206,16 +211,17 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, never())
-            .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any());
+            .byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(any(), any(), any(), any(), any(), any());
     }
 
     @Test
     void exportConsentsByPsu_success() {
         // Given
-        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
-                                                                                      CREATION_DATE_FROM,
-                                                                                      CREATION_DATE_TO,
-                                                                                      SERVICE_INSTANCE_ID))
+        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData,
+                                                                                                          CREATION_DATE_FROM,
+                                                                                                          CREATION_DATE_TO,
+                                                                                                          SERVICE_INSTANCE_ID,
+                                                                                                          null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity consentEntity = buildPiisConsentEntity();
         Page<ConsentEntity> page = new PageImpl<>(Collections.singletonList(consentEntity), PAGE_REQUEST, TOTAL);
@@ -236,17 +242,19 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         assertFalse(piisConsents.isEmpty());
         assertTrue(piisConsents.contains(cmsPiisConsent));
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, CREATION_DATE_FROM,
-                                                       CREATION_DATE_TO, SERVICE_INSTANCE_ID);
+            .byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, CREATION_DATE_FROM,
+                                                                           CREATION_DATE_TO, SERVICE_INSTANCE_ID,
+                                                                           null);
     }
 
     @Test
     void exportConsentsByPsu_success_nullInstanceId() {
         // Given
-        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData,
-                                                                                      CREATION_DATE_FROM,
-                                                                                      CREATION_DATE_TO,
-                                                                                      DEFAULT_SERVICE_INSTANCE_ID))
+        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData,
+                                                                                                          CREATION_DATE_FROM,
+                                                                                                          CREATION_DATE_TO,
+                                                                                                          DEFAULT_SERVICE_INSTANCE_ID,
+                                                                                                          null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity consentEntity = buildPiisConsentEntity();
         Page<ConsentEntity> page = new PageImpl<>(Collections.singletonList(consentEntity), PAGE_REQUEST, TOTAL);
@@ -267,15 +275,17 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         assertFalse(piisConsents.isEmpty());
         assertTrue(piisConsents.contains(cmsPiisConsent));
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdDataAndCreationPeriodAndInstanceId(psuIdData, CREATION_DATE_FROM,
-                                                       CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+            .byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(psuIdData, CREATION_DATE_FROM,
+                                                                           CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID,
+                                                                           null);
     }
 
     @Test
     void exportConsentsByPsu_failure_wrongPsuIdData() {
         // Given
-        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceId(wrongPsuIdData, CREATION_DATE_FROM,
-                                                                                      CREATION_DATE_TO, SERVICE_INSTANCE_ID))
+        when(piisConsentEntitySpecification.byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(wrongPsuIdData, CREATION_DATE_FROM,
+                                                                                                          CREATION_DATE_TO, SERVICE_INSTANCE_ID,
+                                                                                                          null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         Page<ConsentEntity> page = new PageImpl<>(Collections.emptyList(), PAGE_REQUEST, 0);
         when(consentJpaRepository.findAll(any(Specification.class), eq(PAGE_REQUEST))).thenReturn(page);
@@ -291,8 +301,8 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, times(1))
-            .byPsuIdDataAndCreationPeriodAndInstanceId(wrongPsuIdData, CREATION_DATE_FROM,
-                                                       CREATION_DATE_TO, SERVICE_INSTANCE_ID);
+            .byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(wrongPsuIdData, CREATION_DATE_FROM,
+                                                                           CREATION_DATE_TO, SERVICE_INSTANCE_ID, null);
     }
 
     @Test
@@ -307,7 +317,7 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, never())
-            .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
+            .byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(any(), any(), any(), any(), any());
     }
 
     @Test
@@ -322,16 +332,17 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, never())
-            .byPsuIdDataAndCreationPeriodAndInstanceId(any(), any(), any(), any());
+            .byPsuIdDataAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(any(), any(), any(), any(), any());
     }
 
     @Test
     void exportConsentsByAccountId_success() {
         // Given
-        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
-                                                                                           CREATION_DATE_FROM,
-                                                                                           CREATION_DATE_TO,
-                                                                                           SERVICE_INSTANCE_ID))
+        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(ASPSP_ACCOUNT_ID,
+                                                                                                               CREATION_DATE_FROM,
+                                                                                                               CREATION_DATE_TO,
+                                                                                                               SERVICE_INSTANCE_ID,
+                                                                                                               null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity consentEntity = buildPiisConsentEntity();
         Page<ConsentEntity> page = new PageImpl<>(Collections.singletonList(consentEntity), PAGE_REQUEST, TOTAL);
@@ -352,17 +363,19 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         assertFalse(piisConsents.isEmpty());
         assertTrue(piisConsents.contains(cmsPiisConsent));
         verify(piisConsentEntitySpecification, times(1))
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                            CREATION_DATE_TO, SERVICE_INSTANCE_ID);
+            .byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                                CREATION_DATE_TO, SERVICE_INSTANCE_ID,
+                                                                                null);
     }
 
     @Test
     void exportConsentsByAccountId__success_nullInstanceId() {
         // Given
-        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID,
-                                                                                           CREATION_DATE_FROM,
-                                                                                           CREATION_DATE_TO,
-                                                                                           DEFAULT_SERVICE_INSTANCE_ID))
+        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(ASPSP_ACCOUNT_ID,
+                                                                                                               CREATION_DATE_FROM,
+                                                                                                               CREATION_DATE_TO,
+                                                                                                               DEFAULT_SERVICE_INSTANCE_ID,
+                                                                                                               null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         ConsentEntity consentEntity = buildPiisConsentEntity();
         Page<ConsentEntity> page = new PageImpl<>(Collections.singletonList(consentEntity), PAGE_REQUEST, TOTAL);
@@ -383,15 +396,17 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         assertFalse(piisConsents.isEmpty());
         assertTrue(piisConsents.contains(cmsPiisConsent));
         verify(piisConsentEntitySpecification, times(1))
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                            CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID);
+            .byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                                CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID,
+                                                                                null);
     }
 
     @Test
     void exportConsentsByAccountId_wrongAspspAccountId() {
         // Given
-        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                                                           CREATION_DATE_TO, SERVICE_INSTANCE_ID))
+        when(piisConsentEntitySpecification.byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                                                               CREATION_DATE_TO, SERVICE_INSTANCE_ID,
+                                                                                                               null))
             .thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         Page<ConsentEntity> page = new PageImpl<>(Collections.emptyList(), PAGE_REQUEST, 0);
         when(consentJpaRepository.findAll(any(Specification.class), eq(PAGE_REQUEST))).thenReturn(page);
@@ -407,8 +422,9 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, times(1))
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
-                                                            CREATION_DATE_TO, SERVICE_INSTANCE_ID);
+            .byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
+                                                                                CREATION_DATE_TO, SERVICE_INSTANCE_ID,
+                                                                                null);
     }
 
     @Test
@@ -423,7 +439,7 @@ class CmsAspspPiisFundsExportServiceInternalTest {
         // Then
         assertTrue(piisConsents.isEmpty());
         verify(piisConsentEntitySpecification, never())
-            .byAspspAccountIdAndCreationPeriodAndInstanceId(any(), any(), any(), any());
+            .byAspspAccountIdAndCreationPeriodAndInstanceIdAndAdditionalTppInfo(any(), any(), any(), any(), any());
     }
 
     private ConsentEntity buildPiisConsentEntity() {

@@ -37,12 +37,15 @@ public class CmsAspspAisExportController implements CmsAspspAisExportApi {
 
     @Override
     public ResponseData<Collection<CmsAisAccountConsent>> getConsentsByTpp(String tppId, LocalDate start,
-                                                                             LocalDate end, String psuId,
-                                                                             String psuIdType, String psuCorporateId,
-                                                                             String psuCorporateIdType, String instanceId,
-                                                                             Integer pageIndex, Integer itemsPerPage) {
+                                                                           LocalDate end, String psuId,
+                                                                           String psuIdType, String psuCorporateId,
+                                                                           String psuCorporateIdType, String instanceId,
+                                                                           Integer pageIndex, Integer itemsPerPage,
+                                                                           String additionalTppInfo) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        PageData<Collection<CmsAisAccountConsent>> consents = cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex, itemsPerPage);
+        PageData<Collection<CmsAisAccountConsent>> consents =
+            cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex,
+                                                         itemsPerPage, additionalTppInfo);
         return ResponseData.list(
             consents.getData(),
             new CmsPageInfo(consents.getPage(), consents.getPageSize(), consents.getTotal()),
@@ -54,9 +57,12 @@ public class CmsAspspAisExportController implements CmsAspspAisExportApi {
                                                                            String psuId, String psuIdType,
                                                                            String psuCorporateId,
                                                                            String psuCorporateIdType, String instanceId,
-                                                                           Integer pageIndex, Integer itemsPerPage) {
+                                                                           Integer pageIndex, Integer itemsPerPage,
+                                                                           String additionalTppInfo) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
-        PageData<Collection<CmsAisAccountConsent>> consents = cmsAspspAisExportService.exportConsentsByPsu(psuIdData, start, end, instanceId, pageIndex, itemsPerPage);
+        PageData<Collection<CmsAisAccountConsent>> consents =
+            cmsAspspAisExportService.exportConsentsByPsuAndAdditionalTppInfo(psuIdData, start, end, instanceId,
+                                                                             pageIndex, itemsPerPage, additionalTppInfo);
         return ResponseData.list(
             consents.getData(),
             new CmsPageInfo(consents.getPage(), consents.getPageSize(), consents.getTotal()),
@@ -65,9 +71,13 @@ public class CmsAspspAisExportController implements CmsAspspAisExportApi {
 
     @Override
     public ResponseData<Collection<CmsAisAccountConsent>> getConsentsByAccount(String aspspAccountId, LocalDate start,
-                                                                                 LocalDate end, String instanceId,
-                                                                                 Integer pageIndex, Integer itemsPerPage) {
-        PageData<Collection<CmsAisAccountConsent>> consents = cmsAspspAisExportService.exportConsentsByAccountId(aspspAccountId, start, end, instanceId, pageIndex, itemsPerPage);
+                                                                               LocalDate end, String instanceId,
+                                                                               Integer pageIndex, Integer itemsPerPage,
+                                                                               String additionalTppInfo) {
+        PageData<Collection<CmsAisAccountConsent>> consents =
+            cmsAspspAisExportService.exportConsentsByAccountIdAndAdditionalTppInfo(aspspAccountId, start, end,
+                                                                                   instanceId, pageIndex, itemsPerPage,
+                                                                                   additionalTppInfo);
         return ResponseData.list(
             consents.getData(),
             new CmsPageInfo(consents.getPage(), consents.getPageSize(), consents.getTotal()),

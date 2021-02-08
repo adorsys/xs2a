@@ -34,6 +34,7 @@ public class EntityAttribute {
 
     public static final String TPP_INFO_ATTRIBUTE = "tppInfo";
     public static final String TPP_INFO_AUTHORISATION_NUMBER_ATTRIBUTE = "authorisationNumber";
+    public static final String ADDITIONAL_TPP_INFORMATION_ATTRIBUTE = "additionalInfo";
 
     public static final String ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE = "aspspAccountAccesses";
     public static final String ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER = "accountIdentifier";

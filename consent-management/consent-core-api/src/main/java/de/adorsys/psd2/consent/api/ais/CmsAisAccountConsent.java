@@ -56,4 +56,6 @@ public class CmsAisAccountConsent {
     private OffsetDateTime statusChangeTimestamp;
     @Nullable
     private String tppBrandLoggingInformation;
+    @Nullable
+    private String additionalTppInfo;
 }
