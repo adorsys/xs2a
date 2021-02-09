@@ -135,7 +135,7 @@ jobs:
       - name: plantuml
         uses: Timmy/plantuml-action@v1
         with:
-           args: '**/*.puml -DPLANTUML_LIMIT_SIZE=8192'
+          args: '**/*.puml -DPLANTUML_LIMIT_SIZE=8192'
 
       - name:  Install Ruby
         uses: ruby/setup-ruby@v1
