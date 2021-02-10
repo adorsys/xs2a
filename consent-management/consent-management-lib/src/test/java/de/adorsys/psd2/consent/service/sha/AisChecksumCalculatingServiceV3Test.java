@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.sha.v3;
+package de.adorsys.psd2.consent.service.sha;
 
-import de.adorsys.psd2.consent.service.sha.ChecksumConstant;
 import de.adorsys.psd2.core.data.Consent;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AisChecksumCalculatingServiceV3Test {
     private static final String VERSION_03 = "003";
+    private static final byte[] C0RECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS = getCorrectChecksumForMultipleAccounts().getBytes();
     private static final byte[] WRONG_CHECKSUM = "checksum in consent".getBytes();
     private static final byte[] WRONG_CHECKSUM_WITH_DELIMITER = ("checksum in consent" + ChecksumConstant.DELIMITER).getBytes();
-    private static final byte[] WRONG_CHECKSUM_WITH_2_PARTS = ("checksum in consent" + ChecksumConstant.DELIMITER+"second part==").getBytes();
+    private static final byte[] WRONG_CHECKSUM_WITH_2_PARTS = ("checksum in consent" + ChecksumConstant.DELIMITER + "second part==").getBytes();
     private static final byte[] CHECKSUM_TPP_ACCESS_IBAN = getCorrectChecksumForTppAccessIban().getBytes();
     private static final byte[] CHECKSUM_ASPSP_ACCESS_IBAN = getCorrectChecksumForAspspAccessIban().getBytes();
 
     private static final byte[] CHECKSUM_TPP_ACCESS_IBAN_MASKEDPAN = getCorrectChecksumForTppAccessIbanAndMaskedPan().getBytes();
     private static final byte[] CHECKSUM_ASPSP_ACCESS_IBAN_MASKEDPAN = getCorrectChecksumForAspspAccessIbanAndMaskedPan().getBytes();
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     private final AisChecksumCalculatingServiceV3 aisChecksumCalculatingServiceV3 = new AisChecksumCalculatingServiceV3();
 
@@ -49,6 +50,30 @@ class AisChecksumCalculatingServiceV3Test {
 
         // then
         assertTrue(actualResult);
+    }
+
+    @Test
+    void verifyConsentWithChecksum_multipleAccounts() {
+        // given
+        AisConsent aisConsent = buildConsentTppIbanMultiple();
+
+        // when
+        boolean actualResult = aisChecksumCalculatingServiceV3.verifyConsentWithChecksum(aisConsent, C0RECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+
+        // then
+        assertThat(actualResult).isFalse();
+    }
+
+    @Test
+    void verifyConsentWithChecksum_multipleAccountsMixed() {
+        // given
+        AisConsent aisConsent = buildConsentTppIbanMultipleMixed();
+
+        // when
+        boolean actualResult = aisChecksumCalculatingServiceV3.verifyConsentWithChecksum(aisConsent, C0RECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+
+        // then
+        assertThat(actualResult).isFalse();
     }
 
     @Test
@@ -236,6 +261,14 @@ class AisChecksumCalculatingServiceV3Test {
         return jsonReader.getObjectFromFile("json/dedicated-ais-consent_tpp_access.json", AisConsent.class);
     }
 
+    private AisConsent buildConsentTppIbanMultiple() {
+        return jsonReader.getObjectFromFile("json/dedicated-ais-consent-multiple-accounts.json", AisConsent.class);
+    }
+
+    private AisConsent buildConsentTppIbanMultipleMixed() {
+        return jsonReader.getObjectFromFile("json/dedicated-ais-consent-multiple-accounts-mixed.json", AisConsent.class);
+    }
+
     private AisConsent buildConsentAspspIban() {
         return jsonReader.getObjectFromFile("json/dedicated-ais-consent_aspsp_access.json", AisConsent.class);
     }
@@ -264,11 +297,14 @@ class AisChecksumCalculatingServiceV3Test {
         return "003_%_dsuFMYCrZd1YWY7+3/zF7mgrO0PFjhkHn9foi2ylWZOzCWRaUBXNBXkllfmnQ8JXLFEZk3Ta7l+jbdRHHkYT0Q==_%_eyJpYmFuIjoidDg2OTRsdXd1RUkvQTRQM1NvYkh5c0NhMVRqdjJFbEk4cXltWjkwK3duN2o4cXdMcnBOck5VQWFpbWF2RlZ6OE0vZEhFbUlsbzZJNEZ5VGpaNUdIU3c9PSIsIm1hc2tlZFBhbiI6Ild6TG9rYjM1cXFaMElkcVdFZ09PSEtDSEtFMVg1dDY1amxQMURRREJ1UkQya2VJUDVrYmhUMFRKQ3YwWFQ0Sk9ueGxkYWljTzY2Tk9ZcFBsY1JhdmhnPT0ifQ==";
     }
 
+    private static String getCorrectChecksumForMultipleAccounts() {
+        return "003_%_Mj7nHAyka6LdA3zDA0e4TQU0283X1iFDGyJSRePNNpaRlHeuAG5a24vid4K/5jNIWyTsaEo4JZSPmYkiSJ5YoA==_%_eyJpYmFuIjoiUjBqQWVubFFJcm0zR2JNdG9qN2FvWDZWRXdXRmNhM3NMVnROUFVkOFV2T1RLSUpqUmhkb0tIdGpvamxBQTFFSzdVUVhMQ1cwZU53NkZ6TG1jQk9vUUE9PSJ9";
+    }
+
     private class TestObject extends Consent {
         TestObject() {
             //For these tests any consent type different from `AIS` is suitable
             setConsentType(ConsentType.PIIS_ASPSP);
         }
     }
-
 }

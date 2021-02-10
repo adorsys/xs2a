@@ -32,13 +32,13 @@ import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 public class PaymentInitiationLinks extends AbstractLinks {
 
-    private ScaApproachResolver scaApproachResolver;
-    private RedirectLinkBuilder redirectLinkBuilder;
-    private RedirectIdService redirectIdService;
-    private boolean explicitMethod;
-    private ScaRedirectFlow scaRedirectFlow;
-    private boolean authorisationConfirmationRequestMandated;
-    private String instanceId;
+    private final ScaApproachResolver scaApproachResolver;
+    private final RedirectLinkBuilder redirectLinkBuilder;
+    private final RedirectIdService redirectIdService;
+    private final boolean explicitMethod;
+    private final ScaRedirectFlow scaRedirectFlow;
+    private final boolean authorisationConfirmationRequestMandated;
+    private final String instanceId;
 
     public PaymentInitiationLinks(String httpUrl, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
                                   RedirectIdService redirectIdService,

@@ -30,7 +30,7 @@ import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
 class AbstractLinks extends Links {
 
-    private String httpUrl;
+    private final String httpUrl;
 
     AbstractLinks(String httpUrl) {
         this.httpUrl = httpUrl;

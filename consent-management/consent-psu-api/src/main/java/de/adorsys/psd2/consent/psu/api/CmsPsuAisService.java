@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +69,11 @@ public interface CmsPsuAisService {
     /**
      * Updates a Status of AIS Consent Authorisation by its ID and PSU ID
      *
-     * @param psuIdData          PSU credentials data
-     * @param consentId          ID of Consent
-     * @param authorisationId    ID of Authorisation process
-     * @param status             Status of Authorisation to be set
-     * @param instanceId         optional ID of particular service instance
+     * @param psuIdData                PSU credentials data
+     * @param consentId                ID of Consent
+     * @param authorisationId          ID of Authorisation process
+     * @param status                   Status of Authorisation to be set
+     * @param instanceId               optional ID of particular service instance
      * @param authenticationDataHolder optional parameter for online-banking, chosen method ID and authentication data
      * @return <code>true</code> if consent was found and status was updated. <code>false</code> otherwise.
      * @throws AuthorisationIsExpiredException if authorisation is expired
@@ -102,14 +103,17 @@ public interface CmsPsuAisService {
     /**
      * Returns a list of AIS Consent objects by PSU ID
      *
-     * @param psuIdData  PSU credentials data
-     * @param instanceId optional ID of particular service instance
-     * @param pageIndex index of current page
-     * @param itemsPerPage quantity of consents on one page
+     * @param psuIdData         PSU credentials data
+     * @param instanceId        optional ID of particular service instance
+     * @param pageIndex         index of current page
+     * @param itemsPerPage      quantity of consents on one page
+     * @param additionalTppInfo additional tpp info
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<CmsAisAccountConsent> getConsentsForPsu(@NotNull PsuIdData psuIdData, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
+    List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
+                                                                     Integer pageIndex, Integer itemsPerPage,
+                                                                     @Nullable String additionalTppInfo);
 
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".
@@ -145,9 +149,9 @@ public interface CmsPsuAisService {
     /**
      * Returns list of info objects about psu data and authorisation scaStatuses
      *
-     * @param consentId  ID of Consent
-     * @param instanceId optional ID of particular service instance
-     * @param pageIndex index of current page
+     * @param consentId    ID of Consent
+     * @param instanceId   optional ID of particular service instance
+     * @param pageIndex    index of current page
      * @param itemsPerPage quantity of consents on one page
      * @return list of info objects about psu data and authorisation scaStatuses
      */

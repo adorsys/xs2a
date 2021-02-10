@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.sha.v3;
+package de.adorsys.psd2.consent.service.sha;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,9 +22,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import de.adorsys.psd2.consent.service.sha.ChecksumCalculatingService;
-import de.adorsys.psd2.consent.service.sha.ChecksumConstant;
-import de.adorsys.psd2.consent.service.sha.Sha512HashingService;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.Consent;
 import de.adorsys.psd2.core.data.ais.AisConsent;
@@ -44,11 +41,12 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-public class AisChecksumCalculatingServiceV3 implements ChecksumCalculatingService {
-    private static final String VERSION = "003";
+public abstract class AisAbstractChecksumCalculatingService implements ChecksumCalculatingService {
     private static final Charset CHARSET = Charset.defaultCharset();
     private final Sha512HashingService hashingService = new Sha512HashingService();
     private final ObjectMapper objectMapper = buildObjectMapper();
+
+    protected abstract Comparator<AccountReference> getComparator();
 
     @Override
     public boolean verifyConsentWithChecksum(Consent<?> consent, byte[] checksum) {
@@ -79,11 +77,6 @@ public class AisChecksumCalculatingServiceV3 implements ChecksumCalculatingServi
         }
 
         return new byte[0];
-    }
-
-    @Override
-    public String getVersion() {
-        return VERSION;
     }
 
     private boolean verifyConsentWithChecksumForAisConsent(AisConsent aisConsent, byte[] checksum) {
@@ -119,7 +112,7 @@ public class AisChecksumCalculatingServiceV3 implements ChecksumCalculatingServi
     }
 
     private byte[] calculateChecksumForAisConsent(AisConsent aisConsent) {
-        StringBuilder sb = new StringBuilder(VERSION).append(ChecksumConstant.DELIMITER);
+        StringBuilder sb = new StringBuilder(getVersion()).append(ChecksumConstant.DELIMITER);
 
         String aisConsentChecksumCommon = calculateChecksumForAisConsentCommon(aisConsent);
         sb.append(aisConsentChecksumCommon);
@@ -182,12 +175,7 @@ public class AisChecksumCalculatingServiceV3 implements ChecksumCalculatingServi
         List<AccountReference> filtered = references.stream()
                                               .filter(acc -> acc.getUsedAccountReferenceSelector().getAccountReferenceType() == type)
                                               .filter(acc -> StringUtils.isNotBlank(acc.getResourceId()) || StringUtils.isNotBlank(acc.getAspspAccountId()))
-                                              .sorted(Comparator.comparing(AccountReference::getAccountReferenceType)
-
-                                                          .thenComparing(acc -> Optional.ofNullable(acc.getCurrency())
-                                                                                    .map(Currency::getCurrencyCode)
-                                                                                    .orElse(StringUtils.EMPTY))
-                                              )
+                                              .sorted(getComparator())
                                               .collect(Collectors.toList());
 
         if (CollectionUtils.isEmpty(filtered)) {

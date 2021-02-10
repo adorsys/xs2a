@@ -16,7 +16,10 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * This class is used with decoupled approach as a response to a start decoupled SCA call.
@@ -24,5 +27,7 @@ import lombok.Value;
  */
 @Value
 public class SpiAuthorisationDecoupledScaResponse {
+    @NotNull
+    private ScaStatus scaStatus;
     private String psuMessage;
 }

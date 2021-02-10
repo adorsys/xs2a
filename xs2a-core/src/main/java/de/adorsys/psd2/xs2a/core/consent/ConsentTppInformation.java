@@ -30,4 +30,5 @@ public class ConsentTppInformation {
     private TppInfo tppInfo;
     private List<NotificationSupportedMode> tppNotificationSupportedModes;
     private String tppBrandLoggingInformation;
+    private String additionalInfo;
 }

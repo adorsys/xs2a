@@ -47,7 +47,7 @@ class SpiCardTransactionListToXs2aAccountReportMapperTest {
         //Given
         BookingStatus bookingStatus = BookingStatus.BOTH;
 
-        List<SpiCardTransaction> spiCardTransactions = jsonReader.getObjectFromFile("json/SpiCardTransactions.json", new TypeReference<List<SpiCardTransaction>>() {
+        List<SpiCardTransaction> spiCardTransactions = jsonReader.getObjectFromFile("json/SpiCardTransactions.json", new TypeReference<>() {
         });
         Xs2aCardAccountReport expectedXs2aCardAccountReport = jsonReader.getObjectFromFile("json/Xs2aCardAccountReport.json", Xs2aCardAccountReport.class);
 
@@ -57,7 +57,6 @@ class SpiCardTransactionListToXs2aAccountReportMapperTest {
         //Then
         assertTrue(xs2aCardAccountReport.isPresent());
         assertEquals(expectedXs2aCardAccountReport, xs2aCardAccountReport.get());
-
     }
 
     @Test
@@ -81,5 +80,23 @@ class SpiCardTransactionListToXs2aAccountReportMapperTest {
 
         //Then
         assertFalse(xs2aCardAccountReport.isPresent());
+    }
+
+    @Test
+    void mapToXs2aCardAccountReport_bookingStatusInformation() {
+        //Given
+        BookingStatus bookingStatus = BookingStatus.INFORMATION;
+
+        List<SpiCardTransaction> spiCardTransactions = jsonReader.getObjectFromFile("json/SpiCardTransactions.json", new TypeReference<>() {
+        });
+        Xs2aCardAccountReport expectedXs2aCardAccountReport = jsonReader.getObjectFromFile("json/Xs2aCardAccountReport_information.json", Xs2aCardAccountReport.class);
+        System.out.println("expectedXs2aCardAccountReport = " + expectedXs2aCardAccountReport);
+
+        //When
+        Optional<Xs2aCardAccountReport> xs2aCardAccountReport = spiCardTransactionListToXs2aAccountReportMapper.mapToXs2aCardAccountReport(bookingStatus, spiCardTransactions, null);
+
+        //Then
+        assertTrue(xs2aCardAccountReport.isPresent());
+        assertEquals(expectedXs2aCardAccountReport, xs2aCardAccountReport.get());
     }
 }

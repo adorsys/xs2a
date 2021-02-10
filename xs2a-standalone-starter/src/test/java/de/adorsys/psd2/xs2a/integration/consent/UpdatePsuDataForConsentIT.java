@@ -186,6 +186,7 @@ class UpdatePsuDataForConsentIT {
                             .build());
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
         spiAuthorizationCodeResult.setSelectedScaMethod(sms);
+        spiAuthorizationCodeResult.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         given(aisConsentSpi.requestAuthorisationCode(any(SpiContextData.class), anyString(), any(), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(spiAuthorizationCodeResult)

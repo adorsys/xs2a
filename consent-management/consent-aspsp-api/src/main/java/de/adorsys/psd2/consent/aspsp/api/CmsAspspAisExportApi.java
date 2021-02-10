@@ -47,7 +47,7 @@ public interface CmsAspspAisExportApi {
         @RequestHeader(value = "end-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
         @ApiParam(value = "Client ID of the PSU in the ASPSP client interface. Might be mandated in the ASPSP's" +
-            " documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
+                              " documentation. Is not contained if an OAuth2 based authentication was performed in a pre-step or an OAuth2 based SCA was performed in an preceding AIS service in the same session. ")
         @RequestHeader(value = "psu-id", required = false) String psuId,
         @ApiParam(value = "Type of the PSU-ID, needed in scenarios where PSUs have several PSU-IDs as access possibility. ")
         @RequestHeader(value = "psu-id-type", required = false) String psuIdType,
@@ -60,7 +60,8 @@ public interface CmsAspspAisExportApi {
         @ApiParam(value = "Index of current page", example = "0")
         @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
         @ApiParam(value = "Quantity of consents on one page", example = "20")
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage,
+        @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 
     @GetMapping(path = "/psu")
     @ApiOperation(value = "Returns a list of AIS consent objects by given mandatory PSU ID Data, optional creation date and instance ID")
@@ -86,7 +87,8 @@ public interface CmsAspspAisExportApi {
         @ApiParam(value = "Index of current page", example = "0")
         @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
         @ApiParam(value = "Quantity of consents on one page", example = "20")
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage,
+        @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 
     @GetMapping(path = "/account/{account-id}")
     @ApiOperation(value = "Returns a list of consents by given mandatory aspsp account id, optional creation date and instance ID")
@@ -106,5 +108,6 @@ public interface CmsAspspAisExportApi {
         @ApiParam(value = "Index of current page", example = "0")
         @RequestParam(value = CmsConstant.QUERY.PAGE_INDEX, defaultValue = "0") Integer pageIndex,
         @ApiParam(value = "Quantity of consents on one page", example = "20")
-        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage);
+        @RequestParam(value = CmsConstant.QUERY.ITEMS_PER_PAGE, defaultValue = "20") Integer itemsPerPage,
+        @RequestParam(value = CmsConstant.QUERY.ADDITIONAL_TPP_INFO, required = false) String additionalTppInfo);
 }

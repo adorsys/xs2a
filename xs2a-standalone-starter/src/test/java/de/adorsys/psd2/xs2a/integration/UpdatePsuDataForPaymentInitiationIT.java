@@ -187,6 +187,7 @@ class UpdatePsuDataForPaymentInitiationIT {
                             .build());
         SpiAuthorizationCodeResult spiAuthorizationCodeResult = new SpiAuthorizationCodeResult();
         spiAuthorizationCodeResult.setSelectedScaMethod(sms);
+        spiAuthorizationCodeResult.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         given(paymentAuthorisationSpi.requestAuthorisationCode(any(SpiContextData.class), anyString(), any(), any(SpiAspspConsentDataProvider.class)))
             .willReturn(SpiResponse.<SpiAuthorizationCodeResult>builder()
                             .payload(spiAuthorizationCodeResult)

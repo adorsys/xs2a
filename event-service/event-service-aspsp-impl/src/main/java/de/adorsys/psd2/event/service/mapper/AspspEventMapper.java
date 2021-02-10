@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -38,13 +39,17 @@ public abstract class AspspEventMapper {
 
     @Mapping(target = "xRequestId", source = "XRequestId", qualifiedByName = "mapToXRequestId")
     @Mapping(target = "internalRequestId", source = "internalRequestId", qualifiedByName = "mapToInternalRequestId")
-    @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPduIdDataSet")
+    @Mapping(target = "psuIdData", source = "psuIdData", qualifiedByName = "mapToPsuIdDataList")
     @Mapping(target = "payload", qualifiedByName = "mapToPayload")
     public abstract AspspEvent toAspspEvent(ReportEvent event);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<AspspEvent> toAspspEventList(List<ReportEvent> events);
 
+    @Named("mapToPsuIdDataList")
+    protected abstract List<AspspPsuIdData> mapToPsuIdDataList(Set<PsuIdDataPO> psuIdData);
+
+    @Named("mapToPayload")
     protected Object mapToPayload(byte[] array) {
         try {
             return xs2aObjectMapper.readValue(array, Object.class);
@@ -64,7 +69,7 @@ public abstract class AspspEventMapper {
         return internalRequestId != null ? UUID.fromString(internalRequestId) : null;
     }
 
-    protected AspspPsuIdData mapToPduIdData(PsuIdDataPO psuIdDataPO) {
+    protected AspspPsuIdData mapToPsuIdData(PsuIdDataPO psuIdDataPO) {
         if (psuIdDataPO == null) {
             return null;
         }

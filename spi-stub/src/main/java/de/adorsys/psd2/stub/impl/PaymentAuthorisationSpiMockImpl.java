@@ -17,6 +17,7 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
@@ -65,7 +66,7 @@ public class PaymentAuthorisationSpiMockImpl implements PaymentAuthorisationSpi 
         log.info("PaymentAuthorisationSpi#startScaDecoupled: contextData {}, authorisationId {}, authenticationMethodId {}, businessObject {}", contextData, authorisationId, authenticationMethodId, businessObject);
 
         return SpiResponse.<SpiAuthorisationDecoupledScaResponse>builder()
-                   .payload(new SpiAuthorisationDecoupledScaResponse(DECOUPLED_PSU_MESSAGE))
+                   .payload(new SpiAuthorisationDecoupledScaResponse(ScaStatus.SCAMETHODSELECTED, DECOUPLED_PSU_MESSAGE))
                    .build();
     }
 
