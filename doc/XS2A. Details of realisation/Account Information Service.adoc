@@ -61,8 +61,6 @@ for recurring access on account information for the addressed PSU and potentiall
 
 There are no expiration side effects foreseen for Consent Requests where the “recurringIndicator” equals false.
 
-When this Consent Request is a request for one access to the account data then "recurringIndicator" equals false and "accountAccessFrequencyPerDay" should not be more than "1".
-
 
 ==== Consent on Account List of Available Accounts
 This function implies a consent resource at the ASPSP to return a list of all available accounts, resp. all available accounts with its balances.
