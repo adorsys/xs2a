@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.query;
+package de.adorsys.psd2.xs2a.web.validator.query.account;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import de.adorsys.psd2.xs2a.web.validator.query.account.DateFromQueryParameterParamsValidatorImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_FIELD;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -131,6 +131,19 @@ class DateFromQueryParameterParamsValidatorImplTest {
         dateFromQueryParameterParamsValidator.validate(queryParams, messageError);
         //Then
         verifyError(captor);
+    }
+
+    @Test
+    void validate_wrongFormatError() {
+        //Given
+        ArgumentCaptor<TppMessageInformation> captor = ArgumentCaptor.forClass(TppMessageInformation.class);
+        queryParams.put(DATE_FROM_PARAMETER_NAME, Collections.singletonList("wrong_date_format"));
+        //When
+        dateFromQueryParameterParamsValidator.validate(queryParams, messageError);
+        //Then
+        verify(errorBuildingService, never()).buildErrorType();
+        verify(errorBuildingService).enrichMessageError(eq(messageError), captor.capture());
+        assertEquals(FORMAT_ERROR_INVALID_FIELD, captor.getValue().getMessageErrorCode());
     }
 
     private void verifyNoError() {
