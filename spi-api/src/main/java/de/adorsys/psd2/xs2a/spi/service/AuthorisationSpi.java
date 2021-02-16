@@ -87,6 +87,7 @@ interface AuthorisationSpi<T> {
     }
 
     /**
+     * @deprecated
      * Returns trusted beneficiaries flag
      *
      * @param contextData holder of call's context data (e.g. about PSU and TPP)
@@ -96,7 +97,7 @@ interface AuthorisationSpi<T> {
      * @return returns true if the creditor was part of the related trusted beneficiary list, false otherwise
      */
     @NotNull
-    @Deprecated
+    @Deprecated(since = "9.10", forRemoval = true)
     // TODO: remove method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1462
     default SpiResponse<Boolean> requestTrustedBeneficiaryFlag(@NotNull SpiContextData contextData, @NotNull T businessObject,
                                                                @NotNull String authorisationId,

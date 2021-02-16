@@ -111,6 +111,13 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
+    // Query parameter '%s' is before '%s'
+    FORMAT_ERROR_DATE_PERIOD_INVALID(400) {
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    },
     // Only one delta report query parameter can be present in request
     FORMAT_ERROR_MULTIPLE_DELTA_REPORT(400) {
         @Override
@@ -202,7 +209,7 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
-    // Invalid %s format
+    // Invalid '%s' format
     FORMAT_ERROR_INVALID_FIELD(400) {
         @Override
         public String getName() {

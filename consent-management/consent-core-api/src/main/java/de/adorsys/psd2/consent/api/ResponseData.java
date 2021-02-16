@@ -17,8 +17,10 @@
 package de.adorsys.psd2.consent.api;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ResponseData<D> {
 
     private D data;

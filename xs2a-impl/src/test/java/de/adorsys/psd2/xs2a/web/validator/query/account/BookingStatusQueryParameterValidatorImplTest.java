@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.web.validator.query;
+package de.adorsys.psd2.xs2a.web.validator.query.account;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
-import de.adorsys.psd2.xs2a.web.validator.query.account.BookingStatusQueryParameterParamsValidatorImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

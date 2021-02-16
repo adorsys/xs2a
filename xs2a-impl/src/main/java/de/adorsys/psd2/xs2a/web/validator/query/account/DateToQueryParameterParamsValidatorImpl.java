@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,48 +20,48 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.query.AbstractQueryParameterValidatorImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_DATE_PERIOD_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_FIELD;
 
 @Component
-public class DateFromQueryParameterParamsValidatorImpl extends AbstractQueryParameterValidatorImpl
+public class DateToQueryParameterParamsValidatorImpl extends AbstractQueryParameterValidatorImpl
     implements TransactionListQueryParamsValidator {
-    private static final String DATE_FROM_PARAMETER_NAME = "dateFrom";
-    private static final String ENTRY_REFERENCE_FROM_PARAMETER_NAME = "entryReferenceFrom";
-    private static final String DELTA_LIST_PARAMETER_NAME = "deltaList";
 
-    public DateFromQueryParameterParamsValidatorImpl(ErrorBuildingService errorBuildingService) {
+    private static final String DATE_FROM_PARAMETER_NAME = "dateFrom";
+    private static final String DATE_TO_PARAMETER_NAME = "dateTo";
+
+    public DateToQueryParameterParamsValidatorImpl(ErrorBuildingService errorBuildingService) {
         super(errorBuildingService);
     }
 
     @Override
     protected String getQueryParameterName() {
-        return DATE_FROM_PARAMETER_NAME;
+        return DATE_TO_PARAMETER_NAME;
     }
 
     @Override
     public MessageError validate(Map<String, List<String>> queryParameterMap, MessageError messageError) {
-        String dateFrom = getQueryParameterValue(queryParameterMap, getQueryParameterName());
-
-        if (dateFrom != null && !isDateParamValid(dateFrom)) {
+        String dateTo = getQueryParameterValue(queryParameterMap, getQueryParameterName());
+        if (dateTo != null && !isDateParamValid(dateTo)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, getQueryParameterName()));
+            return messageError;
         }
 
-        if (dateFrom == null && !isDeltaAccess(queryParameterMap)) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ABSENT_PARAMETER, getQueryParameterName()));
+        String dateFrom = getQueryParameterValue(queryParameterMap, DATE_FROM_PARAMETER_NAME);
+        if (StringUtils.isNoneEmpty(dateTo, dateFrom)
+                && isDateParamValid(dateFrom)
+                && LocalDate.parse(dateTo).isBefore(LocalDate.parse(dateFrom))) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DATE_PERIOD_INVALID,
+                                                                                           DATE_TO_PARAMETER_NAME, DATE_FROM_PARAMETER_NAME));
         }
 
         return messageError;
-    }
-
-    private boolean isDeltaAccess(Map<String, List<String>> queryParameterMap) {
-        String entryReferenceFrom = getQueryParameterValue(queryParameterMap, ENTRY_REFERENCE_FROM_PARAMETER_NAME);
-        String deltaList = getQueryParameterValue(queryParameterMap, DELTA_LIST_PARAMETER_NAME);
-        return entryReferenceFrom != null || deltaList != null;
     }
 }

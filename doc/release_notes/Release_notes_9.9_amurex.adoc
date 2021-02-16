@@ -1,0 +1,9 @@
+= Release notes v.9.9
+
+== Table of Contents
+
+* Bugfix: added validator for `dateTo` query parameter in get transaction list
+
+== Bugfix: added validator for `dateTo` query parameter in get transaction list
+
+From now on, query parameter `validTo` is validated. It should be correct format (ISO_DATE, i.e. "2021-02-12") and after `dateFrom`
