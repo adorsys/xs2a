@@ -52,6 +52,7 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -376,8 +377,10 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
             return executePaymentWithoutSca(authorisationProcessorRequest, psuData, payment.getPaymentType(), payment, contextData, EXEMPTED, xs2aCurrencyConversionInfo);
         }
 
+        ScaStatus scaStatus = ObjectUtils.defaultIfNull(authorizationCodeResult.getScaStatus(), ScaStatus.SCAMETHODSELECTED);
+
         Xs2aUpdatePisCommonPaymentPsuDataResponse response = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
-            authorizationCodeResult.getScaStatus(), payment.getPaymentId(), authorisationId, psuData, xs2aCurrencyConversionInfo);
+            scaStatus, payment.getPaymentId(), authorisationId, psuData, xs2aCurrencyConversionInfo);
         response.setChosenScaMethod(authorizationCodeResult.getSelectedScaMethod());
         response.setChallengeData(mapToChallengeData(authorizationCodeResult));
         return response;

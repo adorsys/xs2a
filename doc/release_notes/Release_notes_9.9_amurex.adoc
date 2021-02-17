@@ -3,7 +3,12 @@
 == Table of Contents
 
 * Bugfix: added validator for `dateTo` query parameter in get transaction list
+* Bugfix: handled empty SCA status from SPI
 
 == Bugfix: added validator for `dateTo` query parameter in get transaction list
 
-From now on, query parameter `validTo` is validated. It should be correct format (ISO_DATE, i.e. "2021-02-12") and after `dateFrom`
+From now on, query parameter `dateTo` is validated. It should be correct format (ISO_DATE, i.e. "2021-02-12") and after `dateFrom`
+
+== Bugfix: handled empty SCA status from SPI
+
+From now on, SCA status is handled on XS2A side and prevented from its NULL value.

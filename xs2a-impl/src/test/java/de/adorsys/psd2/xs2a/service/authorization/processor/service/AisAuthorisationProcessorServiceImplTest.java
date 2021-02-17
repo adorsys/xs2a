@@ -1633,7 +1633,6 @@ class AisAuthorisationProcessorServiceImplTest {
         AuthenticationObject method = new AuthenticationObject();
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
         spiAuthorizationCodeResult.setChallengeData(new ChallengeData());
-        spiAuthorizationCodeResult.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         return spiAuthorizationCodeResult;
     }
 }

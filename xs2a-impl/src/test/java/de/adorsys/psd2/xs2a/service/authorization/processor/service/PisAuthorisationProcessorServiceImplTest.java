@@ -1543,7 +1543,6 @@ class PisAuthorisationProcessorServiceImplTest {
         method.setAuthenticationType(TEST_AUTHENTICATION_TYPE);
         spiAuthorizationCodeResult.setSelectedScaMethod(method);
         spiAuthorizationCodeResult.setChallengeData(buildChallengeData());
-        spiAuthorizationCodeResult.setScaStatus(ScaStatus.SCAMETHODSELECTED);
         return spiAuthorizationCodeResult;
     }
 
