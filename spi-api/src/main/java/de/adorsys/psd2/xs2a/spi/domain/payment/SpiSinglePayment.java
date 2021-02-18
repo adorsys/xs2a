@@ -24,12 +24,14 @@ import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class SpiSinglePayment implements SpiPayment {
     private String paymentId;
     private String endToEndIdentification;
