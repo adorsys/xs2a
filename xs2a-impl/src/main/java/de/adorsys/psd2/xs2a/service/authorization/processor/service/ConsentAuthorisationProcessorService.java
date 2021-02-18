@@ -47,6 +47,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -197,9 +198,12 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
         }
 
         SpiAuthorizationCodeResult authorizationCodeResult = spiResponse.getPayload();
+        ScaStatus scaStatus = authorizationCodeResult.isScaExempted() ?
+                                  ScaStatus.EXEMPTED :
+                                  ObjectUtils.defaultIfNull(authorizationCodeResult.getScaStatus(), ScaStatus.SCAMETHODSELECTED);
 
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(
-            authorizationCodeResult.getScaStatus(), request.getBusinessObjectId(), request.getAuthorisationId(), psuData);
+            scaStatus, request.getBusinessObjectId(), request.getAuthorisationId(), psuData);
         response.setChosenScaMethod(authorizationCodeResult.getSelectedScaMethod());
         response.setChallengeData(authorizationCodeResult.getChallengeData());
         return response;
