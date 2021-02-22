@@ -57,7 +57,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
@@ -1291,9 +1291,9 @@ class ConsentServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        when(aisConsentSpi.getScaStatus(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
-            .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.STARTED, false, "psu message"))
+        when(aisConsentSpi.getScaInformation(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiScaInformationResponse>builder()
+                            .payload(new SpiScaInformationResponse(false, "psu message"))
                             .build());
 
         // When
@@ -1325,9 +1325,9 @@ class ConsentServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        when(aisConsentSpi.getScaStatus(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
-            .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.STARTED, true, "psu message"))
+        when(aisConsentSpi.getScaInformation(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiScaInformationResponse>builder()
+                            .payload(new SpiScaInformationResponse(true, "psu message"))
                             .build());
 
         // When
@@ -1360,10 +1360,10 @@ class ConsentServiceTest {
             .thenReturn(spiAspspConsentDataProvider);
 
         TppMessage tppMessage = new TppMessage(MessageErrorCode.FORMAT_ERROR);
-        SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
+        SpiResponse<SpiScaInformationResponse> spiResponse = SpiResponse.<SpiScaInformationResponse>builder()
                                                .error(tppMessage)
                                                .build();
-        when(aisConsentSpi.getScaStatus(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(aisConsentSpi.getScaInformation(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)).thenReturn(ErrorHolder.builder(ErrorType.AIS_400).build());
 
         // When

@@ -111,9 +111,9 @@ interface AuthorisationSpi<T> {
      * Returns authorisation SCA status and PSU message
      *
      * @param authorisationId a unique identifier of authorisation process
-     * @return Returns response object, containing a message from ASPSP to PSU and SCA status
+     * @return Returns response object, containing a SCA information from ASPSP
      */
-    SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
-                                                   @NotNull String authorisationId,
-                                                   @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiScaInformationResponse> getScaInformation(@NotNull SpiContextData contextData,
+                                                             @NotNull String authorisationId,
+                                                             @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 }

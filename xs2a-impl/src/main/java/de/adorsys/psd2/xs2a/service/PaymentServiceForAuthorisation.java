@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public abstract class PaymentServiceForAuthorisation {
 
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId);
-        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = getScaStatus(contextData, authorisationId, spiAspspConsentDataProvider);
+        SpiResponse<SpiScaInformationResponse> spiScaStatusResponse = getScaStatus(contextData, authorisationId, spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIS);
@@ -71,13 +71,13 @@ public abstract class PaymentServiceForAuthorisation {
                        .build();
         }
 
-        SpiScaStatusResponse spiScaStatus = spiScaStatusResponse.getPayload();
+        SpiScaInformationResponse spiScaStatusResponsePayload = spiScaStatusResponse.getPayload();
         ScaStatus scaStatus = paymentScaStatusResponse.getBody().getScaStatus();
 
-        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaStatus.getTrustedBeneficiaryFlag() : null;
+        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaStatusResponsePayload.getTrustedBeneficiaryFlag() : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
                                                                    beneficiaryFlag,
-                                                                   spiScaStatus.getPsuMessage());
+                                                                   spiScaStatusResponsePayload.getPsuMessage());
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)
@@ -87,9 +87,9 @@ public abstract class PaymentServiceForAuthorisation {
     abstract ResponseObject<PaymentScaStatus> getCMSScaStatus(String paymentId, String authorisationId,
                                                                   PaymentType paymentType, String paymentProduct);
 
-    abstract SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
-                                                            @NotNull String authorisationId,
-                                                            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    abstract SpiResponse<SpiScaInformationResponse> getScaStatus(@NotNull SpiContextData contextData,
+                                                                 @NotNull String authorisationId,
+                                                                 @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     private SpiContextData getSpiContextData() {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();

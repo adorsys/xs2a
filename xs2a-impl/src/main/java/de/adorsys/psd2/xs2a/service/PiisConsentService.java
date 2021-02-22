@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
@@ -50,7 +51,7 @@ import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentRequestO
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
@@ -225,8 +226,8 @@ public class PiisConsentService {
 
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
-        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(contextData, authorisationId,
-                                                                                             spiAspspConsentDataProvider);
+        SpiResponse<SpiScaInformationResponse> spiScaStatusResponse = piisConsentSpi.getScaInformation(contextData, authorisationId,
+                                                                                                       spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIIS);
@@ -236,7 +237,8 @@ public class PiisConsentService {
                        .build();
         }
 
-        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(cmsConsentScaStatusResponse.getBody().getScaStatus(), null,
+        ScaStatus scaStatus = cmsConsentScaStatusResponse.getBody().getScaStatus();
+        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus, null,
                                                                    spiScaStatusResponse.getPayload().getPsuMessage());
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()

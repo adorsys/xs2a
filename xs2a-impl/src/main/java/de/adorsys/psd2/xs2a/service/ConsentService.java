@@ -50,7 +50,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -374,34 +374,33 @@ public class ConsentService {
      * @return Response containing SCA status of the authorisation and optionally trusted beneficiaries flag or corresponding error
      */
     public ResponseObject<Xs2aScaStatusResponse> getConsentAuthorisationScaStatus(String consentId, String authorisationId) {
-        ResponseObject<ConsentScaStatus> consentScaStatusResponse = consentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
-        if (consentScaStatusResponse.hasError()) {
+        ResponseObject<ConsentScaStatus> cmsScaStatusResponse = consentAuthorisationService.getConsentAuthorisationScaStatus(consentId, authorisationId);
+        if (cmsScaStatusResponse.hasError()) {
             return ResponseObject.<Xs2aScaStatusResponse>builder()
-                       .fail(consentScaStatusResponse.getError())
+                       .fail(cmsScaStatusResponse.getError())
                        .build();
         }
 
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
 
-        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = aisConsentSpi.getScaStatus(contextData, authorisationId,
-                                                                                            spiAspspConsentDataProvider);
-        if (spiScaStatusResponse.hasError()) {
-            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.AIS);
+        SpiResponse<SpiScaInformationResponse> spiScaInformation = aisConsentSpi.getScaInformation(contextData, authorisationId,
+                                                                                                      spiAspspConsentDataProvider);
+        if (spiScaInformation.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaInformation, ServiceType.AIS);
             log.info("Authorisation-ID [{}], Consent-ID [{}]. Get SCA status failed.", authorisationId, consentId);
             return ResponseObject.<Xs2aScaStatusResponse>builder()
                        .fail(errorHolder)
                        .build();
         }
 
-        SpiScaStatusResponse spiScaStatus = spiScaStatusResponse.getPayload();
-        // Get SCA status from CMS
-        ScaStatus scaStatus = consentScaStatusResponse.getBody().getScaStatus();
+        SpiScaInformationResponse spiScaInformationPayload = spiScaInformation.getPayload();
+        ScaStatus scaStatus = cmsScaStatusResponse.getBody().getScaStatus();
 
-        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaStatus.getTrustedBeneficiaryFlag() : null;
+        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaInformationPayload.getTrustedBeneficiaryFlag() : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
                                                                    beneficiaryFlag,
-                                                                   spiScaStatus.getPsuMessage());
+                                                                   spiScaInformationPayload.getPsuMessage());
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)

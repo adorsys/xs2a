@@ -11,4 +11,6 @@ From now on, query parameter `dateTo` is validated. It should be correct format 
 
 == Bugfix: handled empty SCA status from SPI
 
-From now on, SCA status is handled on XS2A side and prevented from its NULL value.
+SCA status is retrieved from CMS.
+Method AuthorisationSpi#getScaStatus was renamed to AuthorisationSpi#getScaInformation.
+AuthorisationSpi#getScaInformation method obtains SCA information from ASPSP like PSU message and trusted beneficiaries flag.
