@@ -8,13 +8,15 @@
     "amount": "3000.45",
     "currency": "EUR"
   },
-  "debtorAccount": {
-    "iban": "DE371234599997",
-    "currency": "EUR"
+  "transactionInfo": {
+    "debtorAccount": {
+      "iban": "DE371234599997",
+      "currency": "EUR"
+    },
+    "remittanceInformationStructured": "Ref Number Merchant",
+    "remittanceInformationUnstructured": "Ref Number Merchant",
+    "purposeCode": "BKDF"
   },
-  "remittanceInformationStructured": "Ref Number Merchant",
-  "remittanceInformationUnstructured": "Ref Number Merchant",
-  "purposeCode": "BKDF",
   "bankTransactionCodeCode": {
     "code": "BankTransactionCode"
   }

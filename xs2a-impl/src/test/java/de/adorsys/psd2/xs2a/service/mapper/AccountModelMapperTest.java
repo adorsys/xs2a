@@ -18,21 +18,19 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
-import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
-import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.Transactions;
-import de.adorsys.psd2.xs2a.domain.*;
-import de.adorsys.psd2.xs2a.domain.account.*;
+import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountListHolder;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
-import de.adorsys.psd2.xs2a.web.mapper.HrefLinkMapper;
-import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import de.adorsys.psd2.xs2a.web.mapper.*;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -48,24 +46,23 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {AccountModelMapperImpl.class, AccountModelMapperTest.TestConfiguration.class})
+@ContextConfiguration(classes = {AccountModelMapperImpl.class,
+    AccountModelMapperTest.TestConfiguration.class,
+    BalanceMapperImpl.class, ReportExchangeMapperImpl.class,
+    DayOfExecutionMapper.class, OffsetDateTimeMapper.class
+})
 class AccountModelMapperTest {
-
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
-    private static final String BYTE_ARRAY_IN_STRING = "000000000000000=";
     private static final String XS2A_LINKS_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-links.json";
     private static final String LINKS_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-links.json";
     private static final String XS2A_AMOUNT_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-amount.json";
-    private static final String XS2A_AMOUNT_ENTRY_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-amount-entry.json";
     private static final String AMOUNT_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-amount.json";
-    private static final String AMOUNT_ENTRY_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-amount-entry.json";
 
     @Autowired
     private AccountModelMapper mapper;
@@ -75,6 +72,8 @@ class AccountModelMapperTest {
     private AmountModelMapper mockedAmountModelMapper;
     @Autowired
     private PurposeCodeMapper mockedPurposeCodeMapper;
+    @Autowired
+    protected BalanceMapper balanceMapper;
     @MockBean
     private AspspProfileServiceWrapper aspspProfileService;
 
@@ -191,110 +190,6 @@ class AccountModelMapperTest {
     }
 
     @Test
-    void mapToReportExchangeRate_success() {
-        Xs2aExchangeRate xs2aExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-exchange-rate.json", Xs2aExchangeRate.class);
-        ReportExchangeRate reportExchangeRate = mapper.mapToReportExchangeRate(xs2aExchangeRate);
-
-        ReportExchangeRate expectedReportExchangeRate = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-report-exchange-rate-expected.json",
-                                                                                     ReportExchangeRate.class);
-        assertEquals(expectedReportExchangeRate, reportExchangeRate);
-
-    }
-
-    @Test
-    void mapToReportExchangeRate_nullValue() {
-        ReportExchangeRate reportExchangeRate = mapper.mapToReportExchangeRate(null);
-        assertNull(reportExchangeRate);
-    }
-
-    @Test
-    void mapToTransaction_success() {
-        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
-        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
-
-        Xs2aAmount xs2aEntryAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_ENTRY_JSON_PATH, Xs2aAmount.class);
-        Amount amountEntry = jsonReader.getObjectFromFile(AMOUNT_ENTRY_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aEntryAmount)).thenReturn(amountEntry);
-
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.CDCB)).thenReturn(de.adorsys.psd2.model.PurposeCode.CDCB);
-
-        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
-        de.adorsys.psd2.model.Transactions actualTransactionDetails = mapper.mapToTransactions(transactions);
-
-        de.adorsys.psd2.model.Transactions expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
-                                                                                                           de.adorsys.psd2.model.Transactions.class);
-        assertEquals(expectedReportTransactionDetails, actualTransactionDetails);
-
-    }
-
-    @Test
-    void mapToTransactionDetails_success() {
-        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
-        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
-
-        Xs2aAmount xs2aEntryAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_ENTRY_JSON_PATH, Xs2aAmount.class);
-        Amount amountEntry = jsonReader.getObjectFromFile(AMOUNT_ENTRY_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aEntryAmount)).thenReturn(amountEntry);
-
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.CDCB)).thenReturn(de.adorsys.psd2.model.PurposeCode.CDCB);
-        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
-
-        InlineResponse2001 actualInlineResponse2001 = mapper.mapToTransactionDetails(transactions);
-
-        de.adorsys.psd2.model.Transactions expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
-                                                                                                     de.adorsys.psd2.model.Transactions.class);
-
-        assertNotNull(actualInlineResponse2001);
-        assertEquals(expectedTransactionDetails, actualInlineResponse2001.getTransactionsDetails().getTransactionDetails());
-    }
-
-    @Test
-    void mapToTransactionsResponseRaw_success() {
-        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
-
-        byte[] actualByteArray = mapper.mapToTransactionsResponseRaw(xs2aTransactionsReport);
-
-        assertEquals(BYTE_ARRAY_IN_STRING, Base64.getEncoder().encodeToString(actualByteArray));
-    }
-
-    @Test
-    void mapToTransactionsResponse200Json_success() {
-        // Given
-        Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
-        });
-        Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
-        when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
-        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
-        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
-
-        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
-
-        // When
-        TransactionsResponse200Json actual = mapper.mapToTransactionsResponse200Json(xs2aTransactionsReport);
-
-        actual.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
-
-        TransactionsResponse200Json expected = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactionsResponse200.json",
-                                                                            TransactionsResponse200Json.class);
-        expected.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
-
-        // Then
-        assertLinks(expected.getLinks(), actual.getLinks());
-        expected.getTransactions().setLinks(null);
-        actual.getTransactions().setLinks(null);
-
-        expected.setLinks(actual.getLinks());
-        assertEquals(expected, actual);
-
-    }
-
-    @Test
     void mapToAccountDetailsCurrency_currencyPresent() {
         //Given
         Currency currency = Currency.getInstance("EUR");
@@ -395,13 +290,6 @@ class AccountModelMapperTest {
             AccountDetails accountDetails = actualAccountList.getAccounts().get(0);
             assertEquals("XXX", accountDetails.getCurrency());
         });
-    }
-
-    @Test
-    void mapToBalanceType() {
-        Stream.of(BalanceType.values()) //Given
-            .map(mapper::mapToBalanceType) //When
-            .forEach(Assertions::assertNotNull); //Then
     }
 
     private Xs2aAccountDetails buildXs2aAccountDetails(Currency currency) {

@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
 import de.adorsys.psd2.xs2a.domain.code.BankTransactionCode;
 import lombok.Data;
@@ -45,24 +43,7 @@ public class Transactions {
     private LocalDate valueDate;
     private Xs2aAmount amount;
     private List<Xs2aExchangeRate> exchangeRate;
-    @Size(max = 70)
-    private String creditorName;
-    private AccountReference creditorAccount;
-    private String creditorAgent;
-    @Size(max = 70)
-    private String ultimateCreditor;
-    private String debtorName;
-    private AccountReference debtorAccount;
-    private String debtorAgent;
-    @Size(max = 70)
-    private String ultimateDebtor;
-    @Size(max = 140)
-    private String remittanceInformationUnstructured;
-    private List<String> remittanceInformationUnstructuredArray;
-    @Size(max = 140)
-    private String remittanceInformationStructured;
-    private List<String> remittanceInformationStructuredArray;
-    private PurposeCode purposeCode;
+    private TransactionInfo transactionInfo;
     private BankTransactionCode bankTransactionCodeCode;
     @Size(max = 35)
     private String proprietaryBankTransactionCode;

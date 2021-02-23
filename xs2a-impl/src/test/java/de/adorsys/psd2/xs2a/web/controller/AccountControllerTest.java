@@ -32,6 +32,7 @@ import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.service.mapper.TransactionModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.TrustedBeneficiariesModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.controller.util.RequestUriHandler;
@@ -103,6 +104,8 @@ class AccountControllerTest {
     private ResponseMapper responseMapper;
     @Mock
     private AccountModelMapper accountModelMapper;
+    @Mock
+    private TransactionModelMapper transactionModelMapper;
     @Mock
     private HttpServletRequest request;
     @Mock

@@ -47,7 +47,6 @@ public class AccountSpiMockImpl implements AccountSpi {
     private static final String TRUSTED_BENEFICIARIES_ID = "874aa308-78af-11ea-bc55-0242ac130003";
     private static final String IBAN = "DE52500105173911841934";
     private static final String NAME = "Müller";
-    private static final String REMITTANCE = "PMNT-ICDT-STDO";
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -169,9 +168,7 @@ public class AccountSpiMockImpl implements AccountSpi {
     private SpiTransaction buildSpiTransactionById(String transactionId) {
         return new SpiTransaction(transactionId, "", "", "", "", "aspsp", LocalDate.of(2019, Month.JANUARY, 4),
                                   LocalDate.of(2019, Month.JANUARY, 4), new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(200)), Collections.emptyList(),
-                                  NAME, buildSpiAccountReference(), NAME, NAME, NAME, buildSpiAccountReference(),
-                                  NAME, NAME, "", Collections.singletonList("remittance information unstructured"),
-                                  REMITTANCE, Collections.singletonList(REMITTANCE), "", "",
+                                  buildSpiTransactionInfo(), "",
                                   "some additional information", null, null, buildSpiAccountBalance(),
                                   false, 10, Collections.singletonList(buildSpiEntryDetails()));
     }
@@ -179,10 +176,19 @@ public class AccountSpiMockImpl implements AccountSpi {
     private SpiEntryDetails buildSpiEntryDetails() {
         return new SpiEntryDetails("endToEndId", "mandateId", "checkId", "creditorId",
                                    new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(345)),
-                                   Collections.emptyList(), "creditorName", buildSpiAccountReference(),
-                                   "creditorAgent", "ultimateCreditor", "debtorName", buildSpiAccountReference(),
-                                   "debtorAgent", "ultimateDebtor", "remittanceInformationUnstructured", Collections.singletonList("remittanceInformationUnstructuredArray"),
-                                   "remittanceInformationStructured", Collections.singletonList("remittanceInformationStructuredArray"), "CDCB");
+                                   Collections.emptyList(), buildSpiTransactionInfo());
+    }
+
+    private SpiTransactionInfo buildSpiTransactionInfo() {
+        return new SpiTransactionInfo("creditorName", buildSpiAccountReference(),
+                                      "creditorAgent", "ultimateCreditor",
+                                      "debtorName", buildSpiAccountReference(),
+                                      "debtorAgent", "ultimateDebtor",
+                                      "remittanceInformationUnstructured",
+                                      Collections.singletonList("remittanceInformationUnstructuredArray"),
+                                      "remittanceInformationStructured",
+                                      Collections.singletonList("remittanceInformationStructuredArray"),
+                                      "CDCB");
     }
 
     private SpiTransaction buildInformationSpiTransaction() {
@@ -194,11 +200,7 @@ public class AccountSpiMockImpl implements AccountSpi {
         SpiAdditionalInformationStructured additionalInformationStructured = new SpiAdditionalInformationStructured(standingOrderDetails);
         return new SpiTransaction(null, null, null, null, null,
                                   null, null, null, null, null,
-                                  "John Miles", buildSpiAccountReference(), null, null,
-                                  null, null, null,
-                                  "", null, null,
-                                  REMITTANCE, Collections.singletonList(REMITTANCE),
-                                  null, null, null,
+                                  buildSpiTransactionInfo(), null, null,
                                   null, additionalInformationStructured, buildSpiAccountBalance(),
                                   false, 15, Collections.singletonList(buildSpiEntryDetails()));
     }
