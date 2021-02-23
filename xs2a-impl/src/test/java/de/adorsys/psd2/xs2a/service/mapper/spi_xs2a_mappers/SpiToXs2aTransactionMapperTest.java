@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
     classes = {SpiToXs2aTransactionMapperImpl.class, SpiToXs2aAmountMapperImpl.class, SpiToXs2aBalanceMapperImpl.class,
         SpiToXs2aExchangeRateMapperImpl.class, SpiToXs2aAccountReferenceMapperImpl.class})
 class SpiToXs2aTransactionMapperTest {
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Autowired
     private SpiToXs2aTransactionMapper mapper;

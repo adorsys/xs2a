@@ -29,17 +29,5 @@ public class SpiEntryDetails {
     private final String creditorId;
     private final SpiAmount transactionAmount;
     private final List<SpiExchangeRate> currencyExchange;
-    private final String creditorName;
-    private final SpiAccountReference creditorAccount;
-    private final String creditorAgent;
-    private final String ultimateCreditor;
-    private final String debtorName;
-    private final SpiAccountReference debtorAccount;
-    private final String debtorAgent;
-    private final String ultimateDebtor;
-    private final String remittanceInformationUnstructured;
-    private final List<String> remittanceInformationUnstructuredArray;
-    private final String remittanceInformationStructured;
-    private final List<String> remittanceInformationStructuredArray;
-    private final String purposeCode;
+    private final SpiTransactionInfo spiTransactionInfo;
 }

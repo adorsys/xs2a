@@ -13,50 +13,55 @@
     "booked": [
       {
         "transactionId": "1234567",
-        "creditorName": "John Miles",
-        "creditorAccount": {
-          "iban": "DE67100100101306118605"
+        "transactionInfo": {
+          "creditorName": "John Miles",
+          "creditorAccount": {
+            "iban": "DE67100100101306118605"
+          },
+          "remittanceInformationUnstructured": "Example 1"
         },
         "amount": {
           "currency": "USD",
           "amount": "100"
         },
         "bookingDate": "2017-10-25",
-        "valueDate": "2017-10-26",
-        "remittanceInformationUnstructured": "Example 1"
+        "valueDate": "2017-10-26"
       },
       {
         "transactionId": "1234568",
-        "debtorName": "Paul Simpson",
-        "debtorAccount": {
-          "iban": "NL76RABO0359400371"
+        "transactionInfo": {
+          "debtorName": "Paul Simpson",
+          "debtorAccount": {
+            "iban": "NL76RABO0359400371"
+          },
+          "remittanceInformationUnstructured": "Example 2"
         },
         "amount": {
           "currency": "USD",
           "amount": "100"
         },
         "bookingDate": "2017-10-25",
-        "valueDate": "2017-10-26",
-        "remittanceInformationUnstructured": "Example 2"
+        "valueDate": "2017-10-26"
       }
     ],
     "pending": [
       {
         "transactionId": "1234569",
-        "creditorName": "Claude Renault",
-        "creditorAccount": {
-          "iban": "FR7612345987650123456789014"
+        "transactionInfo": {
+          "creditorName": "Claude Renault",
+          "creditorAccount": {
+            "iban": "FR7612345987650123456789014"
+          },
+          "remittanceInformationUnstructured": "Example 3"
         },
         "amount": {
           "currency": "USD",
           "amount": "100"
         },
-        "valueDate": "2017-10-26",
-        "remittanceInformationUnstructured": "Example 3"
+        "valueDate": "2017-10-26"
       }
     ],
     "transactionsRaw": "000000000000000="
-
   },
   "balances": [
     {
@@ -69,7 +74,6 @@
       "referenceDate": "2019-03-21",
       "lastCommittedTransaction": "lastCommittedTransaction"
     }
-
   ],
   "links": {
     "scaRedirect": {

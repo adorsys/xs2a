@@ -21,35 +21,37 @@
       "contractIdentification": "contractIdentification"
     }
   ],
-  "creditorName": "John Miles",
-  "creditorAccount": {
-    "aspspAccountId": "1234567890",
-    "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
-    "currency": "EUR",
-    "iban": "DE52500105173911841934",
-    "bban": "Test BBAN",
-    "maskedPan": "23456xxxxxx1234",
-    "msisdn": "0172/1111111",
-    "pan": "1111"
+  "spiTransactionInfo": {
+    "creditorName": "John Miles",
+    "creditorAccount": {
+      "aspspAccountId": "1234567890",
+      "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+      "currency": "EUR",
+      "iban": "DE52500105173911841934",
+      "bban": "Test BBAN",
+      "maskedPan": "23456xxxxxx1234",
+      "msisdn": "0172/1111111",
+      "pan": "1111"
+    },
+    "creditorAgent": "creditorAgent",
+    "ultimateCreditor": "Paul Simpson",
+    "debtorName": "Jan",
+    "debtorAccount": {
+      "aspspAccountId": "1234567890",
+      "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+      "currency": "EUR",
+      "iban": "DE52500105173911841934",
+      "bban": "Test BBAN",
+      "maskedPan": "23456xxxxxx1234",
+      "msisdn": "0172/1111111",
+      "pan": "1111"
+    },
+    "debtorAgent": "debtorAgent",
+    "ultimateDebtor": "Max",
+    "remittanceInformationUnstructured": "Ref Number Merchant",
+    "remittanceInformationStructured": "Ref Number Merchant",
+    "purposeCode": "CDCS"
   },
-  "creditorAgent": "creditorAgent",
-  "ultimateCreditor": "Paul Simpson",
-  "debtorName": "Jan",
-  "debtorAccount": {
-    "aspspAccountId": "1234567890",
-    "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
-    "currency": "EUR",
-    "iban": "DE52500105173911841934",
-    "bban": "Test BBAN",
-    "maskedPan": "23456xxxxxx1234",
-    "msisdn": "0172/1111111",
-    "pan": "1111"
-  },
-  "debtorAgent": "debtorAgent",
-  "ultimateDebtor": "Max",
-  "remittanceInformationUnstructured": "Ref Number Merchant",
-  "remittanceInformationStructured": "Ref Number Merchant",
-  "purposeCode": "CDCS",
   "bankTransactionCodeCode": "DE52500105173911841934",
   "proprietaryBankTransactionCode": "DE52500105173911841934",
   "balanceAfterTransaction": {
@@ -85,41 +87,43 @@
           "contractIdentification": "contractIdentification"
         }
       ],
-      "creditorName": "creditorName",
-      "creditorAccount": {
-        "aspspAccountId": "1234567890",
-        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
-        "currency": "EUR",
-        "iban": "DE52500105173911841934",
-        "bban": "Test BBAN",
-        "maskedPan": "23456xxxxxx1234",
-        "msisdn": "0172/1111111",
-        "pan": "1111"
-      },
-      "creditorAgent": "creditorAgent",
-      "ultimateCreditor": "ultimateCreditor",
-      "debtorName": "debtorName",
-      "debtorAccount": {
-        "aspspAccountId": "111234567890",
-        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
-        "currency": "USD",
-        "iban": "DE52500105173911841934",
-        "bban": "Test BBAN",
-        "maskedPan": "23456xxxxxx1234",
-        "msisdn": "0172/1111111",
-        "pan": "2222"
-      },
-      "debtorAgent": "debtorAgent",
-      "ultimateDebtor": "ultimateDebtor",
-      "remittanceInformationUnstructured": "remittanceInformationUnstructured",
-      "remittanceInformationUnstructuredArray": [
-        "remittanceInformationUnstructuredArray"
-      ],
-      "remittanceInformationStructured": "remittanceInformationStructured",
-      "remittanceInformationStructuredArray": [
-        "remittanceInformationStructuredArray"
-      ],
-      "purposeCode": "CDCB"
+      "spiTransactionInfo": {
+        "creditorName": "creditorName",
+        "creditorAccount": {
+          "aspspAccountId": "1234567890",
+          "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+          "currency": "EUR",
+          "iban": "DE52500105173911841934",
+          "bban": "Test BBAN",
+          "maskedPan": "23456xxxxxx1234",
+          "msisdn": "0172/1111111",
+          "pan": "1111"
+        },
+        "creditorAgent": "creditorAgent",
+        "ultimateCreditor": "ultimateCreditor",
+        "debtorName": "debtorName",
+        "debtorAccount": {
+          "aspspAccountId": "111234567890",
+          "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+          "currency": "USD",
+          "iban": "DE52500105173911841934",
+          "bban": "Test BBAN",
+          "maskedPan": "23456xxxxxx1234",
+          "msisdn": "0172/1111111",
+          "pan": "2222"
+        },
+        "debtorAgent": "debtorAgent",
+        "ultimateDebtor": "ultimateDebtor",
+        "remittanceInformationUnstructured": "remittanceInformationUnstructured",
+        "remittanceInformationUnstructuredArray": [
+          "remittanceInformationUnstructuredArray"
+        ],
+        "remittanceInformationStructured": "remittanceInformationStructured",
+        "remittanceInformationStructuredArray": [
+          "remittanceInformationStructuredArray"
+        ],
+        "purposeCode": "CDCB"
+      }
     }
   ]
 }

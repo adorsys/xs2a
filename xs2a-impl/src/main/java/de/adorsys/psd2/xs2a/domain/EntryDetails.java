@@ -16,9 +16,7 @@
 
 package de.adorsys.psd2.xs2a.domain;
 
-import de.adorsys.psd2.core.payment.model.PurposeCode;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
-import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.Data;
 
 import java.util.List;
@@ -31,18 +29,6 @@ public class EntryDetails {
     private String creditorId;
     private Xs2aAmount transactionAmount;
     private List<Xs2aExchangeRate> currencyExchange;
-    private String creditorName;
-    private AccountReference creditorAccount;
-    private String creditorAgent;
-    private String ultimateCreditor;
-    private String debtorName;
-    private AccountReference debtorAccount;
-    private String debtorAgent;
-    private String ultimateDebtor;
-    private String remittanceInformationUnstructured;
-    private List<String> remittanceInformationUnstructuredArray;
-    private String remittanceInformationStructured;
-    private List<String> remittanceInformationStructuredArray;
-    private PurposeCode purposeCode;
+    private TransactionInfo transactionInfo;
 }
 

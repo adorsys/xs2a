@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.ais.*;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
+import de.adorsys.psd2.xs2a.service.mapper.TransactionModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.TrustedBeneficiariesModelMapper;
 import de.adorsys.psd2.xs2a.service.mapper.psd2.ResponseErrorMapper;
 import de.adorsys.psd2.xs2a.web.controller.util.RequestUriHandler;
@@ -67,6 +68,7 @@ public class AccountController implements AccountApi {
     private final TrustedBeneficiariesService trustedBeneficiariesService;
     private final ResponseMapper responseMapper;
     private final AccountModelMapper accountModelMapper;
+    private final TransactionModelMapper transactionModelMapper;
     private final TrustedBeneficiariesModelMapper trustedBeneficiariesModelMapper;
     private final ResponseErrorMapper responseErrorMapper;
     private final TppErrorMessageWriter tppErrorMessageWriter;
@@ -106,9 +108,9 @@ public class AccountController implements AccountApi {
         if (transactionsReport.hasError()) {
             return responseErrorMapper.generateErrorResponse(transactionsReport.getError());
         } else if (transactionsReport.getBody().isResponseContentTypeJson()) {
-            return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponse200Json);
+            return responseMapper.ok(transactionsReport, transactionModelMapper::mapToTransactionsResponse200Json);
         } else {
-            return responseMapper.ok(transactionsReport, accountModelMapper::mapToTransactionsResponseRaw);
+            return responseMapper.ok(transactionsReport, transactionModelMapper::mapToTransactionsResponseRaw);
         }
     }
 
@@ -156,7 +158,7 @@ public class AccountController implements AccountApi {
         ResponseObject<Transactions> transactionDetails = transactionService.getTransactionDetails(consentID, accountId, resourceId, requestUriHandler.trimEndingSlash(request.getRequestURI()));
         return transactionDetails.hasError()
                    ? responseErrorMapper.generateErrorResponse(transactionDetails.getError())
-                   : responseMapper.ok(transactionDetails, accountModelMapper::mapToTransactionDetails);
+                   : responseMapper.ok(transactionDetails, transactionModelMapper::mapToTransactionDetails);
 
     }
 
