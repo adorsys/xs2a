@@ -136,11 +136,11 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
     }
 
     @Override
-    public SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull SpiContextData contextData,
-                                                          @NotNull String authorisationId,
-                                                          @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        return SpiResponse.<SpiScaStatusResponse>builder()
-                   .payload(new SpiScaStatusResponse(ScaStatus.RECEIVED, true, PSU_MESSAGE))
+    public SpiResponse<SpiScaInformationResponse> getScaInformation(@NotNull SpiContextData contextData,
+                                                                    @NotNull String authorisationId,
+                                                                    @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiScaInformationResponse>builder()
+                   .payload(new SpiScaInformationResponse(true, PSU_MESSAGE))
                    .build();
     }
 }

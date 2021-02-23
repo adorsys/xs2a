@@ -36,7 +36,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
@@ -124,10 +124,10 @@ class PaymentServiceForAuthorisationTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
-                                                            .payload(new SpiScaStatusResponse(ScaStatus.STARTED, true, "psu message"))
+        SpiResponse<SpiScaInformationResponse> spiResponse = SpiResponse.<SpiScaInformationResponse>builder()
+                                                            .payload(new SpiScaInformationResponse(null, "psu message"))
                                                             .build();
-        when(paymentAuthorisationSpi.getScaStatus(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(paymentAuthorisationSpi.getScaInformation(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
 
         // When
         ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
@@ -153,10 +153,10 @@ class PaymentServiceForAuthorisationTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
+        SpiResponse<SpiScaInformationResponse> spiResponse = SpiResponse.<SpiScaInformationResponse>builder()
                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                .build();
-        when(paymentAuthorisationSpi.getScaStatus(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(paymentAuthorisationSpi.getScaInformation(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS)).thenReturn(ErrorHolder.builder(ErrorType.PIS_400).build());
 
         // When
@@ -165,7 +165,7 @@ class PaymentServiceForAuthorisationTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.hasError()).isTrue();
-        verify(paymentAuthorisationSpi, times(1)).getScaStatus(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider);
+        verify(paymentAuthorisationSpi, times(1)).getScaInformation(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider);
         verify(spiErrorMapper, times(1)).mapToErrorHolder(spiResponse, ServiceType.PIS);
     }
 
@@ -186,10 +186,10 @@ class PaymentServiceForAuthorisationTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(PAYMENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
-                                               .payload(new SpiScaStatusResponse(ScaStatus.STARTED, true, "psu message"))
+        SpiResponse<SpiScaInformationResponse> spiResponse = SpiResponse.<SpiScaInformationResponse>builder()
+                                               .payload(new SpiScaInformationResponse(true, "psu message"))
                                                .build();
-        when(paymentAuthorisationSpi.getScaStatus(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(paymentAuthorisationSpi.getScaInformation(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
 
         // When
         ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
@@ -199,7 +199,7 @@ class PaymentServiceForAuthorisationTest {
         assertThat(actual.hasError()).isFalse();
         assertThat(actual.getBody()).isEqualTo(expected);
 
-        verify(paymentAuthorisationSpi, times(1)).getScaStatus(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider);
+        verify(paymentAuthorisationSpi, times(1)).getScaInformation(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider);
         verify(spiErrorMapper, never()).mapToErrorHolder(any(), any());
     }
 }
