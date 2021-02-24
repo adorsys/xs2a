@@ -3,7 +3,19 @@
 == Table of Contents
 
 * Fixed spi periodic payment
+* Bugfix: added validator for `dateTo` query parameter in get transaction list
+* Bugfix: handled empty SCA status from SPI
 
 == Fixed spi periodic payment
 
 `@Data` annotation was fixed for SpiPeriodicPayment.
+
+== Bugfix: added validator for `dateTo` query parameter in get transaction list
+
+From now on, query parameter `dateTo` is validated. It should be correct format (ISO_DATE, i.e. "2021-02-12") and after `dateFrom`
+
+== Bugfix: handled empty SCA status from SPI
+
+SCA status is retrieved from CMS.
+Method AuthorisationSpi#getScaStatus was renamed to AuthorisationSpi#getScaInformation.
+AuthorisationSpi#getScaInformation method obtains SCA information from ASPSP like PSU message and trusted beneficiaries flag.
