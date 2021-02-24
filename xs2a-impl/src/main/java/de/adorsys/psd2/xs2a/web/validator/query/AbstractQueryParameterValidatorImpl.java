@@ -24,6 +24,9 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,5 +100,33 @@ public abstract class AbstractQueryParameterValidatorImpl implements QueryParame
 
     private boolean hasMultipleValues(List<String> queryParameterValues) {
         return queryParameterValues.size() > 1;
+    }
+
+    protected String getQueryParameterValue(Map<String, List<String>> queryParameterMap, String parameter) {
+        return Optional.of(parameter)
+                   .map(queryParameterMap::get)
+                   .orElseGet(ArrayList::new)
+                   .stream()
+                   .findFirst()
+                   .orElse(null);
+
+    }
+
+    /**
+     * Validates date parameter format if it exists. Based on `ISO_DATE` format (i.e. 2021-02-12)
+     *
+     * @param dateParam input date parameter
+     * @return TRUE if date parameter has correct format and FALSE otherwise
+     */
+    protected boolean isDateParamValid(String dateParam) {
+        if (StringUtils.isEmpty(dateParam)) {
+            return false;
+        }
+        try {
+            LocalDate.parse(dateParam, DateTimeFormatter.ISO_DATE);
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+        return true;
     }
 }

@@ -22,12 +22,11 @@ import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.query.AbstractQueryParameterValidatorImpl;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_ABSENT_PARAMETER;
+import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_FIELD;
 
 @Component
 public class DateFromQueryParameterParamsValidatorImpl extends AbstractQueryParameterValidatorImpl
@@ -49,6 +48,10 @@ public class DateFromQueryParameterParamsValidatorImpl extends AbstractQueryPara
     public MessageError validate(Map<String, List<String>> queryParameterMap, MessageError messageError) {
         String dateFrom = getQueryParameterValue(queryParameterMap, getQueryParameterName());
 
+        if (dateFrom != null && !isDateParamValid(dateFrom)) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, getQueryParameterName()));
+        }
+
         if (dateFrom == null && !isDeltaAccess(queryParameterMap)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ABSENT_PARAMETER, getQueryParameterName()));
         }
@@ -61,15 +64,4 @@ public class DateFromQueryParameterParamsValidatorImpl extends AbstractQueryPara
         String deltaList = getQueryParameterValue(queryParameterMap, DELTA_LIST_PARAMETER_NAME);
         return entryReferenceFrom != null || deltaList != null;
     }
-
-    private String getQueryParameterValue(Map<String, List<String>> queryParameterMap, String parameter) {
-        return Optional.of(parameter)
-                   .map(queryParameterMap::get)
-                   .orElseGet(ArrayList::new)
-                   .stream()
-                   .findFirst()
-                   .orElse(null);
-
-    }
-
 }
