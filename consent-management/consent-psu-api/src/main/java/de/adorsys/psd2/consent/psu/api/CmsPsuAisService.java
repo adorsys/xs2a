@@ -106,10 +106,14 @@ public interface CmsPsuAisService {
      * @param psuIdData  PSU credentials data
      * @param instanceId optional ID of particular service instance
      * @param additionalTppInfo additional tpp info
+     * @param statuses consent statuses
+     * @param accountNumbers account numbers (IBAN, BBAN...)
      * @return List of AIS Consent objects corresponding to the given PSU
      */
     @NotNull
-    List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData, @NotNull String instanceId, @Nullable String additionalTppInfo);
+    List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
+                                                                     @Nullable String additionalTppInfo,  @Nullable List<String> statuses,
+                                                                     @Nullable List<String> accountNumbers);
 
     /**
      * Revokes AIS Consent object by its ID. Consent gets status "Revoked by PSU".

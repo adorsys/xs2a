@@ -57,6 +57,7 @@ import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -199,12 +200,15 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
 
     @Override
     public @NotNull List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData, @NotNull String instanceId,
-                                                                                     @Nullable String additionalTppInfo) {
+                                                                                     @Nullable String additionalTppInfo, @Nullable List<String> statuses,
+                                                                                     @Nullable List<String> accountNumbers) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo))
+        List<ConsentStatus> consentStatuses = CollectionUtils.emptyIfNull(statuses).stream()
+                                                  .map(ConsentStatus::valueOf).collect(Collectors.toList());
+        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo, consentStatuses, accountNumbers))
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)

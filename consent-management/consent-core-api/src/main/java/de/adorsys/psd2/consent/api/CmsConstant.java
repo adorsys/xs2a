@@ -38,5 +38,7 @@ public class CmsConstant {
 
     public static final class QUERY {
         public static final String ADDITIONAL_TPP_INFO = "additionalTppInfo";
+        public static final String STATUS = "status";
+        public static final String ACCOUNT_NUMBER = "accountNumber";
     }
 }

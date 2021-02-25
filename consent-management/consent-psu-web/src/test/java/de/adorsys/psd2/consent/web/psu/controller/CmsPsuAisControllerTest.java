@@ -43,6 +43,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -74,6 +75,7 @@ class CmsPsuAisControllerTest {
     private static final String PSU_ID_TYPE_HEADER_NAME = "psu-id-type";
     private static final String PSU_CORPORATE_ID_HEADER_NAME = "psu-corporate-id";
     private static final String PSU_CORPORATE_ID_TYPE_HEADER_NAME = "psu-corporate-id-type";
+    private static final String STATUS_PARAM = "status";
     private static final HttpHeaders PSU_HEADERS = buildPsuHeaders();
     private static final HttpHeaders INSTANCE_ID_HEADERS = buildInstanceIdHeaders();
     private static final byte[] EMPTY_BODY = new byte[0];
@@ -355,7 +357,7 @@ class CmsPsuAisControllerTest {
         // Given
         String aisConsentListString = jsonReader.getStringFromFile("json/ais/response/ais-consent-list.json");
         List<CmsAisAccountConsent> cmsAisAccountConsentList = jsonReader.getListFromString(aisConsentListString, CmsAisAccountConsent.class);
-        when(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null))
+        when(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null, null, null))
             .thenReturn(cmsAisAccountConsentList);
 
         // When
@@ -366,24 +368,26 @@ class CmsPsuAisControllerTest {
             .andExpect(content().json(aisConsentListString));
 
         // Then
-        verify(cmsPsuAisService).getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null);
+        verify(cmsPsuAisService).getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null, null, null);
     }
 
     @Test
     void getConsentsForPsu_withFalseServiceResponse_shouldReturnOk() throws Exception {
         // Given
-        when(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null))
+        when(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null, Arrays.asList("RECEIVED", "VALID"), null))
             .thenReturn(Collections.emptyList());
 
         // When
         mockMvc.perform(get("/psu-api/v1/ais/consent/consents")
                             .headers(INSTANCE_ID_HEADERS)
-                            .headers(PSU_HEADERS))
+                            .headers(PSU_HEADERS)
+                            .param(STATUS_PARAM, "RECEIVED,VALID")
+        )
             .andExpect(status().isOk())
             .andExpect(content().json("[]"));
 
         // Then
-        verify(cmsPsuAisService).getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null);
+        verify(cmsPsuAisService).getConsentsForPsuAndAdditionalTppInfo(PSU_ID_DATA, INSTANCE_ID, null, Arrays.asList("RECEIVED", "VALID"), null);
     }
 
     @Test

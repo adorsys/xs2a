@@ -71,7 +71,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = ConsentManagementStandaloneApp.class)
 @ContextConfiguration(classes = WebConfig.class)
-public class CmsPsuAisControllerIT {
+class CmsPsuAisControllerIT {
 
     private static final String INSTANCE_ID = "bank-instance-id";
     private static final String CONSENT_ID = "4b112130-6a96-4941-a220-2da8a4af2c65";
@@ -220,7 +220,7 @@ public class CmsPsuAisControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/psu/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, INSTANCE_ID, null);
+        verify(aisConsentSpecification).byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, INSTANCE_ID, null, Collections.emptyList(), null);
     }
 
     @Test
