@@ -93,9 +93,9 @@ public class CmsPsuAisController implements CmsPsuAisApi {
     @Override
     public ResponseEntity<List<CmsAisAccountConsent>> getConsentsForPsu(String psuId, String psuIdType, String psuCorporateId,
                                                                         String psuCorporateIdType, String instanceId,
-                                                                        String additionalTppInfo) {
+                                                                        String additionalTppInfo, List<String> statuses, List<String> accountNumbers) {
         PsuIdData psuIdData = getPsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType);
-        return new ResponseEntity<>(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo), HttpStatus.OK);
+        return new ResponseEntity<>(cmsPsuAisService.getConsentsForPsuAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo, statuses, accountNumbers), HttpStatus.OK);
     }
 
     @Override

@@ -16,22 +16,25 @@
 
 package de.adorsys.psd2.consent.repository.specification;
 
+import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.repository.specification.EntityAttribute.*;
-import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForEntityAttribute;
-import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.provideSpecificationForJoinedEntityAttribute;
+import static de.adorsys.psd2.consent.repository.specification.EntityAttributeSpecificationProvider.*;
 
 @RequiredArgsConstructor
 public abstract class ConsentFilterableSpecification {
@@ -76,11 +79,36 @@ public abstract class ConsentFilterableSpecification {
                    .orElse(null);
     }
 
-    public Specification<ConsentEntity> byPsuDataInListAndInstanceIdAndAdditionalTppInfo(PsuIdData psuIdData, String instanceId, String additionalTppInfo) {
+    public Specification<ConsentEntity> byPsuDataInListAndInstanceIdAndAdditionalTppInfo(PsuIdData psuIdData, String instanceId,
+                                                                                         String additionalTppInfo, List<ConsentStatus> statuses,
+                                                                                         List<String> accountNumbers) {
         return Optional.ofNullable(consentSpecification.byPsuDataInListAndInstanceId(psuIdData, instanceId))
                    .map(s -> s.and(byAdditionalTppInfo(additionalTppInfo)))
+                   .map(s -> s.and(byInConsentStatuses(statuses)))
+                   .map(s -> s.and(byInAccountNumbers(accountNumbers)))
                    .map(s -> s.and(byConsentType()))
                    .orElse(null);
+    }
+
+    private Specification<ConsentEntity> byInConsentStatuses(List<ConsentStatus> statuses) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (CollectionUtils.isEmpty(statuses)) {
+                return null;
+            }
+            return criteriaBuilder.and(root.get(CONSENT_STATUS).in(statuses));
+        };
+    }
+
+    private Specification<ConsentEntity> byInAccountNumbers(List<String> accountNumbers) {
+        return (root, query, cb) -> {
+            if (CollectionUtils.isEmpty(accountNumbers)) {
+                return null;
+            }
+            Join<ConsentEntity, List<AspspAccountAccess>> aspspAccountAccessesJoin = root.join(ASPSP_ACCOUNT_ACCESSES_ATTRIBUTE);
+            return Specification
+                       .where(provideSpecificationForJoinedEntityAttributeIn(aspspAccountAccessesJoin, ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER, accountNumbers))
+                       .toPredicate(root, query, cb);
+        };
     }
 
     public Specification<ConsentEntity> byAdditionalTppInfo(@Nullable String additionalTppInfo) {
