@@ -20,17 +20,16 @@ import com.google.common.net.InternetDomainName;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.TppUriCompliance;
+import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.BusinessValidator;
-import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
@@ -53,7 +52,7 @@ public class TppDomainValidator implements BusinessValidator<String> {
     private final ScaApproachResolver scaApproachResolver;
 
     @Override
-    public ValidationResult validate(@NotNull String header) {
+    public ValidationResult validate(String header) {
         if (StringUtils.isNotBlank(header) &&
                 isRedirectScaApproach() &&
                 isCheckUriComplianceToDomainSupported() &&
@@ -74,7 +73,7 @@ public class TppDomainValidator implements BusinessValidator<String> {
     }
 
     @Override
-    public Set<TppMessageInformation> buildWarningMessages(@NotNull String urlString) {
+    public Set<TppMessageInformation> buildWarningMessages(String urlString) {
         Set<TppMessageInformation> warningMessages = new HashSet<>();
 
         if (!isCheckUriComplianceToDomainSupported()) {

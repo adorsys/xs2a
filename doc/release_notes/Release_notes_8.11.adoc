@@ -1,3 +1,9 @@
 = Release notes v.8.11
 
 == Table of Contents
+
+* Removed @NotNull from TppDomainValidator#validate
+
+== Removed @NotNull from TppDomainValidator#validate
+
+From now on, @NotNull is removed from TppDomainValidator#validate.
