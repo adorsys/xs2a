@@ -3,7 +3,17 @@
 == Table of Contents
 
 * Removed @NotNull from TppDomainValidator#validate
+* Added additional query parameters for `/psu-api/v1/ais/consent/consents`
 
 == Removed @NotNull from TppDomainValidator#validate
 
 From now on, @NotNull is removed from TppDomainValidator#validate.
+
+== Added additional query parameters for `/psu-api/v1/ais/consent/consents`
+
+From now on, getting consent by PSU can be filtered by query parameters:
+
+* `status` - list of consent statuses, i.e. status=VALID,EXPIRED
+* `accountNumber` - list of account numbers, i.e. accountNumber=CH0900784152046193205,CH0900784152046193206
+
+All of these query parameters are optional, if they are empty it will mean ALL.
