@@ -16,11 +16,11 @@
 
 package de.adorsys.psd2.consent.repository.specification;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.Join;
 import java.util.List;
@@ -76,6 +76,26 @@ public class EntityAttributeSpecificationProvider {
                 return null;
             }
             return criteriaBuilder.and(criteriaBuilder.equal(join.get(attribute), value));
+        };
+    }
+
+    /**
+     * Provides specification for the attribute in a joined entity.
+     *
+     * @param join      join to an entity
+     * @param attribute name of the attribute in joined entity
+     * @param values    optional values of the attribute
+     * @param <T>       type of the entity, for which this specification will be created
+     * @return resulting specification, or <code>null</code> if the attribute's value was omitted
+     */
+    public static <T> Specification<T> provideSpecificationForJoinedEntityAttributeIn(@NotNull Join<T, ?> join,
+                                                                                      @NotNull String attribute,
+                                                                                      @Nullable List<String> values) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (CollectionUtils.isEmpty(values)) {
+                return null;
+            }
+            return criteriaBuilder.and(join.get(attribute).in(values));
         };
     }
 
