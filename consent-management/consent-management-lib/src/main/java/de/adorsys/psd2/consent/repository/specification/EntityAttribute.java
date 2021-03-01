@@ -40,6 +40,7 @@ public class EntityAttribute {
     public static final String ACCOUNT_ACCESS_ATTRIBUTE_ACCOUNT_IDENTIFIER = "accountIdentifier";
     public static final String CURRENCY_ATTRIBUTE = "currency";
     public static final String ASPSP_ACCOUNT_ID_ATTRIBUTE = "aspspAccountId";
+    public static final String CONSENT_STATUS = "consentStatus";
 
     private EntityAttribute() {
     }

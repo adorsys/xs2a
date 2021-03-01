@@ -43,5 +43,7 @@ public class CmsConstant {
         public static final String PAGE_INDEX = "pageIndex";
         public static final String ITEMS_PER_PAGE = "itemsPerPage";
         public static final String ADDITIONAL_TPP_INFO = "additionalTppInfo";
+        public static final String STATUS = "status";
+        public static final String ACCOUNT_NUMBER = "accountNumber";
     }
 }
