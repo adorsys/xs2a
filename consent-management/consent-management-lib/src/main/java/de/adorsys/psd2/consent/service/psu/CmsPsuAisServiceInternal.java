@@ -60,6 +60,7 @@ import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -207,21 +208,17 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     @Override
     public @NotNull List<CmsAisAccountConsent> getConsentsForPsuAndAdditionalTppInfo(@NotNull PsuIdData psuIdData,
                                                                                      @NotNull String instanceId,
-                                                                                     Integer pageIndex, Integer itemsPerPage,
-                                                                                     @Nullable String additionalTppInfo) {
+                                                                                     @Nullable String additionalTppInfo, @Nullable List<String> statuses,
+                                                                                     @Nullable List<String> accountNumbers,
+                                                                                     Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData.isEmpty()) {
             return Collections.emptyList();
         }
 
-        if (pageIndex == null && itemsPerPage == null) {
-            return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo))
-                       .stream()
-                       .map(aisConsentLazyMigrationService::migrateIfNeeded)
-                       .map(this::mapToCmsAisAccountConsentWithAuthorisations)
-                       .collect(Collectors.toList());
-        }
+        List<ConsentStatus> consentStatuses = CollectionUtils.emptyIfNull(statuses).stream()
+                                                  .map(ConsentStatus::valueOf).collect(Collectors.toList());
         Pageable pageRequest = pageRequestBuilder.getPageable(pageIndex, itemsPerPage);
-        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo), pageRequest)
+        return consentJpaRepository.findAll(aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, instanceId, additionalTppInfo, consentStatuses, accountNumbers), pageRequest)
                    .stream()
                    .map(aisConsentLazyMigrationService::migrateIfNeeded)
                    .map(this::mapToCmsAisAccountConsentWithAuthorisations)

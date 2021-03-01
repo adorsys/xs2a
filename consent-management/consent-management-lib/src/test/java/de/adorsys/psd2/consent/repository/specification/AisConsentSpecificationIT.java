@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.integration.test.BaseTest;
 import de.adorsys.psd2.integration.test.TestDBConfiguration;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.apache.commons.collections4.CollectionUtils;
@@ -128,6 +129,44 @@ class AisConsentSpecificationIT extends BaseTest {
         ConsentEntity actualConsent = actual.get(0);
         assertEquals(PSU_ID_DATA.getPsuId(), actualConsent.getPsuDataList().get(0).getPsuId());
         assertEquals(INSTANCE_ID, actual.get(0).getInstanceId());
+    }
+
+    @Test
+    @Transactional
+    void byPsuDataInListAndInstanceIdAndConsentStatuses() {
+        List<ConsentEntity> actual = consentJpaRepository.findAll(
+            aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(
+                PSU_ID_DATA,
+                INSTANCE_ID,
+                null, List.of(ConsentStatus.EXPIRED, ConsentStatus.RECEIVED), null
+            )
+        );
+
+        assertTrue(CollectionUtils.isNotEmpty(actual));
+        assertEquals(1, actual.size());
+        ConsentEntity actualConsent = actual.get(0);
+        assertEquals(PSU_ID_DATA.getPsuId(), actualConsent.getPsuDataList().get(0).getPsuId());
+        assertEquals(INSTANCE_ID, actual.get(0).getInstanceId());
+        assertEquals(ConsentStatus.RECEIVED, actual.get(0).getConsentStatus());
+    }
+
+    @Test
+    @Transactional
+    void byPsuDataInListAndInstanceIdAndAccountNumbers() {
+        List<ConsentEntity> actual = consentJpaRepository.findAll(
+            aisConsentSpecification.byPsuDataInListAndInstanceIdAndAdditionalTppInfo(
+                PSU_ID_DATA,
+                INSTANCE_ID,
+                null, null, List.of("DE15500105172295759744", "DE15500105172295759745")
+            )
+        );
+
+        assertTrue(CollectionUtils.isNotEmpty(actual));
+        assertEquals(1, actual.size());
+        ConsentEntity actualConsent = actual.get(0);
+        assertEquals(PSU_ID_DATA.getPsuId(), actualConsent.getPsuDataList().get(0).getPsuId());
+        assertEquals(INSTANCE_ID, actual.get(0).getInstanceId());
+        assertEquals("DE15500105172295759744", actual.get(0).getAspspAccountAccesses().get(0).getAccountIdentifier());
     }
 
     @Test

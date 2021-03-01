@@ -42,6 +42,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -58,6 +60,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -209,7 +212,7 @@ class CmsPsuAisControllerIT {
     void getConsentsForPsu() throws Exception {
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/consent/integration/psu/psu-id-data.json", PsuIdData.class);
 
-        given(consentJpaRepository.findAll(any())).willReturn(Collections.singletonList(consentEntity));
+        given(consentJpaRepository.findAll(any(), eq(Pageable.unpaged()))).willReturn(new PageImpl<>(Collections.singletonList(consentEntity)));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getConsentsForPsuUrl());
         requestBuilder.headers(httpHeaders);
@@ -219,7 +222,7 @@ class CmsPsuAisControllerIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(jsonReader.getStringFromFile("json/consent/integration/psu/expect/cms-ais-account-consent.json")));
 
-        verify(aisConsentSpecification).byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, INSTANCE_ID, null);
+        verify(aisConsentSpecification).byPsuDataInListAndInstanceIdAndAdditionalTppInfo(psuIdData, INSTANCE_ID, null, Collections.emptyList(), null);
     }
 
     @Test
