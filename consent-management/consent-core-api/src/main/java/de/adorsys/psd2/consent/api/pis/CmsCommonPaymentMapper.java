@@ -17,7 +17,7 @@
 package de.adorsys.psd2.consent.api.pis;
 
 public interface CmsCommonPaymentMapper {
-    CmsPayment mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment);
-    CmsPayment mapToCmsBulkPayment(CmsCommonPayment cmsCommonPayment);
-    CmsPayment mapToCmsPeriodicPayment(CmsCommonPayment cmsCommonPayment);
+    CmsBasePaymentResponse mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment);
+    CmsBasePaymentResponse mapToCmsBulkPayment(CmsCommonPayment cmsCommonPayment);
+    CmsBasePaymentResponse mapToCmsPeriodicPayment(CmsCommonPayment cmsCommonPayment);
 }

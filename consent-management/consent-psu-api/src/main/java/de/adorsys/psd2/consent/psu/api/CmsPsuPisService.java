@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
@@ -51,7 +52,7 @@ public interface CmsPsuPisService {
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId);
+    Optional<CmsBasePaymentResponse> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId);
 
     /**
      * Checks redirect URL and corresponding authorisation on expiration and returns Payment Response object if authorisation is valid

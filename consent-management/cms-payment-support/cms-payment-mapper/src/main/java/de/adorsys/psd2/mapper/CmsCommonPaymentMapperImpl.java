@@ -16,26 +16,26 @@
 
 package de.adorsys.psd2.mapper;
 
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPaymentMapper;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CmsCommonPaymentMapperImpl implements CmsCommonPaymentMapper {
 
     @Override
-    public CmsPayment mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment) {
         return cmsCommonPayment;
     }
 
     @Override
-    public CmsPayment mapToCmsBulkPayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse mapToCmsBulkPayment(CmsCommonPayment cmsCommonPayment) {
         return cmsCommonPayment;
     }
 
     @Override
-    public CmsPayment mapToCmsPeriodicPayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse mapToCmsPeriodicPayment(CmsCommonPayment cmsCommonPayment) {
         return cmsCommonPayment;
     }
 }

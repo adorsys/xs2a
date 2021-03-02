@@ -17,9 +17,9 @@
 package de.adorsys.psd2.consent.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPaymentMapper;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.PisPayment;
 import de.adorsys.psd2.consent.service.mapper.CmsCorePaymentMapper;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
@@ -51,7 +51,7 @@ public class CorePaymentsConvertService {
         }
     }
 
-    public CmsPayment expandCommonPaymentWithCorePayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse expandCommonPaymentWithCorePayment(CmsCommonPayment cmsCommonPayment) {
         CmsCommonPaymentMapper cmsCommonPaymentMapper = paymentMapperResolver.getCmsCommonPaymentMapper(cmsCommonPayment.getPaymentProduct());
         switch (cmsCommonPayment.getPaymentType()) {
             case SINGLE:
