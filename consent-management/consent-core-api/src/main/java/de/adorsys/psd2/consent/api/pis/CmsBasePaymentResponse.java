@@ -35,39 +35,4 @@ public class CmsBasePaymentResponse implements CmsPayment {
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;
 
-
-    @Override
-    public String getPaymentId() {
-        return paymentId;
-    }
-
-    @Override
-    public PaymentType getPaymentType() {
-        return paymentType;
-    }
-
-    @Override
-    public String getPaymentProduct() {
-        return paymentProduct;
-    }
-
-    @Override
-    public List<PsuIdData> getPsuIdDatas() {
-        return psuIdDatas;
-    }
-
-    @Override
-    public TppInfo getTppInfo() {
-        return tppInfo;
-    }
-
-    @Override
-    public OffsetDateTime getCreationTimestamp() {
-        return creationTimestamp;
-    }
-
-    @Override
-    public OffsetDateTime getStatusChangeTimestamp() {
-        return getStatusChangeTimestamp();
-    }
 }

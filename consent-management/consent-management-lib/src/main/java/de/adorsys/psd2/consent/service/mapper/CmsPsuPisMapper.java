@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CmsPsuPisMapper {
-    private final PisCommonPaymentMapper pisCommonPaymentMapper;
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
     private final CmsRemittanceMapper cmsRemittanceMapper;
