@@ -18,7 +18,6 @@ package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CreatePisCommonPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.config.CmsPsuApiTagName;
@@ -31,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.*;
+import static de.adorsys.psd2.consent.psu.api.config.CmsPsuApiDefaultValue.DEFAULT_SERVICE_INSTANCE_ID;
 
 @RequestMapping(path = "psu-api/v1/payment")
 @Api(value = "psu-api/v1/payment", tags = CmsPsuApiTagName.PSU_PIS_PAYMENT)
