@@ -5,6 +5,7 @@
 * Removed @NotNull from TppDomainValidator#validate
 * Added additional query parameters for `/psu-api/v1/ais/consent/consents`
 * Added validation certificate roles for PIIS consent v2
+* Updated jackson version to 2.12.1
 
 == Removed @NotNull from TppDomainValidator#validate
 
@@ -24,3 +25,7 @@ All of these query parameters are optional, if they are empty it will mean ALL.
 From now on, certificate roles will be applied for all `/v2/consents/confirmation-of-funds/**` endpoints.
 
 To enable certificate roles validation set flag `setting.common.checkTppRolesFromCertificateSupported: TRUE`
+
+== Updated jackson version to 2.12.1
+
+Fixed severe security vulnerability detected in com.fasterxml.jackson.core:jackson-databind < 2.12.1 defined in pom.xml.
