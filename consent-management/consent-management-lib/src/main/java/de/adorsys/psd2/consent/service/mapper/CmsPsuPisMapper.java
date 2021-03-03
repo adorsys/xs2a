@@ -36,14 +36,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CmsPsuPisMapper {
-    private final PisCommonPaymentMapper pisCommonPaymentMapper;
     private final TppInfoMapper tppInfoMapper;
     private final PsuDataMapper psuDataMapper;
     private final CmsRemittanceMapper cmsRemittanceMapper;
     private final CorePaymentsConvertService corePaymentsConvertService;
     private final CmsAddressMapper cmsAddressMapper;
 
-    public CmsPayment mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
+    public CmsBasePaymentResponse mapToCmsPayment(@NotNull PisCommonPaymentData paymentData) {
         CmsCommonPayment cmsCommonPayment = new CmsCommonPayment(paymentData.getPaymentProduct());
         cmsCommonPayment.setPaymentId(paymentData.getPaymentId());
         cmsCommonPayment.setPaymentProduct(paymentData.getPaymentProduct());
@@ -59,7 +58,7 @@ public class CmsPsuPisMapper {
         return cmsCommonPayment;
     }
 
-    public CmsPayment mapToCmsPayment(List<PisPaymentData> pisPaymentDataList) {
+    public CmsBasePaymentResponse mapToCmsPayment(List<PisPaymentData> pisPaymentDataList) {
         PaymentType paymentType = pisPaymentDataList.get(0).getPaymentData().getPaymentType();
         String paymentProduct = pisPaymentDataList.get(0).getPaymentData().getPaymentProduct();
 
@@ -92,7 +91,7 @@ public class CmsPsuPisMapper {
         }
     }
 
-    private CmsPayment mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, String paymentProduct) {
+    private CmsBasePaymentResponse mapToCmsPeriodicPayment(PisPaymentData pisPaymentData, String paymentProduct) {
         CmsPeriodicPayment periodicPayment = new CmsPeriodicPayment(paymentProduct);
         periodicPayment.setPaymentId(pisPaymentData.getPaymentId());
         periodicPayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());
@@ -126,7 +125,7 @@ public class CmsPsuPisMapper {
         return periodicPayment;
     }
 
-    private CmsPayment mapToCmsBulkPayment(List<PisPaymentData> pisPaymentDataList, String paymentProduct) {
+    private CmsBasePaymentResponse mapToCmsBulkPayment(List<PisPaymentData> pisPaymentDataList, String paymentProduct) {
         PisPaymentData bulkPisPaymentData = pisPaymentDataList.get(0);
         CmsBulkPayment bulkPayment = new CmsBulkPayment();
         bulkPayment.setPaymentId(bulkPisPaymentData.getPaymentData().getPaymentId());
@@ -142,7 +141,7 @@ public class CmsPsuPisMapper {
         return bulkPayment;
     }
 
-    private CmsPayment mapToCmsSinglePayment(PisPaymentData pisPaymentData, String paymentProduct) {
+    private CmsBasePaymentResponse mapToCmsSinglePayment(PisPaymentData pisPaymentData, String paymentProduct) {
         CmsSinglePayment singlePayment = new CmsSinglePayment(paymentProduct);
         singlePayment.setPaymentId(pisPaymentData.getPaymentId());
         singlePayment.setEndToEndIdentification(pisPaymentData.getEndToEndIdentification());

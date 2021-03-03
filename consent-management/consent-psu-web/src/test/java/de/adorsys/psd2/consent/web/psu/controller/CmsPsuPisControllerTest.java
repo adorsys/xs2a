@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.web.psu.controller;
 
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
@@ -183,7 +184,7 @@ class CmsPsuPisControllerTest {
     @Test
     void getPaymentByPaymentId_withValidRequest_shouldReturnPayment() throws Exception {
         String cmsPaymentJson = jsonReader.getStringFromFile("json/pis/response/cms-payment.json");
-        CmsPayment cmsPayment = buildCmsPayment();
+        CmsBasePaymentResponse cmsPayment = buildCmsPayment();
         when(cmsPsuPisService.getPayment(psuIdData, PAYMENT_ID, INSTANCE_ID)).thenReturn(Optional.of(cmsPayment));
 
         mockMvc.perform(get("/psu-api/v1/payment/{payment-id}", PAYMENT_ID)
@@ -247,7 +248,7 @@ class CmsPsuPisControllerTest {
     @Test
     void getPaymentByPaymentIdForCancellation_withValidRequest_shouldReturnPayment() throws Exception {
         String cmsPaymentJson = jsonReader.getStringFromFile("json/pis/response/cms-payment.json");
-        CmsPayment cmsPayment = buildCmsPayment();
+        CmsBasePaymentResponse cmsPayment = buildCmsPayment();
         when(cmsPsuPisService.getPayment(psuIdData, PAYMENT_ID, INSTANCE_ID)).thenReturn(Optional.of(cmsPayment));
 
         mockMvc.perform(get("/psu-api/v1/payment/cancellation/{payment-id}", PAYMENT_ID)
@@ -449,7 +450,7 @@ class CmsPsuPisControllerTest {
         return jsonReader.getObjectFromFile("json/psu-id-data.json", PsuIdData.class);
     }
 
-    private CmsPayment buildCmsPayment() {
+    private CmsBasePaymentResponse buildCmsPayment() {
         CmsSinglePayment cmsPayment = new CmsSinglePayment(PAYMENT_PRODUCT);
         cmsPayment.setPaymentId(PAYMENT_ID);
         return cmsPayment;
