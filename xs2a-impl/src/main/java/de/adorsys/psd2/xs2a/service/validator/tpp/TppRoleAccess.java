@@ -19,7 +19,6 @@ package de.adorsys.psd2.xs2a.service.validator.tpp;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.Assert;
 
@@ -28,11 +27,10 @@ import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.config.Xs2aEndpointPathConstant.*;
 
-@Value
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TppRoleAccess {
-    private static AntPathMatcher matcher = new AntPathMatcher();
-    private static Map<String, Set<TppRole>> secureURIs = new HashMap<>();
+    private static final AntPathMatcher matcher = new AntPathMatcher();
+    private static final Map<String, Set<TppRole>> secureURIs = new HashMap<>();
 
     static {
         linkTppRolePatterns(ACCOUNTS_PATH, TppRole.AISP);
@@ -43,6 +41,7 @@ public class TppRoleAccess {
         linkTppRolePatterns(SINGLE_PAYMENTS_PATH, TppRole.PISP);
         linkTppRolePatterns(PERIODIC_PAYMENTS_PATH, TppRole.PISP);
         linkTppRolePatterns(FUNDS_CONFIRMATION_PATH, TppRole.PIISP);
+        linkTppRolePatterns(CONSENTS_V2_PATH, TppRole.PIISP);
     }
 
     static boolean hasAccessForPath(List<TppRole> tppRoles, String targetPath) {
