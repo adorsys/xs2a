@@ -7,6 +7,7 @@
 * Added validation certificate roles for PIIS consent v2
 * Updated jackson version to 2.12.1
 * Changed response type for getting payment in CMS-PSU-API: `/psu-api/v1/payment/{payment-id}`
+* Removed deprecated method `requestTrustedBeneficiaryFlag` from `AuthorisationSpi` class.
 
 == Removed @NotNull from TppDomainValidator#validate
 
@@ -34,3 +35,7 @@ Fixed severe security vulnerability detected in com.fasterxml.jackson.core:jacks
 == Changed response type for getting payment in CMS-PSU-API: `/psu-api/v1/payment/{payment-id}`
 
 From now on, this endpoint returns the `CmsBasePaymentResponse` class instead of the `CmsPayment` interface.
+
+== Removed deprecated method `requestTrustedBeneficiaryFlag` from `AuthorisationSpi` class.
+
+The method is removed from the AuthorisationSpi class. This flag is currently available in the `AuthorisationSpi#getScaStatus` method.
