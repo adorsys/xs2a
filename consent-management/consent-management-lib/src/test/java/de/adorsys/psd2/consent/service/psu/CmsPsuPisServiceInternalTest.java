@@ -18,8 +18,8 @@ package de.adorsys.psd2.consent.service.psu;
 
 import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
@@ -118,7 +118,7 @@ class CmsPsuPisServiceInternalTest {
     private AuthenticationDataHolder authenticationDataHolder;
     private PsuData psuData;
     private PsuIdData psuIdData;
-    private CmsPayment cmsPayment;
+    private CmsBasePaymentResponse cmsPayment;
 
     @BeforeEach
     void setUp() {
@@ -323,7 +323,7 @@ class CmsPsuPisServiceInternalTest {
         when(pisPaymentDataRepository.findAll(any(Specification.class))).thenReturn(buildPisPaymentDataList());
 
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsBasePaymentResponse> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -354,7 +354,7 @@ class CmsPsuPisServiceInternalTest {
         when(corePaymentsConvertService.expandCommonPaymentWithCorePayment(cmsPayment)).thenReturn(cmsPayment);
 
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsBasePaymentResponse> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertTrue(actualResult.isPresent());
@@ -373,7 +373,7 @@ class CmsPsuPisServiceInternalTest {
                             .error(CmsError.LOGICAL_ERROR)
                             .build());
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, WRONG_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsBasePaymentResponse> actualResult = cmsPsuPisServiceInternal.getPayment(PSU_ID_DATA, WRONG_PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult.isPresent());
@@ -390,7 +390,7 @@ class CmsPsuPisServiceInternalTest {
                             .payload(Collections.singletonList(psuIdData))
                             .build());
         // When
-        Optional<CmsPayment> actualResult = cmsPsuPisServiceInternal.getPayment(WRONG_PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
+        Optional<CmsBasePaymentResponse> actualResult = cmsPsuPisServiceInternal.getPayment(WRONG_PSU_ID_DATA, PAYMENT_ID, DEFAULT_SERVICE_INSTANCE_ID);
 
         // Then
         assertFalse(actualResult.isPresent());
@@ -916,7 +916,7 @@ class CmsPsuPisServiceInternalTest {
         return pisAccountReference;
     }
 
-    private CmsPayment buildCmsPayment() {
+    private CmsBasePaymentResponse buildCmsPayment() {
         CmsSinglePayment cmsPayment = new CmsSinglePayment(PAYMENT_PRODUCT);
         cmsPayment.setPaymentId(PAYMENT_ID);
 

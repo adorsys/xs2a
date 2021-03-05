@@ -41,7 +41,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
     private final Xs2aObjectMapper xs2aObjectMapper;
 
     @Override
-    public CmsPayment mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse mapToCmsSinglePayment(CmsCommonPayment cmsCommonPayment) {
         PaymentInitiationJson payment = convert(cmsCommonPayment.getPaymentData(), PaymentInitiationJson.class);
         if (payment == null) {
             return null;
@@ -50,7 +50,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
     }
 
     @Override
-    public CmsPayment mapToCmsBulkPayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse mapToCmsBulkPayment(CmsCommonPayment cmsCommonPayment) {
         BulkPaymentInitiationJson payment = convert(cmsCommonPayment.getPaymentData(), BulkPaymentInitiationJson.class);
         if (payment == null) {
             return null;
@@ -59,7 +59,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
     }
 
     @Override
-    public CmsPayment mapToCmsPeriodicPayment(CmsCommonPayment cmsCommonPayment) {
+    public CmsBasePaymentResponse mapToCmsPeriodicPayment(CmsCommonPayment cmsCommonPayment) {
         PeriodicPaymentInitiationJson payment = convert(cmsCommonPayment.getPaymentData(), PeriodicPaymentInitiationJson.class);
         if (payment == null) {
             return null;
