@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.psu.api;
 
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
@@ -51,7 +51,7 @@ public interface CmsPsuPisService {
      * @return Payment object if it was found and it corresponds to the user data given in parameter
      */
     @NotNull
-    Optional<CmsPayment> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId);
+    Optional<CmsBasePaymentResponse> getPayment(@NotNull PsuIdData psuIdData, @NotNull String paymentId, @NotNull String instanceId);
 
     /**
      * Checks redirect URL and corresponding authorisation on expiration and returns Payment Response object if authorisation is valid
@@ -78,8 +78,8 @@ public interface CmsPsuPisService {
     /**
      * Returns Authorisation object by its ID
      *
-     * @param authorisationId  ID of authorisation
-     * @param instanceId optional ID of particular service instance
+     * @param authorisationId ID of authorisation
+     * @param instanceId      optional ID of particular service instance
      * @return Authorisation object if it was found
      */
     @NotNull
@@ -88,11 +88,11 @@ public interface CmsPsuPisService {
     /**
      * Updates a Status of Payment's authorisation by its ID and PSU ID
      *
-     * @param psuIdData       PSU credentials data
-     * @param paymentId       ID of Payment
-     * @param authorisationId ID of Authorisation process
-     * @param status          Status of Authorisation to be set
-     * @param instanceId      optional ID of particular service instance
+     * @param psuIdData                PSU credentials data
+     * @param paymentId                ID of Payment
+     * @param authorisationId          ID of Authorisation process
+     * @param status                   Status of Authorisation to be set
+     * @param instanceId               optional ID of particular service instance
      * @param authenticationDataHolder optional parameter for online-banking, chosen method ID and authentication data
      * @return <code>true</code> if payment was found and status was updated. <code>false</code> otherwise.
      * @throws AuthorisationIsExpiredException if authorisation is expired
@@ -112,9 +112,9 @@ public interface CmsPsuPisService {
     /**
      * Returns list of info objects about psu data and authorisation scaStatuses
      *
-     * @param paymentId  ID of Payment
-     * @param instanceId optional ID of particular service instance
-     * @param pageIndex index of current page
+     * @param paymentId    ID of Payment
+     * @param instanceId   optional ID of particular service instance
+     * @param pageIndex    index of current page
      * @param itemsPerPage quantity of psu authorisations on one page
      * @return list of info objects about psu data and authorisation scaStatuses
      */
