@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public abstract class BaseCmsPayment implements CmsPayment {
+public abstract class BaseCmsPayment extends CmsBasePaymentResponse {
     private String paymentId;
     private String paymentProduct;
     private List<PsuIdData> psuIdDatas = new ArrayList<>();

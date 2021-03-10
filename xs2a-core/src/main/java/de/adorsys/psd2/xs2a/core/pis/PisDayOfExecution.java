@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -104,8 +105,10 @@ public enum PisDayOfExecution {
     }
 
     @JsonCreator
-    public static PisDayOfExecution fromValue(String value) {
-        return Arrays.stream(values()).filter(doe -> doe.getValue().equals(value)).findFirst().orElse(null);
+    public static PisDayOfExecution fromValue(Object value) {
+        return Arrays.stream(values())
+                   .filter(Objects::nonNull)
+                   .filter(doe -> doe.getValue().equals(String.valueOf(value))).findFirst().orElse(null);
     }
 
     @Override

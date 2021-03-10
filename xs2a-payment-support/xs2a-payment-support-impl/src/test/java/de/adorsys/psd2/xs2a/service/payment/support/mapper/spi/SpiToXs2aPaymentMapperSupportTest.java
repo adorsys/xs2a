@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.payment.support.mapper.spi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.model.PaymentInitiationJson;
 import de.adorsys.psd2.model.PeriodicPaymentInitiationJson;
@@ -61,7 +62,7 @@ class SpiToXs2aPaymentMapperSupportTest {
     @Mock
     private Xs2aObjectMapper mockXs2aObjectMapper;
 
-    private Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+    private Xs2aObjectMapper xs2aObjectMapper = new ObjectMapperConfig().xs2aObjectMapper();
 
     private SpiToXs2aPaymentMapperSupport spiToXs2aPaymentMapperSupport;
 

@@ -4,9 +4,10 @@ On this page release notes for each version released are published.
 For Versioning policy see xref:Version_Policy.adoc[Versioning, Release and Support policy].
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
-=== Mainline 8.x (Stable. Supported minimum till 19.03.2021)
+=== Mainline 8.x (Stable. Supported minimum till 16.04.2021)
 
-* xref:release_notes/Release_notes_8.10.adoc[Version 8.10  (release date: ?)]
+* xref:release_notes/Release_notes_8.11.adoc[Version 8.11  (release date: ?)]
+* xref:release_notes/Release_notes_8.10.adoc[Version 8.10  (release date: 24.02.2021)]
 * xref:release_notes/Release_notes_8.9.adoc[Version 8.9  (release date: 10.02.2021)]
 * xref:release_notes/Release_notes_8.8.adoc[Version 8.8  (release date: 27.01.2021)]
 * xref:release_notes/Release_notes_8.7.adoc[Version 8.7  (release date: 13.01.2021)]

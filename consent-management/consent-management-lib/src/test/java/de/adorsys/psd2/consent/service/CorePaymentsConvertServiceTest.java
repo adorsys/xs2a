@@ -26,6 +26,7 @@ import de.adorsys.psd2.core.payment.model.BulkPaymentInitiationJson;
 import de.adorsys.psd2.core.payment.model.PaymentInitiationJson;
 import de.adorsys.psd2.core.payment.model.PeriodicPaymentInitiationJson;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,16 +42,14 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CmsCorePaymentMapper.class, Xs2aObjectMapper.class, CmsAddressMapperImpl.class})
+@ContextConfiguration(classes = {CmsCorePaymentMapper.class, CmsAddressMapperImpl.class})
 class CorePaymentsConvertServiceTest {
     private CorePaymentsConvertService corePaymentsConvertService;
 
     @Autowired
     private CmsCorePaymentMapper cmsCorePaymentMapper;
 
-    @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
-
     private CmsCommonPaymentMapper cmsCommonPaymentMapper;
     private PaymentMapperResolver paymentMapperResolver;
 
@@ -60,6 +59,9 @@ class CorePaymentsConvertServiceTest {
 
     @BeforeEach
     void setUp() {
+        ObjectMapperConfig objectMapperConfig = new ObjectMapperConfig();
+        xs2aObjectMapper = objectMapperConfig.xs2aObjectMapper();
+
         pisPayment = jsonReader.getObjectFromFile("json/service/mapper/pis-payment.json", PisPayment.class);
         cmsCommonPayment = new CmsCommonPayment("payments");
 

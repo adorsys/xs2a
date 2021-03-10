@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.validator.body.payment.handler.type;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
@@ -69,7 +70,7 @@ class PeriodicPaymentTypeValidatorImplTest {
         accountReference = jsonReader.getObjectFromFile("json/validation/account_reference.json", AccountReference.class);
         address = jsonReader.getObjectFromFile("json/validation/address.json", Xs2aAddress.class);
 
-        Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
+        Xs2aObjectMapper xs2aObjectMapper = new ObjectMapperConfig().xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
