@@ -44,6 +44,11 @@ image::xs2a-version-policy.png[version policy]
 
 If you need additional support, please contact https://adorsys.de/kontakt/[adorsys Team].
 
+==== Mainline 10.x (till 13.09.2021)
+
+Mainline 10.x based on xs2a v.9.10 is released on 19.03.2020. The main goal is to support mandatory requirements of Berlin Group specification 1.3.8 and fix bugs.
+This version will be supported till 13.09.2021.
+
 ==== Mainline 8.x (Planned to be supported till 16.04.2021)
 
 Mainline 8.x based on xs2a v.7.9 is released on 15.09.2020. The main goal is to support mandatory requirements of Berlin Group specification 1.3.6 with all Errata files and fix bugs.
