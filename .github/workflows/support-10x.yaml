@@ -1,0 +1,118 @@
+name: Develop 10.x CI
+
+on:
+    push:
+        branches:
+            - support-10.x
+
+env:
+    SONAR_PRJ_KEY: adorsys_xs2a
+    SONAR_ORG: adorsys
+    SONAR_HOST: https://sonarcloud.io
+    GPG_EXECUTABLE: ${{ secrets.GPG_EXECUTABLE }}
+    GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+    SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+jobs:
+    build_and_test_support_10x_java11:
+        name: Build and test XS2A (openjdk 1.11)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone XS2A develop repository
+              uses: actions/checkout@v2
+
+            - name: Set up JDK 11 for x64
+              uses: actions/setup-java@v1
+              with:
+                  java-version: 1.11
+                  architecture: x64
+
+            # - name: Cache Maven packages
+            #   uses: actions/cache@v2
+            #   with:
+            #     path: ~/.m2
+            #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            #     restore-keys: ${{ runner.os }}-m2
+
+            - name: Build XS2A
+              run: mvn -ntp -DskipTests -DskipITs -Dmaven.javadoc.skip=true clean install
+
+            - name: Check pmd
+              run: mvn -ntp pmd:check
+
+            - name: Generate javadocs
+              run: mvn -ntp javadoc:javadoc
+
+            - name: Run UI tests
+              run: mvn -ntp -DskipITs --fail-at-end clean install
+            #Blocked temporary
+            # - name: Run IT tests
+            #   run: mvn -ntp failsafe:integration-test failsafe:verify
+
+
+    sonar:
+        name: Publish code coverage to Sonar Cloud
+        needs: build_and_test_support_10x_java11
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone XS2A develop repository
+              uses: actions/checkout@v2
+
+            - name: Set up JDK 11 for x64
+              uses: actions/setup-java@v1
+              with:
+                  java-version: 1.11
+                  architecture: x64
+
+            # - name: Cache Maven packages
+            #   uses: actions/cache@v2
+            #   with:
+            #     path: ~/.m2
+            #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+            #     restore-keys: ${{ runner.os }}-m2
+
+            - name: Publish to sonarcloud
+              run: >
+                  mvn
+                  -ntp
+                  clean
+                  org.jacoco:jacoco-maven-plugin:prepare-agent
+                  install
+                  sonar:sonar
+                  -Pcoverage
+                  -Dsonar.host.url=${{ env.SONAR_HOST }}
+                  -Dsonar.projectKey=${{ env.SONAR_PRJ_KEY }}
+                  -Dsonar.organization=${{ env.SONAR_ORG }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+    deployMavenCentral:
+        name: Publish XS2A artifacts to Maven Central
+        needs: [build_and_test_support_10x_java11, sonar]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clone ledgers develop repository
+              uses: actions/checkout@v2
+
+            - name: Set up JDK 11 for x64
+              uses: actions/setup-java@v1
+              with:
+                  java-version: 1.11
+                  architecture: x64
+
+            - name: Cache Maven packages
+              uses: actions/cache@v2
+              with:
+                  path: ~/.m2
+                  key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+                  restore-keys: ${{ runner.os }}-m2
+
+            - name: Publish to Maven Central
+              run: |
+                  gpg --version
+                  export GPG_TTY="$( tty )" #need to run to sign artifacts with maven
+                  echo ${{ secrets.GPG_SECRET_KEY }} | base64 --decode | gpg --import --batch
+                  echo ${{ secrets.GPG_OWNERTRUST }} | base64 --decode | gpg --batch --import-ownertrust
+                  mvn -ntp --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -U deploy
