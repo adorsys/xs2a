@@ -105,6 +105,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         bulkPayment.setPaymentStatus(cmsCommonPayment.getTransactionStatus());
         bulkPayment.setBatchBookingPreferred(bulkPaymentInitiationJson.getBatchBookingPreferred());
         bulkPayment.setDebtorAccount(mapToAccountReference(bulkPaymentInitiationJson.getDebtorAccount()));
+        bulkPayment.setDebtorName(bulkPaymentInitiationJson.getDebtorName());
         bulkPayment.setBatchBookingPreferred(bulkPaymentInitiationJson.getBatchBookingPreferred());
         bulkPayment.setRequestedExecutionDate(bulkPaymentInitiationJson.getRequestedExecutionDate());
         List<CmsSinglePayment> payments = bulkPaymentInitiationJson.getPayments().stream()
