@@ -35,6 +35,7 @@ public class BulkPayment extends CommonPayment implements AccountReferenceCollec
 
     @NotNull
     private AccountReference debtorAccount;
+    private String debtorName;
     private LocalDate requestedExecutionDate;
     private OffsetDateTime requestedExecutionTime;
     private List<SinglePayment> payments;
