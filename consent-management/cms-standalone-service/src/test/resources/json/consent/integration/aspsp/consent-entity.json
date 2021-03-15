@@ -6,7 +6,7 @@
   "frequencyPerDay": 4,
   "recurringIndicator": true,
   "multilevelScaRequired": true,
-  "validUntil": "2021-03-14",
+  "validUntil": "2031-03-14",
   "expireDate": "2021-01-21",
   "lastActionDate": "2020-01-13",
   "psuDataList": [
