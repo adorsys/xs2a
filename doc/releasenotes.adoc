@@ -1,7 +1,9 @@
 == Release notes
 
 On this page release notes for each version released are published.
-For Versioning policy see xref:Version_Policy.adoc[Versioning, Release and Support policy].
+
+For Versioning policy see xref:version_policy.adoc[Versioning, Release and Support policy].
+
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 11.x (Development. Planned to be released 13.09.2021 as 12.0 Stable version)

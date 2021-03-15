@@ -316,14 +316,43 @@ a|
 
 a|
 
-|*For future development*| |8.x|9.x|
+|10.03.2021| |8.11|9.10|
+
+a|
+
+a|
+
+a|* Bugfix: Remove @NotNull from TppDomainValidator#validate
+
+* Bugfix: Validate certificate roles for PIIS consent v2
+
+* Bugfix: Faulty definition CmsPayment in REST API
+
+* Fix sonar alerts
+
+
+a| * All fixes and updates from v.8.10
+
+* Update Ledgers to 4.7 in Connector
+
+* Remove deprecated requestTrustedBeneficiaryFlag method in 9.10
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+|*For future development*| |10.x|11.x|
 
 | | | | |Signing Basket plugin for XS2A
 
-| | | | |Single card account plugin for XS2A
-
-| | | | |Multiple consents plugin
-
-| | | | |Resource Notification Push Service
+| | | | |Multiple consents plugin for XS2A
 
 |====
