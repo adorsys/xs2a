@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.ais.RedirectAisAuthorizationService;
@@ -57,7 +58,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiAccountAccess;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
@@ -154,6 +155,8 @@ class ConsentServiceTest {
     private AccountReferenceInConsentUpdater accountReferenceUpdater;
     @Mock
     private AdditionalInformationSupportedService additionalInformationSupportedService;
+    @Mock
+    private Xs2aAuthorisationService xs2aAuthorisationService;
 
     private AisConsent aisConsent;
 
@@ -1276,7 +1279,7 @@ class ConsentServiceTest {
     void getConsentAuthorisationScaStatus() {
         // Given
         ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
-                                                             .body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, null, "psu message"))
+                                                             .body(new Xs2aScaStatusResponse(ScaStatus.FINALISED, false, "psu message"))
                                                              .build();
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.RECEIVED);
@@ -1291,9 +1294,9 @@ class ConsentServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        when(aisConsentSpi.getScaInformation(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
-            .thenReturn(SpiResponse.<SpiScaInformationResponse>builder()
-                            .payload(new SpiScaInformationResponse(false, "psu message"))
+        when(aisConsentSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
+                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, false, "psu message"))
                             .build());
 
         // When
@@ -1304,6 +1307,7 @@ class ConsentServiceTest {
         assertEquals(expected.getBody(), actual.getBody());
 
         verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+        verify(xs2aAuthorisationService).updateAuthorisationStatus(WRONG_AUTHORISATION_ID, ScaStatus.FINALISED);
     }
 
     @Test
@@ -1325,9 +1329,9 @@ class ConsentServiceTest {
         when(aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(CONSENT_ID))
             .thenReturn(spiAspspConsentDataProvider);
 
-        when(aisConsentSpi.getScaInformation(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
-            .thenReturn(SpiResponse.<SpiScaInformationResponse>builder()
-                            .payload(new SpiScaInformationResponse(true, "psu message"))
+        when(aisConsentSpi.getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider))
+            .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
+                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message"))
                             .build());
 
         // When
@@ -1338,6 +1342,7 @@ class ConsentServiceTest {
         assertEquals(expected.getBody(), actual.getBody());
 
         verify(consentAuthorisationService).getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+        verifyNoInteractions(xs2aAuthorisationService);
     }
 
     @Test
@@ -1360,10 +1365,10 @@ class ConsentServiceTest {
             .thenReturn(spiAspspConsentDataProvider);
 
         TppMessage tppMessage = new TppMessage(MessageErrorCode.FORMAT_ERROR);
-        SpiResponse<SpiScaInformationResponse> spiResponse = SpiResponse.<SpiScaInformationResponse>builder()
+        SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
                                                .error(tppMessage)
                                                .build();
-        when(aisConsentSpi.getScaInformation(SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(aisConsentSpi.getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.AIS)).thenReturn(ErrorHolder.builder(ErrorType.AIS_400).build());
 
         // When
