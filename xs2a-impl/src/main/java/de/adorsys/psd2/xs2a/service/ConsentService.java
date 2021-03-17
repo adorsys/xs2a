@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
@@ -50,7 +51,7 @@ import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -88,6 +89,7 @@ public class ConsentService {
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final LoggingContextService loggingContextService;
     private final AdditionalInformationSupportedService additionalInformationSupportedService;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -383,9 +385,10 @@ public class ConsentService {
 
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
+        ScaStatus scaStatus = cmsScaStatusResponse.getBody().getScaStatus();
 
-        SpiResponse<SpiScaInformationResponse> spiScaInformation = aisConsentSpi.getScaInformation(contextData, authorisationId,
-                                                                                                      spiAspspConsentDataProvider);
+        SpiResponse<SpiScaStatusResponse> spiScaInformation = aisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiAspspConsentDataProvider);
+
         if (spiScaInformation.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaInformation, ServiceType.AIS);
             log.info("Authorisation-ID [{}], Consent-ID [{}]. Get SCA status failed.", authorisationId, consentId);
@@ -394,8 +397,13 @@ public class ConsentService {
                        .build();
         }
 
-        SpiScaInformationResponse spiScaInformationPayload = spiScaInformation.getPayload();
-        ScaStatus scaStatus = cmsScaStatusResponse.getBody().getScaStatus();
+        SpiScaStatusResponse spiScaInformationPayload = spiScaInformation.getPayload();
+
+        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaInformationPayload.getScaStatus()) {
+            scaStatus = spiScaInformationPayload.getScaStatus();
+            xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
+            log.info("Authorisation-ID [{}], Consent-ID [{}]. SCA status was changed to [{}] from SPI.", authorisationId, consentId, scaStatus);
+        }
 
         Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaInformationPayload.getTrustedBeneficiaryFlag() : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,

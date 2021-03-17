@@ -712,3 +712,9 @@ Multicurrency accounts support can be enabled in ASPSP Profile by setting `multi
 By default, `multicurrencyAccountLevelSupported` property is set to `SUBACCOUNT`.
 When TPP asks for account list information or account information (*requestAccountList* or *requestAccountDetailForAccount* method in AccountSpi), ASPSP can return *null* in currency field.
 In such case, XS2A will mark `currency` field with `XXX` text.
+
+=== Get SPI SCA status
+
+ASPSP should have a possibility to update authorisation status from bank's internal system related to consent/payment confirmation due to the fact that not every system is capable of updating the status in CMS.
+For this reason AuthorisationSpi has method `getScaStatus` which calls ASPSP for actual status. The CMS SCA status will be updated if it is not final and differs from the bank.
+By default, SCA status is used from CMS on request for getting SCA status.

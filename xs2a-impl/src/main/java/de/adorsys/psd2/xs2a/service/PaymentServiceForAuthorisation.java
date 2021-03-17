@@ -24,12 +24,13 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.PaymentScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public abstract class PaymentServiceForAuthorisation {
     private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
     private final SpiErrorMapper spiErrorMapper;
     private final RequestProviderService requestProviderService;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -61,7 +63,8 @@ public abstract class PaymentServiceForAuthorisation {
 
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId);
-        SpiResponse<SpiScaInformationResponse> spiScaStatusResponse = getScaStatus(contextData, authorisationId, spiAspspConsentDataProvider);
+        ScaStatus scaStatus = paymentScaStatusResponse.getBody().getScaStatus();
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = getScaStatus(scaStatus, contextData, authorisationId, spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIS);
@@ -71,13 +74,18 @@ public abstract class PaymentServiceForAuthorisation {
                        .build();
         }
 
-        SpiScaInformationResponse spiScaStatusResponsePayload = spiScaStatusResponse.getPayload();
-        ScaStatus scaStatus = paymentScaStatusResponse.getBody().getScaStatus();
+        SpiScaStatusResponse spiScaInformationPayload = spiScaStatusResponse.getPayload();
 
-        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaStatusResponsePayload.getTrustedBeneficiaryFlag() : null;
+        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaInformationPayload.getScaStatus()) {
+            scaStatus = spiScaInformationPayload.getScaStatus();
+            xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
+            log.info("Authorisation-ID [{}], Payment-ID [{}]. SCA status was changed to [{}] from SPI.", authorisationId, paymentId, scaStatus);
+        }
+
+        Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaInformationPayload.getTrustedBeneficiaryFlag() : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
                                                                    beneficiaryFlag,
-                                                                   spiScaStatusResponsePayload.getPsuMessage());
+                                                                   spiScaInformationPayload.getPsuMessage());
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)
@@ -87,9 +95,10 @@ public abstract class PaymentServiceForAuthorisation {
     abstract ResponseObject<PaymentScaStatus> getCMSScaStatus(String paymentId, String authorisationId,
                                                                   PaymentType paymentType, String paymentProduct);
 
-    abstract SpiResponse<SpiScaInformationResponse> getScaStatus(@NotNull SpiContextData contextData,
-                                                                 @NotNull String authorisationId,
-                                                                 @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    abstract SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
+                                                            @NotNull SpiContextData contextData,
+                                                            @NotNull String authorisationId,
+                                                            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     private SpiContextData getSpiContextData() {
         PsuIdData psuIdData = requestProviderService.getPsuIdData();
