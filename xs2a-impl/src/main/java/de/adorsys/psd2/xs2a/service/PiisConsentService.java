@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
@@ -51,7 +52,7 @@ import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentRequestO
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaInformationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiConsentStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
@@ -86,6 +87,7 @@ public class PiisConsentService {
     private final PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
     private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     private final PiisConsentAuthorisationService piisConsentAuthorisationService;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
 
     public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
@@ -226,8 +228,9 @@ public class PiisConsentService {
 
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
-        SpiResponse<SpiScaInformationResponse> spiScaStatusResponse = piisConsentSpi.getScaInformation(contextData, authorisationId,
-                                                                                                       spiAspspConsentDataProvider);
+        ScaStatus scaStatus = cmsConsentScaStatusResponse.getBody().getScaStatus();
+
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIIS);
@@ -237,12 +240,15 @@ public class PiisConsentService {
                        .build();
         }
 
-        ScaStatus scaStatus = cmsConsentScaStatusResponse.getBody().getScaStatus();
-        Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus, null,
-                                                                   spiScaStatusResponse.getPayload().getPsuMessage());
+        SpiScaStatusResponse spiScaInformationPayload = spiScaStatusResponse.getPayload();
+        if (scaStatus.isNotFinalisedStatus() && scaStatus != spiScaInformationPayload.getScaStatus()) {
+            scaStatus = spiScaInformationPayload.getScaStatus();
+            xs2aAuthorisationService.updateAuthorisationStatus(authorisationId, scaStatus);
+            log.info("Authorisation-ID [{}], PIIS consent-ID [{}]. SCA status was changed to [{}] from SPI.", authorisationId, consentId, scaStatus);
+        }
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
-                   .body(response)
+                   .body(new Xs2aScaStatusResponse(scaStatus, null, spiScaInformationPayload.getPsuMessage()))
                    .build();
     }
 

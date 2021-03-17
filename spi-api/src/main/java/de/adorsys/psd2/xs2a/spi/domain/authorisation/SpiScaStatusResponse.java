@@ -16,13 +16,16 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Value
-@Deprecated
-public class SpiScaInformationResponse {
+public class SpiScaStatusResponse {
 
+    @NotNull
+    private ScaStatus scaStatus;
     @Nullable
     private Boolean trustedBeneficiaryFlag;
     @Nullable
