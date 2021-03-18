@@ -189,12 +189,12 @@ class SinglePaymentTypeValidatorImplTest {
     }
 
     @Test
-    void doValidation_debtorName_notSupportedEmptyValue_error() {
-        singlePayment.setDebtorName("");
+    void doValidation_debtorName_longValue_error() {
+        singlePayment.setDebtorName(VALUE_71_LENGHT);
 
         validator.doSingleValidation(singlePayment, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"debtorName"}, messageError.getTppMessage().getTextParameters());
+        assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
+        assertArrayEquals(new Object[]{"debtorName", 70}, messageError.getTppMessage().getTextParameters());
     }
 
     @Test
