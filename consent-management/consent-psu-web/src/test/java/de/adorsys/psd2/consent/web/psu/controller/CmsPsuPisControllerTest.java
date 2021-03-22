@@ -17,7 +17,6 @@
 package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
@@ -80,9 +79,9 @@ class CmsPsuPisControllerTest {
     private static final byte[] EMPTY_BODY = new byte[0];
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private MockMvc mockMvc;
-    private PsuIdData psuIdData = buildPsuIdData();
+    private final PsuIdData psuIdData = buildPsuIdData();
 
     @Mock
     private CmsPsuPisService cmsPsuPisService;
@@ -441,7 +440,7 @@ class CmsPsuPisControllerTest {
 
     private CmsPaymentResponse buildCmsPaymentResponse() {
         CmsPaymentResponse cmsPaymentResponse = jsonReader.getObjectFromFile("json/pis/response/cms-payment-response-no-payment.json", CmsPaymentResponse.class);
-        CmsPayment cmsPayment = buildCmsPayment();
+        CmsBasePaymentResponse cmsPayment = buildCmsPayment();
         cmsPaymentResponse.setPayment(cmsPayment);
         return cmsPaymentResponse;
     }

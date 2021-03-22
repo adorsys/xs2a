@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CmsPaymentResponse {
 
-    private CmsPayment payment;
+    private CmsBasePaymentResponse payment;
     private String authorisationId;
     private String tppOkRedirectUri;
     private String tppNokRedirectUri;
