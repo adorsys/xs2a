@@ -1,3 +1,9 @@
 = Release notes v.10.1
 
 == Table of Contents
+
+* Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
+
+== Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
+
+From now on, CmsPayment usages are replaced with CmsBasePaymentResponse.

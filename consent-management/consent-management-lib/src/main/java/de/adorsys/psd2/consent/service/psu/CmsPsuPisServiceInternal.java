@@ -19,7 +19,6 @@ package de.adorsys.psd2.consent.service.psu;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
@@ -336,7 +335,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
             return Optional.empty();
         }
 
-        CmsPayment payment = cmsPsuPisMapper.mapPaymentDataToCmsPayment(commonPayment.get());
+        CmsBasePaymentResponse payment = cmsPsuPisMapper.mapPaymentDataToCmsPayment(commonPayment.get());
 
         CmsPaymentResponse cmsPaymentResponse = new CmsPaymentResponse(payment,
                                                                        authorisation.getExternalId(),

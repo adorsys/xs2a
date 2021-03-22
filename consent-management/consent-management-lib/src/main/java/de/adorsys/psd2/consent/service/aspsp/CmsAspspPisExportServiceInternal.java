@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.aspsp;
 
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.pis.CmsAspspPisExportService;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
@@ -51,9 +51,9 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
 
 
     @Override
-    public PageData<Collection<CmsPayment>> exportPaymentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom,
-                                                                @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
-                                                                @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
+    public PageData<Collection<CmsBasePaymentResponse>> exportPaymentsByTpp(String tppAuthorisationNumber, @Nullable LocalDate createDateFrom,
+                                                                            @Nullable LocalDate createDateTo, @Nullable PsuIdData psuIdData,
+                                                                            @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             log.info("InstanceId: [{}], TPP ID: [{}]. Export payments by TPP failed, TPP ID or instanceId is empty or null.", instanceId,
                      tppAuthorisationNumber);
@@ -66,7 +66,7 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     }
 
     @Override
-    public PageData<Collection<CmsPayment>> exportPaymentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
+    public PageData<Collection<CmsBasePaymentResponse>> exportPaymentsByPsu(PsuIdData psuIdData, @Nullable LocalDate createDateFrom,
                                                                 @Nullable LocalDate createDateTo, @NotNull String instanceId,
                                                                 Integer pageIndex, Integer itemsPerPage) {
         if (psuIdData == null || psuIdData.isEmpty() || StringUtils.isBlank(instanceId)) {
@@ -81,7 +81,7 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
     }
 
     @Override
-    public PageData<Collection<CmsPayment>> exportPaymentsByAccountId(@NotNull String aspspAccountId, @Nullable LocalDate createDateFrom,
+    public PageData<Collection<CmsBasePaymentResponse>> exportPaymentsByAccountId(@NotNull String aspspAccountId, @Nullable LocalDate createDateFrom,
                                                                       @Nullable LocalDate createDateTo, @NotNull String instanceId,
                                                                       Integer pageIndex, Integer itemsPerPage) {
         if (StringUtils.isBlank(aspspAccountId) || StringUtils.isBlank(instanceId)) {
@@ -95,7 +95,7 @@ public class CmsAspspPisExportServiceInternal implements CmsAspspPisExportServic
             pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
     }
 
-    private PageData<Collection<CmsPayment>> mapToPageData(Page<PisCommonPaymentData> entities) {
+    private PageData<Collection<CmsBasePaymentResponse>> mapToPageData(Page<PisCommonPaymentData> entities) {
         return new PageData<>(entities
                                   .stream()
                                   .map(cmsPsuPisMapper::mapPaymentDataToCmsPayment)

@@ -68,7 +68,7 @@ class CmsCommonPaymentMapperSupportImplTest {
     void mapToCmsSinglePayment() throws JsonProcessingException {
         PaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/payment-initiation-resp.json", PaymentInitiationJson.class);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
-        CmsPayment actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
+        CmsBasePaymentResponse actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
 
         CmsSinglePayment expected = getCmsSinglePayment(paymentInitiationJson, cmsCommonPayment);
         assertEquals(expected, actual);
@@ -84,7 +84,7 @@ class CmsCommonPaymentMapperSupportImplTest {
     void mapToCmsBulkPayment() throws JsonProcessingException {
         BulkPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/bulk-payment-initiation-resp.json", BulkPaymentInitiationJson.class);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
-        CmsPayment actual = mapper.mapToCmsBulkPayment(cmsCommonPayment);
+        CmsBasePaymentResponse actual = mapper.mapToCmsBulkPayment(cmsCommonPayment);
 
         CmsBulkPayment expected = getCmsBulkPayment(paymentInitiationJson, cmsCommonPayment);
         assertEquals(expected, actual);
@@ -100,7 +100,7 @@ class CmsCommonPaymentMapperSupportImplTest {
     void mapToCmsPeriodicPayment() throws JsonProcessingException {
         PeriodicPaymentInitiationJson paymentInitiationJson = jsonReader.getObjectFromFile("json/periodic-payment-initiation-resp.json", PeriodicPaymentInitiationJson.class);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
-        CmsPayment actual = mapper.mapToCmsPeriodicPayment(cmsCommonPayment);
+        CmsBasePaymentResponse actual = mapper.mapToCmsPeriodicPayment(cmsCommonPayment);
 
         CmsPeriodicPayment expected = getCmsPeriodicPayment(paymentInitiationJson);
         assertEquals(expected, actual);
@@ -120,7 +120,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
 
         // When
-        CmsPayment actual = mapper.mapToCmsPeriodicPayment(cmsCommonPayment);
+        CmsBasePaymentResponse actual = mapper.mapToCmsPeriodicPayment(cmsCommonPayment);
 
         // Then
         CmsPeriodicPayment expected = getCmsPeriodicPayment(paymentInitiationJson);
@@ -134,7 +134,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         paymentInitiationJson.setRemittanceInformationStructuredArray(null);
         cmsCommonPayment.setPaymentData(xs2aObjectMapper.writeValueAsBytes(paymentInitiationJson));
 
-        CmsPayment actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
+        CmsBasePaymentResponse actual = mapper.mapToCmsSinglePayment(cmsCommonPayment);
 
         assertTrue(actual instanceof CmsSinglePayment);
         CmsSinglePayment actualSinglePayment = (CmsSinglePayment) actual;
@@ -195,7 +195,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         return payment;
     }
 
-    private List<CmsSinglePayment> getBulkPayments(PaymentInitiationJson paymentInitiationJson, CmsPayment parent) {
+    private List<CmsSinglePayment> getBulkPayments(PaymentInitiationJson paymentInitiationJson, CmsBasePaymentResponse parent) {
         CmsSinglePayment singlePayment = new CmsSinglePayment(PAYMENT_PRODUCT);
         Xs2aAmount instructedAmount = paymentInitiationJson.getInstructedAmount();
         singlePayment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
@@ -244,7 +244,7 @@ class CmsCommonPaymentMapperSupportImplTest {
         return payment;
     }
 
-    private CmsSinglePayment getCmsSinglePayment(PaymentInitiationJson paymentInitiationJson, CmsPayment parent) {
+    private CmsSinglePayment getCmsSinglePayment(PaymentInitiationJson paymentInitiationJson, CmsBasePaymentResponse parent) {
         CmsSinglePayment payment = new CmsSinglePayment(PAYMENT_PRODUCT);
         payment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         payment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
