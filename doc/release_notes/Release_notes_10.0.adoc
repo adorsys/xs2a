@@ -2,3 +2,11 @@
 
 == Table of Contents
 
+* Call SPI for scaStatus on GET SCA Status request
+
+=== Get SPI SCA status
+
+ASPSP should have a possibility to update authorisation status from bank's internal system related to consent/payment confirmation due to the fact that not every system is capable of updating the status in CMS.
+SCA status in CMS will be updated by status from SPI if it is not final.
+
+Method AuthorisationSpi#getScaInformation was marked as deprecated and will be removed in 10.3 releases.
