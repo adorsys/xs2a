@@ -29,7 +29,6 @@ import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -91,18 +90,19 @@ class Xs2aPiisConsentServiceTest {
     private ScaApproachResolver scaApproachResolver;
     @Mock
     private RequestProviderService requestProviderService;
+    @Mock
+    private CmsCreateConsentResponseService cmsCreateConsentResponseService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
-    void createConsent_success() throws WrongChecksumException {
+    void createConsent_success() {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
-        CmsResponse<CmsCreateConsentResponse> response = CmsResponse.<CmsCreateConsentResponse>builder().payload(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent)).build();
-        when(consentService.createConsent(cmsConsent))
-            .thenReturn(response);
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Optional.of(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent)));
+
         when(xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent))
             .thenReturn(piisConsent);
 
@@ -117,13 +117,12 @@ class Xs2aPiisConsentServiceTest {
     }
 
     @Test
-    void createConsent_catchWrongChecksumException() throws WrongChecksumException {
+    void createConsent_catchWrongChecksumException() {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
-        when(consentService.createConsent(cmsConsent))
-            .thenThrow(new WrongChecksumException());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Optional.empty());
 
         //When
         Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
@@ -133,15 +132,12 @@ class Xs2aPiisConsentServiceTest {
     }
 
     @Test
-    void createConsent_withError() throws WrongChecksumException {
+    void createConsent_withError() {
         //Given
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
-        when(consentService.createConsent(cmsConsent))
-            .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder()
-                            .error(LOGICAL_ERROR)
-                            .build());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Optional.empty());
 
         //When
         Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
