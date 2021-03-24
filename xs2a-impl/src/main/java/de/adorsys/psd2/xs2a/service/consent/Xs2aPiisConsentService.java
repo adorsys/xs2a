@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.CmsCreateConsentResponseService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
@@ -53,29 +54,16 @@ public class Xs2aPiisConsentService {
     private final Xs2aAuthorisationService authorisationService;
     private final Xs2aConsentAuthorisationMapper consentAuthorisationMapper;
     private final LoggingContextService loggingContextService;
+    private final CmsCreateConsentResponseService cmsCreateConsentResponseService;
 
     public Optional<Xs2aCreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
         CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuData, tppInfo);
 
-        CmsResponse<CmsCreateConsentResponse> response;
-        try {
-            response = consentService.createConsent(cmsConsent);
-        } catch (WrongChecksumException e) {
-            log.info("Consent cannot be created, checksum verification failed");
-            return Optional.empty();
-        }
+        Optional<CmsCreateConsentResponse> createConsentResponse = cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent);
 
-        if (response.hasError()) {
-            log.info("Consent cannot be created, because can't save to cms DB");
-            return Optional.empty();
-        }
-
-        CmsCreateConsentResponse createConsentResponse = response.getPayload();
-
-        PiisConsent piisConsent = xs2aPiisConsentMapper.mapToPiisConsent(createConsentResponse.getCmsConsent());
-
-        Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = new Xs2aCreatePiisConsentResponse(createConsentResponse.getConsentId(), piisConsent);
-        return Optional.of(xs2aCreatePiisConsentResponse);
+        return createConsentResponse
+            .map(c -> new Xs2aCreatePiisConsentResponse(c.getConsentId(),
+                                                        xs2aPiisConsentMapper.mapToPiisConsent(c.getCmsConsent())));
     }
 
     public Optional<PiisConsent> getPiisConsentById(String consentId) {
