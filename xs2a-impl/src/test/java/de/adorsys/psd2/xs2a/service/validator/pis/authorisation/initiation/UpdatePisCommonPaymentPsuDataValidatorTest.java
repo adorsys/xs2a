@@ -229,7 +229,7 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated()).thenReturn(true);
 
         // When
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate( new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1, CONFIRMATION_CODE)));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate( new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1, CONFIRMATION_CODE)));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -296,7 +296,7 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -323,7 +323,7 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
             .thenReturn(ValidationResult.valid());
 
         // When
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1, CONFIRMATION_CODE)));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1, CONFIRMATION_CODE)));
 
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
@@ -346,7 +346,7 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
             .thenReturn(true);
 
         //When
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
 
         //Then
         assertNotNull(validationResult);
@@ -370,7 +370,7 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
 
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, psuIdData)));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, psuIdData)));
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -392,7 +392,7 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         when(pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONFIRMATION_CODE_RECEIVED_FALSE))
             .thenReturn(true);
 
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1)));
 
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
@@ -536,8 +536,8 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         return pisCommonPaymentResponse;
     }
 
-    private UpdatePisCommonPaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse commonPaymentResponse, String authorisationId) {
-        return new UpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(authorisationId, PSU_ID_DATA_1));
+    private UpdatePaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse commonPaymentResponse, String authorisationId) {
+        return new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(authorisationId, PSU_ID_DATA_1));
     }
 
     private Xs2aUpdatePisCommonPaymentPsuDataRequest buildUpdateRequest(String authoridsationId, PsuIdData psuIdData) {

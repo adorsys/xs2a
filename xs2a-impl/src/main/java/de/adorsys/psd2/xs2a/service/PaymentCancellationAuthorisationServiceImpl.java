@@ -42,6 +42,7 @@ import de.adorsys.psd2.xs2a.service.event.EventTypeService;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.validator.pis.CommonPaymentObject;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.*;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation.UpdatePaymentPsuDataPO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -125,7 +126,7 @@ public class PaymentCancellationAuthorisationServiceImpl implements PaymentCance
 
         PisCommonPaymentResponse pisCommonPaymentResponse = pisCommonPaymentResponseOptional.get();
         loggingContextService.storeTransactionStatus(pisCommonPaymentResponse.getTransactionStatus());
-        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePisCancellationPsuDataPO(pisCommonPaymentResponse, request));
+        ValidationResult validationResult = updatePisCancellationPsuDataValidator.validate(new UpdatePaymentPsuDataPO(pisCommonPaymentResponse, request));
 
         if (validationResult.isNotValid()) {
             MessageErrorCode messageErrorCode = validationResult.getMessageError().getTppMessage().getMessageErrorCode();
