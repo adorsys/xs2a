@@ -21,18 +21,19 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.UpdatePisPsuDataPO;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.UpdatePisCancellationPsuDataValidator;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Payment object that contains necessary information for validating payment in {@link UpdatePisCommonPaymentPsuDataValidator}
+ * Payment object that contains necessary information for validating payment in {@link UpdatePisCommonPaymentPsuDataValidator} and {@link UpdatePisCancellationPsuDataValidator}
  */
 @Value
-public class UpdatePisCommonPaymentPsuDataPO implements UpdatePisPsuDataPO {
+public class UpdatePaymentPsuDataPO implements UpdatePisPsuDataPO {
     @NotNull
-    private final PisCommonPaymentResponse pisCommonPaymentResponse;
+    PisCommonPaymentResponse pisCommonPaymentResponse;
     @NotNull
-    private final Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest;
+    Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest;
 
     @Override
     public TppInfo getTppInfo() {

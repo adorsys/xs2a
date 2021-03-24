@@ -230,7 +230,7 @@ class PaymentAuthorisationServiceTest {
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
-        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePisCommonPaymentPsuDataPO.class)))
+        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePaymentPsuDataPO.class)))
             .thenReturn(ValidationResult.invalid(PSU_CREDENTIALS_INVALID_ERROR));
 
         // When
@@ -267,7 +267,7 @@ class PaymentAuthorisationServiceTest {
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
 
-        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePisCommonPaymentPsuDataPO.class)))
+        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePaymentPsuDataPO.class)))
             .thenReturn(ValidationResult.valid());
 
         // When
@@ -393,7 +393,7 @@ class PaymentAuthorisationServiceTest {
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(commonPaymentResponse));
 
-        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePisCommonPaymentPsuDataPO.class)))
+        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePaymentPsuDataPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
@@ -445,7 +445,7 @@ class PaymentAuthorisationServiceTest {
         when(pisCommonPaymentService.getPisCommonPaymentById(PAYMENT_ID))
             .thenReturn(Optional.of(invalidPisCommonPaymentResponse));
 
-        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePisCommonPaymentPsuDataPO.class)))
+        when(updatePisCommonPaymentPsuDataValidator.validate(any(UpdatePaymentPsuDataPO.class)))
             .thenReturn(ValidationResult.invalid(VALIDATION_ERROR));
 
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildXs2aUpdatePisPsuDataRequest();
@@ -681,7 +681,7 @@ class PaymentAuthorisationServiceTest {
         return response;
     }
 
-    private UpdatePisCommonPaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse invalidPisCommonPaymentResponse) {
-        return new UpdatePisCommonPaymentPsuDataPO(invalidPisCommonPaymentResponse, buildXs2aUpdatePisPsuDataRequest());
+    private UpdatePaymentPsuDataPO buildUpdatePisCommonPaymentPsuDataPO(PisCommonPaymentResponse invalidPisCommonPaymentResponse) {
+        return new UpdatePaymentPsuDataPO(invalidPisCommonPaymentResponse, buildXs2aUpdatePisPsuDataRequest());
     }
 }

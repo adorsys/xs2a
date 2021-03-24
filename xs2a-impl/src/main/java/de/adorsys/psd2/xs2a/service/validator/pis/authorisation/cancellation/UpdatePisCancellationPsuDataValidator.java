@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.AbstractUpdatePi
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationStatusValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.PisAuthorisationValidator;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.UpdatePisPsuDataPO;
+import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation.UpdatePaymentPsuDataPO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +36,7 @@ import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType
  */
 @Slf4j
 @Component
-public class UpdatePisCancellationPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePisCancellationPsuDataPO> {
+public class UpdatePisCancellationPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePaymentPsuDataPO> {
 
     public UpdatePisCancellationPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
                                                  PisAuthorisationValidator pisAuthorisationValidator,
