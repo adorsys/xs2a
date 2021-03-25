@@ -30,6 +30,7 @@ import java.util.List;
 public class CmsBulkPayment extends BaseCmsPayment {
     private boolean batchBookingPreferred;
     private AccountReference debtorAccount;
+    private String debtorName;
     private LocalDate requestedExecutionDate;
     private TransactionStatus paymentStatus;
     private List<CmsSinglePayment> payments;
