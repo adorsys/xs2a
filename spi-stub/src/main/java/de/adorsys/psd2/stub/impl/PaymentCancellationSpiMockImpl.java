@@ -115,4 +115,13 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
                    .payload(new SpiScaInformationResponse(true, PSU_MESSAGE))
                    .build();
     }
+
+    @Override
+    public SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus, @NotNull SpiContextData contextData,
+                                                          @NotNull String authorisationId,
+                                                          @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiScaStatusResponse>builder()
+                   .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE))
+                   .build();
+    }
 }

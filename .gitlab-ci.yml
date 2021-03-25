@@ -42,7 +42,7 @@ variables:
   # Private Openshift Images #
   ############################
 
-  OPENSHIFT_NAMESPACE_SUPPORT10X: "adorsys-psd2-support10x"
+  OPENSHIFT_NAMESPACE_SUPPORT10X: "adorsys-xs2a-support10x"
 
   ###########################
   # Build variables         #
@@ -117,7 +117,7 @@ Lint:Docker_compose:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-10.x
     - master
   script:
     - apt update && apt install yamllint docker-compose make -yq
@@ -129,7 +129,7 @@ Lint:Ci_file:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-10.x
     - master
   script:
     - apt-get update && apt-get install yamllint python3-pkg-resources -yq
@@ -141,7 +141,7 @@ Lint:XS2A_yaml_json_xml:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-10.x
     - master
   script:
     - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
@@ -158,7 +158,7 @@ Lint:XS2A_PMD_CPD_Report:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-10.x
     - master
   script:
     - apt update && apt install make -yq
@@ -179,7 +179,7 @@ Lint:XS2A_core_dockerfiles:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-10.x
     - master
   script:
     - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
@@ -242,7 +242,7 @@ Test:DOCKER_test_image_build:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
   variables:
-    DOCKER_TAG: develop
+    DOCKER_TAG: support-10x
 
 Test:Javadoc_Java11:
   stage: "Test"
@@ -271,7 +271,7 @@ Test:Sonarcube:
   needs: []
   except:
     - schedules
-    - develop
+    - support-10.x
   script:
     - jabba use system@1.11
     - cat /sys/fs/cgroup/memory/memory.limit_in_bytes

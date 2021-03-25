@@ -387,13 +387,4 @@ class PeriodicPaymentTypeValidatorImplTest {
         assertEquals(MessageErrorCode.FORMAT_ERROR_OVERSIZE_FIELD, messageError.getTppMessage().getMessageErrorCode());
         assertArrayEquals(new Object[]{"remittanceInformationStructured", 140}, messageError.getTppMessage().getTextParameters());
     }
-
-    @Test
-    void doValidation_debtorName_notSupportedEmptyValue_error() {
-        periodicPayment.setDebtorName("");
-
-        validator.doPeriodicValidation(periodicPayment, messageError, validationConfig);
-        assertEquals(MessageErrorCode.FORMAT_ERROR_EXTRA_FIELD, messageError.getTppMessage().getMessageErrorCode());
-        assertArrayEquals(new Object[]{"debtorName"}, messageError.getTppMessage().getTextParameters());
-    }
 }

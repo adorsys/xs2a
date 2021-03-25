@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
@@ -92,7 +93,34 @@ interface AuthorisationSpi<T> {
      * @param authorisationId a unique identifier of authorisation process
      * @return Returns response object, containing a SCA information from ASPSP
      */
+    @Deprecated
+    //TODO: remove deprecated method https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1507
     SpiResponse<SpiScaInformationResponse> getScaInformation(@NotNull SpiContextData contextData,
                                                              @NotNull String authorisationId,
                                                              @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+
+    /**
+     * Returns authorisation SCA status and PSU message
+     *
+     * @param scaStatus                scaStatus from CMS
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param authorisationId          a unique identifier of authorisation process
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
+     * @return Returns response object, containing a SCA information from ASPSP
+     */
+    //TODO: remove default implementation with getScaInformation https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1507
+    default SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
+                                                           @NotNull SpiContextData contextData,
+                                                           @NotNull String authorisationId,
+                                                           @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        SpiResponse<SpiScaInformationResponse> scaInformation = getScaInformation(contextData, authorisationId, aspspConsentDataProvider);
+        if (scaInformation.hasError()) {
+            return SpiResponse.<SpiScaStatusResponse>builder()
+                       .error(scaInformation.getErrors())
+                       .build();
+        }
+        return SpiResponse.<SpiScaStatusResponse>builder()
+                   .payload(new SpiScaStatusResponse(scaStatus, false, null))
+                   .build();
+    }
 }

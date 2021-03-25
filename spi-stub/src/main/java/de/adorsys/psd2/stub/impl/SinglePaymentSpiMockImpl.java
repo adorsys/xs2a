@@ -46,6 +46,8 @@ import java.util.UUID;
 public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
     private static final String TEST_ASPSP_DATA = "Test aspsp data";
     private static final String PSU_MESSAGE = "Message from ASPSP to PSU";
+    private static final String DEBTOR_NAME = "Mocked debtor name from ASPSP";
+
     private final PaymentServiceMock paymentService;
 
     @Override
@@ -70,6 +72,9 @@ public class SinglePaymentSpiMockImpl implements SinglePaymentSpi {
     @Override
     @NotNull
     public SpiResponse<SpiSinglePayment> getPaymentById(@NotNull SpiContextData contextData, @NotNull String acceptMediaType, @NotNull SpiSinglePayment payment, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+
+        payment.setDebtorName(DEBTOR_NAME);
+
         log.info("SinglePaymentSpi#getPaymentById: contextData {}, spiSinglePayment {}, aspspConsentData {}", contextData, payment, aspspConsentDataProvider.loadAspspConsentData());
 
         return SpiResponse.<SpiSinglePayment>builder()

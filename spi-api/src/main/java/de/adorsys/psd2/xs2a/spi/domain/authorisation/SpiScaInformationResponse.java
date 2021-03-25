@@ -20,6 +20,7 @@ import lombok.Value;
 import org.jetbrains.annotations.Nullable;
 
 @Value
+@Deprecated
 public class SpiScaInformationResponse {
 
     @Nullable

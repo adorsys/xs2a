@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.core.payment.model;
+package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
-import lombok.Data;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.List;
+@Value
+public class SpiScaStatusResponse {
 
-@Data
-public class BulkPaymentInitiationJson {
-    private Boolean batchBookingPreferred;
-    private AccountReference debtorAccount;
-    private String debtorName;
-    private LocalDate requestedExecutionDate;
-    private OffsetDateTime requestedExecutionTime;
-    private List<PaymentInitiationJson> payments;
+    @NotNull
+    private ScaStatus scaStatus;
+    @Nullable
+    private Boolean trustedBeneficiaryFlag;
+    @Nullable
+    private String psuMessage;
 }
