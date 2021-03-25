@@ -1,0 +1,9 @@
+= Release notes v.8.12
+
+== Table of Contents
+
+* Added mocked debtor name in starter
+
+== Added mocked debtor name in starter
+
+From now on, mocked debtor name added to starter.
