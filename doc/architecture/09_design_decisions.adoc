@@ -70,6 +70,3 @@ image::09_AspspConsentData_Decryption.png[AspspConsentData Decryption, title="As
 
 
 
-=== TPP Authorisation
-
-<TODO>
