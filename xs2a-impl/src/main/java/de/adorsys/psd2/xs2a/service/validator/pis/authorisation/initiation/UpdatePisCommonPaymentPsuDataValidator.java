@@ -41,7 +41,7 @@ import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType
  */
 @Slf4j
 @Component
-public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePisCommonPaymentPsuDataPO> {
+public class UpdatePisCommonPaymentPsuDataValidator extends AbstractUpdatePisPsuDataValidator<UpdatePaymentPsuDataPO> {
     private final AspspProfileServiceWrapper aspspProfileService;
 
     public UpdatePisCommonPaymentPsuDataValidator(PisEndpointAccessCheckerService pisEndpointAccessCheckerService,
