@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.service.CmsCreateConsentResponseService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
@@ -88,6 +89,8 @@ class Xs2aAisConsentServiceTest {
     private FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     @Mock
     private LoggingContextService loggingContextService;
+    @Mock
+    private CmsCreateConsentResponseService cmsCreateConsentResponseService;
 
     private final JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
@@ -98,18 +101,16 @@ class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    void createConsent_success() throws WrongChecksumException {
+    void createConsent_success() {
         // Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
-        when(consentServiceEncrypted.createConsent(any()))
-            .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder()
-                            .payload(new CmsCreateConsentResponse(CONSENT_ID, getCmsConsentWithNotifications()))
-                            .build());
+        CmsCreateConsentResponse cmsCreateConsentResponse = new CmsCreateConsentResponse(CONSENT_ID, getCmsConsentWithNotifications());
         when(aisConsentMapper.mapToAisConsent(any()))
             .thenReturn(aisConsent);
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.of(cmsCreateConsentResponse));
 
         Xs2aCreateAisConsentResponse expected = new Xs2aCreateAisConsentResponse(CONSENT_ID, aisConsent, null);
 
@@ -121,13 +122,14 @@ class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    void createConsent_WrongChecksumException() throws WrongChecksumException {
+    void createConsent_WrongChecksumException() {
         // Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
-        when(consentServiceEncrypted.createConsent(any())).thenThrow(new WrongChecksumException());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.empty());
+
 
         // When
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
@@ -137,14 +139,13 @@ class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    void createConsent_failed() throws WrongChecksumException {
+    void createConsent_failed() {
         // Given
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
-        when(consentServiceEncrypted.createConsent(any(CmsConsent.class)))
-            .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.empty());
 
         // When
         Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
@@ -292,21 +293,20 @@ class Xs2aAisConsentServiceTest {
     }
 
     @Test
-    void createConsentCheckInternalRequestId() throws WrongChecksumException {
+    void createConsentCheckInternalRequestId() {
         // Given
         ArgumentCaptor<CmsConsent> argumentCaptor = ArgumentCaptor.forClass(CmsConsent.class);
         when(frequencyPerDateCalculationService.getMinFrequencyPerDay(CREATE_CONSENT_REQ.getFrequencyPerDay()))
             .thenReturn(1);
-        when(consentServiceEncrypted.createConsent(any()))
-            .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.empty());
 
         // When
         xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        verify(consentServiceEncrypted).createConsent(argumentCaptor.capture());
+        verify(cmsCreateConsentResponseService).getCmsCreateConsentResponse(argumentCaptor.capture());
     }
 
     @Test

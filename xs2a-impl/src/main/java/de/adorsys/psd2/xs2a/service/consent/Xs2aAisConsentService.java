@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.service.CmsCreateConsentResponseService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
@@ -59,6 +60,7 @@ public class Xs2aAisConsentService {
     private final Xs2aConsentAuthorisationMapper consentAuthorisationMapper;
     private final FrequencyPerDateCalculationService frequencyPerDateCalculationService;
     private final LoggingContextService loggingContextService;
+    private final CmsCreateConsentResponseService cmsCreateConsentResponseService;
 
     /**
      * Sends a POST request to CMS to store created AIS consent
@@ -72,23 +74,11 @@ public class Xs2aAisConsentService {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         CmsConsent cmsConsent = aisConsentMapper.mapToCmsConsent(request, psuData, tppInfo, allowedFrequencyPerDay);
 
-        CmsResponse<CmsCreateConsentResponse> response;
-        try {
-            response = consentService.createConsent(cmsConsent);
-        } catch (WrongChecksumException e) {
-            log.info("Consent cannot be created, checksum verification failed");
-            return Optional.empty();
-        }
+        Optional<CmsCreateConsentResponse> createConsentResponse = cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent);
 
-        if (response.hasError()) {
-            log.info("Consent cannot be created, because can't save to cms DB");
-            return Optional.empty();
-        }
-
-        CmsCreateConsentResponse createConsentResponse = response.getPayload();
-        return Optional.of(new Xs2aCreateAisConsentResponse(createConsentResponse.getConsentId(),
-                                                            aisConsentMapper.mapToAisConsent(createConsentResponse.getCmsConsent()),
-                                                            createConsentResponse.getCmsConsent().getTppInformation().getTppNotificationSupportedModes()));
+        return createConsentResponse.map(c -> new Xs2aCreateAisConsentResponse(c.getConsentId(),
+                                                       aisConsentMapper.mapToAisConsent(c.getCmsConsent()),
+                                                       c.getCmsConsent().getTppInformation().getTppNotificationSupportedModes()));
     }
 
     /**
