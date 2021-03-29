@@ -71,7 +71,7 @@ class Xs2aAisConsentMapperTest {
 
     @Autowired
     private Xs2aAisConsentMapper mapper;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToSpiScaConfirmation() {
@@ -102,22 +102,6 @@ class Xs2aAisConsentMapperTest {
         SpiAccountConsent spiAccountConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/spi-account-consent.json", SpiAccountConsent.class);
         //Then
         assertEquals(spiAccountConsentExpected, spiAccountConsent);
-    }
-
-    @Test
-    void mapToSpiUpdateConsentPsuDataReq() {
-        UpdateConsentPsuDataReq updateAuthorisationRequest = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
-        AuthorisationProcessorResponse authorisationProcessorResponse = jsonReader.getObjectFromFile("json/service/mapper/consent/authorisation-processor-response2.json", AuthorisationProcessorResponse.class);
-
-        UpdateConsentPsuDataReq actual = mapper.mapToUpdateConsentPsuDataReq(updateAuthorisationRequest, authorisationProcessorResponse);
-
-        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req-mapped.json", UpdateConsentPsuDataReq.class);
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void mapToSpiUpdateConsentPsuDataReq_nullValue() {
-        assertNull(mapper.mapToUpdateConsentPsuDataReq(null, null));
     }
 
     @Test
