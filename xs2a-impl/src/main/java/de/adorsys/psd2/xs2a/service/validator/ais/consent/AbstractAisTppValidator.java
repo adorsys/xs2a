@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.consent;
 
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
-import de.adorsys.psd2.xs2a.service.validator.ais.AbstractAisTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.AbstractConsentTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisConsentTppInfoValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.TppInfoValidator;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @param <T> type of object to be checked
  */
-public abstract class AbstractConsentTppValidator<T extends TppInfoProvider> extends AbstractAisTppValidator<T> {
+public abstract class AbstractAisTppValidator<T extends TppInfoProvider> extends AbstractConsentTppValidator<T> {
     private AisConsentTppInfoValidator aisConsentTppInfoValidator;
 
     @Override
