@@ -18,7 +18,7 @@ package de.adorsys.psd2.consent.aspsp.api;
 
 import de.adorsys.psd2.consent.api.CmsConstant;
 import de.adorsys.psd2.consent.api.ResponseData;
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.aspsp.api.config.CmsAspspApiTagName;
 import io.swagger.annotations.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -37,7 +37,7 @@ public interface CmsAspspPisExportApi {
     @ApiOperation(value = "Returns a list of payments by given mandatory TPP ID, optional creation date, PSU ID Data and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    ResponseData<Collection<CmsPayment>> getPaymentsByTpp(
+    ResponseData<Collection<CmsBasePaymentResponse>> getPaymentsByTpp(
         @ApiParam(value = "TPP ID", required = true, example = "12345987")
         @PathVariable("tpp-id") String tppId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
@@ -66,7 +66,7 @@ public interface CmsAspspPisExportApi {
     @ApiOperation(value = "Returns a list of payments by given mandatory PSU ID Data, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    ResponseData<Collection<CmsPayment>> getPaymentsByPsu(
+    ResponseData<Collection<CmsBasePaymentResponse>> getPaymentsByPsu(
         @ApiParam(value = "Creation start date", example = "2010-01-01")
         @RequestHeader(value = "start-date", required = false)
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
@@ -92,7 +92,7 @@ public interface CmsAspspPisExportApi {
     @ApiOperation(value = "Returns a list of payments by given mandatory aspsp account id, optional creation date and instance ID")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK")})
-    ResponseData<Collection<CmsPayment>> getPaymentsByAccountId(
+    ResponseData<Collection<CmsBasePaymentResponse>> getPaymentsByAccountId(
         @ApiParam(value = "Bank specific account identifier.", required = true, example = "11111-99999")
         @PathVariable("account-id") String aspspAccountId,
         @ApiParam(value = "Creation start date", example = "2010-01-01")
