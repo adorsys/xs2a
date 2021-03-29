@@ -27,7 +27,7 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
     private final Xs2aAisConsentService aisConsentService;
     private final Xs2aConsentService consentService;
     private final Xs2aAuthorisationService authorisationService;
-    private final Xs2aAisConsentMapper aisConsentMapper;
+    private final ConsentPsuDataMapper consentPsuDataMapper;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through AisConsentService
@@ -93,7 +93,7 @@ public class EmbeddedAisAuthorizationService implements AisAuthorizationService 
             log.info("Consent-ID [{}], Authorisation-ID [{}]. Update consent authorisation failed. Error msg: {}.",
                      request.getBusinessObjectId(), request.getAuthorisationId(), response.getErrorHolder());
         } else {
-            aisConsentService.updateConsentAuthorisation(aisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
+            aisConsentService.updateConsentAuthorisation(consentPsuDataMapper.mapToUpdateConsentPsuDataReq(request, response));
         }
 
         return response;

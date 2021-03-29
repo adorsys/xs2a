@@ -21,9 +21,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
@@ -32,9 +30,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountConsent;
@@ -76,25 +72,6 @@ public class Xs2aAisConsentMapper {
                             ac.getConsentType()
                         )
                    )
-                   .orElse(null);
-    }
-
-    public UpdateConsentPsuDataReq mapToUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
-                                                                AuthorisationProcessorResponse response) {
-        return Optional.ofNullable(response)
-                   .map(data -> {
-                       UpdateConsentPsuDataReq req = new UpdateConsentPsuDataReq();
-                       req.setPsuData(response.getPsuData());
-                       req.setConsentId(request.getBusinessObjectId());
-                       req.setAuthorizationId(request.getAuthorisationId());
-                       req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
-                                                         .map(AuthenticationObject::getAuthenticationMethodId)
-                                                         .orElse(null));
-                       req.setScaAuthenticationData(request.getScaAuthenticationData());
-                       req.setScaStatus(data.getScaStatus());
-                       req.setAuthorisationType(AuthorisationType.CONSENT);
-                       return req;
-                   })
                    .orElse(null);
     }
 
