@@ -21,26 +21,20 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.PiisConsentData;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Mapper(componentModel = "spring", uses = {ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 public abstract class Xs2aPiisConsentMapper {
@@ -53,25 +47,6 @@ public abstract class Xs2aPiisConsentMapper {
 
     @Mapping(target = "consentTppInformation", source = "tppInformation")
     public abstract PiisConsent mapToPiisConsent(CmsConsent cmsConsent);
-
-    public UpdateConsentPsuDataReq mapToUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
-                                                                AuthorisationProcessorResponse response) {
-        return Optional.ofNullable(response)
-                   .map(data -> {
-                       UpdateConsentPsuDataReq req = new UpdateConsentPsuDataReq();
-                       req.setPsuData(response.getPsuData());
-                       req.setConsentId(request.getBusinessObjectId());
-                       req.setAuthorizationId(request.getAuthorisationId());
-                       req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
-                                                         .map(AuthenticationObject::getAuthenticationMethodId)
-                                                         .orElse(null));
-                       req.setScaAuthenticationData(request.getScaAuthenticationData());
-                       req.setScaStatus(data.getScaStatus());
-                       req.setAuthorisationType(AuthorisationType.CONSENT);
-                       return req;
-                   })
-                   .orElse(null);
-    }
 
     public CmsConsent mapToCmsConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
         PiisConsentData piisConsentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(), request.getCardInformation(), request.getRegistrationInformation());

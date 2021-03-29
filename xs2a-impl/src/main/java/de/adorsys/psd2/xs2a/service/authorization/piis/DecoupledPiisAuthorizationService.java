@@ -27,7 +27,7 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPiisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class DecoupledPiisAuthorizationService implements PiisAuthorizationServi
     private final Xs2aPiisConsentService piisConsentService;
     private final Xs2aConsentService consentService;
     private final Xs2aAuthorisationService authorisationService;
-    private final Xs2aPiisConsentMapper piisConsentMapper;
+    private final ConsentPsuDataMapper consentPsuDataMapper;
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through PiisConsentService
@@ -77,7 +77,7 @@ public class DecoupledPiisAuthorizationService implements PiisAuthorizationServi
             log.info("Consent-ID [{}], Authentication-ID [{}], PSU-ID [{}]. Update consent authorisation has failed. Error msg: {}.",
                      request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData().getPsuId(), response.getErrorHolder());
         } else {
-            piisConsentService.updateConsentAuthorisation(piisConsentMapper.mapToUpdateConsentPsuDataReq(request, response));
+            piisConsentService.updateConsentAuthorisation(consentPsuDataMapper.mapToUpdateConsentPsuDataReq(request, response));
         }
 
         return response;

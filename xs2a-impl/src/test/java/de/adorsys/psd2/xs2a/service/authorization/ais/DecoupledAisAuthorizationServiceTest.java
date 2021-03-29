@@ -31,7 +31,7 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -65,7 +65,7 @@ class DecoupledAisAuthorizationServiceTest {
     @Mock
     private Xs2aConsentService consentService;
     @Mock
-    private Xs2aAisConsentMapper aisConsentMapper;
+    private ConsentPsuDataMapper consentPsuDataMapper;
     @Mock
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
 
@@ -103,7 +103,7 @@ class DecoupledAisAuthorizationServiceTest {
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
         UpdateConsentPsuDataReq mappedUpdatePsuDataRequest = new UpdateConsentPsuDataReq();
-        when(aisConsentMapper.mapToUpdateConsentPsuDataReq(authorisationRequest, processorResponse))
+        when(consentPsuDataMapper.mapToUpdateConsentPsuDataReq(authorisationRequest, processorResponse))
             .thenReturn(mappedUpdatePsuDataRequest);
 
         AuthorisationProcessorResponse actualResponse = decoupledAisAuthorizationService.updateConsentPsuData(authorisationRequest, processorResponse);
