@@ -25,7 +25,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
-public class CmsBasePaymentResponse implements CmsPayment {
+public class CmsBasePaymentResponse {
 
     private String paymentId;
     private PaymentType paymentType;
@@ -34,5 +34,4 @@ public class CmsBasePaymentResponse implements CmsPayment {
     private TppInfo tppInfo;
     private OffsetDateTime creationTimestamp;
     private OffsetDateTime statusChangeTimestamp;
-
 }

@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.consent.service.aspsp;
 
-import de.adorsys.psd2.consent.api.pis.CmsPayment;
+import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
 import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -103,12 +103,12 @@ class CmsAspspPisExportServiceInternalTest {
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
             .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(0, 20), 1));
-        CmsPayment expectedPayment = buildCmsPayment();
+        CmsBasePaymentResponse expectedPayment = buildCmsBasePaymentResponse();
         when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
-            .thenReturn(buildCmsPayment());
+            .thenReturn(buildCmsBasePaymentResponse());
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
@@ -131,12 +131,12 @@ class CmsAspspPisExportServiceInternalTest {
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE))))
             .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
-        CmsPayment expectedPayment = buildCmsPayment();
+        CmsBasePaymentResponse expectedPayment = buildCmsBasePaymentResponse();
         when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
-            .thenReturn(buildCmsPayment());
+            .thenReturn(buildCmsBasePaymentResponse());
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -161,7 +161,7 @@ class CmsAspspPisExportServiceInternalTest {
             .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 0));
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
@@ -177,7 +177,7 @@ class CmsAspspPisExportServiceInternalTest {
         // Given
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByTpp(null, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -198,12 +198,12 @@ class CmsAspspPisExportServiceInternalTest {
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
             .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(0, ITEMS_PER_PAGE), 1));
-        CmsPayment expectedPayment = buildCmsPayment();
+        CmsBasePaymentResponse expectedPayment = buildCmsBasePaymentResponse();
         when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
-            .thenReturn(buildCmsPayment());
+            .thenReturn(buildCmsBasePaymentResponse());
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(psuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
@@ -225,12 +225,12 @@ class CmsAspspPisExportServiceInternalTest {
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE))))
             .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
-        CmsPayment expectedPayment = buildCmsPayment();
+        CmsBasePaymentResponse expectedPayment = buildCmsBasePaymentResponse();
         when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
-            .thenReturn(buildCmsPayment());
+            .thenReturn(buildCmsBasePaymentResponse());
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(psuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -254,7 +254,7 @@ class CmsAspspPisExportServiceInternalTest {
             .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(0, ITEMS_PER_PAGE), 0));
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(wrongPsuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
@@ -268,7 +268,7 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByPsu_failure_nullPsuIdData() {
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(null, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -284,7 +284,7 @@ class CmsAspspPisExportServiceInternalTest {
         PsuIdData emptyPsuIdData = buildEmptyPsuIdData();
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByPsu(emptyPsuIdData, CREATION_DATE_FROM,
                                                                  CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -304,12 +304,12 @@ class CmsAspspPisExportServiceInternalTest {
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
             .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
-        CmsPayment expectedPayment = buildCmsPayment();
+        CmsBasePaymentResponse expectedPayment = buildCmsBasePaymentResponse();
         when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
-            .thenReturn(buildCmsPayment());
+            .thenReturn(buildCmsBasePaymentResponse());
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
@@ -331,12 +331,12 @@ class CmsAspspPisExportServiceInternalTest {
         //noinspection unchecked
         when(pisCommonPaymentDataRepository.findAll(any(Specification.class), eq(PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE))))
             .thenReturn(new PageImpl<>(Collections.singletonList(buildPisCommonPaymentData()), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
-        CmsPayment expectedPayment = buildCmsPayment();
+        CmsBasePaymentResponse expectedPayment = buildCmsBasePaymentResponse();
         when(cmsPsuPisMapper.mapPaymentDataToCmsPayment(buildPisCommonPaymentData()))
-            .thenReturn(buildCmsPayment());
+            .thenReturn(buildCmsBasePaymentResponse());
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -359,7 +359,7 @@ class CmsAspspPisExportServiceInternalTest {
             .thenReturn(new PageImpl<>(Collections.emptyList(), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 0));
 
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(WRONG_ASPSP_ACCOUNT_ID, CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, null, null);
 
@@ -373,7 +373,7 @@ class CmsAspspPisExportServiceInternalTest {
     @Test
     void exportPaymentsByAccountId_failure_blankAspspAccountId() {
         // When
-        PageData<Collection<CmsPayment>> payments =
+        PageData<Collection<CmsBasePaymentResponse>> payments =
             cmsAspspPisExportServiceInternal.exportPaymentsByAccountId(" ", CREATION_DATE_FROM,
                                                                        CREATION_DATE_TO, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE);
 
@@ -395,11 +395,11 @@ class CmsAspspPisExportServiceInternalTest {
         return new PsuData(PSU_ID, null, null, null, null);
     }
 
-    private CmsPayment buildCmsPayment() {
-        CmsSinglePayment cmsPayment = new CmsSinglePayment(PAYMENT_PRODUCT);
-        cmsPayment.setPaymentId(PAYMENT_ID);
+    private CmsBasePaymentResponse buildCmsBasePaymentResponse() {
+        CmsSinglePayment CmsBasePaymentResponse = new CmsSinglePayment(PAYMENT_PRODUCT);
+        CmsBasePaymentResponse.setPaymentId(PAYMENT_ID);
 
-        return cmsPayment;
+        return CmsBasePaymentResponse;
     }
 
     private PisCommonPaymentData buildPisCommonPaymentData() {
