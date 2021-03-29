@@ -39,7 +39,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_
  */
 @Component
 @RequiredArgsConstructor
-public class UpdateConsentPsuDataValidator extends AbstractConsentTppValidator<UpdateConsentPsuDataRequestObject> {
+public class UpdateConsentPsuDataValidator extends AbstractAisTppValidator<UpdateConsentPsuDataRequestObject> {
     private final AisAuthorisationValidator aisAuthorisationValidator;
     private final AisAuthorisationStatusValidator aisAuthorisationStatusValidator;
     private final AisPsuDataUpdateAuthorisationCheckerValidator aisPsuDataUpdateAuthorisationCheckerValidator;

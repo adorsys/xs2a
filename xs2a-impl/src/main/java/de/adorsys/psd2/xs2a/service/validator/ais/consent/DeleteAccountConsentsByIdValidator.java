@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  * Validator to be used for validating delete account consent by id request according to some business rules
  */
 @Component
-public class DeleteAccountConsentsByIdValidator extends AbstractConsentTppValidator<CommonConsentObject> {
+public class DeleteAccountConsentsByIdValidator extends AbstractAisTppValidator<CommonConsentObject> {
     /**
      * Validates delete account consent by id request
      *

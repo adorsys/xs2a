@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class GetAccountConsentByIdValidator extends AbstractConsentTppValidator<CommonConsentObject> {
+public class GetAccountConsentByIdValidator extends AbstractAisTppValidator<CommonConsentObject> {
 
     private final OauthConsentValidator oauthConsentValidator;
 
