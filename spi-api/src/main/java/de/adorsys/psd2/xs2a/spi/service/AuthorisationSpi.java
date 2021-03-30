@@ -105,6 +105,7 @@ interface AuthorisationSpi<T> {
      * @param scaStatus                scaStatus from CMS
      * @param contextData              holder of call's context data (e.g. about PSU and TPP)
      * @param authorisationId          a unique identifier of authorisation process
+     * @param businessObject           generic consent/payment object
      * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
      * @return Returns response object, containing a SCA information from ASPSP
      */
@@ -112,6 +113,7 @@ interface AuthorisationSpi<T> {
     default SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
                                                            @NotNull SpiContextData contextData,
                                                            @NotNull String authorisationId,
+                                                           @NotNull T businessObject,
                                                            @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         SpiResponse<SpiScaInformationResponse> scaInformation = getScaInformation(contextData, authorisationId, aspspConsentDataProvider);
         if (scaInformation.hasError()) {
