@@ -16,80 +16,15 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
-import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-@RequiredArgsConstructor
-public class DecoupledPisScaAuthorisationService implements PisScaAuthorisationService {
-    private final PisAuthorisationService authorisationService;
-    private final Xs2aPisCommonPaymentMapper pisCommonPaymentMapper;
+public class DecoupledPisScaAuthorisationService extends AbstractPisScaAuthorisationService {
 
-    @Override
-    public Optional<Xs2aCreatePisAuthorisationResponse> createCommonPaymentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        return pisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(authorisationService.createPisAuthorisation(paymentId, psuData), paymentType);
-    }
-
-    @Override
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        return authorisationService.updatePisAuthorisation(request, getScaApproachServiceType());
-    }
-
-    @Override
-    public void updateAuthorisation(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
-        authorisationService.updateAuthorisation(request, response);
-    }
-
-    @Override
-    public void updateCancellationAuthorisation(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
-        authorisationService.updateCancellationAuthorisation(request, response);
-    }
-
-    @Override
-    public Optional<Xs2aCreatePisCancellationAuthorisationResponse> createCommonPaymentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData) {
-        return pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(authorisationService.createPisAuthorisationCancellation(paymentId, psuData), paymentType);
-    }
-
-    @Override
-    public Optional<Xs2aPaymentCancellationAuthorisationSubResource> getCancellationAuthorisationSubResources(String paymentId) {
-        return authorisationService.getCancellationAuthorisationSubResources(paymentId)
-                   .map(Xs2aPaymentCancellationAuthorisationSubResource::new);
-    }
-
-    @Override
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
-        return authorisationService.updatePisCancellationAuthorisation(request, getScaApproachServiceType());
-    }
-
-    @Override
-    public Optional<Xs2aAuthorisationSubResources> getAuthorisationSubResources(String paymentId) {
-        return authorisationService.getAuthorisationSubResources(paymentId)
-                   .map(Xs2aAuthorisationSubResources::new);
-    }
-
-    @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String paymentId, String authorisationId) {
-        return authorisationService.getAuthorisationScaStatus(paymentId, authorisationId);
-    }
-
-    @Override
-    public Optional<ScaStatus> getCancellationAuthorisationScaStatus(String paymentId, String authorisationId) {
-        return authorisationService.getCancellationAuthorisationScaStatus(paymentId, authorisationId);
+    public DecoupledPisScaAuthorisationService(PisAuthorisationService authorisationService, Xs2aPisCommonPaymentMapper pisCommonPaymentMapper) {
+        super(authorisationService, pisCommonPaymentMapper);
     }
 
     @Override
