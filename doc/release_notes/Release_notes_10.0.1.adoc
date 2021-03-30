@@ -1,0 +1,9 @@
+= Release notes v.10.0.1
+
+== Table of Contents
+
+* Added business object to AuthorisationSpi#getScaStatus
+
+== Added business object to AuthorisationSpi#getScaStatus
+
+The method AuthorisationSpi#getScaStatus was extended by adding business object.
