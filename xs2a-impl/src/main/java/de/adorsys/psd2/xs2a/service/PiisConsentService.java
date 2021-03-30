@@ -229,8 +229,9 @@ public class PiisConsentService {
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         ScaStatus scaStatus = cmsConsentScaStatusResponse.getBody().getScaStatus();
+        SpiPiisConsent spiPiisConsent = xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(cmsConsentScaStatusResponse.getBody().getPiisConsent());
 
-        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiAspspConsentDataProvider);
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = piisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiPiisConsent, spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIIS);

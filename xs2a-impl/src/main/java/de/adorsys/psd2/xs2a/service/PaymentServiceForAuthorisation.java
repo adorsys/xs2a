@@ -27,11 +27,13 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +46,7 @@ public abstract class PaymentServiceForAuthorisation {
     private final SpiErrorMapper spiErrorMapper;
     private final RequestProviderService requestProviderService;
     private final Xs2aAuthorisationService xs2aAuthorisationService;
+    private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -64,7 +67,9 @@ public abstract class PaymentServiceForAuthorisation {
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(paymentId);
         ScaStatus scaStatus = paymentScaStatusResponse.getBody().getScaStatus();
-        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = getScaStatus(scaStatus, contextData, authorisationId, spiAspspConsentDataProvider);
+        SpiPayment spiPayment = xs2aToSpiPaymentMapper.mapToSpiPayment(paymentScaStatusResponse.getBody().getPisCommonPaymentResponse());
+
+        SpiResponse<SpiScaStatusResponse> spiScaStatusResponse = getScaStatus(scaStatus, contextData, authorisationId, spiPayment, spiAspspConsentDataProvider);
 
         if (spiScaStatusResponse.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaStatusResponse, ServiceType.PIS);
@@ -98,6 +103,7 @@ public abstract class PaymentServiceForAuthorisation {
     abstract SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus,
                                                             @NotNull SpiContextData contextData,
                                                             @NotNull String authorisationId,
+                                                            @NotNull SpiPayment businessObject,
                                                             @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     private SpiContextData getSpiContextData() {

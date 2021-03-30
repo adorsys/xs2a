@@ -2,3 +2,13 @@
 
 == Table of Contents
 
+* Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
+* Added business object to AuthorisationSpi#getScaStatus
+
+== Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
+
+From now on, CmsPayment usages are replaced with CmsBasePaymentResponse.
+
+== Added business object to AuthorisationSpi#getScaStatus
+
+The method AuthorisationSpi#getScaStatus was extended by adding business object.
