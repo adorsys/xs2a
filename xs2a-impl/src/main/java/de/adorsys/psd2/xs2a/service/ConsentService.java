@@ -386,8 +386,9 @@ public class ConsentService {
         SpiContextData contextData = getSpiContextData();
         SpiAspspConsentDataProvider spiAspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId);
         ScaStatus scaStatus = cmsScaStatusResponse.getBody().getScaStatus();
+        SpiAccountConsent spiAccountConsent = aisConsentMapper.mapToSpiAccountConsent(cmsScaStatusResponse.getBody().getAccountConsent());
 
-        SpiResponse<SpiScaStatusResponse> spiScaInformation = aisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiAspspConsentDataProvider);
+        SpiResponse<SpiScaStatusResponse> spiScaInformation = aisConsentSpi.getScaStatus(scaStatus, contextData, authorisationId, spiAccountConsent, spiAspspConsentDataProvider);
 
         if (spiScaInformation.hasError()) {
             ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiScaInformation, ServiceType.AIS);

@@ -40,6 +40,7 @@ import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaStatusResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
+import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,6 +120,7 @@ class PaymentServiceForAuthorisationTest {
         ResponseObject<PaymentScaStatus> paymentScaStatusResponse = ResponseObject.<PaymentScaStatus>builder()
                                                                         .body(paymentScaStatus)
                                                                         .build();
+        SpiPayment spiPayment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse);
 
         when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
@@ -130,7 +132,7 @@ class PaymentServiceForAuthorisationTest {
         SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
                                                             .payload(new SpiScaStatusResponse(ScaStatus.FINALISED,      null, "psu message"))
                                                             .build();
-        when(paymentAuthorisationSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(paymentAuthorisationSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPayment, spiAspspConsentDataProvider)).thenReturn(spiResponse);
 
         // When
         ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
@@ -150,6 +152,7 @@ class PaymentServiceForAuthorisationTest {
         ResponseObject<PaymentScaStatus> paymentScaStatusResponse = ResponseObject.<PaymentScaStatus>builder()
                                                                         .body(paymentScaStatus)
                                                                         .build();
+        SpiPayment spiPayment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse);
 
         when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
@@ -161,7 +164,7 @@ class PaymentServiceForAuthorisationTest {
         SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
                                                .build();
-        when(paymentAuthorisationSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(paymentAuthorisationSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPayment, spiAspspConsentDataProvider)).thenReturn(spiResponse);
         when(spiErrorMapper.mapToErrorHolder(spiResponse, ServiceType.PIS)).thenReturn(ErrorHolder.builder(ErrorType.PIS_400).build());
 
         // When
@@ -170,7 +173,7 @@ class PaymentServiceForAuthorisationTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.hasError()).isTrue();
-        verify(paymentAuthorisationSpi, times(1)).getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider);
+        verify(paymentAuthorisationSpi, times(1)).getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPayment, spiAspspConsentDataProvider);
         verify(spiErrorMapper, times(1)).mapToErrorHolder(spiResponse, ServiceType.PIS);
         verifyNoInteractions(xs2aAuthorisationService);
     }
@@ -184,6 +187,7 @@ class PaymentServiceForAuthorisationTest {
         ResponseObject<PaymentScaStatus> paymentScaStatusResponse = ResponseObject.<PaymentScaStatus>builder()
                                                                         .body(paymentScaStatus)
                                                                         .build();
+        SpiPayment spiPayment = xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse);
 
         when(paymentAuthorisationService.getPaymentInitiationAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT))
             .thenReturn(paymentScaStatusResponse);
@@ -195,7 +199,7 @@ class PaymentServiceForAuthorisationTest {
         SpiResponse<SpiScaStatusResponse> spiResponse = SpiResponse.<SpiScaStatusResponse>builder()
                                                .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message"))
                                                .build();
-        when(paymentAuthorisationSpi.getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider)).thenReturn(spiResponse);
+        when(paymentAuthorisationSpi.getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPayment, spiAspspConsentDataProvider)).thenReturn(spiResponse);
 
         // When
         ResponseObject<Xs2aScaStatusResponse> actual = paymentServiceForAuthorisation.getAuthorisationScaStatus(PAYMENT_ID, AUTHORISATION_ID, PaymentType.SINGLE, PAYMENT_PRODUCT);
@@ -205,7 +209,7 @@ class PaymentServiceForAuthorisationTest {
         assertThat(actual.hasError()).isFalse();
         assertThat(actual.getBody()).isEqualTo(expected);
 
-        verify(paymentAuthorisationSpi, times(1)).getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiAspspConsentDataProvider);
+        verify(paymentAuthorisationSpi, times(1)).getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPayment, spiAspspConsentDataProvider);
         verifyNoInteractions(spiErrorMapper);
     }
 }

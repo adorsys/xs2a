@@ -81,6 +81,7 @@ public class PiisConsentSpiMockImpl implements PiisConsentSpi {
     @Override
     public SpiResponse<SpiScaStatusResponse> getScaStatus(@NotNull ScaStatus scaStatus, @NotNull SpiContextData contextData,
                                                           @NotNull String authorisationId,
+                                                          @NotNull SpiPiisConsent businessObject,
                                                           @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiScaStatusResponse>builder()
                    .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE))

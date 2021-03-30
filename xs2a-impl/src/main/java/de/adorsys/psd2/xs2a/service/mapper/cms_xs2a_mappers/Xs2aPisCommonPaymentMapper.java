@@ -27,7 +27,6 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import org.springframework.stereotype.Component;
@@ -61,7 +60,7 @@ public class Xs2aPisCommonPaymentMapper {
         return Optional.ofNullable(response)
                    .map(data -> {
                        UpdateAuthorisationRequest req = new UpdateAuthorisationRequest();
-                       req.setPsuData(((Xs2aUpdatePisCommonPaymentPsuDataResponse) response).getPsuData());
+                       req.setPsuData(response.getPsuData());
                        req.setAuthenticationMethodId(Optional.ofNullable(data.getChosenScaMethod())
                                                          .map(AuthenticationObject::getAuthenticationMethodId)
                                                          .orElse(null));
