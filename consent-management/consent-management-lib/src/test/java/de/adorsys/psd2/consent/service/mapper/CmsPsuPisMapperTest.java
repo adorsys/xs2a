@@ -133,7 +133,7 @@ class CmsPsuPisMapperTest {
 
     @Test
     void mapToCmsPayment_paymentData_Success() {
-        CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_COMMON_PAYMENT_DATA_SINGLE);
+        CmsBasePaymentResponse cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_COMMON_PAYMENT_DATA_SINGLE);
 
         assertNotNull(cmsPayment);
         assertEquals(PAYMENT_PRODUCT, cmsPayment.getPaymentProduct());
@@ -149,7 +149,7 @@ class CmsPsuPisMapperTest {
     void mapToCmsPayment_pisPaymentDataList_single_Success() {
         when(cmsAddressMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
 
-        CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_SINGLE_LIST);
+        CmsBasePaymentResponse cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_SINGLE_LIST);
 
         assertNotNull(cmsPayment);
         assertTrue(cmsPayment instanceof CmsSinglePayment);
@@ -186,7 +186,7 @@ class CmsPsuPisMapperTest {
     void mapToCmsPayment_pisPaymentDataList_periodic_Success() {
         when(cmsAddressMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
 
-        CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_PERIODIC_LIST);
+        CmsBasePaymentResponse cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_PERIODIC_LIST);
 
         assertNotNull(cmsPayment);
         assertTrue(cmsPayment instanceof CmsPeriodicPayment);
@@ -223,7 +223,7 @@ class CmsPsuPisMapperTest {
     void mapToCmsPayment_pisPaymentDataList_bulk_Success() {
         when(cmsAddressMapper.mapToCmsAddress(CREDITOR_ADDRESS)).thenReturn(CREDITOR_CMS_ADDRESS);
 
-        CmsPayment cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_BULK_LIST);
+        CmsBasePaymentResponse cmsPayment = cmsPsuPisMapper.mapToCmsPayment(PIS_PAYMENT_DATA_BULK_LIST);
 
         assertTrue(cmsPayment instanceof CmsBulkPayment);
 
