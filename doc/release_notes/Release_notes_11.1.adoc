@@ -4,6 +4,7 @@
 
 * Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
 * Added business object to AuthorisationSpi#getScaStatus
+* Added pagination to event-service
 
 == Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
 
@@ -13,3 +14,11 @@ From now on, CmsPayment usages are replaced with CmsBasePaymentResponse.
 
 The method AuthorisationSpi#getScaStatus was extended by adding business object.
 
+== Added pagination to event-service
+
+From now on, pagination works for the next endpoints:
+- `GET aspsp-api/v1/events`
+- `GET aspsp-api/v1/events/consent/{consent-id}`
+- `GET aspsp-api/v1/events/payment/{payment-id}`
+- `GET aspsp-api/v1/events/type/{event-type}`
+- `GET aspsp-api/v1/events/origin/{event-origin}`

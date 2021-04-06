@@ -16,112 +16,11 @@
 
 package de.adorsys.psd2.report.jpa;
 
-import de.adorsys.psd2.event.core.model.EventOrigin;
-import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.report.entity.EventEntityForReport;
-import de.adorsys.psd2.report.jpa.builder.EventReportSqlParameterSourceBuilder;
-import de.adorsys.psd2.report.jpa.builder.SqlEventReportBuilder;
-import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import de.adorsys.psd2.report.entity.EventReportEntity;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.OffsetDateTime;
-import java.util.List;
 
 @Repository
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class EventReportJPARepository {
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    private final SqlEventReportBuilder sqlEventReportBuilder;
-
-    public List<EventEntityForReport> getEventsForPeriod(OffsetDateTime periodFrom, OffsetDateTime periodTo, String instanceId) {
-        EventReportSqlParameterSourceBuilder parameters = new EventReportSqlParameterSourceBuilder()
-                                                              .periodFrom(periodFrom)
-                                                              .periodTo(periodTo)
-                                                              .instanceId(instanceId)
-                                                              .build();
-
-        String sqlRequest = sqlEventReportBuilder
-                                .baseRequest()
-                                .period()
-                                .instanceId()
-                                .build();
-
-        return namedParameterJdbcTemplate.query(sqlRequest, parameters, new BeanPropertyRowMapper<>(EventEntityForReport.class));
-    }
-
-    public List<EventEntityForReport> findByTimestampBetweenAndConsentIdAndInstanceIdOrderByTimestampAsc(OffsetDateTime periodFrom, OffsetDateTime periodTo, String consentId, String instanceId) {
-        EventReportSqlParameterSourceBuilder parameters = new EventReportSqlParameterSourceBuilder()
-                                                              .periodFrom(periodFrom)
-                                                              .periodTo(periodTo)
-                                                              .instanceId(instanceId)
-                                                              .consentId(consentId)
-                                                              .build();
-
-        String sqlRequest = sqlEventReportBuilder
-                                .baseRequest()
-                                .period()
-                                .instanceId()
-                                .consentId()
-                                .build();
-
-        return namedParameterJdbcTemplate.query(sqlRequest, parameters, new BeanPropertyRowMapper<>(EventEntityForReport.class));
-    }
-
-    public List<EventEntityForReport> findByTimestampBetweenAndPaymentIdAndInstanceIdOrderByTimestampAsc(OffsetDateTime periodFrom, OffsetDateTime periodTo, String paymentId, String instanceId) {
-        EventReportSqlParameterSourceBuilder parameters = new EventReportSqlParameterSourceBuilder()
-                                                              .periodFrom(periodFrom)
-                                                              .periodTo(periodTo)
-                                                              .instanceId(instanceId)
-                                                              .paymentId(paymentId)
-                                                              .build();
-
-        String sqlRequest = sqlEventReportBuilder
-                                .baseRequest()
-                                .period()
-                                .instanceId()
-                                .paymentId()
-                                .build();
-
-        return namedParameterJdbcTemplate.query(sqlRequest, parameters, new BeanPropertyRowMapper<>(EventEntityForReport.class));
-    }
-
-    public List<EventEntityForReport> findByTimestampBetweenAndEventTypeAndInstanceIdOrderByTimestampAsc(OffsetDateTime periodFrom, OffsetDateTime periodTo, EventType eventType, String instanceId) {
-        EventReportSqlParameterSourceBuilder parameters = new EventReportSqlParameterSourceBuilder()
-                                                              .periodFrom(periodFrom)
-                                                              .periodTo(periodTo)
-                                                              .instanceId(instanceId)
-                                                              .eventType(eventType)
-                                                              .build();
-
-        String sqlRequest = sqlEventReportBuilder
-                                .baseRequest()
-                                .period()
-                                .instanceId()
-                                .eventType()
-                                .build();
-
-        return namedParameterJdbcTemplate.query(sqlRequest, parameters, new BeanPropertyRowMapper<>(EventEntityForReport.class));
-    }
-
-    public List<EventEntityForReport> findByTimestampBetweenAndEventOriginAndInstanceIdOrderByTimestampAsc(OffsetDateTime periodFrom, OffsetDateTime periodTo, EventOrigin eventOrigin, String instanceId) {
-        EventReportSqlParameterSourceBuilder parameters = new EventReportSqlParameterSourceBuilder()
-                                                              .periodFrom(periodFrom)
-                                                              .periodTo(periodTo)
-                                                              .instanceId(instanceId)
-                                                              .eventOrigin(eventOrigin)
-                                                              .build();
-
-        String sqlRequest = sqlEventReportBuilder
-                                .baseRequest()
-                                .period()
-                                .instanceId()
-                                .eventOrigin()
-                                .build();
-
-        return namedParameterJdbcTemplate.query(sqlRequest, parameters, new BeanPropertyRowMapper<>(EventEntityForReport.class));
-    }
+public interface EventReportJPARepository extends CrudRepository<EventReportEntity, Long>, JpaSpecificationExecutor<EventReportEntity> {
 }

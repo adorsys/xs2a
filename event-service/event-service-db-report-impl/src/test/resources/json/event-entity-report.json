@@ -1,6 +1,10 @@
 {
-  "consentId": "fa6e687b-1ac9-4b1a-9c74-357c35c82ba1",
-  "paymentId": "j-t4XyLJTzQkonfSTnyxIMc",
+  "consent": {
+    "externalId": "fa6e687b-1ac9-4b1a-9c74-357c35c82ba1"
+  },
+  "payment": {
+    "paymentId": "j-t4XyLJTzQkonfSTnyxIMc"
+  },
   "payload": "cGF5bG9hZA==",
   "eventOrigin": "TPP",
   "eventType": "PAYMENT_INITIATION_REQUEST_RECEIVED",
@@ -9,12 +13,10 @@
   "internalRequestId": "9fe83704-6019-46fa-b8aa-53fb8fa667ea",
   "xrequestId": "2f77a125-aa7a-45c0-b414-cea25a116035",
   "timestamp": "2019-07-09T13:29:50.042136+03:00",
-  "psuId": "PSU ID",
-  "psuIdType": "PSU ID TYPE",
-  "psuCorporateId": "PSU CORPORATE ID",
-  "psuCorporateIdType": "PSU CORPORATE ID TYPE",
-  "psuExId": "PSU ID EX",
-  "psuExIdType": "PSU ID TYPE EX",
-  "psuExCorporateId": "PSU CORPORATE ID EX",
-  "psuExCorporateIdType": "PSU CORPORATE ID TYPE EX"
+  "psuData": {
+    "psuId": "PSU ID",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE"
+  }
 }

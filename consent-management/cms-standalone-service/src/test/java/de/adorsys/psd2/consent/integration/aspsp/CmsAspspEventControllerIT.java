@@ -81,7 +81,9 @@ class CmsAspspEventControllerIT {
         given(eventReportRepository.getEventsForPeriod(
             OffsetDateTime.parse(START_DATE),
             OffsetDateTime.parse(END_DATE),
-            INSTANCE_ID
+            INSTANCE_ID,
+            0,
+            20
         )).willReturn(Collections.singletonList(reportEvent));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getEventsForDatesUrl());

@@ -1,0 +1,15 @@
+{
+  "timestamp": "2021-01-11T15:00:19.023702Z",
+  "eventOrigin": "TPP",
+  "eventType": "CREATE_AIS_CONSENT_REQUEST_RECEIVED",
+  "instanceId": "UNDEFINED",
+  "psuIdData": [
+    {
+      "psuId": "marion.mueller"
+    }
+  ],
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "InR-ID": "c0c407cb-bf8e-4e61-91e6-e767d9932e1d",
+  "payload": 24585,
+  "xrequestId": "2f77a125-aa7a-45c0-b414-cea25a116035"
+}

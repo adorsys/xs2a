@@ -61,7 +61,7 @@ class EventReportRepositoryImplIT {
     private EventRepository eventRepository;
 
     private ReportEvent expectedEvent;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeAll
     void setUp() {
@@ -72,7 +72,7 @@ class EventReportRepositoryImplIT {
 
     @Test
     void getEventsForPeriod() {
-        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriod(START, END, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriod(START, END, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -81,7 +81,7 @@ class EventReportRepositoryImplIT {
 
     @Test
     void getEventsForPeriodAndConsentId() {
-        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndConsentId(START, END, CONSENT_ID, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndConsentId(START, END, CONSENT_ID, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -90,7 +90,7 @@ class EventReportRepositoryImplIT {
 
     @Test
     void getEventsForPeriodAndPaymentId() {
-        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndPaymentId(START, END, PAYMENT_ID, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndPaymentId(START, END, PAYMENT_ID, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -99,7 +99,7 @@ class EventReportRepositoryImplIT {
 
     @Test
     void getEventsForPeriodAndEventOrigin() {
-        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventOrigin(START, END, EventOrigin.TPP, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventOrigin(START, END, EventOrigin.TPP, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());
@@ -108,7 +108,7 @@ class EventReportRepositoryImplIT {
 
     @Test
     void getEventsForPeriodAndEventType() {
-        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventType(START, END, EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, INSTANCE_ID);
+        List<ReportEvent> eventsForPeriod = repository.getEventsForPeriodAndEventType(START, END, EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, INSTANCE_ID, 0, 20);
 
         assertNotNull(eventsForPeriod);
         assertEquals(1, eventsForPeriod.size());

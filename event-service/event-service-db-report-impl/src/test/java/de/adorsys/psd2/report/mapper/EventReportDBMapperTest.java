@@ -17,7 +17,7 @@
 package de.adorsys.psd2.report.mapper;
 
 import de.adorsys.psd2.event.persist.model.ReportEvent;
-import de.adorsys.psd2.report.entity.EventEntityForReport;
+import de.adorsys.psd2.report.entity.EventReportEntity;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,11 +37,11 @@ class EventReportDBMapperTest {
     @Autowired
     private EventReportDBMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToReportEvent_PsuIdIsPresent() {
-        EventEntityForReport event = jsonReader.getObjectFromFile("json/event-entity-report.json", EventEntityForReport.class);
+        EventReportEntity event = jsonReader.getObjectFromFile("json/event-entity-report.json", EventReportEntity.class);
         ReportEvent actualReportEvent = mapper.mapToReportEvent(event);
 
         ReportEvent expectedReportEvent = jsonReader.getObjectFromFile("json/report-event.json", ReportEvent.class);
@@ -51,7 +51,7 @@ class EventReportDBMapperTest {
 
     @Test
     void mapToReportEvent_PsuIdIsNotPresentUseEx() {
-        EventEntityForReport event = jsonReader.getObjectFromFile("json/event-entity-report-ex.json", EventEntityForReport.class);
+        EventReportEntity event = jsonReader.getObjectFromFile("json/event-entity-report-ex.json", EventReportEntity.class);
         ReportEvent actualReportEvent = mapper.mapToReportEvent(event);
 
         ReportEvent expectedReportEvent = jsonReader.getObjectFromFile("json/report-event-ex.json", ReportEvent.class);
