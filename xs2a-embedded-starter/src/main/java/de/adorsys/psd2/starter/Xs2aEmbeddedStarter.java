@@ -29,8 +29,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableXs2aInterface
 @SpringBootApplication
 @EnableTransactionManagement
-@EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"})
-@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event"})
+@EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity", "de.adorsys.psd2.report.entity"})
+@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event", "de.adorsys.psd2.report.jpa"})
 @ComponentScan(basePackages = {"de.adorsys.psd2.stub", "de.adorsys.psd2.starter.config", "de.adorsys.psd2.report"})
 public class Xs2aEmbeddedStarter {
     public static void main(String[] args) {

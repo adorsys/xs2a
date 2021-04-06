@@ -36,7 +36,7 @@ class EventDBMapperTest {
     @Autowired
     private EventDBMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void toEventEntity() {

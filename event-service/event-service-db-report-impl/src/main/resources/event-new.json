@@ -1,0 +1,39 @@
+{
+  "timestamp": "2021-03-29T14:55:18.57953+03:00",
+  "eventOrigin": "TPP",
+  "eventType": "GET_AIS_CONSENT_REQUEST_RECEIVED",
+  "instanceId": "UNDEFINED",
+  "psuIdData": [],
+  "tppAuthorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "InR-ID": "2647fcbe-e7c9-4b85-b50d-5269c951b8cd",
+  "payload": {
+    "tppInfo": {
+      "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppIp": "0:0:0:0:0:0:0:1",
+    "uri": "/v1/consents/unknown_id",
+    "headers": {
+      "x-request-id": "2f77a125-aa7a-45c0-b414-cea25a116035",
+      "postman-token": "96a00f8b-88ed-4f5d-afd9-93affea3bbfd",
+      "host": "localhost:8089",
+      "connection": "keep-alive",
+      "cache-control": "no-cache",
+      "accept-encoding": "gzip, deflate, br",
+      "accept": "application/json",
+      "user-agent": "PostmanRuntime/7.26.10"
+    }
+  },
+  "xrequestId": "2f77a125-aa7a-45c0-b414-cea25a116035"
+}

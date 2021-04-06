@@ -16,12 +16,15 @@
 
 package de.adorsys.psd2.report.mapper;
 
+import de.adorsys.psd2.consent.domain.PsuDataEmbeddable;
 import de.adorsys.psd2.event.persist.model.PsuIdDataPO;
 import de.adorsys.psd2.event.persist.model.ReportEvent;
-import de.adorsys.psd2.report.entity.EventEntityForReport;
-import org.apache.commons.lang3.StringUtils;
+import de.adorsys.psd2.report.entity.EventPsuDataList;
+import de.adorsys.psd2.report.entity.EventReportEntity;
+import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.*;
@@ -30,23 +33,36 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface EventReportDBMapper {
-
-    ReportEvent mapToReportEvent(EventEntityForReport event);
+    @Mapping(target = "consentId", source = "event.consent.externalId")
+    @Mapping(target = "paymentId", source = "event.payment.paymentId")
+    ReportEvent mapToReportEvent(EventReportEntity event);
 
     @AfterMapping
-    default void mapToReportEventAfterMapping(EventEntityForReport event,
-                                              @MappingTarget ReportEvent reportEvent) {
+    default void mapToReportEventAfterMappingFromEventEntity(EventReportEntity event,
+                                                             @MappingTarget ReportEvent reportEvent) {
         reportEvent.setPsuIdData(getPsuIdDataPOSet(event));
     }
 
-    default Set<PsuIdDataPO> getPsuIdDataPOSet(EventEntityForReport event) {
+    default Set<PsuIdDataPO> getPsuIdDataPOSet(EventReportEntity event) {
         Set<PsuIdDataPO> psus = new HashSet<>();
-        if (StringUtils.isNotBlank(event.getPsuId())) {
-            psus.add(mapToPsuIdDataPO(event.getPsuId(), event.getPsuIdType(), event.getPsuCorporateId(), event.getPsuCorporateIdType()));
-        } else if (StringUtils.isNotBlank(event.getPsuExId())) {
-            psus.add(mapToPsuIdDataPO(event.getPsuExId(), event.getPsuExIdType(), event.getPsuExCorporateId(), event.getPsuExCorporateIdType()));
+        PsuDataEmbeddable psuDataEmbeddable = event.getPsuData();
+        if (psuDataEmbeddable != null && psuDataEmbeddable.getPsuId() != null) {
+            psus.add(mapToPsuIdDataPO(psuDataEmbeddable.getPsuId(), psuDataEmbeddable.getPsuIdType(),
+                                      psuDataEmbeddable.getPsuCorporateId(), psuDataEmbeddable.getPsuCorporateIdType()));
         }
+
+        populateByPsuIdDataPO(psus, event.getConsent());
+        populateByPsuIdDataPO(psus, event.getPayment());
+
         return psus;
+    }
+
+    default void populateByPsuIdDataPO(Set<PsuIdDataPO> psus, EventPsuDataList eventPsuDataList) {
+        if (eventPsuDataList != null && CollectionUtils.isNotEmpty(eventPsuDataList.getPsuDataList())) {
+            psus.addAll(eventPsuDataList.getPsuDataList().stream()
+                            .map(p -> mapToPsuIdDataPO(p.getPsuId(), p.getPsuIdType(), p.getPsuCorporateId(), p.getPsuCorporateIdType()))
+                            .collect(Collectors.toList()));
+        }
     }
 
     default PsuIdDataPO mapToPsuIdDataPO(String psuId, String psuIdType, String psuCorporateId, String psuCorporateIdType) {
@@ -58,7 +74,7 @@ public interface EventReportDBMapper {
         return psuIdDataPO;
     }
 
-    default List<ReportEvent> mapToAspspReportEvents(List<EventEntityForReport> events) {
+    default List<ReportEvent> mapToAspspReportEvents(List<EventReportEntity> events) {
         Collection<ReportEvent> eventCollection = events.stream()
                                                       .map(this::mapToReportEvent)
                                                       .collect(Collectors.toMap(ReportEvent::getId,

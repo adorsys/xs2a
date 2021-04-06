@@ -35,7 +35,8 @@ public interface EventReportRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period
      */
-    List<ReportEvent> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriod(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @Nullable String instanceId,
+                                         @Nullable Integer pageIndex, @Nullable Integer itemsPerPage);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given consentId
@@ -46,7 +47,8 @@ public interface EventReportRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given consentId
      */
-    List<ReportEvent> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndConsentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String consentId, @Nullable String instanceId,
+                                                     @Nullable Integer pageIndex, @Nullable Integer itemsPerPage);
 
     /**
      * Returns a list of Event objects, recorded in given time period and with the given paymentId
@@ -57,7 +59,8 @@ public interface EventReportRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and with a given paymentId
      */
-    List<ReportEvent> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndPaymentId(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull String paymentId, @Nullable String instanceId,
+                                                     @Nullable Integer pageIndex, @Nullable Integer itemsPerPage);
 
     /**
      * Returns a list of Event objects of the specific type, recorded in given time period
@@ -68,7 +71,8 @@ public interface EventReportRepository {
      * @param instanceId The id of particular service instance
      * @return List of Event objects, recorded in given time period and of a specific type
      */
-    List<ReportEvent> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndEventType(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventType eventType, @Nullable String instanceId,
+                                                     @Nullable Integer pageIndex, @Nullable Integer itemsPerPage);
 
     /**
      * Returns a list of Event objects from a specific origin, recorded in given time period
@@ -79,5 +83,6 @@ public interface EventReportRepository {
      * @param instanceId  The id of particular service instance
      * @return List of Event objects, recorded in given time period and from a specific origin
      */
-    List<ReportEvent> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId);
+    List<ReportEvent> getEventsForPeriodAndEventOrigin(@NotNull OffsetDateTime start, @NotNull OffsetDateTime end, @NotNull EventOrigin eventOrigin, @Nullable String instanceId,
+                                                       @Nullable Integer pageIndex, @Nullable Integer itemsPerPage);
 }

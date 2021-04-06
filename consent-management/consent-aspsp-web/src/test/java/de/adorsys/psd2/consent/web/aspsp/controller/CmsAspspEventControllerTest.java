@@ -17,6 +17,8 @@
 package de.adorsys.psd2.consent.web.aspsp.controller;
 
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
+import de.adorsys.psd2.event.core.model.EventOrigin;
+import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.event.service.AspspEventService;
 import de.adorsys.psd2.event.service.model.AspspEvent;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -45,8 +47,16 @@ class CmsAspspEventControllerTest {
     private static final String START = "2019-07-11T11:51:00Z";
     private static final String END = "2019-07-11T20:00:00Z";
     private static final String INSTANCE_ID = "UNDEFINED";
+    private static final String CONSENT_ID = "consentId";
+    private static final String PAYMENT_ID = "paymentId";
     private static final String EVENT_LIST_PATH = "json/list-aspsp-event.json";
     private static final String GET_ASPSP_EVENT_LIST_URL = "/aspsp-api/v1/events/";
+    private static final String GET_ASPSP_EVENT_LIST_BY_CONSENT_ID_URL = "/aspsp-api/v1/events/consent/consentId";
+    private static final String GET_ASPSP_EVENT_LIST_BY_PAYMENT_ID_URL = "/aspsp-api/v1/events/payment/paymentId";
+    private static final String GET_ASPSP_EVENT_LIST_BY_EVENT_TYPE_URL = "/aspsp-api/v1/events/type/GET_SIGNING_BASKET_REQUEST_RECEIVED";
+    private static final String GET_ASPSP_EVENT_LIST_BY_EVENT_ORIGIN_URL = "/aspsp-api/v1/events/origin/TPP";
+    private static final String GET_ASPSP_EVENT_LIST_BY_EVENT_ORIGIN_URL_INVALID = "/aspsp-api/v1/events/origin/get";
+    private static final String GET_ASPSP_EVENT_LIST_BY_EVENT_TYPE_URL_INVALID = "/aspsp-api/v1/events/type/GET";
 
     @Mock
     private AspspEventService aspspEventService;
@@ -75,7 +85,7 @@ class CmsAspspEventControllerTest {
 
     @Test
     void getEventsForDates_success() throws Exception {
-        when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID))
+        when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID, 0, 20))
             .thenReturn(events);
 
         mockMvc.perform(get(GET_ASPSP_EVENT_LIST_URL)
@@ -86,12 +96,98 @@ class CmsAspspEventControllerTest {
             .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
-        verify(aspspEventService, times(1)).getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID);
+        verify(aspspEventService, times(1)).getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID, 0, 20);
+    }
+
+    @Test
+    void getEventsForDatesAndConsentId_success() throws Exception {
+        when(aspspEventService.getEventsForPeriodAndConsentId(OffsetDateTime.parse(START), OffsetDateTime.parse(END), CONSENT_ID, INSTANCE_ID, 0, 20))
+            .thenReturn(events);
+
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_BY_CONSENT_ID_URL)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
+            .andReturn();
+
+        verify(aspspEventService, times(1)).getEventsForPeriodAndConsentId(OffsetDateTime.parse(START), OffsetDateTime.parse(END), CONSENT_ID, INSTANCE_ID, 0, 20);
+    }
+
+    @Test
+    void getEventsForDatesAndPaymentId_success() throws Exception {
+        when(aspspEventService.getEventsForPeriodAndPaymentId(OffsetDateTime.parse(START), OffsetDateTime.parse(END), PAYMENT_ID, INSTANCE_ID, 0, 20))
+            .thenReturn(events);
+
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_BY_PAYMENT_ID_URL)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
+            .andReturn();
+
+        verify(aspspEventService, times(1)).getEventsForPeriodAndPaymentId(OffsetDateTime.parse(START), OffsetDateTime.parse(END), PAYMENT_ID, INSTANCE_ID, 0, 20);
+    }
+
+    @Test
+    void getEventsForDatesAndEventType_success() throws Exception {
+        when(aspspEventService.getEventsForPeriodAndEventType(OffsetDateTime.parse(START), OffsetDateTime.parse(END), EventType.GET_SIGNING_BASKET_REQUEST_RECEIVED, INSTANCE_ID, 0, 20))
+            .thenReturn(events);
+
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_BY_EVENT_TYPE_URL)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
+            .andReturn();
+
+        verify(aspspEventService, times(1)).getEventsForPeriodAndEventType(OffsetDateTime.parse(START), OffsetDateTime.parse(END), EventType.GET_SIGNING_BASKET_REQUEST_RECEIVED, INSTANCE_ID, 0, 20);
+    }
+
+    @Test
+    void getEventsForDatesAndEventType_badRequest() throws Exception {
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_BY_EVENT_TYPE_URL_INVALID)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
+            .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+            .andReturn();
+
+        verify(aspspEventService, never()).getEventsForPeriodAndEventType(any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void getEventsForDatesAndEventOrigin_success() throws Exception {
+        when(aspspEventService.getEventsForPeriodAndEventOrigin(OffsetDateTime.parse(START), OffsetDateTime.parse(END), EventOrigin.TPP, INSTANCE_ID, 0, 20))
+            .thenReturn(events);
+
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_BY_EVENT_ORIGIN_URL)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
+            .andReturn();
+
+        verify(aspspEventService, times(1)).getEventsForPeriodAndEventOrigin(OffsetDateTime.parse(START), OffsetDateTime.parse(END), EventOrigin.TPP, INSTANCE_ID, 0, 20);
+    }
+
+    @Test
+    void getEventsForDatesAndEventOrigin_badRequest() throws Exception {
+        mockMvc.perform(get(GET_ASPSP_EVENT_LIST_BY_EVENT_ORIGIN_URL_INVALID)
+                            .headers(httpHeaders)
+                            .header("instance-id", INSTANCE_ID))
+            .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+            .andReturn();
+
+        verify(aspspEventService, never()).getEventsForPeriodAndEventOrigin(any(), any(), any(), any(), any(), any());
     }
 
     @Test
     void getEventsForDates_withoutInstanceId() throws Exception {
-        when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID))
+        when(aspspEventService.getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID, 0, 20))
             .thenReturn(events);
 
         mockMvc.perform(get(GET_ASPSP_EVENT_LIST_URL)
@@ -101,6 +197,6 @@ class CmsAspspEventControllerTest {
             .andExpect(content().json(jsonReader.getStringFromFile(EVENT_LIST_PATH)))
             .andReturn();
 
-        verify(aspspEventService, times(1)).getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID);
+        verify(aspspEventService, times(1)).getEventsForPeriod(OffsetDateTime.parse(START), OffsetDateTime.parse(END), INSTANCE_ID, 0, 20);
     }
 }

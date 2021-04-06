@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event.persist"})
-@EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity"})
+@EnableJpaRepositories(basePackages = {"de.adorsys.psd2.consent.repository", "de.adorsys.psd2.event.persist", "de.adorsys.psd2.report.jpa"})
+@EntityScan({"de.adorsys.psd2.consent.domain", "de.adorsys.psd2.event.persist.entity", "de.adorsys.psd2.report.entity"})
 public class DbConfig {
 }
