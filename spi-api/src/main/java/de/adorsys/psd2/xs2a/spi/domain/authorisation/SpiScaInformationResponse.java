@@ -19,8 +19,11 @@ package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 import lombok.Value;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @deprecated since 11.0, will be removed in 11.3
+ */
 @Value
-@Deprecated
+@Deprecated(since = "11.0")
 public class SpiScaInformationResponse {
 
     @Nullable
