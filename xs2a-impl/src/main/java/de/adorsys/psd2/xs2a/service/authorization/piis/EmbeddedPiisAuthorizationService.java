@@ -27,11 +27,13 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class EmbeddedPiisAuthorizationService extends AbstractPiisAuthorizationService {
-    public EmbeddedPiisAuthorizationService(Xs2aPiisConsentService piisConsentService,
-                                            Xs2aConsentService consentService,
+
+
+    public EmbeddedPiisAuthorizationService(Xs2aConsentService consentService,
                                             Xs2aAuthorisationService authorisationService,
-                                            ConsentPsuDataMapper consentPsuDataMapper) {
-        super(piisConsentService, consentService, authorisationService, consentPsuDataMapper);
+                                            ConsentPsuDataMapper consentPsuDataMapper,
+                                            Xs2aPiisConsentService piisConsentService) {
+        super(consentService, authorisationService, consentPsuDataMapper, piisConsentService);
     }
 
     @Override
