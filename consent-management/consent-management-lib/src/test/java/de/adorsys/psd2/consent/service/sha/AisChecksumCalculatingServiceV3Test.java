@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.sha;
 
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV3;
 import de.adorsys.psd2.core.data.Consent;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AisChecksumCalculatingServiceV3Test {
     private static final String VERSION_03 = "003";
-    private static final byte[] C0RECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS = getCorrectChecksumForMultipleAccounts().getBytes();
+    private static final byte[] CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS = getCorrectChecksumForMultipleAccounts().getBytes();
     private static final byte[] WRONG_CHECKSUM = "checksum in consent".getBytes();
     private static final byte[] WRONG_CHECKSUM_WITH_DELIMITER = ("checksum in consent" + ChecksumConstant.DELIMITER).getBytes();
     private static final byte[] WRONG_CHECKSUM_WITH_2_PARTS = ("checksum in consent" + ChecksumConstant.DELIMITER + "second part==").getBytes();
@@ -58,7 +59,7 @@ class AisChecksumCalculatingServiceV3Test {
         AisConsent aisConsent = buildConsentTppIbanMultiple();
 
         // when
-        boolean actualResult = aisChecksumCalculatingServiceV3.verifyConsentWithChecksum(aisConsent, C0RECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+        boolean actualResult = aisChecksumCalculatingServiceV3.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
 
         // then
         assertThat(actualResult).isFalse();
@@ -70,7 +71,7 @@ class AisChecksumCalculatingServiceV3Test {
         AisConsent aisConsent = buildConsentTppIbanMultipleMixed();
 
         // when
-        boolean actualResult = aisChecksumCalculatingServiceV3.verifyConsentWithChecksum(aisConsent, C0RECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+        boolean actualResult = aisChecksumCalculatingServiceV3.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
 
         // then
         assertThat(actualResult).isFalse();

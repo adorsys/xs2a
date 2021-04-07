@@ -17,6 +17,9 @@
 package de.adorsys.psd2.consent.service.sha;
 
 
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV3;
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV4;
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV5;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ChecksumCalculatingFactory.class, AisChecksumCalculatingServiceV3.class,
-    AisChecksumCalculatingServiceV4.class, NoProcessingChecksumService.class})
+    AisChecksumCalculatingServiceV4.class, AisChecksumCalculatingServiceV5.class, NoProcessingChecksumService.class})
 class ChecksumCalculatingFactoryTest {
     private static final byte[] WRONG_CHECKSUM = "wrong checksum in consent".getBytes();
     private static final ConsentType AIS_TYPE = ConsentType.AIS;
@@ -42,6 +45,8 @@ class ChecksumCalculatingFactoryTest {
     private AisChecksumCalculatingServiceV3 aisV3;
     @Autowired
     private AisChecksumCalculatingServiceV4 aisV4;
+    @Autowired
+    private AisChecksumCalculatingServiceV5 aisV5;
     @Autowired
     private NoProcessingChecksumService noProcessingChecksumService;
 
@@ -66,9 +71,19 @@ class ChecksumCalculatingFactoryTest {
     }
 
     @Test
-    void getServiceByChecksum_ais_nextVersion_success() {
+    void getServiceByChecksum_ais_v5_success() {
         // When
         Optional<ChecksumCalculatingService> actualResult = factory.getServiceByChecksum(getCorrectChecksum("005"), AIS_TYPE);
+
+        // Then
+        assertTrue(actualResult.isPresent());
+        assertEquals(aisV5, actualResult.get());
+    }
+
+    @Test
+    void getServiceByChecksum_ais_nextVersion_success() {
+        // When
+        Optional<ChecksumCalculatingService> actualResult = factory.getServiceByChecksum(getCorrectChecksum("006"), AIS_TYPE);
 
         // Then
         assertFalse(actualResult.isPresent());
@@ -128,7 +143,7 @@ class ChecksumCalculatingFactoryTest {
 
         // Then
         assertTrue(actualResult.isPresent());
-        assertEquals(aisV4.getVersion(), actualResult.get().getVersion());
+        assertEquals(aisV5.getVersion(), actualResult.get().getVersion());
     }
 
     private static byte[] getCorrectChecksum(String version) {
