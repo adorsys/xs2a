@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.sha;
+package de.adorsys.psd2.consent.service.sha.impl;
 
-import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV4;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AisChecksumCalculatingServiceV4Test {
+class AisChecksumCalculatingServiceV5Test {
     private static final byte[] CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS = getCorrectChecksumForMultipleAccounts().getBytes();
-    private final AisChecksumCalculatingServiceV4 aisChecksumCalculatingServiceV4 = new AisChecksumCalculatingServiceV4();
+    private final AisChecksumCalculatingServiceV5 aisChecksumCalculatingServiceV5 = new AisChecksumCalculatingServiceV5();
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -35,7 +34,19 @@ class AisChecksumCalculatingServiceV4Test {
         AisConsent aisConsent = buildConsentTppIbanMultiple();
 
         // when
-        boolean actualResult = aisChecksumCalculatingServiceV4.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+        boolean actualResult = aisChecksumCalculatingServiceV5.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+
+        // then
+        assertTrue(actualResult);
+    }
+
+    @Test
+    void verifyConsentWithChecksum_multipleAccounts_noAspspAccountId() {
+        // given
+        AisConsent aisConsent = buildConsentTppIbanMultipleNoAspspAccountId();
+
+        // when
+        boolean actualResult = aisChecksumCalculatingServiceV5.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
 
         // then
         assertTrue(actualResult);
@@ -47,10 +58,14 @@ class AisChecksumCalculatingServiceV4Test {
         AisConsent aisConsent = buildConsentTppIbanMultipleMixed();
 
         // when
-        boolean actualResult = aisChecksumCalculatingServiceV4.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
+        boolean actualResult = aisChecksumCalculatingServiceV5.verifyConsentWithChecksum(aisConsent, CORRECT_CHECKSUM_FOR_MULTIPLE_ACCOUNTS);
 
         // then
         assertTrue(actualResult);
+    }
+
+    private AisConsent buildConsentTppIbanMultipleNoAspspAccountId() {
+        return jsonReader.getObjectFromFile("json/dedicated-ais-consent-multiple-accounts-no-account-id.json", AisConsent.class);
     }
 
     private AisConsent buildConsentTppIbanMultiple() {
@@ -62,6 +77,6 @@ class AisChecksumCalculatingServiceV4Test {
     }
 
     private static String getCorrectChecksumForMultipleAccounts() {
-        return "003_%_Mj7nHAyka6LdA3zDA0e4TQU0283X1iFDGyJSRePNNpaRlHeuAG5a24vid4K/5jNIWyTsaEo4JZSPmYkiSJ5YoA==_%_eyJpYmFuIjoiUjBqQWVubFFJcm0zR2JNdG9qN2FvWDZWRXdXRmNhM3NMVnROUFVkOFV2T1RLSUpqUmhkb0tIdGpvamxBQTFFSzdVUVhMQ1cwZU53NkZ6TG1jQk9vUUE9PSJ9";
+        return "003_%_Mj7nHAyka6LdA3zDA0e4TQU0283X1iFDGyJSRePNNpaRlHeuAG5a24vid4K/5jNIWyTsaEo4JZSPmYkiSJ5YoA==_%_eHlDbWtEaXhiRzJXOTIyZjBqWEZhYlVZbnhUWWIvck9nbE1SdmhwMkFuY0lsWVBpTmpocjh6NkJacXlTVU95YjdTcDdOVDZUbEdmUVlBSFJ6NUVQdlE9PQ==";
     }
 }

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.consent.service.sha;
+package de.adorsys.psd2.consent.service.sha.impl;
 
+import de.adorsys.psd2.consent.service.sha.AisAbstractChecksumCalculatingService;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -27,17 +28,16 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class AisChecksumCalculatingServiceV4 extends AisAbstractChecksumCalculatingService {
+public class AisChecksumCalculatingServiceV3 extends AisAbstractChecksumCalculatingService {
 
     @Override
     public String getVersion() {
-        return "004";
+        return "003";
     }
 
     @Override
     protected Comparator<AccountReference> getComparator() {
-        return Comparator.comparing(AccountReference::getAspspAccountId)
-                   .thenComparing(AccountReference::getResourceId)
+        return Comparator.comparing(AccountReference::getAccountReferenceType)
                    .thenComparing(acc -> Optional.ofNullable(acc.getCurrency())
                                              .map(Currency::getCurrencyCode)
                                              .orElse(StringUtils.EMPTY));
