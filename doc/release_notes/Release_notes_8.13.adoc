@@ -3,7 +3,12 @@
 == Table of Contents
 
 * Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
+* Fixed npe in AIS Consent checksum validation
 
 == Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
 
 From now on, CmsPayment usages are replaced with CmsBasePaymentResponse.
+
+== Fixed npe in AIS Consent checksum validation
+
+From now on, AIS Consent checksum validation works properly for multi-account consents without aspsp account id.
