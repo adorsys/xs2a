@@ -136,18 +136,18 @@ Lint:Ci_file:
     - echo "Run Gitlab ci file lint"
     - yamllint -d relaxed .gitlab-ci.yml
 
-Lint:XS2A_yaml_json_xml:
-  image: debian:stretch-slim
-  stage: "Lint"
-  except:
-    - schedules
-    - develop
-    - master
-  script:
-    - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
-    - curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
-    - echo "Run Xs2A core lint"
-    - find ./ -type f -name "*.json" -exec jsonlint -q {} \; # lint all json
+#Lint:XS2A_yaml_json_xml:
+#  image: debian:stretch-slim
+#  stage: "Lint"
+#  except:
+#    - schedules
+#    - develop
+#    - master
+#  script:
+#    - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
+#    - curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+#    - echo "Run Xs2A core lint"
+#    - find ./ -type f -name "*.json" -exec jsonlint -q {} \; # lint all json
 # commented cause get many small errors for yaml with spaces empty lines and etc
 #    - find ./ -type f \( -name "*.yml" -o -name "*.yaml" \) -exec yamllint -d "{extends: relaxed, rules: {line-length: {max: 160}}}" {} \;
 # commented cause get error Unsupported version '1.1'
@@ -174,21 +174,21 @@ Lint:XS2A_PMD_CPD_Report:
     name: "${CI_PROJECT_NAME}-${CI_BUILD_REF_NAME#*v}-pmd"
     expire_in: "10 day"
 
-Lint:XS2A_core_dockerfiles:
-  image: debian:stretch-slim
-  stage: "Lint"
-  except:
-    - schedules
-    - develop
-    - master
-  script:
-    - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
-    - curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
-    - echo "Run Xs2a core dockerfile check"
-    - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile
-    - docker run --rm -i hadolint/hadolint < ./aspsp-profile/aspsp-profile-server/Dockerfile
-    - docker run --rm -i hadolint/hadolint < ./xs2a-standalone-starter/Dockerfile
-    - docker run --rm -i hadolint/hadolint < ./certificate-generator/Dockerfile
+#Lint:XS2A_core_dockerfiles:
+#  image: debian:stretch-slim
+#  stage: "Lint"
+#  except:
+#    - schedules
+#    - develop
+#    - master
+#  script:
+#    - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
+#    - curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+#    - echo "Run Xs2a core dockerfile check"
+#    - docker run --rm -i hadolint/hadolint < ./consent-management/cms-standalone-service/Dockerfile
+#    - docker run --rm -i hadolint/hadolint < ./aspsp-profile/aspsp-profile-server/Dockerfile
+#    - docker run --rm -i hadolint/hadolint < ./xs2a-standalone-starter/Dockerfile
+#    - docker run --rm -i hadolint/hadolint < ./certificate-generator/Dockerfile
 
 #-------------------------------------------------------------------
 # Compile
