@@ -17,6 +17,9 @@
 package de.adorsys.psd2.consent.service.sha;
 
 
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV3;
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV4;
+import de.adorsys.psd2.consent.service.sha.impl.AisChecksumCalculatingServiceV5;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,8 @@ public class ChecksumCalculatingFactory {
     @Autowired
     private AisChecksumCalculatingServiceV4 aisV4;
     @Autowired
+    private AisChecksumCalculatingServiceV5 aisV5;
+    @Autowired
     private NoProcessingChecksumService noProcessingService;
 
     @PostConstruct
@@ -49,6 +54,7 @@ public class ChecksumCalculatingFactory {
 
         services.put(new MultiKey<>(aisV3.getVersion(), ConsentType.AIS.getName()), aisV3);
         services.put(new MultiKey<>(aisV4.getVersion(), ConsentType.AIS.getName()), aisV4);
+        services.put(new MultiKey<>(aisV5.getVersion(), ConsentType.AIS.getName()), aisV5);
     }
 
     /**
@@ -78,7 +84,7 @@ public class ChecksumCalculatingFactory {
 
     private Optional<ChecksumCalculatingService> getDefaultService(ConsentType consentType) {
         if (ConsentType.AIS == consentType) {
-            return Optional.of(aisV4);
+            return Optional.of(aisV5);
         }
         log.info("Given consent type `[{}]` is not supported.", consentType);
         return Optional.empty();

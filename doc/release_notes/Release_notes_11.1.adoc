@@ -5,6 +5,7 @@
 * Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
 * Added business object to AuthorisationSpi#getScaStatus
 * Added pagination to event-service
+* Fixed npe in AIS Consent checksum validation
 
 == Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
 
@@ -22,3 +23,7 @@ From now on, pagination works for the next endpoints:
 - `GET aspsp-api/v1/events/payment/{payment-id}`
 - `GET aspsp-api/v1/events/type/{event-type}`
 - `GET aspsp-api/v1/events/origin/{event-origin}`
+
+== Fixed npe in AIS Consent checksum validation
+
+From now on, AIS Consent checksum validation works properly for multi-account consents without aspsp account id.
