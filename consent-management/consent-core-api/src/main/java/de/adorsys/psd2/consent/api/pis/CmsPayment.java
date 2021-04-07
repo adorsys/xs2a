@@ -23,8 +23,11 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * @deprecated since 11.0, will be removed in 11.3
+ */
 // TODO: https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1501
-@Deprecated // Use CmsBasePaymentResponse instead.
+@Deprecated(since = "11.0") // Use CmsBasePaymentResponse instead.
 public interface CmsPayment {
     String getPaymentId();
 
