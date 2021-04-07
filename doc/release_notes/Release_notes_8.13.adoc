@@ -1,18 +1,13 @@
-= Release notes v.10.1
+= Release notes v.8.13
 
 == Table of Contents
 
 * Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
-* Added business object to AuthorisationSpi#getScaStatus
 * Fixed npe in AIS Consent checksum validation
 
 == Replaced all occurrences of CmsPayment with CmsBasePaymentResponse
 
 From now on, CmsPayment usages are replaced with CmsBasePaymentResponse.
-
-== Added business object to AuthorisationSpi#getScaStatus
-
-The method AuthorisationSpi#getScaStatus was extended by adding business object.
 
 == Fixed npe in AIS Consent checksum validation
 
