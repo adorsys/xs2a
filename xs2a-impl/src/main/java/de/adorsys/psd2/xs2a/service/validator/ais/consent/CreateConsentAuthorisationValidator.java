@@ -40,7 +40,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
  */
 @Component
 @RequiredArgsConstructor
-public class CreateConsentAuthorisationValidator extends AbstractConsentTppValidator<CreateConsentAuthorisationObject> {
+public class CreateConsentAuthorisationValidator extends AbstractAisTppValidator<CreateConsentAuthorisationObject> {
 
     private final AuthorisationPsuDataChecker authorisationPsuDataChecker;
     private final AuthorisationStatusChecker authorisationStatusChecker;

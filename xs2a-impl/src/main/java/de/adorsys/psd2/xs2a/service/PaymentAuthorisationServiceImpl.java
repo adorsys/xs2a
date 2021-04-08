@@ -135,7 +135,7 @@ public class PaymentAuthorisationServiceImpl implements PaymentAuthorisationServ
 
         PisCommonPaymentResponse pisCommonPayment = pisCommonPaymentResponse.get();
         loggingContextService.storeTransactionStatus(pisCommonPayment.getTransactionStatus());
-        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePisCommonPaymentPsuDataPO(pisCommonPayment, request));
+        ValidationResult validationResult = updatePisCommonPaymentPsuDataValidator.validate(new UpdatePaymentPsuDataPO(pisCommonPayment, request));
 
         if (validationResult.isNotValid()) {
             MessageErrorCode messageErrorCode = validationResult.getMessageError().getTppMessage().getMessageErrorCode();

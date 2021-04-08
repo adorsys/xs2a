@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.validator.PiisPsuDataUpdateAuthorisationCheckerValidator;
-import de.adorsys.psd2.xs2a.service.validator.ais.consent.AbstractConsentTppValidator;
+import de.adorsys.psd2.xs2a.service.validator.ais.consent.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.UpdatePiisConsentPsuDataRequestObject;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_
  */
 @Component
 @RequiredArgsConstructor
-public class UpdatePiisConsentPsuDataValidator extends AbstractConsentTppValidator<UpdatePiisConsentPsuDataRequestObject> {
+public class UpdatePiisConsentPsuDataValidator extends AbstractAisTppValidator<UpdatePiisConsentPsuDataRequestObject> {
     private final PiisAuthorisationValidator piisAuthorisationValidator;
     private final PiisPsuDataUpdateAuthorisationCheckerValidator piisPsuDataUpdateAuthorisationCheckerValidator;
     private final PiisAuthorisationStatusValidator piisAuthorisationStatusValidator;

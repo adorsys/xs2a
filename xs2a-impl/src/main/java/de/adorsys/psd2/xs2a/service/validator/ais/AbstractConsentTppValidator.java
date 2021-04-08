@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2019 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.xs2a.service.validator.piis;
+package de.adorsys.psd2.xs2a.service.validator.ais;
 
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -25,11 +25,11 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Common validator for validating TPP in consents and executing request-specific business validation afterwards.
- * Should be used for all PIIS-related requests after consent creation.
+ * Should be used for all consent-related requests after consent creation.
  *
  * @param <T> type of object to be checked
  */
-public abstract class AbstractPiisTppValidator<T extends TppInfoProvider> implements BusinessValidator<T> {
+public abstract class AbstractConsentTppValidator<T extends TppInfoProvider> implements BusinessValidator<T> {
     @NotNull
     @Override
     public ValidationResult validate(@NotNull T object) {
