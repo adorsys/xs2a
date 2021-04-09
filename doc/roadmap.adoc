@@ -27,6 +27,20 @@ a|* All fixes and updates from v.10.0
 
 a| Signing Basket plugin for XS2A
 
+|08.04.2021| 8.13| 10.1| 11.1| |
+
+a| * Bugfixing: Fixed npe in AIS Consent checksum validation
+
+a| * All fixes and updates from v.8.0
+
+* Bugfixing: Added business object to AuthorisationSpi#getScaStatus
+
+a|* All fixes and updates from v.10.0
+
+*  Added pagination to event-service
+
+a|
+
 a|
 
 a|
