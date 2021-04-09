@@ -19,8 +19,10 @@ package de.adorsys.psd2.xs2a.domain;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode
 @ApiModel(description = "Links ", value = "Links")
 public class Links {
 

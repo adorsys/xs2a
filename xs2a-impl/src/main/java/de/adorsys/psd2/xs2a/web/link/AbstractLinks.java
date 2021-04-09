@@ -20,14 +20,14 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Objects;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 import static org.springframework.web.util.UriComponentsBuilder.fromPath;
 
+@EqualsAndHashCode(callSuper = true)
 class AbstractLinks extends Links {
 
     private final String httpUrl;
@@ -57,25 +57,5 @@ class AbstractLinks extends Links {
 
     protected boolean isScaStatusMethodIdentified(ScaStatus scaStatus) {
         return scaStatus == ScaStatus.PSUIDENTIFIED;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AbstractLinks)) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        AbstractLinks that = (AbstractLinks) o;
-        return httpUrl.equals(that.httpUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), httpUrl);
     }
 }

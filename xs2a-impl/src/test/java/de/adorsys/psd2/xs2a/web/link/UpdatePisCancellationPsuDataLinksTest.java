@@ -52,7 +52,7 @@ class UpdatePisCancellationPsuDataLinksTest {
 
     @BeforeEach
     void setUp() {
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
 
         JsonReader jsonReader = new JsonReader();
         request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
