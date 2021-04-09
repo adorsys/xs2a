@@ -44,7 +44,7 @@ class AccountDetailsLinksTest {
         aisConsent = new AisConsent();
         aisConsent.setAspspAccountAccesses(accountAccess);
         aisConsent.setConsentData(new AisConsentData(null, null, null, true));
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
     }
 
     @Test

@@ -36,7 +36,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -226,19 +229,19 @@ public class ConsentModelMapper {
         updatePsuData.setAuthorisationType(AuthorisationType.CONSENT);
         if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
-                .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuDataMap -> updatePsuData.setPassword(psuDataMap.get("password")));
+                .map(Map.class::cast)
+                .ifPresent(psuDataMap -> updatePsuData.setPassword((String) psuDataMap.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
-                .map(o -> (String) o)
+                .map(String.class::cast)
                 .ifPresent(updatePsuData::setAuthenticationMethodId);
 
             Optional.ofNullable(body.get("scaAuthenticationData"))
-                .map(o -> (String) o)
+                .map(String.class::cast)
                 .ifPresent(updatePsuData::setScaAuthenticationData);
 
             Optional.ofNullable(body.get("confirmationCode"))
-                .map(o -> (String) o)
+                .map(String.class::cast)
                 .ifPresent(updatePsuData::setConfirmationCode);
 
         } else {
@@ -263,11 +266,11 @@ public class ConsentModelMapper {
         request.setPaymentProduct(paymentProduct);
         if (body != null && !body.isEmpty()) {
             Optional.ofNullable(body.get("psuData"))
-                .map(o -> (LinkedHashMap<String, String>) o)
-                .ifPresent(psuDataMap -> request.setPassword(psuDataMap.get("password")));
+                .map(Map.class::cast)
+                .ifPresent(psuDataMap -> request.setPassword((String) psuDataMap.get("password")));
 
             Optional.ofNullable(body.get("authenticationMethodId"))
-                .map(o -> (String) o)
+                .map(String.class::cast)
                 .ifPresent(request::setAuthenticationMethodId);
 
             Optional.ofNullable(body.get("scaAuthenticationData"))

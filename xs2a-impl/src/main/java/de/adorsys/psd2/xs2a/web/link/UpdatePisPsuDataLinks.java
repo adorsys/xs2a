@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 
-public class UpdatePisPsuDataLinks extends AbstractLinks {
+public class UpdatePisPsuDataLinks extends AbstractLinks {//NOSONAR
 
     private final ScaApproachResolver scaApproachResolver;
 

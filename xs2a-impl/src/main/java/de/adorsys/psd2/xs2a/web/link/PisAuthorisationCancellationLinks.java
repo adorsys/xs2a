@@ -22,12 +22,11 @@ import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
-
 import java.util.EnumSet;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
-public class PisAuthorisationCancellationLinks extends AbstractLinks {
+public class PisAuthorisationCancellationLinks extends AbstractLinks {//NOSONAR
 
     private final RedirectLinkBuilder redirectLinkBuilder;
     private final ScaRedirectFlow scaRedirectFlow;

@@ -30,7 +30,7 @@ import java.util.EnumSet;
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
-public class PaymentInitiationLinks extends AbstractLinks {
+public class PaymentInitiationLinks extends AbstractLinks {//NOSONAR
 
     private final ScaApproachResolver scaApproachResolver;
     private final RedirectLinkBuilder redirectLinkBuilder;
