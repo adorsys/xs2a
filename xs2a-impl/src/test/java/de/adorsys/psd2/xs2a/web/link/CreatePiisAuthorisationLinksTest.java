@@ -58,7 +58,7 @@ class CreatePiisAuthorisationLinksTest {
 
     @BeforeEach
     void setUp() {
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
         scaRedirectFlow = ScaRedirectFlow.REDIRECT;
 
         response = new CreateConsentAuthorizationResponse();

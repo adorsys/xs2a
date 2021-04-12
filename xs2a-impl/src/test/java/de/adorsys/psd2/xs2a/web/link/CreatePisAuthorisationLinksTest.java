@@ -63,7 +63,7 @@ class CreatePisAuthorisationLinksTest {
     void setUp() {
         jsonReader = new JsonReader();
         psuIdData = jsonReader.getObjectFromFile("json/link/empty.json", PsuIdData.class);
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
 
         request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, psuIdData, PAYMENT_PRODUCT, SINGLE, "");
     }

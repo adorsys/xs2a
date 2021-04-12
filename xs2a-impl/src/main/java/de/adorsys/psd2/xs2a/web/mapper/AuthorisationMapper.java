@@ -127,8 +127,8 @@ public class AuthorisationMapper {
         return Optional.ofNullable(body)
                    .filter(bdy -> !bdy.isEmpty())
                    .map(bdy -> bdy.get("psuData"))
-                   .map(o -> (LinkedHashMap<String, String>) o)
-                   .map(psuDataMap -> psuDataMap.get("password"))
+                   .map(Map.class::cast)
+                   .map(psuDataMap -> (String) psuDataMap.get("password"))
                    .orElse(null);
     }
 
