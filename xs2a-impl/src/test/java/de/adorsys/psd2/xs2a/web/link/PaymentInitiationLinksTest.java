@@ -68,7 +68,7 @@ class PaymentInitiationLinksTest {
     @BeforeEach
     void setUp() {
         jsonReader = new JsonReader();
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
 
         response = new CommonPaymentInitiationResponse();
         response.setPaymentId(PAYMENT_ID);

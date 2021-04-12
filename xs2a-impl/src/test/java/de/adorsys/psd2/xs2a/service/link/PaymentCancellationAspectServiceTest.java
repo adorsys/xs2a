@@ -90,7 +90,7 @@ class PaymentCancellationAspectServiceTest {
         response.setTransactionStatus(TransactionStatus.ACCP);
 
         paymentCancellationRequest = new PisPaymentCancellationRequest(PaymentType.SINGLE, PAYMENT_PRODUCT, PAYMENT_ID,
-                                                                       false, new TppRedirectUri("ok_url", "nok_url"));
+            false, new TppRedirectUri("ok_url", "nok_url"));
     }
 
     @Test
@@ -99,8 +99,8 @@ class PaymentCancellationAspectServiceTest {
         response.setTransactionStatus(TransactionStatus.RJCT);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
-                             .body(response)
-                             .build();
+            .body(response)
+            .build();
         // When
         ResponseObject<CancelPaymentResponse> actualResponse = service.cancelPayment(responseObject, paymentCancellationRequest);
 
@@ -111,6 +111,8 @@ class PaymentCancellationAspectServiceTest {
 
     @Test
     void cancelPayment_success() {
+        when(requestProviderService.getInstanceId()).thenReturn("instanceId");
+
         JsonReader jsonReader = new JsonReader();
         AspspSettings aspspSettings = jsonReader.getObjectFromFile("json/aspect/aspsp-settings.json", AspspSettings.class);
 
@@ -120,12 +122,13 @@ class PaymentCancellationAspectServiceTest {
 
         when(authorisationMethodDecider.isExplicitMethod(false, false)).thenReturn(false);
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
+        when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
 
-        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false, "");
+        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false, "instanceId");
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
-                             .body(response)
-                             .build();
+            .body(response)
+            .build();
         ResponseObject<CancelPaymentResponse> actualResponse = service.cancelPayment(responseObject, paymentCancellationRequest);
 
         assertFalse(actualResponse.hasError());
@@ -136,8 +139,8 @@ class PaymentCancellationAspectServiceTest {
     void createPisAuthorizationAspect_withError_shouldAddTextErrorMessage() {
         // When
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
-                             .fail(AIS_400, of(CONSENT_UNKNOWN_400))
-                             .build();
+            .fail(AIS_400, of(CONSENT_UNKNOWN_400))
+            .build();
         ResponseObject<CancelPaymentResponse> actualResponse = service.cancelPayment(responseObject, paymentCancellationRequest);
 
         // Then

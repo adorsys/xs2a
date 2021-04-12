@@ -57,7 +57,7 @@ class CreateConsentLinksTest {
 
     @BeforeEach
     void setUp() {
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
 
         response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, true, INTERNAL_REQUEST_ID, null);
         response.setAuthorizationId(AUTHORISATION_ID);
