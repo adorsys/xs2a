@@ -41,6 +41,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -105,7 +106,7 @@ class Xs2aAisConsentServiceTest {
     @Mock
     private LoggingContextService loggingContextService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
 
     @BeforeEach
@@ -130,11 +131,11 @@ class Xs2aAisConsentServiceTest {
         Xs2aCreateAisConsentResponse expected = new Xs2aCreateAisConsentResponse(CONSENT_ID, aisConsent, null);
 
         // When
-        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertTrue(actualResponse.isPresent());
-        assertEquals(expected, actualResponse.get());
+        assertTrue(actualResponse.isSuccessful());
+        assertEquals(expected, actualResponse.getPayload());
     }
 
     @Test
@@ -147,10 +148,10 @@ class Xs2aAisConsentServiceTest {
         when(consentServiceEncrypted.createConsent(any())).thenThrow(new WrongChecksumException());
 
         // When
-        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertTrue(actualResponse.isEmpty());
+        assertTrue(actualResponse.hasError());
     }
 
     @Test
@@ -164,10 +165,10 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         // When
-        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertFalse(actualResponse.isPresent());
+        assertTrue(actualResponse.hasError());
     }
 
     @Test
