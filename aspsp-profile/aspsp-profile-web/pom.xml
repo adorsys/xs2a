@@ -21,7 +21,7 @@
     <parent>
         <artifactId>aspsp-profile</artifactId>
         <groupId>de.adorsys.psd2</groupId>
-        <version>7.6.6</version>
+        <version>7.6.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
