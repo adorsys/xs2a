@@ -20,11 +20,9 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,9 +67,6 @@ public abstract class RedirectConsentAuthorizationService implements ConsentAuth
 
 
     protected abstract boolean isConsentAbsent(String consentId);
-
-    @Override
-    public abstract AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
 
     @Override
     public Optional<Authorisation> getConsentAuthorizationById(String authorizationId) {
