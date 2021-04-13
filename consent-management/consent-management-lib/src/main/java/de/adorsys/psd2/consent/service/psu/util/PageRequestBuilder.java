@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu.util;
 
+import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,14 @@ public class PageRequestBuilder {
             return Pageable.unpaged();
         }
         return PageRequest.of(getValueOrDefault(pageIndex, defaultPageIndex),
-                              getValueOrDefault(itemsPerPage, defaultItemsPerPage));
+            getValueOrDefault(itemsPerPage, defaultItemsPerPage));
+    }
+
+    public Pageable getPageable(PageRequestParameters pageRequestParameters) {
+        if (pageRequestParameters == null) {
+            return Pageable.unpaged();
+        }
+        return getPageable(pageRequestParameters.getPageIndex(), pageRequestParameters.getItemsPerPage());
     }
 
     private int getValueOrDefault(Integer value, int defaultValue) {

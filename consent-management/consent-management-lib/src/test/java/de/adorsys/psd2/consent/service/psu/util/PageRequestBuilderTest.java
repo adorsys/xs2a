@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.service.psu.util;
 
+import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,6 +53,30 @@ class PageRequestBuilderTest {
 
         // When
         Pageable actual = pageRequestBuilder.getPageable(5, 28);
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void getPageable_pageRequestParametersIsNuLL() {
+        // Given
+        Pageable expected = Pageable.unpaged();
+
+        // When
+        Pageable actual = pageRequestBuilder.getPageable(null);
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void getPageable_pageRequestParametersIsValid() {
+        // Given
+        PageRequest expected = PageRequest.of(5, 28);
+
+        // When
+        Pageable actual = pageRequestBuilder.getPageable(new PageRequestParameters(5,28));
 
         // Then
         assertThat(actual).isEqualTo(expected);

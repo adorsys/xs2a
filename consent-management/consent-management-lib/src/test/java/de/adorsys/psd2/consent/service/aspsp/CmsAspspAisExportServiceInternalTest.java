@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +59,7 @@ import static org.mockito.Mockito.*;
 class CmsAspspAisExportServiceInternalTest {
     public static final Integer PAGE_INDEX = 0;
     public static final Integer ITEMS_PER_PAGE = 20;
+    public static final PageRequestParameters PAGE_PARAMETERS = new PageRequestParameters(0,20);
     private static final String TPP_AUTHORISATION_NUMBER = "authorisation number";
     private static final String WRONG_TPP_AUTHORISATION_NUMBER = "wrong authorisation number";
     private static final LocalDate CREATION_DATE_FROM = LocalDate.of(2019, 1, 1);
@@ -112,7 +114,7 @@ class CmsAspspAisExportServiceInternalTest {
         )).thenReturn((root, criteriaQuery, criteriaBuilder) -> null);
         //noinspection unchecked
         when(consentJpaRepository.findAll(any(Specification.class), eq(Pageable.unpaged())))
-            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(PAGE_INDEX, ITEMS_PER_PAGE), 1));
+            .thenReturn(new PageImpl<>(Collections.singletonList(consentEntity), PageRequest.of(PAGE_PARAMETERS.getPageIndex(), PAGE_PARAMETERS.getItemsPerPage()), 1));
         CmsAisAccountConsent expectedConsent = buildAisAccountConsent();
 
         List<AuthorisationEntity> authorisations = Collections.singletonList(new AuthorisationEntity());
@@ -126,7 +128,7 @@ class CmsAspspAisExportServiceInternalTest {
         // When
         PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null,
+                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null,
                                                                  AdditionalTppInfo.NONE);
 
         // Then
@@ -168,7 +170,7 @@ class CmsAspspAisExportServiceInternalTest {
         // When
         PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_PARAMETERS,
                                                                  AdditionalTppInfo.NONE);
 
         // Then
@@ -198,7 +200,7 @@ class CmsAspspAisExportServiceInternalTest {
         // When
         PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(WRONG_TPP_AUTHORISATION_NUMBER, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null, null,
+                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, null,
                                                                  AdditionalTppInfo.NONE);
 
         // Then
@@ -214,7 +216,7 @@ class CmsAspspAisExportServiceInternalTest {
         // When
         PageData<Collection<CmsAisAccountConsent>> aisConsents =
             cmsAspspAisExportServiceInternal.exportConsentsByTpp(null, CREATION_DATE_FROM,
-                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+                                                                 CREATION_DATE_TO, psuIdData, DEFAULT_SERVICE_INSTANCE_ID, PAGE_PARAMETERS,
                                                                  AdditionalTppInfo.NONE);
 
         // Then
