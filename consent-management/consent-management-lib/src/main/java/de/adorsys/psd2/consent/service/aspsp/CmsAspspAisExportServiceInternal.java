@@ -29,6 +29,7 @@ import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.util.PageRequestBuilder;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,16 +69,16 @@ public class CmsAspspAisExportServiceInternal implements CmsAspspAisExportServic
                                                                           @Nullable LocalDate createDateFrom,
                                                                           @Nullable LocalDate createDateTo,
                                                                           @Nullable PsuIdData psuIdData, @NotNull String instanceId,
-                                                                          Integer pageIndex, Integer itemsPerPage,
+                                                                          @Nullable PageRequestParameters pageRequestParameters,
                                                                           @Nullable String additionalTppInfo) {
         if (StringUtils.isBlank(tppAuthorisationNumber) || StringUtils.isBlank(instanceId)) {
             log.info("TPP ID: [{}], InstanceId: [{}]. Export Consents by TPP: Some of these two values are empty", tppAuthorisationNumber, instanceId);
-            return new PageData<>(Collections.emptyList(), 0, itemsPerPage, 0);
+            return new PageData<>(Collections.emptyList(), 0, Optional.ofNullable(pageRequestParameters).map(PageRequestParameters::getItemsPerPage).orElse(0), 0);
         }
 
         return mapToPageData(consentJpaRepository.findAll(
             aisConsentSpecification.byTppIdAndCreationPeriodAndPsuIdDataAndInstanceId(tppAuthorisationNumber, createDateFrom, createDateTo, psuIdData, instanceId, additionalTppInfo),
-            pageRequestBuilder.getPageable(pageIndex, itemsPerPage)));
+            pageRequestBuilder.getPageable(pageRequestParameters)));
     }
 
     @Override
