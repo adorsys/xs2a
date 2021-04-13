@@ -29,7 +29,7 @@ import org.mapstruct.Mapping;
 import java.util.Optional;
 
 @Mapper(componentModel = "spring", uses = {Xs2aToSpiPsuDataMapper.class})
-public abstract class Xs2aToSpiPiisConsentMapper {
+public interface Xs2aToSpiPiisConsentMapper {
 
     @Mapping(target = "account", expression = "java(toSpiAccountReference(piisConsent.getAccountReference()))")
     @Mapping(target = "cardExpiryDate", source = "consentData.cardExpiryDate")
@@ -39,9 +39,9 @@ public abstract class Xs2aToSpiPiisConsentMapper {
     @Mapping(target = "registrationInformation", source = "consentData.registrationInformation")
     @Mapping(target = "requestDateTime", source = "creationTimestamp")
     @Mapping(target = "tppAuthorisationNumber", source = "consentTppInformation.tppInfo.authorisationNumber")
-    public abstract SpiPiisConsent mapToSpiPiisConsent(PiisConsent piisConsent);
+    SpiPiisConsent mapToSpiPiisConsent(PiisConsent piisConsent);
 
-    public SpiScaConfirmation toSpiScaConfirmation(UpdateAuthorisationRequest request, PsuIdData psuData) {
+    default SpiScaConfirmation toSpiScaConfirmation(UpdateAuthorisationRequest request, PsuIdData psuData) {
         SpiScaConfirmation accountConfirmation = new SpiScaConfirmation();
         accountConfirmation.setConsentId(request.getBusinessObjectId());
         accountConfirmation.setPsuId(Optional.ofNullable(psuData).map(PsuIdData::getPsuId).orElse(null));
@@ -49,7 +49,7 @@ public abstract class Xs2aToSpiPiisConsentMapper {
         return accountConfirmation;
     }
 
-    SpiAccountReference toSpiAccountReference(AccountReference account) {
+    default SpiAccountReference toSpiAccountReference(AccountReference account) {
         return new SpiAccountReference(
             account.getAspspAccountId(),
             account.getResourceId(),
