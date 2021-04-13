@@ -22,19 +22,21 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Xs2aEndpointPathConstant {
+    public static final String PREFIX_V1 = "/v1";
+    public static final String PREFIX_V2 = "/v2";
     // v1
-    public static final String ACCOUNTS_PATH = "/v1/accounts/**";
-    public static final String BENEFICIARIES_PATH = "/v1/trusted-beneficiaries";
-    public static final String CARD_ACCOUNTS_PATH = "/v1/card-accounts/**";
-    public static final String CONSENTS_PATH = "/v1/consents/**";
-    public static final String FUNDS_CONFIRMATION_PATH = "/v1/funds-confirmations/**";
-    public static final String SINGLE_PAYMENTS_PATH = "/v1/payments/**";
-    public static final String BULK_PAYMENTS_PATH = "/v1/bulk-payments/**";
-    public static final String PERIODIC_PAYMENTS_PATH = "/v1/periodic-payments/**";
-    public static final String SIGNING_BASKETS_PATH = "/v1/signing-baskets/**";
-    public static final String GLOBAL_PATH = "/v1/**";
+    public static final String ACCOUNTS_PATH = PREFIX_V1 + "/accounts/**";
+    public static final String BENEFICIARIES_PATH = PREFIX_V1 + "/trusted-beneficiaries";
+    public static final String CARD_ACCOUNTS_PATH = PREFIX_V1 + "/card-accounts/**";
+    public static final String CONSENTS_PATH = PREFIX_V1 + "/consents/**";
+    public static final String FUNDS_CONFIRMATION_PATH = PREFIX_V1 + "/funds-confirmations/**";
+    public static final String SINGLE_PAYMENTS_PATH = PREFIX_V1 + "/payments/**";
+    public static final String BULK_PAYMENTS_PATH = PREFIX_V1 + "/bulk-payments/**";
+    public static final String PERIODIC_PAYMENTS_PATH = PREFIX_V1 + "/periodic-payments/**";
+    public static final String SIGNING_BASKETS_PATH = PREFIX_V1 + "/signing-baskets/**";
+    public static final String GLOBAL_PATH = PREFIX_V1 + "/**";
     // v2
-    public static final String CONSENTS_V2_PATH = "/v2/consents/**";
+    public static final String CONSENTS_V2_PATH = PREFIX_V2 + "/consents/**";
 
     public static String[] getAllXs2aEndpointPaths() {
         return new String[]{ACCOUNTS_PATH, BENEFICIARIES_PATH, CARD_ACCOUNTS_PATH, CONSENTS_PATH, FUNDS_CONFIRMATION_PATH, SINGLE_PAYMENTS_PATH, BULK_PAYMENTS_PATH, PERIODIC_PAYMENTS_PATH, SIGNING_BASKETS_PATH, CONSENTS_V2_PATH};
