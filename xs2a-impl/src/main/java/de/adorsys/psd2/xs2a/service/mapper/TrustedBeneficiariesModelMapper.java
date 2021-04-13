@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {Xs2aAddressMapper.class})
-public abstract class TrustedBeneficiariesModelMapper {
+public interface TrustedBeneficiariesModelMapper {
 
-    public TrustedBeneficiariesList mapToTrustedBeneficiariesList(Xs2aTrustedBeneficiariesList xs2ATrustedBeneficiariesList) {
+    default TrustedBeneficiariesList mapToTrustedBeneficiariesList(Xs2aTrustedBeneficiariesList xs2ATrustedBeneficiariesList) {
         List<Xs2aTrustedBeneficiaries> trustedBeneficiaries = xs2ATrustedBeneficiariesList.getTrustedBeneficiaries();
 
         List<TrustedBeneficiary> beneficiaries = trustedBeneficiaries.stream()
@@ -41,6 +41,6 @@ public abstract class TrustedBeneficiariesModelMapper {
         return result;
     }
 
-    public abstract TrustedBeneficiary mapToTrustedBeneficiaries(Xs2aTrustedBeneficiaries trustedBeneficiaries);
+    TrustedBeneficiary mapToTrustedBeneficiaries(Xs2aTrustedBeneficiaries trustedBeneficiaries);
 }
 
