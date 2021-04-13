@@ -142,9 +142,19 @@ spring.datasource.password=cms
 
 ==== Getting events
 
-Use endpoint for getting events *by period* and *instance_id* (GET aspsp-api/v1/events).
+There are 5 endpoints for getting events:
 
-Request parameters are passed as headers:
+`GET aspsp-api/v1/events`
+
+`GET aspsp-api/v1/events/consent/{consent-id}`
+
+`GET aspsp-api/v1/events/payment/{payment-id}`
+
+`GET aspsp-api/v1/events/type/{event-type}`
+
+`GET aspsp-api/v1/events/origin/{event-origin}`
+
+Request parameters for the all 5 endpoints above are passed as headers:
 
 .Request Headers
 |===
@@ -153,6 +163,53 @@ Request parameters are passed as headers:
 |start-date |true |
 |end-date |true |
 |instance-id |false |UNDEFINED
+|===
+
+Description:
+
+* `GET aspsp-api/v1/events`  --  Use endpoint for getting events *by period*
+and *instance_id*.
+
+* `GET aspsp-api/v1/events/consent/{consent-id}`  --  Use endpoint for getting events *by period*
+and *instance_id* with specific consent
+identifier *consent_id*.
+
+.*consent_id* path variable usage.
+|===
+|Path variable |Required |Example
+
+|consent-id | true |bf489af6-a2cb-4b75-b71d-d66d58b934d7 |
+|===
+
+* `GET aspsp-api/v1/events/payment/{payment-id}`  --  Use endpoint for getting events *by period*
+and *instance_id* with a specific
+identifier of created payment *payment_id*.
+
+.*payment_id* path variable usage.
+|===
+|Path variable |Required |Example
+
+|payment-id |true |bf489af6-a2cb-4b75-b71d-d66d58b934d7 |
+|===
+
+* `GET aspsp-api/v1/events/type/{event-type}`  --  Use endpoint for getting events *by period*
+and *instance_id* with a specific type of event *event_type*.
+
+.*event_type* path variable usage.
+|===
+|Path variable |Required |Example
+
+|event-type |true |CREATE_SIGNING_BASKET_REQUEST_RECEIVED |
+|===
+
+* `GET aspsp-api/v1/events/origin/{event-origin}`  --  Use endpoint for getting events
+*by period* and *instance_id* for a specific origin type of event *event_origin*.
+
+.*event_origin* path variable usage.
+|===
+|Path variable |Required |Example
+
+|event-origin |true |ASPSP |
 |===
 
 ==== Configuring events recording
