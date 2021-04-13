@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
 import de.adorsys.psd2.consent.web.aspsp.config.ObjectMapperTestConfig;
+import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,7 @@ class CmsAspspAisExportControllerTest {
     private final String LIST_OF_AIS_ACCOUNT_CONSENT_PATH = "json/ais/list-ais-account-consent.json";
     private static final Integer PAGE_INDEX = 0;
     private static final Integer ITEMS_PER_PAGE = 20;
+    private static final PageRequestParameters PAGE_PARAMETERS = new PageRequestParameters(0,20);
 
     private MockMvc mockMvc;
     private final JsonReader jsonReader = new JsonReader();
@@ -88,7 +90,7 @@ class CmsAspspAisExportControllerTest {
     @Test
     void getConsentsByTpp_Success() throws Exception {
         String TPP_ID = "PSDDE-FAKENCA-87B2AC";
-        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_INDEX, ITEMS_PER_PAGE,
+        when(cmsAspspAisExportService.exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_PARAMETERS,
                                                           null))
             .thenReturn(new PageData<>(consents, 0, 20, consents.size()));
 
@@ -98,7 +100,7 @@ class CmsAspspAisExportControllerTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andExpect(content().json(jsonReader.getStringFromFile(LIST_OF_AIS_ACCOUNT_CONSENT_PATH)));
 
-        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, 0, 20,
+        verify(cmsAspspAisExportService, times(1)).exportConsentsByTpp(TPP_ID, START_DATE, END_DATE, psuIdData, INSTANCE_ID, PAGE_PARAMETERS,
                                                                        null);
     }
 

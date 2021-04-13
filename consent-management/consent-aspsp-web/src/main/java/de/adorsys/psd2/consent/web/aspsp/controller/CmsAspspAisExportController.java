@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.api.ais.CmsAisAccountConsent;
 import de.adorsys.psd2.consent.aspsp.api.CmsAspspAisExportApi;
 import de.adorsys.psd2.consent.aspsp.api.PageData;
 import de.adorsys.psd2.consent.aspsp.api.ais.CmsAspspAisExportService;
+import de.adorsys.psd2.xs2a.core.pagination.data.PageRequestParameters;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,9 +44,9 @@ public class CmsAspspAisExportController implements CmsAspspAisExportApi {
                                                                            Integer pageIndex, Integer itemsPerPage,
                                                                            String additionalTppInfo) {
         PsuIdData psuIdData = new PsuIdData(psuId, psuIdType, psuCorporateId, psuCorporateIdType, null);
+        PageRequestParameters pageRequestParameters = new PageRequestParameters(pageIndex, itemsPerPage);
         PageData<Collection<CmsAisAccountConsent>> consents =
-            cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId, pageIndex,
-                                                         itemsPerPage, additionalTppInfo);
+            cmsAspspAisExportService.exportConsentsByTpp(tppId, start, end, psuIdData, instanceId, pageRequestParameters, additionalTppInfo);
         return ResponseData.list(
             consents.getData(),
             new CmsPageInfo(consents.getPage(), consents.getPageSize(), consents.getTotal()),
