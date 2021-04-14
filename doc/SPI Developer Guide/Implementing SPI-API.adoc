@@ -486,7 +486,12 @@ The Interface is used while implementing payment authorisation flow on SPI level
 * *requestAvailableScaMethods*;
 * *requestAuthorisationCode*.
 
-The Method *authorisePsu* authorises psu and returns current (success or failure) authorisation status. *Should be used only with Embedded SCA Approach*. It contains following Data:
+The Method *authorisePsu* authorises PSU and returns current (success or failure) authorisation status with *scaExempted* flag.
+This flag is taken into account by XS2A for performing SCA exemption.
+If the PSU authorisation SPI response for bulk or single payment will be successful and *scaExempted* is *true*
+- SCA will not be performed will be invoked and authorisation status will be set to *EXEMPTED*. SCA exemption is supported for multilevel SCA too.
+
+*The Method authorisePsu should be used only with Embedded SCA Approach*. It contains following Data:
 
 * *spiContextData*;
 * *psuLoginData*: ASPSP identifier(s) of the PSU, provided by TPP within this request;
