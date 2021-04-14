@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -70,15 +71,21 @@ public class Xs2aAisConsentService {
      * @param tppInfo Information about particular TPP from TPP Certificate
      * @return create consent response, containing consent and its encrypted ID
      */
-    public Optional<Xs2aCreateAisConsentResponse> createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
+    public Xs2aResponse<Xs2aCreateAisConsentResponse> createConsent(CreateConsentReq request, PsuIdData psuData, TppInfo tppInfo) {
         int allowedFrequencyPerDay = frequencyPerDateCalculationService.getMinFrequencyPerDay(request.getFrequencyPerDay());
         CmsConsent cmsConsent = aisConsentMapper.mapToCmsConsent(request, psuData, tppInfo, allowedFrequencyPerDay);
 
-        Optional<CmsCreateConsentResponse> createConsentResponse = cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent);
+        Xs2aResponse<CmsCreateConsentResponse> createConsentResponse = cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent);
 
-        return createConsentResponse.map(c -> new Xs2aCreateAisConsentResponse(c.getConsentId(),
-                                                       aisConsentMapper.mapToAisConsent(c.getCmsConsent()),
-                                                       c.getCmsConsent().getTppInformation().getTppNotificationSupportedModes()));
+        Xs2aCreateAisConsentResponse xs2aCreateAisConsentResponse = Optional.ofNullable(createConsentResponse.getPayload())
+                                                                        .map(c -> new Xs2aCreateAisConsentResponse(c.getConsentId(),
+                                                                                                                   aisConsentMapper.mapToAisConsent(c.getCmsConsent()),
+                                                                                                                   c.getCmsConsent().getTppInformation().getTppNotificationSupportedModes()))
+                                                                        .orElse(null);
+
+        return Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                   .payload(xs2aCreateAisConsentResponse)
+                   .build();
     }
 
     /**

@@ -30,6 +30,7 @@ import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
@@ -56,14 +57,19 @@ public class Xs2aPiisConsentService {
     private final LoggingContextService loggingContextService;
     private final CmsCreateConsentResponseService cmsCreateConsentResponseService;
 
-    public Optional<Xs2aCreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
+    public Xs2aResponse<Xs2aCreatePiisConsentResponse> createConsent(CreatePiisConsentRequest request, PsuIdData psuData, TppInfo tppInfo) {
         CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuData, tppInfo);
 
-        Optional<CmsCreateConsentResponse> createConsentResponse = cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent);
+        Xs2aResponse<CmsCreateConsentResponse> createConsentResponse = cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent);
 
-        return createConsentResponse
-            .map(c -> new Xs2aCreatePiisConsentResponse(c.getConsentId(),
-                                                        xs2aPiisConsentMapper.mapToPiisConsent(c.getCmsConsent())));
+        Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = Optional.ofNullable(createConsentResponse.getPayload())
+                                                                        .map(c -> new Xs2aCreatePiisConsentResponse(c.getConsentId(),
+                                                                                                                    xs2aPiisConsentMapper.mapToPiisConsent(c.getCmsConsent())))
+                                                                        .orElse(null);
+
+        return Xs2aResponse.<Xs2aCreatePiisConsentResponse>builder()
+                   .payload(xs2aCreatePiisConsentResponse)
+                   .build();
     }
 
     public Optional<PiisConsent> getPiisConsentById(String consentId) {
