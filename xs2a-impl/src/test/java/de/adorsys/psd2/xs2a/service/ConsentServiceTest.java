@@ -36,6 +36,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
@@ -158,7 +159,7 @@ class ConsentServiceTest {
 
     private TppInfo tppInfo;
     private Xs2aCreateAisConsentResponse xs2aCreateAisConsentResponse;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -183,7 +184,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
 
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
@@ -222,7 +225,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -262,7 +267,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -300,7 +307,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -333,7 +342,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, true), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -391,7 +402,9 @@ class ConsentServiceTest {
         );
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(getReferenceList(), Collections.emptyList(), Collections.emptyList()), false, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -424,7 +437,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.emptyList()), false, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo()).thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
             .thenReturn(SPI_ACCOUNT_CONSENT);
@@ -457,7 +472,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1)), Collections.singletonList(getReference(CORRECT_IBAN_1, CURRENCY_2)), Collections.singletonList(getReference(CORRECT_IBAN_2, CURRENCY_1))), false, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -493,7 +510,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), false, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
 
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
@@ -530,7 +549,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -567,7 +588,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -613,7 +636,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -648,7 +673,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -693,6 +720,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
             .thenReturn(createValidationResult(true, null));
+        when(aisConsentService.createConsent(req, PSU_ID_DATA, null))
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .build());
 
         ResponseObject responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -780,7 +810,9 @@ class ConsentServiceTest {
         when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
         when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
             Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA, tppInfo))
-            .thenReturn(Optional.of(xs2aCreateAisConsentResponse));
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
         when(tppService.getTppInfo())
             .thenReturn(tppInfo);
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -829,8 +861,8 @@ class ConsentServiceTest {
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent))
             .thenReturn(ValidationResult.valid());
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
-                                                                   .build();
+                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .build();
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
@@ -874,8 +906,8 @@ class ConsentServiceTest {
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent))
             .thenReturn(ValidationResult.valid());
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
-                                                                   .build();
+                                                                .error(new TppMessage(MessageErrorCode.FORMAT_ERROR))
+                                                                .build();
 
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(spiResponse);
@@ -910,8 +942,8 @@ class ConsentServiceTest {
             .thenReturn(Optional.of(aisConsent));
         when(consentValidationService.validateConsentOnGettingStatusById(aisConsent)).thenReturn(ValidationResult.valid());
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
-                                                                   .build();
+                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .build();
 
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         when(aisConsentSpi.getConsentStatus(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
@@ -957,8 +989,8 @@ class ConsentServiceTest {
     void getAccountConsentsStatusById_shouldRecordIntoLoggingContext() {
         // Given
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
-                                                                   .build();
+                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .build();
         ArgumentCaptor<ConsentStatus> consentStatusCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
@@ -988,8 +1020,8 @@ class ConsentServiceTest {
     void getAccountConsentsById_Success() {
         // Given
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
-                                                                   .build();
+                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .build();
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(getAisConsent()));
         when(aisConsentMapper.mapToSpiAccountConsent(any()))
@@ -1018,8 +1050,8 @@ class ConsentServiceTest {
         // Given
         ArgumentCaptor<ConsentStatus> argumentCaptor = ArgumentCaptor.forClass(ConsentStatus.class);
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
-                                                                   .build();
+                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .build();
         //GetConsentById
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(getAisConsent()));
@@ -1099,8 +1131,8 @@ class ConsentServiceTest {
         // Given
         ArgumentCaptor<EventType> argumentCaptor = ArgumentCaptor.forClass(EventType.class);
         SpiResponse<SpiConsentStatusResponse> spiResponse = SpiResponse.<SpiConsentStatusResponse>builder()
-                                                                   .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
-                                                                   .build();
+                                                                .payload(new SpiConsentStatusResponse(ConsentStatus.VALID, TEST_PSU_MESSAGE))
+                                                                .build();
 
         when(aisConsentService.getAccountConsentById(CONSENT_ID))
             .thenReturn(Optional.of(getAisConsent()));
@@ -1280,14 +1312,14 @@ class ConsentServiceTest {
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.RECEIVED);
         ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
-                                                                        .body(consentScaStatus)
-                                                                        .build();
+                                                              .body(consentScaStatus)
+                                                              .build();
 
         when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(responseObject);
 
         // When
-        ResponseObject<Xs2aScaStatusResponse> actual  = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+        ResponseObject<Xs2aScaStatusResponse> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.hasError());
@@ -1305,8 +1337,8 @@ class ConsentServiceTest {
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.FINALISED);
         ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
-                                                                        .body(consentScaStatus)
-                                                                        .build();
+                                                              .body(consentScaStatus)
+                                                              .build();
 
         when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(responseObject);
@@ -1317,7 +1349,7 @@ class ConsentServiceTest {
         when(aisConsentSpi.requestTrustedBeneficiaryFlag(any(), any(), any(), any())).thenReturn(spiResponse);
 
         // When
-        ResponseObject<Xs2aScaStatusResponse> actual  = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
+        ResponseObject<Xs2aScaStatusResponse> actual = consentService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID);
 
         // Then
         assertFalse(actual.hasError());
@@ -1335,8 +1367,8 @@ class ConsentServiceTest {
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.FINALISED);
         ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
-                                                                        .body(consentScaStatus)
-                                                                        .build();
+                                                              .body(consentScaStatus)
+                                                              .build();
 
         when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(responseObject);
@@ -1365,8 +1397,8 @@ class ConsentServiceTest {
                                                              .fail(ErrorHolder.builder(ErrorType.AIS_400).build())
                                                              .build();
         ResponseObject<ConsentScaStatus> responseObject = ResponseObject.<ConsentScaStatus>builder()
-                                                                        .fail(ErrorHolder.builder(ErrorType.AIS_400).build())
-                                                                        .build();
+                                                              .fail(ErrorHolder.builder(ErrorType.AIS_400).build())
+                                                              .build();
 
         when(consentAuthorisationService.getConsentAuthorisationScaStatus(CONSENT_ID, WRONG_AUTHORISATION_ID))
             .thenReturn(responseObject);
