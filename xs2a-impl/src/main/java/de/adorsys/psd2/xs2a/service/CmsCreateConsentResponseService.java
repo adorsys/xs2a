@@ -21,11 +21,10 @@ import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,20 +32,24 @@ import java.util.Optional;
 public class CmsCreateConsentResponseService {
     private final ConsentServiceEncrypted consentService;
 
-    public Optional<CmsCreateConsentResponse> getCmsCreateConsentResponse(CmsConsent cmsConsent) {
+    public Xs2aResponse<CmsCreateConsentResponse> getCmsCreateConsentResponse(CmsConsent cmsConsent) {
         CmsResponse<CmsCreateConsentResponse> response;
         try {
             response = consentService.createConsent(cmsConsent);
         } catch (WrongChecksumException e) {
             log.info("Consent cannot be created, checksum verification failed");
-            return Optional.empty();
+            return Xs2aResponse.<CmsCreateConsentResponse>builder()
+                       .build();
         }
 
         if (response.hasError()) {
             log.info("Consent cannot be created, because can't save to cms DB");
-            return Optional.empty();
+            return Xs2aResponse.<CmsCreateConsentResponse>builder()
+                       .build();
         }
 
-        return Optional.ofNullable(response.getPayload());
+        return Xs2aResponse.<CmsCreateConsentResponse>builder()
+                   .payload(response.getPayload())
+                   .build();
     }
 }

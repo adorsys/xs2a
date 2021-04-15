@@ -25,12 +25,14 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -63,7 +65,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 
@@ -102,15 +106,16 @@ public class PiisConsentService {
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, psuData, tppInfo);
+        Xs2aResponse<Xs2aCreatePiisConsentResponse> xs2aResponse = xs2aPiisConsentService.createConsent(request, psuData, tppInfo);
 
-        if (xs2aCreatePiisConsentResponseOptional.isEmpty()) {
-            return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
-                       .fail(ErrorType.PIIS_400, of(MessageErrorCode.RESOURCE_UNKNOWN_400))
-                       .build();
+        if (xs2aResponse.hasError()) {
+            return resolveConsentCreationError(xs2aResponse.getErrors()
+                                                   .stream()
+                                                   .map(TppMessage::getErrorCode)
+                                                   .collect(Collectors.toList()));
         }
 
-        Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = xs2aCreatePiisConsentResponseOptional.get();
+        Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = xs2aResponse.getPayload();
         PiisConsent piisConsent = xs2aCreatePiisConsentResponse.getPiisConsent();
         String encryptedConsentId = xs2aCreatePiisConsentResponse.getConsentId();
 
@@ -151,6 +156,17 @@ public class PiisConsentService {
         }
 
         return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder().body(xs2aConfirmationOfFundsResponse).build();
+    }
+
+    private ResponseObject<Xs2aConfirmationOfFundsResponse> resolveConsentCreationError(List<MessageErrorCode> errors) {
+        if (errors.contains(MessageErrorCode.PSU_CREDENTIALS_INVALID)) {
+            return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
+                       .fail(ErrorType.PIIS_400, of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                       .build();
+        }
+        return ResponseObject.<Xs2aConfirmationOfFundsResponse>builder()
+                   .fail(ErrorType.PIIS_400, of(MessageErrorCode.RESOURCE_UNKNOWN_400))
+                   .build();
     }
 
     public ResponseObject<PiisConsent> getPiisConsentById(String consentId) {
