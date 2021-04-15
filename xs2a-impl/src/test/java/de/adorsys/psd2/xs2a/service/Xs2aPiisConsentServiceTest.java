@@ -20,8 +20,6 @@ import de.adorsys.psd2.consent.api.CmsError;
 import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
-import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
-import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.AisConsentServiceEncrypted;
@@ -30,10 +28,9 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
@@ -60,12 +57,7 @@ class Xs2aPiisConsentServiceTest {
     private static final String CORRECT_PSU_ID = "marion.mueller";
     private static final String CONSENT_ID = "consent ID";
     private static final String AUTHORISATION_ID = "a01562ea-19ff-4b5a-8188-c45d85bfa20a";
-    private static final String REDIRECT_URI = "request/redirect_uri";
-    private static final String NOK_REDIRECT_URI = "request/nok_redirect_uri";
-    private static final ScaApproach SCA_APPROACH = ScaApproach.DECOUPLED;
-    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
-    private static final CreateAuthorisationRequest CONSENT_AUTHORISATION_REQUEST = buildConsentAuthorisationRequest();
     private final TppInfo tppInfo = buildTppInfo();
 
     @InjectMocks
@@ -101,17 +93,19 @@ class Xs2aPiisConsentServiceTest {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Optional.of(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent)));
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                     .payload(new CmsCreateConsentResponse(CONSENT_ID, cmsConsent))
+                                                                                                     .build());
 
         when(xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent))
             .thenReturn(piisConsent);
 
         //When
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
+        Xs2aResponse<Xs2aCreatePiisConsentResponse> actualResult = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
 
         //Then
-        assertTrue(xs2aCreatePiisConsentResponseOptional.isPresent());
-        Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = xs2aCreatePiisConsentResponseOptional.get();
+        assertTrue(actualResult.isSuccessful());
+        Xs2aCreatePiisConsentResponse xs2aCreatePiisConsentResponse = actualResult.getPayload();
         assertEquals(CONSENT_ID, xs2aCreatePiisConsentResponse.getConsentId());
         assertEquals(piisConsent, xs2aCreatePiisConsentResponse.getPiisConsent());
     }
@@ -122,13 +116,14 @@ class Xs2aPiisConsentServiceTest {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Optional.empty());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                     .build());
 
         //When
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
+        Xs2aResponse<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseXs2aResponse = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
 
         //Then
-        assertTrue(xs2aCreatePiisConsentResponseOptional.isEmpty());
+        assertTrue(xs2aCreatePiisConsentResponseXs2aResponse.hasError());
     }
 
     @Test
@@ -137,13 +132,14 @@ class Xs2aPiisConsentServiceTest {
         CreatePiisConsentRequest request = new CreatePiisConsentRequest(null, null, null, null, null);
         when(xs2aPiisConsentMapper.mapToCmsConsent(request, PSU_ID_DATA, tppInfo))
             .thenReturn(cmsConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Optional.empty());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(cmsConsent)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                     .build());
 
         //When
-        Optional<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseOptional = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
+        Xs2aResponse<Xs2aCreatePiisConsentResponse> xs2aCreatePiisConsentResponseXs2aResponse = xs2aPiisConsentService.createConsent(request, PSU_ID_DATA, tppInfo);
 
         //Then
-        assertTrue(xs2aCreatePiisConsentResponseOptional.isEmpty());
+        assertTrue(xs2aCreatePiisConsentResponseXs2aResponse.hasError());
     }
 
     @Test
@@ -314,16 +310,5 @@ class Xs2aPiisConsentServiceTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber("Test TppId");
         return tppInfo;
-    }
-
-    private static CreateAuthorisationRequest buildConsentAuthorisationRequest() {
-        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
-        consentAuthorization.setPsuData(PSU_ID_DATA);
-        consentAuthorization.setScaApproach(SCA_APPROACH);
-        return consentAuthorization;
-    }
-
-    private static CreateAuthorisationResponse buildCreateConsentAuthorizationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
     }
 }
