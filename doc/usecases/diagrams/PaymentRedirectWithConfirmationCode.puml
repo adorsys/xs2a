@@ -69,8 +69,8 @@ deactivate CMS
 Online_banking-->PSU: Redirect back to TPP with Confirmation Code
 deactivate Online_banking
 PSU->TPP: Redirect back to TPP
-activate TPP
 deactivate PSU
+activate TPP
 note right of TPP
 Additional Authorisation Confirmation Call
 end note
@@ -209,14 +209,35 @@ CMS-->XS2A: GetAuthorisationsByPaymentId Response
 deactivate CMS
 XS2A-->TPP: Authorisation Ids List
 |||
-TPP->XS2A: REST Call Get Authorisation\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorisationId}"
-XS2A->CMS: GetAuthorisationScaStatus
+TPP->XS2A: REST Call Get Sca Status Request\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorithationId}"
+|||
+deactivate TPP
+XS2A->CMS: REST Call getPaymentInitiationAuthorisationScaStatus
 activate CMS
 |||
-CMS-->XS2A: GetAuthorisationScaStatus Response
+CMS-->XS2A: getPaymentInitiationAuthorisationScaStatus Response
 deactivate CMS
-XS2A-->TPP: Sca Status
-deactivate XS2A
+|||
+XS2A->SPI: Java Call getScaStatus
+activate SPI
+|||
+SPI->Core_banking: getScaStatus
+activate Core_banking
+|||
+Core_banking-->SPI: getScaStatus Response
+deactivate Core_banking
+SPI->XS2A: SpiScaStatusResponse
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateAuthorisationStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateAuthorisationStatus Response
+|||
+deactivate CMS
+|||
+XS2A-->TPP: Get Sca Status Response
 deactivate TPP
+deactivate XS2A
 @enduml
 

@@ -1,5 +1,9 @@
 @startuml
+
+== Decoupled approach flow for the case when several SCA methods is available ==
+
 actor PSU
+entity Dedicated_device_OR_application as dd
 entity TPP
 entity XS2A
 entity CMS
@@ -65,7 +69,8 @@ deactivate XS2A
 TPP-->PSU: Feedback to the customer\n"Please select SCA method"
 activate PSU
 |||
-PSU->TPP: SCA Method
+PSU->TPP: Select SCA Method
+deactivate PSU
 |||
 TPP->XS2A: REST Call Update Psu data(Select Authentication Method)\n"PUT/v1/{payment-service}/{payment-id}/\n{payment-product}/authorisations/{authorisationId}"
 activate XS2A
@@ -75,8 +80,6 @@ activate SPI
 |||
 SPI->Core_banking: SelectScaMethod
 activate Core_banking
-|||
-Core_banking-->PSU: ScaAuthenticationData
 |||
 Core_banking-->SPI: SelectScaMethod Respons
 deactivate Core_banking
@@ -93,40 +96,25 @@ deactivate CMS
 XS2A-->TPP:UpdatePsuAuthenticationResponse
 deactivate XS2A
 |||
-PSU->TPP: Provide Authentication Data
-|||
-TPP->XS2A: REST Call Transaction Authorisation\n"PUT/v1/{payment-service}/{payment-id}/\n{payment-product}/authorisations/{authorisationId}"
+TPP-->PSU: PsuMessage:\n"Please use your xxx App to authorise the payment"
 deactivate TPP
-activate XS2A
+activate PSU
 |||
-XS2A->SPI: Java Call SinglePaymentSpi
-activate SPI
+dd-->PSU: ScaAuthenticationData:\nAuthorise the transaction via app „xxx“
+activate dd
 |||
-SPI-->Core_banking: Authorised Payment
-activate Core_banking
-|||
-Core_banking-->SPI: Authorised Payment Response 
-deactivate Core_banking
-|||
-SPI-->XS2A: SpiPaymentExecution Response
-deactivate SPI
-|||
-XS2A->CMS: REST Call UpdatePisAuthorisation
-activate CMS
-|||
-CMS-->XS2A: UpdatePisAuthorisation Response
-deactivate CMS
-|||
-XS2A-->TPP: Transaction Authorisation Response
-deactivate XS2A
-activate TPP
-|||
-TPP-->PSU: Feedback to the customer:\n"Payment Authorised"
+PSU->dd: The PSU authorises the payment
 deactivate PSU
 |||
+dd->Core_banking: Execute Transaction
+deactivate dd
+activate Core_banking
+Core_banking->Core_banking: Confirm Transaction Authorisation
+deactivate Core_banking
 TPP->XS2A: REST Call get payment status\n"GET/v1/{payment-service}/{paymentId}/status"
 activate XS2A
-XS2A->CMS: REST Call GetPaymentById 
+activate TPP
+XS2A->CMS: REST Call GetPaymentById
 activate CMS
 |||
 CMS-->XS2A: Payment Object Response
