@@ -1,10 +1,14 @@
 @startuml
 actor PSU
+entity Dedicated_device_OR_application as dd
 entity TPP
 entity XS2A
 entity CMS
 entity SPI
 entity Core_banking
+
+== Decoupled approach flow for the case when several SCA methods is available ==
+
 PSU->TPP: Initiate an Account information access
 activate PSU
 activate TPP
@@ -65,7 +69,7 @@ deactivate XS2A
 TPP-->PSU: Feedback to the customer\n"Please select SCA method"
 activate PSU
 |||
-PSU->TPP: SCA Method
+PSU->TPP: Select SCA Method
 deactivate PSU
 |||
 TPP->XS2A: REST Call Update Psu data(Select Authentication Method)\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
@@ -77,13 +81,11 @@ activate SPI
 SPI->Core_banking: SelectScaMethod
 activate Core_banking
 |||
-Core_banking-->PSU: ScaAuthenticationData
-activate PSU
 |||
-Core_banking-->SPI: SelectScaMethod Respons
+Core_banking-->SPI: SelectScaMethod Response: Decoupled method chosen
 deactivate Core_banking
 |||
-SPI-->XS2A: SpiAuthorisationCodeResult
+SPI-->XS2A: SpiAuthorisationDecoupledScaResponse
 deactivate SPI
 |||
 XS2A->CMS: REST Call UpdateAisAuthorisation
@@ -95,40 +97,26 @@ deactivate CMS
 XS2A-->TPP:UpdatePsuAuthenticationResponse
 deactivate XS2A
 |||
-PSU->TPP: Provide Authentication Data
-deactivate PSU
-|||
-TPP->XS2A: REST Call Consent Authorisation\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
+TPP-->PSU: PsuMessage:\n"Please use your xxx app to authorise the Consent"
 deactivate TPP
-activate XS2A
+activate PSU
 |||
-XS2A->SPI: Java Call AisConsentSpi
-activate SPI
+dd-->PSU: ScaAuthenticationData:\nAuthorise the Consent via application "xxx"
+activate dd
 |||
-SPI-->Core_banking: Authorised Consent
-activate Core_banking
-|||
-Core_banking-->SPI: Authorised Consent Response
-deactivate Core_banking
-|||
-SPI-->XS2A: SpiConsentExecution Response
-deactivate SPI
-|||
-XS2A->CMS: REST Call UpdateAisAuthorisation
-activate CMS
-|||
-CMS-->XS2A: UpdateAisAuthorisation Response
-deactivate CMS
-|||
-XS2A-->TPP: Consent Authorisation Response
-deactivate XS2A
-activate TPP
-|||
-TPP-->PSU: Feedback to the customer:\n"Consent Authorised"
+PSU->dd: PSU authorise the Consent
 deactivate PSU
+|||
+dd->Core_banking: Apply Authorisation
+deactivate dd
+|||
+activate Core_banking
+Core_banking->Core_banking: Confirm Consent Authorisation
+deactivate Core_banking
 |||
 TPP->XS2A: REST Call Get consent status\n"GET/v1/consents/{consentId}/status"
 activate XS2A
+activate TPP
 XS2A->CMS: REST Call GetConsentById
 activate CMS
 |||
