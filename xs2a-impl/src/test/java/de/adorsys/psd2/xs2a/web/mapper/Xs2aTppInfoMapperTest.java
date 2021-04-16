@@ -18,12 +18,15 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,5 +46,17 @@ class Xs2aTppInfoMapperTest {
         TppInfo tppInfo = xs2aTppInfoMapper.mapToTppInfo(tppCertificateData);
         //Then
         assertEquals(tppInfoExpected, tppInfo);
+    }
+
+    @Test
+    void mapToTppRoles() {
+        //Given
+        String header = "AISP, PISP, PIISP, ASPSP, UNKNOWN_ROLE";
+        List<String> rolesList = Arrays.asList(header.split(","));
+        List<TppRole> rolesExpected = Arrays.asList(TppRole.AISP, TppRole.PISP, TppRole.PIISP, TppRole.ASPSP);
+        //When
+        List<TppRole> roles = xs2aTppInfoMapper.mapToTppRoles(rolesList);
+        //Then
+        assertEquals(rolesExpected, roles);
     }
 }

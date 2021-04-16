@@ -18,8 +18,13 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.validator.certificate.util.TppCertificateData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface Xs2aTppInfoMapper {
@@ -29,4 +34,21 @@ public interface Xs2aTppInfoMapper {
     @Mapping(source = "pspAuthorityId", target = "authorityId")
     @Mapping(source = "pspAuthorityName", target = "authorityName")
     TppInfo mapToTppInfo(TppCertificateData tppInfoEntity);
+
+    default List<TppRole> mapToTppRoles(List<String> rolesList) {
+        return rolesList.stream()
+            .map(String::trim)
+            .map(this::getTppRole)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    private TppRole getTppRole(String role) {
+        return Arrays.stream(TppRole.values())
+            .map(Enum::toString)
+            .filter(roleString -> roleString.equals(role))
+            .findFirst()
+            .map(TppRole::valueOf)
+            .orElse(null);
+    }
 }
