@@ -1,9 +1,9 @@
 @startuml
 
+== Payment Initiation with Decoupled approach as a second SCA factor ==
 == Decoupled approach flow for the case when several SCA methods is available ==
 
 actor PSU
-entity Dedicated_device_OR_application as dd
 entity TPP
 entity XS2A
 entity CMS
@@ -100,17 +100,30 @@ TPP-->PSU: PsuMessage:\n"Please use your xxx App to authorise the payment"
 deactivate TPP
 activate PSU
 |||
-dd-->PSU: ScaAuthenticationData:\nAuthorise the transaction via app „xxx“
-activate dd
+group PSU to ASPSP Interface
 |||
-PSU->dd: The PSU authorises the payment
+Core_banking-->PSU: The ASPSP pushes the challenge to an authorisation app and requests a strong customer authentication (SCA)
+activate Core_banking
+|||
+PSU->Core_banking: The PSU authorises the payment
 deactivate PSU
 |||
-dd->Core_banking: Execute Transaction
-deactivate dd
+end group
 activate Core_banking
-Core_banking->Core_banking: Confirm Transaction Authorisation
+|||
+Core_banking->CMS: REST Call UpdateAuthorisationStatus\n"PUT/psu-api/v1/payment/{payment-id}/authorisation/\n{authorisation-id}/status/{status}"
+activate CMS
+|||
+CMS-->Core_banking: Response "http Codes: 200 successful or 400 error"
+|||
+Core_banking->CMS: REST Call UpdatePaymentStatus\n"PUT/psu-api/v1/payment/{payment-id}/status/{status}"
+|||
+CMS-->Core_banking: Response "http Codes: 200 successful or 400 error"
+deactivate CMS
 deactivate Core_banking
+|||
+== TPP asks for the result of the transaction ==
+|||
 TPP->XS2A: REST Call get payment status\n"GET/v1/{payment-service}/{paymentId}/status"
 activate XS2A
 activate TPP

@@ -1,3 +1,8 @@
 = Release notes v.11.2
 
 == Table of Contents
+* Updated project documentation
+
+== Updated project documentation
+Existed diagrams for all Payment/Consent flows were updated: Added Call SPI for scaStatus on GET SCA Status request.
+Created new diagrams for Payment/Consent Creation in Decoupled approach.
