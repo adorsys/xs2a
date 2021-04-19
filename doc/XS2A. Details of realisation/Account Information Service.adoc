@@ -28,6 +28,9 @@ image::ConsentInitRedirect.png[Consent Initiation in Redirect Approach, title='C
 ==== Account Information Service in Embedded approach
 image::ConsentInitEmbedded.png[Consent Initiation in Embedded Approach, title='Consent Initiation in Embedded Approach', align='center']
 
+==== Account Information Service in Decoupled approach (Decoupled approach as a second SCA factor)
+image::ConsentInitDecoupled.png[Consent Initiation in Decoupled Approach, title='Consent Initiation in Decoupled Approach', align='center']
+
 === Consent Models
 The XS2A supports four different consent models:
 
