@@ -24,19 +24,16 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 
 import java.util.EnumSet;
 
 public class CreateConsentLinks extends AbstractLinks {
-
-    public CreateConsentLinks(String httpUrl, ScaApproachResolver scaApproachResolver,
+    public CreateConsentLinks(LinkParameters linkParameters, ScaApproachResolver scaApproachResolver,
                               CreateConsentResponse response, RedirectLinkBuilder redirectLinkBuilder,
                               RedirectIdService redirectIdService,
-                              boolean explicitMethod, boolean signingBasketModeActive,
-                              ScaRedirectFlow scaRedirectFlow,
-                              boolean authorisationConfirmationRequestMandated,
-                              String instanceId) {
-        super(httpUrl);
+                              ScaRedirectFlow scaRedirectFlow) {
+        super(linkParameters.getHttpUrl());
 
         String consentId = response.getConsentId();
         String authorisationId = response.getAuthorizationId();
@@ -49,21 +46,22 @@ public class CreateConsentLinks extends AbstractLinks {
                                       : scaApproachResolver.getScaApproach(authorisationId);
 
         if (EnumSet.of(ScaApproach.EMBEDDED, ScaApproach.DECOUPLED).contains(scaApproach)) {
-            buildLinkForEmbeddedAndDecoupledScaApproach(consentId, authorisationId, explicitMethod, signingBasketModeActive);
+            buildLinkForEmbeddedAndDecoupledScaApproach(consentId, authorisationId, linkParameters.isExplicitMethod(),
+                linkParameters.isSigningBasketModeActive());
         } else if (ScaApproach.REDIRECT == scaApproach) {
-            if (explicitMethod) {
+            if (linkParameters.isExplicitMethod()) {
                 setStartAuthorisation(buildPath(UrlHolder.CREATE_AIS_AUTHORISATION_URL, consentId));
             } else {
                 String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
                 String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                               ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
-                                              : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.AIS);
+                                              : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), linkParameters.getInstanceId(), ConsentType.AIS);
 
                 setScaRedirect(new HrefType(consentOauthLink));
                 setScaStatus(buildPath(UrlHolder.AIS_AUTHORISATION_URL, consentId, authorisationId));
 
-                if (authorisationConfirmationRequestMandated) {
+                if (linkParameters.isAuthorisationConfirmationRequestMandated()) {
                     setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.AIS)));
                 }
             }

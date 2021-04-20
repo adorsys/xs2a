@@ -27,16 +27,17 @@ import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.PaymentInitiationLinks;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentAspectService extends BaseAspectService<PaymentController> {
-    private ScaApproachResolver scaApproachResolver;
-    private AuthorisationMethodDecider authorisationMethodDecider;
-    private RedirectLinkBuilder redirectLinkBuilder;
-    private RedirectIdService redirectIdService;
-    private RequestProviderService requestProviderService;
+    private final ScaApproachResolver scaApproachResolver;
+    private final AuthorisationMethodDecider authorisationMethodDecider;
+    private final RedirectLinkBuilder redirectLinkBuilder;
+    private final RedirectIdService redirectIdService;
+    private final RequestProviderService requestProviderService;
 
     @Autowired
     public PaymentAspectService(ScaApproachResolver scaApproachResolver,
@@ -51,17 +52,24 @@ public class PaymentAspectService extends BaseAspectService<PaymentController> {
         this.requestProviderService = requestProviderService;
     }
 
-    public ResponseObject<PaymentInitiationResponse> createPaymentAspect(ResponseObject<PaymentInitiationResponse> result, PaymentInitiationParameters requestParameters) {
+    public ResponseObject<PaymentInitiationResponse> createPaymentAspect(ResponseObject<PaymentInitiationResponse> result,
+                                                                         PaymentInitiationParameters requestParameters) {
         if (!result.hasError()) {
             PaymentInitiationResponse body = result.getBody();
             boolean explicitPreferred = requestParameters.isTppExplicitAuthorisationPreferred();
-            boolean explicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
-            boolean signingBasketModeActive = authorisationMethodDecider.isSigningBasketModeActive(explicitPreferred);
+            boolean isExplicitMethod = authorisationMethodDecider.isExplicitMethod(explicitPreferred, body.isMultilevelScaRequired());
+            boolean isSigningBasketModeActive = authorisationMethodDecider.isSigningBasketModeActive(explicitPreferred);
 
-            body.setLinks(new PaymentInitiationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                     redirectIdService,
-                                                     requestParameters, body, explicitMethod, signingBasketModeActive, getScaRedirectFlow(),
-                                                     isAuthorisationConfirmationRequestMandated(), requestProviderService.getInstanceId()));
+            LinkParameters linkParameters =  LinkParameters.builder()
+                .httpUrl(getHttpUrl())
+                .isExplicitMethod(isExplicitMethod)
+                .isSigningBasketModeActive(isSigningBasketModeActive)
+                .isAuthorisationConfirmationRequestMandated(isAuthorisationConfirmationRequestMandated())
+                .instanceId(requestProviderService.getInstanceId())
+                .build();
+
+            body.setLinks(new PaymentInitiationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+                                                     redirectIdService, requestParameters, body, getScaRedirectFlow()));
         }
         return result;
     }
