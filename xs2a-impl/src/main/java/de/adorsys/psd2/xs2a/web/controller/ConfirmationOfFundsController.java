@@ -171,7 +171,7 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
         return updatePiisAuthorisation(psuData, authorisationId, consentId, body);
     }
 
-    private ResponseEntity updatePiisAuthorisation(PsuIdData psuData, String authorisationId, String consentId, Object body) {
+    private ResponseEntity<Object> updatePiisAuthorisation(PsuIdData psuData, String authorisationId, String consentId, Object body) {
         UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponse = piisConsentService.updateConsentPsuData(updatePsuDataRequest);
 

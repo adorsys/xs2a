@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2020 adorsys GmbH & Co KG
+ * Copyright 2018-2021 adorsys GmbH & Co KG
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package de.adorsys.psd2.core.data.piis;
+package de.adorsys.psd2.core.data;
 
-import lombok.Value;
+import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 
-import java.time.LocalDate;
+import java.util.Optional;
 
-@Value
-public class PiisConsentData {
-    String cardNumber;
-    LocalDate cardExpiryDate;
-    String cardInformation;
-    String registrationInformation;
-
-    public static PiisConsentData buildDefaultConsentData() {
-        return new PiisConsentData(null, null, null, null);
-    }
+public interface ConsentAutorizable {
+    String getId();
+    Optional<ConsentAuthorization> findAuthorisationInConsent(String authorisationId);
 }

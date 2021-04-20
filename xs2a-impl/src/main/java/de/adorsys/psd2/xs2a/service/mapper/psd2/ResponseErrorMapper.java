@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@SuppressWarnings("rawtypes")
 @RequiredArgsConstructor
 public class ResponseErrorMapper {
     private static final String LOG_PATTERN = "Generate error: [{}]";

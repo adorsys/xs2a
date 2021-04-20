@@ -404,7 +404,7 @@ public class PaymentController implements PaymentApi {
         return updatePisAuthorisation(psuData, authorisationId, paymentService, paymentProduct, paymentId, body);
     }
 
-    private ResponseEntity updatePisAuthorisation(PsuIdData psuData, String authorisationId, String paymentService, String paymentProduct, String paymentId, Object body) {
+    private ResponseEntity<Object> updatePisAuthorisation(PsuIdData psuData, String authorisationId, String paymentService, String paymentProduct, String paymentId, Object body) {
         Xs2aUpdatePisCommonPaymentPsuDataRequest request = consentModelMapper.mapToPisUpdatePsuData(psuData, paymentId, authorisationId, getPaymentType(paymentService), paymentProduct, (Map) body);
 
         ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> serviceResponse = paymentAuthorisationService.updatePisCommonPaymentPsuData(request);
