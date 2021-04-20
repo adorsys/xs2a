@@ -23,17 +23,15 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
 public class CreatePiisAuthorisationLinks extends AbstractLinks {
-
-    public CreatePiisAuthorisationLinks(String httpUrl, CreateConsentAuthorizationResponse response,
+    public CreatePiisAuthorisationLinks(LinkParameters linkParameters, CreateConsentAuthorizationResponse response,
                                         ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
-                                        RedirectIdService redirectIdService, ScaRedirectFlow scaRedirectFlow,
-                                        boolean authorisationConfirmationRequestMandated,
-                                        String instanceId) {
-        super(httpUrl);
+                                        RedirectIdService redirectIdService, ScaRedirectFlow scaRedirectFlow) {
+        super(linkParameters.getHttpUrl());
 
         String consentId = response.getConsentId();
         String authorisationId = response.getAuthorisationId();
@@ -45,11 +43,11 @@ public class CreatePiisAuthorisationLinks extends AbstractLinks {
 
             String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
                                           ? redirectLinkBuilder.buildConsentScaOauthRedirectLink(consentId, redirectId, response.getInternalRequestId())
-                                          : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), instanceId, ConsentType.PIIS_TPP);
+                                          : redirectLinkBuilder.buildConsentScaRedirectLink(consentId, redirectId, response.getInternalRequestId(), linkParameters.getInstanceId(), ConsentType.PIIS_TPP);
 
             setScaRedirect(new HrefType(consentOauthLink));
 
-            if (authorisationConfirmationRequestMandated) {
+            if (linkParameters.isAuthorisationConfirmationRequestMandated()) {
                 setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.PIIS_TPP)));
             }
 
