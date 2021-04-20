@@ -4,6 +4,9 @@
 
 * Updated project documentation
 * Added new optional attributes to the Response body
+* Fixed sonar alerts
+* Added documentation
+* Added possibility to return custom error when user is pending / blocked
 
 == Updated project documentation
 Existed diagrams for all Payment/Consent flows were updated: Added Call SPI for scaStatus on GET SCA Status request.
@@ -18,3 +21,16 @@ From now on, responses for following endpoints contain new fields - `links` and 
 - `GET /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}`
 - `GET /v1/{payment-service}/{payment-product}/{paymentId}/status`
 - `GET /v1/consents/{consentId}/authorisations/{authorisationId}`
+
+== Fixed sonar alerts
+
+Numbers of parameters in Links extenders and constructors were reduced, lambdas were replaced with method references,
+redundant methods were removed, mapstruct mappers where changed to interfaces,
+
+== Added documentation
+
+Documentation was extended with description of `scaExempted` flag and new event endpoints.
+
+== Added possibility to return custom error when user is pending / blocked
+
+From now on, it's possible to pass through xs2a error from bank when user is pending / blocked
