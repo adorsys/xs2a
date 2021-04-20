@@ -16,12 +16,17 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.MediaType;
+
+import java.util.Set;
 
 @Data
 public class ReadPaymentStatusResponse {
@@ -29,21 +34,27 @@ public class ReadPaymentStatusResponse {
     @Nullable
     private Boolean fundsAvailable;
     private MediaType responseContentType;
-    @Nullable
     private byte[] paymentStatusRaw;
     private ErrorHolder errorHolder;
 
     @Nullable
     private String psuMessage;
+    @JsonProperty("_links")
+    private Links links;
+    private Set<TppMessageInformation> tppMessageInformation;
 
     public ReadPaymentStatusResponse(@NotNull TransactionStatus status, @Nullable Boolean fundsAvailable,
-                                     @NotNull MediaType responseContentType, @Nullable byte[] paymentStatusRaw,
-                                     @Nullable String psuMessage) {
+                                     @NotNull MediaType responseContentType, byte[] paymentStatusRaw,
+                                     @Nullable String psuMessage,
+                                     @Nullable Links links,
+                                     @Nullable Set<TppMessageInformation> tppMessageInformation) {
         this.status = status;
         this.fundsAvailable = fundsAvailable;
         this.responseContentType = responseContentType;
         this.paymentStatusRaw = paymentStatusRaw;
         this.psuMessage = psuMessage;
+        this.links = links;
+        this.tppMessageInformation = tppMessageInformation;
     }
 
     public ReadPaymentStatusResponse(ErrorHolder errorHolder) {

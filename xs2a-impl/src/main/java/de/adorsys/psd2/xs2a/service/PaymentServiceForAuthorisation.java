@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPaymentMapper;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -47,6 +48,7 @@ public abstract class PaymentServiceForAuthorisation {
     private final RequestProviderService requestProviderService;
     private final Xs2aAuthorisationService xs2aAuthorisationService;
     private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
+    private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
 
     /**
      * Gets SCA status response of payment authorisation
@@ -90,7 +92,10 @@ public abstract class PaymentServiceForAuthorisation {
         Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaInformationPayload.getTrustedBeneficiaryFlag() : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
                                                                    beneficiaryFlag,
-                                                                   spiScaInformationPayload.getPsuMessage());
+                                                                   spiScaInformationPayload.getPsuMessage(),
+                                                                   spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
+                                                                   spiScaInformationPayload.getTppMessageInformation()
+        );
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)

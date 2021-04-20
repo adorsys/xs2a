@@ -16,13 +16,18 @@
 
 package de.adorsys.psd2.xs2a.domain.pis;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.domain.CustomContentTypeProvider;
+import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.MediaType;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -37,6 +42,9 @@ public class GetPaymentStatusResponse implements CustomContentTypeProvider {
     private final byte[] paymentStatusRaw;
     @Nullable
     private String psuMessage;
+    @JsonProperty("_links")
+    private Links links;
+    private Set<TppMessageInformation> tppMessageInformation;
 
     public boolean isResponseContentTypeJson() {
         return MediaType.APPLICATION_JSON.includes(responseContentType);

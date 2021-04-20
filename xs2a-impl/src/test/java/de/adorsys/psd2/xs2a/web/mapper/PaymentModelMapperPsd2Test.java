@@ -63,7 +63,7 @@ class PaymentModelMapperPsd2Test {
     private static final String PSU_MESSAGE = "PSU message";
     private static final TransactionStatus TRANSACTION_STATUS = TransactionStatus.ACCP;
     private static final boolean FUNDS_AVAILABLE = true;
-    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null, PSU_MESSAGE);
+    private static final GetPaymentStatusResponse PAYMENT_STATUS_RESPONSE = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_JSON, null, PSU_MESSAGE, null, null);
     private static final List<NotificationSupportedMode> NOTIFICATION_MODES = Arrays.asList(NotificationSupportedMode.SCA, NotificationSupportedMode.LAST);
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("123456789", null, null, null, null);
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
@@ -146,7 +146,7 @@ class PaymentModelMapperPsd2Test {
     void mapToStatusResponseRaw_shouldReturnBytesFromResponse() {
         // Given
         byte[] rawPaymentStatusBody = "some raw body".getBytes();
-        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody, PSU_MESSAGE);
+        GetPaymentStatusResponse getPaymentStatusResponse = new GetPaymentStatusResponse(TRANSACTION_STATUS, FUNDS_AVAILABLE, MediaType.APPLICATION_XML, rawPaymentStatusBody, PSU_MESSAGE, null, null);
 
         // When
         byte[] actual = mapper.mapToStatusResponseRaw(getPaymentStatusResponse);

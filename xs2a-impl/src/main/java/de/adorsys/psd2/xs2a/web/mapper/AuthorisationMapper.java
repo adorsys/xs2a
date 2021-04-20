@@ -43,6 +43,7 @@ public class AuthorisationMapper {
     private final ScaMethodsMapper scaMethodsMapper;
     private final AuthorisationModelMapper authorisationModelMapper;
     private final AmountModelMapper amountModelMapper;
+    private final TppMessage2XXMapper tppMessage2XXMapper;
 
     public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResources xs2AAuthorisationSubResources) {
         Authorisations authorisations = new Authorisations();
@@ -94,7 +95,9 @@ public class AuthorisationMapper {
         return new ScaStatusResponse()
                    .scaStatus(coreObjectsMapper.mapToModelScaStatus(xs2aScaStatusResponse.getScaStatus()))
                    .trustedBeneficiaryFlag(xs2aScaStatusResponse.getTrustedBeneficiaryFlag())
-                   .psuMessage(xs2aScaStatusResponse.getPsuMessage());
+                   .psuMessage(xs2aScaStatusResponse.getPsuMessage())
+                   ._links(hrefLinkMapper.mapToLinksMap(xs2aScaStatusResponse.getLinks()))
+                   .tppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(xs2aScaStatusResponse.getTppMessageInformation()));
     }
 
     public UpdatePsuAuthenticationResponse mapToPisUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {
@@ -133,24 +136,24 @@ public class AuthorisationMapper {
     }
 
     private UpdatePsuAuthenticationResponse buildUpdatePsuAuthenticationResponseWithCurrencyInfo(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {
-        UpdatePsuAuthenticationResponse psuResponse =  new UpdatePsuAuthenticationResponse()
-                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
-                   .scaMethods(scaMethodsMapper.mapToScaMethods(response.getAvailableScaMethods()))
-                   .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
-                   .psuMessage(response.getPsuMessage())
-                   .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
-                   .scaStatus(
-                       Optional.ofNullable(response.getScaStatus())
-                           .map(s -> de.adorsys.psd2.model.ScaStatus.valueOf(s.name()))
-                           .orElse(null)
-                   );
+        UpdatePsuAuthenticationResponse psuResponse = new UpdatePsuAuthenticationResponse()
+                                                          ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
+                                                          .scaMethods(scaMethodsMapper.mapToScaMethods(response.getAvailableScaMethods()))
+                                                          .chosenScaMethod(mapToChosenScaMethod(response.getChosenScaMethod()))
+                                                          .psuMessage(response.getPsuMessage())
+                                                          .challengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()))
+                                                          .scaStatus(
+                                                              Optional.ofNullable(response.getScaStatus())
+                                                                  .map(s -> de.adorsys.psd2.model.ScaStatus.valueOf(s.name()))
+                                                                  .orElse(null)
+                                                          );
         Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo = response.getXs2aCurrencyConversionInfo();
         if (xs2aCurrencyConversionInfo != null) {
             psuResponse
                 .transactionFees(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getTransactionFees()))
-                   .currencyConversionFees(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getCurrencyConversionFees()))
-                   .estimatedTotalAmount(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getEstimatedTotalAmount()))
-                   .estimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getEstimatedInterbankSettlementAmount()));
+                .currencyConversionFees(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getCurrencyConversionFees()))
+                .estimatedTotalAmount(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getEstimatedTotalAmount()))
+                .estimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(xs2aCurrencyConversionInfo.getEstimatedInterbankSettlementAmount()));
         }
         return psuResponse;
     }

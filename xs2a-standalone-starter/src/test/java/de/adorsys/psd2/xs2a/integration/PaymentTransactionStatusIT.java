@@ -165,7 +165,7 @@ class PaymentTransactionStatusIT {
         requestBuilder.headers(httpHeaders);
         when(singlePaymentSpi.getPaymentStatusById(any(), eq(JSON_CONTENT_TYPE), any(), any()))
             .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
+                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE, null, null))
                             .build());
 
         // When
@@ -186,7 +186,7 @@ class PaymentTransactionStatusIT {
         byte[] paymentStatusRaw = IOUtils.resourceToByteArray(TRANSACTION_STATUS_SPI_XML_PATH);
         when(singlePaymentSpi.getPaymentStatusById(any(), eq(XML_CONTENT_TYPE), any(), any()))
             .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_XML, paymentStatusRaw, PSU_MESSAGE))
+                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_XML, paymentStatusRaw, PSU_MESSAGE, null, null))
                             .build());
 
         // When
@@ -205,7 +205,7 @@ class PaymentTransactionStatusIT {
         requestBuilder.headers(httpHeaders);
         when(singlePaymentSpi.getPaymentStatusById(any(), any(), any(), any()))
             .thenReturn(SpiResponse.<SpiGetPaymentStatusResponse>builder()
-                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE))
+                            .payload(new SpiGetPaymentStatusResponse(TransactionStatus.ACSP, null, SpiGetPaymentStatusResponse.RESPONSE_TYPE_JSON, null, PSU_MESSAGE, null, null))
                             .build());
 
         // When

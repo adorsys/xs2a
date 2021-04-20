@@ -1,0 +1,10 @@
+{
+  "scaStatus": "RECEIVED",
+  "trustedBeneficiaryFlag": true,
+  "psuMessage": "psu message",
+  "_links": {
+    "account": {
+      "href": "Mock spi account link"
+    }
+  }
+}

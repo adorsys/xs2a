@@ -1,8 +1,20 @@
 = Release notes v.11.2
 
 == Table of Contents
+
 * Updated project documentation
+* Added new optional attributes to the Response body
 
 == Updated project documentation
 Existed diagrams for all Payment/Consent flows were updated: Added Call SPI for scaStatus on GET SCA Status request.
 Created new diagrams for Payment/Consent Creation in Decoupled approach.
+
+
+== Added new optional attributes to the Response body
+
+From now on, responses for following endpoints contain new fields - `links` and `tpp messages`:
+
+- `GET /v1/{payment-service}/{payment-product}/{paymentId}/cancellation-authorisations/{authorisationId}`
+- `GET /v1/{payment-service}/{payment-product}/{paymentId}/authorisations/{authorisationId}`
+- `GET /v1/{payment-service}/{payment-product}/{paymentId}/status`
+- `GET /v1/consents/{consentId}/authorisations/{authorisationId}`

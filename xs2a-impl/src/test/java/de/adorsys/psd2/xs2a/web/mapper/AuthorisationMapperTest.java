@@ -51,28 +51,24 @@ class AuthorisationMapperTest {
     private static final String SELF_LINK = "self";
     private static final String LOCALHOST_LINK = "http://localhost";
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @InjectMocks
     private AuthorisationMapper mapper;
-
     @Mock
     private HrefLinkMapper hrefLinkMapper;
-
     @Mock
     private ScaMethodsMapper scaMethodsMapper;
-
     @Mock
     private CoreObjectsMapper coreObjectsMapper;
-
     @Mock
     private ScaApproachResolver scaApproachResolver;
-
     @Mock
     private RedirectLinkBuilder redirectLinkBuilder;
-
     @Mock
     private AuthorisationModelMapper authorisationModelMapper;
+    @Mock
+    private TppMessage2XXMapper tppMessage2XXMapper;
 
     @Test
     void mapToAuthorisations_equals_success() {
@@ -174,6 +170,9 @@ class AuthorisationMapperTest {
     void mapToScaStatusResponse() {
         Xs2aScaStatusResponse xs2aScaStatusResponse = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/Xs2aScaStatusResponse.json", Xs2aScaStatusResponse.class);
         ScaStatusResponse expected = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/ScaStatusResponse-expected.json", ScaStatusResponse.class);
+
+        when(hrefLinkMapper.mapToLinksMap(any())).thenReturn(null);
+        when(tppMessage2XXMapper.mapToTppMessage2XXList(any())).thenReturn(null);
 
         ScaStatusResponse actual = mapper.mapToScaStatusResponse(xs2aScaStatusResponse);
         assertEquals(expected, actual);

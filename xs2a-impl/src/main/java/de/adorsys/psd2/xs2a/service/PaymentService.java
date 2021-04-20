@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.payment.PaymentServiceResolver;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
@@ -74,6 +75,7 @@ public class PaymentService {
     private final PaymentServiceResolver paymentServiceResolver;
     private final LoggingContextService loggingContextService;
     private final ScaApproachResolver scaApproachResolver;
+    private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -202,7 +204,7 @@ public class PaymentService {
         }
 
         if (pisCommonPaymentResponse.getTransactionStatus() == TransactionStatus.RJCT) {
-            return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null, null)).build();
+            return ResponseObject.<GetPaymentStatusResponse>builder().body(new GetPaymentStatusResponse(TransactionStatus.RJCT, null, MediaType.APPLICATION_JSON, null, null, null, null)).build();
         }
 
         SpiContextData spiContextData = spiContextDataProvider.provideWithPsuIdData(getPsuIdDataFromRequest());
@@ -234,7 +236,13 @@ public class PaymentService {
 
         loggingContextService.storeTransactionStatus(transactionStatus);
 
-        GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus, readPaymentStatusResponse.getFundsAvailable(), readPaymentStatusResponse.getResponseContentType(), readPaymentStatusResponse.getPaymentStatusRaw(), readPaymentStatusResponse.getPsuMessage());
+        GetPaymentStatusResponse response = new GetPaymentStatusResponse(transactionStatus,
+                                                                         readPaymentStatusResponse.getFundsAvailable(),
+                                                                         readPaymentStatusResponse.getResponseContentType(),
+                                                                         readPaymentStatusResponse.getPaymentStatusRaw(),
+                                                                         readPaymentStatusResponse.getPsuMessage(),
+                                                                         readPaymentStatusResponse.getLinks(),
+                                                                         readPaymentStatusResponse.getTppMessageInformation());
         return ResponseObject.<GetPaymentStatusResponse>builder().body(response).build();
     }
 

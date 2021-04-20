@@ -146,7 +146,7 @@ class PaymentControllerTest {
     @Mock
     private PisPaymentCancellationRequest pisPaymentCancellationRequest;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void getPaymentById() {
@@ -204,7 +204,7 @@ class PaymentControllerTest {
             .when(responseMapper).ok(any(), any());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder()
-                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE))
+                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_JSON, null, PSU_MESSAGE, null, null))
                             .build());
 
         PaymentInitiationStatusResponse200Json expectedBody = getPaymentInitiationStatus();
@@ -233,7 +233,7 @@ class PaymentControllerTest {
             .when(responseMapper).ok(any(), any());
         when(xs2aPaymentService.getPaymentStatusById(SINGLE, PRODUCT, CORRECT_PAYMENT_ID))
             .thenReturn(ResponseObject.<GetPaymentStatusResponse>builder()
-                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus, PSU_MESSAGE))
+                            .body(new GetPaymentStatusResponse(TransactionStatus.ACCP, null, MediaType.APPLICATION_XML, rawPaymentStatus, PSU_MESSAGE, null, null))
                             .build());
 
         // When
@@ -371,7 +371,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentInitiationScaStatus_success() {
         // Given
-        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true, "psu message");
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true, "psu message", null, null);
         ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
                                                                                         .body(xs2aScaStatusResponse)
                                                                                         .build();
@@ -422,7 +422,7 @@ class PaymentControllerTest {
     @Test
     void getPaymentCancellationScaStatus_success() {
         // Given
-        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true, "psu message");
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(de.adorsys.psd2.xs2a.core.sca.ScaStatus.RECEIVED, true, "psu message", null, null);
         ResponseObject<Xs2aScaStatusResponse> xs2aScaStatusResponseResponseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
                                                                                         .body(xs2aScaStatusResponse)
                                                                                         .build();

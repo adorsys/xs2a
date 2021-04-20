@@ -49,6 +49,7 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -137,6 +138,8 @@ class PiisConsentServiceTest {
     private CreateConsentAuthorizationResponse createConsentAuthorizationResponse;
     @Mock
     private Xs2aAuthorisationService xs2aAuthorisationService;
+    @Mock
+    private SpiToXs2aLinksMapper spiToXs2aLinksMapper;
 
     @Test
     void createPiisConsentWithResponse_success() {
@@ -514,7 +517,7 @@ class PiisConsentServiceTest {
 
         when(piisConsentSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, AUTHORISATION_ID, xs2aToSpiPiisConsentMapper.mapToSpiPiisConsent(piisConsent), aspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message"))
+                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message", null, null))
                             .build());
 
         //When
