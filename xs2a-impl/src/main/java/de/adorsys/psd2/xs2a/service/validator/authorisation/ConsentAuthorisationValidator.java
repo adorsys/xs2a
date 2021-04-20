@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.validator.authorisation;
 
-import de.adorsys.psd2.core.data.Consent;
+import de.adorsys.psd2.core.data.ConsentAutorizable;
 import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
@@ -31,7 +31,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_
 public abstract class ConsentAuthorisationValidator {
 
     @NotNull
-    public ValidationResult validate(@NotNull String authorisationId, @NotNull Consent consent) {
+    public ValidationResult validate(@NotNull String authorisationId, @NotNull ConsentAutorizable consent) {
         Optional<ConsentAuthorization> authorisationOptional = consent.findAuthorisationInConsent(authorisationId);
         if (authorisationOptional.isEmpty()) {
             log.info("Consent ID: [{}], Authorisation ID: [{}]. Authorisation validation has failed: couldn't find authorisation with given authorisationId for consent",
