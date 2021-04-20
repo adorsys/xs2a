@@ -32,6 +32,10 @@ public class TppMessageInformation {
     private Object[] textParameters;
     private String text;
 
+    public static TppMessageInformation buildWithCustomWarning(MessageErrorCode messageErrorCode, String text) {
+        return new TppMessageInformation(WARNING, messageErrorCode, null, text, (Object) null);
+    }
+
     public static TppMessageInformation buildWithCustomError(MessageErrorCode messageErrorCode, String text) {
         return new TppMessageInformation(ERROR, messageErrorCode, null, text, (Object) null);
     }

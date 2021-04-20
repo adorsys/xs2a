@@ -338,7 +338,7 @@ class ConsentControllerTest {
     @Test
     void getConsentScaStatus_success() {
         // Given
-        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true, "psu message");
+        Xs2aScaStatusResponse xs2aScaStatusResponse = new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true, "psu message", null, null);
         ResponseObject<Xs2aScaStatusResponse> responseObject = ResponseObject.<Xs2aScaStatusResponse>builder()
                                                                    .body(xs2aScaStatusResponse)
                                                                    .build();

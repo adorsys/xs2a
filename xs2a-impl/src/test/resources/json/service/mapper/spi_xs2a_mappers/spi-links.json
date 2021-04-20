@@ -1,0 +1,77 @@
+{
+  "scaRedirect": {
+    "href": "Mock spi scaRedirect link"
+  },
+  "scaOAuth": {
+    "href": "Mock spi scaOAuth link"
+  },
+  "updatePsuIdentification": {
+    "href": "Mock spi updatePsuIdentification link"
+  },
+  "updateProprietaryData": {
+    "href": "Mock spi updateProprietaryData link"
+  },
+  "updatePsuAuthentication": {
+    "href": "Mock spi updatePsuAuthentication link"
+  },
+  "selectAuthenticationMethod": {
+    "href": "Mock spi selectAuthenticationMethod link"
+  },
+  "self": {
+    "href": "Mock spi self link"
+  },
+  "status": {
+    "href": "Mock spi status link"
+  },
+  "account": {
+    "href": "Mock spi account link"
+  },
+  "balances": {
+    "href": "Mock spi balances link"
+  },
+  "transactions": {
+    "href": "Mock spi transactions link"
+  },
+  "first": {
+    "href": "Mock spi first link"
+  },
+  "next": {
+    "href": "Mock spi next link"
+  },
+  "previous": {
+    "href": "Mock spi previous link"
+  },
+  "last": {
+    "href": "Mock spi last link"
+  },
+  "download": {
+    "href": "Mock spi download link"
+  },
+  "startAuthorisation": {
+    "href": "Mock spi startAuthorisation link"
+  },
+  "startAuthorisationWithPsuIdentification": {
+    "href": "Mock spi startAuthorisationWithPsuIdentification link"
+  },
+  "startAuthorisationWithPsuAuthentication": {
+    "href": "Mock spi startAuthorisationWithPsuAuthentication link"
+  },
+  "startAuthorisationWithAuthenticationMethodSelection": {
+    "href": "Mock spi startAuthorisationWithAuthenticationMethodSelection link"
+  },
+  "startAuthorisationWithTransactionAuthorisation": {
+    "href": "Mock spi startAuthorisationWithTransactionAuthorisation link"
+  },
+  "scaStatus": {
+    "href": "Mock spi scaStatus link"
+  },
+  "authoriseTransaction": {
+    "href": "Mock spi authoriseTransaction link"
+  },
+  "confirmation": {
+    "href": "Mock spi confirmation link"
+  },
+  "card": {
+    "href": "Mock spi card link"
+  }
+}

@@ -129,7 +129,7 @@ class GetCustomPaymentStatusIT extends CustomPaymentTestParent {
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder().payload(response).build());
 
         byte[] paymentStatusRaw = isMediaTypeXml ? data : null;
-        SpiGetPaymentStatusResponse buildGetPaymentStatusResponse = new SpiGetPaymentStatusResponse(TransactionStatus.RCVD, null, mediaType.toString(), paymentStatusRaw, "PSU message");
+        SpiGetPaymentStatusResponse buildGetPaymentStatusResponse = new SpiGetPaymentStatusResponse(TransactionStatus.RCVD, null, mediaType.toString(), paymentStatusRaw, "PSU message", null, null);
         given(commonPaymentSpi.getPaymentStatusById(any(SpiContextData.class), anyString(), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
             .willReturn(PisCommonPaymentResponseBuilder.buildGetPaymentStatusResponse(buildGetPaymentStatusResponse));
 

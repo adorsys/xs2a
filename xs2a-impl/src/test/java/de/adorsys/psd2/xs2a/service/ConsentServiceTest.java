@@ -53,6 +53,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapperImpl;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -101,7 +102,6 @@ class ConsentServiceTest {
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
-
     private static final MessageError CONSENT_INVALID_401_ERROR =
         new MessageError(ErrorType.AIS_401, TppMessageInformation.of(MessageErrorCode.CONSENT_INVALID));
     private static final MessageError CONSENT_UNKNOWN_403_ERROR =
@@ -158,6 +158,8 @@ class ConsentServiceTest {
     private AdditionalInformationSupportedService additionalInformationSupportedService;
     @Mock
     private Xs2aAuthorisationService xs2aAuthorisationService;
+    @Mock
+    private SpiToXs2aLinksMapper spiToXs2aLinksMapper;
 
     private AisConsent aisConsent;
 
@@ -1310,7 +1312,7 @@ class ConsentServiceTest {
     void getConsentAuthorisationScaStatus() {
         // Given
         ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
-                                                             .body(new Xs2aScaStatusResponse(ScaStatus.FINALISED, false, "psu message"))
+                                                             .body(new Xs2aScaStatusResponse(ScaStatus.FINALISED, false, "psu message", null, null))
                                                              .build();
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.RECEIVED);
@@ -1327,7 +1329,7 @@ class ConsentServiceTest {
 
         when(aisConsentSpi.getScaStatus(ScaStatus.RECEIVED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, aisConsentMapper.mapToSpiAccountConsent(aisConsent), spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, false, "psu message"))
+                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, false, "psu message", null, null))
                             .build());
 
         // When
@@ -1345,7 +1347,7 @@ class ConsentServiceTest {
     void getConsentAuthorisationScaStatus_withBeneficiariesFlag() {
         // Given
         ResponseObject<Xs2aScaStatusResponse> expected = ResponseObject.<Xs2aScaStatusResponse>builder()
-                                                             .body(new Xs2aScaStatusResponse(ScaStatus.FINALISED, true, "psu message"))
+                                                             .body(new Xs2aScaStatusResponse(ScaStatus.FINALISED, true, "psu message", null, null))
                                                              .build();
 
         ConsentScaStatus consentScaStatus = new ConsentScaStatus(null, aisConsent, ScaStatus.FINALISED);
@@ -1362,7 +1364,7 @@ class ConsentServiceTest {
 
         when(aisConsentSpi.getScaStatus(ScaStatus.FINALISED, SPI_CONTEXT_DATA, WRONG_AUTHORISATION_ID, aisConsentMapper.mapToSpiAccountConsent(aisConsent), spiAspspConsentDataProvider))
             .thenReturn(SpiResponse.<SpiScaStatusResponse>builder()
-                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message"))
+                            .payload(new SpiScaStatusResponse(ScaStatus.FINALISED, true, "psu message", null, null))
                             .build());
 
         // When

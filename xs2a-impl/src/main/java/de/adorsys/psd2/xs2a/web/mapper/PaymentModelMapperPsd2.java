@@ -77,7 +77,9 @@ public class PaymentModelMapperPsd2 {
         return new PaymentInitiationStatusResponse200Json()
                    .transactionStatus(mapToTransactionStatus(response.getTransactionStatus()))
                    .fundsAvailable(response.getFundsAvailable())
-                   .psuMessage(response.getPsuMessage());
+                   .psuMessage(response.getPsuMessage())
+                   ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
+                   .tppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(response.getTppMessageInformation()));
     }
 
     public byte[] mapToStatusResponseRaw(GetPaymentStatusResponse response) {

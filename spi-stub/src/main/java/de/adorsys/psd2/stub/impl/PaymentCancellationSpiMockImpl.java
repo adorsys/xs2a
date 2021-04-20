@@ -17,6 +17,7 @@
 package de.adorsys.psd2.stub.impl;
 
 import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
+import de.adorsys.psd2.stub.impl.service.SpiMockData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -122,7 +123,9 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
                                                           @NotNull SpiPayment businessObject,
                                                           @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
         return SpiResponse.<SpiScaStatusResponse>builder()
-                   .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE))
+                   .payload(new SpiScaStatusResponse(scaStatus, true, PSU_MESSAGE,
+                                                     SpiMockData.SPI_LINKS,
+                                                     SpiMockData.TPP_MESSAGES))
                    .build();
     }
 }

@@ -16,18 +16,25 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiLinks;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 @Value
 public class SpiScaStatusResponse {
 
     @NotNull
-    private ScaStatus scaStatus;
+    ScaStatus scaStatus;
     @Nullable
-    private Boolean trustedBeneficiaryFlag;
+    Boolean trustedBeneficiaryFlag;
     @Nullable
-    private String psuMessage;
+    String psuMessage;
+
+    SpiLinks links;
+    Set<TppMessageInformation> tppMessageInformation;
 }

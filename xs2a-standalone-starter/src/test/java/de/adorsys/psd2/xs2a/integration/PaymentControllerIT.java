@@ -191,7 +191,7 @@ class PaymentControllerIT {
         // Given
         given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(paymentServiceForAuthorisation.getAuthorisationScaStatus(ENCRYPT_PAYMENT_ID, AUTHORISATION_ID, SINGLE_PAYMENT_TYPE, SEPA_PAYMENT_PRODUCT))
-            .willReturn(ResponseObject.<Xs2aScaStatusResponse>builder().body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true, "psu message")).build());
+            .willReturn(ResponseObject.<Xs2aScaStatusResponse>builder().body(new Xs2aScaStatusResponse(ScaStatus.RECEIVED, true, "psu message", null, null)).build());
         given(pisCommonPaymentServiceEncrypted.getCommonPaymentById(ENCRYPT_PAYMENT_ID))
             .willReturn(CmsResponse.<PisCommonPaymentResponse>builder()
                             .payload(PisCommonPaymentResponseBuilder.buildPisCommonPaymentResponseWithAuthorisation(

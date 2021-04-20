@@ -16,10 +16,15 @@
 
 package de.adorsys.psd2.xs2a.domain.consent;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.AllArgsConstructor;
 import lombok.Value;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 @Value
 @AllArgsConstructor
@@ -28,4 +33,7 @@ public class Xs2aScaStatusResponse {
     private Boolean trustedBeneficiaryFlag;
     @Nullable
     private String psuMessage;
+    @JsonProperty("_links")
+    private Links links;
+    private Set<TppMessageInformation> tppMessageInformation;
 }

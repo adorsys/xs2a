@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPiisConsentMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
@@ -92,6 +93,7 @@ public class PiisConsentService {
     private final ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     private final PiisConsentAuthorisationService piisConsentAuthorisationService;
     private final Xs2aAuthorisationService xs2aAuthorisationService;
+    private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
 
     public ResponseObject<Xs2aConfirmationOfFundsResponse> createPiisConsentWithResponse(CreatePiisConsentRequest request, PsuIdData psuData, boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_PIIS_CONSENT_REQUEST_RECEIVED, request);
@@ -265,7 +267,10 @@ public class PiisConsentService {
         }
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
-                   .body(new Xs2aScaStatusResponse(scaStatus, null, spiScaInformationPayload.getPsuMessage()))
+                   .body(new Xs2aScaStatusResponse(scaStatus, null, spiScaInformationPayload.getPsuMessage(),
+                                                   spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
+                                                   spiScaInformationPayload.getTppMessageInformation()
+                   ))
                    .build();
     }
 

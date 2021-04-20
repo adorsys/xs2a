@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.payment.support.status;
 import de.adorsys.psd2.xs2a.service.mapper.MediaTypeMapper;
 import de.adorsys.psd2.xs2a.service.mapper.payment.SpiPaymentFactory;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.payment.status.AbstractReadPaymentStatusService;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -33,14 +34,15 @@ import org.springframework.stereotype.Service;
 @Service("status-bulk-payments")
 public class ReadBulkPaymentStatusService extends AbstractReadPaymentStatusService {
 
-    private BulkPaymentSpi bulkPaymentSpi;
+    private final BulkPaymentSpi bulkPaymentSpi;
 
     @Autowired
     public ReadBulkPaymentStatusService(BulkPaymentSpi bulkPaymentSpi, SpiErrorMapper spiErrorMapper,
                                         SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                         SpiPaymentFactory spiPaymentFactory,
-                                        MediaTypeMapper mediaTypeMapper) {
-        super(spiErrorMapper, aspspConsentDataProviderFactory, mediaTypeMapper, spiPaymentFactory);
+                                        MediaTypeMapper mediaTypeMapper,
+                                        SpiToXs2aLinksMapper spiToXs2aLinksMapper) {
+        super(spiErrorMapper, aspspConsentDataProviderFactory, mediaTypeMapper, spiPaymentFactory, spiToXs2aLinksMapper);
         this.bulkPaymentSpi = bulkPaymentSpi;
     }
 

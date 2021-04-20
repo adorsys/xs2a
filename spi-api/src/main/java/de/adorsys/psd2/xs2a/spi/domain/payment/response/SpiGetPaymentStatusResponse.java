@@ -16,11 +16,15 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiLinks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 /**
  * A response object that is returned by the ASPSP after requesting the payment status.
@@ -62,5 +66,6 @@ public class SpiGetPaymentStatusResponse {
      */
     @Nullable
     private String psuMessage;
-
+    private final SpiLinks links;
+    private final Set<TppMessageInformation> tppMessageInformation;
 }

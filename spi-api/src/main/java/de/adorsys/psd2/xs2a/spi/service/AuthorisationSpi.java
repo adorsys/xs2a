@@ -123,7 +123,7 @@ interface AuthorisationSpi<T> {
                        .build();
         }
         return SpiResponse.<SpiScaStatusResponse>builder()
-                   .payload(new SpiScaStatusResponse(scaStatus, false, null))
+                   .payload(new SpiScaStatusResponse(scaStatus, false, null, null, null))
                    .build();
     }
 }

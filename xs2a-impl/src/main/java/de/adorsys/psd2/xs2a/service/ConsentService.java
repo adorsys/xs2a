@@ -48,6 +48,7 @@ import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
+import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -84,6 +85,7 @@ public class ConsentService {
     private final AisConsentSpi aisConsentSpi;
     private final Xs2aEventService xs2aEventService;
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
+    private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
     private final SpiErrorMapper spiErrorMapper;
 
     private final ConsentValidationService consentValidationService;
@@ -425,7 +427,10 @@ public class ConsentService {
         Boolean beneficiaryFlag = scaStatus.isFinalisedStatus() ? spiScaInformationPayload.getTrustedBeneficiaryFlag() : null;
         Xs2aScaStatusResponse response = new Xs2aScaStatusResponse(scaStatus,
                                                                    beneficiaryFlag,
-                                                                   spiScaInformationPayload.getPsuMessage());
+                                                                   spiScaInformationPayload.getPsuMessage(),
+                                                                   spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
+                                                                   spiScaInformationPayload.getTppMessageInformation()
+                                                                   );
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)
