@@ -34,6 +34,7 @@ import de.adorsys.psd2.xs2a.service.authorization.PaymentCancellationAuthorisati
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.PaymentCancellationLinks;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -124,7 +125,15 @@ class PaymentCancellationAspectServiceTest {
         when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
         when(aspspProfileServiceWrapper.getScaRedirectFlow()).thenReturn(ScaRedirectFlow.REDIRECT);
 
-        PaymentCancellationLinks links = new PaymentCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, response, false, ScaRedirectFlow.REDIRECT, false, "instanceId");
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .isExplicitMethod(false)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("instanceId")
+            .build();
+
+        PaymentCancellationLinks links = new PaymentCancellationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, response, ScaRedirectFlow.REDIRECT);
 
         responseObject = ResponseObject.<CancelPaymentResponse>builder()
             .body(response)

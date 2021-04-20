@@ -31,6 +31,7 @@ import de.adorsys.psd2.xs2a.web.controller.PaymentController;
 import de.adorsys.psd2.xs2a.web.link.CreatePisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisAuthorisationLinks;
 import de.adorsys.psd2.xs2a.web.link.UpdatePisPsuDataLinks;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +59,16 @@ public class PaymentAuthorisationAspectService extends BaseAspectService<Payment
             if (result.getBody() instanceof Xs2aCreatePisAuthorisationResponse) {
                 Xs2aCreatePisAuthorisationResponse response = (Xs2aCreatePisAuthorisationResponse) result.getBody();
 
-                response.setLinks(new CreatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, redirectLinkBuilder,
-                                                                  redirectIdService, request, response.getAuthorisationId(),
-                                                                  getScaRedirectFlow(), response.getInternalRequestId(),
-                                                                  isAuthorisationConfirmationRequestMandated(),
-                                                                  requestProviderService.getInstanceId()));
+                LinkParameters linkParameters = LinkParameters.builder()
+                    .httpUrl(getHttpUrl())
+                    .authorisationId(response.getAuthorisationId())
+                    .internalRequestId(response.getInternalRequestId())
+                    .isAuthorisationConfirmationRequestMandated(isAuthorisationConfirmationRequestMandated())
+                    .instanceId(requestProviderService.getInstanceId())
+                    .build();
+                response.setLinks(new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+                                                                  redirectIdService, request,
+                                                                  getScaRedirectFlow()));
             } else if (result.getBody() instanceof Xs2aUpdatePisCommonPaymentPsuDataResponse) {
                 Xs2aUpdatePisCommonPaymentPsuDataResponse response = (Xs2aUpdatePisCommonPaymentPsuDataResponse) result.getBody();
                 response.setLinks(new UpdatePisAuthorisationLinks(getHttpUrl(), scaApproachResolver, response, request));
