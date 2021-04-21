@@ -37,6 +37,7 @@ import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
@@ -110,15 +111,18 @@ class Xs2aAisConsentServiceTest {
         CmsCreateConsentResponse cmsCreateConsentResponse = new CmsCreateConsentResponse(CONSENT_ID, getCmsConsentWithNotifications());
         when(aisConsentMapper.mapToAisConsent(any()))
             .thenReturn(aisConsent);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.of(cmsCreateConsentResponse));
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                      .payload(cmsCreateConsentResponse)
+                                                                                                      .build());
 
         Xs2aCreateAisConsentResponse expected = new Xs2aCreateAisConsentResponse(CONSENT_ID, aisConsent, null);
 
         // When
-        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertThat(actualResponse).isPresent().contains(expected);
+        assertThat(actualResponse.isSuccessful()).isTrue();
+        assertThat(actualResponse.getPayload()).isEqualTo(expected);
     }
 
     @Test
@@ -128,14 +132,15 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(1);
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.empty());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                      .build());
 
 
         // When
-        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertThat(actualResponse).isEmpty();
+        assertThat(actualResponse.hasError()).isTrue();
     }
 
     @Test
@@ -145,13 +150,14 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(1);
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.empty());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                      .build());
 
         // When
-        Optional<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> actualResponse = xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);
 
         // Then
-        assertThat(actualResponse).isEmpty();
+        assertThat(actualResponse.hasError()).isTrue();
     }
 
     @Test
@@ -300,7 +306,8 @@ class Xs2aAisConsentServiceTest {
             .thenReturn(1);
         when(aisConsentMapper.mapToCmsConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO, 1))
             .thenReturn(CMS_CONSENT);
-        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Optional.empty());
+        when(cmsCreateConsentResponseService.getCmsCreateConsentResponse(CMS_CONSENT)).thenReturn(Xs2aResponse.<CmsCreateConsentResponse>builder()
+                                                                                                      .build());
 
         // When
         xs2aAisConsentService.createConsent(CREATE_CONSENT_REQ, PSU_DATA, TPP_INFO);

@@ -66,6 +66,7 @@ TPP-->PSU: Feedback to the customer\n"Please select SCA method"
 activate PSU
 |||
 PSU->TPP: SCA Method
+deactivate PSU
 |||
 TPP->XS2A: REST Call Update Psu data(Select Authentication Method)\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
 activate XS2A
@@ -77,6 +78,7 @@ SPI->Core_banking: SelectScaMethod
 activate Core_banking
 |||
 Core_banking-->PSU: ScaAuthenticationData
+activate PSU
 |||
 Core_banking-->SPI: SelectScaMethod Respons
 deactivate Core_banking
@@ -94,6 +96,7 @@ XS2A-->TPP:UpdatePsuAuthenticationResponse
 deactivate XS2A
 |||
 PSU->TPP: Provide Authentication Data
+deactivate PSU
 |||
 TPP->XS2A: REST Call Consent Authorisation\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
 deactivate TPP
@@ -189,14 +192,33 @@ CMS-->XS2A: GetAuthorisationsByConsentId Response
 deactivate CMS
 XS2A-->TPP: AuthorisationByConsentIdsList Response
 |||
-TPP->XS2A: REST Call Get Authorisation\n"GET/v1/consents/{consentId}/authorisations/{authorithationId}"
-XS2A->CMS: GetAuthorisationScaStatus
+TPP->XS2A: REST Call Get Sca Status Request\n"/v1/consents/{consentId}/authorisations/{authorisationId}"
+|||
+XS2A->CMS: REST Call getConsentAuthorisationScaStatus
 activate CMS
 |||
-CMS-->XS2A: GetAuthorisationScaStatus Response
+CMS-->XS2A: getConsentAuthorisationScaStatus Response
 deactivate CMS
 |||
-XS2A-->TPP: Sca Status
+XS2A->SPI: Java Call getScaStatus
+activate SPI
+|||
+SPI->Core_banking: getScaStatus
+activate Core_banking
+|||
+Core_banking-->SPI: getScaStatus Response
+deactivate Core_banking
+SPI->XS2A: SpiScaStatusResponse
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateAuthorisationStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateAuthorisationStatus Response
+|||
+deactivate CMS
+|||
+XS2A-->TPP: Get Sca Status Response
 deactivate TPP
 deactivate XS2A
 @enduml

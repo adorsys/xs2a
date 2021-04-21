@@ -45,6 +45,10 @@ image::PaymentInitOAuth.png[Payment Initiation in OAuth with Redirect Approach, 
 
 image::paymentInitEmbedded.png[Payment Initiation in Embedded Approach, title='Payment Initiation in Embedded Approach', align='center']
 
+==== Payment Initiation Service in Decoupled Approach (Decoupled approach as a second SCA factor)
+
+image::paymentInitDecoupled.png[Payment Initiation in Decopled Approach, title='Payment Initiation in Decoupled Approach', align='center']
+
 === Payment statuses
 Payment transaction status is synchronised in bank's database and in CMS. When payment data with payment transaction status is given from ASPSP, status will be updated in CMS, even if it is already finalised. There is endpoint in cms-aspsp-api to set payment data with payment transaction status directly from ASPSP to CMS.
 

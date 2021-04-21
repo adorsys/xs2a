@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,60 +57,41 @@ class PisAuthorisationCancellationLinksTest {
 
     @BeforeEach
     void setUp() {
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
     }
 
     @Test
-    void scaApproachEmbeddedAndPsuDataIsEmpty() {
+    void scaApproachEmbedded() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
+        LinkParameters linkParameters = LinkParameters.builder().httpUrl(HTTP_URL)
+            .paymentService(PAYMENT_SERVICE).paymentProduct(PAYMENT_PRODUCT).paymentId(PAYMENT_ID)
+            .authorisationId(AUTHORISATION_ID).internalRequestId(null).instanceId("").build();
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
-                                                      PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
-                                                      null, null, "");
+        links = new PisAuthorisationCancellationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, null);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
-    @Test
-    void scaApproachEmbeddedAndPsuDataIsNotEmpty() {
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
-
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
-                                                      PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
-                                                      null, null, "");
-
-        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        assertEquals(expectedLinks, links);
-    }
 
     @Test
     void scaApproachDecoupledAndPsuDataIsEmpty() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
-                                                      PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
-                                                      null, null, "");
+        LinkParameters linkParameters = LinkParameters.builder().httpUrl(HTTP_URL)
+            .paymentService(PAYMENT_SERVICE).paymentProduct(PAYMENT_PRODUCT).paymentId(PAYMENT_ID)
+            .authorisationId(AUTHORISATION_ID).internalRequestId(null).instanceId("").build();
+
+        links = new PisAuthorisationCancellationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, null);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 
-    @Test
-    void scaApproachDecoupledAndPsuDataIsNotEmpty() {
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
-
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
-                                                      PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
-                                                      null, null, "");
-
-        expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        assertEquals(expectedLinks, links);
-    }
 
     @Test
     void scaApproachRedirect() {
@@ -117,9 +99,11 @@ class PisAuthorisationCancellationLinksTest {
         when(redirectIdService.generateRedirectId(AUTHORISATION_ID)).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildPaymentCancellationScaRedirectLink(PAYMENT_ID, AUTHORISATION_ID, INTERNAL_REQUEST_ID, "")).thenReturn(REDIRECT_LINK);
 
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
-                                                      PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
-                                                      ScaRedirectFlow.REDIRECT, INTERNAL_REQUEST_ID, "");
+        LinkParameters linkParameters = LinkParameters.builder().httpUrl(HTTP_URL)
+            .paymentService(PAYMENT_SERVICE).paymentProduct(PAYMENT_PRODUCT).paymentId(PAYMENT_ID)
+            .authorisationId(AUTHORISATION_ID).internalRequestId(INTERNAL_REQUEST_ID).instanceId("").build();
+        links = new PisAuthorisationCancellationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, ScaRedirectFlow.REDIRECT);
 
         expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -137,9 +121,11 @@ class PisAuthorisationCancellationLinksTest {
             .thenReturn(AUTHORISATION_ID);
 
         // When
-        links = new PisAuthorisationCancellationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService,
-                                                      PAYMENT_SERVICE, PAYMENT_PRODUCT, PAYMENT_ID, AUTHORISATION_ID,
-                                                      ScaRedirectFlow.OAUTH, INTERNAL_REQUEST_ID, "");
+        LinkParameters linkParameters = LinkParameters.builder().httpUrl(HTTP_URL)
+            .paymentService(PAYMENT_SERVICE).paymentProduct(PAYMENT_PRODUCT).paymentId(PAYMENT_ID)
+            .authorisationId(AUTHORISATION_ID).internalRequestId(INTERNAL_REQUEST_ID).instanceId("").build();
+        links = new PisAuthorisationCancellationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder, redirectIdService,
+                                                      ScaRedirectFlow.OAUTH);
 
         // Then
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/cancellation-authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));

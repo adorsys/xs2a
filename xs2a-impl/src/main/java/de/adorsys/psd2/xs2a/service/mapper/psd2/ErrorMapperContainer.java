@@ -34,6 +34,7 @@ import java.util.Map;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 
 @Component
+@SuppressWarnings("rawtypes")
 @RequiredArgsConstructor
 public class ErrorMapperContainer {
     private final Map<ErrorType, Psd2ErrorMapper> mapperContainer = new EnumMap<>(ErrorType.class);

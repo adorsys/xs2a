@@ -43,7 +43,7 @@ import java.util.Optional;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class Consent<T> {
+public abstract class Consent<T> implements ConsentAutorizable {
     private T consentData;
     private String id;
     @Nullable
@@ -90,6 +90,7 @@ public abstract class Consent<T> {
                    .orElse(null);
     }
 
+    @Override
     public Optional<ConsentAuthorization> findAuthorisationInConsent(String authorisationId) {
         return getAuthorisations().stream()
                    .filter(auth -> auth.getId().equals(authorisationId))

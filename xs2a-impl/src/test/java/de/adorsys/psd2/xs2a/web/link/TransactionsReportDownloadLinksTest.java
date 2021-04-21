@@ -31,7 +31,7 @@ class TransactionsReportDownloadLinksTest {
 
     @BeforeEach
     void setUp() {
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
         expectedLinks.setDownload(new HrefType(HTTP_URL + "/v1/accounts/" + ACCOUNT_ID + "/transactions/download/encoded-string"));
     }
 

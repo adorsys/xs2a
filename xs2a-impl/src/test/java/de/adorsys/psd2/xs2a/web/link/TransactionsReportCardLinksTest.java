@@ -31,7 +31,7 @@ class TransactionsReportCardLinksTest {
 
     @BeforeEach
     void setUp() {
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
     }
 
     @Test

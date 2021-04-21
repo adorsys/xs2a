@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -52,10 +52,10 @@ class CmsCreateConsentResponseServiceTest {
         when(consentService.createConsent(CMS_CONSENT)).thenThrow(new WrongChecksumException());
 
         // When
-        Optional<CmsCreateConsentResponse> actual = service.getCmsCreateConsentResponse(CMS_CONSENT);
+        Xs2aResponse<CmsCreateConsentResponse> actual = service.getCmsCreateConsentResponse(CMS_CONSENT);
 
         // Then
-        assertThat(actual).isEmpty();
+        assertThat(actual.hasError()).isTrue();
     }
 
     @Test
@@ -65,10 +65,10 @@ class CmsCreateConsentResponseServiceTest {
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
 
         // When
-        Optional<CmsCreateConsentResponse> actual = service.getCmsCreateConsentResponse(CMS_CONSENT);
+        Xs2aResponse<CmsCreateConsentResponse> actual = service.getCmsCreateConsentResponse(CMS_CONSENT);
 
         // Then
-        assertThat(actual).isEmpty();
+        assertThat(actual.hasError()).isTrue();
     }
 
     @Test
@@ -79,10 +79,11 @@ class CmsCreateConsentResponseServiceTest {
             .thenReturn(CmsResponse.<CmsCreateConsentResponse>builder().payload(cmsCreateConsentResponse).build());
 
         // When
-        Optional<CmsCreateConsentResponse> actual = service.getCmsCreateConsentResponse(CMS_CONSENT);
+        Xs2aResponse<CmsCreateConsentResponse> actual = service.getCmsCreateConsentResponse(CMS_CONSENT);
 
         // Then
-        assertThat(actual).isPresent().contains(cmsCreateConsentResponse);
+        assertThat(actual.isSuccessful()).isTrue();
+        assertThat(actual.getPayload()).isEqualTo(cmsCreateConsentResponse);
     }
 
     private CmsConsent getCmsConsentWithNotifications() {

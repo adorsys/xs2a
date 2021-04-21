@@ -26,12 +26,14 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
+import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
@@ -61,8 +63,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 
@@ -120,15 +124,16 @@ public class ConsentService {
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
-        Optional<Xs2aCreateAisConsentResponse> createAisConsentResponseOptional = aisConsentService.createConsent(requestAfterCheck, psuData, tppInfo);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> xs2aResponse = aisConsentService.createConsent(requestAfterCheck, psuData, tppInfo);
 
-        if (createAisConsentResponseOptional.isEmpty()) {
-            return ResponseObject.<CreateConsentResponse>builder()
-                       .fail(ErrorType.AIS_400, of(MessageErrorCode.RESOURCE_UNKNOWN_400))
-                       .build();
+        if (xs2aResponse.hasError()) {
+            return resolveConsentCreationError(xs2aResponse.getErrors()
+                                                   .stream()
+                                                   .map(TppMessage::getErrorCode)
+                                                   .collect(Collectors.toList()));
         }
 
-        Xs2aCreateAisConsentResponse createAisConsentResponse = createAisConsentResponseOptional.get();
+        Xs2aCreateAisConsentResponse createAisConsentResponse = xs2aResponse.getPayload();
         SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
         AisConsent aisConsent = createAisConsentResponse.getAisConsent();
@@ -176,6 +181,17 @@ public class ConsentService {
         loggingContextService.storeConsentStatus(consentStatus);
 
         return createConsentResponseObject;
+    }
+
+    private ResponseObject<CreateConsentResponse> resolveConsentCreationError(List<MessageErrorCode> errors) {
+        if (errors.contains(MessageErrorCode.PSU_CREDENTIALS_INVALID)) {
+            return ResponseObject.<CreateConsentResponse>builder()
+                       .fail(ErrorType.AIS_401, of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                       .build();
+        }
+        return ResponseObject.<CreateConsentResponse>builder()
+                   .fail(ErrorType.AIS_400, of(MessageErrorCode.RESOURCE_UNKNOWN_400))
+                   .build();
     }
 
     private void updateMultilevelSca(String consentId, boolean multilevelScaRequired) {

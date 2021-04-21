@@ -21,10 +21,10 @@ import lombok.Value;
 
 @Value
 public class AisConsentData {
-    private AccountAccessType availableAccounts;
-    private AccountAccessType allPsd2;
-    private AccountAccessType availableAccountsWithBalance;
-    private final boolean combinedServiceIndicator;
+    AccountAccessType availableAccounts;
+    AccountAccessType allPsd2;
+    AccountAccessType availableAccountsWithBalance;
+    boolean combinedServiceIndicator;
 
     public static AisConsentData buildDefaultAisConsentData() {
         return new AisConsentData(null, null, null, false);

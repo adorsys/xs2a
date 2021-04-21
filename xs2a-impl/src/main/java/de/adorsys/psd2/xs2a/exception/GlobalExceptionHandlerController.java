@@ -44,6 +44,7 @@ import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 
 @Slf4j
+@SuppressWarnings("rawtypes")
 @RestControllerAdvice(basePackages = "de.adorsys.psd2.xs2a.web.controller")
 @RequiredArgsConstructor
 public class GlobalExceptionHandlerController {

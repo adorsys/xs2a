@@ -32,6 +32,7 @@ import static org.springframework.http.HttpStatus.*;
  * ResponseMapper class should be used for success responses mapping only.
  * In case of unsuccessful error mapping IllegalArgumentException would be thrown - ResponseErrorMapper should be used for such cases.
  */
+@SuppressWarnings("rawtypes")
 @RequiredArgsConstructor
 @Component
 public class ResponseMapper {

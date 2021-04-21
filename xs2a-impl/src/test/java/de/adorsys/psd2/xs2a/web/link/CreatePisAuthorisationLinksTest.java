@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.RedirectIdService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
+import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ class CreatePisAuthorisationLinksTest {
     void setUp() {
         jsonReader = new JsonReader();
         psuIdData = jsonReader.getObjectFromFile("json/link/empty.json", PsuIdData.class);
-        expectedLinks = new Links();
+        expectedLinks = new AbstractLinks(HTTP_URL);
 
         request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, psuIdData, PAYMENT_PRODUCT, SINGLE, "");
     }
@@ -72,7 +73,15 @@ class CreatePisAuthorisationLinksTest {
     void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndPsuDataIsEmpty() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false, "");
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .authorisationId(AUTHORISATION_ID)
+            .internalRequestId(null)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("")
+            .build();
+        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, request, null);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -86,7 +95,15 @@ class CreatePisAuthorisationLinksTest {
 
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
-        links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false, "");
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .authorisationId(AUTHORISATION_ID)
+            .internalRequestId(null)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("")
+            .build();
+        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, request, null);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -97,7 +114,15 @@ class CreatePisAuthorisationLinksTest {
     void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsuDataIsEmpty() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false, "");
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .authorisationId(AUTHORISATION_ID)
+            .internalRequestId(null)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("")
+            .build();
+        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, request, null);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -111,7 +136,15 @@ class CreatePisAuthorisationLinksTest {
 
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
-        links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, null, null, false, "");
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .authorisationId(AUTHORISATION_ID)
+            .internalRequestId(null)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("")
+            .build();
+        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, request, null);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
@@ -122,9 +155,18 @@ class CreatePisAuthorisationLinksTest {
     void scaApproachRedirect() {
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(AUTHORISATION_ID)).thenReturn(AUTHORISATION_ID);
-        when(redirectLinkBuilder.buildPaymentScaRedirectLink(PAYMENT_ID, AUTHORISATION_ID, INTERNAL_REQUEST_ID, "")).thenReturn(REDIRECT_LINK);
+        when(redirectLinkBuilder.buildPaymentScaRedirectLink(PAYMENT_ID, AUTHORISATION_ID,
+            INTERNAL_REQUEST_ID, "")).thenReturn(REDIRECT_LINK);
 
-        links = new CreatePisAuthorisationLinks(HTTP_URL, scaApproachResolver, redirectLinkBuilder, redirectIdService, request, AUTHORISATION_ID, ScaRedirectFlow.REDIRECT, INTERNAL_REQUEST_ID, false, "");
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .authorisationId(AUTHORISATION_ID)
+            .internalRequestId(INTERNAL_REQUEST_ID)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("")
+            .build();
+        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
+            redirectIdService, request, ScaRedirectFlow.REDIRECT);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v1/payments/sepa-credit-transfers/1111111111111/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));

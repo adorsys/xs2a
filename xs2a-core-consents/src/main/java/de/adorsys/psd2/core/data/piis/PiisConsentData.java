@@ -22,10 +22,10 @@ import java.time.LocalDate;
 
 @Value
 public class PiisConsentData {
-    private String cardNumber;
-    private LocalDate cardExpiryDate;
-    private String cardInformation;
-    private String registrationInformation;
+    String cardNumber;
+    LocalDate cardExpiryDate;
+    String cardInformation;
+    String registrationInformation;
 
     public static PiisConsentData buildDefaultConsentData() {
         return new PiisConsentData(null, null, null, null);

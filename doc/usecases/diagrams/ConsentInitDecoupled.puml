@@ -1,0 +1,224 @@
+@startuml
+== Consent Initiation with Decoupled approach as a second SCA factor ==
+== Decoupled approach flow for the case when several SCA methods is available ==
+
+actor PSU
+entity TPP
+entity XS2A
+entity CMS
+entity SPI
+entity Core_banking
+
+PSU->TPP: Initiate an Account information access
+activate PSU
+activate TPP
+TPP -> XS2A: REST Call Initiate consent\nPOST "/v1/consents"
+activate XS2A
+XS2A->SPI: Java Call SpiInitiateAisConsent
+activate SPI
+|||
+SPI-->XS2A: SpiInitiateAisConsentResponse
+deactivate SPI
+|||
+XS2A-->TPP:Consent initiation Response
+|||
+TPP->XS2A: REST Call Initiate authorithation\nPOST"/v1/consents/{consentId}/authorisations"
+note left
+         in case of Multilevel SCA
+         the authorisation steps
+         should be repeated for other PSUs
+end note
+|||
+XS2A->CMS: Create authorisation sub-resource
+XS2A-->TPP:Start authorisation response\n"link_updatePsuWithAuthentication"
+deactivate XS2A
+|||
+TPP-->PSU: Feedback to the customer\n"Please enter your User-id & password"
+|||
+PSU->TPP: PSU provide User-id & password
+deactivate PSU
+|||
+TPP->XS2A: REST Call Update PSU data (Authentication)\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
+activate XS2A
+|||
+XS2A->SPI: Java Call AisConsentSpi
+activate SPI
+|||
+SPI->Core_banking: AuthorisedPsu
+activate Core_banking
+|||
+Core_banking-->SPI: AuthorisedPsu Response
+deactivate Core_banking
+|||
+SPI-->XS2A: SpiAuthorisationStatus
+|||
+XS2A->SPI: Java Call AisConsentSpi
+|||
+SPI-->XS2A: List "AuthenticationObject"
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateAisAuthorisation
+activate CMS
+|||
+CMS-->XS2A: UpdateAisAuthorisation Response
+deactivate CMS
+|||
+XS2A->TPP: UpdatePsuAuthenticationResponse
+deactivate XS2A
+|||
+TPP-->PSU: Feedback to the customer\n"Please select SCA method"
+activate PSU
+|||
+PSU->TPP: Select SCA Method
+deactivate PSU
+|||
+TPP->XS2A: REST Call Update Psu data(Select Authentication Method)\n"PUT/v1/consents/{consent-id}/authorisations/\n{authorisationId}"
+activate XS2A
+|||
+XS2A->SPI: Java Call AisConsentSpi
+activate SPI
+|||
+SPI->Core_banking: SelectScaMethod
+activate Core_banking
+|||
+|||
+Core_banking-->SPI: SelectScaMethod Response: Decoupled method chosen
+deactivate Core_banking
+|||
+SPI-->XS2A: SpiAuthorisationDecoupledScaResponse
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateAisAuthorisation
+activate CMS
+|||
+CMS-->XS2A: UpdateAisAuthorisation Response
+deactivate CMS
+|||
+XS2A-->TPP:UpdatePsuAuthenticationResponse
+deactivate XS2A
+|||
+TPP-->PSU: PsuMessage:\n"Please use your xxx app to authorise the Consent"
+deactivate TPP
+activate PSU
+|||
+group PSU to ASPSP Interface
+|||
+Core_banking-->PSU: The ASPSP pushes the challenge to an authorisation app and requests a strong customer authentication (SCA)
+activate Core_banking
+|||
+PSU->Core_banking: The PSU authorises the consent
+deactivate PSU
+|||
+end group
+|||
+Core_banking->CMS: REST Call UpdateAuthorisationStatus\n"PUT/psu-api/v1/ais/consent/{consent-id}/authorisation/\n{authorisation-id}/status/{status}"
+activate CMS
+|||
+CMS-->Core_banking: Response "http Codes: 200 successful or 400 error"
+deactivate CMS
+|||
+Core_banking->CMS: REST Call ConfirmConsent\n"PUT/psu-api/v1/ais/consent/{consent-id}/confirm-consent"
+activate CMS
+|||
+CMS-->Core_banking: Response "http Codes: 200 successful or 404 error"
+deactivate CMS
+deactivate Core_banking
+|||
+== TPP asks for the result of the transaction ==
+|||
+TPP->XS2A: REST Call Get consent status\n"GET/v1/consents/{consentId}/status"
+activate XS2A
+activate TPP
+XS2A->CMS: REST Call GetConsentById
+activate CMS
+|||
+CMS-->XS2A: Consent Object Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call SPI GetConsentStatusByid
+activate SPI
+|||
+SPI->Core_banking: GetConsentStatusById
+activate Core_banking
+|||
+Core_banking-->SPI: AisConsentStatusResponse
+deactivate Core_banking
+|||
+SPI-->XS2A: SpiAisConsentStatusResponse
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateConsentStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateConsentStatus Response
+deactivate CMS
+|||
+XS2A-->TPP: Consent Status Response
+|||
+TPP->XS2A: REST Call Get Consent Request\n"GET/v1/consents/{consentId}"
+|||
+XS2A->CMS: REST Call GetConsentById
+activate CMS
+|||
+CMS-->XS2A: Consent Object Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call SpiGetConsentById
+activate SPI
+|||
+SPI->Core_banking: GetConsentById
+activate Core_banking
+|||
+Core_banking-->SPI: AisConsentStatusResponse
+deactivate Core_banking
+|||
+SPI-->XS2A: SpiAisConsentStatus Response
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateConsentStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateConsent Response
+deactivate CMS
+|||
+XS2A-->TPP: GetConsent Response
+|||
+TPP->XS2A: REST Call Get Authorisation Sub-resources\n"GET/v1/consents/{consentId}/authorisations"
+|||
+XS2A->CMS: GetAuthorisationsByConsentId
+activate CMS
+|||
+CMS-->XS2A: GetAuthorisationsByConsentId Response
+deactivate CMS
+XS2A-->TPP: AuthorisationByConsentIdsList Response
+|||
+TPP->XS2A: REST Call Get Sca Status Request\n"/v1/consents/{consentId}/authorisations/{authorisationId}"
+|||
+XS2A->CMS: REST Call getConsentAuthorisationScaStatus
+activate CMS
+|||
+CMS-->XS2A: getConsentAuthorisationScaStatus Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call getScaStatus
+activate SPI
+|||
+SPI->Core_banking: getScaStatus
+activate Core_banking
+|||
+Core_banking-->SPI: getScaStatus Response
+deactivate Core_banking
+SPI->XS2A: SpiScaStatusResponse
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateAuthorisationStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateAuthorisationStatus Response
+|||
+deactivate CMS
+|||
+XS2A-->TPP: Get Sca Status Response
+deactivate TPP
+deactivate XS2A
+@enduml
