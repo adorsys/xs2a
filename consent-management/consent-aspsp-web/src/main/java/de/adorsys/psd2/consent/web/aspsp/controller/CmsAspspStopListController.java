@@ -34,7 +34,7 @@ public class CmsAspspStopListController implements CmsAspspStopListApi {
     @Override
     public ResponseEntity<TppStopListRecord> getTppStopListRecord(String tppAuthorisationNumber, String instanceId) {
         return cmsAspspTppService.getTppStopListRecord(tppAuthorisationNumber, instanceId)
-                   .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
+                   .map(tppStopListRecord -> new ResponseEntity<>(tppStopListRecord, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
