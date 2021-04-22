@@ -32,7 +32,7 @@ public class CmsAspspTppInfoController implements CmsAspspTppInfoApi {
     @Override
     public ResponseEntity<TppInfo> getTppInfo(String tppAuthorisationNumber, String instanceId) {
         return cmsAspspTppService.getTppInfo(tppAuthorisationNumber, instanceId)
-                   .map(record -> new ResponseEntity<>(record, HttpStatus.OK))
+                   .map(tppInfo -> new ResponseEntity<>(tppInfo, HttpStatus.OK))
                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
