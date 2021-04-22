@@ -41,6 +41,19 @@ a|* All fixes and updates from v.10.0
 
 a|
 
+|21.04.2021| | 10.2| 11.2| |
+
+a|
+
+a| *  Added description about scaExemption flag
+
+a|* All fixes and updates from v.10.0
+
+*  Add new optional attributes (_links, tppMessages) to the Response body of Get Transaction Status Request,
+Get SCA Status Request
+
+a|
+
 a|
 
 a|
