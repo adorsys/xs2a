@@ -49,6 +49,7 @@ import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -96,6 +97,8 @@ public class ConsentService {
     private final LoggingContextService loggingContextService;
     private final AdditionalInformationSupportedService additionalInformationSupportedService;
     private final Xs2aAuthorisationService xs2aAuthorisationService;
+    private final AspspProfileServiceWrapper aspspProfileService;
+    private final PsuDataCleaner psuDataCleaner;
 
     /**
      * Performs create consent operation either by filling the appropriate AccountAccess fields with corresponding
@@ -115,7 +118,12 @@ public class ConsentService {
         }
         CreateConsentReq requestAfterCheck = additionalInformationSupportedService.checkIfAdditionalInformationSupported(request);
 
-        ValidationResult validationResult = consentValidationService.validateConsentOnCreate(requestAfterCheck, psuData);
+        PsuIdData checkedPsuIdData = psuData;
+        if (aspspProfileService.isPsuInInitialRequestIgnored()) {
+            checkedPsuIdData = psuDataCleaner.clearPsuData(checkedPsuIdData);
+        }
+
+        ValidationResult validationResult = consentValidationService.validateConsentOnCreate(requestAfterCheck, checkedPsuIdData);
         if (validationResult.isNotValid()) {
             log.info("Create account consent with response - validation failed: {}",
                      validationResult.getMessageError());
@@ -129,7 +137,7 @@ public class ConsentService {
         }
 
         TppInfo tppInfo = tppService.getTppInfo();
-        Xs2aResponse<Xs2aCreateAisConsentResponse> xs2aResponse = aisConsentService.createConsent(requestAfterCheck, psuData, tppInfo);
+        Xs2aResponse<Xs2aCreateAisConsentResponse> xs2aResponse = aisConsentService.createConsent(requestAfterCheck, checkedPsuIdData, tppInfo);
 
         if (xs2aResponse.hasError()) {
             return resolveConsentCreationError(xs2aResponse.getErrors()
@@ -139,7 +147,7 @@ public class ConsentService {
         }
 
         Xs2aCreateAisConsentResponse createAisConsentResponse = xs2aResponse.getPayload();
-        SpiContextData contextData = spiContextDataProvider.provide(psuData, tppInfo);
+        SpiContextData contextData = spiContextDataProvider.provide(checkedPsuIdData, tppInfo);
         InitialSpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider();
         AisConsent aisConsent = createAisConsentResponse.getAisConsent();
 
@@ -180,7 +188,7 @@ public class ConsentService {
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
         if (authorisationMethodDecider.isImplicitMethod(explicitPreferred, multilevelScaRequired)) {
-            proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), psuData, encryptedConsentId);
+            proceedImplicitCaseForCreateConsent(createConsentResponseObject.getBody(), checkedPsuIdData, encryptedConsentId);
         }
 
         loggingContextService.storeConsentStatus(consentStatus);

@@ -33,13 +33,13 @@ import de.adorsys.psd2.xs2a.domain.pis.*;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.event.Xs2aEventService;
-import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
 import de.adorsys.psd2.xs2a.service.payment.PaymentServiceResolver;
 import de.adorsys.psd2.xs2a.service.payment.Xs2aUpdatePaymentAfterSpiService;
 import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.ReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.*;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -75,7 +75,8 @@ public class PaymentService {
     private final PaymentServiceResolver paymentServiceResolver;
     private final LoggingContextService loggingContextService;
     private final ScaApproachResolver scaApproachResolver;
-    private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    private final AspspProfileServiceWrapper aspspProfileService;
+    private final PsuDataCleaner psuDataCleaner;
 
     /**
      * Initiates a payment though "payment service" corresponding service method
@@ -88,6 +89,11 @@ public class PaymentService {
         xs2aEventService.recordTppRequest(EventType.PAYMENT_INITIATION_REQUEST_RECEIVED, payment);
 
         CreatePaymentRequestObject createPaymentRequestObject = new CreatePaymentRequestObject(payment, paymentInitiationParameters);
+
+        if (aspspProfileService.isPsuInInitialRequestIgnored()) {
+            paymentInitiationParameters.setPsuData(psuDataCleaner.clearPsuData(paymentInitiationParameters.getPsuData()));
+        }
+
         ValidationResult validationResult = createPaymentValidator.validate(createPaymentRequestObject);
         if (validationResult.isNotValid()) {
             log.info("PaymentType [{}], PaymentProduct [{}]. Create payment - validation failed: [{}]",

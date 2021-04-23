@@ -130,4 +130,8 @@ public class CommonAspspProfileBankSetting {
      * Indicates whether ASPSP returns warning with correct response or rejects request when redirect URIs don't match certificate
      */
     private TppUriCompliance tppUriComplianceResponse;
+    /**
+     * Indicates if PSU-ID is ignored by XS2A, in case it's provided in Initial request for Payment request or Establishing Consent.
+     */
+    private boolean psuInInitialRequestIgnored;
 }

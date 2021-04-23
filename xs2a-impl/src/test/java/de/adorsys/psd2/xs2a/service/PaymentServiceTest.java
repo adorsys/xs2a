@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.service.payment.cancel.CancelPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.create.CreatePaymentService;
 import de.adorsys.psd2.xs2a.service.payment.read.ReadPaymentService;
 import de.adorsys.psd2.xs2a.service.payment.status.AbstractReadPaymentStatusService;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.*;
 import de.adorsys.psd2.xs2a.service.validator.pis.payment.dto.CreatePaymentRequestObject;
@@ -81,6 +82,7 @@ class PaymentServiceTest {
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String AUTHORISATION = "Bearer 1111111";
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(null, null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_CLEAR = new PsuIdData(null, null, null, null, null, null);
     private static final SpiPsuData SPI_PSU_DATA = SpiPsuData.builder().build();
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.PIS_401, TppMessageInformation.of(UNAUTHORIZED));
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.buildWithPsuTppAuthToken(SPI_PSU_DATA, new TppInfo(), AUTHORISATION);
@@ -133,6 +135,10 @@ class PaymentServiceTest {
     private LoggingContextService loggingContextService;
     @Mock
     private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    private PsuDataCleaner psuDataCleaner;
 
     private JsonReader jsonReader;
 
@@ -165,6 +171,31 @@ class PaymentServiceTest {
             .thenReturn(ResponseObject.<PaymentInitiationResponse>builder()
                             .body(buildSinglePaymentInitiationResponse())
                             .build());
+        // When
+        ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment("".getBytes(), buildPaymentInitiationParameters(PaymentType.SINGLE));
+
+        // Then
+        assertThatPaymentWasCreated(actualResponse);
+    }
+
+    @Test
+    void createRawPayment_Success_ClearPsu() {
+        // Given
+        when(tppService.getTppInfo()).thenReturn(getTppInfo());
+        when(createPaymentValidator.validate(any(CreatePaymentRequestObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+
+        PaymentInitiationParameters paymentInitiationParameters = buildPaymentInitiationParameters(PaymentType.SINGLE);
+        when(paymentServiceResolver.getCreatePaymentService(paymentInitiationParameters)).thenReturn(createPaymentService);
+        when(createPaymentService.createPayment(any(), any(), any()))
+            .thenReturn(ResponseObject.<PaymentInitiationResponse>builder()
+                            .body(buildSinglePaymentInitiationResponse())
+                            .build());
+
+        when(aspspProfileService.isPsuInInitialRequestIgnored()).thenReturn(true);
+        when(psuDataCleaner.clearPsuData(PSU_ID_DATA)).thenReturn(PSU_ID_DATA_CLEAR);
+
         // When
         ResponseObject<PaymentInitiationResponse> actualResponse = paymentService.createPayment("".getBytes(), buildPaymentInitiationParameters(PaymentType.SINGLE));
 
