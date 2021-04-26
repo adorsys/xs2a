@@ -1,10 +1,8 @@
 {
-  "image": null,
   "data": [
     "some data"
   ],
   "imageLink": "some link",
   "otpMaxLength": 1,
-  "otpFormat": null,
   "additionalInformation": "some info"
 }
