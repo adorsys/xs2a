@@ -110,6 +110,9 @@ public class ConsentService {
     public ResponseObject<CreateConsentResponse> createAccountConsentsWithResponse(CreateConsentReq request, PsuIdData psuData,
                                                                                    boolean explicitPreferred) {
         xs2aEventService.recordTppRequest(EventType.CREATE_AIS_CONSENT_REQUEST_RECEIVED, request);
+        if (request.isOneAccessType()) {
+            request.setFrequencyPerDay(1);
+        }
         CreateConsentReq requestAfterCheck = additionalInformationSupportedService.checkIfAdditionalInformationSupported(request);
 
         ValidationResult validationResult = consentValidationService.validateConsentOnCreate(requestAfterCheck, psuData);
