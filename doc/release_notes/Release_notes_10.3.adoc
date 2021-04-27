@@ -1,3 +1,9 @@
 = Release notes v.10.3
 
 == Table of Contents
+
+* Restricted FrequencyPerDay for one-off consent usage
+
+== Restricted FrequencyPerDay for one-off consent usage
+
+From now on, all one-off consents are created with FrequencyPerDay = 1.
