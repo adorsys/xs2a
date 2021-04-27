@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
     @InjectMocks
     private AspspProfileConvertServiceImpl aspspProfileConvertService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
      void convertProfile() {

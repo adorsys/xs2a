@@ -71,3 +71,4 @@ setting:
     authorisationConfirmationCheckByXs2a: FALSE
     checkUriComplianceToDomainSupported: FALSE
     tppUriComplianceResponse: WARNING
+    psuInInitialRequestIgnored: FALSE

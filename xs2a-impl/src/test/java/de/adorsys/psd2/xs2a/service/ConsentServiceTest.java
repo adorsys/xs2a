@@ -54,6 +54,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aAccountReferenceMapperImpl;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiToXs2aLinksMapper;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
@@ -98,6 +99,7 @@ class ConsentServiceTest {
     private static final LocalDate DATE = LocalDate.now().plusDays(1);
     private static final boolean EXPLICIT_PREFERRED = true;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData(CORRECT_PSU_ID, null, null, null, null);
+    private static final PsuIdData PSU_ID_DATA_CLEAR = new PsuIdData(null, null, null, null, null, null);
     private static final String AUTHORISATION_ID = "a8fc1f02-3639-4528-bd19-3eacf1c67038";
     private static final String WRONG_AUTHORISATION_ID = "wrong authorisation id";
     private static final SpiAccountConsent SPI_ACCOUNT_CONSENT = new SpiAccountConsent();
@@ -160,6 +162,10 @@ class ConsentServiceTest {
     private Xs2aAuthorisationService xs2aAuthorisationService;
     @Mock
     private SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
+    @Mock
+    private PsuDataCleaner psuDataCleaner;
 
     private AisConsent aisConsent;
 
@@ -214,6 +220,52 @@ class ConsentServiceTest {
 
         // Then
         verify(authorisationMethodDecider, atLeastOnce()).isImplicitMethod(anyBoolean(), argumentCaptor.capture());
+        assertFalse(argumentCaptor.getValue());
+        assertResponseIsCorrect(response);
+    }
+
+    @Test
+    void createAccountConsentsWithResponse_Success_AllAccounts_psuIgnored() {
+        // Given
+        ArgumentCaptor<Boolean> argumentCaptor = ArgumentCaptor.forClass(Boolean.class);
+        CreateConsentReq req = getCreateConsentRequest(
+            getAccess(Collections.emptyList(), Collections.emptyList(), Collections.emptyList()),
+            true,
+            false
+        );
+
+        when(additionalInformationSupportedService.checkIfAdditionalInformationSupported(req)).thenReturn(req);
+        when(aisConsentService.createConsent(getCreateConsentRequest(getAccess(
+            Collections.emptyList(), Collections.emptyList(), Collections.emptyList()), true, false), PSU_ID_DATA_CLEAR, tppInfo))
+            .thenReturn(Xs2aResponse.<Xs2aCreateAisConsentResponse>builder()
+                            .payload(xs2aCreateAisConsentResponse)
+                            .build());
+
+        when(tppService.getTppInfo())
+            .thenReturn(tppInfo);
+        when(aisConsentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+        when(spiContextDataProvider.provide(PSU_ID_DATA_CLEAR, tppInfo))
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
+            .thenReturn(initialSpiAspspConsentDataProvider);
+        when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA_CLEAR))
+            .thenReturn(createValidationResult(true, null));
+        when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
+            .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .build());
+
+        when(aspspProfileService.isPsuInInitialRequestIgnored()).thenReturn(true);
+        when(psuDataCleaner.clearPsuData(PSU_ID_DATA)).thenReturn(PSU_ID_DATA_CLEAR);
+
+        // When
+        ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
+        CreateConsentResponse response = responseObj.getBody();
+
+        // Then
+        verify(authorisationMethodDecider, atLeastOnce()).isImplicitMethod(anyBoolean(), argumentCaptor.capture());
+        verify(psuDataCleaner).clearPsuData(PSU_ID_DATA);
         assertFalse(argumentCaptor.getValue());
         assertResponseIsCorrect(response);
     }

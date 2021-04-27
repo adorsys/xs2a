@@ -138,7 +138,8 @@ public class AspspSettingsBuilder {
                                                                          AUTHORISATION_CONFIRMATION_REQUEST_MANDATED,
                                                                          AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
-                                                                         TPP_URI_COMPLIANCE_RESPONSE);
+                                                                         TPP_URI_COMPLIANCE_RESPONSE,
+                                                                         false);
 
         return new AspspSettings(ais, pis, piis, sb, common);
     }

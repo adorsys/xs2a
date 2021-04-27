@@ -3,7 +3,13 @@
 == Table of Contents
 
 * Restricted FrequencyPerDay for one-off consent usage
+* Added new attribute to ASPSP-Profile
 
 == Restricted FrequencyPerDay for one-off consent usage
 
 From now on, all one-off consents are created with FrequencyPerDay = 1.
+
+== Added new attribute to ASPSP-Profile
+
+Added new profile property - `psuInInitialRequestIgnored`. This property indicates if PSU-ID is ignored by XS2A,
+in case it's provided in Initial request for Payment request or Establishing Consent.

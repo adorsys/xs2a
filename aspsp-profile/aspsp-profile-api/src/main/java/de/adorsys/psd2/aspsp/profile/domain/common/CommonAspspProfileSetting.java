@@ -53,4 +53,5 @@ public class CommonAspspProfileSetting {
     private final boolean authorisationConfirmationCheckByXs2a;
     private final boolean checkUriComplianceToDomainSupported;
     private final TppUriCompliance tppUriComplianceResponse;
+    private final boolean psuInInitialRequestIgnored;
 }

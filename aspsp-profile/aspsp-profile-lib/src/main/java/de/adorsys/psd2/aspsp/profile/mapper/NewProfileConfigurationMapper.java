@@ -98,7 +98,8 @@ public class NewProfileConfigurationMapper {
                                                                                  false,
                                                                                  false,
                                                                                  false,
-                                                                                 TppUriCompliance.WARNING);
+                                                                                 TppUriCompliance.WARNING,
+                                                                                 false);
 
         NewProfileConfiguration result = new NewProfileConfiguration();
         result.setSetting(new NewBankProfileSetting(ais, pis, piis, sb, common));

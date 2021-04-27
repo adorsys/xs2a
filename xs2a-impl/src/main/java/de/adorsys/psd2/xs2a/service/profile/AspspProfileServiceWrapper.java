@@ -430,4 +430,13 @@ public class AspspProfileServiceWrapper {
     public TppUriCompliance getTppUriComplianceResponse() {
         return readAspspSettings().getCommon().getTppUriComplianceResponse();
     }
+
+    /**
+     * Indicates if PSU-ID is ignored by XS2A, in case it's provided in Initial request for Payment request or Establishing Consent.
+     *
+     * @return true if PSU-ID is ignored by XS2A, in case it's provided in Initial request for Payment request or Establishing Consent, false otherwise.
+     */
+    public boolean isPsuInInitialRequestIgnored() {
+        return readAspspSettings().getCommon().isPsuInInitialRequestIgnored();
+    }
 }
