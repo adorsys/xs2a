@@ -4,6 +4,8 @@
 
 * Restricted FrequencyPerDay for one-off consent usage
 * Increased test coverage
+* Removed deprecated AuthorisationSpi#getScaInformation
+* Removed deprecated CmsPayment
 
 == Restricted FrequencyPerDay for one-off consent usage
 
@@ -12,3 +14,11 @@ From now on, all one-off consents are created with FrequencyPerDay = 1.
 == Increased test coverage
 
 Increased test coverage for mapper classes
+
+== Removed deprecated AuthorisationSpi#getScaInformation
+
+From now on, `AuthorisationSpi#getScaInformation` is removed.
+
+== Removed deprecated CmsPayment
+
+From now on, `CmsPayment` is removed.
