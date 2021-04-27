@@ -5,6 +5,8 @@
 * Restricted FrequencyPerDay for one-off consent usage
 * Added new attribute to ASPSP-Profile
 * Increased test coverage
+* Removed deprecated AuthorisationSpi#getScaInformation
+* Removed deprecated CmsPayment
 
 == Restricted FrequencyPerDay for one-off consent usage
 
@@ -19,3 +21,10 @@ in case it's provided in Initial request for Payment request or Establishing Con
 
 Increased test coverage for mapper classes
 
+== Removed deprecated AuthorisationSpi#getScaInformation
+
+From now on, `AuthorisationSpi#getScaInformation` is removed.
+
+== Removed deprecated CmsPayment
+
+From now on, `CmsPayment` is removed.
