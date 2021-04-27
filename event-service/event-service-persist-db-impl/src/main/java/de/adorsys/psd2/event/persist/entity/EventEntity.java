@@ -26,6 +26,7 @@ import java.time.OffsetDateTime;
 
 @Data
 @Entity(name = "event")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class EventEntity {
     static final String DEFAULT_SERVICE_INSTANCE_ID = "UNDEFINED";
 
