@@ -28,6 +28,7 @@ import java.util.List;
 /**
  * This is a class for providing Spring Data Jpa Specification for different entities attributes
  */
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class EventEntityAttributeSpecificationProvider {
     private EventEntityAttributeSpecificationProvider() {
     }

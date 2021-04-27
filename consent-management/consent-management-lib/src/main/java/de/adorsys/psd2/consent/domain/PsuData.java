@@ -26,6 +26,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @Entity(name = "psu_data")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class PsuData extends InstanceDependableEntity {
     @Id
     @Column(name = "id")

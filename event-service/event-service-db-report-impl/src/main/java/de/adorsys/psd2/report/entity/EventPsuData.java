@@ -26,6 +26,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name = "psu_data")
+@SuppressWarnings("common-java:DuplicatedBlocks")
 public class EventPsuData implements Serializable {
     @Id
     @Column(name = "id")
