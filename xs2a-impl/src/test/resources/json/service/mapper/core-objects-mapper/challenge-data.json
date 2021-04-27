@@ -1,0 +1,6 @@
+{
+  "imageLink": "image link" ,
+  "otpMaxLength": 6 ,
+  "otpFormat": "INTEGER" ,
+  "additionalInformation": "additional info"
+}
