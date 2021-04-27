@@ -1,0 +1,13 @@
+[
+  {
+    "balanceAmount": {
+      "currency": "EUR" ,
+      "amount": "55"
+    } ,
+    "balanceType": "expected",
+    "creditLimitIncluded": true,
+    "lastChangeDateTime": "2018-03-31T15:16:16.0+03:00",
+    "referenceDate": "2019-03-21" ,
+    "lastCommittedTransaction": "1234567890"
+  }
+]

@@ -1,23 +1,9 @@
 {
+  "psuMessage": "some message",
+  "paymentId": "p1",
   "authorisationId": "a1",
-  "chosenScaMethod": {
-    "authenticationType": "FLASH",
-    "authenticationVersion": "1",
-    "authenticationMethodId": "card",
-    "name": "flash-card",
-    "explanation": "flash-card explanation"
-  },
-  "challengeData": {
-    "image": null,
-    "data": [
-      "some data"
-    ],
-    "imageLink": "some link",
-    "otpMaxLength": 1,
-    "otpFormat": null,
-    "additionalInformation": "some info"
-  },
-  "scaMethods": [
+  "scaStatus": "received",
+  "availableScaMethods": [
     {
       "authenticationType": "SMS_OTP",
       "authenticationVersion": "1",
@@ -42,11 +28,24 @@
     {
     }
   ],
-  "_links": {
+  "chosenScaMethod": {
+    "authenticationType": "FLASH",
+    "authenticationVersion": "1",
+    "authenticationMethodId": "card",
+    "name": "flash-card",
+    "explanation": "flash-card explanation"
+  },
+  "challengeData": {
+    "data": [
+      "some data"
+    ],
+    "imageLink": "some link",
+    "otpMaxLength": 1,
+    "additionalInformation": "some info"
+  },
+  "links": {
     "self": {
       "href": "http://localhost"
     }
-  },
-  "scaStatus": "received",
-  "psuMessage": "some message"
+  }
 }

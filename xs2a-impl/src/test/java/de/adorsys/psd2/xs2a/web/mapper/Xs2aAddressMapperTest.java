@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.Address;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
+import de.adorsys.psd2.xs2a.core.domain.address.Xs2aCountryCode;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ class Xs2aAddressMapperTest {
 
     @Autowired
     private Xs2aAddressMapper xs2aAddressMapper;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToXs2aAddress_success() {
@@ -64,5 +65,27 @@ class Xs2aAddressMapperTest {
     void mapToAddress_nullValue() {
         Address address = xs2aAddressMapper.mapToAddress(null);
         assertNull(address);
+    }
+
+    @Test
+    void mapToAdress_Xs2aCountryCodeIsNull() {
+        //Given
+        Xs2aAddress xs2aAddress = jsonReader.getObjectFromFile("json/service/mapper/expected-address.json", Xs2aAddress.class);
+        xs2aAddress.setCountry(null);
+        //When
+        Address address = xs2aAddressMapper.mapToAddress(xs2aAddress);
+        //Then
+        assertNull(address.getCountry());
+    }
+
+    @Test
+    void mapToAdress_Xs2aCountryCodeCodeIsNull() {
+        //Given
+        Xs2aAddress xs2aAddress = jsonReader.getObjectFromFile("json/service/mapper/expected-address.json", Xs2aAddress.class);
+        xs2aAddress.setCountry(new Xs2aCountryCode(null));
+        //When
+        Address address = xs2aAddressMapper.mapToAddress(xs2aAddress);
+        //Then
+        assertNull(address.getCountry());
     }
 }

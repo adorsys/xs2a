@@ -1,0 +1,13 @@
+{
+  "chosenScaMethod": {
+    "authenticationType": "FLASH" ,
+    "authenticationVersion": "1" ,
+    "authenticationMethodId": "card" ,
+    "name": "flash-card" ,
+    "explanation": "flash-card explanation"
+  } ,
+  "_links": { } ,
+  "scaStatus": "received" ,
+  "psuMessage": "some message" ,
+  "authorisationId": "a1"
+}
