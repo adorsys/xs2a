@@ -117,4 +117,8 @@ jobs:
           export GPG_TTY="$( tty )" #need to run to sign artifacts with maven
           echo ${{ secrets.GPG_SECRET_KEY }} | base64 --decode | gpg --import --batch
           echo ${{ secrets.GPG_OWNERTRUST }} | base64 --decode | gpg --batch --import-ownertrust
-          mvn -ntp --settings scripts/mvn-release-settings.xml -Prelease -DskipTests -U deploy
+          mvn -ntp --settings scripts/mvn-release-settings.xml \
+          -Dhttp.keepAlive=false \
+          -Dmaven.wagon.http.pool=false \
+          -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
+          -Prelease -DskipTests -U deploy
