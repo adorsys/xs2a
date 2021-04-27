@@ -1489,7 +1489,7 @@ class ConsentServiceTest {
         CreateConsentReq req = new CreateConsentReq();
         req.setAccess(access);
         req.setValidUntil(DATE);
-        req.setFrequencyPerDay(4);
+        req.setFrequencyPerDay(1);
         req.setCombinedServiceIndicator(false);
         req.setRecurringIndicator(false);
         req.setAvailableAccounts(allAccounts ? AccountAccessType.ALL_ACCOUNTS : null);
