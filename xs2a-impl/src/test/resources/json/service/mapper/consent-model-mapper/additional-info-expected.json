@@ -1,0 +1,22 @@
+{
+  "ownerName": [
+    {
+      "iban": "DE89370400440532013000",
+      "bban": "DE89370400440532013000",
+      "pan": "4937023494670836",
+      "maskedPan": "493702******0836",
+      "msisdn": "Test MSISDN",
+      "currency": "EUR"
+    }
+  ],
+  "trustedBeneficiaries": [
+    {
+      "iban": "DE89370400440532013000",
+      "bban": "DE89370400440532013000",
+      "pan": "4937023494670836",
+      "maskedPan": "493702******0836",
+      "msisdn": "Test MSISDN",
+      "currency": "EUR"
+    }
+  ]
+}

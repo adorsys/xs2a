@@ -1,0 +1,28 @@
+{
+  "transactionFees": {
+    "currency": "EUR" ,
+    "amount": "123"
+  } ,
+  "currencyConversionFees": {
+    "currency": "USD" ,
+    "amount": "234"
+  } ,
+  "estimatedTotalAmount": {
+    "currency": "UAH" ,
+    "amount": "345"
+  } ,
+  "estimatedInterbankSettlementAmount": {
+    "currency": "GBP" ,
+    "amount": "456"
+  } ,
+  "chosenScaMethod": {
+    "authenticationType": "FLASH" ,
+    "authenticationVersion": "1" ,
+    "authenticationMethodId": "card" ,
+    "name": "flash-card" ,
+    "explanation": "flash-card explanation"
+  } ,
+  "scaStatus": "received" ,
+  "psuMessage": "some message" ,
+  "authorisationId": "a1"
+}
