@@ -330,6 +330,34 @@ class ConsentModelMapperTest {
         assertNull(actual);
     }
 
+    @Test
+    void mapToAccountAccessDomain_mapToAdditionalInformationAccess_noAdditionalInformationAccess() {
+        //Given
+        AisConsent aisConsent = getAisConsentWithAdditionalInfoNullValues();
+        //When
+        ConsentInformationResponse200Json consentInformationResponse = consentModelMapper.mapToConsentInformationResponse200Json(aisConsent);
+        //Then
+        assertNull(consentInformationResponse.getAccess().getAdditionalInformation());
+    }
+
+    @Test
+    void mapToAccountAccessDomain_mapToAdditionalInformationAccess_withAdditionalInformationAccess() {
+        //Given
+        AisConsent aisConsent = getAisConsentWithFullAdditionalInfo();
+        AdditionalInformationAccess expected = jsonReader.getObjectFromFile("json/service/mapper/consent-model-mapper/additional-info-expected.json", AdditionalInformationAccess.class);
+        de.adorsys.psd2.model.AccountReference accountReference = jsonReader
+            .getObjectFromFile("json/service/mapper/consent-model-mapper/account-references.json", de.adorsys.psd2.model.AccountReference.class);
+        //When
+        when(accountModelMapper.mapToAccountReferences(any())).thenReturn(List.of(accountReference));
+        ConsentInformationResponse200Json consentInformationResponse = consentModelMapper.mapToConsentInformationResponse200Json(aisConsent);
+        AdditionalInformationAccess actual = consentInformationResponse.getAccess().getAdditionalInformation();
+        //Then
+        assertNotNull(actual);
+        assertNotNull(actual.getOwnerName());
+        assertNotNull(actual.getTrustedBeneficiaries());
+        assertEquals(expected, actual);
+    }
+
     private void checkCommonFields(ConsentsResponse201 actual) {
         assertNotNull(actual);
         assertEquals(CONSENT_STATUS, actual.getConsentStatus().toString());
@@ -365,6 +393,20 @@ class ConsentModelMapperTest {
         return aisConsent;
     }
 
+    private AisConsent getAisConsentWithFullAdditionalInfo() {
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/mapper/consent-model-mapper/ais-consent-additional-info.json", AisConsent.class);
+        AisConsentData consentData = AisConsentData.buildDefaultAisConsentData();
+        aisConsent.setConsentData(consentData);
+        return aisConsent;
+    }
+
+    private AisConsent getAisConsentWithAdditionalInfoNullValues() {
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/mapper/consent-model-mapper/ais-consent-additional-info-null-values.json", AisConsent.class);
+        AisConsentData consentData = AisConsentData.buildDefaultAisConsentData();
+        aisConsent.setConsentData(consentData);
+        return aisConsent;
+    }
+
     private static AccountReference buildXs2aAccountReference() {
         return new AccountReference(ASPSP_ACCOUNT_ID, ACCOUNT_ID, IBAN, BBAN, PAN, MASKED_PAN, MSISDN, EUR_CURRENCY, null);
     }
@@ -392,5 +434,4 @@ class ConsentModelMapperTest {
         accountReference.setIban(IBAN);
         return accountReference;
     }
-
 }

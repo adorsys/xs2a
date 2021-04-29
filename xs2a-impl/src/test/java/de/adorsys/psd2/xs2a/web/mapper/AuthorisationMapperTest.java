@@ -27,6 +27,7 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
+import de.adorsys.psd2.xs2a.service.mapper.AmountModelMapper;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.xs2a.reader.JsonReader;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -71,6 +72,8 @@ class AuthorisationMapperTest {
     private AuthorisationModelMapper authorisationModelMapper;
     @Mock
     private TppMessage2XXMapper tppMessage2XXMapper;
+    @Mock
+    private AmountModelMapper amountModelMapper;
 
     @Test
     void mapToAuthorisations_equals_success() {
@@ -135,7 +138,7 @@ class AuthorisationMapperTest {
 
     @Test
     void mapToPisCreateOrUpdateAuthorisationResponse_for_Xs2aUpdatePisCommonPaymentPsuDataResponse() {
-        // given
+        //Given
         when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
 
         UpdatePsuAuthenticationResponse expectedUpdatePsuAuthenticationResponse =
@@ -156,11 +159,11 @@ class AuthorisationMapperTest {
         de.adorsys.psd2.xs2a.core.sca.ChallengeData xs2aChallengeData = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/challengeData.json", de.adorsys.psd2.xs2a.core.sca.ChallengeData.class);
         when(coreObjectsMapper.mapToChallengeData(xs2aChallengeData)).thenReturn(challengeData);
 
-        // when
+        //When
         UpdatePsuAuthenticationResponse actualUpdatePsuAuthenticationResponse =
             (UpdatePsuAuthenticationResponse) mapper.mapToPisCreateOrUpdateAuthorisationResponse(responseObject);
 
-        // then
+        //Then
         assertNotNull(actualUpdatePsuAuthenticationResponse.getLinks());
         assertFalse(actualUpdatePsuAuthenticationResponse.getLinks().isEmpty());
 
@@ -286,6 +289,37 @@ class AuthorisationMapperTest {
             mapper.mapToXs2aCreatePisAuthorisationRequest(new PsuIdData(), paymentId, null, paymentProduct, getTestValidBody());
         //Then
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToPisUpdatePsuAuthenticationResponse_responseXs2aCurrencyConversionInfo_notNull() {
+        // given
+        UpdatePsuAuthenticationResponse expectedUpdatePsuAuthenticationResponse =
+            jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/update-psu-auth-response-expected.json", UpdatePsuAuthenticationResponse.class);
+
+        Xs2aUpdatePisCommonPaymentPsuDataResponse xs2aUpdatePisCommonPaymentPsuDataResponse =
+            jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/update-psu-authentication-response-xs2acurrencyconversoninfo.json", Xs2aUpdatePisCommonPaymentPsuDataResponse.class);
+        ResponseObject<Xs2aUpdatePisCommonPaymentPsuDataResponse> responseObject = ResponseObject.<Xs2aUpdatePisCommonPaymentPsuDataResponse>builder()
+            .body(xs2aUpdatePisCommonPaymentPsuDataResponse)
+            .build();
+
+        // when
+        when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(null);
+        when(scaMethodsMapper.mapToScaMethods(any())).thenReturn(null);
+        when(coreObjectsMapper.mapToChallengeData(any())).thenReturn(null);
+        when(amountModelMapper.mapToAmount(responseObject.getBody().getXs2aCurrencyConversionInfo().getTransactionFees()))
+            .thenReturn(new Amount().currency("EUR").amount("123"));
+        when(amountModelMapper.mapToAmount(responseObject.getBody().getXs2aCurrencyConversionInfo().getCurrencyConversionFees()))
+            .thenReturn(new Amount().currency("USD").amount("234"));
+        when(amountModelMapper.mapToAmount(responseObject.getBody().getXs2aCurrencyConversionInfo().getEstimatedTotalAmount()))
+            .thenReturn(new Amount().currency("UAH").amount("345"));
+        when(amountModelMapper.mapToAmount(responseObject.getBody().getXs2aCurrencyConversionInfo().getEstimatedInterbankSettlementAmount()))
+            .thenReturn(new Amount().currency("GBP").amount("456"));
+        UpdatePsuAuthenticationResponse actualUpdatePsuAuthenticationResponse =
+            (UpdatePsuAuthenticationResponse) mapper.mapToPisCreateOrUpdateAuthorisationResponse(responseObject);
+
+        //Then
+        assertEquals(expectedUpdatePsuAuthenticationResponse, actualUpdatePsuAuthenticationResponse);
     }
 
     private Map<String, HrefType> buildLinks() {
