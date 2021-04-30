@@ -36,7 +36,7 @@ class ScaMethodsMapperTest {
     @Autowired
     private ScaMethodsMapper scaMethodsMapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToScaMethods_withNull_shouldReturnNull() {
@@ -45,6 +45,13 @@ class ScaMethodsMapperTest {
 
         // Then
         assertNull(scaMethods);
+    }
+
+    @Test
+    void mapToAuthenticationObject_withNull_returnsNull() {
+        AuthenticationObject authenticationObject = scaMethodsMapper.mapToAuthenticationObject(null);
+
+        assertNull(authenticationObject);
     }
 
     @Test
