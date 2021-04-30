@@ -1,0 +1,18 @@
+{
+  "transactionFees" : {
+    "currency": "EUR",
+    "amount" : "11"
+  },
+  "currencyConversionFees" : {
+    "currency": "USD",
+    "amount" : "22"
+  },
+  "estimatedTotalAmount" : {
+    "currency": "UAH",
+    "amount" : "33"
+  },
+  "estimatedInterbankSettlementAmount" : {
+    "currency": "GBP",
+    "amount" : "44"
+  }
+}
