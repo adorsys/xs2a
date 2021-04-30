@@ -24,10 +24,12 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 
 class RemittanceMapperTest {
-    private JsonReader jsonReader = new JsonReader();
-    private RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
+    private final JsonReader jsonReader = new JsonReader();
+    private final RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
 
     @Test
     void mapToRemittanceInformationStructured() {
@@ -35,6 +37,31 @@ class RemittanceMapperTest {
         RemittanceInformationStructured remittanceInformationStructured = remittanceMapper.mapToRemittanceInformationStructured(remittance);
         RemittanceInformationStructured expectedRemittanceInformationStructured = getRemittanceFromFile(RemittanceInformationStructured.class);
         assertEquals(expectedRemittanceInformationStructured, remittanceInformationStructured);
+    }
+
+    @Test
+    void mapToRemittanceInformationStructured_isNull_returnNull() {
+        RemittanceInformationStructured  remittanceInformationStructured = remittanceMapper.mapToRemittanceInformationStructured(null);
+        assertNull(remittanceInformationStructured);
+    }
+
+    @Test
+    void mapToRemittance_isNull_returnsNull() {
+        Remittance remittance = remittanceMapper.mapToRemittance((RemittanceInformationStructured) null);
+        assertNull(remittance);
+    }
+
+    @Test
+    void mapToSpiRemittance_isNull_returnsNull() {
+        SpiRemittance spiRemittance = remittanceMapper.mapToSpiRemittance(null);
+        assertNull(spiRemittance);
+    }
+
+    @Test
+    void mapToRemittance_Spi_isNull_returns_null() {
+        SpiRemittance spiRemittance = null;
+        Remittance remittance = remittanceMapper.mapToRemittance(spiRemittance);
+        assertNull(remittance);
     }
 
     @Test
