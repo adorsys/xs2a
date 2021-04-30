@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiLinks;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -53,6 +54,15 @@ class SpiToXs2aLinksMapperTest {
     void toXs2aLinks_null() {
         // When
         Links actual = mapper.toXs2aLinks(null);
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void toXs2aHrefType_null() {
+        //When
+        HrefType actual = mapper.toXs2aHrefType(null);
 
         // Then
         assertThat(actual).isNull();

@@ -1,0 +1,8 @@
+{
+  "image" : "",
+  "data" : ["test data"],
+  "imageLink": "imagelink" ,
+  "otpMaxLength": 10 ,
+  "otpFormat": "CHARACTERS" ,
+  "additionalInformation": "additionalInformation"
+}
