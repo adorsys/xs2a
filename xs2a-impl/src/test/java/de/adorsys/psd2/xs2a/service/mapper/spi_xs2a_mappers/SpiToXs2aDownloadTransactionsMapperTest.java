@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 @ExtendWith(SpringExtension.class)
@@ -39,7 +40,8 @@ class SpiToXs2aDownloadTransactionsMapperTest {
 
     @Autowired
     private SpiToXs2aDownloadTransactionsMapper mapper;
-    private JsonReader jsonReader = new JsonReader();
+
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToXs2aTransactionsDownloadResponseTest() throws IOException {
@@ -61,4 +63,12 @@ class SpiToXs2aDownloadTransactionsMapperTest {
         assertEquals(IOUtils.toString(expectedResponse.getTransactionStream(), StandardCharsets.UTF_8), IOUtils.toString(actualResponse.getTransactionStream(), StandardCharsets.UTF_8));
     }
 
+    @Test
+    void mapToXs2aTransactionsDownloadResponseTest_nullInput() {
+        //When
+        Xs2aTransactionsDownloadResponse actual = mapper.mapToXs2aTransactionsDownloadResponse(null);
+
+        //Then
+        assertNull(actual);
+    }
 }

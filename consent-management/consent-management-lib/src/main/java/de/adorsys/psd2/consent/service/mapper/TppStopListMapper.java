@@ -28,12 +28,12 @@ public class TppStopListMapper {
     public TppStopListRecord mapToTppStopListRecord(TppStopListEntity tppStopListEntity) {
         return Optional.ofNullable(tppStopListEntity)
                    .map(entity -> {
-                       TppStopListRecord record = new TppStopListRecord();
-                       record.setTppAuthorisationNumber(entity.getTppAuthorisationNumber());
-                       record.setBlockingExpirationTimestamp(entity.getBlockingExpirationTimestamp());
-                       record.setStatus(entity.getStatus());
-                       record.setInstanceId(entity.getInstanceId());
-                       return record;
+                       TppStopListRecord tppStopListRecord = new TppStopListRecord();
+                       tppStopListRecord.setTppAuthorisationNumber(entity.getTppAuthorisationNumber());
+                       tppStopListRecord.setBlockingExpirationTimestamp(entity.getBlockingExpirationTimestamp());
+                       tppStopListRecord.setStatus(entity.getStatus());
+                       tppStopListRecord.setInstanceId(entity.getInstanceId());
+                       return tppStopListRecord;
                    })
                    .orElse(null);
     }

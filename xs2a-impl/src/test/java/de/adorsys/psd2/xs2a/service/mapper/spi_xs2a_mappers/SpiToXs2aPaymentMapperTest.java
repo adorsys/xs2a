@@ -16,12 +16,14 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiBulkPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPeriodicPaymentInitiationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiSinglePaymentInitiationResponse;
@@ -32,7 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
+import java.util.Currency;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(SpringExtension.class)
@@ -41,8 +47,9 @@ class SpiToXs2aPaymentMapperTest {
 
     @Autowired
     private SpiToXs2aPaymentMapper mapper;
-    private JsonReader jsonReader = new JsonReader();
-    private InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider =
+
+    private final JsonReader jsonReader = new JsonReader();
+    private final InitialSpiAspspConsentDataProvider initialSpiAspspConsentDataProvider =
         mock(InitialSpiAspspConsentDataProvider.class);
 
     @Test
@@ -120,5 +127,20 @@ class SpiToXs2aPaymentMapperTest {
         expectedResponse.setAspspConsentDataProvider(initialSpiAspspConsentDataProvider);
 
         assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    void spiAmountToXs2aAmount_notNull() {
+        //When
+        Xs2aAmount actual = mapper.spiAmountToXs2aAmount(getTestSpiAmount());
+        //Then
+        assertNotNull(actual.getAmount());
+        assertNotNull(actual.getCurrency());
+        assertEquals("22", actual.getAmount());
+        assertEquals("USD", actual.getCurrency().getCurrencyCode());
+    }
+
+    private SpiAmount getTestSpiAmount() {
+        return new SpiAmount(Currency.getInstance("USD"), BigDecimal.valueOf(22));
     }
 }

@@ -53,5 +53,4 @@ public class CoreObjectsMapper {
                    .map(de.adorsys.psd2.model.ChallengeData.OtpFormatEnum::fromValue)
                .orElse(null);
     }
-
 }

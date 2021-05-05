@@ -1,0 +1,6 @@
+{
+  "cardNumber": "cardNumber",
+  "cardExpiryDate": "2030-10-10",
+  "cardInformation": "cardInformation",
+  "registrationInformation": "registrationInformation"
+}

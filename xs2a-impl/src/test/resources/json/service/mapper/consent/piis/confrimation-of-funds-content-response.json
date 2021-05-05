@@ -1,0 +1,15 @@
+{
+  "account": {
+    "iban": "Test IBAN",
+    "bban": "Test BBAN",
+    "pan": "Test PAN",
+    "maskedPan": "Test MASKED_PAN",
+    "msisdn": "Test MSISDN",
+    "currency": "EUR"
+  },
+  "cardNumber": "1234567891234",
+  "cardExpiryDate": "2020-12-31",
+  "cardInformation": "MyMerchant Loyalty Card",
+  "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
+  "consentStatus": "valid"
+}

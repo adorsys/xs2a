@@ -18,14 +18,11 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -37,16 +34,7 @@ public class MultiPartBoundaryBuilder {
     private static final String XMLPART_PLACEHOLDER = "{XML_PART}";
     private static final String JSONPART_PLACEHOLDER = "{JSON_PART}";
     private static final String BOUNDARY_PREFIX = "--";
-
-    private static String contentTemplate = null;
-
-    static {
-        try {
-            contentTemplate = IOUtils.resourceToString("/template/multipart-payment-template.txt", StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            log.error("Reading multipart payment template failed: {}", e.getMessage());
-        }
-    }
+    private static final String TEMPLATE_PATH = "/template" + "/multipart-payment-template.txt";
 
     public String getMultiPartContent(HttpServletRequest request, String xmlSct, String jsonPart) {
         String contentTypeHeader = request.getHeader(HttpHeaders.CONTENT_TYPE);
@@ -58,7 +46,7 @@ public class MultiPartBoundaryBuilder {
             String boundaryValue = contentTypeHeader.substring(contentTypeHeader.indexOf(BOUNDARY) + BOUNDARY.length());
             boundary = boundaryValue.startsWith(BOUNDARY_PREFIX) ? boundaryValue : BOUNDARY_PREFIX + boundaryValue;
         }
-        return contentTemplate
+        return MultiPartBoundaryBuilderTemplateUtil.getTemplate(TEMPLATE_PATH)
                    .replace(BOUNDARY_PLACEHOLDER, boundary)
                    .replace(XMLPART_PLACEHOLDER, xmlSct)
                    .replace(JSONPART_PLACEHOLDER, jsonPart)

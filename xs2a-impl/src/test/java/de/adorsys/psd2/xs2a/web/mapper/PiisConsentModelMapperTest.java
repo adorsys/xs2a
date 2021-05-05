@@ -16,10 +16,14 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.model.ConsentsConfirmationOfFundsResponse;
+import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
+import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,6 +75,52 @@ class PiisConsentModelMapperTest {
         ConsentsConfirmationOfFundsResponse actual = piisConsentModelMapper.mapToConsentsConfirmationOfFundsResponse(xs2aConfirmationOfFundsResponse);
         //Then
         checkCommonFields(actual);
+    }
+
+    @Test
+    void mapToConsentConfirmationOfFundsContentResponse() {
+        PiisConsent piisConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/piis-consent.json", PiisConsent.class);
+
+        de.adorsys.psd2.model.AccountReference accountReference = jsonReader.getObjectFromFile("json/service/mapper/account-reference.json", AccountReference.class);
+
+        when(accountModelMapper.mapToAccountReference(piisConsent.getAccountReference())).thenReturn((accountReference));
+
+        ConsentConfirmationOfFundsContentResponse actual = piisConsentModelMapper.mapToConsentConfirmationOfFundsContentResponse(piisConsent);
+
+        ConsentConfirmationOfFundsContentResponse expected =
+            jsonReader.getObjectFromFile("json/service/mapper/consent/piis/confrimation-of-funds-content-response.json", ConsentConfirmationOfFundsContentResponse.class);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void toCreatePiisConsentRequest_null() {
+        CreatePiisConsentRequest actual = piisConsentModelMapper.toCreatePiisConsentRequest(null);
+
+        assertNull(actual);
+    }
+
+    @Test
+    void toCreatePiisConsentRequest_Ok() {
+        ConsentsConfirmationOfFunds consentsConfirmationOfFunds = jsonReader.getObjectFromFile("json/piis/create-piis-consent.json", ConsentsConfirmationOfFunds.class);
+
+        CreatePiisConsentRequest actual = piisConsentModelMapper.toCreatePiisConsentRequest(consentsConfirmationOfFunds);
+
+        CreatePiisConsentRequest expected = jsonReader.getObjectFromFile("json/service/mapper/piis-consent-model-mapper/piis-consent-request.json", CreatePiisConsentRequest.class);
+
+        assertNotNull(actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void mapToConsentConfirmationOfFundsStatusResponse() {
+        ConsentStatusResponse consentStatusResponse = new ConsentStatusResponse(ConsentStatus.VALID, "message");
+
+        ConsentConfirmationOfFundsStatusResponse actual = piisConsentModelMapper.mapToConsentConfirmationOfFundsStatusResponse(consentStatusResponse);
+
+        ConsentConfirmationOfFundsStatusResponse expected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/confrimation-of-funds-status-response.json", ConsentConfirmationOfFundsStatusResponse.class);
+
+        assertEquals(expected, actual);
     }
 
     private void checkCommonFields(ConsentsConfirmationOfFundsResponse actual) {

@@ -128,6 +128,18 @@ class PaymentModelMapperPsd2Test {
     }
 
     @Test
+    void mapToGetPaymentResponse_enrich_with_additional_data() {
+        CommonPayment payment = new CommonPayment();
+        payment.setTransactionStatus(TransactionStatus.RCVD);
+        payment.setPaymentProduct(PAYMENT_PRODUCT);
+        payment.setPaymentData("incorrectPaymentData".getBytes());
+
+        Object actual = mapper.mapToGetPaymentResponse(payment);
+
+        assertEquals("incorrectPaymentData", actual);
+    }
+
+    @Test
     void mapToPaymentCancellationRequest() {
         PisPaymentCancellationRequest actualPaymentCancellationRequest = mapper.mapToPaymentCancellationRequest(PAYMENT_PRODUCT, PaymentType.SINGLE.getValue(), PAYMENT_ID, Boolean.TRUE, "ok_url", "nok_url");
 

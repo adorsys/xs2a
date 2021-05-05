@@ -25,10 +25,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aTppInfoMapperImpl.class})
@@ -46,6 +48,12 @@ class Xs2aTppInfoMapperTest {
         TppInfo tppInfo = xs2aTppInfoMapper.mapToTppInfo(tppCertificateData);
         //Then
         assertEquals(tppInfoExpected, tppInfo);
+    }
+
+    @Test
+    void mapToTppInfo_nullTppInfoEntity() {
+        TppInfo actual = xs2aTppInfoMapper.mapToTppInfo(null);
+        assertNull(actual);
     }
 
     @Test
