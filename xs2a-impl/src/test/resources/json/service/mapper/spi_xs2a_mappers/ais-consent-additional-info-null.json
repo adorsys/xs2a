@@ -1,5 +1,8 @@
 {
   "consentData": {
+    "availableAccounts" : "allAccounts",
+    "allPsd2" : "allAccounts",
+    "availableAccountsWithBalance" : "allAccounts"
   },
   "id": "c966f143-f6a2-41db-9036-8abaeeef3af7",
   "internalRequestId": "1234-5678-9012-3456",
@@ -81,8 +84,6 @@
         "msisdn": "Test MSISDN",
         "currency": "EUR"
       }
-    ],
-    "additionalInformationAccess": {
-      }
+    ]
   }
 }
