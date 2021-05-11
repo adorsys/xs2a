@@ -1,0 +1,14 @@
+{
+  "psuAccount": {
+    "aspspAccountId": "aspspAccountId" ,
+    "resourceId": "resourceId" ,
+    "iban": "55" ,
+    "currency": "EUR"
+  } ,
+  "instructedAmount": {
+    "currency": "EUR",
+    "amount": 11
+  } ,
+  "cardNumber": "cardNumber",
+  "payee": "test payee"
+}
