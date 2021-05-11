@@ -1,0 +1,115 @@
+[
+  {
+    "transactionId": "1234567",
+    "entryReference": "12345678",
+    "endToEndId": "123456789",
+    "mandateId": "12345",
+    "checkId": "1234567",
+    "creditorId": "12345",
+    "bookingDate": "2017-01-01",
+    "valueDate": "2018-01-01",
+    "amount": {
+      "currency": "EUR",
+      "amount": "1.06"
+    },
+    "exchangeRate": [
+      {
+        "sourceCurrency": "EUR",
+        "exchangeRate": "12",
+        "unitCurrency": "UAH",
+        "targetCurrency": "USD",
+        "quotationDate": "2019-05-28",
+        "contractIdentification": "contractIdentification"
+      }
+    ],
+    "transactionInfo": {
+      "creditorName": "John Miles",
+      "creditorAccount": {
+        "aspspAccountId": "1234567890",
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "currency": "EUR",
+        "iban": "DE52500105173911841934",
+        "bban": "Test BBAN",
+        "maskedPan": "23456xxxxxx1234",
+        "msisdn": "0172/1111111",
+        "pan": "1111"
+      },
+      "ultimateCreditor": "Paul Simpson",
+      "debtorName": "Jan",
+      "debtorAccount": {
+        "aspspAccountId": "1234567890",
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "currency": "EUR",
+        "iban": "DE52500105173911841934",
+        "bban": "Test BBAN",
+        "maskedPan": "23456xxxxxx1234",
+        "msisdn": "0172/1111111",
+        "pan": "1111"
+      },
+      "ultimateDebtor": "Max",
+      "remittanceInformationUnstructured": "Ref Number Merchant",
+      "remittanceInformationStructured": "Ref Number Merchant",
+      "purposeCode": "CDCS"
+    },
+    "bankTransactionCodeCode": {
+      "code": "DE52500105173911841934"
+    },
+    "proprietaryBankTransactionCode": "DE52500105173911841934"
+  },
+  {
+    "transactionId": "7654321",
+    "entryReference": "87654321",
+    "endToEndId": "987654321",
+    "mandateId": "54321",
+    "checkId": "7654321",
+    "creditorId": "54321",
+    "valueDate": "2018-01-01",
+    "amount": {
+      "currency": "EUR",
+      "amount": "6.01"
+    },
+    "exchangeRate": [
+      {
+        "sourceCurrency": "EUR",
+        "exchangeRate": "21",
+        "unitCurrency": "UAH",
+        "targetCurrency": "USD",
+        "quotationDate": "2019-05-28",
+        "contractIdentification": "contractIdentification"
+      }
+    ],
+    "transactionInfo": {
+      "creditorName": "John Miles",
+      "creditorAccount": {
+        "aspspAccountId": "1234567890",
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "currency": "EUR",
+        "iban": "DE52500105173911841934",
+        "bban": "Test BBAN",
+        "maskedPan": "23456xxxxxx1234",
+        "msisdn": "0172/1111111",
+        "pan": "1111"
+      },
+      "ultimateCreditor": "Paul Simpson",
+      "debtorName": "Jan",
+      "debtorAccount": {
+        "aspspAccountId": "1234567890",
+        "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+        "currency": "EUR",
+        "iban": "DE52500105173911841934",
+        "bban": "Test BBAN",
+        "maskedPan": "23456xxxxxx1234",
+        "msisdn": "0172/1111111",
+        "pan": "1111"
+      },
+      "ultimateDebtor": "Max",
+      "remittanceInformationUnstructured": "Ref Number Merchant",
+      "remittanceInformationStructured": "Ref Number Merchant",
+      "purposeCode": "CDCS"
+    },
+    "bankTransactionCodeCode": {
+      "code": "DE52500105173911841934"
+    },
+    "proprietaryBankTransactionCode": "DE52500105173911841934"
+  }
+]

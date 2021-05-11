@@ -1,0 +1,35 @@
+{
+  "accounts": [
+    {
+      "iban": "Test IBAN" ,
+      "bban": "Test BBAN" ,
+      "pan": "Test PAN" ,
+      "maskedPan": "Test MASKED_PAN" ,
+      "msisdn": "Test MSISDN" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "balances": [
+    {
+      "iban": "Test IBAN" ,
+      "bban": "Test BBAN" ,
+      "pan": "Test PAN" ,
+      "maskedPan": "Test MASKED_PAN" ,
+      "msisdn": "Test MSISDN" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "transactions": [
+    {
+      "iban": "Test IBAN" ,
+      "bban": "Test BBAN" ,
+      "pan": "Test PAN" ,
+      "maskedPan": "Test MASKED_PAN" ,
+      "msisdn": "Test MSISDN" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "availableAccounts": "allAccounts" ,
+  "allPsd2": "allAccounts" ,
+  "availableAccountsWithBalance": "allAccounts"
+}

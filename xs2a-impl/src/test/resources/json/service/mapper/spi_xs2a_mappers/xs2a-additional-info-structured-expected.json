@@ -1,0 +1,16 @@
+{
+  "standingOrderDetails": {
+    "startDate" : "2021-03-04",
+    "endDate" : "2022-03-04",
+    "executionRule" : "following",
+    "withinAMonthFlag" : "true",
+    "frequency" : "DAILY",
+    "monthsOfExecution" : ["JAN", "FEB"],
+    "multiplicator" : "10",
+    "dayOfExecution" : "DAY_1",
+    "limitAmount" : {
+      "currency" : "EUR",
+      "amount" : "123"
+    }
+  }
+}
