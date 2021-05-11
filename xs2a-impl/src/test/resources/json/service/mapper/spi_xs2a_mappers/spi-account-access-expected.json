@@ -1,0 +1,61 @@
+{
+  "accounts": [
+    {
+      "iban": "Test IBAN" ,
+      "bban": "Test BBAN" ,
+      "pan": "Test PAN" ,
+      "maskedPan": "Test MASKED_PAN" ,
+      "msisdn": "Test MSISDN" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "balances": [
+    {
+      "iban": "Test IBAN" ,
+      "bban": "Test BBAN" ,
+      "pan": "Test PAN" ,
+      "maskedPan": "Test MASKED_PAN" ,
+      "msisdn": "Test MSISDN" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "transactions": [
+    {
+      "iban": "Test IBAN" ,
+      "bban": "Test BBAN" ,
+      "pan": "Test PAN" ,
+      "maskedPan": "Test MASKED_PAN" ,
+      "msisdn": "Test MSISDN" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "availableAccounts": "allAccounts" ,
+  "allPsd2": "allAccounts" ,
+  "availableAccountsWithBalance": "allAccounts" ,
+  "spiAdditionalInformationAccess": {
+    "ownerName": [
+      {
+        "aspspAccountId": "3278921mxl-n2131-13nw" ,
+        "resourceId": "Test accountId" ,
+        "iban": "DE89370400440532013000" ,
+        "bban": "DE89370400440532013000" ,
+        "pan": "4937023494670836" ,
+        "maskedPan": "493702******0836" ,
+        "msisdn": "Test MSISDN" ,
+        "currency": "EUR"
+      }
+    ] ,
+    "trustedBeneficiaries": [
+      {
+        "aspspAccountId": "3278921mxl-n2131-13nw" ,
+        "resourceId": "Test accountId" ,
+        "iban": "DE89370400440532013000" ,
+        "bban": "DE89370400440532013000" ,
+        "pan": "4937023494670836" ,
+        "maskedPan": "493702******0836" ,
+        "msisdn": "Test MSISDN" ,
+        "currency": "EUR"
+      }
+    ]
+  }
+}

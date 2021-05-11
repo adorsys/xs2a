@@ -1,5 +1,8 @@
 {
   "consentData": {
+    "availableAccounts" : "allAccounts",
+    "allPsd2" : "allAccounts",
+    "availableAccountsWithBalance" : "allAccounts"
   },
   "id": "c966f143-f6a2-41db-9036-8abaeeef3af7",
   "internalRequestId": "1234-5678-9012-3456",
@@ -83,6 +86,30 @@
       }
     ],
     "additionalInformationAccess": {
-      }
+      "ownerName": [
+        {
+          "aspspAccountId": "3278921mxl-n2131-13nw",
+          "resourceId": "Test accountId",
+          "iban": "DE89370400440532013000",
+          "bban": "DE89370400440532013000",
+          "pan": "4937023494670836",
+          "maskedPan": "493702******0836",
+          "msisdn": "Test MSISDN",
+          "currency": "EUR"
+        }
+      ],
+      "trustedBeneficiaries": [
+        {
+          "aspspAccountId": "3278921mxl-n2131-13nw",
+          "resourceId": "Test accountId",
+          "iban": "DE89370400440532013000",
+          "bban": "DE89370400440532013000",
+          "pan": "4937023494670836",
+          "maskedPan": "493702******0836",
+          "msisdn": "Test MSISDN",
+          "currency": "EUR"
+        }
+      ]
+    }
   }
 }
