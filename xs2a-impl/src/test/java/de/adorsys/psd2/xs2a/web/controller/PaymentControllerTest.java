@@ -287,7 +287,7 @@ class PaymentControllerTest {
         //noinspection unchecked
         ResponseEntity<PaymentInitiationCancelResponse202> actualResult = (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                                                                                                                CORRECT_PAYMENT_ID, null, null, null,
-                                                                                                                                                               null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                                                                                                               null, null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
                                                                                                                                                                null, null, null,
                                                                                                                                                                null, null, null,
                                                                                                                                                                null, null, null);
@@ -315,7 +315,7 @@ class PaymentControllerTest {
         ResponseEntity<PaymentInitiationCancelResponse202> actualResult =
             (ResponseEntity<PaymentInitiationCancelResponse202>) paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                                                  CORRECT_PAYMENT_ID, null, null, null,
-                                                                                                 null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                                                 null, null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
                                                                                                  null, null, null,
                                                                                                  null, null, null,
                                                                                                  null, null, null);
@@ -337,7 +337,7 @@ class PaymentControllerTest {
         // Given
         ResponseEntity<?> actualResult = paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                          CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
-                                                                         null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                         null, null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
                                                                          null, null, null,
                                                                          null, null, null,
                                                                          null, null, null);
@@ -359,7 +359,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actualResult = paymentController.cancelPayment(CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                          CORRECT_PAYMENT_ID, REQUEST_ID, null, null,
-                                                                         null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
+                                                                         null, null, null, null, null, EXPLICIT_PREFERRED_FALSE, null,
                                                                          null, null, null,
                                                                          null, null, null,
                                                                          null, null, null);
@@ -652,7 +652,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.initiatePayment(rawRequestObject, REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                      null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                      null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                      null, null, null, null, null);
 
@@ -686,7 +686,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.initiatePayment(rawRequestObject, REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                      null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                      null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                      null, null, null, null, null);
 
@@ -720,7 +720,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.initiatePayment(jsonRequestObject, REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                      null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                      null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                      null, null, null, null, null);
 
@@ -756,7 +756,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.initiatePayment(jsonRequestObject, REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                      null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                      null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                      null, null, null, null, null);
 
@@ -788,7 +788,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.initiatePayment(REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                      XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                      null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                      null, null, null, null, null);
 
@@ -823,7 +823,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.initiatePayment(REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                      XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                     null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                      null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                      null, null, null, null, null);
 
@@ -850,7 +850,7 @@ class PaymentControllerTest {
 
         assertThrows(IllegalArgumentException.class, () -> paymentController.initiatePayment(REQUEST_ID, PSU_IP_ADDRESS, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                                              XML_SCT, JSON_STANDING_ORDER_TYPE, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                                             null, TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, true, null,
+                                                                                             null, TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, true, null,
                                                                                              null, TPP_NOTIFICATION_URI, TPP_NOTIFICATION_CONTENT_PREFERRED, null, null, null, null,
                                                                                              null, null, null, null, null));
     }
@@ -883,7 +883,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                                                      CORRECT_PAYMENT_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                                                     TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
+                                                                                                     TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
                                                                                                      null, null, null, null, null, null,
                                                                                                      null, null, null);
 
@@ -925,7 +925,7 @@ class PaymentControllerTest {
         // When
         ResponseEntity<?> actual = paymentController.startPaymentInitiationCancellationAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT,
                                                                                                      CORRECT_PAYMENT_ID, body, null, null, null, PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE,
-                                                                                                     TPP_REDIRECT_PREFERRED_TRUE, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
+                                                                                                     TPP_REDIRECT_PREFERRED_TRUE, null, REDIRECT_LINK, REDIRECT_LINK, null, null, null,
                                                                                                      null, null, null, null, null, null,
                                                                                                      null, null, null);
 
@@ -1183,7 +1183,7 @@ class PaymentControllerTest {
 
         // When
         ResponseEntity<?> actual = paymentController.startPaymentAuthorisation(REQUEST_ID, CORRECT_PAYMENT_SERVICE, PRODUCT, CORRECT_PAYMENT_ID, body,
-                                                                               PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, TPP_REDIRECT_PREFERRED_TRUE,
+                                                                               PSU_ID, PSU_ID_TYPE, PSU_CORPORATE_ID, PSU_CORPORATE_ID_TYPE, TPP_REDIRECT_PREFERRED_TRUE, null,
                                                                                REDIRECT_LINK, null, null, null, null, null, null,
                                                                                null, null, null, null, null, null, null, null,
                                                                                null, null);

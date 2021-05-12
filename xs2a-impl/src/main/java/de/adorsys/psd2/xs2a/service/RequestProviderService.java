@@ -50,6 +50,7 @@ import java.util.stream.Collectors;
 public class RequestProviderService {
 
     private static final String TPP_REDIRECT_PREFERRED_HEADER = "tpp-redirect-preferred";
+    private static final String TPP_DECOUPLED_PREFERRED_HEADER = "tpp-decoupled-preferred";
     private static final String X_REQUEST_ID_HEADER = "x-request-id";
     private static final String PSU_ID_HEADER = "psu-id";
     private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
@@ -67,8 +68,15 @@ public class RequestProviderService {
     private final InternalRequestIdService internalRequestIdService;
 
     public Optional<Boolean> resolveTppRedirectPreferred() {
-
         String header = getHeader(TPP_REDIRECT_PREFERRED_HEADER);
+        if (header == null) {
+            return Optional.empty();
+        }
+        return Optional.of(Boolean.valueOf(header));
+    }
+
+    public Optional<Boolean> resolveTppDecoupledPreferred() {
+        String header = getHeader(TPP_DECOUPLED_PREFERRED_HEADER);
         if (header == null) {
             return Optional.empty();
         }

@@ -1,3 +1,15 @@
 = Release notes v.11.4
 
 == Table of Contents
+
+* Added new optional Header TPP-Decoupled-Preferred
+
+==  Added new optional Header TPP-Decoupled-Preferred
+
+From now on, Header TPP-Decoupled-Preferred could be sent in requests:
+
+- Payment Initiation Request
+- Payment Cancellation  Request
+- Establish Consent Request
+- Start authorization Request
+- Establish Signing Basket Request.

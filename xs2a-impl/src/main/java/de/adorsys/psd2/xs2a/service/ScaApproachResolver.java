@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 @Slf4j
 @Service
@@ -56,25 +56,77 @@ public class ScaApproachResolver {
      * @return chosen ScaApproach to be used for authorisation
      */
     public ScaApproach resolveScaApproach() {
-        List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches(requestProviderService.getInstanceId());
-        ScaApproach firstScaApproach = getFirst(scaApproaches);
         Optional<Boolean> tppRedirectPreferredOptional = requestProviderService.resolveTppRedirectPreferred();
-        if (tppRedirectPreferredOptional.isEmpty()) {
-            return firstScaApproach;
+        Optional<Boolean> tppDecoupledPreferredOptional = requestProviderService.resolveTppDecoupledPreferred();
+
+        return resolveHeaders(tppRedirectPreferredOptional, tppDecoupledPreferredOptional);
+    }
+
+    private ScaApproach resolveHeaders(Optional<Boolean> tppRedirectPreferredOptional, Optional<Boolean> tppDecoupledPreferredOptional) {
+        List<ScaApproach> scaApproaches = aspspProfileService.getScaApproaches(requestProviderService.getInstanceId());
+        // Both empty use first in list
+        if (tppRedirectPreferredOptional.isEmpty() && tppDecoupledPreferredOptional.isEmpty()) {
+            return getFirst(scaApproaches);
         }
 
-        boolean tppRedirectPreferred = tppRedirectPreferredOptional.get();
+        boolean tppRedirectPreferred = tppRedirectPreferredOptional.orElse(false);
+        boolean tppDecoupledPreferred = tppDecoupledPreferredOptional.orElse(false);
+        // Choose not embedded if both true
+        if (tppRedirectPreferred && tppDecoupledPreferred) {
+            return getScaApproachByPreferredHeadersTrue(scaApproaches);
+        }
+
+        // only redirect is true - use redirect
         if (tppRedirectPreferred && scaApproaches.contains(REDIRECT)) {
             return REDIRECT;
         }
 
-        if (!tppRedirectPreferred
-                && REDIRECT == firstScaApproach
-                && scaApproaches.size() > 1) {
+        // only decoupled is true - use decoupled
+        if (tppDecoupledPreferred && scaApproaches.contains(DECOUPLED)) {
+            return DECOUPLED;
+        }
+
+        return getScaApproachByPreferredHeadersFalse(tppRedirectPreferredOptional, tppDecoupledPreferredOptional, scaApproaches);
+    }
+
+    private ScaApproach getScaApproachByPreferredHeadersFalse(Optional<Boolean> tppRedirectPreferredOptional,
+                                                              Optional<Boolean> tppDecoupledPreferredOptional,
+                                                              List<ScaApproach> scaApproaches) {
+        ScaApproach firstScaApproach = getFirst(scaApproaches);
+
+        // redirect empty - use decoupled
+        boolean tppDecoupledPreferred = tppDecoupledPreferredOptional.orElse(false);
+        boolean notDecoupled = tppRedirectPreferredOptional.isEmpty()
+                                   && !tppDecoupledPreferred
+                                   && DECOUPLED == firstScaApproach
+                                   && scaApproaches.size() > 1;
+
+        // decoupled empty - use redirect
+        boolean tppRedirectPreferred = tppRedirectPreferredOptional.orElse(false);
+        boolean notRedirect = tppDecoupledPreferredOptional.isEmpty()
+                                  && !tppRedirectPreferred
+                                  && REDIRECT == firstScaApproach
+                                  && scaApproaches.size() > 1;
+        if (notDecoupled || notRedirect) {
             return getSecond(scaApproaches);
         }
 
+        // both false - use embedded if possible
+        boolean bothNotEmpty = tppRedirectPreferredOptional.isPresent() && tppDecoupledPreferredOptional.isPresent();
+        boolean bothFalse = !tppDecoupledPreferred && !tppRedirectPreferred;
+        if (bothNotEmpty && bothFalse && scaApproaches.contains(EMBEDDED)) {
+            return EMBEDDED;
+        }
+
         return firstScaApproach;
+    }
+
+    private ScaApproach getScaApproachByPreferredHeadersTrue(List<ScaApproach> scaApproaches) {
+        if (getFirst(scaApproaches) != EMBEDDED || scaApproaches.size() == 1) {
+            return getFirst(scaApproaches);
+        } else {
+            return getSecond(scaApproaches);
+        }
     }
 
     /**
@@ -107,5 +159,4 @@ public class ScaApproachResolver {
     private ScaApproach getSecond(List<ScaApproach> scaApproaches) {
         return scaApproaches.get(1);
     }
-
 }

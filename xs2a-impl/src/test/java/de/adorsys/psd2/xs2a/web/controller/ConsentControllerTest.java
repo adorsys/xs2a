@@ -123,7 +123,7 @@ class ConsentControllerTest {
         //When:
         ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
                                                                         new byte[]{}, CORRECT_PSU_ID, null, null,
-                                                                        null, false, null, null,
+                                                                        null, false, null, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null, null);
@@ -147,7 +147,7 @@ class ConsentControllerTest {
         //When:
         assertThrows(IllegalArgumentException.class, () -> consentController.createConsent(null, null, consents, null, null,
                                                                                            new byte[]{}, CORRECT_PSU_ID, null, null,
-                                                                                           null, false, null, null,
+                                                                                           null, false, null, null, null,
                                                                                            EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                                            null, null, null, null, null,
                                                                                            null, null));
@@ -165,7 +165,7 @@ class ConsentControllerTest {
         //When:
         ResponseEntity responseEntity = consentController.createConsent(null, null, consents, null, null,
                                                                         new byte[]{}, WRONG_PSU_ID, null, null,
-                                                                        null, false, null, null,
+                                                                        null, false, null, null, null,
                                                                         EXPLICIT_PREFERRED, null, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null, null);
@@ -235,7 +235,7 @@ class ConsentControllerTest {
         // When
         ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, CONSENT_ID,
                                                                                     BODY, null, null, null, CORRECT_PSU_ID, null, null,
-                                                                                    null, null, null, null, null,
+                                                                                    null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null, null);
 
@@ -258,7 +258,7 @@ class ConsentControllerTest {
         // When
         ResponseEntity responseEntity = consentController.startConsentAuthorisation(null, WRONG_CONSENT_ID,
                                                                                     BODY, null, null, null, CORRECT_PSU_ID, null,
-                                                                                    null, null, null, null, null,
+                                                                                    null, null, null, null, null, null,
                                                                                     null, null, null, null, null,
                                                                                     null, null, null, null, null, null, null);
 
