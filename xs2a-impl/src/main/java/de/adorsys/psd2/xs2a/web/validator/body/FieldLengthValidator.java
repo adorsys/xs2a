@@ -34,16 +34,19 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 public class FieldLengthValidator {
     private final ErrorBuildingService errorBuildingService;
 
-    public void checkFieldForMaxLength(String fieldToCheck, String fieldName, ValidationObject validationObject, MessageError messageError) {
-        if (validationObject.isNone() && Objects.nonNull(fieldToCheck)) {
+    public void checkFieldForMaxLength(String fieldToCheck, String fieldName, ValidationObject validationObject,
+                                       MessageError messageError) {
+        if (isFieldExtra(validationObject, fieldToCheck)) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EXTRA_FIELD, fieldName));
-        } else if (validationObject.isRequired()) {
-            if (StringUtils.isBlank(fieldToCheck)) {
-                errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EMPTY_FIELD, fieldName));
-            } else {
-                checkFieldForMaxLength(fieldToCheck, fieldName, validationObject.getMaxLength(), messageError);
-            }
-        } else if (validationObject.isOptional() && StringUtils.isNotBlank(fieldToCheck)) {
+            return;
+        }
+
+        if (isFieldMissing(validationObject, fieldToCheck)) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_EMPTY_FIELD, fieldName));
+            return;
+        }
+
+        if (isFieldPresent(validationObject, fieldToCheck)) {
             checkFieldForMaxLength(fieldToCheck, fieldName, validationObject.getMaxLength(), messageError);
         }
     }
@@ -52,5 +55,18 @@ public class FieldLengthValidator {
         if (fieldToCheck.length() > maxLength) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_OVERSIZE_FIELD, fieldName, maxLength));
         }
+    }
+
+    private boolean isFieldExtra(ValidationObject validationObject, String fieldToCheck) {
+        return validationObject.isNone() && Objects.nonNull(fieldToCheck);
+    }
+
+    private boolean isFieldMissing(ValidationObject validationObject, String fieldToCheck) {
+        return validationObject.isRequired() && StringUtils.isBlank(fieldToCheck);
+    }
+
+    private boolean isFieldPresent(ValidationObject validationObject, String fieldToCheck) {
+        boolean isNotExtra = validationObject.isRequired() || validationObject.isOptional();
+        return isNotExtra && StringUtils.isNotBlank(fieldToCheck);
     }
 }
