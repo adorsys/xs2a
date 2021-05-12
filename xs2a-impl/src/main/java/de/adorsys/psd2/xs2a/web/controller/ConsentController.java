@@ -66,13 +66,13 @@ public class ConsentController implements ConsentApi {
     @Override
     public ResponseEntity createConsent(UUID xRequestID, String psuIpAddress, Consents body, String digest, String signature,
                                         byte[] tppSignatureCertificate, String psuId, String psuIdType, String psuCorporateId,
-                                        String psuCorporateIdType, Boolean tppRedirectPreferred, String tppRedirectUri, String tppNokRedirectUri,
+                                        String psuCorporateIdType, Boolean tppRedirectPreferred, Boolean tppDecoupledPreferred,
+                                        String tppRedirectUri, String tppNokRedirectUri,
                                         Boolean tppExplicitAuthorisationPreferred, String tppBrandLoggingInformation,
                                         String tppNotificationUri, String tppNotificationContentPreferred, String psuIpPort,
                                         String psuAccept, String psuAcceptCharset, String psuAcceptEncoding,
                                         String psuAcceptLanguage, String psuUserAgent, String psuHttpMethod,
                                         UUID psuDeviceId, String psuGeoLocation) {
-
         TppRedirectUri xs2aTppRedirectUri = tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectUri, tppNokRedirectUri);
         TppNotificationData tppNotificationData = notificationSupportedModeService.getTppNotificationData(tppNotificationContentPreferred, tppNotificationUri);
 
@@ -118,7 +118,7 @@ public class ConsentController implements ConsentApi {
     public ResponseEntity startConsentAuthorisation(UUID xRequestID, String consentId, Object body,
                                                     String digest, String signature, byte[] tpPSignatureCertificate,
                                                     String psuId, String psUIDType, String psUCorporateID,
-                                                    String psUCorporateIDType, Boolean tpPRedirectPreferred,
+                                                    String psUCorporateIDType, Boolean tppRedirectPreferred, Boolean tppDecoupledPreferred,
                                                     String tpPRedirectURI, String tpPNokRedirectURI,
                                                     String tpPNotificationURI, String tpPNotificationContentPreferred,
                                                     String psUIPAddress, String psUIPPort, String psUAccept,

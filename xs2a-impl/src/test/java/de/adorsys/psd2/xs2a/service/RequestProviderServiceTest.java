@@ -33,8 +33,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,6 +63,8 @@ class RequestProviderServiceTest {
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tpp-brand-logging-information";
     private static final String TPP_BRAND_LOGGING_INFORMATION_VALUE = "tppBrandLoggingInformation";
     private static final String INSTANCE_ID = "bank1";
+    private static final String TPP_REDIRECT_PREFERRED_HEADER = "tpp-redirect-preferred";
+    private static final String TPP_DECOUPLED_PREFERRED_HEADER = "tpp-decoupled-preferred";
 
     @InjectMocks
     private RequestProviderService requestProviderService;
@@ -72,6 +76,55 @@ class RequestProviderServiceTest {
     @BeforeEach
     void setUp() {
         PSU_ID_DATA = buildPsuIdData();
+    }
+
+    @Test
+    void resolveTppRedirectPreferred() {
+        // Given
+        when(httpServletRequest.getHeader(TPP_REDIRECT_PREFERRED_HEADER)).thenReturn("true");
+
+        // When
+        Optional<Boolean> actual = requestProviderService.resolveTppRedirectPreferred();
+
+        // Then
+        assertThat(actual).contains(true);
+    }
+
+    @Test
+    void resolveTppRedirectPreferred_null() {
+        // Given
+        when(httpServletRequest.getHeader(TPP_REDIRECT_PREFERRED_HEADER)).thenReturn(null);
+
+        // When
+        Optional<Boolean> actual = requestProviderService.resolveTppRedirectPreferred();
+
+        // Then
+        assertThat(actual).isEmpty();
+    }
+
+
+    @Test
+    void resolveTppDecoupledPreferred() {
+        // Given
+        when(httpServletRequest.getHeader(TPP_DECOUPLED_PREFERRED_HEADER)).thenReturn("true");
+
+        // When
+        Optional<Boolean> actual = requestProviderService.resolveTppDecoupledPreferred();
+
+        // Then
+        assertThat(actual).contains(true);
+    }
+
+    @Test
+    void resolveTppDecoupledPreferred_null() {
+        // Given
+        when(httpServletRequest.getHeader(TPP_DECOUPLED_PREFERRED_HEADER)).thenReturn(null);
+
+        // When
+        Optional<Boolean> actual = requestProviderService.resolveTppDecoupledPreferred();
+
+        // Then
+        assertThat(actual).isEmpty();
     }
 
     @Test

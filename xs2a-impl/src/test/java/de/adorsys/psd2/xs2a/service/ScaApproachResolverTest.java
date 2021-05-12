@@ -140,6 +140,231 @@ class ScaApproachResolverTest {
     }
 
     @Test
+    void resolveScaApproach_noHeaders() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(REDIRECT, DECOUPLED, EMBEDDED));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.empty());
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(REDIRECT);
+    }
+
+    @Test
+    void resolveScaApproach_bothTrue() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(true));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(DECOUPLED);
+    }
+
+    @Test
+    void resolveScaApproach_bothTrueDecoupledFirst() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(DECOUPLED, REDIRECT, EMBEDDED));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(true));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(DECOUPLED);
+    }
+
+    @Test
+    void resolveScaApproach_bothTrueRedirectFirst() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(REDIRECT, DECOUPLED, EMBEDDED));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(true));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(REDIRECT);
+    }
+
+    @Test
+    void resolveScaApproach_RedirectTrue() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.empty());
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(REDIRECT);
+    }
+
+    @Test
+    void resolveScaApproach_RedirectTrueDecoupledFalse() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(REDIRECT);
+    }
+
+    @Test
+    void resolveScaApproach_DecoupledTrue() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.empty());
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(DECOUPLED);
+    }
+
+    @Test
+    void resolveScaApproach_RedirectFalseDecoupledTrue() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(true));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(DECOUPLED);
+    }
+
+    @Test
+    void resolveScaApproach_RedirectFalse() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(EMBEDDED);
+    }
+
+    @Test
+    void resolveScaApproach_DecoupledFalse() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(EMBEDDED, DECOUPLED, REDIRECT));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(EMBEDDED);
+    }
+
+    @Test
+    void resolveScaApproach_RedirectFalseDecoupled() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(DECOUPLED, EMBEDDED, REDIRECT));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(DECOUPLED);
+    }
+
+    @Test
+    void resolveScaApproach_DecoupledFalseRedirect() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(REDIRECT, DECOUPLED, EMBEDDED));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(REDIRECT);
+    }
+
+    @Test
+    void resolveScaApproach_RedirectFalseAndFirst() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(REDIRECT, EMBEDDED, DECOUPLED));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(EMBEDDED);
+    }
+
+    @Test
+    void resolveScaApproach_DecoupledFalseAndFirst() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(DECOUPLED, REDIRECT, EMBEDDED));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.empty());
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(REDIRECT);
+    }
+
+    @Test
+    void resolveScaApproach_bothFalse() {
+        //Given
+        when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
+        when(aspspProfileService.getScaApproaches(INSTANCE_ID)).thenReturn(buildScaApproaches(DECOUPLED, REDIRECT, EMBEDDED));
+        when(requestProviderService.resolveTppRedirectPreferred()).thenReturn(Optional.of(false));
+        when(requestProviderService.resolveTppDecoupledPreferred()).thenReturn(Optional.of(false));
+
+        //When
+        ScaApproach actualResult = scaApproachResolver.resolveScaApproach();
+
+        //Then
+        assertThat(actualResult).isEqualTo(EMBEDDED);
+    }
+
+    @Test
     void resolveScaApproach_TppRedirectPreferredTrue_Embedded_shouldReturn_Embedded() {
         //Given
         when(requestProviderService.getInstanceId()).thenReturn(INSTANCE_ID);
