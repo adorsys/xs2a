@@ -38,8 +38,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -65,7 +68,7 @@ class GetBalancesReportValidatorTest {
     @Mock
     private OauthConsentValidator oauthConsentValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -134,6 +137,25 @@ class GetBalancesReportValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent accountConsent = buildAisConsent(INVALID_TPP_INFO);
+        GetAccountBalanceRequestObject getAccountBalanceRequestObject =
+            new GetAccountBalanceRequestObject(accountConsent, ACCOUNT_ID, REQUEST_URI);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getBalancesReportValidator.buildWarningMessages(getAccountBalanceRequestObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(aisAccountTppInfoValidator);
+        verifyNoInteractions(accountReferenceAccessValidator);
+        verifyNoInteractions(oauthConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

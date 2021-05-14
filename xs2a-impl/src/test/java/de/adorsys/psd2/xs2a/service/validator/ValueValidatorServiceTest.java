@@ -42,6 +42,26 @@ class ValueValidatorServiceTest {
     }
 
     @Test
+    void validateAccountIdTransactionId() {
+        //When Then:
+        valueValidatorService.validateAccountIdTransactionId(ACCOUNT_ID, TRANSACTION_ID);
+    }
+
+    @Test
+    void shouldFail_validateAccountIdTransactionId_accountIdNull() {
+        //When Then:
+        assertThatThrownBy(() -> valueValidatorService.validateAccountIdTransactionId(null, TRANSACTION_ID))
+            .isInstanceOf(ValidationException.class);
+    }
+
+    @Test
+    void shouldFail_validateAccountIdTransactionId_transactionIdNull() {
+        //When Then:
+        assertThatThrownBy(() -> valueValidatorService.validateAccountIdTransactionId(ACCOUNT_ID, null))
+            .isInstanceOf(ValidationException.class);
+    }
+
+    @Test
     void validate_AccountAndTransaction() {
         //Given:
         ValidationGroup fields = new ValidationGroup();

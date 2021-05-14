@@ -37,8 +37,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -64,7 +67,7 @@ class GetTransactionDetailsValidatorTest {
     @Mock
     private OauthConsentValidator oauthConsentValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -127,7 +130,8 @@ class GetTransactionDetailsValidatorTest {
             .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
 
         // When
-        ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(aisConsent, ACCOUNT_ID, REQUEST_URI));
+        ValidationResult validationResult =
+            getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(aisConsent, ACCOUNT_ID, REQUEST_URI));
 
         // Then
         verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
@@ -135,6 +139,25 @@ class GetTransactionDetailsValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent aisConsent = getAisConsent();
+        CommonAccountTransactionsRequestObject commonAccountTransactionsRequestObject =
+            new CommonAccountTransactionsRequestObject(aisConsent, ACCOUNT_ID, REQUEST_URI);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getTransactionDetailsValidator.buildWarningMessages(commonAccountTransactionsRequestObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(aisAccountTppInfoValidator);
+        verifyNoInteractions(accountReferenceAccessValidator);
+        verifyNoInteractions(oauthConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {
