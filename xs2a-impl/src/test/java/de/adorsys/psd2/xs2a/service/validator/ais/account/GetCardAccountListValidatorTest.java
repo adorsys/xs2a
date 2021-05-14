@@ -36,11 +36,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetCardAccountListValidatorTest {
@@ -61,7 +63,7 @@ class GetCardAccountListValidatorTest {
     @Mock
     private AisAccountTppInfoValidator aisAccountTppInfoValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -184,6 +186,24 @@ class GetCardAccountListValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(FORBIDDEN_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent aisConsent = buildAisConsent(TPP_INFO);
+        GetCardAccountListConsentObject getCardAccountListConsentObject =
+            new GetCardAccountListConsentObject(aisConsent, REQUEST_URI);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getCardAccountListValidator.buildWarningMessages(getCardAccountListConsentObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(oauthConsentValidator);
+        verifyNoInteractions(aisAccountTppInfoValidator);
     }
 
     private AisConsent buildAisConsent(TppInfo tppInfo) {

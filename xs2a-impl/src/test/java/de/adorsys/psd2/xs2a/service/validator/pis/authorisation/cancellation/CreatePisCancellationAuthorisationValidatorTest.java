@@ -36,14 +36,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePisCancellationAuthorisationValidatorTest {
@@ -95,9 +95,9 @@ class CreatePisCancellationAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -109,9 +109,9 @@ class CreatePisCancellationAuthorisationValidatorTest {
         ValidationResult validationResult = createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationObject(commonPaymentResponse, PSU_ID_DATA, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(PAYMENT_PRODUCT_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(PAYMENT_PRODUCT_VALIDATION_ERROR);
     }
 
     @Test
@@ -125,9 +125,9 @@ class CreatePisCancellationAuthorisationValidatorTest {
         ValidationResult validationResult = createPisCancellationAuthorisationValidator.validate(new CreatePisCancellationAuthorisationObject(commonPaymentResponse, PSU_ID_DATA, SINGLE, CORRECT_PAYMENT_PRODUCT));
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(PSU_CREDENTIALS_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(PSU_CREDENTIALS_INVALID_ERROR);
     }
 
     @Test
@@ -142,16 +142,17 @@ class CreatePisCancellationAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(TPP_VALIDATION_ERROR);
     }
 
     @Test
     void validate_withFinalisedAuthorisation_shouldReturnStatusInvalidError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponseWithPsuIdDataAndAuthorisation(TPP_INFO);
-        CreatePisCancellationAuthorisationObject createPisCancellationAuthorisationObject = new CreatePisCancellationAuthorisationObject(commonPaymentResponse, PSU_ID_DATA, SINGLE, CORRECT_PAYMENT_PRODUCT);
+        CreatePisCancellationAuthorisationObject createPisCancellationAuthorisationObject =
+            new CreatePisCancellationAuthorisationObject(commonPaymentResponse, PSU_ID_DATA, SINGLE, CORRECT_PAYMENT_PRODUCT);
         when(authorisationStatusChecker.isFinalised(any(PsuIdData.class), anyList(), eq(AuthorisationType.PIS_CANCELLATION))).thenReturn(true);
         when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
 
@@ -161,9 +162,27 @@ class CreatePisCancellationAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(createPisCancellationAuthorisationObject.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(STATUS_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(STATUS_INVALID_ERROR);
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponseWithPsuIdDataAndAuthorisation(TPP_INFO);
+        CreatePisCancellationAuthorisationObject createPisCancellationAuthorisationObject =
+            new CreatePisCancellationAuthorisationObject(commonPaymentResponse, PSU_ID_DATA, SINGLE, CORRECT_PAYMENT_PRODUCT);
+
+        //When
+        Set<TppMessageInformation> actual =
+            createPisCancellationAuthorisationValidator.buildWarningMessages(createPisCancellationAuthorisationObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(authorisationPsuDataChecker);
+        verifyNoInteractions(authorisationStatusChecker);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {
@@ -192,5 +211,4 @@ class CreatePisCancellationAuthorisationValidatorTest {
 
         return pisCommonPaymentResponse;
     }
-
 }

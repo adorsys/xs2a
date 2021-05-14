@@ -33,11 +33,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
@@ -144,6 +146,25 @@ class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
+        GetPaymentInitiationAuthorisationScaStatusPO getPaymentInitiationAuthorisationScaStatusPO =
+            new GetPaymentInitiationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getPaymentInitiationAuthorisationScaStatusValidator.buildWarningMessages(getPaymentInitiationAuthorisationScaStatusPO);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisAuthorisationValidator);
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(requestProviderService);
+        verifyNoInteractions(oauthPaymentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

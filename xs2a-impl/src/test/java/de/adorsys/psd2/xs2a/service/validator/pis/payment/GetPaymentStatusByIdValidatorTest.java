@@ -33,10 +33,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetPaymentStatusByIdValidatorTest {
@@ -181,6 +183,24 @@ class GetPaymentStatusByIdValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(ACCEPT_HEADER_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        GetPaymentStatusByIdPO getPaymentStatusByIdPO =
+            new GetPaymentStatusByIdPO(commonPaymentResponse, PAYMENT_TYPE, PAYMENT_PRODUCT);
+
+        //When
+        Set<TppMessageInformation> actual = getPaymentStatusByIdValidator.buildWarningMessages(getPaymentStatusByIdPO);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(requestProviderService);
+        verifyNoInteractions(oauthPaymentValidator);
+        verifyNoInteractions(transactionStatusAcceptHeaderValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

@@ -23,18 +23,20 @@ import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_EXPIRED;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,21 +52,14 @@ class DownloadTransactionsReportValidatorTest {
     @Mock
     private AisAccountTppInfoValidator aisAccountTppInfoValidator;
 
-    private JsonReader jsonReader;
+    private final JsonReader jsonReader = new JsonReader();
     private DownloadTransactionListRequestObject requestObject;
-
-    @BeforeEach
-    void setUp() {
-        jsonReader = new JsonReader();
-
-        when(aisAccountTppInfoValidator.validateTpp(any()))
-            .thenReturn(ValidationResult.valid());
-    }
 
     @Test
     void testValidate_shouldReturnValid() {
         // Given
         requestObject = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-download-object-valid.json", DownloadTransactionListRequestObject.class);
+        when(aisAccountTppInfoValidator.validateTpp(requestObject.getTppInfo())).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult actual = downloadTransactionsReportValidator.validate(requestObject);
@@ -77,6 +72,7 @@ class DownloadTransactionsReportValidatorTest {
     void testValidateExpired_shouldReturnExpiredError() {
         // Given
         requestObject = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-download-object-expired.json", DownloadTransactionListRequestObject.class);
+        when(aisAccountTppInfoValidator.validateTpp(requestObject.getTppInfo())).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult actual = downloadTransactionsReportValidator.validate(requestObject);
@@ -90,6 +86,7 @@ class DownloadTransactionsReportValidatorTest {
     void testValidateInvalid_shouldReturnInvalidError() {
         // Given
         requestObject = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-download-object-invalid.json", DownloadTransactionListRequestObject.class);
+        when(aisAccountTppInfoValidator.validateTpp(requestObject.getTppInfo())).thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult actual = downloadTransactionsReportValidator.validate(requestObject);
@@ -97,5 +94,18 @@ class DownloadTransactionsReportValidatorTest {
         // Then
         assertTrue(actual.isNotValid());
         assertEquals(AIS_CONSENT_INVALID_ERROR, actual.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        requestObject = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-download-object-valid.json", DownloadTransactionListRequestObject.class);
+
+        //When
+        Set<TppMessageInformation> actual = downloadTransactionsReportValidator.buildWarningMessages(requestObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aisAccountTppInfoValidator);
     }
 }

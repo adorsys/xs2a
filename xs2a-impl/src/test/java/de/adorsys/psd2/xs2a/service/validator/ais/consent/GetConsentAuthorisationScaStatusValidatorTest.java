@@ -32,10 +32,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetConsentAuthorisationScaStatusValidatorTest {
@@ -101,6 +103,24 @@ class GetConsentAuthorisationScaStatusValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent aisConsent = buildAccountConsent(INVALID_TPP_INFO);
+        GetConsentAuthorisationScaStatusPO getConsentAuthorisationScaStatusPO =
+            new GetConsentAuthorisationScaStatusPO(aisConsent, AUTHORISATION_ID);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getConsentAuthorisationScaStatusValidator.buildWarningMessages(getConsentAuthorisationScaStatusPO);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aisAuthorisationValidator);
+        verifyNoInteractions(aisConsentTppInfoValidator);
+        verifyNoInteractions(oauthConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

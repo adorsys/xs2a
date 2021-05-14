@@ -44,16 +44,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.PIS_CANCELLATION;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdatePisCancellationPsuDataValidatorTest {
@@ -467,6 +468,28 @@ class UpdatePisCancellationPsuDataValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(PIS_SERVICE_INVALID, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse =
+            buildPisCommonPaymentResponse(TPP_INFO, ScaStatus.SCAMETHODSELECTED);
+        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        UpdatePaymentPsuDataPO updatePaymentPsuDataPO = new UpdatePaymentPsuDataPO(commonPaymentResponse, updateRequest);
+
+        //When
+        Set<TppMessageInformation> actual =
+            updatePisCancellationPsuDataValidator.buildWarningMessages(updatePaymentPsuDataPO);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(pisEndpointAccessCheckerService);
+        verifyNoInteractions(pisAuthorisationValidator);
+        verifyNoInteractions(pisAuthorisationStatusValidator);
+        verifyNoInteractions(pisPsuDataUpdateAuthorisationCheckerValidator);
+        verifyNoInteractions(authorisationStageCheckValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

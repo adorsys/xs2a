@@ -38,15 +38,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.AIS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateConsentPsuDataValidatorTest {
@@ -391,6 +392,28 @@ class UpdateConsentPsuDataValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(AIS_SERVICE_INVALID, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent aisConsent =
+            jsonReader.getObjectFromFile("json/service/ais-consent-sca-method-selected-status.json", AisConsent.class);
+        UpdateConsentPsuDataReq updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        UpdateConsentPsuDataRequestObject updateConsentPsuDataRequestObject =
+            new UpdateConsentPsuDataRequestObject(aisConsent, updateRequest);
+
+        //When
+        Set<TppMessageInformation> actual =
+            updateConsentPsuDataValidator.buildWarningMessages(updateConsentPsuDataRequestObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aisConsentTppInfoValidator);
+        verifyNoInteractions(aisAuthorisationValidator);
+        verifyNoInteractions(aisAuthorisationStatusValidator);
+        verifyNoInteractions(psuDataUpdateAuthorisationCheckerValidator);
+        verifyNoInteractions(authorisationStageCheckValidator);
     }
 
     private UpdateConsentPsuDataReq buildUpdateRequest(String authorisationId, PsuIdData psuIdData) {
