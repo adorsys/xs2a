@@ -1,0 +1,30 @@
+{
+  "accounts": [
+    {
+      "resourceId": "11111-999999999" ,
+      "iban": "DE89370400440532013000" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "balances": [
+    {
+      "resourceId": "11111-999999999" ,
+      "iban": "DE89370400440532013000" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "transactions": [
+    {
+      "resourceId": "11111-999999999" ,
+      "iban": "DE89370400440532013000" ,
+      "currency": "EUR"
+    }
+  ] ,
+  "additionalInformationAccess": {
+    "ownerName": [
+      {
+        "resourceId": "11111-999999999"
+      }
+    ]
+  }
+}

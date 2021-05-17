@@ -1,0 +1,62 @@
+{
+  "id": "10818bb2-8fb1-485f-bd85-5af90dee99db",
+  "consentData": {
+    "cardNumber": "1234567891234",
+    "cardExpiryDate": "2020-12-31",
+    "cardInformation": "MyMerchant Loyalty Card",
+    "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank."
+  },
+  "internalRequestId": "1234-5678-9012-3456",
+  "consentStatus": "VALID",
+  "frequencyPerDay": 0,
+  "recurringIndicator": true,
+  "multilevelScaRequired": false,
+  "expireDate": "2025-12-31",
+  "lastActionDate": "2019-12-31",
+  "consentTppInformation": {
+    "tppRedirectPreferred": true,
+    "tppNotificationUri": "http://super-redirect.info",
+    "tppInfo": {
+      "tppName": "",
+      "tppRoles": [
+        "AISP",
+        "PISP",
+        "PIISP"
+      ],
+      "authorityId": "DE-FAKENCA",
+      "authorityName": "Trust Service Provider AG",
+      "country": "Germany",
+      "organisation": "Fictional Corporation AG",
+      "organisationUnit": "Information Technology",
+      "city": "Nuremberg",
+      "state": "Bayern"
+    },
+    "tppNotificationSupportedModes": [
+    ]
+  },
+  "psuIdDataList": [
+    {
+      "psuId": "marion.mueller",
+      "psuIdType": "PSU ID TYPE",
+      "psuCorporateId": "PSU CORPORATE ID",
+      "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+      "psuIpAddress": "PSU IP ADDRESS"
+    }
+  ],
+  "authorisations": [
+    {
+      "id": "a8fc1f02-3639-4528-bd19-3eacf1c67038"
+    }
+  ],
+  "aspspAccountAccesses": {
+    "accounts": [
+      {
+        "currency": "EUR",
+        "iban": "DE15500105172295759744"
+      }
+    ]
+  },
+  "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
+  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
+  "consentType": "PIIS_TPP"
+}
