@@ -40,13 +40,15 @@ class AdditionalInformationSupportedServiceTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
 
-    JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
 
     @Test
     void checkSupportedAccountTrustedBeneficiariesInformation_supported() {
         // Given
-        CreateConsentReq input = jsonReader.getObjectFromFile("json/service/create-consent-req-with-beneficiaries.json", CreateConsentReq.class);
+        CreateConsentReq input =
+            jsonReader.getObjectFromFile("json/service/create-consent-req-with-beneficiaries.json",
+                CreateConsentReq.class);
         when(aspspProfileService.isTrustedBeneficiariesSupported()).thenReturn(true);
 
         // When
@@ -59,8 +61,11 @@ class AdditionalInformationSupportedServiceTest {
     @Test
     void checkSupportedAccountTrustedBeneficiariesInformation_notSupportedAndPresent() {
         // Given
-        CreateConsentReq input = jsonReader.getObjectFromFile("json/service/create-consent-req-with-beneficiaries.json", CreateConsentReq.class);
-        CreateConsentReq expected = jsonReader.getObjectFromFile("json/service/create-consent-req.json", CreateConsentReq.class);
+        CreateConsentReq input =
+            jsonReader.getObjectFromFile("json/service/create-consent-req-with-beneficiaries.json",
+                CreateConsentReq.class);
+        CreateConsentReq expected =
+            jsonReader.getObjectFromFile("json/service/create-consent-req.json", CreateConsentReq.class);
         when(aspspProfileService.isTrustedBeneficiariesSupported()).thenReturn(false);
 
         // When
@@ -73,7 +78,8 @@ class AdditionalInformationSupportedServiceTest {
     @Test
     void checkSupportedAccountTrustedBeneficiariesInformation_notSupportedAndNotPresent() {
         // Given
-        CreateConsentReq input = jsonReader.getObjectFromFile("json/service/create-consent-req.json", CreateConsentReq.class);
+        CreateConsentReq input =
+            jsonReader.getObjectFromFile("json/service/create-consent-req.json", CreateConsentReq.class);
         when(aspspProfileService.isTrustedBeneficiariesSupported()).thenReturn(false);
 
         // When
@@ -84,10 +90,19 @@ class AdditionalInformationSupportedServiceTest {
     }
 
     private static Stream<Arguments> params() {
-        return Stream.of(Arguments.arguments("json/service/create-consent-req.json", "json/service/create-consent-req-with-owner-name.json"),
-                         Arguments.arguments("json/service/create-consent-req-with-available-accounts.json", "json/service/create-consent-req-with-available-accounts-owner-name.json"),
-                         Arguments.arguments("json/service/create-consent-req-with-balance.json", "json/service/create-consent-req-with-available-accounts-with-balance-owner-name.json"),
-                         Arguments.arguments("json/service/create-consent-req-with-all-psd2.json", "json/service/create-consent-req-with-all-psd2-owner-name.json")
+        String createConsentReqPath = "json/service/create-consent-req.json";
+        String createConsentReqOwnerNamePath = "json/service/create-consent-req-with-owner-name.json";
+        String createConsentReqAvailAccountsPath = "json/service/create-consent-req-with-available-accounts.json";
+        String createConsentReqAvailAccountsOwnerNamePath = "json/service/create-consent-req-with-available-accounts-owner-name.json";
+        String createConsentReqBalancePath = "json/service/create-consent-req-with-balance.json";
+        String createConsentReqBalanceOwnerNamePath = "json/service/create-consent-req-with-available-accounts-with-balance-owner-name.json";
+        String createConsentReqAllPsd2Path = "json/service/create-consent-req-with-all-psd2.json";
+        String createConsentReqAllPsd2OwnerNamePath = "json/service/create-consent-req-with-all-psd2-owner-name.json";
+
+        return Stream.of(Arguments.arguments(createConsentReqPath, createConsentReqOwnerNamePath),
+                         Arguments.arguments(createConsentReqAvailAccountsPath, createConsentReqAvailAccountsOwnerNamePath),
+                         Arguments.arguments(createConsentReqBalancePath, createConsentReqBalanceOwnerNamePath),
+                         Arguments.arguments(createConsentReqAllPsd2Path, createConsentReqAllPsd2OwnerNamePath)
         );
     }
 

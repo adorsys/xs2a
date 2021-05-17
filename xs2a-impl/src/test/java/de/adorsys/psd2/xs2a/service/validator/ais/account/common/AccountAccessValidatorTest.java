@@ -31,7 +31,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountAccessValidatorTest {
 
@@ -56,13 +56,19 @@ class AccountAccessValidatorTest {
 
         ValidationResult actual = accountAccessValidator.validate(aisConsent, withBalance);
 
-        assertTrue(actual.isValid());
+        assertThat(actual.isValid()).isTrue();
     }
 
     private static Stream<Arguments> params() {
-        return Stream.of(Arguments.arguments("json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance.json", true),
-                         Arguments.arguments("json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance_with_owner_name.json", true),
-                         Arguments.arguments("json/service/validator/ais/account/xs2a-account-consent.json", false)
+        String xs2aAccountConsentAllAccsBalancePath =
+            "json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance.json";
+        String xs2aAccountConsentAllAccsBalanceOwnerNamePath =
+            "json/service/validator/ais/account/xs2a-account-consent-all-available-accounts-with-balance_with_owner_name.json";
+        String xs2aAccountConsentPath = "json/service/validator/ais/account/xs2a-account-consent.json";
+
+        return Stream.of(Arguments.arguments(xs2aAccountConsentAllAccsBalancePath, true),
+                         Arguments.arguments(xs2aAccountConsentAllAccsBalanceOwnerNamePath, true),
+                         Arguments.arguments(xs2aAccountConsentPath, false)
         );
     }
 
@@ -76,33 +82,37 @@ class AccountAccessValidatorTest {
         ValidationResult actual = accountAccessValidator.validate(aisConsent, true);
 
         // Then
-        assertTrue(actual.isNotValid());
-        assertEquals(AIS_VALIDATION_ERROR, actual.getMessageError());
+        assertThat(actual.isNotValid()).isTrue();
+        assertThat(actual.getMessageError()).isEqualTo(AIS_VALIDATION_ERROR);
     }
 
     @Test
     void testValidate_globalConsent_withBalanceAndNullBalances_shouldReturnError() {
         // Given
-        aisConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AisConsent.class);
-        assertNull(aisConsent.getAccess().getBalances());
+        aisConsent =
+            jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json",
+                AisConsent.class);
+        assertThat(aisConsent.getAccess().getBalances()).isNull();
 
         // When
         ValidationResult actual = accountAccessValidator.validate(aisConsent, true);
 
         // Then
-        assertTrue(actual.isValid());
+        assertThat(actual.isValid()).isTrue();
     }
 
     @Test
     void testValidate_globalConsent_withoutBalanceAndNullBalances_shouldReturnError() {
         // Given
-        aisConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json", AisConsent.class);
-        assertNull(aisConsent.getAccess().getBalances());
+        aisConsent =
+            jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-consent-global.json",
+                AisConsent.class);
+        assertThat(aisConsent.getAccess().getBalances()).isNull();
 
         // When
         ValidationResult actual = accountAccessValidator.validate(aisConsent, false);
 
         // Then
-        assertTrue(actual.isValid());
+        assertThat(actual.isValid()).isTrue();
     }
 }

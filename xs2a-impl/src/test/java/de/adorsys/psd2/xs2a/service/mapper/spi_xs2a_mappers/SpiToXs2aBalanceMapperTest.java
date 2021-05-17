@@ -16,12 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.domain.BalanceType;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
+import de.adorsys.psd2.xs2a.spi.domain.account.SpiBalanceType;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -29,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aBalanceMapperImpl.class, SpiToXs2aAmountMapperImpl.class})
@@ -38,7 +42,7 @@ class SpiToXs2aBalanceMapperTest {
     @Autowired
     private SpiToXs2aBalanceMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private SpiAccountBalance spiAccountBalance;
     private Xs2aBalance expectedBalance;
 
@@ -52,28 +56,61 @@ class SpiToXs2aBalanceMapperTest {
 
     @Test
     void mapToXs2aBalance() {
-        Xs2aBalance xs2aBalance = mapper.mapToXs2aBalance(spiAccountBalance);
+        //When
+        Xs2aBalance actual = mapper.mapToXs2aBalance(spiAccountBalance);
 
-        assertEquals(expectedBalance, xs2aBalance);
+        //Then
+        assertThat(actual).isEqualTo(expectedBalance);
     }
 
     @Test
     void mapToXs2aBalance_nullValue() {
-        assertNull(mapper.mapToXs2aBalance(null));
+        //When
+        Xs2aBalance actual = mapper.mapToXs2aBalance(null);
+
+        //Then
+        assertThat(actual).isNull();
     }
 
     @Test
     void mapToXs2aBalanceList() {
-        List<Xs2aBalance> Xs2aBalanceList = mapper.mapToXs2aBalanceList(Collections.singletonList(spiAccountBalance));
+        //When
+        List<Xs2aBalance> actual = mapper.mapToXs2aBalanceList(Collections.singletonList(spiAccountBalance));
 
-        assertEquals(1, Xs2aBalanceList.size());
-        assertEquals(expectedBalance, Xs2aBalanceList.get(0));
+        //Then
+        assertThat(actual)
+            .asList()
+            .isNotEmpty()
+            .hasSize(1)
+            .contains(expectedBalance);
     }
 
     @Test
     void mapToXs2aBalanceList_nullValue() {
-        List<Xs2aBalance> xs2aBalances = mapper.mapToXs2aBalanceList(null);
-        assertNotNull(xs2aBalances);
-        assertTrue(xs2aBalances.isEmpty());
+        //When
+        List<Xs2aBalance> actual = mapper.mapToXs2aBalanceList(null);
+
+        //Then
+        assertThat(actual)
+            .isEmpty();
+    }
+
+    @Test
+    void mapToSpiBalanceType_nullInput() {
+        //When
+        BalanceType actual = mapper.mapToSpiBalanceType(null);
+
+        //Then
+        assertThat(actual).isNull();
+    }
+
+    @ParameterizedTest
+    @EnumSource(SpiBalanceType.class)
+    void mapToSpiBalanceType(SpiBalanceType spiBalanceType) {
+        //When
+        BalanceType actual = mapper.mapToSpiBalanceType(spiBalanceType);
+
+        //Then
+        assertThat(actual.name()).isEqualTo(spiBalanceType.name());
     }
 }
