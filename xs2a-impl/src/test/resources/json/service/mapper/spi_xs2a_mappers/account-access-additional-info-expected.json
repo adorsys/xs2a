@@ -1,0 +1,9 @@
+{
+  "accounts": [ ],
+  "balances": [ ],
+  "transactions": [ ],
+  "additionalInformationAccess": {
+    "ownerName": [ ],
+    "trustedBeneficiaries": [ ]
+  }
+}

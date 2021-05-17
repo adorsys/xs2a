@@ -2,7 +2,12 @@
 
 == Table of Contents
 
+* Increased test coverage
 * Added new optional Header TPP-Decoupled-Preferred
+
+== Increased test coverage
+
+Increased test coverage for mapper classes
 
 ==  Added new optional Header TPP-Decoupled-Preferred
 
