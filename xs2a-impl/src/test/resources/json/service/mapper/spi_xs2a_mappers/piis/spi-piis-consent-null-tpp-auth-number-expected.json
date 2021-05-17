@@ -1,0 +1,28 @@
+{
+  "id": "10818bb2-8fb1-485f-bd85-5af90dee99db",
+  "recurringIndicator": true,
+  "lastActionDate": "2019-12-31",
+  "expireDate": "2025-12-31",
+  "psuData": [
+    {
+    "psuId": "marion.mueller",
+    "psuIdType": "PSU ID TYPE",
+    "psuCorporateId": "PSU CORPORATE ID",
+    "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+    "psuIpAddress": "PSU IP ADDRESS"
+  }
+  ],
+  "consentStatus": "VALID",
+  "account": {
+    "currency": "EUR",
+    "iban": "DE15500105172295759744"
+  },
+  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
+  "requestDateTime": "2019-07-26T13:29:50.042136+03:00",
+  "cardNumber": "1234567891234",
+  "cardExpiryDate": "2020-12-31",
+  "cardInformation": "MyMerchant Loyalty Card",
+  "registrationInformation": "Your contract Number 1234 with MyMerchant is completed with the registration with your bank.",
+  "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
+  "consentType": "PIIS_TPP"
+}

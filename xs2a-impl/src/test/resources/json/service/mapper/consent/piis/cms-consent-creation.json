@@ -40,6 +40,11 @@
       "state": "Bayern"
     }
   },
+  "authorisationTemplate" : {
+    "tppRedirectUri" : {
+      "uri" : "test tppRedirectUri"
+    }
+  },
   "frequencyPerDay": 0,
   "psuIdDataList": [
     {
@@ -50,6 +55,5 @@
     }
   ],
   "recurringIndicator": false,
-  "multilevelScaRequired": false,
-  "authorisationTemplate": {}
+  "multilevelScaRequired": false
 }

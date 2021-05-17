@@ -2,8 +2,13 @@
 
 == Table of Contents
 
+* Increased test coverage
 * Added new optional Header TPP-Decoupled-Preferred
 * Refactored FieldLengthValidator
+
+== Increased test coverage
+
+Increased test coverage for mapper classes
 
 ==  Added new optional Header TPP-Decoupled-Preferred
 
