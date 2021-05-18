@@ -1,1 +1,5 @@
-{"paymentId":"2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGz","endToEndIdentification":null,"debtorAccount":null,"instructedAmount":null,"creditorAccount":null,"creditorAgent":null,"creditorName":null,"creditorAddress":null,"remittanceInformationUnstructured":null,"paymentStatus":null,"paymentProduct":"product","requestedExecutionDate":null,"requestedExecutionTime":null,"psuDataList":null,"statusChangeTimestamp":null,"paymentType":"payments"}
+{
+  "paymentId": "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGz" ,
+  "paymentProduct": "product" ,
+  "paymentType": "payments"
+}

@@ -8,7 +8,6 @@
   "organisation":"Fictional Corporation AG",
   "organisationUnit":"Information Technology",
   "city":"Nuremberg","state":"Bayern",
-  "issuerCN":null,
   "notAfter":1583280000000,
   "dnsList":[
     "adorsys.de",

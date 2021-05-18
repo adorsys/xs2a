@@ -1,0 +1,43 @@
+{
+  "paymentType": "periodic-payments" ,
+  "endToEndIdentification": "RI-123456789" ,
+  "debtorAccount": {
+    "iban": "DE52500105173911841934" ,
+    "pan": "1111" ,
+    "maskedPan": "23456xxxxxx1234" ,
+    "msisdn": "0172/1111111" ,
+    "currency": "EUR"
+  } ,
+  "ultimateDebtor": "ultimateDebtor" ,
+  "instructedAmount": {
+    "currency": "EUR" ,
+    "amount": "1000.00"
+  } ,
+  "creditorAccount": {
+    "iban": "DE52500105173911841934" ,
+    "pan": "1111" ,
+    "maskedPan": "23456xxxxxx1234" ,
+    "msisdn": "0172/1111111" ,
+    "currency": "EUR"
+  } ,
+  "creditorAgent": "BCENECEQ" ,
+  "creditorName": "Telekom" ,
+  "creditorAddress": {
+    "streetName": "Herrnstraße" ,
+    "buildingNumber": "123-34" ,
+    "townName": "Nürnberg" ,
+    "postCode": "90431" ,
+    "country": {
+      "code": "DE"
+    }
+  } ,
+  "ultimateCreditor": "ultimateCreditor" ,
+  "purposeCode": "CDQC" ,
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222" ,
+  "remittanceInformationStructured": "remittanceInformationStructured" ,
+  "startDate": "2017-03-03" ,
+  "executionRule": "following" ,
+  "endDate": "2018-03-03" ,
+  "frequency": "ANNUAL" ,
+  "dayOfExecution": "14"
+}

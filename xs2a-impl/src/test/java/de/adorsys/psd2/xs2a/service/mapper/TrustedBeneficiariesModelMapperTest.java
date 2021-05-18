@@ -42,8 +42,10 @@ class TrustedBeneficiariesModelMapperTest {
     @Test
     void mapToTrustedBeneficiaries() {
         // Given
-        TrustedBeneficiary expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries.json", TrustedBeneficiary.class);
-        Xs2aTrustedBeneficiaries input = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries.json", Xs2aTrustedBeneficiaries.class);
+        TrustedBeneficiary expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries.json",
+                                                                   TrustedBeneficiary.class);
+        Xs2aTrustedBeneficiaries input = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries.json",
+                                                                      Xs2aTrustedBeneficiaries.class);
 
         // When
         TrustedBeneficiary actual = trustedBeneficiariesModelMapper.mapToTrustedBeneficiaries(input);
@@ -55,11 +57,38 @@ class TrustedBeneficiariesModelMapperTest {
     @Test
     void mapToTrustedBeneficiariesList() {
         // Given
-        TrustedBeneficiariesList expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries-list.json", TrustedBeneficiariesList.class);
-        Xs2aTrustedBeneficiariesList input = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries-list.json", Xs2aTrustedBeneficiariesList.class);
+        TrustedBeneficiariesList expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries-list.json",
+                                                                         TrustedBeneficiariesList.class);
+        Xs2aTrustedBeneficiariesList input = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries-list.json",
+                                                                          Xs2aTrustedBeneficiariesList.class);
 
         // When
         TrustedBeneficiariesList actual = trustedBeneficiariesModelMapper.mapToTrustedBeneficiariesList(input);
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void mapToTrustedBeneficiaries_null() {
+        // When
+        TrustedBeneficiary actual = trustedBeneficiariesModelMapper.mapToTrustedBeneficiaries(null);
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void accountReference_isNull() {
+        // Given
+        Xs2aTrustedBeneficiaries input = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/xs2a-trusted-beneficiaries-accountReference-isNull.json",
+                                                                      Xs2aTrustedBeneficiaries.class);
+
+        // When
+        TrustedBeneficiary actual = trustedBeneficiariesModelMapper.mapToTrustedBeneficiaries(input);
+
+        TrustedBeneficiary expected = jsonReader.getObjectFromFile("json/service/mapper/trusted-beneficiaries-model-mapper/trusted-beneficiaries-accountReference-null.json",
+                                                                   TrustedBeneficiary.class);
 
         // Then
         assertThat(actual).isEqualTo(expected);
