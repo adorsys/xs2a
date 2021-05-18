@@ -16,141 +16,103 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import de.adorsys.psd2.core.payment.model.PurposeCode;
-import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.model.AccountReport;
+import de.adorsys.psd2.model.EntryDetails;
 import de.adorsys.psd2.model.InlineResponse2001;
 import de.adorsys.psd2.model.TransactionsResponse200Json;
-import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
+import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.Transactions;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aStandingOrderDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.web.mapper.*;
 import de.adorsys.xs2a.reader.JsonReader;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TransactionModelMapperImpl.class,
-    AccountModelMapperTest.TestConfiguration.class,
-    BalanceMapperImpl.class, ReportExchangeMapperImpl.class,
-    DayOfExecutionMapper.class, OffsetDateTimeMapper.class})
+@ContextConfiguration(classes = {TransactionModelMapperImpl.class, TestMapperConfiguration.class,
+    BalanceMapperImpl.class, ReportExchangeMapperImpl.class, HrefLinkMapper.class, Xs2aObjectMapper.class,
+    DayOfExecutionMapper.class, OffsetDateTimeMapper.class, PurposeCodeMapperImpl.class, AmountModelMapper.class})
 class TransactionModelMapperTest {
     private static final OffsetDateTime OFFSET_DATE_TIME = OffsetDateTime.now();
     private static final String BYTE_ARRAY_IN_STRING = "000000000000000=";
-    private static final String XS2A_LINKS_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-links.json";
-    private static final String LINKS_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-links.json";
-    private static final String XS2A_AMOUNT_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-amount.json";
-    private static final String XS2A_AMOUNT_ENTRY_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-amount-entry.json";
-    private static final String AMOUNT_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-amount.json";
-    private static final String AMOUNT_ENTRY_JSON_PATH = "json/service/mapper/account-model-mapper/AccountModelMapper-amount-entry.json";
 
     @Autowired
     private TransactionModelMapper mapper;
-    @Autowired
-    private HrefLinkMapper mockedHrefLinkMapper;
-    @Autowired
-    private AmountModelMapper mockedAmountModelMapper;
-    @Autowired
-    private PurposeCodeMapper mockedPurposeCodeMapper;
-    @Autowired
-    protected BalanceMapper balanceMapper;
 
     private final JsonReader jsonReader = new JsonReader();
 
-    @AfterEach
-    void resetMocks() {
-        // Resetting is necessary because these mocks are injected into the mapper as singleton beans
-        // and are not being recreated after each test
-        Mockito.reset(mockedHrefLinkMapper, mockedAmountModelMapper, mockedPurposeCodeMapper);
-    }
-
     @Test
     void mapToTransaction_success() {
-        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
-        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
+        // Given
+        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json",
+                                                                 Transactions.class);
 
-        Xs2aAmount xs2aEntryAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_ENTRY_JSON_PATH, Xs2aAmount.class);
-        Amount amountEntry = jsonReader.getObjectFromFile(AMOUNT_ENTRY_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aEntryAmount)).thenReturn(amountEntry);
-
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.CDCB)).thenReturn(de.adorsys.psd2.model.PurposeCode.CDCB);
-
-        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
+        // When
         de.adorsys.psd2.model.Transactions actualTransactionDetails = mapper.mapToTransactions(transactions);
 
         de.adorsys.psd2.model.Transactions expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
                                                                                                            de.adorsys.psd2.model.Transactions.class);
-        assertEquals(expectedReportTransactionDetails, actualTransactionDetails);
+        // Then
+        assertThat(actualTransactionDetails).isEqualTo(expectedReportTransactionDetails);
     }
 
     @Test
     void mapToTransactionDetails_success() {
-        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
-        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
+        // Given
+        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json",
+                                                                 Transactions.class);
 
-        Xs2aAmount xs2aEntryAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_ENTRY_JSON_PATH, Xs2aAmount.class);
-        Amount amountEntry = jsonReader.getObjectFromFile(AMOUNT_ENTRY_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aEntryAmount)).thenReturn(amountEntry);
-
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.BKDF)).thenReturn(de.adorsys.psd2.model.PurposeCode.BKDF);
-        when(mockedPurposeCodeMapper.mapToPurposeCode(PurposeCode.CDCB)).thenReturn(de.adorsys.psd2.model.PurposeCode.CDCB);
-        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactions.json", Transactions.class);
-
+        // When
         InlineResponse2001 actualInlineResponse2001 = mapper.mapToTransactionDetails(transactions);
 
         de.adorsys.psd2.model.Transactions expectedTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-details-expected.json",
                                                                                                      de.adorsys.psd2.model.Transactions.class);
 
-        assertNotNull(actualInlineResponse2001);
-        assertEquals(expectedTransactionDetails, actualInlineResponse2001.getTransactionsDetails().getTransactionDetails());
+        // Then
+        assertThat(actualInlineResponse2001).isNotNull();
+        assertThat(actualInlineResponse2001.getTransactionsDetails().getTransactionDetails()).isEqualTo(expectedTransactionDetails);
     }
 
     @Test
     void mapToTransactionsResponseRaw_success() {
-        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
+        // Given
+        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json",
+                                                                                     Xs2aTransactionsReport.class);
 
+        // When
         byte[] actualByteArray = mapper.mapToTransactionsResponseRaw(xs2aTransactionsReport);
 
-        assertEquals(BYTE_ARRAY_IN_STRING, Base64.getEncoder().encodeToString(actualByteArray));
+        String actual = Base64.getEncoder().encodeToString(actualByteArray);
+
+        // Then
+        assertThat(actual).isEqualTo(BYTE_ARRAY_IN_STRING);
     }
 
     @Test
     void mapToTransactionsResponse200Json_success() {
         // Given
-        Map<String, HrefType> links = jsonReader.getObjectFromFile(LINKS_JSON_PATH, new TypeReference<Map<String, HrefType>>() {
-        });
-        Links xs2aLinks = jsonReader.getObjectFromFile(XS2A_LINKS_JSON_PATH, Links.class);
-        when(mockedHrefLinkMapper.mapToLinksMap(xs2aLinks)).thenReturn(links);
-        Xs2aAmount xs2aAmount = jsonReader.getObjectFromFile(XS2A_AMOUNT_JSON_PATH, Xs2aAmount.class);
-        Amount amount = jsonReader.getObjectFromFile(AMOUNT_JSON_PATH, Amount.class);
-        when(mockedAmountModelMapper.mapToAmount(xs2aAmount)).thenReturn(amount);
-
-        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json", Xs2aTransactionsReport.class);
+        Xs2aTransactionsReport xs2aTransactionsReport = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-xs2a-transactions-report.json",
+                                                                                     Xs2aTransactionsReport.class);
 
         // When
         TransactionsResponse200Json actual = mapper.mapToTransactionsResponse200Json(xs2aTransactionsReport);
-
         actual.getBalances().get(0).setLastChangeDateTime(OFFSET_DATE_TIME);
 
         TransactionsResponse200Json expected = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transactionsResponse200.json",
@@ -163,8 +125,136 @@ class TransactionModelMapperTest {
         actual.getTransactions().setLinks(null);
 
         expected.setLinks(actual.getLinks());
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
+    }
 
+    @Test
+    void mapToAccountReport_null() {
+        // When
+        AccountReport actual = mapper.mapToAccountReport(null);
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void mapToTransactionsResponse200Json_null() {
+        // When
+        TransactionsResponse200Json actual = mapper.mapToTransactionsResponse200Json(null);
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void mapToTransactions_null() {
+        // When
+        de.adorsys.psd2.model.Transactions actual = mapper.mapToTransactions(null);
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void mapToEntryDetails_null() {
+        // When
+        EntryDetails actual = mapper.mapToEntryDetails(null);
+
+        // Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void transactionInfo_isNull() {
+        // Given
+        Transactions transactions = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-info-isNull.json",
+                                                                 Transactions.class);
+
+        // When
+        de.adorsys.psd2.model.Transactions actualTransactionDetails = mapper.mapToTransactions(transactions);
+
+        de.adorsys.psd2.model.Transactions expectedReportTransactionDetails = jsonReader.getObjectFromFile("json/service/mapper/account-model-mapper/AccountModelMapper-transaction-expected-info-isNull.json",
+                                                                                                           de.adorsys.psd2.model.Transactions.class);
+
+        // Then
+        assertThat(actualTransactionDetails).isEqualTo(expectedReportTransactionDetails);
+    }
+
+    @Test
+    void remittanceInformationStructured_missingVariousInfo() {
+        // Given
+        de.adorsys.psd2.xs2a.domain.EntryDetails inputDetails = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/entryDetails-variousInfo-isNull.json",
+                                                                                             de.adorsys.psd2.xs2a.domain.EntryDetails.class);
+
+        // When
+        EntryDetails actual = mapper.mapToEntryDetails(inputDetails);
+
+        EntryDetails expectedDetails = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/entryDetails-variousInfo-isNull-expected.json",
+                                                                    EntryDetails.class);
+
+        // Then
+        assertThat(actual).isEqualTo(expectedDetails);
+    }
+
+    @ParameterizedTest
+    @EnumSource(de.adorsys.psd2.xs2a.core.pis.FrequencyCode.class)
+    void frequencyCodeToFrequencyCode(de.adorsys.psd2.xs2a.core.pis.FrequencyCode frequencyCode) {
+        // Given
+        Transactions transactions = getTransactionWithFrequencyCode(frequencyCode);
+
+        // When
+        de.adorsys.psd2.model.Transactions actual = mapper.mapToTransactions(transactions);
+
+        String actualResult = actual.getAdditionalInformationStructured().getStandingOrderDetails().getFrequency().name();
+
+        // Then
+        assertThat(actualResult).isEqualTo(frequencyCode.name());
+    }
+
+    @ParameterizedTest
+    @EnumSource(PisExecutionRule.class)
+    void frequencyCodeToFrequencyCode(PisExecutionRule pisExecutionRule) {
+        // Given
+        Transactions transactions = getTransactionsWithExecutionRule(pisExecutionRule);
+
+        // When
+        de.adorsys.psd2.model.Transactions actual = mapper.mapToTransactions(transactions);
+
+        String actualResult = actual.getAdditionalInformationStructured().getStandingOrderDetails().getExecutionRule().name();
+
+        // Then
+        assertThat(actualResult).isEqualTo(pisExecutionRule.name());
+    }
+
+    @Test
+    void monthOfExecution() {
+        // Given
+        Transactions transactions = getTransactionsWithMonthOfExecution();
+
+        // When
+        de.adorsys.psd2.model.Transactions actual = mapper.mapToTransactions(transactions);
+
+        de.adorsys.psd2.model.Transactions expected = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/transactions-monthOfExecution-expected.json",
+                                                                                   de.adorsys.psd2.model.Transactions.class);
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void remittanceInformationUnstructured_isNull() {
+        // Given
+        de.adorsys.psd2.xs2a.domain.Transactions input = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/transactions-remittanceInformationUnstructured-isNull.json",
+                                                                                      Transactions.class);
+
+        // When
+        de.adorsys.psd2.model.Transactions actual = mapper.mapToTransactions(input);
+
+        de.adorsys.psd2.model.Transactions expected = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/transactions-remittanceInformationUnstructured-isNull-expected.json",
+                                                                                   de.adorsys.psd2.model.Transactions.class);
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
     }
 
     private void assertLinks(Map<?, ?> expectedLinks, Map<?, ?> actualLinks) {
@@ -177,21 +267,33 @@ class TransactionModelMapperTest {
         }
     }
 
-    @Configuration
-    static class TestConfiguration {
-        @Bean
-        public HrefLinkMapper mockHrefLinkMapper() {
-            return mock(HrefLinkMapper.class);
-        }
+    private Transactions getTransactionWithFrequencyCode(de.adorsys.psd2.xs2a.core.pis.FrequencyCode frequencyCode) {
+        Transactions transactions = new Transactions();
+        Xs2aAdditionalInformationStructured additionalInformationStructured = new Xs2aAdditionalInformationStructured();
+        Xs2aStandingOrderDetails standingOrderDetails = new Xs2aStandingOrderDetails();
+        standingOrderDetails.setFrequency(frequencyCode);
+        additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
+        transactions.setAdditionalInformationStructured(additionalInformationStructured);
+        return transactions;
+    }
 
-        @Bean
-        public AmountModelMapper mockAmountModelMapper() {
-            return mock(AmountModelMapper.class);
-        }
+    private Transactions getTransactionsWithExecutionRule(PisExecutionRule executionRule) {
+        Transactions transactions = new Transactions();
+        Xs2aAdditionalInformationStructured additionalInformationStructured = new Xs2aAdditionalInformationStructured();
+        Xs2aStandingOrderDetails standingOrderDetails = new Xs2aStandingOrderDetails();
+        standingOrderDetails.setExecutionRule(executionRule);
+        additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
+        transactions.setAdditionalInformationStructured(additionalInformationStructured);
+        return transactions;
+    }
 
-        @Bean
-        public PurposeCodeMapper mockPurposeCodeMapper() {
-            return mock(PurposeCodeMapper.class);
-        }
+    private Transactions getTransactionsWithMonthOfExecution() {
+        Transactions transactions = new Transactions();
+        Xs2aAdditionalInformationStructured additionalInformationStructured = new Xs2aAdditionalInformationStructured();
+        Xs2aStandingOrderDetails standingOrderDetails = new Xs2aStandingOrderDetails();
+        standingOrderDetails.setMonthsOfExecution(Collections.singletonList("5"));
+        additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
+        transactions.setAdditionalInformationStructured(additionalInformationStructured);
+        return transactions;
     }
 }

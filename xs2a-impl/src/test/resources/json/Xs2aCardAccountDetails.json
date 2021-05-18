@@ -16,9 +16,7 @@
       },
       "balanceType": "INTERIM_AVAILABLE",
       "lastChangeDateTime": "2020-05-31T15:16:16.37Z",
-      "referenceDate": "2020-03-31T19:12:13.37Z",
-      "lastCommittedTransaction": null,
-      "creditLimitIncluded": null
+      "referenceDate": "2020-03-31T19:12:13.37Z"
     },
     {
       "balanceAmount": {
@@ -27,15 +25,13 @@
       },
       "balanceType": "CLOSING_BOOKED",
       "lastChangeDateTime": "2020-05-31T15:16:16.37Z",
-      "referenceDate": "2020-03-31T19:12:13.37Z",
-      "creditLimitIncluded": null
+      "referenceDate": "2020-03-31T19:12:13.37Z"
     }
   ],
   "creditLimit": {
     "currency": "EUR",
     "amount": "10000"
   },
-  "ownerName": null,
   "_links": {
   }
 }

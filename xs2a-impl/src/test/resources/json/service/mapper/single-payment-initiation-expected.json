@@ -1,0 +1,41 @@
+{
+  "paymentType": "payments",
+  "endToEndIdentification": "WBG-123456789",
+  "debtorAccount": {
+    "iban": "DE52500105173911841934",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "ultimateDebtor": "ultimateDebtor",
+  "instructedAmount": {
+    "currency": "EUR",
+    "amount": "20.00"
+  },
+  "creditorAccount": {
+    "iban": "DE15500105172295759744",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "creditorAgent": "AAAADEBBXXX",
+  "creditorName": "WBG",
+  "creditorAddress": {
+    "streetName": "WBG Straße",
+    "buildingNumber": "56",
+    "townName": "Nürnberg",
+    "postCode": "90543",
+    "country": {
+      "code": "DE"
+    }
+  },
+  "ultimateCreditor": "ultimateCreditor",
+  "purposeCode": "CDQC",
+  "remittanceInformationUnstructured": "Ref. Number WBG-1222",
+  "remittanceInformationStructured": "remittanceInformationStructured",
+  "remittanceInformationStructuredArray": [
+    "Remittance structured array element reference"
+  ]
+}

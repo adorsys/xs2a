@@ -1,0 +1,7 @@
+  {
+    "iban": "Test IBAN",
+    "bban": "Test BBAN",
+    "pan": "Test PAN",
+    "maskedPan": "Test MASKED_PAN",
+    "msisdn": "Test MSISDN"
+  }
