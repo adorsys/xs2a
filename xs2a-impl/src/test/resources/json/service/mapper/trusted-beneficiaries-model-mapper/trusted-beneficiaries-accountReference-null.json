@@ -1,0 +1,17 @@
+{
+  "trustedBeneficiaryId": "mocked trusted beneficiaries id",
+  "creditorAccount": {
+    "iban": "mocked creditor iban"
+  },
+  "creditorAgent": "mocked creditor agent",
+  "creditorName": "mocked creditor name",
+  "creditorAlias": "mocked creditor alias",
+  "creditorId": "mocked creditor id",
+  "creditorAddress": {
+    "streetName": "mocked street name",
+    "buildingNumber": "mocked building number",
+    "townName": "mocked town name",
+    "postCode": "mocked post code",
+    "country": "mocked country code"
+  }
+}

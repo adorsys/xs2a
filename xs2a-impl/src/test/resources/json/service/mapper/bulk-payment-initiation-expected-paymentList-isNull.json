@@ -1,0 +1,21 @@
+{
+  "paymentType": "bulk-payments",
+  "debtorAccount": {
+    "iban": "DE52500105173911841934",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  },
+  "requestedExecutionDate": "2020-02-02",
+  "batchBookingPreferred": false,
+  "accountReferences": [
+    {
+      "iban": "DE52500105173911841934",
+      "pan": "1111",
+      "maskedPan": "23456xxxxxx1234",
+      "msisdn": "0172/1111111",
+      "currency": "EUR"
+    }
+  ]
+}

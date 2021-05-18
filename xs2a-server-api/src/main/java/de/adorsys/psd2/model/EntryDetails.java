@@ -8,11 +8,9 @@ import de.adorsys.psd2.model.Amount;
 import de.adorsys.psd2.model.PurposeCode;
 import de.adorsys.psd2.model.RemittanceInformationStructuredArray;
 import de.adorsys.psd2.model.RemittanceInformationUnstructuredArray;
-import de.adorsys.psd2.model.ReportExchangeRate;
+import de.adorsys.psd2.model.ReportExchangeRateList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
@@ -22,7 +20,7 @@ import javax.validation.constraints.*;
  */
 @ApiModel(description = "This data type describe entry details of a batch booking entry. The details are restricted to data attributes relevant in this case. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-01-04T14:33:19.837853+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-17T19:19:36.796138+03:00[Europe/Kiev]")
 
 public class EntryDetails   {
   @JsonProperty("endToEndId")
@@ -41,8 +39,7 @@ public class EntryDetails   {
   private Amount transactionAmount = null;
 
   @JsonProperty("currencyExchange")
-  @Valid
-  private List<ReportExchangeRate> currencyExchange = null;
+  private ReportExchangeRateList currencyExchange = null;
 
   @JsonProperty("creditorName")
   private String creditorName = null;
@@ -195,16 +192,8 @@ public class EntryDetails   {
     this.transactionAmount = transactionAmount;
   }
 
-  public EntryDetails currencyExchange(List<ReportExchangeRate> currencyExchange) {
+  public EntryDetails currencyExchange(ReportExchangeRateList currencyExchange) {
     this.currencyExchange = currencyExchange;
-    return this;
-  }
-
-  public EntryDetails addCurrencyExchangeItem(ReportExchangeRate currencyExchangeItem) {
-    if (this.currencyExchange == null) {
-      this.currencyExchange = new ArrayList<>();
-    }
-    this.currencyExchange.add(currencyExchangeItem);
     return this;
   }
 
@@ -218,11 +207,11 @@ public class EntryDetails   {
 
 
   @JsonProperty("currencyExchange")
-  public List<ReportExchangeRate> getCurrencyExchange() {
+  public ReportExchangeRateList getCurrencyExchange() {
     return currencyExchange;
   }
 
-  public void setCurrencyExchange(List<ReportExchangeRate> currencyExchange) {
+  public void setCurrencyExchange(ReportExchangeRateList currencyExchange) {
     this.currencyExchange = currencyExchange;
   }
 
