@@ -5915,9 +5915,7 @@ components:
         transactionAmount:
           $ref: "#/components/schemas/amount"
         currencyExchange:
-          type: array
-          items:
-            $ref: "#/components/schemas/reportExchangeRate"
+          $ref: "#/components/schemas/reportExchangeRateList"
         creditorName:
           $ref: "#/components/schemas/creditorName"
         creditorAccount:

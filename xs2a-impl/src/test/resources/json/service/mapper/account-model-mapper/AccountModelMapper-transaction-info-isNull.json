@@ -1,0 +1,65 @@
+{
+"transactionId": "1",
+"entryReference": "2",
+"endToEndId": "3",
+"mandateId": "4",
+"checkId": "5",
+"creditorId": "6",
+"bookingDate": "2017-01-01",
+"valueDate": "2017-01-01",
+"amount": {
+"currency": "USD",
+"amount": "100"
+},
+"exchangeRate": [
+{
+"sourceCurrency": "USD",
+"exchangeRate": "27",
+"unitCurrency": "UAH",
+"targetCurrency": "UAH",
+"quotationDate": "2018-02-02",
+"contractIdentification": "identification"
+}
+],
+"additionalInformationStructured": {
+"standingOrderDetails": {
+"dayOfExecution": 12
+}
+},
+"bankTransactionCodeCode": {
+"code": "some bank code"
+},
+"proprietaryBankTransactionCode": "very secret code",
+"batchIndicator": false,
+"batchNumberOfTransactions": 14,
+"entryDetails": [
+{
+"endToEndId": "endToEndId",
+"mandateId": "mandateId",
+"checkId": "checkId",
+"creditorId": "creditorId",
+"transactionAmount": {
+"currency": "EUR",
+"amount": "123"
+},
+"currencyExchange": [
+{
+"sourceCurrency": "USD",
+"exchangeRate": 23,
+"unitCurrency": "EUR",
+"targetCurrency": "EUR",
+"quotationDate": "2018-02-02",
+"contractIdentification": "contractIdentification"
+}
+]
+}
+],
+"links": {
+"balances": {
+"href": "http://localhost/api/v1/accounts/33333-999999999/balances"
+},
+"transactions": {
+"href": "http://localhost/api/v1/accounts/33333-999999999/transactions"
+}
+}
+}
