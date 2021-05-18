@@ -44,6 +44,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Currency;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -340,6 +341,25 @@ class CreateConsentRequestValidatorTest {
         //Then
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
+    }
+
+    @Test
+    void buildWarningMessages() {
+        //Given
+        CreateConsentReq createConsentReq =
+            buildCreateConsentReqWithCombinedServiceIndicator(false, AccountAccessType.ALL_ACCOUNTS, null, null);
+        CreateConsentRequestObject createConsentRequestObject = new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA);
+
+        //When
+        Set<TppMessageInformation> actual =
+            createConsentRequestValidator.buildWarningMessages(createConsentRequestObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aspspProfileService);
+        verifyNoInteractions(scaApproachResolver);
+        verifyNoInteractions(psuDataInInitialRequestValidator);
+        verifyNoInteractions(supportedAccountReferenceValidator);
     }
 
     private AccountReference buildAccountReference() {

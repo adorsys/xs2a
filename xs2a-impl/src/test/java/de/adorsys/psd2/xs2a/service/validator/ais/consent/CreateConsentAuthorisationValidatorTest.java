@@ -40,12 +40,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateConsentAuthorisationValidatorTest {
@@ -96,9 +96,9 @@ class CreateConsentAuthorisationValidatorTest {
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -113,9 +113,9 @@ class CreateConsentAuthorisationValidatorTest {
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(RESOURCE_BLOCKED_SB_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(RESOURCE_BLOCKED_SB_ERROR);
     }
 
     @Test
@@ -131,9 +131,9 @@ class CreateConsentAuthorisationValidatorTest {
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(PSU_CREDENTIALS_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(PSU_CREDENTIALS_ERROR);
     }
 
     @Test
@@ -149,9 +149,9 @@ class CreateConsentAuthorisationValidatorTest {
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -169,9 +169,9 @@ class CreateConsentAuthorisationValidatorTest {
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(createPisAuthorisationPO.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(STATUS_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(STATUS_INVALID_ERROR);
     }
 
     @Test
@@ -186,9 +186,27 @@ class CreateConsentAuthorisationValidatorTest {
         // Then
         verify(aisConsentTppInfoValidator).validateTpp(accountConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(TPP_VALIDATION_ERROR);
+    }
+
+    @Test
+    void buildWarningMessages() {
+        //Given
+        AisConsent accountConsent = buildAccountConsentWithPsuIdDataAndAuthorisation();
+        CreateConsentAuthorisationObject createPisAuthorisationPO =
+            new CreateConsentAuthorisationObject(accountConsent, PSU_DATA);
+
+        //When
+        Set<TppMessageInformation> actual =
+            createConsentAuthorisationValidator.buildWarningMessages(createPisAuthorisationPO);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aisConsentTppInfoValidator);
+        verifyNoInteractions(authorisationPsuDataChecker);
+        verifyNoInteractions(aisAuthorisationStatusChecker);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

@@ -45,16 +45,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType.PIS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdatePisCommonPaymentPsuDataValidatorTest {
@@ -513,6 +514,29 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(PIS_SERVICE_INVALID, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse =
+            buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO, ScaStatus.SCAMETHODSELECTED);
+        UpdatePaymentPsuDataPO updatePaymentPsuDataPO =
+            buildUpdatePisCommonPaymentPsuDataPO(commonPaymentResponse, AUTHORISATION_ID);
+
+        //When
+        Set<TppMessageInformation> actual =
+            updatePisCommonPaymentPsuDataValidator.buildWarningMessages(updatePaymentPsuDataPO);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisPsuDataUpdateAuthorisationCheckerValidator);
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(pisEndpointAccessCheckerService);
+        verifyNoInteractions(pisAuthorisationValidator);
+        verifyNoInteractions(pisAuthorisationStatusValidator);
+        verifyNoInteractions(authorisationStageCheckValidator);
+        verifyNoInteractions(aspspProfileService);
     }
 
 

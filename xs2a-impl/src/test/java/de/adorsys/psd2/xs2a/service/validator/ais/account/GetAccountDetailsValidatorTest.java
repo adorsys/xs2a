@@ -39,8 +39,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -77,7 +80,7 @@ class GetAccountDetailsValidatorTest {
     @Mock
     private OauthConsentValidator oauthConsentValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -194,9 +197,29 @@ class GetAccountDetailsValidatorTest {
         // Then
         verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(CONSENT_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(CONSENT_INVALID_ERROR);
+    }
+
+    @Test
+    void buildWarningMessages() {
+        //Given
+        AisConsent aisConsent = buildCardAccountConsent();
+        CommonAccountRequestObject commonAccountRequestObject =
+            new CommonAccountRequestObject(aisConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI);
+
+        //When
+        Set<TppMessageInformation> actual = getAccountDetailsValidator.buildWarningMessages(commonAccountRequestObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(aisAccountTppInfoValidator);
+        verifyNoInteractions(accountReferenceAccessValidator);
+        verifyNoInteractions(permittedAccountReferenceValidator);
+        verifyNoInteractions(accountAccessValidator);
+        verifyNoInteractions(oauthConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

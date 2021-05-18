@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
@@ -30,11 +31,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_401;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_405;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_EXPIRED;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.SERVICE_INVALID_405;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +53,7 @@ class GetTrustedBeneficiariesListValidatorTest {
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     private  AisConsent aisConsent;
     private GetTrustedBeneficiariesListConsentObject getTrustedBeneficiariesListConsentObject;
@@ -161,5 +165,23 @@ class GetTrustedBeneficiariesListValidatorTest {
         // Then
         assertThat(actual).isNotNull();
         assertThat(actual.isValid()).isTrue();
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        aisConsent =
+            jsonReader.getObjectFromFile("json/service/validator/ais/account/ais-consent-dedicated-with-beneficiaries.json", AisConsent.class);
+        getTrustedBeneficiariesListConsentObject =
+            new GetTrustedBeneficiariesListConsentObject(aisConsent, ACCOUNT_ID, REQUEST_URI);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getTrustedBeneficiariesListValidator.buildWarningMessages(getTrustedBeneficiariesListConsentObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(aspspProfileService);
     }
 }
