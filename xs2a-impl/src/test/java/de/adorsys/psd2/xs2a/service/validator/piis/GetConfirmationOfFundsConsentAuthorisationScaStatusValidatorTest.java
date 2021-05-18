@@ -32,10 +32,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetConfirmationOfFundsConsentAuthorisationScaStatusValidatorTest {
@@ -144,6 +146,24 @@ class GetConfirmationOfFundsConsentAuthorisationScaStatusValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        //Given
+        PiisConsent piisConsent = buildPiisConsent(INVALID_TPP_INFO);
+        GetConfirmationOfFundsConsentAuthorisationScaStatusPO confirmation =
+            new GetConfirmationOfFundsConsentAuthorisationScaStatusPO(piisConsent, AUTHORISATION_ID);
+
+        //When
+        Set<TppMessageInformation> actual =
+            getConfirmationOfFundsConsentAuthorisationScaStatusValidator.buildWarningMessages(confirmation);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(confirmationOfFundsAuthorisationValidator);
+        verifyNoInteractions(piisConsentTppInfoValidator);
+        verifyNoInteractions(oauthPiisConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

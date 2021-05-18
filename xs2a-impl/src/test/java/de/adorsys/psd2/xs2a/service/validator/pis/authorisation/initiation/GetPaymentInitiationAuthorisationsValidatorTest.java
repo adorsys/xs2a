@@ -32,12 +32,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.PRODUCT_INVALID_FOR_PAYMENT;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetPaymentInitiationAuthorisationsValidatorTest {
@@ -115,6 +117,21 @@ class GetPaymentInitiationAuthorisationsValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);
+        CommonPaymentObject commonPaymentObject = new CommonPaymentObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT);
+
+        //When
+        Set<TppMessageInformation> actual = getPaymentInitiationAuthorisationsValidator.buildWarningMessages(commonPaymentObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(oauthPaymentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {
