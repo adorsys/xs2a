@@ -43,9 +43,11 @@ import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.ais.BookingStatus.PENDING;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -92,7 +94,7 @@ class GetCardTransactionsReportValidatorTest {
     @Mock
     private OauthConsentValidator oauthConsentValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -318,7 +320,8 @@ class GetCardTransactionsReportValidatorTest {
             .thenReturn(Collections.singletonList(BOOKING_STATUS));
 
         // When
-        ValidationResult validationResult = getCardTransactionsReportValidator.validate(new CardTransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, REQUEST_URI, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, PENDING, LocalDate.now(), LocalDate.now()));
+        ValidationResult validationResult =
+            getCardTransactionsReportValidator.validate(new CardTransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, REQUEST_URI, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, PENDING, LocalDate.now(), LocalDate.now()));
 
         // Then
         verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
@@ -326,6 +329,27 @@ class GetCardTransactionsReportValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(BOOKING_STATUS_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent aisConsent = buildAisConsent(TPP_INFO);
+        CardTransactionsReportByPeriodObject cardTransactionsReportByPeriodObject =
+            new CardTransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, REQUEST_URI, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, PENDING, LocalDate.now(), LocalDate.now());
+
+        //When
+        Set<TppMessageInformation> actual =
+            getCardTransactionsReportValidator.buildWarningMessages(cardTransactionsReportByPeriodObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(aisAccountTppInfoValidator);
+        verifyNoInteractions(accountReferenceAccessValidator);
+        verifyNoInteractions(transactionReportAcceptHeaderValidator);
+        verifyNoInteractions(aspspProfileService);
+        verifyNoInteractions(oauthConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

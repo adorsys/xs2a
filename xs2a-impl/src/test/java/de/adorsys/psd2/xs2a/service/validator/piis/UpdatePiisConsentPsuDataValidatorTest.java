@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service.validator.piis;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -33,8 +34,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.RESOURCE_UNKNOWN_403;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +57,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     @Mock
     private AuthorisationStageCheckValidator authorisationStageCheckValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void executeBusinessValidation_valid() {
@@ -163,4 +167,26 @@ class UpdatePiisConsentPsuDataValidatorTest {
         // Then
         assertThat(actual.isValid()).isFalse();
     }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PiisConsent piisConsent =
+            jsonReader.getObjectFromFile("json/piis/piis-consent-invalid.json", PiisConsent.class);
+        UpdateConsentPsuDataReq updateConsentPsuDataReq =
+            jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        UpdatePiisConsentPsuDataRequestObject input =
+            new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
+
+        //When
+        Set<TppMessageInformation> actual = updatePiisConsentPsuDataValidator.buildWarningMessages(input);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(piisAuthorisationValidator);
+        verifyNoInteractions(piisPsuDataUpdateAuthorisationCheckerValidator);
+        verifyNoInteractions(piisAuthorisationStatusValidator);
+        verifyNoInteractions(authorisationStageCheckValidator);
+    }
 }
+

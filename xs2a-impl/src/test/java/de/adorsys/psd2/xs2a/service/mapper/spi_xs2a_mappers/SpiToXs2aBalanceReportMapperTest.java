@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aBalancesReport;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountBalance;
 import de.adorsys.psd2.xs2a.spi.domain.account.SpiAccountReference;
@@ -28,8 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpiToXs2aBalanceReportMapperImpl.class, SpiToXs2aBalanceMapperImpl.class,
@@ -39,25 +39,63 @@ class SpiToXs2aBalanceReportMapperTest {
     @Autowired
     private SpiToXs2aBalanceReportMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
-    void mapToXs2aBalancesReport() {
-        SpiAccountBalance spiAccountBalance = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-balance.json",
-                                                                           SpiAccountBalance.class);
-        SpiAccountReference spiAccountReference = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json",
-                                                                               SpiAccountReference.class);
+    void mapToXs2aBalancesReportSpi() {
+        //Given
+        SpiAccountBalance spiAccountBalance =
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-balance.json",
+                SpiAccountBalance.class);
+        SpiAccountReference spiAccountReference =
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json",
+                SpiAccountReference.class);
+        Xs2aBalancesReport expected =
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-balances-report.json",
+                Xs2aBalancesReport.class);
 
-        Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReportSpi(spiAccountReference, Collections.singletonList(spiAccountBalance));
+        //When
+        Xs2aBalancesReport actual = mapper.mapToXs2aBalancesReportSpi(spiAccountReference, Collections.singletonList(spiAccountBalance));
 
-        Xs2aBalancesReport expectedXs2aBalancesReport = jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-balances-report.json",
-                                                                                     Xs2aBalancesReport.class);
-        assertEquals(expectedXs2aBalancesReport, xs2aBalancesReport);
+        //Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void mapToXs2aBalancesReportSpi_nullValue() {
+        //When
+        Xs2aBalancesReport actual = mapper.mapToXs2aBalancesReportSpi(null, null);
+
+        //Then
+        assertThat(actual).isNull();
     }
 
     @Test
     void mapToXs2aBalancesReport_nullValue() {
-        Xs2aBalancesReport xs2aBalancesReport = mapper.mapToXs2aBalancesReportSpi(null, null);
-        assertNull(xs2aBalancesReport);
+        //When
+        Xs2aBalancesReport actual = mapper.mapToXs2aBalancesReport(null, null);
+
+        //Then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    void mapToXs2aBalancesReport() {
+        //Given
+        SpiAccountBalance spiAccountBalance =
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-balance.json",
+                SpiAccountBalance.class);
+        AccountReference accountReference =
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-account-reference.json",
+                AccountReference.class);
+        Xs2aBalancesReport expected =
+            jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-balances-report.json",
+                Xs2aBalancesReport.class);
+
+        //When
+        Xs2aBalancesReport actual = mapper.mapToXs2aBalancesReport(accountReference, Collections.singletonList(spiAccountBalance));
+
+        //Then
+        assertThat(actual).isEqualTo(expected);
     }
 }

@@ -38,8 +38,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -69,7 +72,7 @@ class GetAccountListValidatorTest {
     @InjectMocks
     private GetAccountListValidator getAccountListValidator;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -227,6 +230,27 @@ class GetAccountListValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(ACCESS_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AccountAccess accountAccess =
+            jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-account-access-without-iban.json", AccountAccess.class);
+        AisConsent aisConsent = buildAccountConsent(accountAccess, TPP_INFO);
+        GetAccountListConsentObject getAccountListConsentObject =
+            new GetAccountListConsentObject(aisConsent, true, REQUEST_URI);
+
+        //When
+        Set<TppMessageInformation> actual = getAccountListValidator.buildWarningMessages(getAccountListConsentObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(accountConsentValidator);
+        verifyNoInteractions(aisAccountTppInfoValidator);
+        verifyNoInteractions(accountAccessValidator);
+        verifyNoInteractions(accountAccessMultipleAccountsValidator);
+        verifyNoInteractions(oauthConsentValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

@@ -1,0 +1,19 @@
+{
+  "resourceId": "3276159a-27ad-46db-8491-71e629d82baa",
+  "maskedPan": "23456xxxxxx1234",
+  "currency": "EUR",
+  "name": "Main account",
+  "displayName": "Display name",
+  "product": "Girokonto",
+  "status": "enabled",
+  "usage": "ORGA",
+  "details": "Details",
+  "balances": [
+    {
+      "balanceType": "expected",
+      "referenceDate": "2018-03-31",
+      "lastCommittedTransaction": "lastCommittedTransaction"
+    }
+  ],
+  "_links": {}
+}

@@ -1,0 +1,35 @@
+{
+  "id": "10818bb2-8fb1-485f-bd85-5af90dee99db",
+  "internalRequestId": "1234-5678-9012-3456",
+  "consentStatus": "VALID",
+  "frequencyPerDay": 0,
+  "recurringIndicator": true,
+  "multilevelScaRequired": false,
+  "expireDate": "2025-12-31",
+  "lastActionDate": "2019-12-31",
+  "psuIdDataList": [
+    {
+      "psuId": "marion.mueller",
+      "psuIdType": "PSU ID TYPE",
+      "psuCorporateId": "PSU CORPORATE ID",
+      "psuCorporateIdType": "PSU CORPORATE ID TYPE",
+      "psuIpAddress": "PSU IP ADDRESS"
+    }
+  ],
+  "authorisations": [
+    {
+      "id": "a8fc1f02-3639-4528-bd19-3eacf1c67038"
+    }
+  ],
+  "aspspAccountAccesses": {
+    "accounts": [
+      {
+        "currency": "EUR",
+        "iban": "DE15500105172295759744"
+      }
+    ]
+  },
+  "statusChangeTimestamp": "2019-03-17T15:30:35.035Z",
+  "creationTimestamp": "2019-07-26T13:29:50.042136+03:00",
+  "consentType": "PIIS_TPP"
+}

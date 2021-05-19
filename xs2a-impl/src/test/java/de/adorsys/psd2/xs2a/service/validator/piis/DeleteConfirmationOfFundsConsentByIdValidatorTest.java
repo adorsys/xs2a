@@ -32,10 +32,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteConfirmationOfFundsConsentByIdValidatorTest {
@@ -99,5 +101,19 @@ class DeleteConfirmationOfFundsConsentByIdValidatorTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
         return tppInfo;
+    }
+
+    @Test
+    void buildWarningMessages() {
+        //Given
+        PiisConsent piisConsent = buildPiisConsent(INVALID_TPP_INFO);
+        CommonConfirmationOfFundsConsentObject commonConfirmationOfFundsConsentObject = new CommonConfirmationOfFundsConsentObject(piisConsent);
+
+        //When
+        Set<TppMessageInformation> actual = deleteConfirmationOfFundsConsentByIdValidator.buildWarningMessages(commonConfirmationOfFundsConsentObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(piisConsentTppInfoValidator);
     }
 }

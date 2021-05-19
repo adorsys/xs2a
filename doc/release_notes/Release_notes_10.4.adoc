@@ -1,0 +1,14 @@
+= Release notes v.10.4
+
+== Table of Contents
+
+* Refactored FieldLengthValidator
+* Increased test coverage
+
+== Refactored FieldLengthValidator
+
+From now on, FieldLengthValidator is refactored to be more readable.
+
+== Increased test coverage
+
+Increased test coverage for mapper classes

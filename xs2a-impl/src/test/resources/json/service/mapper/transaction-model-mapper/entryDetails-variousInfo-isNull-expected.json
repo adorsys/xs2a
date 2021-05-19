@@ -1,0 +1,19 @@
+{
+  "endToEndId": "endToEndId",
+  "mandateId": "mandateId",
+  "checkId": "checkId",
+  "creditorId": "creditorId",
+  "transactionAmount": {
+    "currency": "EUR",
+    "amount": "123"
+  },
+  "creditorName": "creditorName",
+  "creditorAccount": {
+    "iban": "DE52500105173911841934",
+    "bban": "Test BBAN",
+    "pan": "1111",
+    "maskedPan": "23456xxxxxx1234",
+    "msisdn": "0172/1111111",
+    "currency": "EUR"
+  }
+}

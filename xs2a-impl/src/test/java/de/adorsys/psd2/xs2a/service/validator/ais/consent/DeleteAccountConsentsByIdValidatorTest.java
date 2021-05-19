@@ -32,10 +32,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.UNAUTHORIZED;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteAccountConsentsByIdValidatorTest {
@@ -91,6 +93,20 @@ class DeleteAccountConsentsByIdValidatorTest {
         assertNotNull(validationResult);
         assertTrue(validationResult.isNotValid());
         assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        AisConsent accountConsent = buildAccountConsent(INVALID_TPP_INFO);
+        CommonConsentObject commonConsentObject = new CommonConsentObject(accountConsent);
+
+        //When
+        Set<TppMessageInformation> actual = deleteAccountConsentsByIdValidator.buildWarningMessages(commonConsentObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aisConsentTppInfoValidator);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

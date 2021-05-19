@@ -41,12 +41,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePiisConsentAuthorisationValidatorTest {
@@ -97,9 +97,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Then
         verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -114,9 +114,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Then
         verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(RESOURCE_BLOCKED_SB_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(RESOURCE_BLOCKED_SB_ERROR);
     }
 
     @Test
@@ -132,9 +132,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Then
         verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(PSU_CREDENTIALS_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(PSU_CREDENTIALS_ERROR);
     }
 
     @Test
@@ -150,9 +150,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Then
         verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -170,9 +170,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Then
         verify(piisConsentTppInfoValidator).validateTpp(createPiisAuthorisationPO.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(STATUS_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(STATUS_INVALID_ERROR);
     }
 
     @Test
@@ -187,9 +187,26 @@ class CreatePiisConsentAuthorisationValidatorTest {
         // Then
         verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(TPP_VALIDATION_ERROR);
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PiisConsent piisConsent = buildPiisConsent(TPP_INFO);
+        CreatePiisConsentAuthorisationObject createPiisConsentAuthorisationObject =
+            new CreatePiisConsentAuthorisationObject(piisConsent, EMPTY_PSU_DATA);
+
+        //When
+        Set<TppMessageInformation> actual = createPiisConsentAuthorisationValidator.buildWarningMessages(createPiisConsentAuthorisationObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(piisConsentTppInfoValidator);
+        verifyNoInteractions(authorisationPsuDataChecker);
+        verifyNoInteractions(aisAuthorisationStatusChecker);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

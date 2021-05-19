@@ -144,6 +144,12 @@
     },
     "authoriseTransaction": {
       "href": "http://authoriseTransaction"
+    },
+    "confirmation": {
+      "href": "http://confirmation"
+    },
+    "card": {
+      "href": "http://card"
     }
   },
   "transactionReportHuge": true,

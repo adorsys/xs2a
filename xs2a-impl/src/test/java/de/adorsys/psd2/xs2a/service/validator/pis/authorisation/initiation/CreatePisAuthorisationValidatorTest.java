@@ -38,15 +38,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.domain.TppMessageInformation.of;
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.*;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static de.adorsys.psd2.xs2a.core.profile.PaymentType.SINGLE;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreatePisAuthorisationValidatorTest {
@@ -102,9 +102,9 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -115,9 +115,9 @@ class CreatePisAuthorisationValidatorTest {
         ValidationResult validationResult = createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(commonPaymentResponse, SINGLE, WRONG_PAYMENT_PRODUCT, null));
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(PAYMENT_PRODUCT_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(PAYMENT_PRODUCT_VALIDATION_ERROR);
     }
 
     @Test
@@ -131,9 +131,9 @@ class CreatePisAuthorisationValidatorTest {
         ValidationResult validationResult = createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT, null));
 
         // Then
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(RESOURCE_BLOCKED_SB_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(RESOURCE_BLOCKED_SB_ERROR);
     }
 
     @Test
@@ -149,9 +149,9 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(TPP_VALIDATION_ERROR);
     }
 
     @Test
@@ -167,9 +167,9 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(EXPIRED_PAYMENT_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(EXPIRED_PAYMENT_ERROR);
     }
 
     @Test
@@ -188,9 +188,9 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(PSU_CREDENTIALS_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(PSU_CREDENTIALS_INVALID_ERROR);
     }
 
     @Test
@@ -209,9 +209,9 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isValid());
-        assertNull(validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isNull();
     }
 
     @Test
@@ -231,9 +231,9 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(STATUS_INVALID_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(STATUS_INVALID_ERROR);
     }
 
     @Test
@@ -249,9 +249,26 @@ class CreatePisAuthorisationValidatorTest {
         // Then
         verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
 
-        assertNotNull(validationResult);
-        assertTrue(validationResult.isNotValid());
-        assertEquals(TPP_VALIDATION_ERROR, validationResult.getMessageError());
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(TPP_VALIDATION_ERROR);
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(REJECTED_TRANSACTION_STATUS, INVALID_TPP_INFO);
+        CreatePisAuthorisationObject createPisAuthorisationObject =
+            new CreatePisAuthorisationObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT, null);
+
+        //When
+        Set<TppMessageInformation> actual = createPisAuthorisationValidator.buildWarningMessages(createPisAuthorisationObject);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(pisTppInfoValidator);
+        verifyNoInteractions(authorisationPsuDataChecker);
+        verifyNoInteractions(authorisationStatusChecker);
     }
 
     private static TppInfo buildTppInfo(String authorisationNumber) {

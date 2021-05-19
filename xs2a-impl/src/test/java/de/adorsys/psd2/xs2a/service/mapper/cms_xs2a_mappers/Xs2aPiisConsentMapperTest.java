@@ -38,13 +38,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Collections;
 import java.util.Currency;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Xs2aPiisConsentMapperImpl.class, ConsentDataMapper.class, Xs2aAccountConsentAuthorizationMapper.class})
 class Xs2aPiisConsentMapperTest {
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Autowired
     private Xs2aPiisConsentMapper xs2aPiisConsentMapper;
@@ -60,14 +60,26 @@ class Xs2aPiisConsentMapperTest {
 
     @Test
     void mapToPiisConsent() {
+        //Given
         CmsConsent cmsConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/cms-consent.json", CmsConsent.class);
         byte[] piisConsentData = jsonReader.getBytesFromFile("json/service/mapper/consent/piis/piis-consent-data.json");
         cmsConsent.setConsentData(piisConsentData);
-        PiisConsent expectedXs2aConsent = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/piis-consent.json", PiisConsent.class);
+        PiisConsent expected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/piis-consent.json", PiisConsent.class);
 
-        PiisConsent result = xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent);
+        //When
+        PiisConsent actual = xs2aPiisConsentMapper.mapToPiisConsent(cmsConsent);
 
-        assertEquals(expectedXs2aConsent, result);
+        //Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void mapToPiisConsent_nullInput() {
+        //When
+        PiisConsent actual = xs2aPiisConsentMapper.mapToPiisConsent(null);
+
+        //Then
+        assertThat(actual).isNull();
     }
 
     @Test
@@ -77,17 +89,18 @@ class Xs2aPiisConsentMapperTest {
         accountReference.setIban("DE15500105172295759744");
         accountReference.setCurrency("EUR");
         de.adorsys.psd2.xs2a.core.profile.AccountReference reference = new de.adorsys.psd2.xs2a.core.profile.AccountReference(null, null, accountReference.getIban(), null, null, null, null, Currency.getInstance(accountReference.getCurrency()), null);
-        when(consentModelMapper.mapToXs2aAccountReferences(Collections.singletonList(accountReference)))
-            .thenReturn(Collections.singletonList(reference));
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json", PsuIdData.class);
 
         //When
-
+        when(consentModelMapper.mapToXs2aAccountReferences(Collections.singletonList(accountReference)))
+            .thenReturn(Collections.singletonList(reference));
+        when(requestProviderService.getTppRedirectURI()).thenReturn("test tppRedirectUri");
         CreatePiisConsentRequest request = jsonReader.getObjectFromFile("json/piis/create-piis-consent.json", CreatePiisConsentRequest.class);
         TppInfo tppInfo = jsonReader.getObjectFromFile("json/service/mapper/tpp-info.json", TppInfo.class);
-        CmsConsent cmsConsent = xs2aPiisConsentMapper.mapToCmsConsent(request, psuIdData, tppInfo);
+        CmsConsent actual = xs2aPiisConsentMapper.mapToCmsConsent(request, psuIdData, tppInfo);
+
         //Then
-        CmsConsent cmsConsentExpected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/cms-consent-creation.json", CmsConsent.class);
-        assertEquals(cmsConsentExpected, cmsConsent);
+        CmsConsent expected = jsonReader.getObjectFromFile("json/service/mapper/consent/piis/cms-consent-creation.json", CmsConsent.class);
+        assertThat(actual).isEqualTo(expected);
     }
 }

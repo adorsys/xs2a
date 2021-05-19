@@ -32,11 +32,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PsuDataInInitialRequestValidatorTest {
@@ -119,5 +121,21 @@ class PsuDataInInitialRequestValidatorTest {
 
         assertTrue(validationResult.isNotValid());
         assertEquals(NULL_PSU_ID_ERROR, validationResult.getMessageError());
+    }
+
+    @Test
+    void buildWarningMessages() {
+        //Given
+        PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
+
+        //When
+        Set<TppMessageInformation> actual = psuDataInInitialRequestValidator.buildWarningMessages(psuIdData);
+
+        //Then
+        assertThat(actual).isEmpty();
+        verifyNoInteractions(aspspProfileService);
+        verifyNoInteractions(requestProviderService);
+        verifyNoInteractions(serviceTypeDiscoveryService);
+        verifyNoInteractions(errorTypeMapper);
     }
 }
