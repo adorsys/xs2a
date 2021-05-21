@@ -18,16 +18,21 @@ package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TransactionsReportDownloadLinksTest {
 
     private static final String HTTP_URL = "http://url";
     private static final String ACCOUNT_ID = "33333-999999999";
+    private static final String BALANCES_LINK = "http://url/v1/accounts/33333-999999999/balances";
     private Links expectedLinks;
+
+    private JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -37,20 +42,41 @@ class TransactionsReportDownloadLinksTest {
 
     @Test
     void success_noBalance() {
+        // Given
         boolean withBalance = false;
 
+        // When
         TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string", null);
 
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void success_with_balance() {
+        // Given
         boolean withBalance = true;
 
+        // When
         TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string", null);
 
-        expectedLinks.setBalances(new HrefType("http://url/v1/accounts/33333-999999999/balances"));
+        expectedLinks.setBalances(new HrefType(BALANCES_LINK));
+
+        // Then
         assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    void links_notNull() {
+        // Given
+        Links inputLinks = jsonReader.getObjectFromFile("json/link/test-links.json", Links.class);
+
+        // When
+        TransactionsReportDownloadLinks actual = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, true, "encoded-string", inputLinks);
+
+        expectedLinks.setBalances(new HrefType(BALANCES_LINK));
+
+        // Then
+        assertThat(actual).isEqualTo(expectedLinks);
     }
 }

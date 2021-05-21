@@ -1,3 +1,9 @@
 = Release notes v.11.5
 
 == Table of Contents
+
+* Increased test coverage
+
+== Increased test coverage
+
+Increased test coverage for AbstractLinks child classes
