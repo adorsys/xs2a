@@ -72,8 +72,10 @@ class CreatePiisConsentLinksTest {
 
     @Test
     void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndExplicitMethodAndPsuDataIsEmptyAndMultiLevelRequired() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -86,13 +88,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndExplicitMethodAndPsuDataIsNotEmptyAndMultiLevelRequired() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -105,15 +111,19 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndExplicitMethodAndMultiLevelNotRequired() {
+        // Given
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -126,15 +136,19 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticated_Embedded_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
+        // Given
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -147,13 +161,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisation(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndImplicitMethodAndPsuDataIsEmpty() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(false)
@@ -167,13 +185,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setStatus(STATUS);
         expectedLinks.setScaStatus(SCA_STATUS);
         expectedLinks.setUpdatePsuAuthentication(SCA_STATUS);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndEmbeddedScaApproachAndImplicitMethodAndPsuDataIsNotEmpty() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.EMBEDDED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(false)
@@ -187,14 +209,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setStatus(STATUS);
         expectedLinks.setScaStatus(SCA_STATUS);
         expectedLinks.setUpdatePsuAuthentication(SCA_STATUS);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndExplicitMethodAndPsuDataIsEmptyAndMultiLevelRequired() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
-
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -206,13 +231,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndExplicitMethodAndPsuDataIsNotEmptyAndMultiLevelRequired() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -225,15 +254,19 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndExplicitMethodAndMultiLevelNotRequired() {
+        // Given
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -246,15 +279,19 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisationWithPsuAuthentication(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticated_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
+        // Given
         response.setAuthorizationId(AUTHORISATION_ID);
 
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -267,13 +304,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisation(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndImplicitMethodAndPsuDataIsEmpty() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(false)
@@ -287,13 +328,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setStatus(STATUS);
         expectedLinks.setScaStatus(SCA_STATUS);
         expectedLinks.setUpdatePsuAuthentication(SCA_STATUS);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndImplicitMethodAndPsuDataIsNotEmpty() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(false)
@@ -307,13 +352,17 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setStatus(STATUS);
         expectedLinks.setScaStatus(SCA_STATUS);
         expectedLinks.setUpdatePsuAuthentication(SCA_STATUS);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void scaApproachRedirectAndExplicitMethod() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(true)
@@ -326,15 +375,65 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setSelf(SELF);
         expectedLinks.setStatus(STATUS);
         expectedLinks.setStartAuthorisation(START_AUTHORISATION_WITH_PSU_AUTHENTICATION);
+
+        // Then
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    void scaApproachRedirectAndOauthFlow() {
+        // Given
+        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
+
+        // When
+        LinkParameters linkParameters = LinkParameters.builder()
+            .httpUrl(HTTP_URL)
+            .isExplicitMethod(false)
+            .isSigningBasketModeActive(false)
+            .isAuthorisationConfirmationRequestMandated(false)
+            .instanceId("")
+            .build();
+        links = new CreatePiisConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, ScaRedirectFlow.OAUTH);
+
+        expectedLinks.setSelf(SELF);
+        expectedLinks.setStatus(STATUS);
+        expectedLinks.setScaRedirect(new HrefType(null));
+        expectedLinks.setScaStatus(SCA_STATUS);
+
+        // Then
+        assertEquals(expectedLinks, links);
+    }
+
+    @Test
+    void scaApproach_isNull(){
+        // Given
+        response.setAuthorizationId(null);
+
+        // When
+        LinkParameters linkParameters = LinkParameters.builder()
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
+        links = new CreatePiisConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, ScaRedirectFlow.OAUTH);
+
+        expectedLinks.setSelf(SELF);
+        expectedLinks.setStatus(STATUS);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
     void scaApproachRedirectAndImplicitMethod() {
+        // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
         when(redirectIdService.generateRedirectId(AUTHORISATION_ID)).thenReturn(AUTHORISATION_ID);
         when(redirectLinkBuilder.buildConsentScaRedirectLink(CONSENT_ID, AUTHORISATION_ID, INTERNAL_REQUEST_ID, "", ConsentType.PIIS_TPP)).thenReturn(REDIRECT_LINK);
 
+        // When
         LinkParameters linkParameters = LinkParameters.builder()
             .httpUrl(HTTP_URL)
             .isExplicitMethod(false)
@@ -348,6 +447,8 @@ class CreatePiisConsentLinksTest {
         expectedLinks.setStatus(STATUS);
         expectedLinks.setScaRedirect(new HrefType(REDIRECT_LINK));
         expectedLinks.setScaStatus(SCA_STATUS);
+
+        // Then
         assertEquals(expectedLinks, links);
     }
 

@@ -1,0 +1,8 @@
+{
+  "balances": {
+    "href": "/api/v1/accounts/33333-999999999/balances"
+  },
+  "transactions": {
+    "href": "/api/v1/accounts/33333-999999999/transactions"
+  }
+}
