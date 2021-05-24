@@ -57,4 +57,14 @@ public class SpiPaymentInfo implements SpiPayment {
     public void setPaymentStatus(TransactionStatus status) {
         this.status = status;
     }
+
+    @Override
+    public String getDebtorName() {
+        return null;
+    }
+
+    @Override
+    public void setDebtorName(String debtorName) {
+        // Payment info does not have debtorName
+    }
 }

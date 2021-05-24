@@ -3,7 +3,17 @@
 == Table of Contents
 
 * Increased test coverage
+* Added debtorName to get payment response
 
 == Increased test coverage
 
 Increased test coverage for AbstractLinks child classes
+
+== Added debtorName to get payment response
+
+From now on debtorName is present in get payment response for following payment products:
+
+- bulk-payments - instant-sepa-credit-transfers
+- bulk-payments - target-2-payments
+- single payments - instant-sepa-credit-transfers
+- single payments - target-2-payments
