@@ -35,7 +35,7 @@ a| * All fixes and updates from v.8.0
 
 * Bugfixing: Added business object to AuthorisationSpi#getScaStatus
 
-a|* All fixes and updates from v.10.0
+a|* All fixes and updates from v.10.1
 
 *  Added pagination to event-service
 
@@ -47,10 +47,60 @@ a|
 
 a| *  Added description about scaExemption flag
 
-a|* All fixes and updates from v.10.0
+a|* All fixes and updates from v.10.2
 
 *  Add new optional attributes (_links, tppMessages) to the Response body of Get Transaction Status Request,
 Get SCA Status Request
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+|05.05.2021| | 10.3| 11.3| |
+
+a|
+
+a| * Restricted FrequencyPerDay for one-off consent usage
+
+* Increased test coverage
+
+* Removed deprecated AuthorisationSpi#getScaInformation
+
+* Removed deprecated CmsPayment
+
+a|* All fixes and updates from v.10.3
+
+*  Added new attribute to ASPSP-Profile
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+|19.05.2021| | 10.4| 11.4| |
+
+a|
+
+a| * Refactored FieldLengthValidator
+
+a|* All fixes and updates from v.10.4
+
+*  Added new optional Header TPP-Decoupled-Preferred
 
 a|
 
