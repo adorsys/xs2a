@@ -3,7 +3,17 @@
 == Table of Contents
 
 * Increased test coverage
+* Upgraded commons-io
+* Upgraded commons-validator
 
 == Increased test coverage
 
 Increased test coverage for AbstractLinks child classes
+
+== Upgraded commons-io
+
+From now on, commons-io version is 2.8.0
+
+== Upgraded commons-validator
+
+From now on, commons-validator version is 1.7
