@@ -41,4 +41,8 @@ public interface SpiPayment {
     String getContentType();
 
     String getInstanceId();
+
+    String getDebtorName();
+
+    void setDebtorName(String debtorName);
 }
