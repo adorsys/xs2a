@@ -1,0 +1,14 @@
+= Release notes v.11.5
+
+== Table of Contents
+
+* Upgraded commons-io
+* Upgraded commons-validator
+
+== Upgraded commons-io
+
+From now on, commons-io version is 2.8.0
+
+== Upgraded commons-validator
+
+From now on, commons-validator version is 1.7
