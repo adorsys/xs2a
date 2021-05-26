@@ -49,7 +49,7 @@ public class ConsentModelMapper {
     public final AccountModelMapper accountModelMapper;
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
-    private final TppMessage2XXMapper tppMessage2XXMapper;
+    private final TppMessageGenericMapper tppMessageGenericMapper;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri,
                                                   TppNotificationData tppNotificationData, String tppBrandLoggingInformation,
@@ -95,7 +95,7 @@ public class ConsentModelMapper {
                                 .scaMethods(scaMethodsMapper.mapToScaMethods(cnst.getScaMethods()))
                                 ._links(hrefLinkMapper.mapToLinksMap(cnst.getLinks()))
                                 .psuMessage(cnst.getPsuMessage())
-                                .tppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(cnst.getTppMessageInformation()))
+                                .tppMessages(tppMessageGenericMapper.mapToTppMessageGenericList(cnst.getTppMessageInformation()))
                    )
                    .orElse(null);
     }

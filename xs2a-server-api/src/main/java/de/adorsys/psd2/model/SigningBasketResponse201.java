@@ -1,28 +1,23 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ChallengeData;
-import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.model.LinksSigningBasket;
-import de.adorsys.psd2.model.ScaMethods;
-import de.adorsys.psd2.model.TppMessage2XX;
-import de.adorsys.psd2.model.TransactionStatusSBS;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Body of the JSON response for a successful create signing basket request.
  */
 @ApiModel(description = "Body of the JSON response for a successful create signing basket request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class SigningBasketResponse201   {
   @JsonProperty("transactionStatus")
@@ -48,7 +43,7 @@ public class SigningBasketResponse201   {
 
   @JsonProperty("tppMessages")
   @Valid
-  private List<TppMessage2XX> tppMessages = null;
+  private List<TppMessageGeneric> tppMessages = null;
 
   public SigningBasketResponse201 transactionStatus(TransactionStatusSBS transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -212,12 +207,12 @@ public class SigningBasketResponse201   {
     this.psuMessage = psuMessage;
   }
 
-  public SigningBasketResponse201 tppMessages(List<TppMessage2XX> tppMessages) {
+  public SigningBasketResponse201 tppMessages(List<TppMessageGeneric> tppMessages) {
     this.tppMessages = tppMessages;
     return this;
   }
 
-  public SigningBasketResponse201 addTppMessagesItem(TppMessage2XX tppMessagesItem) {
+  public SigningBasketResponse201 addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
@@ -235,11 +230,11 @@ public class SigningBasketResponse201   {
 
 
   @JsonProperty("tppMessages")
-  public List<TppMessage2XX> getTppMessages() {
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
-  public void setTppMessages(List<TppMessage2XX> tppMessages) {
+  public void setTppMessages(List<TppMessageGeneric> tppMessages) {
     this.tppMessages = tppMessages;
   }
 

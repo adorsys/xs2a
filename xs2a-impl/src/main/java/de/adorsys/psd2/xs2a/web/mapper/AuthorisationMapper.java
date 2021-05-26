@@ -43,7 +43,7 @@ public class AuthorisationMapper {
     private final ScaMethodsMapper scaMethodsMapper;
     private final AuthorisationModelMapper authorisationModelMapper;
     private final AmountModelMapper amountModelMapper;
-    private final TppMessage2XXMapper tppMessage2XXMapper;
+    private final TppMessageGenericMapper tppMessageGenericMapper;
 
     public Authorisations mapToAuthorisations(Xs2aAuthorisationSubResources xs2AAuthorisationSubResources) {
         Authorisations authorisations = new Authorisations();
@@ -97,7 +97,7 @@ public class AuthorisationMapper {
                    .trustedBeneficiaryFlag(xs2aScaStatusResponse.getTrustedBeneficiaryFlag())
                    .psuMessage(xs2aScaStatusResponse.getPsuMessage())
                    ._links(hrefLinkMapper.mapToLinksMap(xs2aScaStatusResponse.getLinks()))
-                   .tppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(xs2aScaStatusResponse.getTppMessageInformation()));
+                   .tppMessage(tppMessageGenericMapper.mapToTppMessageGenericList(xs2aScaStatusResponse.getTppMessageInformation()));
     }
 
     public UpdatePsuAuthenticationResponse mapToPisUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {

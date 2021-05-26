@@ -53,7 +53,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreObjectsMapper.class, TppRedirectUriMapper.class,
     HrefLinkMapper.class, Xs2aObjectMapper.class, ScaMethodsMapperImpl.class, StandardPaymentProductsResolver.class,
-    TppMessage2XXMapperImpl.class})
+    TppMessage201MapperImpl.class, TppMessageGenericMapperImpl.class})
 class PaymentModelMapperPsd2Test {
     private static final String PAYMENT_ID = "594ef79c-d785-41ec-9b14-2ea3a7ae2c7b";
     private static final String ENCRYPTED_PAYMENT_ID = "2Cixxv85Or_qoBBh_d7VTZC0M8PwzR5IGzsJuT-jYHNOMR1D7n69vIF46RgFd7Zn_=_bS6p6XvTWI";
@@ -83,7 +83,9 @@ class PaymentModelMapperPsd2Test {
     @Autowired
     private Xs2aObjectMapper xs2aObjectMapper;
     @Autowired
-    private TppMessage2XXMapper tppMessage2XXMapper;
+    private TppMessage201Mapper tppMessage201Mapper;
+    @Autowired
+    private TppMessageGenericMapper tppMessageGenericMapper;
 
     private final JsonReader jsonReader = new JsonReader();
 
@@ -93,7 +95,7 @@ class PaymentModelMapperPsd2Test {
         AmountModelMapper amountModelMapper = new AmountModelMapper(validatorService);
         mapper = new PaymentModelMapperPsd2(coreObjectsMapper, tppRedirectUriMapper, amountModelMapper,
                                             hrefLinkMapper, scaMethodsMapper, standardPaymentProductsResolver,
-                                            xs2aObjectMapper, tppMessage2XXMapper);
+                                            xs2aObjectMapper, tppMessage201Mapper, tppMessageGenericMapper);
     }
 
     @Test

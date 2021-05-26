@@ -1,29 +1,25 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AccountReference;
-import de.adorsys.psd2.model.Address;
-import de.adorsys.psd2.model.Amount;
-import de.adorsys.psd2.model.DayOfExecution;
-import de.adorsys.psd2.model.ExecutionRule;
-import de.adorsys.psd2.model.FrequencyCode;
-import de.adorsys.psd2.model.PurposeCode;
-import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.time.LocalDate;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field.
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -85,6 +81,10 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
 
   @JsonProperty("transactionStatus")
   private TransactionStatus transactionStatus = null;
+
+  @JsonProperty("tppMessage")
+  @Valid
+  private List<TppMessageGeneric> tppMessage = null;
 
   public PeriodicPaymentInitiationWithStatusResponse endToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -509,7 +509,6 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   @ApiModelProperty(value = "")
 
   @Valid
-@Size(max=2)
 
   @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
@@ -543,6 +542,37 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     this.transactionStatus = transactionStatus;
   }
 
+  public PeriodicPaymentInitiationWithStatusResponse tppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
+    return this;
+  }
+
+  public PeriodicPaymentInitiationWithStatusResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
+    if (this.tppMessage == null) {
+      this.tppMessage = new ArrayList<>();
+    }
+    this.tppMessage.add(tppMessageItem);
+    return this;
+  }
+
+  /**
+   * Messages to the TPP on operational issues.
+   * @return tppMessage
+  **/
+  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
+
+  @Valid
+
+
+  @JsonProperty("tppMessage")
+  public List<TppMessageGeneric> getTppMessage() {
+    return tppMessage;
+  }
+
+  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -571,12 +601,13 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     Objects.equals(this.executionRule, periodicPaymentInitiationWithStatusResponse.executionRule) &&
     Objects.equals(this.frequency, periodicPaymentInitiationWithStatusResponse.frequency) &&
     Objects.equals(this.dayOfExecution, periodicPaymentInitiationWithStatusResponse.dayOfExecution) &&
-    Objects.equals(this.transactionStatus, periodicPaymentInitiationWithStatusResponse.transactionStatus);
+    Objects.equals(this.transactionStatus, periodicPaymentInitiationWithStatusResponse.transactionStatus) &&
+    Objects.equals(this.tppMessage, periodicPaymentInitiationWithStatusResponse.tppMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution, transactionStatus);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution, transactionStatus, tppMessage);
   }
 
   @Override
@@ -604,6 +635,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
     sb.append("    dayOfExecution: ").append(toIndentedString(dayOfExecution)).append("\n");
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
+    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

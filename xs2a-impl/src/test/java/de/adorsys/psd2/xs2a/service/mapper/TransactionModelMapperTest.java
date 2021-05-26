@@ -17,10 +17,7 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.model.AccountReport;
-import de.adorsys.psd2.model.EntryDetails;
-import de.adorsys.psd2.model.InlineResponse2001;
-import de.adorsys.psd2.model.TransactionsResponse200Json;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Transactions;
@@ -158,7 +155,7 @@ class TransactionModelMapperTest {
     @Test
     void mapToEntryDetails_null() {
         // When
-        EntryDetails actual = mapper.mapToEntryDetails(null);
+        EntryDetailsElement actual = mapper.mapToEntryDetailsElement(null);
 
         // Then
         assertThat(actual).isNull();
@@ -187,10 +184,10 @@ class TransactionModelMapperTest {
                                                                                              de.adorsys.psd2.xs2a.domain.EntryDetails.class);
 
         // When
-        EntryDetails actual = mapper.mapToEntryDetails(inputDetails);
+        EntryDetailsElement actual = mapper.mapToEntryDetailsElement(inputDetails);
 
-        EntryDetails expectedDetails = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/entryDetails-variousInfo-isNull-expected.json",
-                                                                    EntryDetails.class);
+        EntryDetailsElement expectedDetails = jsonReader.getObjectFromFile("json/service/mapper/transaction-model-mapper/entryDetails-variousInfo-isNull-expected.json",
+                                                                    EntryDetailsElement.class);
 
         // Then
         assertThat(actual).isEqualTo(expectedDetails);

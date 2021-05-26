@@ -94,7 +94,7 @@ public abstract class TransactionModelMapper {
     @Mapping(target = "remittanceInformationStructured", source = "transactionInfo.remittanceInformationStructured")
     @Mapping(target = "remittanceInformationStructuredArray", source = "transactionInfo.remittanceInformationStructuredArray")
     @Mapping(target = "purposeCode", source = "transactionInfo.purposeCode")
-    public abstract de.adorsys.psd2.model.EntryDetails mapToEntryDetails(de.adorsys.psd2.xs2a.domain.EntryDetails entryDetails);
+    public abstract de.adorsys.psd2.model.EntryDetailsElement mapToEntryDetailsElement(de.adorsys.psd2.xs2a.domain.EntryDetails entryDetails);
 
     public InlineResponse2001 mapToTransactionDetails(Transactions transactions) {
         InlineResponse2001 inlineResponse2001 = new InlineResponse2001();

@@ -1,26 +1,25 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.HrefType;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * LinksCardAccountReport
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class LinksCardAccountReport extends HashMap<String, HrefType>  {
   @JsonProperty("cardAccount")
   private HrefType cardAccount = null;
+
+  @JsonProperty("card")
+  private HrefType card = null;
 
   @JsonProperty("first")
   private HrefType first = null;
@@ -43,8 +42,7 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
    * Get cardAccount
    * @return cardAccount
   **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
+  @ApiModelProperty(value = "")
 
   @Valid
 
@@ -56,6 +54,29 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
 
   public void setCardAccount(HrefType cardAccount) {
     this.cardAccount = cardAccount;
+  }
+
+  public LinksCardAccountReport card(HrefType card) {
+    this.card = card;
+    return this;
+  }
+
+  /**
+   * Get card
+   * @return card
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("card")
+  public HrefType getCard() {
+    return card;
+  }
+
+  public void setCard(HrefType card) {
+    this.card = card;
   }
 
   public LinksCardAccountReport first(HrefType first) {
@@ -164,6 +185,7 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
     }
     LinksCardAccountReport _linksCardAccountReport = (LinksCardAccountReport) o;
     return Objects.equals(this.cardAccount, _linksCardAccountReport.cardAccount) &&
+    Objects.equals(this.card, _linksCardAccountReport.card) &&
     Objects.equals(this.first, _linksCardAccountReport.first) &&
     Objects.equals(this.next, _linksCardAccountReport.next) &&
     Objects.equals(this.previous, _linksCardAccountReport.previous) &&
@@ -172,7 +194,7 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cardAccount, first, next, previous, last, super.hashCode());
+    return Objects.hash(cardAccount, card, first, next, previous, last, super.hashCode());
   }
 
   @Override
@@ -181,6 +203,7 @@ public class LinksCardAccountReport extends HashMap<String, HrefType>  {
     sb.append("class LinksCardAccountReport {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    cardAccount: ").append(toIndentedString(cardAccount)).append("\n");
+    sb.append("    card: ").append(toIndentedString(card)).append("\n");
     sb.append("    first: ").append(toIndentedString(first)).append("\n");
     sb.append("    next: ").append(toIndentedString(next)).append("\n");
     sb.append("    previous: ").append(toIndentedString(previous)).append("\n");

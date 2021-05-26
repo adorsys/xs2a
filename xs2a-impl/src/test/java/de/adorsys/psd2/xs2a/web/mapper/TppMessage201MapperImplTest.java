@@ -16,7 +16,7 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.model.TppMessage2XX;
+import de.adorsys.psd2.model.TppMessage201PaymentInitiation;
 import de.adorsys.psd2.model.TppMessageCategory;
 import de.adorsys.psd2.xs2a.core.domain.MessageCategory;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -35,22 +35,22 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {TppMessage2XXMapperImpl.class})
-class TppMessage2XXMapperImplTest {
+@ContextConfiguration(classes = {TppMessage201MapperImpl.class})
+class TppMessage201MapperImplTest {
     @Autowired
-    private TppMessage2XXMapper tppMessage2XXMapper;
+    private TppMessage201MapperImpl tppMessage201Mapper;
 
     private final JsonReader jsonReader = new JsonReader();
 
     @Test
-    void mapToTppMessage2XX_infoIsNull_returnsNull() {
-        TppMessage2XX tppMessage2XX = tppMessage2XXMapper.mapToTppMessage2XX(null);
-        assertNull(tppMessage2XX);
+    void mapToTppMessage201_infoIsNull_returnsNull() {
+        TppMessage201PaymentInitiation tppMessage201 = tppMessage201Mapper.mapToTppMessage201(null);
+        assertNull(tppMessage201);
     }
 
     @Test
     void mapToTppMessageCategory_categoryIsNull_returnsNull() {
-        TppMessageCategory tppMessageCategory = tppMessage2XXMapper.mapToTppMessageCategory(null);
+        TppMessageCategory tppMessageCategory = tppMessage201Mapper.mapToTppMessageCategory(null);
         assertNull(tppMessageCategory);
     }
 
@@ -58,9 +58,9 @@ class TppMessage2XXMapperImplTest {
     void mapToTppMessageCategory_Ok_Error() {
         TppMessageInformation tppMessageInformation = TppMessageInformation.of(MessageCategory.ERROR,MessageErrorCode.EXECUTION_DATE_INVALID,"test path");
 
-        TppMessage2XX actual = tppMessage2XXMapper.mapToTppMessage2XX(tppMessageInformation);
+        TppMessage201PaymentInitiation actual = tppMessage201Mapper.mapToTppMessage201(tppMessageInformation);
 
-        TppMessage2XX expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-2xx-error.json", TppMessage2XX.class);
+        TppMessage201PaymentInitiation expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-2xx-error.json", TppMessage201PaymentInitiation.class);
 
         assertEquals(expected, actual);
     }
@@ -69,26 +69,27 @@ class TppMessage2XXMapperImplTest {
     void mapToTppMessageCategory_Ok_Warning() {
         TppMessageInformation tppMessageInformation = TppMessageInformation.of(MessageCategory.WARNING,MessageErrorCode.EXECUTION_DATE_INVALID,"test path");
 
-        TppMessage2XX actual = tppMessage2XXMapper.mapToTppMessage2XX(tppMessageInformation);
+        TppMessage201PaymentInitiation actual = tppMessage201Mapper.mapToTppMessage201(tppMessageInformation);
 
-        TppMessage2XX expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-2xx-warning.json", TppMessage2XX.class);
+        TppMessage201PaymentInitiation expected = jsonReader.getObjectFromFile("json/service/mapper/tpp-message-mapper/tpp-message-2xx-warning.json", TppMessage201PaymentInitiation.class);
 
         assertEquals(expected, actual);
     }
 
 
     @Test
-    void mapToTppMessage2XXList_Empty() {
-        assertNull(tppMessage2XXMapper.mapToTppMessage2XXList(Collections.emptySet()));
+    void mapToTppMessage201List_Empty() {
+        assertNull(tppMessage201Mapper.mapToTppMessage201List(Collections.emptySet()));
     }
 
     @Test
-    void mapToTppMessage2XXList_NonEmpty() {
+    void mapToTppMessage201List_NonEmpty() {
         TppMessageInformation error = TppMessageInformation.of(MessageCategory.WARNING,MessageErrorCode.EXECUTION_DATE_INVALID,"test path");
         TppMessageInformation warning = TppMessageInformation.of(MessageCategory.ERROR,MessageErrorCode.EXECUTION_DATE_INVALID,"test path");
 
-        List<TppMessage2XX> actual = tppMessage2XXMapper.mapToTppMessage2XXList(Set.of(error, warning));
+        List<TppMessage201PaymentInitiation> actual = tppMessage201Mapper.mapToTppMessage201List(Set.of(error, warning));
 
         assertNotNull(actual);
     }
 }
+

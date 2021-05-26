@@ -5,16 +5,9 @@
  */
 package de.adorsys.psd2.api;
 
-import de.adorsys.psd2.model.ConfirmationOfFunds;
-import de.adorsys.psd2.model.Error400NGAIS;
-import de.adorsys.psd2.model.Error401NGPIIS;
-import de.adorsys.psd2.model.Error403NGPIIS;
-import de.adorsys.psd2.model.Error404NGPIIS;
-import de.adorsys.psd2.model.Error405NGPIIS;
-import de.adorsys.psd2.model.Error409NGPIIS;
-import de.adorsys.psd2.model.InlineResponse2003;
-import java.util.UUID;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.adorsys.psd2.model.*;
+import io.swagger.annotations.Authorization;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Optional;
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T16:52:53.861403+02:00[Europe/Kiev]")
+import java.util.UUID;
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-21T16:00:16.532536+03:00[Europe/Kiev]")
 
 @Api(value = "ConfirmationOfFundsServicePiis", description = "the ConfirmationOfFundsServicePiis API")
 public interface FundsConfirmationApi {
@@ -47,7 +41,9 @@ public interface FundsConfirmationApi {
         return getRequest().map(r -> r.getHeader("Accept"));
     }
 
-    @ApiOperation(value = "Confirmation of funds request", nickname = "checkAvailabilityOfFunds", notes = "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively. If the related extended services are used a conditional Consent-ID is contained in the header. This field is contained but commented out in this specification.", response = InlineResponse2003.class, tags={  })
+    @ApiOperation(value = "Confirmation of funds request", nickname = "checkAvailabilityOfFunds", notes = "Creates a confirmation of funds request at the ASPSP. Checks whether a specific amount is available at point of time of the request on an account linked to a given tuple card issuer(TPP)/card number, or addressed by IBAN and TPP respectively. If the related extended services are used a conditional Consent-ID is contained in the header. This field is contained but commented out in this specification.", response = InlineResponse2003.class, authorizations = {
+        @Authorization(value = "BearerAuthOAuth")
+    }, tags={  })
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = InlineResponse2003.class),
         @ApiResponse(code = 400, message = "Bad Request", response = Error400NGAIS.class),
@@ -66,7 +62,7 @@ public interface FundsConfirmationApi {
         produces = { "application/json", "application/problem+json" },
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. " ,required=true )  @Valid @RequestBody ConfirmationOfFunds body,@ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party." ,required=true) @RequestHeader(value="X-Request-ID", required=true) UUID xRequestID,@ApiParam(value = "ID of the corresponding consent object as returned by confirmation of funds consent request. " ) @RequestHeader(value="Consent-ID", required=false) String consentID,@ApiParam(value = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. " ) @RequestHeader(value="Authorization", required=false) String authorization,@ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request." ) @RequestHeader(value="Digest", required=false) String digest,@ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. " ) @RequestHeader(value="Signature", required=false) String signature,@ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. " ) @RequestHeader(value="TPP-Signature-Certificate", required=false) byte[] tpPSignatureCertificate) {
+    default ResponseEntity<InlineResponse2003> _checkAvailabilityOfFunds(@ApiParam(value = "Request body for a confirmation of funds request. " ,required=true )  @Valid @RequestBody ConfirmationOfFunds body,@ApiParam(value = "ID of the request, unique to the call, as determined by the initiating party." ,required=true) @RequestHeader(value="X-Request-ID", required=true) UUID xRequestID,@ApiParam(value = "This data element may be contained, if the payment initiation transaction is part of a session, i.e. combined AIS/PIS service. This then contains the consentId of the related AIS consent, which was performed prior to this payment initiation. " ) @RequestHeader(value="Consent-ID", required=false) String consentID,@ApiParam(value = "This field  might be used in case where a consent was agreed between ASPSP and PSU through an OAuth2 based protocol,  facilitated by the TPP. " ) @RequestHeader(value="Authorization", required=false) String authorization,@ApiParam(value = "Is contained if and only if the \"Signature\" element is contained in the header of the request." ) @RequestHeader(value="Digest", required=false) String digest,@ApiParam(value = "A signature of the request by the TPP on application level. This might be mandated by ASPSP. " ) @RequestHeader(value="Signature", required=false) String signature,@ApiParam(value = "The certificate used for signing the request, in base64 encoding.  Must be contained if a signature is contained. " ) @RequestHeader(value="TPP-Signature-Certificate", required=false) byte[] tpPSignatureCertificate) {
         return checkAvailabilityOfFunds(body, xRequestID, consentID, authorization, digest, signature, tpPSignatureCertificate);
     }
 

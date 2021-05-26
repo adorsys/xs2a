@@ -1,28 +1,23 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.ChallengeData;
-import de.adorsys.psd2.model.ChosenScaMethod;
-import de.adorsys.psd2.model.ScaMethods;
-import de.adorsys.psd2.model.TppMessage2XX;
-import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Body of the response for a successful cancel payment request.
  */
 @ApiModel(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class PaymentInitiationCancelResponse202   {
   @JsonProperty("transactionStatus")
@@ -42,7 +37,7 @@ public class PaymentInitiationCancelResponse202   {
 
   @JsonProperty("tppMessages")
   @Valid
-  private List<TppMessage2XX> tppMessages = null;
+  private List<TppMessageGeneric> tppMessages = null;
 
   public PaymentInitiationCancelResponse202 transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -160,12 +155,12 @@ public class PaymentInitiationCancelResponse202   {
     this._links = _links;
   }
 
-  public PaymentInitiationCancelResponse202 tppMessages(List<TppMessage2XX> tppMessages) {
+  public PaymentInitiationCancelResponse202 tppMessages(List<TppMessageGeneric> tppMessages) {
     this.tppMessages = tppMessages;
     return this;
   }
 
-  public PaymentInitiationCancelResponse202 addTppMessagesItem(TppMessage2XX tppMessagesItem) {
+  public PaymentInitiationCancelResponse202 addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
     if (this.tppMessages == null) {
       this.tppMessages = new ArrayList<>();
     }
@@ -183,11 +178,11 @@ public class PaymentInitiationCancelResponse202   {
 
 
   @JsonProperty("tppMessages")
-  public List<TppMessage2XX> getTppMessages() {
+  public List<TppMessageGeneric> getTppMessages() {
     return tppMessages;
   }
 
-  public void setTppMessages(List<TppMessage2XX> tppMessages) {
+  public void setTppMessages(List<TppMessageGeneric> tppMessages) {
     this.tppMessages = tppMessages;
   }
 
