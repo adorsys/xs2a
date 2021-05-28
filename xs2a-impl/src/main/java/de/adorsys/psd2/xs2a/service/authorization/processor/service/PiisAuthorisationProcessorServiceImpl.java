@@ -101,7 +101,7 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
     }
 
     @Override
-    void findAndTerminateOldConsentsByNewConsentId(String consentId) {
+    void findAndTerminateOldConsents(String encryptedNewConsentId, PiisConsent piisConsent) {
         // this method is empty because one tpp could have more then one valid piis consent
     }
 

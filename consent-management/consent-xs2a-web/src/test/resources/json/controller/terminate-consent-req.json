@@ -1,0 +1,11 @@
+{
+  "isOneAccessType": false,
+  "isWrongConsentData": true,
+  "psuIdDataList": [
+    {
+      "psuId": "marion.mueller"
+    }
+  ],
+  "authorisationNumber": "PSDDE-FAKENCA-87B2AC",
+  "instanceId": "instanceId"
+}

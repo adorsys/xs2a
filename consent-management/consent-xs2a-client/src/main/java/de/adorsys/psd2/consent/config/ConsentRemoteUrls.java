@@ -44,6 +44,10 @@ public class ConsentRemoteUrls {
         return consentServiceBaseUrl + "/consent/{encrypted-consent-id}/old-consents";
     }
 
+    public String findAndTerminateOldConsents() {
+        return consentServiceBaseUrl + "/consent/{encrypted-consent-id}/old-consents";
+    }
+
     public String getPsuDataByConsentId() {
         return consentServiceBaseUrl + "/consent/{encrypted-consent-id}/psu-data";
     }
