@@ -33,6 +33,7 @@ import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -191,24 +192,32 @@ class Xs2aAisConsentServiceTest {
     @Test
     void findAndTerminateOldConsentsByNewConsentId_success() {
         // Given
-        when(consentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
+        when(consentServiceEncrypted.findAndTerminateOldConsents(CONSENT_ID, getRequest(aisConsent)))
             .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
 
         // When
-        boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
+        boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsents(CONSENT_ID, getRequest(aisConsent));
 
         // Then
         assertThat(actualResponse).isTrue();
     }
 
+    private TerminateOldConsentsRequest getRequest(AisConsent aisConsent) {
+        return new TerminateOldConsentsRequest(aisConsent.isOneAccessType(),
+                                               aisConsent.isWrongConsentData(),
+                                               aisConsent.getPsuIdDataList(),
+                                               aisConsent.getTppInfo().getAuthorisationNumber(),
+                                               aisConsent.getInstanceId());
+    }
+
     @Test
     void findAndTerminateOldConsentsByNewConsentId_false() {
         // Given
-        when(consentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
+        when(consentServiceEncrypted.findAndTerminateOldConsents(CONSENT_ID, getRequest(aisConsent)))
             .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
 
         // When
-        boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
+        boolean actualResponse = xs2aAisConsentService.findAndTerminateOldConsents(CONSENT_ID, getRequest(aisConsent));
 
         // Then
         assertThat(actualResponse).isFalse();

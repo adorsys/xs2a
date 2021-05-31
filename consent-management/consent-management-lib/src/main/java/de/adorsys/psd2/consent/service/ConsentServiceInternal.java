@@ -37,6 +37,7 @@ import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -228,6 +229,60 @@ public class ConsentServiceInternal implements ConsentService {
                                                                                                  tppInfo.getAuthorisationNumber(),
                                                                                                  newConsent.getInstanceId(),
                                                                                                  newConsent.getExternalId(),
+                                                                                                 EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
+
+        List<ConsentEntity> oldConsentsWithExactPsuDataLists = oldConsents.stream()
+                                                                   .distinct()
+                                                                   .filter(c -> cmsPsuService.isPsuDataListEqual(c.getPsuDataList(), psuDataList))
+                                                                   .collect(Collectors.toList());
+
+        if (oldConsentsWithExactPsuDataLists.isEmpty()) {
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent hasn't exact PSU data lists as old consents", newConsentId);
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
+        }
+
+        oldConsentsWithExactPsuDataLists.forEach(this::updateStatus);
+        consentJpaRepository.saveAll(oldConsentsWithExactPsuDataLists);
+        return CmsResponse.<Boolean>builder()
+                   .payload(true)
+                   .build();
+    }
+
+    /**
+     * Searches the old AIS consents and updates their statuses according to authorisation states and PSU data.
+     *
+     * @param newConsentId ID of new consent that was created
+     * @param request      terminate old consent request
+     * @return true if old consents were updated, false otherwise
+     */
+    @Override
+    @Transactional
+    public CmsResponse<Boolean> findAndTerminateOldConsents(String newConsentId, TerminateOldConsentsRequest request) {
+        if (request.isOneAccessType()) {
+            log.info("Consent ID: [{}]. Cannot find old consents, because consent is OneAccessType", newConsentId);
+            return CmsResponse.<Boolean>builder()
+                       .payload(false)
+                       .build();
+        }
+
+        if (request.isWrongConsentData()) {
+            log.info("Consent ID: [{}]. Find old consents failed, because consent PSU data list is empty or TPP Info is null", newConsentId);
+            throw new IllegalArgumentException("Wrong consent data");
+        }
+
+        List<PsuData> psuDataList = psuDataMapper.mapToPsuDataList(request.getPsuIdDataList(), request.getInstanceId());
+
+        Set<String> psuIds = psuDataList.stream()
+                                 .filter(Objects::nonNull)
+                                 .map(PsuData::getPsuId)
+                                 .collect(Collectors.toSet());
+
+        List<ConsentEntity> oldConsents = consentJpaRepository.findOldConsentsByNewConsentParams(psuIds,
+                                                                                                 request.getAuthorisationNumber(),
+                                                                                                 request.getInstanceId(),
+                                                                                                 newConsentId,
                                                                                                  EnumSet.of(RECEIVED, PARTIALLY_AUTHORISED, VALID));
 
         List<ConsentEntity> oldConsentsWithExactPsuDataLists = oldConsents.stream()
