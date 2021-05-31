@@ -23,6 +23,7 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.ConsentRemoteUrls;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
@@ -120,6 +121,24 @@ public class ConsentServiceRemote implements ConsentServiceEncrypted {
     public CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
         try {
             consentRestTemplate.delete(consentRemoteUrls.findAndTerminateOldConsentsByNewConsentId(), newConsentId);
+            return CmsResponse.<Boolean>builder()
+                       .payload(true)
+                       .build();
+        } catch (CmsRestException cmsRestException) {
+            log.info("Couldn't terminate old consents by new consent ID {}, HTTP response status: {}",
+                     newConsentId, cmsRestException.getHttpStatus());
+        }
+
+        return CmsResponse.<Boolean>builder()
+                   .payload(false)
+                   .build();
+    }
+
+    @Override
+    public CmsResponse<Boolean> findAndTerminateOldConsents(String newConsentId, TerminateOldConsentsRequest request) {
+        try {
+            consentRestTemplate.put(consentRemoteUrls.findAndTerminateOldConsents(), request, newConsentId);
+
             return CmsResponse.<Boolean>builder()
                        .payload(true)
                        .build();

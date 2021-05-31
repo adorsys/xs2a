@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.WrongChecksumException;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 
@@ -77,6 +78,16 @@ interface ConsentServiceBase {
      * @return true if any consents have been terminated, false - if none
      */
     CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId);
+
+    /**
+     * Finds old consents for current TPP and PSU and terminates them.
+     * This method should be invoked, when a new consent is authorised.
+     *
+     * @param newConsentId id of new consent
+     * @param request      terminate old consent request
+     * @return true if any consents have been terminated, false - if none
+     */
+    CmsResponse<Boolean> findAndTerminateOldConsents(String newConsentId, TerminateOldConsentsRequest request);
 
     CmsResponse<List<PsuIdData>> getPsuDataByConsentId(String consentId);
 

@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.config.CmsRestException;
 import de.adorsys.psd2.consent.config.ConsentRemoteUrls;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -206,6 +207,31 @@ class ConsentServiceRemoteTest {
         assertTrue(actualResponse.isSuccessful());
         assertFalse(actualResponse.getPayload());
         verify(consentRestTemplate).delete(URL, CONSENT_ID);
+    }
+
+    @Test
+    void findAndTerminateOldConsents() {
+        when(consentRemoteUrls.findAndTerminateOldConsents()).thenReturn(URL);
+        TerminateOldConsentsRequest request = new TerminateOldConsentsRequest(false, false, null, null, null);
+
+        CmsResponse<Boolean> actualResponse = consentServiceRemote.findAndTerminateOldConsents(CONSENT_ID, request);
+
+        assertTrue(actualResponse.isSuccessful());
+        assertTrue(actualResponse.getPayload());
+        verify(consentRestTemplate).put(URL, request, CONSENT_ID);
+    }
+
+    @Test
+    void findAndTerminateOldConsents_cmsRestException() {
+        when(consentRemoteUrls.findAndTerminateOldConsents()).thenReturn(URL);
+        TerminateOldConsentsRequest request = new TerminateOldConsentsRequest(false, false, null, null, null);
+        doThrow(CmsRestException.class).when(consentRestTemplate).put(URL, request, CONSENT_ID);
+
+        CmsResponse<Boolean> actualResponse = consentServiceRemote.findAndTerminateOldConsents(CONSENT_ID, request);
+
+        assertTrue(actualResponse.isSuccessful());
+        assertFalse(actualResponse.getPayload());
+        verify(consentRestTemplate).put(URL, request, CONSENT_ID);
     }
 
     @Test

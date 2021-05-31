@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization.ais;
 import de.adorsys.psd2.consent.api.service.AuthorisationServiceEncrypted;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorisationConfirmationService;
@@ -71,8 +72,13 @@ public class AisAuthorisationConfirmationService extends ConsentAuthorisationCon
     }
 
     @Override
-    protected void findAndTerminateOldConsentsByNewConsentId(String consentId) {
-        aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
+    protected void findAndTerminateOldConsents(String consentId, AisConsent consent) {
+        var request = new TerminateOldConsentsRequest(consent.isOneAccessType(),
+                                                      consent.isWrongConsentData(),
+                                                      consent.getPsuIdDataList(),
+                                                      consent.getTppInfo().getAuthorisationNumber(),
+                                                      consent.getInstanceId());
+        aisConsentService.findAndTerminateOldConsents(consentId, request);
     }
 
     @Override

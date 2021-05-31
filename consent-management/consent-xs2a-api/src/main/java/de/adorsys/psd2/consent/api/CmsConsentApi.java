@@ -19,6 +19,7 @@ package de.adorsys.psd2.consent.api;
 import de.adorsys.psd2.consent.api.ais.CmsConsent;
 import de.adorsys.psd2.consent.api.ais.ConsentStatusResponse;
 import de.adorsys.psd2.consent.api.config.InternalCmsXs2aApiTagName;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
@@ -86,6 +87,17 @@ public interface CmsConsentApi {
             example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
             required = true)
         @PathVariable("encrypted-consent-id") String encryptedConsentId);
+
+    @PutMapping(path = "/{encrypted-consent-id}/old-consents")
+    @ApiOperation(value = "Find and terminate old consents for TPP and PSU by new consent ID")
+    @ApiResponse(code = 204, message = "No Content")
+    ResponseEntity<Void> findAndTerminateOldConsents(
+        @ApiParam(name = "encrypted-consent-id",
+            value = "Encrypted consent ID",
+            example = "bf489af6-a2cb-4b75-b71d-d66d58b934d7",
+            required = true)
+        @PathVariable("encrypted-consent-id") String encryptedConsentId,
+        @RequestBody TerminateOldConsentsRequest cmsTerminateConsentsRequest);
 
     @PutMapping(path = "/{encrypted-consent-id}/multilevel-sca")
     @ApiOperation(value = "Update requirement for multilevel SCA for consent")

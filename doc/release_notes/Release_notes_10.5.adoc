@@ -4,6 +4,7 @@
 
 * Increased test coverage
 * Added debtorName to get payment response
+* Added new method to terminate old consents
 
 == Increased test coverage
 
@@ -17,3 +18,7 @@ From now on debtorName is present in get payment response for following payment 
 - bulk-payments - target-2-payments
 - single payments - instant-sepa-credit-transfers
 - single payments - target-2-payments
+
+== Added new method to terminate old consents
+
+Added new method to terminate old consents without retrieving new consent from database.
