@@ -20,6 +20,8 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.ConsentTppInformation;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -30,6 +32,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
@@ -107,7 +110,7 @@ class AisAuthorisationProcessorServiceImplTest {
     private CommonDecoupledAisService commonDecoupledAisService;
 
     private AisAuthorisationProcessorServiceImpl aisAuthorisationProcessorService;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
     private AisConsent aisConsent;
     private Authorisation authorisation;
 
@@ -1168,9 +1171,9 @@ class AisAuthorisationProcessorServiceImplTest {
         when(spiAspspConsentDataProviderFactory.getSpiAspspDataProviderFor(ENCRYPTED_CONSENT_ID)).thenReturn(spiAspspConsentDataProvider);
 
         SpiResponse<SpiPsuAuthorisationResponse> spiResponse = SpiResponse.<SpiPsuAuthorisationResponse>builder()
-                                                             .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.ATTEMPT_FAILURE))
-                                                             .error(new TppMessage(MessageErrorCode.PSU_CREDENTIALS_INVALID))
-                                                             .build();
+                                                                   .payload(new SpiPsuAuthorisationResponse(false, SpiAuthorisationStatus.ATTEMPT_FAILURE))
+                                                                   .error(new TppMessage(MessageErrorCode.PSU_CREDENTIALS_INVALID))
+                                                                   .build();
         when(aisConsentSpi.authorisePsu(SPI_CONTEXT_DATA, AUTHORISATION_ID, spiPsuData, PSU_PASSWORD, spiAccountConsent, spiAspspConsentDataProvider))
             .thenReturn(spiResponse);
 
@@ -1445,7 +1448,8 @@ class AisAuthorisationProcessorServiceImplTest {
         assertEquals(AUTHORISATION_ID, processorResponse.getAuthorisationId());
 
         verify(xs2aAisConsentService).updateConsentStatus(ENCRYPTED_CONSENT_ID, ConsentStatus.VALID);
-        verify(xs2aAisConsentService).findAndTerminateOldConsentsByNewConsentId(ENCRYPTED_CONSENT_ID);
+        var request = getRequestFromConsent(aisConsent);
+        verify(xs2aAisConsentService).findAndTerminateOldConsents(ENCRYPTED_CONSENT_ID, request);
     }
 
     @Test
@@ -1455,6 +1459,7 @@ class AisAuthorisationProcessorServiceImplTest {
         updateAuthorisationRequest.setAuthenticationMethodId(AUTHENTICATION_METHOD_ID);
 
         AisConsent aisConsent = new AisConsent();
+        aisConsent.setConsentTppInformation(new ConsentTppInformation());
 
         when(xs2aAisConsentService.getAccountConsentById(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(aisConsent));
 
@@ -1490,7 +1495,18 @@ class AisAuthorisationProcessorServiceImplTest {
 
         verify(xs2aAisConsentService).updateMultilevelScaRequired(ENCRYPTED_CONSENT_ID, true);
         verify(xs2aAisConsentService).updateConsentStatus(ENCRYPTED_CONSENT_ID, ConsentStatus.PARTIALLY_AUTHORISED);
-        verify(xs2aAisConsentService).findAndTerminateOldConsentsByNewConsentId(ENCRYPTED_CONSENT_ID);
+        var request = getRequestFromConsent(aisConsent);
+        verify(xs2aAisConsentService).findAndTerminateOldConsents(ENCRYPTED_CONSENT_ID, request);
+    }
+
+    private TerminateOldConsentsRequest getRequestFromConsent(AisConsent aisConsent) {
+        return new TerminateOldConsentsRequest(aisConsent.isOneAccessType(),
+                                               aisConsent.isWrongConsentData(),
+                                               aisConsent.getPsuIdDataList(),
+                                               Optional.ofNullable(aisConsent.getTppInfo())
+                                                   .map(TppInfo::getAuthorisationNumber)
+                                                   .orElse(null),
+                                               aisConsent.getInstanceId());
     }
 
     @Test

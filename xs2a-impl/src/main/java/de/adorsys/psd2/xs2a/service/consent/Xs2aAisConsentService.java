@@ -31,6 +31,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
@@ -111,8 +112,8 @@ public class Xs2aAisConsentService {
      * @param newConsentId id of new consent
      * @return true if any consents have been terminated, false - if none
      */
-    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
-        CmsResponse<Boolean> response = consentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
+    public boolean findAndTerminateOldConsents(String newConsentId, TerminateOldConsentsRequest request) {
+        CmsResponse<Boolean> response = consentService.findAndTerminateOldConsents(newConsentId, request);
         return response.isSuccessful() && response.getPayload();
     }
 

@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentService;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -202,6 +203,22 @@ class ConsentServiceInternalEncryptedTest {
     }
 
     @Test
+    void findAndTerminateOldConsents() {
+        TerminateOldConsentsRequest request = new TerminateOldConsentsRequest(false, true, null, null, null);
+        when(securityDataService.decryptId(ENCRYPTED_CONSENT_ID)).thenReturn(Optional.of(CONSENT_ID));
+        when(consentService.findAndTerminateOldConsents(CONSENT_ID, request))
+            .thenReturn(CmsResponse.<Boolean>builder()
+                            .payload(true)
+                            .build());
+
+        CmsResponse<Boolean> response = consentServiceInternalEncrypted.findAndTerminateOldConsents(ENCRYPTED_CONSENT_ID, request);
+
+        assertTrue(response.isSuccessful());
+        assertTrue(response.getPayload());
+        verify(consentService).findAndTerminateOldConsents(CONSENT_ID, request);
+    }
+
+    @Test
     void findAndTerminateOldConsentsByNewConsentId_malformedEncryptedId() {
         when(securityDataService.decryptId(MALFORMED_ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
 
@@ -210,6 +227,18 @@ class ConsentServiceInternalEncryptedTest {
         assertTrue(response.hasError());
         assertEquals(CmsError.TECHNICAL_ERROR, response.getError());
         verify(consentService, never()).findAndTerminateOldConsentsByNewConsentId(any());
+    }
+
+    @Test
+    void findAndTerminateOldConsents_malformedEncryptedId() {
+        TerminateOldConsentsRequest request = new TerminateOldConsentsRequest(false, true, null, null, null);
+        when(securityDataService.decryptId(MALFORMED_ENCRYPTED_CONSENT_ID)).thenReturn(Optional.empty());
+
+        CmsResponse<Boolean> response = consentServiceInternalEncrypted.findAndTerminateOldConsents(MALFORMED_ENCRYPTED_CONSENT_ID, request);
+
+        assertTrue(response.hasError());
+        assertEquals(CmsError.TECHNICAL_ERROR, response.getError());
+        verify(consentService, never()).findAndTerminateOldConsents(any(), any());
     }
 
     @Test

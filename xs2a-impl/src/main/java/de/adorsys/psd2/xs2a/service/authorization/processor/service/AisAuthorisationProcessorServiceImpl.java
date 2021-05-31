@@ -18,10 +18,12 @@ package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
@@ -101,8 +103,15 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
     }
 
     @Override
-    void findAndTerminateOldConsentsByNewConsentId(String consentId) {
-        aisConsentService.findAndTerminateOldConsentsByNewConsentId(consentId);
+    void findAndTerminateOldConsents(String consentId, AisConsent consent) {
+        var request = new TerminateOldConsentsRequest(consent.isOneAccessType(),
+                                                      consent.isWrongConsentData(),
+                                                      consent.getPsuIdDataList(),
+                                                      Optional.ofNullable(consent.getTppInfo())
+                                                          .map(TppInfo::getAuthorisationNumber)
+                                                          .orElse(null),
+                                                      consent.getInstanceId());
+        aisConsentService.findAndTerminateOldConsents(consentId, request);
     }
 
     @Override
