@@ -71,7 +71,7 @@ class AuthorisationMapperTest {
     @Mock
     private AuthorisationModelMapper authorisationModelMapper;
     @Mock
-    private TppMessage2XXMapper tppMessage2XXMapper;
+    private TppMessageGenericMapper tppMessageGenericMapper;
     @Mock
     private AmountModelMapper amountModelMapper;
 
@@ -251,7 +251,7 @@ class AuthorisationMapperTest {
         ScaStatusResponse expected = jsonReader.getObjectFromFile("json/service/mapper/authorisation-mapper/ScaStatusResponse-expected.json", ScaStatusResponse.class);
 
         when(hrefLinkMapper.mapToLinksMap(any())).thenReturn(null);
-        when(tppMessage2XXMapper.mapToTppMessage2XXList(any())).thenReturn(null);
+        when(tppMessageGenericMapper.mapToTppMessageGenericList(any())).thenReturn(null);
 
         ScaStatusResponse actual = mapper.mapToScaStatusResponse(xs2aScaStatusResponse);
         assertEquals(expected, actual);

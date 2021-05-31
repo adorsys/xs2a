@@ -88,7 +88,7 @@ class ConsentModelMapperTest {
     private AspspProfileServiceWrapper aspspProfileService;
 
     @Mock
-    private TppMessage2XXMapper tppMessage2XXMapper;
+    private TppMessageGenericMapper tppMessageGenericMapper;
 
     private CreateConsentResponse createConsentResponseWithScaMethods;
     private CreateConsentResponse createConsentResponseWithoutScaMethods;

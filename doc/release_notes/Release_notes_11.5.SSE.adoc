@@ -1,0 +1,42 @@
+= Release notes v.11.5
+
+== Table of Contents
+
+* Migrated to .yaml open API ver 1.3.9_2021-05-04v1
+
+== Migrated to .yaml open API ver 1.3.9_2021-05-04v1
+
+* New models were added:
+
+** `DebitAccounting`
+** `EntryDetailsElement`
+** `LinksPaymentInitiationStatus`
+** `MessageCode201PaymentInitiation`
+** `MessageCode202InitiationStatus`
+** `OtherAccountIdentification`
+** `PaymentInitiationStatusResponse202Json`
+** `TppMessage201PaymentInitiation`
+** `TppMessageGeneric`
+** `TppMessageInitiationStatusResponse202`
+
+
+* Changes were made in models:
+|===
+| Classname | Changes
+
+| BulkPaymentInitiationWithStatusResponse | new field  `List<TppMessageGeneric>` `tppMessage`
+| CardAccountDetails | new field `Boolean` `debitAccounting`
+| CardAccountsTransactionsResponse200 | new field `Boolean` `debitAccounting`
+| ConsentsResponse201 | type of field `tppMessages` changed from `List<TppMessage2XX>` to `List<TppMessageGeneric>`
+| LinksCardAccountReport | new field `HrefType` `card`
+| PaymentInitationRequestResponse201 | type of field `tppMessages` changed from `List<TppMessage2XX>` to `List<TppMessage201PaymentInitiation>`
+| PaymentInitiationCancelResponse202 | type of field `tppMessages` changed from `List<TppMessage2XX>` to `List<TppMessageGeneric>`
+| PaymentInitiationStatusResponse200Json | name and type of field `List<TppMessage2XX>` `tppMessages` changed to `List<TppMessageGeneric>` `tppMessage`
+| PaymentInitiationWithStatusResponse | new field `List<TppMessageGeneric>` `tppMessage`
+| PeriodicPaymentInitiationWithStatusResponse | new field `List<TppMessageGeneric>` `tppMessage`
+| ReadCardAccountBalanceResponse200 | new field `Boolean` `debitAccounting`
+| ScaStatusResponse | name and type of field `List<TppMessage2XX>` `tppMessages` changed to `List<TppMessageGeneric>` `tppMessage`
+| SigningBasketResponse201 | type of field `tppMessages` changed from `List<TppMessage2XX>` to `List<TppMessageGeneric>`
+| Transactions | type of field `List<EntryDetails>` `entryDetails` changed to `EntryDetails`
+| EntryDetails | now it extends `ArrayList` `<EntryDetailsElement>`
+|===

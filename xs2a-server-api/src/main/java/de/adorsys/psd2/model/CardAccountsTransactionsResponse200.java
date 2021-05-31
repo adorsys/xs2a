@@ -1,28 +1,27 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AccountReference;
-import de.adorsys.psd2.model.BalanceList;
-import de.adorsys.psd2.model.CardAccountReport;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Map;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters.
  */
 @ApiModel(description = "Body of the JSON response for a successful read card account transaction list request. This card account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class CardAccountsTransactionsResponse200   {
   @JsonProperty("cardAccount")
   private AccountReference cardAccount = null;
+
+  @JsonProperty("debitAccounting")
+  private Boolean debitAccounting = null;
 
   @JsonProperty("cardTransactions")
   private CardAccountReport cardTransactions = null;
@@ -54,6 +53,28 @@ public class CardAccountsTransactionsResponse200   {
 
   public void setCardAccount(AccountReference cardAccount) {
     this.cardAccount = cardAccount;
+  }
+
+  public CardAccountsTransactionsResponse200 debitAccounting(Boolean debitAccounting) {
+    this.debitAccounting = debitAccounting;
+    return this;
+  }
+
+  /**
+   * Get debitAccounting
+   * @return debitAccounting
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("debitAccounting")
+  public Boolean getDebitAccounting() {
+    return debitAccounting;
+  }
+
+  public void setDebitAccounting(Boolean debitAccounting) {
+    this.debitAccounting = debitAccounting;
   }
 
   public CardAccountsTransactionsResponse200 cardTransactions(CardAccountReport cardTransactions) {
@@ -135,6 +156,7 @@ public class CardAccountsTransactionsResponse200   {
       return false;
 }    CardAccountsTransactionsResponse200 cardAccountsTransactionsResponse200 = (CardAccountsTransactionsResponse200) o;
     return Objects.equals(this.cardAccount, cardAccountsTransactionsResponse200.cardAccount) &&
+    Objects.equals(this.debitAccounting, cardAccountsTransactionsResponse200.debitAccounting) &&
     Objects.equals(this.cardTransactions, cardAccountsTransactionsResponse200.cardTransactions) &&
     Objects.equals(this.balances, cardAccountsTransactionsResponse200.balances) &&
     Objects.equals(this._links, cardAccountsTransactionsResponse200._links);
@@ -142,7 +164,7 @@ public class CardAccountsTransactionsResponse200   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cardAccount, cardTransactions, balances, _links);
+    return Objects.hash(cardAccount, debitAccounting, cardTransactions, balances, _links);
   }
 
   @Override
@@ -151,6 +173,7 @@ public class CardAccountsTransactionsResponse200   {
     sb.append("class CardAccountsTransactionsResponse200 {\n");
 
     sb.append("    cardAccount: ").append(toIndentedString(cardAccount)).append("\n");
+    sb.append("    debitAccounting: ").append(toIndentedString(debitAccounting)).append("\n");
     sb.append("    cardTransactions: ").append(toIndentedString(cardTransactions)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");

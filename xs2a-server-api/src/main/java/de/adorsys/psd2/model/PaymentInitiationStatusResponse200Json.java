@@ -1,25 +1,24 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.TppMessage2XX;
-import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.springframework.validation.annotation.Validated;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * Body of the response for a successful payment initiation status request in case of an JSON based endpoint.
  */
 @ApiModel(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-04-16T16:06:27.670136+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class PaymentInitiationStatusResponse200Json   {
   @JsonProperty("transactionStatus")
@@ -34,9 +33,9 @@ public class PaymentInitiationStatusResponse200Json   {
   @JsonProperty("_links")
   private Map _links = null;
 
-  @JsonProperty("tppMessages")
+  @JsonProperty("tppMessage")
   @Valid
-  private List<TppMessage2XX> tppMessages = null;
+  private List<TppMessageGeneric> tppMessage = null;
 
   public PaymentInitiationStatusResponse200Json transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -129,35 +128,35 @@ public class PaymentInitiationStatusResponse200Json   {
     this._links = _links;
   }
 
-  public PaymentInitiationStatusResponse200Json tppMessages(List<TppMessage2XX> tppMessages) {
-    this.tppMessages = tppMessages;
+  public PaymentInitiationStatusResponse200Json tppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
     return this;
   }
 
-  public PaymentInitiationStatusResponse200Json addTppMessagesItem(TppMessage2XX tppMessagesItem) {
-    if (this.tppMessages == null) {
-      this.tppMessages = new ArrayList<>();
+  public PaymentInitiationStatusResponse200Json addTppMessageItem(TppMessageGeneric tppMessageItem) {
+    if (this.tppMessage == null) {
+      this.tppMessage = new ArrayList<>();
     }
-    this.tppMessages.add(tppMessagesItem);
+    this.tppMessage.add(tppMessageItem);
     return this;
   }
 
   /**
-   * Get tppMessages
-   * @return tppMessages
+   * Messages to the TPP on operational issues.
+   * @return tppMessage
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
 
   @Valid
 
 
-  @JsonProperty("tppMessages")
-  public List<TppMessage2XX> getTppMessages() {
-    return tppMessages;
+  @JsonProperty("tppMessage")
+  public List<TppMessageGeneric> getTppMessage() {
+    return tppMessage;
   }
 
-  public void setTppMessages(List<TppMessage2XX> tppMessages) {
-    this.tppMessages = tppMessages;
+  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
   }
 
 
@@ -173,12 +172,12 @@ public class PaymentInitiationStatusResponse200Json   {
     Objects.equals(this.fundsAvailable, paymentInitiationStatusResponse200Json.fundsAvailable) &&
     Objects.equals(this.psuMessage, paymentInitiationStatusResponse200Json.psuMessage) &&
     Objects.equals(this._links, paymentInitiationStatusResponse200Json._links) &&
-    Objects.equals(this.tppMessages, paymentInitiationStatusResponse200Json.tppMessages);
+    Objects.equals(this.tppMessage, paymentInitiationStatusResponse200Json.tppMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionStatus, fundsAvailable, psuMessage, _links, tppMessages);
+    return Objects.hash(transactionStatus, fundsAvailable, psuMessage, _links, tppMessage);
   }
 
   @Override
@@ -190,7 +189,7 @@ public class PaymentInitiationStatusResponse200Json   {
     sb.append("    fundsAvailable: ").append(toIndentedString(fundsAvailable)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
-    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
+    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

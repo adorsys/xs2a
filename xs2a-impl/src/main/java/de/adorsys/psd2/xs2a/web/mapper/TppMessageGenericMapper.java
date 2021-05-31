@@ -16,9 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web.mapper;
 
-import de.adorsys.psd2.model.MessageCode2XX;
-import de.adorsys.psd2.model.TppMessage2XX;
 import de.adorsys.psd2.model.TppMessageCategory;
+import de.adorsys.psd2.model.TppMessageGeneric;
 import de.adorsys.psd2.xs2a.core.domain.MessageCategory;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,24 +29,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface TppMessage2XXMapper {
+public interface TppMessageGenericMapper {
 
-    default List<TppMessage2XX> mapToTppMessage2XXList(Set<TppMessageInformation> tppMessages) {
+    default List<TppMessageGeneric> mapToTppMessageGenericList(Set<TppMessageInformation> tppMessages) {
         if (CollectionUtils.isEmpty(tppMessages)) {
             return null; //NOSONAR
         }
         return tppMessages.stream()
-                   .map(this::mapToTppMessage2XX)
+                   .map(this::mapToTppMessageGeneric)
                    .collect(Collectors.toList());
     }
 
     @Mapping(target = "category", expression = "java(mapToTppMessageCategory(tppMessage.getCategory()))")
-    @Mapping(target = "code", expression = "java(getMessageCode2XX())")
-    TppMessage2XX mapToTppMessage2XX(TppMessageInformation tppMessage);
+    @Mapping(target = "code", expression = "java(getMessageCode())")
+    TppMessageGeneric mapToTppMessageGeneric(TppMessageInformation tppMessage);
 
     TppMessageCategory mapToTppMessageCategory(MessageCategory messageCategory);
 
-    default MessageCode2XX getMessageCode2XX() {
-        return MessageCode2XX.WARNING;
+    default TppMessageCategory getMessageCode() {
+        return TppMessageCategory.WARNING;
     }
 }

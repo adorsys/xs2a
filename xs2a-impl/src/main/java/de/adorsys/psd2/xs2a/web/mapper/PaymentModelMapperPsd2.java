@@ -51,7 +51,8 @@ public class PaymentModelMapperPsd2 {
     private final ScaMethodsMapper scaMethodsMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final Xs2aObjectMapper xs2aObjectMapper;
-    private final TppMessage2XXMapper tppMessage2XXMapper;
+    private final TppMessage201Mapper tppMessage201Mapper;
+    private final TppMessageGenericMapper tppMessageGenericMapper;
 
     public Object mapToGetPaymentResponse(CommonPayment commonPayment) {
         String rawData = convertResponseToRawData(commonPayment.getPaymentData());
@@ -79,7 +80,7 @@ public class PaymentModelMapperPsd2 {
                    .fundsAvailable(response.getFundsAvailable())
                    .psuMessage(response.getPsuMessage())
                    ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
-                   .tppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(response.getTppMessageInformation()));
+                   .tppMessage(tppMessageGenericMapper.mapToTppMessageGenericList(response.getTppMessageInformation()));
     }
 
     public byte[] mapToStatusResponseRaw(GetPaymentStatusResponse response) {
@@ -96,7 +97,7 @@ public class PaymentModelMapperPsd2 {
         response201.setChallengeData(coreObjectsMapper.mapToChallengeData(response.getChallengeData()));
         response201.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
         response201.setPsuMessage(response.getPsuMessage());
-        response201.setTppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(response.getTppMessageInformation()));
+        response201.setTppMessages(tppMessage201Mapper.mapToTppMessage201List(response.getTppMessageInformation()));
         response201.setCurrencyConversionFee(amountModelMapper.mapToAmount(response.getCurrencyConversionFee()));
         response201.setEstimatedTotalAmount(amountModelMapper.mapToAmount(response.getEstimatedTotalAmount()));
         response201.setEstimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(response.getEstimatedInterbankSettlementAmount()));
@@ -139,7 +140,7 @@ public class PaymentModelMapperPsd2 {
         response.setChosenScaMethod(mapToChosenScaMethod(cancelPaymentResponse.getChosenScaMethod()));
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
-        response.setTppMessages(tppMessage2XXMapper.mapToTppMessage2XXList(cancelPaymentResponse.getTppMessageInformation()));
+        response.setTppMessages(tppMessageGenericMapper.mapToTppMessageGenericList(cancelPaymentResponse.getTppMessageInformation()));
         return response;
     }
 

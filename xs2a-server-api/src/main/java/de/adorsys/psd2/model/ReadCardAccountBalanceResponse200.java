@@ -1,26 +1,27 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.AccountReference;
-import de.adorsys.psd2.model.BalanceList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 /**
  * Body of the response for a successful read balance for a card account request.
  */
 @ApiModel(description = "Body of the response for a successful read balance for a card account request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
 
 public class ReadCardAccountBalanceResponse200   {
   @JsonProperty("cardAccount")
   private AccountReference cardAccount = null;
+
+  @JsonProperty("debitAccounting")
+  private Boolean debitAccounting = null;
 
   @JsonProperty("balances")
   private BalanceList balances = null;
@@ -46,6 +47,28 @@ public class ReadCardAccountBalanceResponse200   {
 
   public void setCardAccount(AccountReference cardAccount) {
     this.cardAccount = cardAccount;
+  }
+
+  public ReadCardAccountBalanceResponse200 debitAccounting(Boolean debitAccounting) {
+    this.debitAccounting = debitAccounting;
+    return this;
+  }
+
+  /**
+   * Get debitAccounting
+   * @return debitAccounting
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("debitAccounting")
+  public Boolean getDebitAccounting() {
+    return debitAccounting;
+  }
+
+  public void setDebitAccounting(Boolean debitAccounting) {
+    this.debitAccounting = debitAccounting;
   }
 
   public ReadCardAccountBalanceResponse200 balances(BalanceList balances) {
@@ -82,12 +105,13 @@ public class ReadCardAccountBalanceResponse200   {
       return false;
 }    ReadCardAccountBalanceResponse200 readCardAccountBalanceResponse200 = (ReadCardAccountBalanceResponse200) o;
     return Objects.equals(this.cardAccount, readCardAccountBalanceResponse200.cardAccount) &&
+    Objects.equals(this.debitAccounting, readCardAccountBalanceResponse200.debitAccounting) &&
     Objects.equals(this.balances, readCardAccountBalanceResponse200.balances);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cardAccount, balances);
+    return Objects.hash(cardAccount, debitAccounting, balances);
   }
 
   @Override
@@ -96,6 +120,7 @@ public class ReadCardAccountBalanceResponse200   {
     sb.append("class ReadCardAccountBalanceResponse200 {\n");
 
     sb.append("    cardAccount: ").append(toIndentedString(cardAccount)).append("\n");
+    sb.append("    debitAccounting: ").append(toIndentedString(debitAccounting)).append("\n");
     sb.append("    balances: ").append(toIndentedString(balances)).append("\n");
     sb.append("}");
     return sb.toString();
