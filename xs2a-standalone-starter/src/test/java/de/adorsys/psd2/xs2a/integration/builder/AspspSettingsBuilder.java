@@ -133,7 +133,8 @@ public class AspspSettingsBuilder {
                                                                 NOT_CONFIRMED_PAYMENT_EXPIRATION_TIME_MS,
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
                                                                 pisRedirectLinkToOnlineBanking,
-                                                                COUNTRY_VALIDATION_SUPPORTED, SUPPORTED_TRANSACTION_STATUS_FORMATS);
+                                                                COUNTRY_VALIDATION_SUPPORTED, SUPPORTED_TRANSACTION_STATUS_FORMATS,
+                                                                false);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         SbAspspProfileSetting sb = new SbAspspProfileSetting(signingBasketSupported == null ? SIGNING_BASKET_SUPPORTED : signingBasketSupported,
                                                              SIGNING_BASKET_MAX_ENTRIES,
@@ -157,6 +158,7 @@ public class AspspSettingsBuilder {
                                                                          AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                          TPP_URI_COMPLIANCE_RESPONSE,
+                                                                         false,
                                                                          false);
 
         return new AspspSettings(ais, pis, piis, sb, common);

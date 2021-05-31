@@ -76,6 +76,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         periodicPayment.setEndToEndIdentification(periodicPaymentInitiationJson.getEndToEndIdentification());
         periodicPayment.setInstructionIdentification(periodicPaymentInitiationJson.getInstructionIdentification());
         periodicPayment.setDebtorAccount(mapToAccountReference(periodicPaymentInitiationJson.getDebtorAccount()));
+        periodicPayment.setDebtorName(periodicPaymentInitiationJson.getDebtorName());
         Xs2aAmount instructedAmount = periodicPaymentInitiationJson.getInstructedAmount();
         periodicPayment.setInstructedAmount(new CmsAmount(mapToCurrency(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
         periodicPayment.setCreditorAccount(mapToAccountReference(periodicPaymentInitiationJson.getCreditorAccount()));
@@ -123,6 +124,7 @@ public class CmsCommonPaymentMapperSupportImpl implements CmsCommonPaymentMapper
         singlePayment.setEndToEndIdentification(paymentInitiationJson.getEndToEndIdentification());
         singlePayment.setInstructionIdentification(paymentInitiationJson.getInstructionIdentification());
         singlePayment.setDebtorAccount(mapToAccountReference(paymentInitiationJson.getDebtorAccount()));
+        singlePayment.setDebtorName(paymentInitiationJson.getDebtorName());
         Xs2aAmount instructedAmount = paymentInitiationJson.getInstructedAmount();
         singlePayment.setInstructedAmount(new CmsAmount(mapToCurrency(instructedAmount.getCurrency()), BigDecimal.valueOf(Double.parseDouble(instructedAmount.getAmount()))));
         singlePayment.setCreditorAccount(mapToAccountReference(paymentInitiationJson.getCreditorAccount()));

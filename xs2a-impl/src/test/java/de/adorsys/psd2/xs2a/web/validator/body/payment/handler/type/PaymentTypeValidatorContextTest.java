@@ -31,9 +31,9 @@ class PaymentTypeValidatorContextTest {
     @Test
     void getValidator() {
         List<PaymentTypeValidator> paymentTypeValidators = new ArrayList<>();
-        paymentTypeValidators.add(new SinglePaymentTypeValidatorImpl(null, null, null, null, null, null, null));
-        paymentTypeValidators.add(new PeriodicPaymentTypeValidatorImpl(null, null, null, null, null, null, null));
-        paymentTypeValidators.add(new BulkPaymentTypeValidatorImpl(null, null, null, null, null, null, null));
+        paymentTypeValidators.add(new SinglePaymentTypeValidatorImpl(null, null, null, null, null, null, null, null));
+        paymentTypeValidators.add(new PeriodicPaymentTypeValidatorImpl(null, null, null, null, null, null, null, null));
+        paymentTypeValidators.add(new BulkPaymentTypeValidatorImpl(null, null, null, null, null, null, null, null));
         PaymentTypeValidatorContext context = new PaymentTypeValidatorContext(paymentTypeValidators);
 
         Optional<PaymentTypeValidator> paymentTypeValidator = context.getValidator(PaymentType.SINGLE.getValue());

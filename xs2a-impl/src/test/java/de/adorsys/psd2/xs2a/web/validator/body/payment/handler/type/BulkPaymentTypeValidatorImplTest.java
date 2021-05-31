@@ -29,8 +29,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
-import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
@@ -44,13 +44,17 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class BulkPaymentTypeValidatorImplTest {
     private static final String VALUE_36_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
     private static final String VALUE_71_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
@@ -63,6 +67,8 @@ class BulkPaymentTypeValidatorImplTest {
     private BulkPayment bulkPayment;
     private SinglePayment singlePayment;
     private PaymentValidationConfig validationConfig;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @BeforeEach
     void setUp() {
@@ -74,7 +80,6 @@ class BulkPaymentTypeValidatorImplTest {
         singlePayment = bulkPayment.getPayments().get(0);
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
-        RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
         validationConfig = new DefaultPaymentValidationConfigImpl();
@@ -83,9 +88,10 @@ class BulkPaymentTypeValidatorImplTest {
                                                      xs2aObjectMapper,
                                                      new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
                                                      new AmountValidator(errorBuildingServiceMock),
-                                                     new IbanValidator(errorBuildingServiceMock),
+                                                     new IbanValidator(aspspProfileService, errorBuildingServiceMock),
                                                      new CustomPaymentValidationService(),
-                                                     new FieldLengthValidator(errorBuildingServiceMock));
+                                                     new FieldLengthValidator(errorBuildingServiceMock),
+                                                     aspspProfileService);
     }
 
     @Test

@@ -13,8 +13,6 @@
 |xs2a.masked-pan-begin-chars|Masked PAN begin chars for identification|6
 |xs2a.masked-pan-end-chars|Masked PAN end chars for identification|4
 
-|xs2a.iban.validation.enabled|Enable IBAN field validation|TRUE
-
 |xs2a.cms.consent-service.baseurl|Consent service base URL|http://localhost:38080/api/v1
 |xs2a.cms.aspsp-profile.baseurl|ASPSP service base URL|http://localhost:48080/api/v1
 

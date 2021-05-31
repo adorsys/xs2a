@@ -32,4 +32,5 @@ public class PisAspspProfileSetting {
     private PisRedirectLinkSetting redirectLinkToOnlineBanking;
     private String countryValidationSupported;
     private List<String> supportedTransactionStatusFormats;
+    private boolean debtorAccountOptionalInInitialRequest;
 }

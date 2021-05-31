@@ -35,6 +35,7 @@ public class CmsSinglePayment extends BaseCmsPayment {
     private String endToEndIdentification;
     private String instructionIdentification;
     private AccountReference debtorAccount;
+    private String debtorName;
     private CmsAmount instructedAmount;
     private AccountReference creditorAccount;
     private String creditorAgent;

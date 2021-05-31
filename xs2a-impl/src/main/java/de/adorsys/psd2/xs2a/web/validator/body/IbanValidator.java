@@ -18,14 +18,13 @@ package de.adorsys.psd2.xs2a.web.validator.body;
 
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.IBANValidator;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVALID_FIELD;
@@ -34,14 +33,11 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_INVA
 @Component
 @RequiredArgsConstructor
 public class IbanValidator {
-
-    @Value("${xs2a.iban.validation.enabled:true}")
-    private Boolean ibanValidationEnabled;
-
+    private final AspspProfileServiceWrapper aspspProfileService;
     private final ErrorBuildingService errorBuildingService;
 
     public void validate(String iban, @NotNull MessageError messageError) {
-        if (ibanValidationEnabled != null && BooleanUtils.isNotTrue(ibanValidationEnabled)) {
+        if (aspspProfileService.isIbanValidationDisabled()) {
             log.info("IBAN validation is disabled.");
             return;
         }

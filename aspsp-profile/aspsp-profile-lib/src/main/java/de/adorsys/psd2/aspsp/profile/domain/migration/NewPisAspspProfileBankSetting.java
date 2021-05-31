@@ -34,4 +34,5 @@ public class NewPisAspspProfileBankSetting {
     private long notConfirmedPaymentExpirationTimeMs;
     private boolean paymentCancellationAuthorisationMandated;
     private PisRedirectLinkBankSetting redirectLinkToOnlineBanking;
+    private boolean debtorAccountOptionalInInitialRequest;
 }

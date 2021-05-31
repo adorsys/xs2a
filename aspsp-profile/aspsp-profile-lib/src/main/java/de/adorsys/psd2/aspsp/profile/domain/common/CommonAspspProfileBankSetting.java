@@ -134,4 +134,8 @@ public class CommonAspspProfileBankSetting {
      * Indicates if PSU-ID is ignored by XS2A, in case it's provided in Initial request for Payment request or Establishing Consent.
      */
     private boolean psuInInitialRequestIgnored;
+    /**
+     * Indicates if IBAN validation is disabled.
+     */
+    private boolean ibanValidationDisabled;
 }

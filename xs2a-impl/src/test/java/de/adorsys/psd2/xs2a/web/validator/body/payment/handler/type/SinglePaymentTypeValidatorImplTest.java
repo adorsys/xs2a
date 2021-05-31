@@ -25,8 +25,8 @@ import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
-import de.adorsys.psd2.xs2a.web.mapper.RemittanceMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
@@ -39,13 +39,17 @@ import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class SinglePaymentTypeValidatorImplTest {
 
     private static final String VALUE_36_LENGHT = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
@@ -59,7 +63,10 @@ class SinglePaymentTypeValidatorImplTest {
     private AccountReference accountReference;
     private Xs2aAddress address;
     private PaymentValidationConfig validationConfig;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
+
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @BeforeEach
     void setUp() {
@@ -70,7 +77,6 @@ class SinglePaymentTypeValidatorImplTest {
 
         Xs2aObjectMapper xs2aObjectMapper = new Xs2aObjectMapper();
         PurposeCodeMapper purposeCodeMapper = Mappers.getMapper(PurposeCodeMapper.class);
-        RemittanceMapper remittanceMapper = Mappers.getMapper(RemittanceMapper.class);
         ErrorBuildingService errorBuildingServiceMock = new ErrorBuildingServiceMock(ErrorType.AIS_400);
 
         validationConfig = new DefaultPaymentValidationConfigImpl();
@@ -79,9 +85,9 @@ class SinglePaymentTypeValidatorImplTest {
                                                        xs2aObjectMapper,
                                                        new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
                                                        new AmountValidator(errorBuildingServiceMock),
-                                                       new IbanValidator(errorBuildingServiceMock),
+                                                       new IbanValidator(aspspProfileService, errorBuildingServiceMock),
                                                        new CustomPaymentValidationService(),
-                                                       new FieldLengthValidator(errorBuildingServiceMock));
+                                                       new FieldLengthValidator(errorBuildingServiceMock), aspspProfileService);
     }
 
     @Test

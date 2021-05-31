@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.CmsResponse;
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsCommonPayment;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.UpdatePaymentRequest;
 import de.adorsys.psd2.consent.api.service.PisCommonPaymentService;
 import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
@@ -218,7 +219,7 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                    .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
                    .map(pd -> commonPaymentDataService.updateStatusInPaymentData(pd, status))
                    .orElseGet(() -> {
-                       log.info("Payment ID [{}], Instance ID: [{}]. Update payment status failed, because PIS common payment data not found",
+                       log.info("Payment ID [{}], Instance ID: [{}]. Update payment status failed, because common payment data not found",
                                 paymentId, instanceId);
                        return false;
                    });
@@ -240,6 +241,21 @@ public class CmsPsuPisServiceInternal implements CmsPsuPisService {
                                                                                                    AuthorisationType.PIS_CANCELLATION),
                                                                                         pageRequest))
                    .map(this::getPsuDataAuthorisations);
+    }
+
+    @Override
+    @Transactional
+    public boolean updatePayment(UpdatePaymentRequest updatePaymentRequest) {
+        Optional<PisCommonPaymentData> paymentDataOptional = commonPaymentDataService.getPisCommonPaymentData(updatePaymentRequest.getPaymentId(), updatePaymentRequest.getInstanceId());
+
+        return paymentDataOptional
+                   .filter(p -> p.getTransactionStatus().isNotFinalisedStatus())
+                   .map(pd -> commonPaymentDataService.updatePaymentData(pd, updatePaymentRequest.getPayment()))
+                   .orElseGet(() -> {
+                       log.info("Payment ID [{}], Instance ID: [{}]. Update payment failed, because common payment data not found",
+                                updatePaymentRequest.getPaymentId(), updatePaymentRequest.getInstanceId());
+                       return false;
+                   });
     }
 
     @NotNull

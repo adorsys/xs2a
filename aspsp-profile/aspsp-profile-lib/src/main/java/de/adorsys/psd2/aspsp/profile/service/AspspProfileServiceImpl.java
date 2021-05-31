@@ -79,7 +79,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                 pisBankSetting.isPaymentCancellationAuthorisationMandated(),
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 pisBankSetting.getCountryValidationSupported(),
-                                                                pisBankSetting.getSupportedTransactionStatusFormats());
+                                                                pisBankSetting.getSupportedTransactionStatusFormats(),
+                                                                pisBankSetting.isDebtorAccountOptionalInInitialRequest());
 
         PiisRedirectLinkSetting piisRedirectLinkSetting = new PiisRedirectLinkSetting(Optional.ofNullable(setting.getPiis().getRedirectLinkToOnlineBanking())
                                                                                           .map(PiisRedirectLinkBankSetting::getPiisRedirectUrlToAspsp)
@@ -113,7 +114,8 @@ public class AspspProfileServiceImpl implements AspspProfileService {
                                                                          commonBankSetting.isAuthorisationConfirmationCheckByXs2a(),
                                                                          commonBankSetting.isCheckUriComplianceToDomainSupported(),
                                                                          commonBankSetting.getTppUriComplianceResponse(),
-                                                                         commonBankSetting.isPsuInInitialRequestIgnored());
+                                                                         commonBankSetting.isPsuInInitialRequestIgnored(),
+                                                                         commonBankSetting.isIbanValidationDisabled());
 
         return new AspspSettings(ais, pis, piis, sb, common);
     }

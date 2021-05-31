@@ -60,6 +60,7 @@ This controller has endpoints for working with PIS payment entities and their at
 * *GET /psu-api/v1/payment/cancellation/{payment-id}* - returns PIS payment object by provided cancellation ID. Used method - `getPaymentByPaymentIdForCancellation`;
 * *GET /psu-api/v1/payment/cancellation/redirect/{redirect-id}* - returns PIS payment object by provided cancellation authorisation (redirect) ID. Method - `getPaymentIdByRedirectIdForCancellation`;
 * *GET /psu-api/v1/payment/redirect/{redirect-id}* - returns PIS payment object by provided authorisation (redirect) ID. Method - `getPaymentIdByRedirectId`.
+* *PUT psu-api/v1/payment/{payment_service}/{payment_product}/{payment_id}* - updates initial payment.
 
 ==== PIIS consent controller
 

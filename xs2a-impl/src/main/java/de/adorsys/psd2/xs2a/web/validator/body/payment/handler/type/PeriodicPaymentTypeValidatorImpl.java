@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
 import de.adorsys.psd2.xs2a.web.validator.body.FieldLengthValidator;
@@ -44,9 +45,9 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
     public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMappe,
                                             PaymentMapper paymentMapper, AmountValidator amountValidator,
                                             IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService,
-                                            FieldLengthValidator fieldLengthValidator) {
+                                            FieldLengthValidator fieldLengthValidator, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
         super(errorBuildingService, xs2aObjectMappe, paymentMapper, amountValidator, ibanValidator, customPaymentValidationService,
-              fieldLengthValidator);
+              fieldLengthValidator, aspspProfileServiceWrapper);
         this.customPaymentValidationService = customPaymentValidationService;
     }
 

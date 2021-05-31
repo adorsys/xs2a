@@ -62,4 +62,9 @@ public class PisAspspProfileBankSetting {
     private String countryValidationSupported;
 
     private List<String> supportedTransactionStatusFormats;
+
+    /**
+     * Indicates whether debtorAccount is required in initial request
+     */
+    private boolean debtorAccountOptionalInInitialRequest;
 }

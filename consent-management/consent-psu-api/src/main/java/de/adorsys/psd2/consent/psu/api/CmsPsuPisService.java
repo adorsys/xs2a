@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.psu.api;
 
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.UpdatePaymentRequest;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
@@ -119,4 +120,12 @@ public interface CmsPsuPisService {
      * @return list of info objects about psu data and authorisation scaStatuses
      */
     Optional<List<CmsPisPsuDataAuthorisation>> getPsuDataAuthorisations(@NotNull String paymentId, @NotNull String instanceId, Integer pageIndex, Integer itemsPerPage);
+
+    /**
+     * Updates Payment object by its ID
+     *
+     * @param updatePisCommonPaymentRequest The Payment to be set
+     * @return <code>true</code> if payment was found and updated. <code>false</code> otherwise.
+     */
+    boolean updatePayment(UpdatePaymentRequest updatePisCommonPaymentRequest);
 }

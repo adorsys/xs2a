@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,6 +55,7 @@ public class SupportedAccountReferenceValidator implements BusinessValidator<Col
         }
 
         Optional<AccountReference> accountWithSeveralUsedTypes = accountReferences.stream()
+                                                                     .filter(Objects::nonNull)
                                                                      .filter(ar -> ar.getUsedAccountReferenceFields().size() > 1)
                                                                      .findFirst();
 
@@ -69,6 +71,7 @@ public class SupportedAccountReferenceValidator implements BusinessValidator<Col
     private ValidationResult validateAccountReference(Collection<AccountReference> accountReferences) {
 
         Set<AccountReferenceType> actualAccountReferenceType = accountReferences.stream()
+                                                                   .filter(Objects::nonNull)
                                                                    .flatMap(ar -> ar.getUsedAccountReferenceFields().stream())
                                                                    .collect(Collectors.toSet());
 

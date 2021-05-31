@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("PMD.ExcessivePublicCount")
 @RequiredArgsConstructor
 public class AspspProfileServiceWrapper {
     private final AspspProfileService aspspProfileService;
@@ -438,5 +439,23 @@ public class AspspProfileServiceWrapper {
      */
     public boolean isPsuInInitialRequestIgnored() {
         return readAspspSettings().getCommon().isPsuInInitialRequestIgnored();
+    }
+
+    /**
+     * Indicates if iban validation is disabled
+     *
+     * @return true if iban validation is disabled, false otherwise.
+     */
+    public boolean isIbanValidationDisabled() {
+        return readAspspSettings().getCommon().isIbanValidationDisabled();
+    }
+
+    /**
+     * Indicates if debtorAccount is optional in initial request
+     *
+     * @return true if debtorAccount is optional in initial request, false otherwise.
+     */
+    public boolean isDebtorAccountOptionalInInitialRequest() {
+        return readAspspSettings().getPis().isDebtorAccountOptionalInInitialRequest();
     }
 }
