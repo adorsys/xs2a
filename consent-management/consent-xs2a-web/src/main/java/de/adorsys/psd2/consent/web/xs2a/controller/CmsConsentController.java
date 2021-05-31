@@ -25,6 +25,7 @@ import de.adorsys.psd2.consent.api.ais.ConsentStatusResponse;
 import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -98,6 +99,18 @@ public class CmsConsentController implements CmsConsentApi {
     @Override
     public ResponseEntity<Void> findAndTerminateOldConsentsByNewConsentId(String encryptedConsentId) {
         consentServiceEncrypted.findAndTerminateOldConsentsByNewConsentId(encryptedConsentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> findAndTerminateOldConsents(String encryptedConsentId,
+                                                            TerminateOldConsentsRequest cmsTerminateConsentsRequest) {
+        TerminateOldConsentsRequest request = new TerminateOldConsentsRequest(cmsTerminateConsentsRequest.isOneAccessType(),
+                                                                              cmsTerminateConsentsRequest.isWrongConsentData(),
+                                                                              cmsTerminateConsentsRequest.getPsuIdDataList(),
+                                                                              cmsTerminateConsentsRequest.getAuthorisationNumber(),
+                                                                              cmsTerminateConsentsRequest.getInstanceId());
+        consentServiceEncrypted.findAndTerminateOldConsents(encryptedConsentId, request);
         return ResponseEntity.noContent().build();
     }
 

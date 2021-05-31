@@ -1,0 +1,9 @@
+= Release notes v.10.0.2
+
+== Table of Contents
+
+* Added new method to terminate old consents
+
+== Added new method to terminate old consents
+
+Added new method to terminate old consents without retrieving new consent from database.

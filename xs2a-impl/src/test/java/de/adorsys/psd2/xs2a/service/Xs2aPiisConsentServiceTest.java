@@ -29,7 +29,6 @@ import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.logger.context.LoggingContextService;
-import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
@@ -52,7 +51,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -260,32 +258,6 @@ class Xs2aPiisConsentServiceTest {
 
         assertTrue(actual.hasError());
         assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_success() {
-        // Given
-        when(consentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
-
-        // When
-        boolean actualResponse = xs2aPiisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse).isTrue();
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_false() {
-        // Given
-        when(consentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
-
-        // When
-        boolean actualResponse = xs2aPiisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse).isFalse();
     }
 
     @Test
