@@ -40,7 +40,8 @@ import java.util.List;
 
 @Component
 public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl {
-    private CustomPaymentValidationService customPaymentValidationService;
+    private final CustomPaymentValidationService customPaymentValidationService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Autowired
     public BulkPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
@@ -50,6 +51,7 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
         super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator, ibanValidator, customPaymentValidationService,
               fieldLengthValidator, aspspProfileServiceWrapper);
         this.customPaymentValidationService = customPaymentValidationService;
+        this.aspspProfileServiceWrapper = aspspProfileServiceWrapper;
     }
 
     @Override
@@ -73,10 +75,10 @@ public class BulkPaymentTypeValidatorImpl extends SinglePaymentTypeValidatorImpl
 
     void doBulkValidation(BulkPayment bulkPayment, MessageError messageError, PaymentValidationConfig validationConfig) {
 
-        if (bulkPayment.getDebtorAccount() == null) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
-        } else {
+        if (bulkPayment.getDebtorAccount() != null) {
             validateAccount(bulkPayment.getDebtorAccount(), messageError, validationConfig);
+        } else if (!aspspProfileServiceWrapper.isDebtorAccountOptionalInInitialRequest()) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
         }
 
         List<SinglePayment> payments = bulkPayment.getPayments();
