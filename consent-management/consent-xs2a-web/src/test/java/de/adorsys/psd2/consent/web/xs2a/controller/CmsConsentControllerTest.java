@@ -8,6 +8,7 @@ import de.adorsys.psd2.consent.api.consent.CmsCreateConsentResponse;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.web.xs2a.config.ObjectMapperTestConfig;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -199,6 +200,19 @@ class CmsConsentControllerTest {
                                                           .buildAndExpand(EXTERNAL_ID)
                                                           .toUriString())
                             .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    void findAndTerminateOldConsents_Success() throws Exception {
+        TerminateOldConsentsRequest request = jsonReader.getObjectFromFile("json/controller/terminate-consent-req.json", TerminateOldConsentsRequest.class);
+        when(consentServiceEncrypted.findAndTerminateOldConsents(EXTERNAL_ID, request)).thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
+
+        mockMvc.perform(MockMvcRequestBuilders.put(UriComponentsBuilder.fromPath("/api/v1/consent/{encrypted-consent-id}/old-consents")
+                                                       .buildAndExpand(EXTERNAL_ID)
+                                                       .toUriString())
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .content(jsonReader.getStringFromFile("json/controller/terminate-consent-req.json")))
             .andExpect(status().is(HttpStatus.NO_CONTENT.value()));
     }
 

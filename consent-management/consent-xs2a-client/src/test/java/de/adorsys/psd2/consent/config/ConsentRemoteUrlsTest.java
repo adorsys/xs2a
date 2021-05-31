@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ConsentRemoteUrlsTest {
     private static final String BASE_URL = "http://base.url";
 
-    private ConsentRemoteUrls consentRemoteUrls = new ConsentRemoteUrls();
+    private final ConsentRemoteUrls consentRemoteUrls = new ConsentRemoteUrls();
 
     @BeforeEach
     void setUp() {
@@ -60,6 +60,12 @@ class ConsentRemoteUrlsTest {
     void findAndTerminateOldConsentsByNewConsentId() {
         String expected = "http://base.url/consent/{encrypted-consent-id}/old-consents";
         assertEquals(expected, consentRemoteUrls.findAndTerminateOldConsentsByNewConsentId());
+    }
+
+    @Test
+    void findAndTerminateOldConsents() {
+        String expected = "http://base.url/consent/{encrypted-consent-id}/old-consents";
+        assertEquals(expected, consentRemoteUrls.findAndTerminateOldConsents());
     }
 
     @Test

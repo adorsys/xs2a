@@ -5,6 +5,7 @@
 * Increased test coverage
 * Added debtorName to get payment response
 * Added debtorAccount to payment resource.
+* Added new method to terminate old consents
 
 == Increased test coverage
 
@@ -23,3 +24,7 @@ From now on debtorName is present in get payment response for following payment 
 
 From now on, there is new endpoint in `CMS-PSU-API`: `PUT psu-api/v1/payment/{payment_service}/{payment_product}/{payment_id}`.
 It updates initial payment data.
+
+== Added new method to terminate old consents
+
+Added new method to terminate old consents without retrieving new consent from database.

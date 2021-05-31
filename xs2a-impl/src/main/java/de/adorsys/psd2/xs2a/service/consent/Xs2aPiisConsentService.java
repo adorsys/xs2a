@@ -116,11 +116,6 @@ public class Xs2aPiisConsentService {
         return builder.payload(xs2aPiisConsentMapper.mapToPiisConsent(response.getPayload())).build();
     }
 
-    public boolean findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
-        CmsResponse<Boolean> response = consentService.findAndTerminateOldConsentsByNewConsentId(newConsentId);
-        return response.isSuccessful() && response.getPayload();
-    }
-
     public void updateConsentAuthorisation(UpdateConsentPsuDataReq updatePsuData) {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {

@@ -65,6 +65,13 @@ public class AisConsent extends Consent<AisConsentData> {
     }
 
     @JsonIgnore
+    public boolean isWrongConsentData() {
+        return CollectionUtils.isEmpty(getPsuIdDataList())
+                   || getConsentTppInformation() == null
+                   || getConsentTppInformation().getTppInfo() == null;
+    }
+
+    @JsonIgnore
     public boolean isGlobalConsent() {
         return getConsentRequestType() == AisConsentRequestType.GLOBAL;
     }
