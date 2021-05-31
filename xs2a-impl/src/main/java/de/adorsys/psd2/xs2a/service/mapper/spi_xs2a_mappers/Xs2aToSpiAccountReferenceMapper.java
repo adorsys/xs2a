@@ -50,6 +50,9 @@ public class Xs2aToSpiAccountReferenceMapper {
     }
 
     public SpiAccountReference mapToSpiAccountReference(AccountReference account) {
+        if (account == null) {
+            return null;
+        }
         return new SpiAccountReference(
             account.getAspspAccountId(),
             account.getResourceId(),

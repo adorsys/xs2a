@@ -54,4 +54,5 @@ public class CommonAspspProfileSetting {
     private final boolean checkUriComplianceToDomainSupported;
     private final TppUriCompliance tppUriComplianceResponse;
     private final boolean psuInInitialRequestIgnored;
+    private final boolean ibanValidationDisabled;
 }

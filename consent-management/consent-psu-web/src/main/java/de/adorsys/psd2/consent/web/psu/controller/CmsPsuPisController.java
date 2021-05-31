@@ -18,17 +18,19 @@ package de.adorsys.psd2.consent.web.psu.controller;
 
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
+import de.adorsys.psd2.consent.api.pis.UpdatePaymentRequest;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisApi;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
+import de.adorsys.psd2.consent.web.psu.mapper.PaymentModelMapperCmsPsu;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -40,9 +42,10 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CmsPsuPisController implements CmsPsuPisApi {
     private final CmsPsuPisService cmsPsuPisService;
+    private final PaymentModelMapperCmsPsu paymentModelMapperCms;
 
     @Override
     public ResponseEntity<Object> updatePsuInPayment(String authorisationId, String instanceId, PsuIdData psuIdData) {
@@ -54,6 +57,15 @@ public class CmsPsuPisController implements CmsPsuPisApi {
             log.debug("Authorisation ID [{}], Instance ID: [{}]. Update PSU data request timeout (authorisation is expired): NOK redirect url [{}]", authorisationId, instanceId, e.getNokRedirectUri());
             return new ResponseEntity<>(new CmsPaymentResponse(e.getNokRedirectUri()), HttpStatus.REQUEST_TIMEOUT);
         }
+    }
+
+    @Override
+    public ResponseEntity<Object> updatePayment(String paymentId, String paymentService, String paymentProduct, String instanceId, Object body) {
+        byte[] payment = paymentModelMapperCms.mapToXs2aPayment();
+        UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest(payment, instanceId, paymentId, paymentProduct, paymentService);
+        return cmsPsuPisService.updatePayment(updatePaymentRequest)
+                   ? ResponseEntity.ok().build()
+                   : ResponseEntity.badRequest().build();
     }
 
     @Override

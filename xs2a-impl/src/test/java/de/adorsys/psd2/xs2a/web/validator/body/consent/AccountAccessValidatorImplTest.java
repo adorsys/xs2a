@@ -23,6 +23,7 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.converter.LocalDateConverter;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.*;
@@ -68,6 +69,8 @@ class AccountAccessValidatorImplTest {
 
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @BeforeEach
     void setUp() {
@@ -81,7 +84,7 @@ class AccountAccessValidatorImplTest {
         CurrencyValidator currencyValidator = new CurrencyValidator(errorService);
         OptionalFieldMaxLengthValidator stringValidator = new OptionalFieldMaxLengthValidator(new StringMaxLengthValidator(errorService));
         accountReferenceValidator =
-            new AccountReferenceValidator(errorService, stringValidator, currencyValidator, new IbanValidator(errorService));
+            new AccountReferenceValidator(errorService, stringValidator, currencyValidator, new IbanValidator(aspspProfileService, errorService));
 
         validator = createValidator(consents);
     }

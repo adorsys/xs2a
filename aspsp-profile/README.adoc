@@ -122,6 +122,7 @@ SINGLE:
 |paymentCancellationAuthorisationMandated |This field defines if an authorisation of the payment cancellation is mandated by the ASPSP. |FALSE |TRUE, FALSE
 |countryValidationSupported | The field defines for which country the payment will be validated. | DE| ISO 3166-1 alpha-2 code (DE, AT, UA, etc)
 |supportedTransactionStatusFormats | The field defines which transaction status formats are supported. | application/json| application/json, application/xml
+|debtorAccountOptionalInInitialRequest | The field defines whether debtorAccount is required in initial request | FALSE| TRUE,FALSE
 |*redirectLinkToOnlineBanking:* | | |
 |pisRedirectUrlToAspsp |Link to online-banking to authorise payment with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id} |String
 |pisPaymentCancellationRedirectUrlToAspsp |	Link to online-banking to authorise payment cancellation with Redirect approach. Attribute is available to be configured with custom url pattern and redirectId parameter. |http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id} |String
@@ -182,6 +183,7 @@ This force overrides multilevel SCA, signing baskets etc.|auto |explicit, auto, 
 |tppSignatureRequired |This field defines whether TPP Signature is required for the request or not. |FALSE |TRUE, FALSE
 |psuInInitialRequestMandated |This field indicates if PSU-ID is mandatory in Initial request for Payment request or Establishing Consent. Should be set FALSE in case of Redirect OAuth SCA approach.|FALSE |TRUE, FALSE
 |psuInInitialRequestIgnored |This field indicates if PSU-ID is ignored by XS2A, in case it's provided in Initial request for Payment request or Establishing Consent.|FALSE |TRUE, FALSE
+|ibanValidationDisabled | The field defines whether iban validation is disabled | FALSE| TRUE,FALSE
 |redirectUrlExpirationTimeMs |This field contains the limit of an expiration time of redirect url for payments and consents set in milliseconds.
 
 The value for expiration time is counted with formula.

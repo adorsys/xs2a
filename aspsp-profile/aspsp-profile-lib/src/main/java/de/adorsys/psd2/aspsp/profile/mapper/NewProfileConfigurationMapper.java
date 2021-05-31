@@ -72,7 +72,8 @@ public class NewProfileConfigurationMapper {
                                                                               setting.getTransactionLifetime(),
                                                                               setting.getNotConfirmedPaymentExpirationPeriodMs(),
                                                                               setting.isPaymentCancellationAuthorizationMandated(),
-                                                                              pisRedirectLinkToOnlineBanking);
+                                                                              pisRedirectLinkToOnlineBanking,
+                                                                              false);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(setting.isPiisConsentSupported() ? PiisConsentSupported.ASPSP_CONSENT_SUPPORTED : PiisConsentSupported.NOT_SUPPORTED, new PiisRedirectLinkBankSetting(DEFAULT_PIIS_REDIRECT_URL));
 
         SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting(setting.isSigningBasketSupported(),
@@ -99,6 +100,7 @@ public class NewProfileConfigurationMapper {
                                                                                  false,
                                                                                  false,
                                                                                  TppUriCompliance.WARNING,
+                                                                                 false,
                                                                                  false);
 
         NewProfileConfiguration result = new NewProfileConfiguration();

@@ -24,6 +24,7 @@ import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AbstractBodyValidatorImpl;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
@@ -52,17 +53,19 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     private final AmountValidator amountValidator;
     private final IbanValidator ibanValidator;
     private final CustomPaymentValidationService customPaymentValidationService;
+    private final AspspProfileServiceWrapper aspspProfileServiceWrapper;
 
     @Autowired
     public SinglePaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                           PaymentMapper paymentMapper, AmountValidator amountValidator,
                                           IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService,
-                                          FieldLengthValidator fieldLengthValidator) {
+                                          FieldLengthValidator fieldLengthValidator, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
         super(errorBuildingService, xs2aObjectMapper, fieldLengthValidator);
         this.paymentMapper = paymentMapper;
         this.amountValidator = amountValidator;
         this.ibanValidator = ibanValidator;
         this.customPaymentValidationService = customPaymentValidationService;
+        this.aspspProfileServiceWrapper = aspspProfileServiceWrapper;
     }
 
     @Override
@@ -88,10 +91,10 @@ public class SinglePaymentTypeValidatorImpl extends AbstractBodyValidatorImpl im
     void doSingleValidation(SinglePayment singlePayment, MessageError messageError, PaymentValidationConfig validationConfig) {
         checkFieldForMaxLength(singlePayment.getEndToEndIdentification(), "endToEndIdentification", validationConfig.getEndToEndIdentification(), messageError);
 
-        if (singlePayment.getDebtorAccount() == null) {
-            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
-        } else {
+        if (singlePayment.getDebtorAccount() != null) {
             validateAccount(singlePayment.getDebtorAccount(), messageError, validationConfig);
+        } else if (!aspspProfileServiceWrapper.isDebtorAccountOptionalInInitialRequest()) {
+            errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, "debtorAccount"));
         }
 
         if (singlePayment.getInstructedAmount() == null) {

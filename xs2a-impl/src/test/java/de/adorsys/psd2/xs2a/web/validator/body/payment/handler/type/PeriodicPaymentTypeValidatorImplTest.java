@@ -26,6 +26,7 @@ import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.body.AmountValidator;
@@ -39,13 +40,17 @@ import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class PeriodicPaymentTypeValidatorImplTest {
     private static final String VALUE_36_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJK";
     private static final String VALUE_71_LENGTH = "QWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJKQWERTYUIOPQWERTYUIOPQWERTYUIOPDFGHJ";
@@ -58,6 +63,9 @@ class PeriodicPaymentTypeValidatorImplTest {
     private AccountReference accountReference;
     private Xs2aAddress address;
     private PaymentValidationConfig validationConfig;
+
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @BeforeEach
     void setUp() {
@@ -80,9 +88,10 @@ class PeriodicPaymentTypeValidatorImplTest {
                                                          xs2aObjectMapper,
                                                          new PaymentMapper(xs2aObjectMapper, purposeCodeMapper),
                                                          new AmountValidator(errorBuildingServiceMock),
-                                                         new IbanValidator(errorBuildingServiceMock),
+                                                         new IbanValidator(aspspProfileService, errorBuildingServiceMock),
                                                          new CustomPaymentValidationService(),
-                                                         new FieldLengthValidator(errorBuildingServiceMock));
+                                                         new FieldLengthValidator(errorBuildingServiceMock),
+                                                         aspspProfileService);
     }
 
     @Test

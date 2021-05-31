@@ -226,7 +226,8 @@ class AspspProfileUpdateServiceImplTest {
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 COUNTRY_VALIDATION_SUPPORTED,
-                                                                SUPPORTED_TRANSACTION_STATUS_FORMATS);
+                                                                SUPPORTED_TRANSACTION_STATUS_FORMATS,
+                                                                false);
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
                                                              SIGNING_BASKET_MAX_ENTRIES,
@@ -250,6 +251,7 @@ class AspspProfileUpdateServiceImplTest {
                                                                          AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                          TPP_URI_COMPLIANCE_RESPONSE,
+                                                                         false,
                                                                          false);
 
         return new AspspSettings(ais, pis, piis, sb, common);
@@ -267,7 +269,7 @@ class AspspProfileUpdateServiceImplTest {
                                                                         deltaReportSettings,
                                                                         scaRequirementsForOneTimeConsents);
         PisRedirectLinkBankSetting pisRedirectLinkToOnlineBanking = new PisRedirectLinkBankSetting();
-        PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false, pisRedirectLinkToOnlineBanking, COUNTRY_VALIDATION_SUPPORTED, new ArrayList<>());
+        PisAspspProfileBankSetting pis = new PisAspspProfileBankSetting(null, 0, 0, false, pisRedirectLinkToOnlineBanking, COUNTRY_VALIDATION_SUPPORTED, new ArrayList<>(), false);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting();
         SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting();
         CommonAspspProfileBankSetting common = new CommonAspspProfileBankSetting();

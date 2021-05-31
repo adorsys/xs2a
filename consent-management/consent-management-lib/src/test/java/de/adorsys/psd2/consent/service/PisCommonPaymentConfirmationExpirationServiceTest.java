@@ -175,6 +175,6 @@ class PisCommonPaymentConfirmationExpirationServiceTest {
     @NotNull
     private PisAspspProfileSetting getPisAspspProfileSetting(long notConfirmedPaymentExpirationTimeMs) {
         return new PisAspspProfileSetting(new HashMap<>(), 0, notConfirmedPaymentExpirationTimeMs,
-                                          true, null, "", null);
+                                          true, null, "", null, false);
     }
 }

@@ -19,46 +19,67 @@ package de.adorsys.psd2.xs2a.web.validator.body;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
+import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import de.adorsys.psd2.xs2a.web.validator.header.ErrorBuildingServiceMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class IbanValidatorTest {
 
     private IbanValidator validator;
     private MessageError messageError;
+    @Mock
+    private AspspProfileServiceWrapper aspspProfileService;
 
     @BeforeEach
     void setUp() {
         messageError = new MessageError();
         ErrorBuildingService errorService = new ErrorBuildingServiceMock(ErrorType.PIS_400);
-        validator = new IbanValidator(errorService);
+        validator = new IbanValidator(aspspProfileService, errorService);
     }
 
     @Test
     void validate_success() {
+        // Given
+        when(aspspProfileService.isIbanValidationDisabled()).thenReturn(false);
+
+        // When
         validator.validate("DE15500105172295759744", messageError);
+
+        // Then
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 
     @Test
     void validate_invalidIban() {
+        // Given
+        when(aspspProfileService.isIbanValidationDisabled()).thenReturn(false);
+
+        // When
         validator.validate("123", messageError);
 
+        // Then
         assertFalse(messageError.getTppMessages().isEmpty());
         assertEquals(MessageErrorCode.FORMAT_ERROR_INVALID_FIELD, messageError.getTppMessage().getMessageErrorCode());
     }
 
     @Test
     void validate_validationDisabled() {
-        ReflectionTestUtils.setField(validator, "ibanValidationEnabled", false);
+        // Given
+        when(aspspProfileService.isIbanValidationDisabled()).thenReturn(true);
 
+        // When
         validator.validate("123", messageError);
 
+        // Then
         assertTrue(messageError.getTppMessages().isEmpty());
     }
 }

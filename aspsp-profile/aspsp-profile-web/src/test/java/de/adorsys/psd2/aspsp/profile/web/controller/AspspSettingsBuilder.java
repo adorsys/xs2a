@@ -83,6 +83,8 @@ public class AspspSettingsBuilder {
     private static final boolean AUTHORISATION_CONFIRMATION_REQUEST_MANDATED = false;
     private static final boolean AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A = false;
     private static final boolean CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED = false;
+    private static final boolean IS_DEBTOR_ACCOUNT_OPTIONAL_IN_INITIAL_REQUEST = false;
+    private static final boolean IBAN_VALIDATION_DISABLED = false;
     private static final TppUriCompliance TPP_URI_COMPLIANCE_RESPONSE = TppUriCompliance.WARNING;
 
     private AspspSettingsBuilder() {
@@ -114,7 +116,8 @@ public class AspspSettingsBuilder {
                                                                 PAYMENT_CANCELLATION_AUTHORISATION_MANDATED,
                                                                 pisRedirectLinkToOnlineBanking,
                                                                 COUNTRY_VALIDATION_SUPPORTED,
-                                                                SUPPORTED_TRANSACTION_STATUS_FORMATS
+                                                                SUPPORTED_TRANSACTION_STATUS_FORMATS,
+                                                                IS_DEBTOR_ACCOUNT_OPTIONAL_IN_INITIAL_REQUEST
         );
         PiisAspspProfileSetting piis = new PiisAspspProfileSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkSetting(PIIS_REDIRECT_LINK));
         SbAspspProfileSetting sb = new SbAspspProfileSetting(SIGNING_BASKET_SUPPORTED,
@@ -139,7 +142,8 @@ public class AspspSettingsBuilder {
                                                                          AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
                                                                          CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                          TPP_URI_COMPLIANCE_RESPONSE,
-                                                                         false);
+                                                                         false,
+                                                                         IBAN_VALIDATION_DISABLED);
 
         return new AspspSettings(ais, pis, piis, sb, common);
     }

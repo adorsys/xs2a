@@ -19,12 +19,14 @@ package de.adorsys.psd2.consent.api.pis;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 public abstract class BaseCmsPayment extends CmsBasePaymentResponse {
     private String paymentId;

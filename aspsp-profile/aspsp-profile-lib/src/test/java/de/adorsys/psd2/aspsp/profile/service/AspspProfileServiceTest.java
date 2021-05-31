@@ -242,7 +242,8 @@ class AspspProfileServiceTest {
                                                                         PAYMENT_CANCELLATION_AUTHORIZATION_MANDATED,
                                                                         pisRedirectLinkToOnlineBanking,
                                                                         COUNTRY_VALIDATION_SUPPORTED,
-                                                                        SUPPORTED_TRANSACTION_STATUS_FORMATS);
+                                                                        SUPPORTED_TRANSACTION_STATUS_FORMATS,
+                                                                        false);
         PiisAspspProfileBankSetting piis = new PiisAspspProfileBankSetting(PIIS_CONSENT_SUPPORTED, new PiisRedirectLinkBankSetting(PIIS_REDIRECT_LINK));
         SbAspspProfileBankSetting sb = new SbAspspProfileBankSetting(SIGNING_BASKET_SUPPORTED,
                                                                      SIGNING_BASKET_MAX_ENTRIES,
@@ -267,6 +268,7 @@ class AspspProfileServiceTest {
                                                                                  AUTHORISATION_CONFIRMATION_CHECK_BY_XS2A,
                                                                                  CHECK_URI_COMPLIANCE_TO_DOMAIN_SUPPORTED,
                                                                                  TPP_URI_COMPLIANCE_RESPONSE,
+                                                                                 false,
                                                                                  false);
         return new BankProfileSetting(ais, pis, piis, sb, common);
     }

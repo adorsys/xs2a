@@ -77,4 +77,10 @@ public class CommonPaymentDataService {
         PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(paymentData);
         return saved.getPaymentId() != null;
     }
+
+    public boolean updatePaymentData(PisCommonPaymentData paymentData, byte[] payment) {
+        paymentData.setPayment(payment);
+        PisCommonPaymentData saved = pisCommonPaymentDataRepository.save(paymentData);
+        return saved.getPaymentId() != null;
+    }
 }
