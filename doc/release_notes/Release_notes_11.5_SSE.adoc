@@ -1,0 +1,9 @@
+= Release notes v.11.5
+
+== Table of Contents
+
+* Headers TPP-Redirect-Preferred,TPP-Decoupled-Preferred were passed to SPI level
+
+== Headers TPP-Redirect-Preferred,TPP-Decoupled-Preferred were passed to SPI level
+
+Headers TPP-Redirect-Preferred and TPP-Decoupled-Preferred were passed to SPI level of the application for Payment/Consent flow.

@@ -41,4 +41,8 @@ public class SpiContextData {
     private String tppBrandLoggingInformation;
     @Nullable
     private Boolean tppRejectionNoFundsPreferred;
+    @Nullable
+    private Boolean tppRedirectPreferred;
+    @Nullable
+    private Boolean tppDecoupledPreferred;
 }
