@@ -48,6 +48,7 @@ public class SpiContextDataProvider {
         return new SpiContextData(spiPsuData, tppInfo, requestProviderService.getRequestId(),
                                   requestProviderService.getInternalRequestId(), requestProviderService.getOAuth2Token(),
                                   requestProviderService.getTppBrandLoggingInformationHeader(),
-                                  requestProviderService.getTppRejectionNoFundsPreferred());
+                                  requestProviderService.getTppRejectionNoFundsPreferred(),
+                                  requestProviderService.resolveTppRedirectPreferred().orElse(null));
     }
 }
