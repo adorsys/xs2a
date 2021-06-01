@@ -65,16 +65,18 @@ public class TestSpiDataProvider {
             INTERNAL_REQUEST_ID,
             AUTHORISATION,
             TPP_BRAND_LOGGING_INFORMATION,
+            null,
+            null,
             null
         );
     }
 
     public static SpiContextData defaultSpiContextData() {
-        return new SpiContextData(null, null, null, null, null, null, null);
+        return new SpiContextData(null, null, null, null, null, null, null, null, null);
     }
 
     public static SpiContextData buildWithPsuTppAuthToken(SpiPsuData psuData, TppInfo tppInfo, String oAuth2Token) {
-        return new SpiContextData(psuData, tppInfo, X_REQUEST_ID, INTERNAL_REQUEST_ID, oAuth2Token, TPP_BRAND_LOGGING_INFORMATION, null);
+        return new SpiContextData(psuData, tppInfo, X_REQUEST_ID, INTERNAL_REQUEST_ID, oAuth2Token, TPP_BRAND_LOGGING_INFORMATION, null, null, null);
     }
 
 }

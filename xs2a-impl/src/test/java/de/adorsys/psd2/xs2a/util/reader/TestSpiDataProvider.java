@@ -43,6 +43,8 @@ public class TestSpiDataProvider {
     private static final UUID PSU_DEVICE_ID = UUID.randomUUID();
     private static final String TPP_BRAND_LOGGING_INFORMATION = "tppBrandLoggingInformation";
     private static final Boolean TPP_REJECTION_NO_FUNDS_PREFFERED = true;
+    private static final Boolean TPP_DECOUPLED_PREFERRED_HEADER = true;
+    private static final Boolean TPP_REDIRECT_PREFERRED_HEADER = true;
 
     public static SpiContextData getSpiContextData() {
         return new SpiContextData(
@@ -66,15 +68,17 @@ public class TestSpiDataProvider {
             INTERNAL_REQUEST_ID,
             AUTHORISATION,
             TPP_BRAND_LOGGING_INFORMATION,
-            TPP_REJECTION_NO_FUNDS_PREFFERED
+            TPP_REJECTION_NO_FUNDS_PREFFERED,
+            TPP_DECOUPLED_PREFERRED_HEADER,
+            TPP_REDIRECT_PREFERRED_HEADER
         );
     }
 
     public static SpiContextData defaultSpiContextData() {
-        return new SpiContextData(null, null, null, null, null, null, null);
+        return new SpiContextData(null, null, null, null, null, null, null, null, null);
     }
 
     public static SpiContextData buildWithPsuTppAuthToken(SpiPsuData psuData, TppInfo tppInfo, String oAuth2Token) {
-        return new SpiContextData(psuData, tppInfo, X_REQUEST_ID, INTERNAL_REQUEST_ID, oAuth2Token, TPP_BRAND_LOGGING_INFORMATION, null);
+        return new SpiContextData(psuData, tppInfo, X_REQUEST_ID, INTERNAL_REQUEST_ID, oAuth2Token, TPP_BRAND_LOGGING_INFORMATION, null, null, null);
     }
 }

@@ -156,6 +156,6 @@ class SpiContextDataProviderTest {
     }
 
     private static SpiContextData buildSpiContextData(SpiPsuData spiPsuData) {
-        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION, null);
+        return new SpiContextData(spiPsuData, TPP_INFO, X_REQUEST_ID, INTERNAL_REQUEST_ID, AUTHORISATION, TPP_BRAND_LOGGING_INFORMATION, null, null, null);
     }
 }
