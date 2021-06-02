@@ -1,9 +1,0 @@
-= Release notes v.10.5
-
-== Table of Contents
-
-* Header TPP-Redirect-Preferred was passed to SPI level
-
-== Header TPP-Redirect-Preferred was passed to SPI level
-
-Header TPP-Redirect-Preferred was passed to SPI level of the application for Payment/Consent flow.
