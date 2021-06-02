@@ -1,0 +1,11 @@
+{
+  "isOneAccessType": false,
+  "isWrongConsentData": false,
+  "psuIdDataList": [
+    {
+      "psuId": "marion.mueller"
+    }
+  ],
+  "authorisationNumber": "Test Authorisation Number",
+  "instanceId": "UNDEFINED"
+}

@@ -43,6 +43,7 @@ import de.adorsys.psd2.consent.service.migration.AisConsentLazyMigrationService;
 import de.adorsys.psd2.consent.service.psu.CmsPsuService;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -77,9 +78,9 @@ class ConsentServiceInternalTest {
     private static final LocalDate VALID_UNTIL = LocalDate.of(2030, 12, 31);
 
     private ConsentEntity consentEntity;
-    private List<AuthorisationEntity> authorisationEntities = new ArrayList<>();
-    private JsonReader jsonReader = new JsonReader();
-    private AspspSettings aspspSettings = buildMockAspspSettings();
+    private final List<AuthorisationEntity> authorisationEntities = new ArrayList<>();
+    private final JsonReader jsonReader = new JsonReader();
+    private final AspspSettings aspspSettings = buildMockAspspSettings();
 
     @InjectMocks
     private ConsentServiceInternal consentServiceInternal;
@@ -457,6 +458,19 @@ class ConsentServiceInternalTest {
     }
 
     @Test
+    void findAndTerminateOldConsents_success_newConsentRecurringIndicatorIsFalse() {
+        // Given
+        TerminateOldConsentsRequest request = getTerminateOldConsentsRequestOneOff();
+
+        // When
+        CmsResponse<Boolean> result = consentServiceInternal.findAndTerminateOldConsents(EXTERNAL_CONSENT_ID, request);
+
+        // Then
+        assertTrue(result.isSuccessful());
+        assertFalse(result.getPayload());
+    }
+
+    @Test
     void findAndTerminateOldConsentsByNewConsentId_failure_wrongConsentData() {
         // Given
         when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
@@ -472,6 +486,19 @@ class ConsentServiceInternalTest {
         );
     }
 
+
+    @Test
+    void findAndTerminateOldConsents_failure_wrongConsentData() {
+        // Given
+        TerminateOldConsentsRequest request = getTerminateOldConsentsRequestWrongConsentData();
+
+        // When
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> consentServiceInternal.findAndTerminateOldConsents(EXTERNAL_CONSENT_ID, request)
+        );
+    }
+
     @Test
     void findAndTerminateOldConsentsByNewConsentId_success_oldConsentsEmpty() {
         // Given
@@ -480,6 +507,19 @@ class ConsentServiceInternalTest {
 
         // When
         CmsResponse<Boolean> result = consentServiceInternal.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+
+        // Then
+        assertTrue(result.isSuccessful());
+        assertFalse(result.getPayload());
+    }
+
+    @Test
+    void findAndTerminateOldConsents_success_oldConsentsEmpty() {
+        // Given
+        TerminateOldConsentsRequest request = getTerminateOldConsentsRequest();
+
+        // When
+        CmsResponse<Boolean> result = consentServiceInternal.findAndTerminateOldConsents(EXTERNAL_CONSENT_ID, request);
 
         // Then
         assertTrue(result.isSuccessful());
@@ -518,6 +558,37 @@ class ConsentServiceInternalTest {
 
         // When
         CmsResponse<Boolean> result = consentServiceInternal.findAndTerminateOldConsentsByNewConsentId(EXTERNAL_CONSENT_ID);
+
+        // Then
+        assertTrue(result.isSuccessful());
+        assertTrue(result.getPayload());
+        assertEquals(ConsentStatus.TERMINATED_BY_TPP, oldConsent.getConsentStatus());
+        verify(consentJpaRepository).saveAll(oldConsents);
+    }
+
+    @Test
+    void findAndTerminateOldConsents_success() {
+        // Given
+        TerminateOldConsentsRequest request = getTerminateOldConsentsRequest();
+
+        List<PsuData> psuDataList = Collections.singletonList(psuDataMocked);
+        when(psuDataMocked.getPsuId())
+            .thenReturn(PSU_ID);
+        when(cmsPsuService.isPsuDataListEqual(psuDataList, psuDataList))
+            .thenReturn(true);
+
+        when(psuDataMapper.mapToPsuDataList(request.getPsuIdDataList(), request.getInstanceId())).thenReturn(psuDataList);
+        ConsentEntity oldConsent = buildConsentEntity(EXTERNAL_CONSENT_ID_NOT_EXIST);
+        List<ConsentEntity> oldConsents = Collections.singletonList(oldConsent);
+        when(consentJpaRepository.findOldConsentsByNewConsentParams(Collections.singleton(PSU_ID),
+                                                                    AUTHORISATION_NUMBER,
+                                                                    INSTANCE_ID,
+                                                                    EXTERNAL_CONSENT_ID,
+                                                                    EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED, ConsentStatus.VALID)))
+            .thenReturn(oldConsents);
+
+        // When
+        CmsResponse<Boolean> result = consentServiceInternal.findAndTerminateOldConsents(EXTERNAL_CONSENT_ID, request);
 
         // Then
         assertTrue(result.isSuccessful());
@@ -703,6 +774,18 @@ class ConsentServiceInternalTest {
         ConsentTypeSetting consentTypeSettings = new ConsentTypeSetting(false, false, false, 0, 1L, maxValidity, false, false);
         AisAspspProfileSetting aisAspspProfileSettings = new AisAspspProfileSetting(consentTypeSettings, null, null, null, null);
         return new AspspSettings(aisAspspProfileSettings, null, null, null, null);
+    }
+
+    private TerminateOldConsentsRequest getTerminateOldConsentsRequestOneOff() {
+        return new TerminateOldConsentsRequest(true, false, null, null, null);
+    }
+
+    private TerminateOldConsentsRequest getTerminateOldConsentsRequestWrongConsentData() {
+        return new TerminateOldConsentsRequest(false, true, null, null, null);
+    }
+
+    private TerminateOldConsentsRequest getTerminateOldConsentsRequest() {
+        return jsonReader.getObjectFromFile("json/service/terminate-consent-req.json", TerminateOldConsentsRequest.class);
     }
 }
 

@@ -38,4 +38,14 @@ public class SpiCommonPayment implements SpiPayment {
     private byte[] paymentData;
     private OffsetDateTime creationTimestamp;
     private String instanceId;
+
+    @Override
+    public String getDebtorName() {
+        return null;
+    }
+
+    @Override
+    public void setDebtorName(String debtorName) {
+        // Common payment does not have debtorName
+    }
 }

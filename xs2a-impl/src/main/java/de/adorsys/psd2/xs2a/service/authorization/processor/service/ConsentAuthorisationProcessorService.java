@@ -155,7 +155,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
             updateConsentStatus(consentId, responseConsentStatus);
         }
 
-        findAndTerminateOldConsentsByNewConsentId(consentId);
+        findAndTerminateOldConsents(consentId, consent);
 
         return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, consentId, request.getAuthorisationId(), psuData);
     }
@@ -348,7 +348,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
 
     abstract SpiResponse<SpiPsuAuthorisationResponse> authorisePsu(SpiContextData spiContextData, String authorisationId, SpiPsuData spiPsuData, String password, T consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 
-    abstract void findAndTerminateOldConsentsByNewConsentId(String consentId);
+    abstract void findAndTerminateOldConsents(String encryptedNewConsentId, T consent);
 
     abstract void updateConsentStatus(String consentId, ConsentStatus responseConsentStatus);
 

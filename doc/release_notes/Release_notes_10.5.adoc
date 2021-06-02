@@ -1,0 +1,39 @@
+= Release notes v.10.5
+
+== Table of Contents
+
+* Increased test coverage
+* Added debtorName to get payment response
+* Added new method to terminate old consents
+* Upgraded commons-io
+* Upgraded commons-validator
+* Header TPP-Redirect-Preferred was passed to SPI level
+
+== Increased test coverage
+
+Increased test coverage for AbstractLinks child classes
+
+== Added debtorName to get payment response
+
+From now on debtorName is present in get payment response for following payment products:
+
+- bulk-payments - instant-sepa-credit-transfers
+- bulk-payments - target-2-payments
+- single payments - instant-sepa-credit-transfers
+- single payments - target-2-payments
+
+== Added new method to terminate old consents
+
+Added new method to terminate old consents without retrieving new consent from database.
+
+== Upgraded commons-io
+
+From now on, commons-io version is 2.8.0
+
+== Upgraded commons-validator
+
+From now on, commons-validator version is 1.7
+
+== Header TPP-Redirect-Preferred was passed to SPI level
+
+Header TPP-Redirect-Preferred was passed to SPI level of the application for Payment/Consent flow.

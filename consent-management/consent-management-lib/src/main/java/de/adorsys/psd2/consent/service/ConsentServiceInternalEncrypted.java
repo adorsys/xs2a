@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.api.service.ConsentService;
 import de.adorsys.psd2.consent.api.service.ConsentServiceEncrypted;
 import de.adorsys.psd2.consent.service.security.SecurityDataService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
+import de.adorsys.psd2.xs2a.core.consent.TerminateOldConsentsRequest;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -125,6 +126,22 @@ public class ConsentServiceInternalEncrypted implements ConsentServiceEncrypted 
         }
 
         return consentService.findAndTerminateOldConsentsByNewConsentId(decryptIdOptional.get());
+    }
+
+    @Override
+    @Transactional
+    public CmsResponse<Boolean> findAndTerminateOldConsents(String encryptedNewConsentId,
+                                                            TerminateOldConsentsRequest request) {
+        Optional<String> decryptIdOptional = securityDataService.decryptId(encryptedNewConsentId);
+
+        if (decryptIdOptional.isEmpty()) {
+            log.info("Encrypted Consent ID: [{}]. Terminate consent by id failed, couldn't decrypt consent id", encryptedNewConsentId);
+            return CmsResponse.<Boolean>builder()
+                       .error(TECHNICAL_ERROR)
+                       .build();
+        }
+
+        return consentService.findAndTerminateOldConsents(decryptIdOptional.get(), request);
     }
 
     @Override

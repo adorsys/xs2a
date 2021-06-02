@@ -48,7 +48,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static de.adorsys.psd2.consent.api.CmsError.LOGICAL_ERROR;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -252,32 +251,6 @@ class Xs2aPiisConsentServiceTest {
 
         assertTrue(actual.hasError());
         assertEquals(CmsError.TECHNICAL_ERROR, actual.getError());
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_success() {
-        // Given
-        when(consentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(true).build());
-
-        // When
-        boolean actualResponse = xs2aPiisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse).isTrue();
-    }
-
-    @Test
-    void findAndTerminateOldConsentsByNewConsentId_false() {
-        // Given
-        when(consentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID))
-            .thenReturn(CmsResponse.<Boolean>builder().payload(false).build());
-
-        // When
-        boolean actualResponse = xs2aPiisConsentService.findAndTerminateOldConsentsByNewConsentId(CONSENT_ID);
-
-        // Then
-        assertThat(actualResponse).isFalse();
     }
 
     @Test
