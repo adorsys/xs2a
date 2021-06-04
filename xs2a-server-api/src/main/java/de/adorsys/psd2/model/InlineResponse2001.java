@@ -11,13 +11,13 @@ import java.util.Objects;
  * InlineResponse2001
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-06-03T17:05:20.987779+03:00[Europe/Kiev]")
 
 public class InlineResponse2001   {
   @JsonProperty("transactionsDetails")
-  private TransactionDetailsBody transactionsDetails = null;
+  private Transactions transactionsDetails = null;
 
-  public InlineResponse2001 transactionsDetails(TransactionDetailsBody transactionsDetails) {
+  public InlineResponse2001 transactionsDetails(Transactions transactionsDetails) {
     this.transactionsDetails = transactionsDetails;
     return this;
   }
@@ -32,11 +32,11 @@ public class InlineResponse2001   {
 
 
   @JsonProperty("transactionsDetails")
-  public TransactionDetailsBody getTransactionsDetails() {
+  public Transactions getTransactionsDetails() {
     return transactionsDetails;
   }
 
-  public void setTransactionsDetails(TransactionDetailsBody transactionsDetails) {
+  public void setTransactionsDetails(Transactions transactionsDetails) {
     this.transactionsDetails = transactionsDetails;
   }
 
