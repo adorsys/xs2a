@@ -1,0 +1,9 @@
+= Release notes v.10.6
+
+== Table of Contents
+
+* Changed transactionDetails structure
+
+== Changed transactionDetails structure
+
+From now on, `transactionDetails` are stored in `Transactions` object, and response has correct structure. Before they were stored in `transactionDetailsBody` object, and this was the cause of the incorrect structure of the response. Unnecessary `TransactionDetailsBody` object model was removed.

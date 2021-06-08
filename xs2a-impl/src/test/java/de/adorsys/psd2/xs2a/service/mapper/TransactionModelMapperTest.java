@@ -87,7 +87,7 @@ class TransactionModelMapperTest {
 
         // Then
         assertThat(actualInlineResponse2001).isNotNull();
-        assertThat(actualInlineResponse2001.getTransactionsDetails().getTransactionDetails()).isEqualTo(expectedTransactionDetails);
+        assertThat(actualInlineResponse2001.getTransactionsDetails()).isEqualTo(expectedTransactionDetails);
     }
 
     @Test
