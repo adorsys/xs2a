@@ -16,12 +16,15 @@
 
 package de.adorsys.psd2.xs2a.spi.domain.payment.response;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.spi.domain.common.SpiAmount;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public abstract class SpiPaymentInitiationResponse {
@@ -30,11 +33,11 @@ public abstract class SpiPaymentInitiationResponse {
     private SpiAmount spiTransactionFees;
     private Boolean spiTransactionFeeIndicator;
     private boolean multilevelScaRequired;
-    private List<String> scaMethods;
+    private List<SpiAuthenticationObject> scaMethods;
     private String chosenScaMethod;
     private ChallengeData challengeData;
     private String psuMessage;
-    private List<String> tppMessages;
+    private Set<TppMessageInformation> tppMessages;
     private String aspspAccountId;
     private SpiAmount currencyConversionFee;
     private SpiAmount estimatedTotalAmount;

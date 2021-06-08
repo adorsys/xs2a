@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
-import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aAmount;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
@@ -32,6 +31,7 @@ import de.adorsys.psd2.xs2a.service.spi.InitialSpiAspspConsentDataProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,7 +48,6 @@ public abstract class PaymentInitiationResponse {
     private List<AuthenticationObject> scaMethods;
     private ChallengeData challengeData;
     private String psuMessage;
-    private MessageErrorCode[] tppMessages;
     @JsonProperty("_links")
     private Links links = new Links();
     private String authorizationId;
@@ -57,10 +56,10 @@ public abstract class PaymentInitiationResponse {
     private ErrorHolder errorHolder;
     private String internalRequestId;
     private List<NotificationSupportedMode> tppNotificationContentPreferred;
-    private Set<TppMessageInformation> tppMessageInformation;
     private Xs2aAmount currencyConversionFee;
     private Xs2aAmount estimatedTotalAmount;
     private Xs2aAmount estimatedInterbankSettlementAmount;
+    private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
 
     PaymentInitiationResponse(ErrorHolder errorHolder) {
         this.errorHolder = errorHolder;

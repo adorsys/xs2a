@@ -2,8 +2,11 @@
 
 == Table of Contents
 
-* Changed transactionDetails structure
+* Retrieve fields from SPI
 
-== Changed transactionDetails structure
+== Retrieve fields from SPI
 
-From now on, `transactionDetails` are stored in `Transactions` object, and response has correct structure. Before they were stored in `transactionDetailsBody` object, and this was the cause of the incorrect structure of the response. Unnecessary `TransactionDetailsBody` object model was removed.
+From now on, `psuMessage`, `tppMessage` and `scaMethods` fields are present in Payment Initiation Response for Single, Bulk, Periodic and Common payments and in AIS Consent Response. Previously, mentioned fields were ignored and haven't been used;
+
+- In `SpiPaymentInitiationResponse` field *scaMethods* was changed from `List<String>` to `List<SpiAuthenticationObject>`;
+- In `SpiInitiateAisConsentResponse` fields *tppMessage* and *scaMethods* were added;

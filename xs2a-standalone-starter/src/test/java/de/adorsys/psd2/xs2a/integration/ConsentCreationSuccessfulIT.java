@@ -31,6 +31,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.event.service.Xs2aEventServiceEncrypted;
 import de.adorsys.psd2.event.service.model.EventBO;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
+import de.adorsys.psd2.model.ConsentsResponse201;
 import de.adorsys.psd2.starter.Xs2aStandaloneStarter;
 import de.adorsys.psd2.xs2a.config.CorsConfigurationProperties;
 import de.adorsys.psd2.xs2a.config.WebConfig;
@@ -48,7 +49,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
-import org.apache.commons.io.IOUtils;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,6 +74,7 @@ import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.profile.StartAuthorisationMode.EXPLICIT;
 import static org.apache.commons.io.IOUtils.resourceToString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -99,12 +101,12 @@ class ConsentCreationSuccessfulIT {
     private static final String GLOBAL_CONSENT_REQUEST_JSON_PATH = "/json/account/req/GlobalConsent.json";
     private static final String ALL_AVAILABLE_ACCOUNT_CONSENT_REQUEST_JSON_PATH = "/json/account/req/AllAvailableAccountConsent.json";
     private static final String ALL_AVAILABLE_WITH_BALANCES_ACCOUNT_CONSENT_REQUEST_JSON_PATH = "/json/account/req/AllAvailableWithBalancesAccountConsent.json";
-    private static final String CREATE_CONSENT_IMPLICIT_EMBEDDED_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_embedded_response.json";
-    private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_redirect_response.json";
-    private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH = "/json/account/res/CreateAisConsent_implicit_redirect_oauth_response.json";
-    private static final String CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH = "/json/account/res/CreateAisConsent_explicit_embedded_response.json";
-    private static final String CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH = "/json/account/res/CreateAisConsent_explicit_redirect_response.json";
-    private static final String CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH = "/json/account/res/CreateAisConsent_explicit_redirect_response.json";
+    private static final String CREATE_CONSENT_IMPLICIT_EMBEDDED_RESPONSE_PATH = "json/account/res/CreateAisConsent_implicit_embedded_response.json";
+    private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_RESPONSE_PATH = "json/account/res/CreateAisConsent_implicit_redirect_response.json";
+    private static final String CREATE_CONSENT_IMPLICIT_REDIRECT_OAUTH_RESPONSE_PATH = "json/account/res/CreateAisConsent_implicit_redirect_oauth_response.json";
+    private static final String CREATE_CONSENT_EXPLICIT_EMBEDDED_RESPONSE_PATH = "json/account/res/CreateAisConsent_explicit_embedded_response.json";
+    private static final String CREATE_CONSENT_EXPLICIT_REDIRECT_RESPONSE_PATH = "json/account/res/CreateAisConsent_explicit_redirect_response.json";
+    private static final String CREATE_CONSENT_EXPLICIT_EMBEDDED_SIGNING_BASKET_RESPONSE_PATH = "json/account/res/CreateAisConsent_explicit_redirect_response.json";
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
 
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
@@ -133,6 +135,8 @@ class ConsentCreationSuccessfulIT {
     private AspspDataService aspspDataService;
     @MockBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void init() {
@@ -335,8 +339,11 @@ class ConsentCreationSuccessfulIT {
 
         //Then
         resultActions.andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(content().json(IOUtils.resourceToString(responseJsonPath, UTF_8)));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        ConsentsResponse201 actual = jsonReader.getObjectFromString(resultActions.andReturn().getResponse().getContentAsString(), ConsentsResponse201.class);
+        ConsentsResponse201 expected = jsonReader.getObjectFromFile(responseJsonPath, ConsentsResponse201.class);
+        assertThat(actual).isEqualTo(expected);
     }
 
     private CreateAuthorisationResponse buildCreateAisConsentAuthorizationResponse() {

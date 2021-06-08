@@ -28,7 +28,6 @@
     "additionalInformation": "some info"
   },
   "psuMessage": "hello, world!",
-  "tppMessages": [],
   "_links": {
     "scaRedirect": {
       "href": "http://localhost:4200/consent/confirmation/pis"

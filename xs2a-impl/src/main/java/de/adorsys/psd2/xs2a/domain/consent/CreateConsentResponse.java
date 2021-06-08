@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -55,5 +56,6 @@ public class CreateConsentResponse {
     private final String internalRequestId;
 
     private final List<NotificationSupportedMode> tppNotificationContentPreferred;
-    private Set<TppMessageInformation> tppMessageInformation;
+
+    private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
 }

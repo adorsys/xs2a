@@ -23,6 +23,7 @@ import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
@@ -68,6 +69,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
 import de.adorsys.psd2.xs2a.util.reader.TestSpiDataProvider;
+import de.adorsys.psd2.xs2a.web.mapper.ScaMethodsMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -166,6 +168,8 @@ class ConsentServiceTest {
     private AspspProfileServiceWrapper aspspProfileService;
     @Mock
     private PsuDataCleaner psuDataCleaner;
+    @Mock
+    private ScaMethodsMapper scaMethodsMapper;
 
     private AisConsent aisConsent;
 
@@ -212,8 +216,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
@@ -253,11 +258,12 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
 
         when(aspspProfileService.isPsuInInitialRequestIgnored()).thenReturn(true);
         when(psuDataCleaner.clearPsuData(PSU_ID_DATA)).thenReturn(PSU_ID_DATA_CLEAR);
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -300,8 +306,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), true, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), true, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
@@ -342,8 +349,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), true, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), true, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
         CreateConsentResponse response = responseObj.getBody();
@@ -380,8 +388,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
 
@@ -415,8 +424,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -475,8 +485,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -509,8 +520,9 @@ class ConsentServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
             req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -541,6 +553,7 @@ class ConsentServiceTest {
             .thenReturn(SPI_CONTEXT_DATA);
         when(aspspConsentDataProviderFactory.getInitialAspspConsentDataProvider())
             .thenReturn(initialSpiAspspConsentDataProvider);
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         when(consentValidationService.validateConsentOnCreate(req, PSU_ID_DATA))
@@ -548,7 +561,7 @@ class ConsentServiceTest {
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
 
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -584,8 +597,9 @@ class ConsentServiceTest {
 
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         ResponseObject<CreateConsentResponse> responseObj = consentService.createAccountConsentsWithResponse(
@@ -622,8 +636,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         ResponseObject<CreateConsentResponse> response = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -661,7 +676,7 @@ class ConsentServiceTest {
             .thenReturn(ValidationResult.valid());
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
 
         when(authorisationMethodDecider.isImplicitMethod(true, false))
@@ -672,6 +687,7 @@ class ConsentServiceTest {
         authorisationResponse.setAuthorisationId(AUTHORISATION_ID);
         when(redirectAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
             .thenReturn(Optional.of(authorisationResponse));
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         ResponseObject<CreateConsentResponse> actualResponse = consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -709,8 +725,9 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -746,7 +763,7 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE,  null, null))
                             .build());
         when(authorisationMethodDecider.isImplicitMethod(true, false))
             .thenReturn(true);
@@ -756,6 +773,7 @@ class ConsentServiceTest {
         authorisationResponse.setScaStatus(ScaStatus.RECEIVED);
         when(redirectAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
             .thenReturn(Optional.of(authorisationResponse));
+        when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
         // When
         consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -1589,5 +1607,17 @@ class ConsentServiceTest {
     private void assertResponseIsCorrect(CreateConsentResponse response) {
         assertThat(response.getConsentId()).isEqualTo(CONSENT_ID);
         assertThat(response.getPsuMessage()).isEqualTo(TEST_PSU_MESSAGE);
+    }
+
+    private de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject getAuthenticationObject(){
+        AuthenticationObject authenticationObject = new AuthenticationObject();
+        authenticationObject.setAuthenticationType("MockedAuthenticationType");
+        authenticationObject.setAuthenticationMethodId("MockedAuthenticationMethodId");
+        authenticationObject.setAuthenticationVersion("MockedAuthenticationVersion");
+        authenticationObject.setName("MockedName");
+        authenticationObject.setDecoupled(false);
+        authenticationObject.setExplanation("MockedExplanation");
+
+        return authenticationObject;
     }
 }

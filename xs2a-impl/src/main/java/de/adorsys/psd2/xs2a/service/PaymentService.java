@@ -120,7 +120,8 @@ public class PaymentService {
         }
 
         PaymentInitiationResponse paymentInitiationResponse = responseObject.getBody();
-        paymentInitiationResponse.setTppMessageInformation(createPaymentValidator.buildWarningMessages(createPaymentRequestObject));
+
+        paymentInitiationResponse.getTppMessageInformation().addAll(createPaymentValidator.buildWarningMessages(createPaymentRequestObject));
 
         loggingContextService.storeTransactionAndScaStatus(paymentInitiationResponse.getTransactionStatus(), paymentInitiationResponse.getScaStatus());
 
