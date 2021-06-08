@@ -1,6 +1,14 @@
 {
   "consentStatus": "received",
   "consentId": "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
+  "scaMethods": [
+    {
+      "authenticationType": "Mocked Authentication type",
+      "authenticationVersion": "Mocked Authentication version",
+      "authenticationMethodId": "Mocked Authentication id",
+      "name": "Mocked name"
+    }
+  ],
   "_links": {
     "self": {
       "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI"
@@ -11,5 +19,13 @@
     "startAuthorisation": {
       "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations"
     }
-  }
+  },
+  "psuMessage": "mocked PSU message",
+  "tppMessages": [
+    {
+      "category": "WARNING",
+      "code": "WARNING",
+      "text": "Mocked tpp message from the bank"
+    }
+  ]
 }

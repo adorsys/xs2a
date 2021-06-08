@@ -61,6 +61,7 @@ import de.adorsys.psd2.xs2a.spi.domain.consent.SpiInitiateAisConsentResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse.VoidResponse;
 import de.adorsys.psd2.xs2a.spi.service.AisConsentSpi;
+import de.adorsys.psd2.xs2a.web.mapper.ScaMethodsMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -88,6 +89,7 @@ public class ConsentService {
     private final AccountReferenceInConsentUpdater accountReferenceUpdater;
     private final SpiToXs2aLinksMapper spiToXs2aLinksMapper;
     private final SpiErrorMapper spiErrorMapper;
+    private final ScaMethodsMapper scaMethodsMapper;
 
     private final ConsentValidationService consentValidationService;
     private final ConsentAuthorisationService consentAuthorisationService;
@@ -178,12 +180,12 @@ public class ConsentService {
 
         ConsentStatus consentStatus = aisConsent.getConsentStatus();
         CreateConsentResponse createConsentResponse = new CreateConsentResponse(consentStatus.getValue(), encryptedConsentId,
-                                                                                null, null, null,
+                                                                                scaMethodsMapper.mapToAuthenticationObjectList(spiResponsePayload.getScaMethods()), null, null,
                                                                                 spiResponsePayload.getPsuMessage(), multilevelScaRequired,
                                                                                 requestProviderService.getInternalRequestIdString(),
                                                                                 createAisConsentResponse.getTppNotificationContentPreferred());
 
-        createConsentResponse.setTppMessageInformation(consentValidationService.buildWarningMessages(requestAfterCheck));
+        enrichTppMessages(requestAfterCheck, spiResponsePayload, createConsentResponse);
 
         ResponseObject<CreateConsentResponse> createConsentResponseObject = ResponseObject.<CreateConsentResponse>builder().body(createConsentResponse).build();
 
@@ -194,6 +196,13 @@ public class ConsentService {
         loggingContextService.storeConsentStatus(consentStatus);
 
         return createConsentResponseObject;
+    }
+
+    private void enrichTppMessages(CreateConsentReq requestAfterCheck, SpiInitiateAisConsentResponse spiResponsePayload, CreateConsentResponse createConsentResponse) {
+        if (spiResponsePayload.getTppMessages() != null) {
+            createConsentResponse.getTppMessageInformation().addAll(spiResponsePayload.getTppMessages());
+        }
+        createConsentResponse.getTppMessageInformation().addAll(consentValidationService.buildWarningMessages(requestAfterCheck));
     }
 
     private ResponseObject<CreateConsentResponse> resolveConsentCreationError(List<MessageErrorCode> errors) {
@@ -441,7 +450,7 @@ public class ConsentService {
                                                                    spiScaInformationPayload.getPsuMessage(),
                                                                    spiToXs2aLinksMapper.toXs2aLinks(spiScaInformationPayload.getLinks()),
                                                                    spiScaInformationPayload.getTppMessageInformation()
-                                                                   );
+        );
 
         return ResponseObject.<Xs2aScaStatusResponse>builder()
                    .body(response)

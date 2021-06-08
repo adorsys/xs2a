@@ -59,6 +59,10 @@ public class CommonPaymentSpiMockImpl implements CommonPaymentSpi {
         response.setEstimatedTotalAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(2000)));
         response.setEstimatedInterbankSettlementAmount(new SpiAmount(Currency.getInstance("EUR"), new BigDecimal(1300)));
 
+        response.setPsuMessage(SpiMockData.PSU_MESSAGE);
+        response.setTppMessages(SpiMockData.TPP_MESSAGES);
+        response.setScaMethods(SpiMockData.SCA_METHODS);
+
         aspspConsentDataProvider.updateAspspConsentData(TEST_ASPSP_DATA.getBytes());
 
         return SpiResponse.<SpiPaymentInitiationResponse>builder()

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.model.AuthenticationObject;
 import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.xs2a.spi.domain.common.SpiAuthenticationObject;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
+import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -70,4 +73,40 @@ class ScaMethodsMapperTest {
         assertNotNull(scaMethods);
         assertEquals(expected, scaMethods.get(0));
     }
+
+    @Test
+    void mapToAuthenticationObjectList_withNull_returnNull(){
+        // When
+        List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> scaMethodsList = scaMethodsMapper.mapToAuthenticationObjectList(null);
+
+        // Then
+        assertThat(scaMethodsList).isNull();
+
+    }
+
+    @Test
+    void mapToAuthenticationObjectList_withRealData_success() {
+        // Given
+        SpiAuthenticationObject authenticationObject =
+            jsonReader.getObjectFromFile("json/service/mapper/xs2a-authentication-objects-list.json", SpiAuthenticationObject.class);
+
+        List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> expected =
+            Collections.singletonList(jsonReader.getObjectFromFile("json/service/mapper/authentication-objects-list.json", de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject.class));
+
+        // When
+        List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> actual = scaMethodsMapper.mapToAuthenticationObjectList(Collections.singletonList(authenticationObject));
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void spiAuthenticationObjectToAuthenticationObject_isNull_returnsNull() {
+        //  When
+        List<de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject> actual = scaMethodsMapper.mapToAuthenticationObjectList(Collections.singletonList(null));
+
+        // Then
+        assertThat(actual.get(0)).isNull();
+    }
+
 }

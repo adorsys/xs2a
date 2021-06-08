@@ -57,8 +57,14 @@ public class AisConsentSpiMockImpl implements AisConsentSpi {
         access.setBalances(Collections.singletonList(accountReference));
         access.setTransactions(Collections.singletonList(accountReference));
 
+        SpiInitiateAisConsentResponse response = new SpiInitiateAisConsentResponse();
+        response.setPsuMessage(SpiMockData.PSU_MESSAGE);
+        response.setTppMessages(SpiMockData.TPP_MESSAGES);
+        response.setScaMethods(SpiMockData.SCA_METHODS);
+        response.setAccountAccess(access);
+
         return SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                   .payload(new SpiInitiateAisConsentResponse(access, false, ""))
+                   .payload(response)
                    .build();
     }
 

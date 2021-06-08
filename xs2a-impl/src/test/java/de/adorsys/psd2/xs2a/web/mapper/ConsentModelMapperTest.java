@@ -128,7 +128,7 @@ class ConsentModelMapperTest {
         methods.add(new AuthenticationObject());
         when(scaMethodsMapper.mapToScaMethods(anyList())).thenReturn(methods);
         when(hrefLinkMapper.mapToLinksMap(any(Links.class))).thenReturn(buildLinks());
-        createConsentResponseWithScaMethods.setTppMessageInformation(Collections.singleton(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE)));
+        createConsentResponseWithScaMethods.getTppMessageInformation().addAll((Collections.singleton(TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE))));
 
         // When
         ConsentsResponse201 actual = consentModelMapper.mapToConsentsResponse201(createConsentResponseWithScaMethods);
