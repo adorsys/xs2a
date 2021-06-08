@@ -98,9 +98,7 @@ public abstract class TransactionModelMapper {
 
     public InlineResponse2001 mapToTransactionDetails(Transactions transactions) {
         InlineResponse2001 inlineResponse2001 = new InlineResponse2001();
-        TransactionDetailsBody transactionDetailsBody = new TransactionDetailsBody();
-        transactionDetailsBody.setTransactionDetails(mapToTransactions(transactions));
-        inlineResponse2001.setTransactionsDetails(transactionDetailsBody);
+        inlineResponse2001.setTransactionsDetails(mapToTransactions(transactions));
         return inlineResponse2001;
     }
 
