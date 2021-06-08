@@ -1,26 +1,23 @@
 package de.adorsys.psd2.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import de.adorsys.psd2.model.TransactionDetailsBody;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
+
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import java.util.Objects;
 
 /**
  * InlineResponse2001
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T17:35:11.808068+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-06-04T14:56:41.124675+03:00[Europe/Kiev]")
 
 public class InlineResponse2001   {
   @JsonProperty("transactionsDetails")
-  private TransactionDetailsBody transactionsDetails = null;
+  private Transactions transactionsDetails = null;
 
-  public InlineResponse2001 transactionsDetails(TransactionDetailsBody transactionsDetails) {
+  public InlineResponse2001 transactionsDetails(Transactions transactionsDetails) {
     this.transactionsDetails = transactionsDetails;
     return this;
   }
@@ -35,11 +32,11 @@ public class InlineResponse2001   {
 
 
   @JsonProperty("transactionsDetails")
-  public TransactionDetailsBody getTransactionsDetails() {
+  public Transactions getTransactionsDetails() {
     return transactionsDetails;
   }
 
-  public void setTransactionsDetails(TransactionDetailsBody transactionsDetails) {
+  public void setTransactionsDetails(Transactions transactionsDetails) {
     this.transactionsDetails = transactionsDetails;
   }
 

@@ -5301,16 +5301,6 @@ components:
       items:
         $ref: "#/components/schemas/cardTransaction"
 
-
-    transactionDetailsBody:
-      description: Transaction details.
-      type: object
-      required:
-        - transactionDetails
-      properties:
-        transactionDetails:
-          $ref: "#/components/schemas/transactions"
-
     transactions:
       description: Transaction details.
       type: object
@@ -12205,7 +12195,7 @@ components:
               - transactionsDetails
             properties:
               transactionsDetails:
-                $ref: "#/components/schemas/transactionDetailsBody"
+                $ref: "#/components/schemas/transactions"
           examples:
             Example:
               $ref: "#/components/examples/transactionDetailsExample"
