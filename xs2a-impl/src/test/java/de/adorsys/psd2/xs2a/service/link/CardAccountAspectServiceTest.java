@@ -50,7 +50,7 @@ class CardAccountAspectServiceTest {
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileServiceWrapper;
-    @Mock Xs2aTransactionsReportByPeriodRequest request;
+    @Mock Xs2aCardTransactionsReportByPeriodRequest request;
 
     private Xs2aCardAccountDetails accountDetails;
     private AisConsent aisConsent;

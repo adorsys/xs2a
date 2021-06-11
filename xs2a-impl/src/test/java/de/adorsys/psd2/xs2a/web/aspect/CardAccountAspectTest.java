@@ -41,7 +41,7 @@ class CardAccountAspectTest {
     @Mock
     private CardAccountAspectService cardAccountAspectService;
     @Mock
-    private Xs2aTransactionsReportByPeriodRequest request;
+    private Xs2aCardTransactionsReportByPeriodRequest request;
 
     private Xs2aCardAccountDetails accountDetails;
     private AisConsent aisConsent;

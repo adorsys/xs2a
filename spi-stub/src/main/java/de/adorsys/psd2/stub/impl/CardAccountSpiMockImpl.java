@@ -67,10 +67,10 @@ public class CardAccountSpiMockImpl implements CardAccountSpi {
     }
 
     @Override
-    public SpiResponse<SpiCardTransactionReport> requestCardTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
-        log.info("CardAccountSpi#requestCardTransactionsForAccount: contextData {}, acceptMediaType {}, withBalance {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, spiTransactionReportParameters.getAcceptMediaType(), spiTransactionReportParameters.isWithBalance(), spiTransactionReportParameters.getDateFrom(), spiTransactionReportParameters.getDateTo(), spiTransactionReportParameters.getBookingStatus(), accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
+    public SpiResponse<SpiCardTransactionReport> requestCardTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiCardTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        log.info("CardAccountSpi#requestCardTransactionsForAccount: contextData {}, acceptMediaType {}, dateFrom {}, dateTo {}, bookingStatus {}, accountReference {}, accountConsent-id {}, aspspConsentData {}", contextData, spiCardTransactionReportParameters.getAcceptMediaType(), spiCardTransactionReportParameters.getDateFrom(), spiCardTransactionReportParameters.getDateTo(), spiCardTransactionReportParameters.getBookingStatus(), accountReference, accountConsent.getId(), aspspConsentDataProvider.loadAspspConsentData());
 
-        List<SpiCardTransaction> transactions = BookingStatus.INFORMATION == spiTransactionReportParameters.getBookingStatus() ?
+        List<SpiCardTransaction> transactions = BookingStatus.INFORMATION == spiCardTransactionReportParameters.getBookingStatus() ?
                                                     buildSpiInformationTransactionList() :
                                                     buildSpiTransactionList();
 
