@@ -28,10 +28,7 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionParameters;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
+import de.adorsys.psd2.xs2a.domain.account.*;
 import de.adorsys.psd2.xs2a.service.TppService;
 import de.adorsys.psd2.xs2a.service.consent.CardAccountHandler;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAccountService;
@@ -93,7 +90,7 @@ public class CardTransactionService {
      * @param request Xs2aTransactionsReportByPeriodRequest object which contains information for building Xs2aCardTransactionsReport
      * @return CardTransactionsReport filled with appropriate card transaction arrays Booked and Pending.
      */
-    public ResponseObject<Xs2aCardTransactionsReport> getCardTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request) {
+    public ResponseObject<Xs2aCardTransactionsReport> getCardTransactionsReportByPeriod(Xs2aCardTransactionsReportByPeriodRequest request) {
         xs2aEventService.recordConsentTppRequest(request.getConsentId(), EventType.READ_CARD_TRANSACTION_LIST_REQUEST_RECEIVED);
 
         Optional<AisConsent> aisConsentOptional = aisConsentService.getAccountConsentById(request.getConsentId());
@@ -110,8 +107,8 @@ public class CardTransactionService {
         ValidationResult validationResult = getValidationResultForTransactionsReportByPeriod(request, aisConsent);
 
         if (validationResult.isNotValid()) {
-            log.info("Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period - validation failed: {}",
-                     request.getAccountId(), request.getConsentId(), request.isWithBalance(),
+            log.info("Account-ID [{}], Consent-ID [{}], RequestUri [{}]. Get transactions report by period - validation failed: {}",
+                     request.getAccountId(), request.getConsentId(),
                      request.getRequestUri(), validationResult.getMessageError());
             return ResponseObject.<Xs2aCardTransactionsReport>builder()
                        .fail(validationResult.getMessageError())
@@ -131,7 +128,7 @@ public class CardTransactionService {
         return getXs2aCardTransactionsReportResponseObject(request, aisConsent, spiResponse.getPayload());
     }
 
-    private ValidationResult getValidationResultForTransactionsReportByPeriod(Xs2aTransactionsReportByPeriodRequest request,
+    private ValidationResult getValidationResultForTransactionsReportByPeriod(Xs2aCardTransactionsReportByPeriodRequest request,
                                                                               AisConsent aisConsent) {
 
         CardTransactionsReportByPeriodObject validatorObject = new CardTransactionsReportByPeriodObject(aisConsent,
@@ -146,7 +143,7 @@ public class CardTransactionService {
     }
 
     @NotNull
-    private SpiResponse<SpiCardTransactionReport> getSpiResponseSpiCardTransactionReport(Xs2aTransactionsReportByPeriodRequest request,
+    private SpiResponse<SpiCardTransactionReport> getSpiResponseSpiCardTransactionReport(Xs2aCardTransactionsReportByPeriodRequest request,
                                                                                          AisConsent aisConsent) {
         return cardAccountSpi.requestCardTransactionsForAccount(accountHelperService.getSpiContextData(),
                                                                 buildSpiTransactionReportParameters(request),
@@ -155,11 +152,8 @@ public class CardTransactionService {
                                                                 aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getConsentId()));
     }
 
-    private SpiTransactionReportParameters buildSpiTransactionReportParameters(Xs2aTransactionsReportByPeriodRequest request) {
-        boolean isTransactionsShouldContainBalances =
-            !aspspProfileService.isTransactionsWithoutBalancesSupported() || request.isWithBalance();
-
-        return new SpiTransactionReportParameters(request.getAcceptHeader(), isTransactionsShouldContainBalances, request.getDateFrom(), request.getDateTo(),
+    private SpiTransactionReportParameters buildSpiTransactionReportParameters(Xs2aCardTransactionsReportByPeriodRequest request) {
+        return new SpiTransactionReportParameters(request.getAcceptHeader(), Boolean.FALSE, request.getDateFrom(), request.getDateTo(),
                                                   request.getBookingStatus(), request.getEntryReferenceFrom(), request.getDeltaList(), null, null);
     }
 
@@ -168,7 +162,7 @@ public class CardTransactionService {
         return accountHelperService.findAccountReference(access.getTransactions(), accountId);
     }
 
-    private ResponseObject<Xs2aCardTransactionsReport> checkSpiResponseForCardTransactionsReport(Xs2aTransactionsReportByPeriodRequest request,
+    private ResponseObject<Xs2aCardTransactionsReport> checkSpiResponseForCardTransactionsReport(Xs2aCardTransactionsReportByPeriodRequest request,
                                                                                                  SpiResponse<SpiCardTransactionReport> spiResponse) {
         // in this particular call we use NOT_SUPPORTED to indicate that requested Content-type is not ok for us
         if (spiResponse.getErrors().get(0).getErrorCode() == SERVICE_NOT_SUPPORTED) {
@@ -188,7 +182,7 @@ public class CardTransactionService {
     }
 
     @NotNull
-    private ResponseObject<Xs2aCardTransactionsReport> getXs2aCardTransactionsReportResponseObject(Xs2aTransactionsReportByPeriodRequest request,
+    private ResponseObject<Xs2aCardTransactionsReport> getXs2aCardTransactionsReportResponseObject(Xs2aCardTransactionsReportByPeriodRequest request,
                                                                                                    AisConsent aisConsent,
                                                                                                    SpiCardTransactionReport spiTransactionReport) {
         Xs2aCardTransactionsReport transactionsReport = mapToCardTransactionsReport(request, aisConsent, spiTransactionReport);
@@ -199,7 +193,7 @@ public class CardTransactionService {
         AccountReference accountReference = transactionsReport.getAccountReference();
         aisConsentService.consentActionLog(tppService.getTppId(),
                                            request.getConsentId(),
-                                           accountHelperService.createActionStatus(request.isWithBalance(), TypeAccess.TRANSACTION, response),
+                                           accountHelperService.createActionStatus(Boolean.FALSE, TypeAccess.TRANSACTION, response),
                                            request.getRequestUri(),
                                            accountHelperService.needsToUpdateUsage(aisConsent),
                                            accountReference == null ? null : accountReference.getResourceId(), null);
@@ -207,7 +201,7 @@ public class CardTransactionService {
     }
 
     @NotNull
-    private Xs2aCardTransactionsReport mapToCardTransactionsReport(Xs2aTransactionsReportByPeriodRequest request,
+    private Xs2aCardTransactionsReport mapToCardTransactionsReport(Xs2aCardTransactionsReportByPeriodRequest request,
                                                                    AisConsent accountConsent,
                                                                    SpiCardTransactionReport spiTransactionReport) {
         Xs2aCardAccountReport report = cardTransactionListToXs2aAccountReportMapper

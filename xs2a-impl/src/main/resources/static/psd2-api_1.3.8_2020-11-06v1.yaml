@@ -2171,7 +2171,6 @@ paths:
         - $ref: "#/components/parameters/entryReferenceFrom"
         - $ref: "#/components/parameters/bookingStatus"
         - $ref: "#/components/parameters/deltaList"
-        - $ref: "#/components/parameters/withBalanceQuery"
       #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
