@@ -54,7 +54,7 @@ public interface CardAccountSpi {
      * Requests a list of card transactions
      *
      * @param contextData                    known Context of this call
-     * @param spiTransactionReportParameters Transaction report parameters (acceptMediaType, withBalance, dateFrom, dateTo, bookingStatus, entryReferenceFrom, deltaList)
+     * @param spiTransactionReportParameters Transaction report parameters (acceptMediaType, dateFrom, dateTo, bookingStatus, entryReferenceFrom, deltaList)
      * @param accountReference               SpiAccountReference
      * @param accountConsent                 SpiAccountConsent
      * @param aspspConsentDataProvider       Provides access to read/write encrypted data to be stored in the consent management system
