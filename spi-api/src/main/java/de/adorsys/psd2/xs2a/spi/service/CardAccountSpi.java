@@ -54,13 +54,13 @@ public interface CardAccountSpi {
      * Requests a list of card transactions
      *
      * @param contextData                    known Context of this call
-     * @param spiTransactionReportParameters Transaction report parameters (acceptMediaType, withBalance, dateFrom, dateTo, bookingStatus, entryReferenceFrom, deltaList)
+     * @param spiCardTransactionReportParameters Card transaction report parameters (acceptMediaType, dateFrom, dateTo, bookingStatus, entryReferenceFrom, deltaList)
      * @param accountReference               SpiAccountReference
      * @param accountConsent                 SpiAccountConsent
      * @param aspspConsentDataProvider       Provides access to read/write encrypted data to be stored in the consent management system
      * @return List of card transactions
      */
-    SpiResponse<SpiCardTransactionReport> requestCardTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
+    SpiResponse<SpiCardTransactionReport> requestCardTransactionsForAccount(@NotNull SpiContextData contextData, @NotNull SpiTransactionReportParameters spiCardTransactionReportParameters, @NotNull SpiAccountReference accountReference, @NotNull SpiAccountConsent accountConsent, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider);
 
     /**
      * Requests a list of card account balances
