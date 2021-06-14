@@ -104,9 +104,6 @@ public class CancelPaymentService {
         }
 
         UUID internalRequestId = requestProviderService.getInternalRequestId();
-
-        updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(encryptedPaymentId, tppRedirectUri);
-        updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(encryptedPaymentId, internalRequestId.toString());
         cancelPaymentResponse.setInternalRequestId(internalRequestId.toString());
 
         if (resultStatus == TransactionStatus.CANC) {
@@ -133,7 +130,11 @@ public class CancelPaymentService {
 
         // in payment cancellation case 'multilevelScaRequired' is always false
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, false);
+
         updatePaymentStatusAfterSpiService.updateInternalPaymentStatus(encryptedPaymentId, InternalPaymentStatus.CANCELLED_INITIATED);
+        updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(encryptedPaymentId, tppRedirectUri);
+        updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(encryptedPaymentId, internalRequestId.toString());
+
         if (implicitMethod) {
             Xs2aCreatePisAuthorisationRequest request = new Xs2aCreatePisAuthorisationRequest(encryptedPaymentId, new PsuIdData(null, null, null, null, null), payment.getPaymentProduct(), payment.getPaymentType(), null);
             ResponseObject<CancellationAuthorisationResponse> authorisationResponse = paymentCancellationAuthorisationService.createPisCancellationAuthorisation(request);
