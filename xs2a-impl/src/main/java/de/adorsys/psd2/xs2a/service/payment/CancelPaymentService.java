@@ -104,8 +104,6 @@ public class CancelPaymentService {
 
         UUID internalRequestId = requestProviderService.getInternalRequestId();
 
-        updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(encryptedPaymentId, tppRedirectUri);
-        updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(encryptedPaymentId, internalRequestId.toString());
         cancelPaymentResponse.setInternalRequestId(internalRequestId.toString());
 
         if (resultStatus == TransactionStatus.CANC) {
@@ -127,6 +125,9 @@ public class CancelPaymentService {
             payment.setPaymentStatus(resultStatus);
             return proceedNoScaCancellation(payment, spiContextData, aspspConsentDataProvider, encryptedPaymentId);
         }
+
+        updatePaymentStatusAfterSpiService.updatePaymentCancellationTppRedirectUri(encryptedPaymentId, tppRedirectUri);
+        updatePaymentStatusAfterSpiService.updatePaymentCancellationInternalRequestId(encryptedPaymentId, internalRequestId.toString());
 
         // in payment cancellation case 'multilevelScaRequired' is always false
         boolean implicitMethod = authorisationMethodDecider.isImplicitMethod(tppExplicitAuthorisationPreferred, false);
