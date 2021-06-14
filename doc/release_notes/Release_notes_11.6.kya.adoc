@@ -1,0 +1,10 @@
+= Release notes v.11.6
+
+== Table of Contents
+
+* Fixed cancellation flow
+
+== Fixed cancellation flow
+
+From now on, update Payment Cancellation Tpp Redirect Uri and update Payment Cancellation Internal Request Id will
+be performed only for successful cancellation responses.
