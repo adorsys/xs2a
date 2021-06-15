@@ -332,6 +332,28 @@ class TransactionServiceTest {
     }
 
     @Test
+    void getTransactionsReportByPeriod_nullAccount() {
+        // Given
+        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(accountHelperService.findAccountReference(any(), any()))
+            .thenReturn(null);
+
+        // When
+        ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
+
+        // Then
+        Xs2aTransactionsReport body = actualResponse.getBody();
+
+        assertThat(body).isNull();
+        assertThatErrorIs(actualResponse, FORMAT_ERROR_UNKNOWN_ACCOUNT);
+
+        verify(accountSpi, never()).requestTransactionsForAccount(any(SpiContextData.class), any(), any(SpiAccountReference.class), any(SpiAccountConsent.class), any());
+    }
+
+    @Test
     void getTransactionsReportByPeriod_WhenConsentIsGlobal_Success() {
         // Given
         when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
