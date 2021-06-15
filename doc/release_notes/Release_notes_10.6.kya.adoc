@@ -3,8 +3,13 @@
 == Table of Contents
 
 * Fixed cancellation flow
+* Fixed NPE for get transactions list without get account list
 
 == Fixed cancellation flow
 
 From now on, update Payment Cancellation Tpp Redirect Uri and update Payment Cancellation Internal Request Id will
 be performed only for successful cancellation responses.
+
+== Fixed NPE for get transactions list without get account list
+
+From now on, for get transaction list request with incorrect account id, the response will be `400 FORMAT_ERROR_UNKNOWN_ACCOUNT`.
