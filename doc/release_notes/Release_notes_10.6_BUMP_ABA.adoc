@@ -1,0 +1,14 @@
+= Release notes v.10.6
+
+== Table of Contents
+
+* Bumped hibernate-validator from 6.1.0.Final to 6.1.5.Final
+* Bumped snakeyaml from 1.23 to 1.26
+
+== Bumped hibernate-validator from 6.1.0.Final to 6.1.5.Final
+
+From now on hibernate-validator is updated to version 6.1.5.Final
+
+== Bumped snakeyaml from 1.23 to 1.26
+
+From now on snakeyaml is updated to version 1.26
