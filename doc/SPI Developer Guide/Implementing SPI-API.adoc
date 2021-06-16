@@ -47,8 +47,33 @@ Another parameter in *SpiContextData* is the *tppInfo*. It contains information 
 ** "TPP name": example = "Tpp company";
 ** "National competent authority": example = "Bafin";
 
-Also, SpiContextData object stores the OAuth2 token in the *oAuth2Token* field - this is the authorisation token that should be present
+Also, *SpiContextData* object stores the OAuth2 token in the *oAuth2Token* field - this is the authorisation token
+that should be present
 in any XS2A request during OAuth SCA approach. This header is passed to SPI level in each method.
+
+There are a few optional fields in *SpiContextData*, which can be sent as headers in request by TPP:
+
+|===
+| Attribute | Type | Condition | Description
+
+| tppBrandLoggingInformation | String | Optional | This parameter might be used by TPPs to inform the ASPSP about
+the brand used by the TPP towards the PSU.
+This information is meant for logging entries to enhance communication between ASPSP and PSU or ASPSP and TPP.
+This parameter might be ignored by the ASPSP.
+| tppRejectionNoFundsPreferred | Boolean | Optional | If it equals "true" then the TPP prefers a rejection of the
+payment initiation in case the ASPSP is providing an integrated confirmation of funds request an the result of this
+is that not sufficient funds are available.
+If it equals "false" then the TPP prefers that the ASPSP is dealing with the payment initiation like in the ASPSPs
+online channel, potentially waiting for a certain time period for funds to arrive to initiate the payment.
+This parameter may be ignored by the ASPSP.
+| tppRedirectPreferred | Boolean | Optional | If it equals "true", the TPP prefers a redirect over an embedded SCA
+approach.
+If it equals "false", the TPP prefers not to be redirected for SCA. The ASPSP will then choose between the Embedded
+or the Decoupled SCA approach, depending on the parameter TPP- Decoupled-Preferred and the choice of the SCA
+procedure by the TPP/PSU.
+If the parameter is not used, the ASPSP will choose the SCA approach to be applied depending on the SCA method
+chosen by the TPP/PSU.
+|===
 
 The response from the connector to XS2A and the ASPSP consent data provider are described in the next chapters.
 

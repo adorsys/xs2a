@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountDetailsHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardAccountListHolder;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReport;
-import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
+import de.adorsys.psd2.xs2a.domain.account.Xs2aCardTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.link.CardAccountAspectService;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -47,7 +47,7 @@ public class CardAccountAspect {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ais.CardTransactionService.getCardTransactionsReportByPeriod(..)) && args(request)", returning = "result", argNames = "result,request")
-    public ResponseObject<Xs2aCardTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aCardTransactionsReport> result, Xs2aTransactionsReportByPeriodRequest request) {
+    public ResponseObject<Xs2aCardTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aCardTransactionsReport> result, Xs2aCardTransactionsReportByPeriodRequest request) {
         return cardAccountAspectService.getTransactionsReportByPeriod(result, request);
     }
 }

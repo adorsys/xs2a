@@ -2171,7 +2171,6 @@ paths:
         - $ref: "#/components/parameters/entryReferenceFrom"
         - $ref: "#/components/parameters/bookingStatus"
         - $ref: "#/components/parameters/deltaList"
-        - $ref: "#/components/parameters/withBalanceQuery"
       #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
@@ -5300,16 +5299,6 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/cardTransaction"
-
-
-    transactionDetailsBody:
-      description: Transaction details.
-      type: object
-      required:
-        - transactionDetails
-      properties:
-        transactionDetails:
-          $ref: "#/components/schemas/transactions"
 
     transactions:
       description: Transaction details.
@@ -12205,7 +12194,7 @@ components:
               - transactionsDetails
             properties:
               transactionsDetails:
-                $ref: "#/components/schemas/transactionDetailsBody"
+                $ref: "#/components/schemas/transactions"
           examples:
             Example:
               $ref: "#/components/examples/transactionDetailsExample"

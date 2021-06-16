@@ -128,7 +128,17 @@ public class TransactionService {
                        .build();
         }
 
-        SpiResponse<SpiTransactionReport> spiResponse = getSpiResponseSpiTransactionReport(request, aisConsent);
+        var spiAccountReference = getRequestedAccountReference(aisConsent, request.getAccountId());
+        if (spiAccountReference == null) {
+            log.info("Account-ID [{}], Consent-ID [{}], WithBalance [{}], RequestUri [{}]. Get transactions report by period with incorrect account id",
+                     request.getAccountId(), request.getConsentId(), request.isWithBalance(),
+                     request.getRequestUri());
+            return ResponseObject.<Xs2aTransactionsReport>builder()
+                       .fail(new MessageError(AIS_400, TppMessageInformation.of(FORMAT_ERROR_UNKNOWN_ACCOUNT)))
+                       .build();
+        }
+
+        SpiResponse<SpiTransactionReport> spiResponse = getSpiResponseSpiTransactionReport(request, aisConsent, spiAccountReference);
 
         if (spiResponse.hasError()) {
             return checkSpiResponseForTransactionsReport(request, spiResponse);
@@ -263,12 +273,12 @@ public class TransactionService {
         return downloadTransactionsReportValidator.validate(validatorObject);
     }
 
-    @NotNull
     private SpiResponse<SpiTransactionReport> getSpiResponseSpiTransactionReport(Xs2aTransactionsReportByPeriodRequest request,
-                                                                                 AisConsent aisConsent) {
+                                                                                 AisConsent aisConsent,
+                                                                                 SpiAccountReference spiAccountReference) {
         return accountSpi.requestTransactionsForAccount(accountHelperService.getSpiContextData(),
                                                         buildSpiTransactionReportParameters(request),
-                                                        getRequestedAccountReference(aisConsent, request.getAccountId()),
+                                                        spiAccountReference,
                                                         consentMapper.mapToSpiAccountConsent(aisConsent),
                                                         aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getConsentId()));
     }

@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CardAccountAspectService extends BaseAspectService<CardAccountController> {
@@ -62,16 +61,13 @@ public class CardAccountAspectService extends BaseAspectService<CardAccountContr
     }
 
     public ResponseObject<Xs2aCardTransactionsReport> getTransactionsReportByPeriod(ResponseObject<Xs2aCardTransactionsReport> result,
-                                                                                    Xs2aTransactionsReportByPeriodRequest request) {
+                                                                                    Xs2aCardTransactionsReportByPeriodRequest request) {
         if (!result.hasError()) {
             Xs2aCardTransactionsReport transactionsReport = result.getBody();
-            boolean isWithBalance = Optional.ofNullable(transactionsReport.getBalances())
-                                        .map(balances -> !balances.isEmpty())
-                                        .orElse(false);
-            transactionsReport.setLinks(new TransactionsReportCardDownloadLinks(getHttpUrl(), request.getAccountId(), isWithBalance, transactionsReport.getDownloadId()));
+            transactionsReport.setLinks(new TransactionsReportCardDownloadLinks(getHttpUrl(), request.getAccountId(), Boolean.FALSE, transactionsReport.getDownloadId()));
             Xs2aCardAccountReport cardAccountReport = transactionsReport.getCardAccountReport();
             if (cardAccountReport != null) {
-                cardAccountReport.setLinks(new TransactionsReportCardLinks(getHttpUrl(), request.getAccountId(), isWithBalance));
+                cardAccountReport.setLinks(new TransactionsReportCardLinks(getHttpUrl(), request.getAccountId(), Boolean.FALSE));
             }
         }
         return result;
