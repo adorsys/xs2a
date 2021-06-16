@@ -4,6 +4,7 @@
 
 * Fixed NPE for get transactions list without get account list
 * Fixed cancellation flow
+* Changed transactionDetails structure
 * Removed withBalance field from read card transactions list
 * Bumped hibernate-validator from 6.1.0.Final to 6.1.5.Final
 * Bumped snakeyaml from 1.23 to 1.26
@@ -16,6 +17,10 @@ From now on, for get transaction list request with incorrect account id, the res
 
 From now on, update Payment Cancellation Tpp Redirect Uri and update Payment Cancellation Internal Request Id will
 be performed only for successful cancellation responses.
+
+== Changed transactionDetails structure
+
+From now on, `transactionDetails` are stored in `Transactions` object, and response has correct structure. Before they were stored in `transactionDetailsBody` object, and this was the cause of the incorrect structure of the response. Unnecessary `TransactionDetailsBody` object model was removed.
 
 == Removed withBalance field from read card transactions list
 
