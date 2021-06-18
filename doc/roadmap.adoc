@@ -147,7 +147,44 @@ a|
 a|
 
 a|
+|16.06.2021| | 10.6| 11.6| |
 
+a|
+a| * NPE for get transactions list without get account list
+
+* Remove withBalance query parameter from read card transaction list
+
+* Bump snakeyaml from 1.23 to 1.26
+
+* Bump hibernate-validator from 6.1.0.Final to 6.1.5.Final
+
+* Incorrect response structure for read transaction details request
+
+* Retrieve fields from SPI
+
+* Implement GetScaStatus from Ledgers
+
+
+a|* All fixes and updates from v.10.6
+
+* Migrate Connector to use OperationInitiationResource
+
+* Update connector to use latest ledgers version
+
+* Check Transaction report with execution date for pending transaction in valueDate attribute
+
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
+
+a|
 |*For future development*| |*10.x*|*11.x*| *XS2A extention (commercial)*
 
 | | | | |Signing Basket plugin for XS2A
