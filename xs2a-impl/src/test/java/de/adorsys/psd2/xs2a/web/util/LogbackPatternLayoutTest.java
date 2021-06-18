@@ -16,6 +16,11 @@
 
 package de.adorsys.psd2.xs2a.web.util;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEvent;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.adorsys.psd2.xs2a.core.domain.address.Xs2aAddress;
@@ -30,11 +35,15 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class LogbackPatternLayoutTest {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final LogbackPatternLayout layout = new LogbackPatternLayout();
+    private final LogbackPatternLayout layout = spy(new LogbackPatternLayout());
     private final String mask = LogbackPatternLayout.MASK;
+    private final LoggerContext loggerContext = new LoggerContext();
+    private final Logger logger = loggerContext.getLogger(Logger.FQCN);
 
     @Test
     void testFieldsAndObjectsMask() throws IOException {
@@ -88,5 +97,19 @@ class LogbackPatternLayoutTest {
         Map<String, Object> map = mapper.readValue(testMapRepresentationModified, new TypeReference<HashMap<String, Object>>() {
         });
         map.forEach((key, value) -> assertNotSame(mask, value));
+    }
+
+    @Test
+    void doLayout() {
+        //When
+        layout.doLayout(getEventObject());
+
+        //Then
+        verify(layout).modifyMessage("");
+    }
+
+    private ILoggingEvent getEventObject() {
+        return new LoggingEvent(logger.getName(),
+                                logger, Level.INFO, "Custom message", new Exception("Custom exception"), null);
     }
 }

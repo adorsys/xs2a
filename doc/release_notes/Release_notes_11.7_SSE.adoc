@@ -1,0 +1,9 @@
+= Release notes v.11.7
+
+== Table of Contents
+
+* Added tests to xs2a-impl
+
+== Added tests to xs2a-impl
+
+Increased unit test coverage for xs2a-impl classes.
