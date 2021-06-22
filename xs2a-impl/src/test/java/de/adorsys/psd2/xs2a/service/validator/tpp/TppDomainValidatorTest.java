@@ -52,8 +52,12 @@ class TppDomainValidatorTest {
     private static final String URL_HEADER_WRONG = "example-TPP";
 
     private static final String TPP_NAME_DOMAIN = "www.example-TPP.com";
+    private static final String TPP_NAME_DOMAIN_WITH_HTTP = "http://www.example-TPP.com";
+    private static final String MALFORMED_URL = "httpw234243://www.example-TPP.=-=-=-=-=-";
+    private static final String MALFORMED_HOST = "www.-TPP.com/xs2a-client/v1/ASPSPidentifcation/mytransaction-id";
     private static final String TPP_NAME_NON_DOMAIN = "Some bank name";
     private static final String TPP_DNS_DOMAIN = "www.example-TPP.de";
+    private static final String TPP_DNS_DOMAIN_WITH_HTTP = "http://www.example-TPP.com";
     private static final String TPP_WILDCARD_DOMAIN = "*.example-TPP.de";
     private static final TppMessageInformation TPP_MESSAGE_INFORMATION = TppMessageInformation.buildWarning(INVALID_DOMAIN_MESSAGE);
 
@@ -260,6 +264,36 @@ class TppDomainValidatorTest {
         //Then
         assertFalse(validate.isEmpty());
         assertEquals(TPP_MESSAGE_INFORMATION, validate.iterator().next());
+    }
+
+    @Test
+    void buildWarningMessages_UrlHeaderCorrectDomain_Invalid() {
+        //Given
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(TPP_NAME_DOMAIN_WITH_HTTP, TPP_DNS_DOMAIN_WITH_HTTP));
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(true);
+
+        //When
+        Set<TppMessageInformation> validate = tppDomainValidator.buildWarningMessages(URL_HEADER_WRONG_DOMAIN);
+
+        //Then
+        assertFalse(validate.isEmpty());
+        assertEquals(TPP_MESSAGE_INFORMATION, validate.iterator().next());
+    }
+
+    @Test
+    void build_malformed_url_invalid() {
+        // Given
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.REDIRECT);
+        when(aspspProfileServiceWrapper.isCheckUriComplianceToDomainSupported()).thenReturn(true);
+        when(aspspProfileServiceWrapper.getTppUriComplianceResponse()).thenReturn(TppUriCompliance.REJECT);
+        when(tppService.getTppInfo()).thenReturn(buildTppInfo(MALFORMED_URL, TPP_DNS_DOMAIN));
+        when(errorBuildingService.buildErrorType()).thenReturn(ErrorType.PIS_400);
+
+        // When
+        ValidationResult validationResult = tppDomainValidator.validate(MALFORMED_URL);
+
+        // Then
+        assertTrue(validationResult.isNotValid());
     }
 
     @Test

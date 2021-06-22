@@ -65,6 +65,8 @@ class CreatePisAuthorisationValidatorTest {
         new MessageError(PIS_401, TppMessageInformation.of(PSU_CREDENTIALS_INVALID));
     private static final MessageError STATUS_INVALID_ERROR =
         new MessageError(PIS_409, TppMessageInformation.of(STATUS_INVALID));
+    private static final MessageError STATUS_INVALID_ERROR_MESSAGE =
+        new MessageError(PIS_400, TppMessageInformation.of(STATUS_INVALID));
     private static final MessageError RESOURCE_BLOCKED_SB_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(RESOURCE_BLOCKED_SB));
 
@@ -134,6 +136,24 @@ class CreatePisAuthorisationValidatorTest {
         assertThat(validationResult).isNotNull();
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult.getMessageError()).isEqualTo(RESOURCE_BLOCKED_SB_ERROR);
+    }
+
+    @Test
+    void validate_paymentIsBlocked_shouldReturnStatusInvalidError() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TRANSACTION_STATUS, TPP_INFO);
+        commonPaymentResponse.setSigningBasketAuthorised(true);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        // When
+        ValidationResult validationResult = createPisAuthorisationValidator.validate(new CreatePisAuthorisationObject(commonPaymentResponse, SINGLE, CORRECT_PAYMENT_PRODUCT, null));
+
+        // Then
+        verifyNoInteractions(authorisationPsuDataChecker, authorisationStatusChecker);
+
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(STATUS_INVALID_ERROR_MESSAGE);
     }
 
     @Test

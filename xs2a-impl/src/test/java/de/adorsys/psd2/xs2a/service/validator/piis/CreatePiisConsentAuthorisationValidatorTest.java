@@ -62,6 +62,9 @@ class CreatePiisConsentAuthorisationValidatorTest {
     private static final MessageError STATUS_INVALID_ERROR =
         new MessageError(ErrorType.PIIS_409, TppMessageInformation.of(STATUS_INVALID));
 
+    private static final MessageError STATUS_INVALID_ERROR_MESSAGE =
+        new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(STATUS_INVALID));
+
     private static final MessageError RESOURCE_BLOCKED_SB_ERROR =
         new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(RESOURCE_BLOCKED_SB));
 
@@ -135,6 +138,24 @@ class CreatePiisConsentAuthorisationValidatorTest {
         assertThat(validationResult).isNotNull();
         assertThat(validationResult.isNotValid()).isTrue();
         assertThat(validationResult.getMessageError()).isEqualTo(PSU_CREDENTIALS_ERROR);
+    }
+
+    @Test
+    void validate_withDifferentPsuIdInConsent_authorisedSigningBasket() {
+        // Given
+        PiisConsent piisConsent = buildPiisConsentWithPsuIdData(false);
+        when(piisConsentTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+        piisConsent.setSigningBasketAuthorised(true);
+
+        // When
+        ValidationResult validationResult = createPiisConsentAuthorisationValidator.validate(new CreatePiisConsentAuthorisationObject(piisConsent, NEW_PSU_DATA));
+
+        // Then
+        verify(piisConsentTppInfoValidator).validateTpp(piisConsent.getTppInfo());
+
+        assertThat(validationResult).isNotNull();
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult.getMessageError()).isEqualTo(STATUS_INVALID_ERROR_MESSAGE);
     }
 
     @Test

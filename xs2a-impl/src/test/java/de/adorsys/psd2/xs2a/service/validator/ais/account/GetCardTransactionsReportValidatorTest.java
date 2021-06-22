@@ -134,6 +134,48 @@ class GetCardTransactionsReportValidatorTest {
     }
 
     @Test
+    void validate_withValidConsentObject_shouldReturnInvalid() {
+        // Given
+        AisConsent aisConsent = buildAisConsent(TPP_INFO);
+
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(aspspProfileService.isDeltaListSupported())
+            .thenReturn(false);
+        when(aspspProfileService.getAvailableBookingStatuses())
+            .thenReturn(Collections.singletonList(BOOKING_STATUS));
+        when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE))
+            .thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent, aisConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getCardTransactionsReportValidator.validate(new CardTransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, REQUEST_URI, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS, LocalDate.now(), LocalDate.now()));
+
+        // Then
+        verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
+    void validate_withIban_shouldReturnInvalid () {
+        // Given
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/ais-consent-with-iban-and-consentData.json", AisConsent.class);
+
+        // When
+        ValidationResult validationResult = getCardTransactionsReportValidator.executeBusinessValidation(new CardTransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, REQUEST_URI, DELTA_LIST,MediaType.APPLICATION_JSON_VALUE,BOOKING_STATUS, LocalDate.now(), LocalDate.now()));
+
+        // Then
+        verifyNoInteractions(accountConsentValidator, transactionReportAcceptHeaderValidator, accountReferenceAccessValidator, oauthConsentValidator);
+
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
     void validate_withAcceptHeader_shouldReturnInvalid() {
         // Given
         AisConsent aisConsent = buildAisConsent(TPP_INFO);
