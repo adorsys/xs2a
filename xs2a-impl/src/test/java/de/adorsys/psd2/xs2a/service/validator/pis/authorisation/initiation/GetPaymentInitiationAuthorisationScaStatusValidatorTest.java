@@ -102,6 +102,27 @@ class GetPaymentInitiationAuthorisationScaStatusValidatorTest {
     }
 
     @Test
+    void validate_withValidPaymentObjectAndValidId_oauth_error() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(pisTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(pisAuthorisationValidator.validate(AUTHORISATION_ID, commonPaymentResponse))
+            .thenReturn(ValidationResult.valid());
+        when(oauthPaymentValidator.validate(commonPaymentResponse))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getPaymentInitiationAuthorisationScaStatusValidator.validate(new GetPaymentInitiationAuthorisationScaStatusPO(commonPaymentResponse, AUTHORISATION_ID, SINGLE, CORRECT_PAYMENT_PRODUCT));
+
+        // Then
+        verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
     void validate_withValidPaymentObjectAndInvalidId_shouldReturnInvalid() {
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
         when(pisTppInfoValidator.validateTpp(TPP_INFO))

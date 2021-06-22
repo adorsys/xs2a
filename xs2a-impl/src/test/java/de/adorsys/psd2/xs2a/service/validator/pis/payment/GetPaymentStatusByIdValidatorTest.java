@@ -105,6 +105,30 @@ class GetPaymentStatusByIdValidatorTest {
     }
 
     @Test
+    void validate_withValidPaymentObject_oauth_error() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        when(oauthPaymentValidator.validate(commonPaymentResponse))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        when(pisTppInfoValidator.validateTpp(TPP_INFO)).thenReturn(ValidationResult.valid());
+
+        when(requestProviderService.getAcceptHeader()).thenReturn(JSON_ACCEPT_HEADER);
+
+        when(transactionStatusAcceptHeaderValidator.validate(JSON_ACCEPT_HEADER))
+            .thenReturn(ValidationResult.valid());
+
+        // When
+        ValidationResult validationResult = getPaymentStatusByIdValidator.validate(new GetPaymentStatusByIdPO(commonPaymentResponse, PAYMENT_TYPE, PAYMENT_PRODUCT));
+
+        // Then
+        verify(pisTppInfoValidator).validateTpp(commonPaymentResponse.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
     void validate_withInvalidTppInPayment_shouldReturnTppValidationError() {
         // Given
         PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(INVALID_TPP_INFO);

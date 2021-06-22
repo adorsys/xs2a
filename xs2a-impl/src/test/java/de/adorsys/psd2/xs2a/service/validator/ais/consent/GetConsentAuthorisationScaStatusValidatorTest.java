@@ -88,6 +88,45 @@ class GetConsentAuthorisationScaStatusValidatorTest {
     }
 
     @Test
+    void validate_withValidConsentObject_oauth() {
+        // Given
+        AisConsent aisConsent = buildAccountConsent(TPP_INFO);
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent)).thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(aisConsent, AUTHORISATION_ID));
+
+        // Then
+        verify(aisConsentTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
+    void validate_withValidConsentObject_authorisationValidation_error() {
+        // Given
+        AisConsent aisConsent = buildAccountConsent(TPP_INFO);
+        when(aisConsentTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getConsentAuthorisationScaStatusValidator.validate(new GetConsentAuthorisationScaStatusPO(aisConsent, AUTHORISATION_ID));
+
+        // Then
+        verify(aisConsentTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+        verifyNoInteractions(oauthConsentValidator);
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
     void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AisConsent aisConsent = buildAccountConsent(INVALID_TPP_INFO);

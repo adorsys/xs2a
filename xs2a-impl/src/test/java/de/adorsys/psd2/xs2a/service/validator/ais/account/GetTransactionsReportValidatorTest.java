@@ -176,6 +176,53 @@ class GetTransactionsReportValidatorTest {
     }
 
     @Test
+    void validate_withValidConsentObject_oauth_error() {
+        // Given
+        AisConsent aisConsent = buildAccountConsent(TPP_INFO);
+
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(aspspProfileService.isDeltaListSupported())
+            .thenReturn(false);
+        when(aspspProfileService.isEntryReferenceFromSupported())
+            .thenReturn(false);
+        when(aspspProfileService.getAvailableBookingStatuses())
+            .thenReturn(Collections.singletonList(BOOKING_STATUS));
+        when(transactionReportAcceptHeaderValidator.validate(MediaType.APPLICATION_JSON_VALUE))
+            .thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent, aisConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
+            .thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(aisConsent, ACCOUNT_ID, WITH_BALANCE))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.validate(new TransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS, LocalDate.now()));
+
+        // Then
+        verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
+    void validate_withValidConsentObject_invalidConsent() {
+        // Given
+        AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/validator/ais/account/ais-consent-with-masked-pan-and-consentData.json", AisConsent.class);
+
+        // When
+        ValidationResult validationResult = getTransactionsReportValidator.executeBusinessValidation(new TransactionsReportByPeriodObject(aisConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, MediaType.APPLICATION_JSON_VALUE, BOOKING_STATUS, LocalDate.now()));
+
+        // Then
+        verifyNoInteractions(permittedAccountReferenceValidator, transactionReportAcceptHeaderValidator, accountReferenceAccessValidator, oauthConsentValidator);
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
     void validate_withAcceptHeader_shouldReturnInvalid() {
         // Given
         AisConsent aisConsent = buildAccountConsent(TPP_INFO);
