@@ -20,6 +20,7 @@ import de.adorsys.psd2.xs2a.component.MultiReadHttpServletRequest;
 import de.adorsys.psd2.xs2a.component.MultiReadHttpServletResponse;
 import de.adorsys.psd2.xs2a.web.Xs2aEndpointChecker;
 import de.adorsys.psd2.xs2a.web.error.TppErrorMessageWriter;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Order(Integer.MIN_VALUE)
 public class ContentCachingWrappingFilter extends AbstractXs2aFilter {
 
     public ContentCachingWrappingFilter(TppErrorMessageWriter tppErrorMessageWriter, Xs2aEndpointChecker xs2aEndpointChecker) {
