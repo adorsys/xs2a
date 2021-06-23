@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReport;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTransactionsReportByPeriodRequest;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.web.controller.AccountController;
-import de.adorsys.psd2.xs2a.web.link.TransactionsReportAccountLinks;
+import de.adorsys.psd2.xs2a.web.link.Xs2aAccountReportLinks;
 import de.adorsys.psd2.xs2a.web.link.TransactionsReportDownloadLinks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,13 +39,13 @@ public class TransactionAspectService extends BaseAspectService<AccountControlle
                                                                                 Xs2aTransactionsReportByPeriodRequest request) {
         if (!result.hasError()) {
             Xs2aTransactionsReport transactionsReport = result.getBody();
-            transactionsReport.setLinks(new TransactionsReportDownloadLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance(), transactionsReport.getDownloadId(), transactionsReport.getLinks()));
-            Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
-
-            if (transactionsReport.getAccountReport() != null) {
-                accountReport.setLinks(new TransactionsReportAccountLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance()));
+            if (transactionsReport != null) {
+                Xs2aAccountReport accountReport = transactionsReport.getAccountReport();
+                if (accountReport != null) {
+                    accountReport.setLinks(new Xs2aAccountReportLinks(getHttpUrl(), request.getAccountId(), transactionsReport.getLinks()));
+                }
+                transactionsReport.setLinks(new TransactionsReportDownloadLinks(getHttpUrl(), request.getAccountId(), request.isWithBalance(), transactionsReport.getDownloadId()));
             }
-
         }
         return result;
     }

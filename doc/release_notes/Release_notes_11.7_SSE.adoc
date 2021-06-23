@@ -4,6 +4,14 @@
 
 * Added tests to xs2a-impl
 
+* Fixed inner structure of Transaction List Response
+
 == Added tests to xs2a-impl
 
 Increased unit test coverage for xs2a-impl classes.
+
+== Fixed inner structure of Transaction List Response
+
+From now on according to BG specification `Account Report` type returned as
+`transactions` subfield contains `_links` section not only with `account` property,
+but also with paging information.
