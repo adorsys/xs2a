@@ -22,7 +22,6 @@ import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TransactionsReportDownloadLinksTest {
@@ -46,7 +45,7 @@ class TransactionsReportDownloadLinksTest {
         boolean withBalance = false;
 
         // When
-        TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string", null);
+        TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string");
 
         // Then
         assertEquals(expectedLinks, links);
@@ -58,25 +57,11 @@ class TransactionsReportDownloadLinksTest {
         boolean withBalance = true;
 
         // When
-        TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string", null);
+        TransactionsReportDownloadLinks links = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, withBalance, "encoded-string");
 
         expectedLinks.setBalances(new HrefType(BALANCES_LINK));
 
         // Then
         assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void links_notNull() {
-        // Given
-        Links inputLinks = jsonReader.getObjectFromFile("json/link/test-links.json", Links.class);
-
-        // When
-        TransactionsReportDownloadLinks actual = new TransactionsReportDownloadLinks(HTTP_URL, ACCOUNT_ID, true, "encoded-string", inputLinks);
-
-        expectedLinks.setBalances(new HrefType(BALANCES_LINK));
-
-        // Then
-        assertThat(actual).isEqualTo(expectedLinks);
     }
 }
