@@ -16,19 +16,10 @@
 
 package de.adorsys.psd2.xs2a.web.link;
 
-import de.adorsys.psd2.xs2a.domain.Links;
-
 public class TransactionsReportDownloadLinks extends AbstractLinks {
 
-    public TransactionsReportDownloadLinks(String httpUrl, String accountId, boolean withBalance, String downloadId, Links links) {
+    public TransactionsReportDownloadLinks(String httpUrl, String accountId, boolean withBalance, String downloadId) {
         super(httpUrl);
-
-        if (links != null) {
-            setFirst(links.getFirst());
-            setNext(links.getNext());
-            setPrevious(links.getPrevious());
-            setLast(links.getLast());
-        }
 
         if (downloadId != null) {
             setDownload(buildPath(UrlHolder.ACCOUNT_TRANSACTIONS_DOWNLOAD_URL, accountId, downloadId));
