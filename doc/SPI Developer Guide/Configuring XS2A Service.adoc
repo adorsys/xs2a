@@ -75,5 +75,5 @@ See <<SPI_Developer_Guide.adoc#configuring-mapping-type-specific-payments-cms-ap
 XS2A relies on specific order of filter execution to function correctly and relies on connector application to maintain that order.
 
 If connector is launched as Spring Boot application, the order will be guaranteed by the priority of the filter beans and no additional configuration is required.
-If it's not the case, connector should make sure that `de.adorsys.psd2.xs2a.web.filter.ContentCachingWrappingFilter` will be executed first,
-then `de.adorsys.psd2.xs2a.web.filter.Xs2aLoggingContextFilter` and then any other XS2A filter.
+If it's not the case, connector should make sure that `de.adorsys.psd2.xs2a.web.filter.Xs2aLoggingContextFilter` will be executed first,
+then `de.adorsys.psd2.xs2a.web.filter.ContentCachingWrappingFilter` and then any other XS2A filter.
