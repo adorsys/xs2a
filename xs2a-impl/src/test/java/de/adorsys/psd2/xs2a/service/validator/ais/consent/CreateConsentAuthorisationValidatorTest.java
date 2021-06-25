@@ -102,6 +102,21 @@ class CreateConsentAuthorisationValidatorTest {
     }
 
     @Test
+    void isSingingBasketAuthorized() {
+        // Given
+        AisConsent accountConsent = buildAccountConsent(TPP_INFO);
+        accountConsent.setSigningBasketAuthorised(true);
+
+        ValidationResult expected = ValidationResult.invalid(ErrorType.AIS_400, STATUS_INVALID);
+
+        // When
+        ValidationResult actual = createConsentAuthorisationValidator.executeBusinessValidation(new CreateConsentAuthorisationObject(accountConsent, EMPTY_PSU_DATA));
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
     void validate_consentIsBlocked_shouldReturnResourceBlockedInvalidError() {
         // Given
         AisConsent accountConsent = buildAccountConsentWithPsuIdData(false);

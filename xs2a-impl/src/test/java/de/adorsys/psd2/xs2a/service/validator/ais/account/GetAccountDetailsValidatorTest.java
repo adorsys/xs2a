@@ -165,6 +165,52 @@ class GetAccountDetailsValidatorTest {
     }
 
     @Test
+    void validate_withInvalidAccountValidation_error() {
+        // Given
+        AisConsent aisConsent = buildAccountConsent(TPP_INFO);
+
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent, aisConsent.getAccess().getAccounts(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
+            .thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(aisConsent, ACCOUNT_ID, WITH_BALANCE)).thenReturn(ValidationResult.valid());
+        when(accountAccessValidator.validate(aisConsent, WITH_BALANCE)).thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
+
+        // When
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(aisConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+
+        // Then
+        verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+        verifyNoInteractions(oauthConsentValidator);
+
+        assertNotNull(validationResult);
+        assertFalse(validationResult.isValid());
+    }
+
+    @Test
+    void validate_withInvalidOauthConsentValidation_error() {
+        // Given
+        AisConsent aisConsent = buildAccountConsent(TPP_INFO);
+
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent, aisConsent.getAccess().getAccounts(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
+            .thenReturn(ValidationResult.valid());
+        when(permittedAccountReferenceValidator.validate(aisConsent, ACCOUNT_ID, WITH_BALANCE)).thenReturn(ValidationResult.valid());
+        when(accountAccessValidator.validate(aisConsent, WITH_BALANCE)).thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent)).thenReturn(ValidationResult.invalid(ErrorType.AIS_401, CONSENT_INVALID));
+
+        // When
+        ValidationResult validationResult = getAccountDetailsValidator.validate(new CommonAccountRequestObject(aisConsent, ACCOUNT_ID, WITH_BALANCE, REQUEST_URI));
+
+        // Then
+        verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertFalse(validationResult.isValid());
+    }
+
+    @Test
     void validate_withInvalidTppInConsent_shouldReturnTppValidationError() {
         // Given
         AisConsent aisConsent = buildAccountConsent(INVALID_TPP_INFO);

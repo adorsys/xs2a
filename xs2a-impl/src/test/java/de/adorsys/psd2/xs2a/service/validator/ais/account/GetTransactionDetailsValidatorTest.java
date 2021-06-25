@@ -100,6 +100,27 @@ class GetTransactionDetailsValidatorTest {
     }
 
     @Test
+    void validate_withValidConsentObject_oauth_error() {
+        // Given
+        AisConsent aisConsent = getAisConsent();
+        when(aisAccountTppInfoValidator.validateTpp(TPP_INFO))
+            .thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent, aisConsent.getAccess().getTransactions(), ACCOUNT_ID, AisConsentRequestType.DEDICATED_ACCOUNTS))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent))
+            .thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult validationResult = getTransactionDetailsValidator.validate(new CommonAccountTransactionsRequestObject(aisConsent, ACCOUNT_ID, REQUEST_URI));
+
+        // Then
+        verify(aisAccountTppInfoValidator).validateTpp(aisConsent.getTppInfo());
+
+        assertNotNull(validationResult);
+        assertTrue(validationResult.isNotValid());
+    }
+
+    @Test
     void validate_withInvalidAccountReferenceAccess_error() {
         // Given
         AisConsent aisConsent = getAisConsent();

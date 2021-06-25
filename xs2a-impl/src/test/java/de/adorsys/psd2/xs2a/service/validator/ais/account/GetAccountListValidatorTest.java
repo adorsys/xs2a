@@ -233,6 +233,70 @@ class GetAccountListValidatorTest {
     }
 
     @Test
+    void validate_accountConsentValidation_error() {
+        // Given
+        AccountAccess accountAccess = buildXs2aAccountAccess();
+        AisConsent aisConsent = buildAccountConsent(accountAccess, TPP_INFO);
+
+        when(accountConsentValidator.validate(aisConsent, REQUEST_URI)).thenReturn(ValidationResult.invalid(TPP_VALIDATION_ERROR));
+
+        // When
+        ValidationResult actual = getAccountListValidator.executeBusinessValidation(new GetAccountListConsentObject(aisConsent, true, REQUEST_URI));
+
+        // Then
+        verifyNoInteractions(accountAccessValidator, accountAccessMultipleAccountsValidator, oauthConsentValidator);
+
+        assertTrue(actual.isNotValid());
+    }
+
+    @Test
+    void validate_accountAccessMultipleAccountsValidation_error() {
+        // Given
+        AccountAccess accountAccess = buildXs2aAccountAccess();
+        AisConsent aisConsent = buildAccountConsent(accountAccess, TPP_INFO);
+
+        when(accountConsentValidator.validate(aisConsent, REQUEST_URI))
+            .thenReturn(ValidationResult.valid());
+        when(accountAccessValidator.validate(aisConsent, aisConsent.isWithBalance()))
+            .thenReturn(ValidationResult.valid());
+        when(accountAccessMultipleAccountsValidator.validate(aisConsent,aisConsent.isWithBalance())).thenReturn(ValidationResult.invalid(ACCESS_VALIDATION_ERROR));
+
+        GetAccountListConsentObject consentObject = new GetAccountListConsentObject(aisConsent, aisConsent.isWithBalance(), REQUEST_URI);
+
+        // When
+        ValidationResult actual = getAccountListValidator.executeBusinessValidation(consentObject);
+
+        // Then
+        verifyNoInteractions(oauthConsentValidator);
+
+        assertTrue(actual.isNotValid());
+    }
+
+    @Test
+    void validate_accountOauthConsentValidation_error() {
+        // Given
+        AccountAccess accountAccess = buildXs2aAccountAccess();
+        AisConsent aisConsent = buildAccountConsent(accountAccess, TPP_INFO);
+
+        when(accountConsentValidator.validate(aisConsent, REQUEST_URI))
+            .thenReturn(ValidationResult.valid());
+        when(accountAccessValidator.validate(aisConsent, aisConsent.isWithBalance()))
+            .thenReturn(ValidationResult.valid());
+        when(accountAccessMultipleAccountsValidator.validate(aisConsent,aisConsent.isWithBalance()))
+            .thenReturn(ValidationResult.valid());
+        when(oauthConsentValidator.validate(aisConsent)).thenReturn(ValidationResult.invalid(ACCESS_VALIDATION_ERROR));
+
+        GetAccountListConsentObject consentObject = new GetAccountListConsentObject(aisConsent, aisConsent.isWithBalance(), REQUEST_URI);
+
+        // When
+        ValidationResult actual = getAccountListValidator.executeBusinessValidation(consentObject);
+
+        // Then
+        assertNotNull(actual);
+        assertTrue(actual.isNotValid());
+    }
+
+    @Test
     void buildWarningMessages() {
         // Given
         AccountAccess accountAccess =
