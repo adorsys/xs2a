@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.web;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,12 +26,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class RedirectLinkBuilderTest {
 
     private static final String INTERNAL_REQUEST_ID = "5c2d5564-367f-4e03-a621-6bef76fa4208";
+    private static final String ENC_PMNT_ID = "encryptedPaymentId";
+    private static final String ENC_CNSNT_ID = "encryptedConsentId";
+    private static final String REDIRECT_ID = "redirectId";
 
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
@@ -72,6 +77,13 @@ class RedirectLinkBuilderTest {
         String redirectLink = redirectLinkBuilder.buildConsentScaRedirectLink("Consent123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1", ConsentType.AIS);
 
         assertEquals("something/Authorisation123/Consent123/{encrypted-payment-id}/Consent123/Authorisation123/{encrypted-payment-id}/something-else", redirectLink);
+    }
+
+    @Test
+    void buildConsentScaRedirectLink_exception() {
+
+        assertThrows(UnsupportedOperationException.class,
+                     () -> redirectLinkBuilder.buildConsentScaRedirectLink("Consent123", "Authorisation123", INTERNAL_REQUEST_ID, "bank1", ConsentType.PIIS_ASPSP));
     }
 
     @Test
@@ -177,9 +189,54 @@ class RedirectLinkBuilderTest {
     }
 
     @Test
+    void buildAisConfirmationLink_exception() {
+        assertThrows(UnsupportedOperationException.class,
+                     () -> redirectLinkBuilder.buildConfirmationLink(StringUtils.EMPTY, StringUtils.EMPTY, ConsentType.PIIS_ASPSP));
+    }
+
+    @Test
     void buildPiisConfirmationLink() {
         String confirmationLink = redirectLinkBuilder.buildConfirmationLink("consentID", "redirectID", ConsentType.PIIS_TPP);
 
         assertEquals("/v2/consents/confirmation-of-funds/consentID/authorisations/redirectID", confirmationLink);
+    }
+
+    @Test
+    void buildConsentScaOauthRedirectLink() {
+        //Given
+        doReturn("something/{redirect-id}/authorisation/{encrypted-consent-id}/Consent123/{inr-id}").when(aspspProfileService).getOauthConfigurationUrl();
+        String expected = "something/redirectId/authorisation/encryptedConsentId/Consent123/5c2d5564-367f-4e03-a621-6bef76fa4208";
+
+        //When
+        String actual = redirectLinkBuilder.buildConsentScaOauthRedirectLink(ENC_CNSNT_ID, REDIRECT_ID, INTERNAL_REQUEST_ID);
+
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void buildPaymentScaOauthRedirectLink() {
+        //Given
+        doReturn("something/{redirect-id}/authorisation/{encrypted-payment-id}/Consent123/{inr-id}").when(aspspProfileService).getOauthConfigurationUrl();
+        String expected = "something/redirectId/authorisation/encryptedPaymentId/Consent123/5c2d5564-367f-4e03-a621-6bef76fa4208";
+
+        //When
+        String actual = redirectLinkBuilder.buildPaymentScaOauthRedirectLink(ENC_PMNT_ID, REDIRECT_ID, INTERNAL_REQUEST_ID);
+
+        //Then
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void buildPaymentCancellationScaOauthRedirectLink() {
+        //Given
+        doReturn("something/{redirect-id}/authorisation/{encrypted-payment-id}/Consent123/{inr-id}").when(aspspProfileService).getOauthConfigurationUrl();
+        String expected = "something/redirectId/authorisation/encryptedPaymentId/Consent123/5c2d5564-367f-4e03-a621-6bef76fa4208";
+
+        //When
+        String actual = redirectLinkBuilder.buildPaymentCancellationScaOauthRedirectLink(ENC_PMNT_ID, REDIRECT_ID, INTERNAL_REQUEST_ID);
+
+        //Then
+        assertEquals(expected, actual);
     }
 }

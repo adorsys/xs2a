@@ -16,11 +16,8 @@
 
 package de.adorsys.psd2.xs2a.web;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Enumerator for storing all PIS REST controller method names (i.e. method names from {@link de.adorsys.psd2.api.PaymentApi}.
@@ -56,10 +53,5 @@ public enum Psd2PaymentMethodNameConstant {
 
     public String getValue() {
         return value;
-    }
-
-    @JsonIgnore
-    public static Optional<Psd2PaymentMethodNameConstant> getByValue(String name) {
-        return Optional.ofNullable(container.get(name));
     }
 }

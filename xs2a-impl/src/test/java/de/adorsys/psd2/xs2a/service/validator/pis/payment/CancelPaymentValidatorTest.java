@@ -25,6 +25,7 @@ import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.tpp.PisTppInfoValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,6 +66,9 @@ class CancelPaymentValidatorTest {
 
     @Mock
     private RequestProviderService requestProviderService;
+
+    @Mock
+    private TppUriHeaderValidator tppUriHeaderValidator;
 
     @InjectMocks
     private CancelPaymentValidator cancelPaymentValidator;
@@ -159,6 +165,21 @@ class CancelPaymentValidatorTest {
         TppInfo tppInfo = new TppInfo();
         tppInfo.setAuthorisationNumber(authorisationNumber);
         return tppInfo;
+    }
+
+    @Test
+    void buildWarningMessages() {
+        // Given
+        PisCommonPaymentResponse commonPaymentResponse = buildPisCommonPaymentResponse(TPP_INFO);
+        CancelPaymentPO cancelPaymentPO = new CancelPaymentPO(commonPaymentResponse, PaymentType.SINGLE, "sepa-credit-transfers", TPP_REDIRECT_URIs);
+        Set<TppMessageInformation> expected = tppUriHeaderValidator.buildWarningMessages(TPP_REDIRECT_URIs);
+
+        // When
+        Set<TppMessageInformation> actual = cancelPaymentValidator.buildWarningMessages(cancelPaymentPO);
+
+        // Then
+        assertNotNull(actual);
+        assertEquals(expected ,actual);
     }
 
     private PisCommonPaymentResponse buildPisCommonPaymentResponse(TppInfo tppInfo) {

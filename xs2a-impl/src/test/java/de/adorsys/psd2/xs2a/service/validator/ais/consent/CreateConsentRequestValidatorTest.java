@@ -248,6 +248,23 @@ class CreateConsentRequestValidatorTest {
     }
 
     @Test
+    void validate_bankOfferedConsentNotSupported_EmbeddedApproach() {
+        //Given
+        when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
+        when(supportedAccountReferenceValidator.validate(anyCollection())).thenReturn(ValidationResult.valid());
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
+
+        CreateConsentReq createConsentReq = buildCreateConsentReq(null, null, null);
+
+        //When
+        ValidationResult validationResult = createConsentRequestValidator.validate(new CreateConsentRequestObject(createConsentReq, EMPTY_PSU_DATA));
+
+        //Then
+        assertThat(validationResult.isNotValid()).isTrue();
+        assertThat(validationResult).isEqualTo(ValidationResult.invalid(ErrorType.AIS_400, SERVICE_INVALID_400));
+    }
+
+    @Test
     void validate_globalConsentNotSupported() {
         //Given
         when(psuDataInInitialRequestValidator.validate(any(PsuIdData.class))).thenReturn(ValidationResult.valid());
