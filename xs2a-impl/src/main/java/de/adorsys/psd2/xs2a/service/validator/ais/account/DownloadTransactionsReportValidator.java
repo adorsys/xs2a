@@ -20,6 +20,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.CONSENT_INVALID;
 @Component
 @RequiredArgsConstructor
 public class DownloadTransactionsReportValidator extends AbstractAccountTppValidator<DownloadTransactionListRequestObject> {
+    private final AccountReferenceAccessValidator accountReferenceAccessValidator;
 
     @NotNull
     @Override
@@ -52,6 +54,14 @@ public class DownloadTransactionsReportValidator extends AbstractAccountTppValid
             return ValidationResult.invalid(AIS_401, messageErrorCode);
         }
 
+        ValidationResult accountReferenceValidationResult =
+            accountReferenceAccessValidator.validate(aisConsent,
+                                                     consentObject.getTransactions(),
+                                                     consentObject.getAccountId(),
+                                                     aisConsent.getAisConsentRequestType());
+        if (accountReferenceValidationResult.isNotValid()) {
+            return accountReferenceValidationResult;
+        }
         return ValidationResult.valid();
     }
 }

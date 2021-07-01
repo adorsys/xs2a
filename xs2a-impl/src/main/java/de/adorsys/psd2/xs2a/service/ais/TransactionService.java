@@ -225,7 +225,7 @@ public class TransactionService {
         }
 
         AisConsent aisConsent = aisConsentOptional.get();
-        ValidationResult validationResult = getValidationResultForDownloadTransactionRequest(aisConsent);
+        ValidationResult validationResult = getValidationResultForDownloadTransactionRequest(aisConsent, accountId);
 
         if (validationResult.isNotValid()) {
             log.info("Consent-ID [{}], Account-ID: [{}], Download-ID: [{}]. Download transactions - validation failed: {}",
@@ -268,8 +268,8 @@ public class TransactionService {
         return getTransactionDetailsValidator.validate(validatorObject);
     }
 
-    private ValidationResult getValidationResultForDownloadTransactionRequest(AisConsent aisConsent) {
-        DownloadTransactionListRequestObject validatorObject = new DownloadTransactionListRequestObject(aisConsent);
+    private ValidationResult getValidationResultForDownloadTransactionRequest(AisConsent aisConsent, String accountId) {
+        DownloadTransactionListRequestObject validatorObject = new DownloadTransactionListRequestObject(aisConsent, accountId);
         return downloadTransactionsReportValidator.validate(validatorObject);
     }
 

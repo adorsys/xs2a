@@ -1,3 +1,9 @@
 = Release notes v.10.8
 
 == Table of Contents
+
+* Add validation for download transactions endpoint
+
+== Add validation for download transactions endpoint
+
+From now on, requests for download transactions with all available accounts consent will be rejected by xs2a.

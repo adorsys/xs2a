@@ -1,0 +1,23 @@
+{
+  "aisConsent": {
+    "consentData": {
+      "availableAccounts": "allAccounts"
+    },
+    "tppAccountAccesses": {
+      "accounts": [],
+      "balances": [],
+      "transactions": []
+    },
+    "aspspAccountAccesses": {
+    },
+    "recurringIndicator": true,
+    "validUntil": "2037-08-06",
+    "frequencyPerDay": "4",
+    "consentStatus": "VALID",
+    "consentTppInformation": {
+      "tppInfo": {
+        "authorisationNumber": "fc488759-d8a2-4a51-b797-7d4cf7ac0447"
+      }
+    }
+  }
+}
