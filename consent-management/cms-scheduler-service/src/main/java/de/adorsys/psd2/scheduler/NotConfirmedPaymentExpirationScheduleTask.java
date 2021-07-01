@@ -55,9 +55,10 @@ public class NotConfirmedPaymentExpirationScheduleTask extends PageableScheduler
     @Override
     protected void executePageable(Pageable pageable) {
         List<PisCommonPaymentData> expiredNotConfirmedPayments = paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC), pageable)
-                                                                         .stream()
-                                                                         .filter(pisCommonPaymentConfirmationExpirationService::isConfirmationExpired)
-                                                                         .collect(Collectors.toList());
+                                                                     .stream()
+                                                                     .filter(p -> !p.isSigningBasketBlocked())
+                                                                     .filter(pisCommonPaymentConfirmationExpirationService::isConfirmationExpired)
+                                                                     .collect(Collectors.toList());
 
         if (CollectionUtils.isNotEmpty(expiredNotConfirmedPayments)) {
             pisCommonPaymentConfirmationExpirationService.updatePaymentDataListOnConfirmationExpiration(expiredNotConfirmedPayments);

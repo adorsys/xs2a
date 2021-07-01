@@ -92,6 +92,39 @@ class NotConfirmedPaymentExpirationScheduleTaskTest {
     }
 
     @Test
+    void obsoleteNotConfirmedPaymentIfExpiredAndSigningBasketBlocked() {
+        // Given
+        List<PisCommonPaymentData> pisCommonPaymentDataList = new ArrayList<>();
+        PisCommonPaymentData pisCommonPaymentData = new PisCommonPaymentData();
+        pisCommonPaymentData.setSigningBasketBlocked(true);
+        pisCommonPaymentDataList.add(pisCommonPaymentData);
+        pisCommonPaymentDataList.add(new PisCommonPaymentData());
+        pisCommonPaymentDataList.add(new PisCommonPaymentData());
+
+        when(paymentDataRepository.countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
+            .thenReturn(10L);
+        when(paymentDataRepository.findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC), PageRequest.of(0, 100)))
+            .thenReturn(pisCommonPaymentDataList);
+        when(pisCommonPaymentConfirmationExpirationService.isConfirmationExpired(any(PisCommonPaymentData.class)))
+            .thenReturn(true, false);
+        when(pisCommonPaymentConfirmationExpirationService.updatePaymentDataListOnConfirmationExpiration(commonPaymentDataCaptor.capture()))
+            .thenReturn(Collections.emptyList());
+
+        // When
+        scheduleTask.obsoleteNotConfirmedPaymentIfExpired();
+
+        // Then
+        verify(paymentDataRepository, times(1))
+            .countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC));
+        verify(paymentDataRepository, times(1))
+            .findByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC), PageRequest.of(0, 100));
+        verify(pisCommonPaymentConfirmationExpirationService, times(2)).isConfirmationExpired(any(PisCommonPaymentData.class));
+        verify(pisCommonPaymentConfirmationExpirationService, times(1)).updatePaymentDataListOnConfirmationExpiration(anyList());
+
+        assertEquals(1, commonPaymentDataCaptor.getValue().size());
+    }
+
+    @Test
     void obsoleteNotConfirmedPaymentIfExpired_emptyList() {
         // Given
         when(paymentDataRepository.countByTransactionStatusIn(EnumSet.of(TransactionStatus.RCVD, TransactionStatus.PATC)))
