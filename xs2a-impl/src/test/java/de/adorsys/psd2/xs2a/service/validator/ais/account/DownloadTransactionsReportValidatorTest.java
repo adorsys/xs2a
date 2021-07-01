@@ -16,13 +16,16 @@
 
 package de.adorsys.psd2.xs2a.service.validator.ais.account;
 
+import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
+import de.adorsys.psd2.xs2a.service.validator.ais.account.common.AccountReferenceAccessValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.account.dto.DownloadTransactionListRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.tpp.AisAccountTppInfoValidator;
 import de.adorsys.xs2a.reader.JsonReader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -51,15 +54,30 @@ class DownloadTransactionsReportValidatorTest {
 
     @Mock
     private AisAccountTppInfoValidator aisAccountTppInfoValidator;
+    @Mock
+    private AccountReferenceAccessValidator accountReferenceAccessValidator;
 
     private final JsonReader jsonReader = new JsonReader();
     private DownloadTransactionListRequestObject requestObject;
+
+    @BeforeEach
+    void setUp() {
+        // Inject pisTppInfoValidator via setter
+        downloadTransactionsReportValidator.setAisAccountTppInfoValidator(aisAccountTppInfoValidator);
+    }
 
     @Test
     void testValidate_shouldReturnValid() {
         // Given
         requestObject = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-download-object-valid.json", DownloadTransactionListRequestObject.class);
         when(aisAccountTppInfoValidator.validateTpp(requestObject.getTppInfo())).thenReturn(ValidationResult.valid());
+        AisConsent aisConsent = requestObject.getAisConsent();
+        when(aisAccountTppInfoValidator.validateTpp(requestObject.getTppInfo())).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent,
+                                                      requestObject.getTransactions(),
+                                                      requestObject.getAccountId(),
+                                                      aisConsent.getAisConsentRequestType()))
+            .thenReturn(ValidationResult.valid());
 
         // When
         ValidationResult actual = downloadTransactionsReportValidator.validate(requestObject);
@@ -94,6 +112,25 @@ class DownloadTransactionsReportValidatorTest {
         // Then
         assertTrue(actual.isNotValid());
         assertEquals(AIS_CONSENT_INVALID_ERROR, actual.getMessageError());
+    }
+
+    @Test
+    void testValidateInvalid_allAvailableAccounts() {
+        // Given
+        requestObject = jsonReader.getObjectFromFile("json/service/validator/ais/account/xs2a-download-object-all-accounts.json", DownloadTransactionListRequestObject.class);
+        AisConsent aisConsent = requestObject.getAisConsent();
+        when(aisAccountTppInfoValidator.validateTpp(requestObject.getTppInfo())).thenReturn(ValidationResult.valid());
+        when(accountReferenceAccessValidator.validate(aisConsent,
+                                                      requestObject.getTransactions(),
+                                                      requestObject.getAccountId(),
+                                                      aisConsent.getAisConsentRequestType()))
+            .thenReturn(ValidationResult.valid());
+
+        // When
+        ValidationResult actual = downloadTransactionsReportValidator.validate(requestObject);
+
+        // Then
+        assertTrue(actual.isValid());
     }
 
     @Test
