@@ -56,6 +56,7 @@ public class NotConfirmedConsentExpirationScheduleTask extends PageableScheduler
     protected void executePageable(Pageable pageable) {
         List<ConsentEntity> expiredNotConfirmedConsents = consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED), pageable)
                                                               .stream()
+                                                              .filter(c -> !c.isSigningBasketBlocked())
                                                               .filter(aisConsentConfirmationExpirationService::isConfirmationExpired)
                                                               .collect(Collectors.toList());
 

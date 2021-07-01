@@ -91,6 +91,39 @@ class NotConfirmedConsentExpirationScheduleTaskTest {
     }
 
     @Test
+    void obsoleteNotConfirmedConsentIfExpiredAndSigningBasketBlocked() {
+        // Given
+        List<ConsentEntity> aisConsents = new ArrayList<>();
+        ConsentEntity consentEntityBlocked = new ConsentEntity();
+        consentEntityBlocked.setSigningBasketBlocked(true);
+        aisConsents.add(consentEntityBlocked);
+        aisConsents.add(new ConsentEntity());
+        aisConsents.add(new ConsentEntity());
+
+        when(consentJpaRepository.countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED)))
+            .thenReturn(10L);
+        when(consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED), PageRequest.of(0, 100)))
+            .thenReturn(aisConsents);
+        when(aisConsentConfirmationExpirationService.isConfirmationExpired(any(ConsentEntity.class)))
+            .thenReturn(true,false);
+        when(aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpiration(consentsCaptor.capture()))
+            .thenReturn(Collections.emptyList());
+
+        // When
+        scheduleTask.obsoleteNotConfirmedConsentIfExpired();
+
+        // Then
+        verify(consentJpaRepository, times(1))
+            .countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED));
+        verify(consentJpaRepository, times(1))
+            .findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED), PageRequest.of(0, 100));
+        verify(aisConsentConfirmationExpirationService, times(2)).isConfirmationExpired(any(ConsentEntity.class));
+        verify(aisConsentConfirmationExpirationService, times(1)).updateConsentListOnConfirmationExpiration(anyList());
+
+        assertEquals(1, consentsCaptor.getValue().size());
+    }
+
+    @Test
     void obsoleteNotConfirmedConsentIfExpired_emptyList() {
         // Given
         when(consentJpaRepository.countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED)))
