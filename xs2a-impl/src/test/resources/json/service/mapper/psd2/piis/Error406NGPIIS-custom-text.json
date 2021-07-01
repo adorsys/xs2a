@@ -1,0 +1,9 @@
+{
+  "tppMessages": [
+    {
+      "category": "ERROR",
+      "code": "CONTENT_TYPE_NOT_SUPPORTED",
+      "text": "Custom text"
+    }
+  ]
+}
