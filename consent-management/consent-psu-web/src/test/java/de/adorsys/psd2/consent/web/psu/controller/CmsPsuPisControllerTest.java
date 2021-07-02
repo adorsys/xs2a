@@ -78,6 +78,7 @@ class CmsPsuPisControllerTest {
     private static final HttpHeaders INSTANCE_ID_HEADERS = buildInstanceIdHeaders();
     private static final byte[] EMPTY_BODY = new byte[0];
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_TYPE = "payments";
 
     private final JsonReader jsonReader = new JsonReader();
     private MockMvc mockMvc;
