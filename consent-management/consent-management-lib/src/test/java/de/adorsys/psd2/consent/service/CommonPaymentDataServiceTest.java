@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.payment.PisCommonPaymentData;
 import de.adorsys.psd2.consent.repository.PisCommonPaymentDataRepository;
 import de.adorsys.psd2.consent.repository.specification.PisCommonPaymentDataSpecification;
+import de.adorsys.psd2.xs2a.core.pis.InternalPaymentStatus;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -89,6 +91,28 @@ class CommonPaymentDataServiceTest {
 
         commonPaymentDataService.updateStatusInPaymentData(paymentData, transactionStatus);
         assertEquals(transactionStatus, paymentData.getTransactionStatus());
+    }
+
+    @Test
+    void updateInternalStatusInPaymentData() {
+        InternalPaymentStatus transactionStatus = InternalPaymentStatus.INITIATED;
+        PisCommonPaymentData paymentData = new PisCommonPaymentData();
+
+        when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(new PisCommonPaymentData());
+
+        commonPaymentDataService.updateInternalStatusInPaymentData(paymentData, transactionStatus);
+        assertThat(paymentData.getInternalPaymentStatus()).isEqualTo(transactionStatus);
+    }
+
+    @Test
+    void updatePaymentData() {
+        byte[] payment = "payment".getBytes();
+        PisCommonPaymentData paymentData = new PisCommonPaymentData();
+
+        when(pisCommonPaymentDataRepository.save(paymentData)).thenReturn(new PisCommonPaymentData());
+
+        commonPaymentDataService.updatePaymentData(paymentData, payment);
+        assertThat(paymentData.getPayment()).isEqualTo(payment);
     }
 
     @Test

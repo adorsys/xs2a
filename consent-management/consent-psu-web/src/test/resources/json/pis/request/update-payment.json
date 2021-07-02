@@ -1,0 +1,26 @@
+{
+  "endToEndIdentification": "RI-1234567890",
+  "debtorAccount": {
+    "currency": "EUR",
+    "iban": "{{iban_none}}"
+  },
+  "debtorName": "name of the debtor",
+  "instructedAmount": {
+    "amount": 1000,
+    "currency": "EUR"
+  },
+  "creditorAccount": {
+    "currency": "EUR",
+    "iban": "{{iban_none}}"
+  },
+  "creditorAgent": "AAAADEBBXXX",
+  "creditorName": "Telekom",
+  "creditorAddress": {
+    "buildingNumber": "123-34",
+    "townName": "Nürnberg",
+    "country": "DE",
+    "postCode": 90431,
+    "streetName": "Herrnstraße"
+  },
+  "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222"
+}
