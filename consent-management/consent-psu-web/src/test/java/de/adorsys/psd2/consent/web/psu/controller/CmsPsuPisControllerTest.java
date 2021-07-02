@@ -19,9 +19,11 @@ package de.adorsys.psd2.consent.web.psu.controller;
 import de.adorsys.psd2.consent.api.pis.CmsBasePaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsPaymentResponse;
 import de.adorsys.psd2.consent.api.pis.CmsSinglePayment;
+import de.adorsys.psd2.consent.api.pis.UpdatePaymentRequest;
 import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.CmsPsuPisService;
 import de.adorsys.psd2.consent.psu.api.pis.CmsPisPsuDataAuthorisation;
+import de.adorsys.psd2.consent.web.psu.mapper.PaymentModelMapperCmsPsu;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.mapper.config.ObjectMapperConfig;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
@@ -78,6 +80,7 @@ class CmsPsuPisControllerTest {
     private static final HttpHeaders INSTANCE_ID_HEADERS = buildInstanceIdHeaders();
     private static final byte[] EMPTY_BODY = new byte[0];
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
+    private static final String PAYMENT_TYPE = "payments";
 
     private final JsonReader jsonReader = new JsonReader();
     private MockMvc mockMvc;
@@ -85,6 +88,8 @@ class CmsPsuPisControllerTest {
 
     @Mock
     private CmsPsuPisService cmsPsuPisService;
+    @Mock
+    private PaymentModelMapperCmsPsu paymentModelMapperCms;
 
     @InjectMocks
     private CmsPsuPisController cmsPsuPisController;
@@ -95,6 +100,38 @@ class CmsPsuPisControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(cmsPsuPisController)
                       .setMessageConverters(new MappingJackson2HttpMessageConverter(xs2aObjectMapper))
                       .build();
+    }
+
+    @Test
+    void updatePayment() throws Exception {
+        String payment = jsonReader.getStringFromFile("json/pis/request/update-payment.json");
+
+        when(paymentModelMapperCms.mapToXs2aPayment()).thenReturn(payment.getBytes());
+        UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest(payment.getBytes(), INSTANCE_ID, PAYMENT_ID, PAYMENT_PRODUCT, PAYMENT_TYPE);
+        when(cmsPsuPisService.updatePayment(updatePaymentRequest)).thenReturn(true);
+
+        mockMvc.perform(put("/psu-api/v1/payment/{payment-service}/{payment-product}/{payment-id}", PAYMENT_TYPE, PAYMENT_PRODUCT, PAYMENT_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(payment))
+            .andExpect(status().isOk())
+            .andExpect(content().bytes(EMPTY_BODY));
+    }
+
+    @Test
+    void updatePayment_error() throws Exception {
+        String payment = jsonReader.getStringFromFile("json/pis/request/update-payment.json");
+
+        when(paymentModelMapperCms.mapToXs2aPayment()).thenReturn(payment.getBytes());
+        UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest(payment.getBytes(), INSTANCE_ID, PAYMENT_ID, PAYMENT_PRODUCT, PAYMENT_TYPE);
+        when(cmsPsuPisService.updatePayment(updatePaymentRequest)).thenReturn(false);
+
+        mockMvc.perform(put("/psu-api/v1/payment/{payment-service}/{payment-product}/{payment-id}", PAYMENT_TYPE, PAYMENT_PRODUCT, PAYMENT_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(payment))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().bytes(EMPTY_BODY));
     }
 
     @Test
