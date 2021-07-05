@@ -192,11 +192,11 @@ a| * Read Transaction List return "_links" subfield in wrong place
 
 * Fix filters order
 
-
 a|* All fixes and updates from v.10.7
 
-* Update psu data with password fails for payment without creditor address field
+* Bugfixing: Update psu data with password fails for payment without creditor address field
 
+a| Signing Basket plugin for XS2A
 
 a|
 
