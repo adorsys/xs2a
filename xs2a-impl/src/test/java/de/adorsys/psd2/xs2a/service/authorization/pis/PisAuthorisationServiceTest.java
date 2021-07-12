@@ -31,10 +31,10 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -67,8 +67,8 @@ class PisAuthorisationServiceTest {
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psuId", "psuIdType", "psuCorporateId", "psuCorporateIdType", "psuIpAddress");
-    private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
-    private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildXs2aUpdatePisCommonPaymentPsuDataRequest();
+    private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, SCA_APPROACH);
+    private static final PaymentAuthorisationParameters XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = buildXs2aUpdatePisCommonPaymentPsuDataRequest();
     private static final Authorisation GET_PIS_AUTHORISATION_RESPONSE = buildGetPisAuthorisationResponse();
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse STAGE_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
         SCA_STATUS, PAYMENT_ID, AUTHORISATION_ID, PSU_ID_DATA, null);
@@ -78,8 +78,6 @@ class PisAuthorisationServiceTest {
 
     @Mock
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
-    @Mock
-    private ScaApproachResolver scaApproachResolver;
     @Mock
     private RequestProviderService requestProviderService;
     @Mock
@@ -94,16 +92,21 @@ class PisAuthorisationServiceTest {
         // Given
         ArgumentCaptor<PisAuthorisationParentHolder> authorisationParentHolderCaptor = ArgumentCaptor.forClass(PisAuthorisationParentHolder.class);
 
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(SCA_APPROACH);
         when(authorisationServiceEncrypted.createAuthorisation(authorisationParentHolderCaptor.capture(), any(CreateAuthorisationRequest.class)))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(CREATE_PIS_AUTHORISATION_RESPONSE).build());
         when(requestProviderService.getTppRedirectURI()).thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI()).thenReturn(TPP_NOK_REDIRECT_URI);
         when(tppRedirectUriMapper.mapToTppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI))
             .thenReturn(new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI));
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
         // When
-        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA);
+        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(xs2aCreateAuthorisationRequest);
 
         // Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -117,17 +120,21 @@ class PisAuthorisationServiceTest {
         // Given
         ArgumentCaptor<PisAuthorisationParentHolder> authorisationParentHolderCaptor = ArgumentCaptor.forClass(PisAuthorisationParentHolder.class);
 
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
         when(authorisationServiceEncrypted.createAuthorisation(authorisationParentHolderCaptor.capture(), any(CreateAuthorisationRequest.class)))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
             .thenReturn(TPP_NOK_REDIRECT_URI);
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(WRONG_PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
         // When
-        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA);
+        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisation(xs2aCreateAuthorisationRequest);
 
         // Then
         assertThat(actualResponse).isNull();
@@ -180,16 +187,21 @@ class PisAuthorisationServiceTest {
         // Given
         ArgumentCaptor<PisCancellationAuthorisationParentHolder> authorisationParentHolderCaptor = ArgumentCaptor.forClass(PisCancellationAuthorisationParentHolder.class);
 
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(SCA_APPROACH);
         when(authorisationServiceEncrypted.createAuthorisation(authorisationParentHolderCaptor.capture(), any(CreateAuthorisationRequest.class)))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().payload(CREATE_PIS_AUTHORISATION_RESPONSE).build());
         when(requestProviderService.getTppRedirectURI()).thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI()).thenReturn(TPP_NOK_REDIRECT_URI);
         when(tppRedirectUriMapper.mapToTppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI))
             .thenReturn(new TppRedirectUri(TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI));
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
         // When
-        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA);
+        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(xs2aCreateAuthorisationRequest);
 
         // Then
         assertThat(actualResponse).isEqualTo(CREATE_PIS_AUTHORISATION_RESPONSE);
@@ -200,17 +212,21 @@ class PisAuthorisationServiceTest {
     @Test
     void createPisAuthorisationCancellation_wrongId_fail() {
         // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
         when(authorisationServiceEncrypted.createAuthorisation(any(), any()))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder().error(CmsError.TECHNICAL_ERROR).build());
         when(requestProviderService.getTppRedirectURI())
             .thenReturn(TPP_REDIRECT_URI);
         when(requestProviderService.getTppNokRedirectURI())
             .thenReturn(TPP_NOK_REDIRECT_URI);
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(WRONG_PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
         // When
-        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA);
+        CreateAuthorisationResponse actualResponse = pisAuthorisationService.createPisAuthorisationCancellation(xs2aCreateAuthorisationRequest);
 
         // Then
         assertThat(actualResponse).isNull();
@@ -335,7 +351,7 @@ class PisAuthorisationServiceTest {
 
     @Test
     void updateAuthorisation() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         request.setAuthorisationId(AUTHORISATION_ID);
         AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
@@ -350,7 +366,7 @@ class PisAuthorisationServiceTest {
 
     @Test
     void updateAuthorisation_hasError() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         request.setAuthorisationId(AUTHORISATION_ID);
         AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
         response.setErrorHolder(ErrorHolder.builder(ErrorType.AIS_400).build());
@@ -363,7 +379,7 @@ class PisAuthorisationServiceTest {
 
     @Test
     void updateCancellationAuthorisation() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         request.setAuthorisationId(AUTHORISATION_ID);
         AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
         UpdateAuthorisationRequest updateAuthorisationRequest = new UpdateAuthorisationRequest();
@@ -378,7 +394,7 @@ class PisAuthorisationServiceTest {
 
     @Test
     void updateCancellationAuthorisation_hasError() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         request.setAuthorisationId(AUTHORISATION_ID);
         AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
         response.setErrorHolder(ErrorHolder.builder(ErrorType.AIS_400).build());
@@ -389,8 +405,8 @@ class PisAuthorisationServiceTest {
         verify(pisCommonPaymentMapper, never()).mapToUpdateAuthorisationRequest(any(), any());
     }
 
-    private static Xs2aUpdatePisCommonPaymentPsuDataRequest buildXs2aUpdatePisCommonPaymentPsuDataRequest() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+    private static PaymentAuthorisationParameters buildXs2aUpdatePisCommonPaymentPsuDataRequest() {
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         request.setAuthorisationId(AUTHORISATION_ID);
         return request;
     }

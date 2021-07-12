@@ -41,11 +41,14 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.AisConsentAuthorizationResponseBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.ais.CmsConsentBuilder;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -98,6 +101,7 @@ class ContextPathIT {
     private static final String ENCRYPT_CONSENT_ID = "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI";
     private static final String AUTHORISATION_ID = "e8356ea7-8e3e-474f-b5ea-2b89346cb2dc";
     private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
+    private static final String TEST_PSU_MESSAGE = "psu message";
 
     private final HttpHeaders httpHeadersImplicit = new HttpHeaders();
 
@@ -121,6 +125,8 @@ class ContextPathIT {
     private AspspDataService aspspDataService;
     @MockBean
     private AisConsentServiceEncrypted aisConsentServiceEncrypted;
+    @MockBean
+    private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
 
     @BeforeEach
     void init() {
@@ -169,7 +175,7 @@ class ContextPathIT {
         given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(SCA_APPROACH));
         given(authorisationServiceEncrypted.createAuthorisation(any(AuthorisationParentHolder.class), any(CreateAuthorisationRequest.class)))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
-                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null))
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null, ScaApproach.EMBEDDED))
                             .build());
         given(consentServiceEncrypted.createConsent(any(CmsConsent.class)))
             .willReturn(CmsResponse.<CmsCreateConsentResponse>builder()
@@ -189,6 +195,11 @@ class ContextPathIT {
             .thenReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(SCA_APPROACH))
                             .build());
+        CreateConsentAuthorisationProcessorResponse processorResponse =
+            new CreateConsentAuthorisationProcessorResponse(ScaStatus.STARTED, SCA_APPROACH, TEST_PSU_MESSAGE,
+                                                            Collections.emptySet(), ENCRYPT_CONSENT_ID, null);
+        given(authorisationChainResponsibilityService.apply(any(AisAuthorisationProcessorRequest.class)))
+            .willReturn(processorResponse);
 
         String requestUrl = CONTEXT_PATH + UrlBuilder.buildConsentCreation();
         MockHttpServletRequestBuilder requestBuilder = post(requestUrl);

@@ -57,6 +57,10 @@ class PiisConsentModelMapperTest {
     private AccountModelMapper accountModelMapper;
     @Mock
     private ConsentModelMapper consentModelMapper;
+    @Mock
+    private TppMessageGenericMapper tppMessageGenericMapper;
+    @Mock
+    private CoreObjectsMapper coreObjectsMapper;
 
     private Xs2aConfirmationOfFundsResponse xs2aConfirmationOfFundsResponse;
     private JsonReader jsonReader;

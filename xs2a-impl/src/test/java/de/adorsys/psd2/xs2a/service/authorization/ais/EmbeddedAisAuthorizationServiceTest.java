@@ -23,9 +23,10 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
@@ -53,6 +54,7 @@ class EmbeddedAisAuthorizationServiceTest {
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String WRONG_AUTHORISATION_ID = "Wrong authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
 
     @InjectMocks
     private EmbeddedAisAuthorizationService authorizationService;
@@ -68,7 +70,7 @@ class EmbeddedAisAuthorizationServiceTest {
     @Mock
     private AisScaStageAuthorisationFactory scaStageAuthorisationFactory;
     @Mock
-    private UpdateConsentPsuDataReq updateConsentPsuDataRequest;
+    private ConsentAuthorisationsParameters updateConsentPsuDataRequest;
     @Mock
     private Authorisation authorisation;
     @Mock
@@ -81,9 +83,15 @@ class EmbeddedAisAuthorizationServiceTest {
         // Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .psuData(PSU_DATA)
+                                                                            .consentId(WRONG_CONSENT_ID)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .build();
         // When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
 
         // Then
         assertThat(actualResponse).isNotPresent();
@@ -126,11 +134,18 @@ class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     void createConsentAuthorization_Success() {
-        when(consentService.createConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .psuData(PSU_DATA)
+                                                                            .consentId(CONSENT_ID)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .scaStatus(STARTED_XS2A_SCA_STATUS)
+                                                                            .build();
+        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
 
         assertThat(actualResponseOptional).isPresent();
 
@@ -146,9 +161,15 @@ class EmbeddedAisAuthorizationServiceTest {
     void createConsentAuthorization_wrongId_Failure() {
         //Given
         when(aisConsentService.getAccountConsentById(WRONG_CONSENT_ID)).thenReturn(Optional.empty());
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .psuData(PSU_DATA)
+                                                                            .consentId(WRONG_CONSENT_ID)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .scaStatus(STARTED_XS2A_SCA_STATUS)
+                                                                            .build();
         //When
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
 
         // Then
         assertThat(actualResponseOptional).isNotPresent();
@@ -156,11 +177,18 @@ class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     void createConsentAuthorizationNoPsuAuthentification_Success() {
-        when(consentService.createConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .psuData(PSU_DATA)
+                                                                            .consentId(CONSENT_ID)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .scaStatus(STARTED_XS2A_SCA_STATUS)
+                                                                            .build();
+        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
 
         assertThat(actualResponseOptional).isPresent();
 
@@ -173,11 +201,19 @@ class EmbeddedAisAuthorizationServiceTest {
 
     @Test
     void createConsentAuthorizationNoPsuIdentification_Success() {
+
         PsuIdData psuIdData = new PsuIdData(null, null, null, null, null);
-        when(consentService.createConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, psuIdData))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .psuData(psuIdData)
+                                                                            .consentId(CONSENT_ID)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .scaStatus(STARTED_XS2A_SCA_STATUS)
+                                                                            .build();
+        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, psuIdData))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(psuIdData, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
 
         assertThat(actualResponseOptional).isPresent();
 
@@ -210,6 +246,6 @@ class EmbeddedAisAuthorizationServiceTest {
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null, SCA_APPROACH);
     }
 }

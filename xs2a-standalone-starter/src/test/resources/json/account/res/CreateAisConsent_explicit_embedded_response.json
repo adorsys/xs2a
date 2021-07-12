@@ -3,10 +3,10 @@
   "consentId": "DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI",
   "scaMethods": [
     {
-      "authenticationType": "Mocked Authentication type",
-      "authenticationVersion": "Mocked Authentication version",
-      "authenticationMethodId": "Mocked Authentication id",
-      "name": "Mocked name"
+      "authenticationType": "Mocked Authentication type from spi stub",
+      "authenticationVersion": "Mocked Authentication version from spi stub",
+      "authenticationMethodId": "Mocked Authentication id from spi stub",
+      "name": "Mocked name from spi stub"
     }
   ],
   "_links": {
@@ -20,12 +20,12 @@
       "href": "http://localhost/v1/consents/DfLtDOgo1tTK6WQlHlb-TMPL2pkxRlhZ4feMa5F4tOWwNN45XLNAVfWwoZUKlQwb_=_bS6p6XvTWI/authorisations"
     }
   },
-  "psuMessage": "mocked PSU message",
+  "psuMessage": "mocked PSU message from spi stub",
   "tppMessages": [
     {
       "category": "WARNING",
       "code": "WARNING",
-      "text": "Mocked tpp message from the bank"
+      "text": "Mocked tpp message from spi stub"
     }
   ]
 }

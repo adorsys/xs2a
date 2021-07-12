@@ -32,7 +32,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
@@ -110,7 +110,7 @@ class PisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_success_checkOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
         TransactionStatus transactionStatus = TransactionStatus.ACSP;
         Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
             ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
@@ -160,7 +160,7 @@ class PisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_success_checkOnXs2a() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
         Xs2aUpdatePisCommonPaymentPsuDataResponse expectedResult = new Xs2aUpdatePisCommonPaymentPsuDataResponse(
             ScaStatus.FINALISED, PAYMENT_ID, AUTHORISATION_ID, psuIdData, null);
         Authorisation authorisationResponse = buildGetPisAuthorisationResponse();
@@ -204,7 +204,7 @@ class PisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_failed_NoAuthorisation() {
         // given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_404)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_404_NO_AUTHORISATION))
@@ -227,7 +227,7 @@ class PisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_failed_WrongScaStatus() {
         // given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
@@ -254,7 +254,7 @@ class PisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_failed_wrongCode() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
         request.setConfirmationCode("wrong_code");
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
@@ -302,7 +302,7 @@ class PisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_checkOnSpi_spiError() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
 
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIS_400)
                                       .tppMessages(TppMessageInformation.of(MessageErrorCode.SCA_INVALID))
@@ -346,7 +346,7 @@ class PisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_failed_errorOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = buildUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = buildUpdatePisCommonPaymentPsuDataRequest();
         SpiResponse<SpiPaymentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiPaymentConfirmationCodeValidationResponse>builder()
                                                                                     .error(new TppMessage(PSU_CREDENTIALS_INVALID))
                                                                                     .build();
@@ -401,10 +401,10 @@ class PisAuthorisationConfirmationServiceTest {
         return response;
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest buildUpdatePisCommonPaymentPsuDataRequest() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request =
+    private PaymentAuthorisationParameters buildUpdatePisCommonPaymentPsuDataRequest() {
+        PaymentAuthorisationParameters request =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-update-pis-common-payment-psu-data-request.json",
-                                         Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
+                                         PaymentAuthorisationParameters.class);
 
         request.setConfirmationCode(CONFIRMATION_CODE);
         request.setPaymentId(PAYMENT_ID);

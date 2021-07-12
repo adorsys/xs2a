@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.validator.PiisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.UpdatePiisConsentPsuDataRequestObject;
@@ -63,7 +63,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     void executeBusinessValidation_valid() {
         // Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input = new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/piis/psu-data.json", PsuIdData.class);
 
@@ -83,7 +83,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     void executeBusinessValidation_invalidStage() {
         // Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input = new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/piis/psu-data.json", PsuIdData.class);
 
@@ -103,7 +103,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     void executeBusinessValidation_invalidAuthStatus() {
         // Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input = new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/piis/psu-data.json", PsuIdData.class);
 
@@ -122,7 +122,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     void executeBusinessValidation_invalidPsu() {
         // Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input = new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
         PsuIdData psuIdData = jsonReader.getObjectFromFile("json/piis/psu-data.json", PsuIdData.class);
 
@@ -140,7 +140,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     void executeBusinessValidation_invalidAuth() {
         // Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input = new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
 
         when(piisAuthorisationValidator.validate(AUTHORISATION_ID, piisConsent)).thenReturn(INVALID);
@@ -156,7 +156,7 @@ class UpdatePiisConsentPsuDataValidatorTest {
     void executeBusinessValidation_EmptyAuth() {
         // Given
         PiisConsent piisConsent = jsonReader.getObjectFromFile("json/piis/piis-consent-invalid.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input = new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
 
         when(piisAuthorisationValidator.validate(AUTHORISATION_ID, piisConsent)).thenReturn(ValidationResult.valid());
@@ -173,8 +173,8 @@ class UpdatePiisConsentPsuDataValidatorTest {
         // Given
         PiisConsent piisConsent =
             jsonReader.getObjectFromFile("json/piis/piis-consent-invalid.json", PiisConsent.class);
-        UpdateConsentPsuDataReq updateConsentPsuDataReq =
-            jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq =
+            jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
         UpdatePiisConsentPsuDataRequestObject input =
             new UpdatePiisConsentPsuDataRequestObject(piisConsent, updateConsentPsuDataReq);
 

@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful cancel payment request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-06T19:02:27.572839+03:00[Europe/Kiev]")
 
 public class PaymentInitiationCancelResponse202   {
   @JsonProperty("transactionStatus")
@@ -38,6 +39,12 @@ public class PaymentInitiationCancelResponse202   {
   @JsonProperty("tppMessages")
   @Valid
   private List<TppMessageGeneric> tppMessages = null;
+
+  @JsonProperty("scaStatus")
+  private ScaStatus scaStatus = null;
+
+  @JsonProperty("psuMessage")
+  private String psuMessage = null;
 
   public PaymentInitiationCancelResponse202 transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -186,6 +193,51 @@ public class PaymentInitiationCancelResponse202   {
     this.tppMessages = tppMessages;
   }
 
+  public PaymentInitiationCancelResponse202 scaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+    return this;
+  }
+
+  /**
+   * Get scaStatus
+   * @return scaStatus
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("scaStatus")
+  public ScaStatus getScaStatus() {
+    return scaStatus;
+  }
+
+  public void setScaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+  }
+
+  public PaymentInitiationCancelResponse202 psuMessage(String psuMessage) {
+    this.psuMessage = psuMessage;
+    return this;
+  }
+
+  /**
+   * Get psuMessage
+   * @return psuMessage
+  **/
+  @ApiModelProperty(value = "")
+
+@Size(max=500)
+
+  @JsonProperty("psuMessage")
+  public String getPsuMessage() {
+    return psuMessage;
+  }
+
+  public void setPsuMessage(String psuMessage) {
+    this.psuMessage = psuMessage;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -200,12 +252,14 @@ public class PaymentInitiationCancelResponse202   {
     Objects.equals(this.chosenScaMethod, paymentInitiationCancelResponse202.chosenScaMethod) &&
     Objects.equals(this.challengeData, paymentInitiationCancelResponse202.challengeData) &&
     Objects.equals(this._links, paymentInitiationCancelResponse202._links) &&
-    Objects.equals(this.tppMessages, paymentInitiationCancelResponse202.tppMessages);
+    Objects.equals(this.tppMessages, paymentInitiationCancelResponse202.tppMessages) &&
+    Objects.equals(this.scaStatus, paymentInitiationCancelResponse202.scaStatus) &&
+    Objects.equals(this.psuMessage, paymentInitiationCancelResponse202.psuMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionStatus, scaMethods, chosenScaMethod, challengeData, _links, tppMessages);
+    return Objects.hash(transactionStatus, scaMethods, chosenScaMethod, challengeData, _links, tppMessages, scaStatus, psuMessage);
   }
 
   @Override
@@ -219,6 +273,8 @@ public class PaymentInitiationCancelResponse202   {
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
+    sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
+    sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

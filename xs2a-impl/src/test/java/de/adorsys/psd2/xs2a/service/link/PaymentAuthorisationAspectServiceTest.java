@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -67,12 +67,12 @@ class PaymentAuthorisationAspectServiceTest {
     private AspspSettings aspspSettings;
     private ResponseObject responseObject;
     private Xs2aCreatePisAuthorisationRequest request;
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest;
+    private PaymentAuthorisationParameters updateRequest;
 
     @BeforeEach
     void setUp() {
         request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, null, PAYMENT_PRODUCT, SINGLE, "");
-        updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        updateRequest = new PaymentAuthorisationParameters();
         updateRequest.setPaymentService(SINGLE);
     }
 

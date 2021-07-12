@@ -24,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,7 +34,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a Start single SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-07-01T15:25:06.394043+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-06T15:08:52.622411+03:00[Europe/Kiev]")
 
 public class ConsentsConfirmationOfFundsResponse   {
   @JsonProperty("consentStatus")
@@ -55,6 +57,13 @@ public class ConsentsConfirmationOfFundsResponse   {
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
+
+  @JsonProperty("scaStatus")
+  private ScaStatus scaStatus = null;
+
+  @JsonProperty("tppMessage")
+  @Valid
+  private List<TppMessageGeneric> tppMessage = null;
 
   public ConsentsConfirmationOfFundsResponse consentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -218,6 +227,60 @@ public class ConsentsConfirmationOfFundsResponse   {
     this.psuMessage = psuMessage;
   }
 
+  public ConsentsConfirmationOfFundsResponse scaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+    return this;
+  }
+
+  /**
+   * Get scaStatus
+   * @return scaStatus
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("scaStatus")
+  public ScaStatus getScaStatus() {
+    return scaStatus;
+  }
+
+  public void setScaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+  }
+
+  public ConsentsConfirmationOfFundsResponse tppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
+    return this;
+  }
+
+  public ConsentsConfirmationOfFundsResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
+    if (this.tppMessage == null) {
+      this.tppMessage = new ArrayList<>();
+    }
+    this.tppMessage.add(tppMessageItem);
+    return this;
+  }
+
+  /**
+   * Messages to the TPP on operational issues.
+   * @return tppMessage
+  **/
+  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
+
+  @Valid
+
+
+  @JsonProperty("tppMessage")
+  public List<TppMessageGeneric> getTppMessage() {
+    return tppMessage;
+  }
+
+  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -226,20 +289,21 @@ public class ConsentsConfirmationOfFundsResponse   {
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
-    }
-    ConsentsConfirmationOfFundsResponse consentsConfirmationOfFundsResponse = (ConsentsConfirmationOfFundsResponse) o;
+}    ConsentsConfirmationOfFundsResponse consentsConfirmationOfFundsResponse = (ConsentsConfirmationOfFundsResponse) o;
     return Objects.equals(this.consentStatus, consentsConfirmationOfFundsResponse.consentStatus) &&
-        Objects.equals(this.consentId, consentsConfirmationOfFundsResponse.consentId) &&
-        Objects.equals(this.scaMethods, consentsConfirmationOfFundsResponse.scaMethods) &&
-        Objects.equals(this.chosenScaMethod, consentsConfirmationOfFundsResponse.chosenScaMethod) &&
-        Objects.equals(this.challengeData, consentsConfirmationOfFundsResponse.challengeData) &&
-        Objects.equals(this._links, consentsConfirmationOfFundsResponse._links) &&
-        Objects.equals(this.psuMessage, consentsConfirmationOfFundsResponse.psuMessage);
+    Objects.equals(this.consentId, consentsConfirmationOfFundsResponse.consentId) &&
+    Objects.equals(this.scaMethods, consentsConfirmationOfFundsResponse.scaMethods) &&
+    Objects.equals(this.chosenScaMethod, consentsConfirmationOfFundsResponse.chosenScaMethod) &&
+    Objects.equals(this.challengeData, consentsConfirmationOfFundsResponse.challengeData) &&
+    Objects.equals(this._links, consentsConfirmationOfFundsResponse._links) &&
+    Objects.equals(this.psuMessage, consentsConfirmationOfFundsResponse.psuMessage) &&
+    Objects.equals(this.scaStatus, consentsConfirmationOfFundsResponse.scaStatus) &&
+    Objects.equals(this.tppMessage, consentsConfirmationOfFundsResponse.tppMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(consentStatus, consentId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage);
+    return Objects.hash(consentStatus, consentId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage, scaStatus, tppMessage);
   }
 
   @Override
@@ -254,6 +318,8 @@ public class ConsentsConfirmationOfFundsResponse   {
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+    sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
+    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

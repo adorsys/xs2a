@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.psd2.xs2a.service.validator.PisEndpointAccessCheckerService;
 import de.adorsys.psd2.xs2a.service.validator.PisPsuDataUpdateAuthorisationCheckerValidator;
@@ -564,8 +564,8 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         return new UpdatePaymentPsuDataPO(commonPaymentResponse, buildUpdateRequest(authorisationId, PSU_ID_DATA_1));
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest buildUpdateRequest(String authoridsationId, PsuIdData psuIdData) {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest result = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+    private PaymentAuthorisationParameters buildUpdateRequest(String authoridsationId, PsuIdData psuIdData) {
+        PaymentAuthorisationParameters result = new PaymentAuthorisationParameters();
         result.setAuthorisationId(authoridsationId);
         result.setPsuData(psuIdData);
         result.setPaymentService(PaymentType.SINGLE);
@@ -573,8 +573,8 @@ class UpdatePisCommonPaymentPsuDataValidatorTest {
         return result;
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest buildUpdateRequest(String authorisationId, PsuIdData psuIdData, String confirmationCode) {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest result = buildUpdateRequest(authorisationId, psuIdData);
+    private PaymentAuthorisationParameters buildUpdateRequest(String authorisationId, PsuIdData psuIdData, String confirmationCode) {
+        PaymentAuthorisationParameters result = buildUpdateRequest(authorisationId, psuIdData);
         result.setConfirmationCode(confirmationCode);
         return result;
     }

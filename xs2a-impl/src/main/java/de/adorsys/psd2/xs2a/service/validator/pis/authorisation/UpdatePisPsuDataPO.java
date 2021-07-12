@@ -16,9 +16,9 @@
 
 package de.adorsys.psd2.xs2a.service.validator.pis.authorisation;
 
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.validator.pis.PaymentTypeAndInfoProvider;
 
 public interface UpdatePisPsuDataPO extends PaymentTypeAndInfoProvider {
-    Xs2aUpdatePisCommonPaymentPsuDataRequest getUpdateRequest();
+    PaymentAuthorisationParameters getUpdateRequest();
 }

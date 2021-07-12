@@ -72,7 +72,7 @@ class ConsentAspectTest {
         ResponseObject<UpdateConsentPsuDataResponse> responseObject = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .body(updateConsentPsuDataResponse)
                                                                           .build();
-        aspect.invokeUpdateConsentPsuDataAspect(responseObject, new UpdateConsentPsuDataReq());
+        aspect.invokeUpdateConsentPsuDataAspect(responseObject, new ConsentAuthorisationsParameters());
         verify(consentAspectService).invokeUpdateConsentPsuDataAspect(responseObject);
     }
 

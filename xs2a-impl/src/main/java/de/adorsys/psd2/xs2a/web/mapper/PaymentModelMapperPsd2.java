@@ -101,7 +101,9 @@ public class PaymentModelMapperPsd2 {
         response201.setCurrencyConversionFee(amountModelMapper.mapToAmount(response.getCurrencyConversionFee()));
         response201.setEstimatedTotalAmount(amountModelMapper.mapToAmount(response.getEstimatedTotalAmount()));
         response201.setEstimatedInterbankSettlementAmount(amountModelMapper.mapToAmount(response.getEstimatedInterbankSettlementAmount()));
-
+        response201.setScaStatus(Optional.ofNullable(response.getScaStatus())
+                                  .map(coreObjectsMapper::mapToModelScaStatus)
+                                  .orElse(null));
         return response201;
     }
 
@@ -141,6 +143,10 @@ public class PaymentModelMapperPsd2 {
         response.setChallengeData(coreObjectsMapper.mapToChallengeData(cancelPaymentResponse.getChallengeData()));
         response._links(hrefLinkMapper.mapToLinksMap(cancelPaymentResponse.getLinks()));
         response.setTppMessages(tppMessageGenericMapper.mapToTppMessageGenericList(cancelPaymentResponse.getTppMessageInformation()));
+        response.setPsuMessage(cancelPaymentResponse.getPsuMessage());
+        response.setScaStatus(Optional.ofNullable(cancelPaymentResponse.getScaStatus())
+                                  .map(coreObjectsMapper::mapToModelScaStatus)
+                                  .orElse(null));
         return response;
     }
 

@@ -48,7 +48,7 @@ public class ConsentAspect {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.ConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
-    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
+    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdateConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, ConsentAuthorisationsParameters updatePsuData) {
         return consentAspectService.invokeUpdateConsentPsuDataAspect(result);
     }
 
@@ -63,7 +63,7 @@ public class ConsentAspect {
     }
 
     @AfterReturning(pointcut = "execution(* de.adorsys.psd2.xs2a.service.PiisConsentService.updateConsentPsuData(..)) && args(updatePsuData)", returning = "result", argNames = "result,updatePsuData")
-    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdatePiisConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, UpdateConsentPsuDataReq updatePsuData) {
+    public ResponseObject<UpdateConsentPsuDataResponse> invokeUpdatePiisConsentPsuDataAspect(ResponseObject<UpdateConsentPsuDataResponse> result, ConsentAuthorisationsParameters updatePsuData) {
         return consentAspectService.invokeUpdatePiisConsentPsuDataAspect(result);
     }
 }

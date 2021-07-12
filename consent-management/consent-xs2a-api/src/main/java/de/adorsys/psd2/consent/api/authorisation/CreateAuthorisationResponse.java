@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.authorisation;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import io.swagger.annotations.ApiModel;
@@ -37,4 +38,5 @@ public class CreateAuthorisationResponse {
 
     private String internalRequestId;
     private PsuIdData psuIdData;
+    private ScaApproach scaApproach;
 }

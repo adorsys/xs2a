@@ -21,9 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.profile.NotificationSupportedMode;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +47,7 @@ public class CreateConsentResponse {
     @JsonProperty("_links")
     private Links links = new Links();
 
-    private final String psuMessage;
+    private String psuMessage;
 
     private final boolean multilevelScaRequired;
 
@@ -58,4 +61,9 @@ public class CreateConsentResponse {
     private final List<NotificationSupportedMode> tppNotificationContentPreferred;
 
     private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
+
+    @Nullable
+    private ScaStatus scaStatus;
+    @Nullable
+    private ScaApproach scaApproach;
 }

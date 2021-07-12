@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.validator.TppNotificationDataValidator;
 import de.adorsys.psd2.xs2a.service.validator.TppUriHeaderValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.CommonConsentObject;
@@ -70,7 +70,7 @@ public class ConsentValidationService {
         return createConsentAuthorisationValidator.validate(createConsentAuthorisationObject);
     }
 
-    public ValidationResult validateConsentPsuDataOnUpdate(AisConsent consent, UpdateConsentPsuDataReq request) {
+    public ValidationResult validateConsentPsuDataOnUpdate(AisConsent consent, ConsentAuthorisationsParameters request) {
         return updateConsentPsuDataValidator.validate(new UpdateConsentPsuDataRequestObject(consent, request));
     }
 

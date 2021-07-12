@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.validator.AisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.dto.UpdateConsentPsuDataRequestObject;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
@@ -284,7 +284,7 @@ class UpdateConsentPsuDataValidatorTest {
     void validate_validationFailure_wrongAuthorisationStageDataProvided_received() {
         // Given
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-received-status.json", AisConsent.class);
-        UpdateConsentPsuDataReq updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        ConsentAuthorisationsParameters updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
 
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent))
             .thenReturn(ValidationResult.valid());
@@ -313,7 +313,7 @@ class UpdateConsentPsuDataValidatorTest {
         // Given
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-psu-identified-status.json", AisConsent.class);
 
-        UpdateConsentPsuDataReq updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        ConsentAuthorisationsParameters updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
 
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent))
             .thenReturn(ValidationResult.valid());
@@ -342,7 +342,7 @@ class UpdateConsentPsuDataValidatorTest {
         // Given
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-psu-authenticated-status.json", AisConsent.class);
 
-        UpdateConsentPsuDataReq updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        ConsentAuthorisationsParameters updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
 
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent))
             .thenReturn(ValidationResult.valid());
@@ -371,7 +371,7 @@ class UpdateConsentPsuDataValidatorTest {
         // Given
         AisConsent aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-sca-method-selected-status.json", AisConsent.class);
 
-        UpdateConsentPsuDataReq updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        ConsentAuthorisationsParameters updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
 
         when(aisAuthorisationValidator.validate(AUTHORISATION_ID, aisConsent))
             .thenReturn(ValidationResult.valid());
@@ -399,7 +399,7 @@ class UpdateConsentPsuDataValidatorTest {
         // Given
         AisConsent aisConsent =
             jsonReader.getObjectFromFile("json/service/ais-consent-sca-method-selected-status.json", AisConsent.class);
-        UpdateConsentPsuDataReq updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
+        ConsentAuthorisationsParameters updateRequest = buildUpdateRequest(AUTHORISATION_ID, PSU_ID_DATA_1);
         UpdateConsentPsuDataRequestObject updateConsentPsuDataRequestObject =
             new UpdateConsentPsuDataRequestObject(aisConsent, updateRequest);
 
@@ -416,15 +416,15 @@ class UpdateConsentPsuDataValidatorTest {
         verifyNoInteractions(authorisationStageCheckValidator);
     }
 
-    private UpdateConsentPsuDataReq buildUpdateRequest(String authorisationId, PsuIdData psuIdData) {
-        UpdateConsentPsuDataReq result = new UpdateConsentPsuDataReq();
+    private ConsentAuthorisationsParameters buildUpdateRequest(String authorisationId, PsuIdData psuIdData) {
+        ConsentAuthorisationsParameters result = new ConsentAuthorisationsParameters();
         result.setAuthorizationId(authorisationId);
         result.setPsuData(psuIdData);
         return result;
     }
 
-    private UpdateConsentPsuDataReq buildUpdateRequest(String authorisationId, PsuIdData psuIdData, String confirmationCode) {
-        UpdateConsentPsuDataReq result = buildUpdateRequest(authorisationId, psuIdData);
+    private ConsentAuthorisationsParameters buildUpdateRequest(String authorisationId, PsuIdData psuIdData, String confirmationCode) {
+        ConsentAuthorisationsParameters result = buildUpdateRequest(authorisationId, psuIdData);
         result.setConfirmationCode(confirmationCode);
         return result;
     }

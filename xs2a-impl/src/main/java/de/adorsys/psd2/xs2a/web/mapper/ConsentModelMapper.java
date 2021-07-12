@@ -30,7 +30,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppNotificationData;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.BooleanUtils;
@@ -50,6 +50,7 @@ public class ConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final ScaMethodsMapper scaMethodsMapper;
     private final TppMessageGenericMapper tppMessageGenericMapper;
+    private final CoreObjectsMapper coreObjectsMapper;
 
     public CreateConsentReq mapToCreateConsentReq(Consents consent, TppRedirectUri tppRedirectUri,
                                                   TppNotificationData tppNotificationData, String tppBrandLoggingInformation,
@@ -93,6 +94,10 @@ public class ConsentModelMapper {
                                 .consentStatus(ConsentStatus.fromValue(cnst.getConsentStatus()))
                                 .consentId(cnst.getConsentId())
                                 .scaMethods(scaMethodsMapper.mapToScaMethods(cnst.getScaMethods()))
+                                .scaStatus(Optional.ofNullable(cnst.getScaStatus())
+                                               .map(coreObjectsMapper::mapToModelScaStatus)
+                                               .orElse(null)
+                                )
                                 ._links(hrefLinkMapper.mapToLinksMap(cnst.getLinks()))
                                 .psuMessage(cnst.getPsuMessage())
                                 .tppMessages(tppMessageGenericMapper.mapToTppMessageGenericList(cnst.getTppMessageInformation()))
@@ -221,8 +226,8 @@ public class ConsentModelMapper {
         return xs2aObjectMapper.convertValue(reference, AccountReference.class);
     }
 
-    public UpdateConsentPsuDataReq mapToUpdatePsuData(PsuIdData psuData, String consentId, String authorizationId, Map body) {
-        UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
+    public ConsentAuthorisationsParameters mapToUpdatePsuData(PsuIdData psuData, String consentId, String authorizationId, Map body) {
+        ConsentAuthorisationsParameters updatePsuData = new ConsentAuthorisationsParameters();
         updatePsuData.setPsuData(psuData);
         updatePsuData.setConsentId(consentId);
         updatePsuData.setAuthorizationId(authorizationId);
@@ -257,8 +262,8 @@ public class ConsentModelMapper {
                    .orElseGet(Authorisations::new);
     }
 
-    public Xs2aUpdatePisCommonPaymentPsuDataRequest mapToPisUpdatePsuData(PsuIdData psuData, String paymentId, String authorisationId, PaymentType paymentService, String paymentProduct, Map body) {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+    public PaymentAuthorisationParameters mapToPisUpdatePsuData(PsuIdData psuData, String paymentId, String authorisationId, PaymentType paymentService, String paymentProduct, Map body) {
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         request.setPsuData(psuData);
         request.setPaymentId(paymentId);
         request.setAuthorisationId(authorisationId);

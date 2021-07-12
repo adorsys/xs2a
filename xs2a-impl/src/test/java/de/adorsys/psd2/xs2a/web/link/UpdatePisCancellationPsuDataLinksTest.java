@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ class UpdatePisCancellationPsuDataLinksTest {
     private ScaApproachResolver scaApproachResolver;
 
     private UpdatePisCancellationPsuDataLinks links;
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest request;
+    private PaymentAuthorisationParameters request;
     private AuthenticationObject authenticationObject;
 
     private Links expectedLinks;
@@ -55,7 +55,7 @@ class UpdatePisCancellationPsuDataLinksTest {
         expectedLinks = new AbstractLinks(HTTP_URL);
 
         JsonReader jsonReader = new JsonReader();
-        request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        request = new PaymentAuthorisationParameters();
         request.setPaymentService(SINGLE);
         request.setPaymentProduct(PAYMENT_PRODUCT);
         request.setPaymentId(PAYMENT_ID);

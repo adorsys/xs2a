@@ -63,7 +63,7 @@ class AuthorisationControllerTest {
     private AuthorisationServiceEncrypted authorisationServiceEncrypted;
 
     private MockMvc mockMvc;
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -77,7 +77,7 @@ class AuthorisationControllerTest {
         CreateAuthorisationRequest request = jsonReader.getObjectFromFile("json/controller/create-authorisation-request.json", CreateAuthorisationRequest.class);
         when(authorisationServiceEncrypted.createAuthorisation(new AuthorisationParentHolder(AuthorisationType.CONSENT, PARENT_ID), request))
             .thenReturn(CmsResponse.<CreateAuthorisationResponse>builder()
-                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, null, null, null)).build());
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, null, null, null, null)).build());
 
         mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromPath("/api/v1/CONSENT/5c2d5564-367f-4e03-a621-6bef76fa4208/authorisations")
                                                         .buildAndExpand(AuthorisationType.CONSENT.name().toLowerCase(), AUTHORISATION_ID)

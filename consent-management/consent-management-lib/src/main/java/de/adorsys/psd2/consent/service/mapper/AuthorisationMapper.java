@@ -23,7 +23,6 @@ import de.adorsys.psd2.consent.domain.AuthorisationTemplateEntity;
 import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -52,16 +51,10 @@ public interface AuthorisationMapper {
                                                            long redirectUrlExpirationTimeMs, long authorisationExpirationTimeMs) {
         AuthorisationEntity entity = new AuthorisationEntity();
         entity.setType(authorisationType);
-
-        ScaStatus scaStatus = ScaStatus.RECEIVED;
-        if (psuDataOptional.isPresent()) {
-            entity.setPsuData(psuDataOptional.get());
-            scaStatus = ScaStatus.PSUIDENTIFIED;
-        }
-
-        entity.setExternalId(UUID.randomUUID().toString());
+        psuDataOptional.ifPresent(entity::setPsuData);
+        entity.setExternalId(Optional.ofNullable(request.getAuthorisationId()).orElse(UUID.randomUUID().toString()));
         entity.setParentExternalId(authorisationParent.getExternalId());
-        entity.setScaStatus(scaStatus);
+        entity.setScaStatus(request.getScaStatus());
         entity.setRedirectUrlExpirationTimestamp(OffsetDateTime.now().plus(redirectUrlExpirationTimeMs, ChronoUnit.MILLIS));
         entity.setAuthorisationExpirationTimestamp(OffsetDateTime.now().plus(authorisationExpirationTimeMs, ChronoUnit.MILLIS));
         entity.setScaApproach(request.getScaApproach());

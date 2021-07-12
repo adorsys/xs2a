@@ -62,11 +62,13 @@ class AuthorisationModelMapperTest {
     private ScaMethodsMapper mockScaMethodsMapper;
     @Autowired
     private ChosenScaMethodMapper mockChosenScaMethodMapper;
+    @Autowired
+    private TppMessageGenericMapper tppMessageGenericMapper;
 
     @Mock
     private CancellationAuthorisationResponse cancellationAuthorisationResponse;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -302,6 +304,11 @@ class AuthorisationModelMapperTest {
         @Bean
         ScaMethodsMapper mockScaMethodsMapper() {
             return mock(ScaMethodsMapper.class);
+        }
+
+        @Bean
+        TppMessageGenericMapper mockTppMessageGenericMapper() {
+            return mock(TppMessageGenericMapper.class);
         }
 
         @Bean

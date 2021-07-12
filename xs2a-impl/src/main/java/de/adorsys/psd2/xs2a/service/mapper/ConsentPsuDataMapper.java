@@ -18,8 +18,8 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import org.springframework.stereotype.Component;
 
@@ -27,11 +27,11 @@ import java.util.Optional;
 
 @Component
 public class ConsentPsuDataMapper {
-    public UpdateConsentPsuDataReq mapToUpdateConsentPsuDataReq(UpdateAuthorisationRequest request,
-                                                                AuthorisationProcessorResponse response) {
+    public ConsentAuthorisationsParameters mapToUpdateConsentPsuDataReq(CommonAuthorisationParameters request,
+                                                                        AuthorisationProcessorResponse response) {
         return Optional.ofNullable(response)
                    .map(data -> {
-                       UpdateConsentPsuDataReq req = new UpdateConsentPsuDataReq();
+                       ConsentAuthorisationsParameters req = new ConsentAuthorisationsParameters();
                        req.setPsuData(response.getPsuData());
                        req.setConsentId(request.getBusinessObjectId());
                        req.setAuthorizationId(request.getAuthorisationId());

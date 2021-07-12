@@ -22,9 +22,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Common authorisation response to be used on creating or updating cancellation authorisation
  */
-public interface CancellationAuthorisationResponse {
-    String getAuthorisationId();
-
+public interface CancellationAuthorisationResponse extends AuthorisationResponse {
     ScaStatus getScaStatus();
 
     @NotNull
@@ -33,4 +31,6 @@ public interface CancellationAuthorisationResponse {
     default String getInternalRequestId() {
         return "";
     }
+
+    String getPsuMessage();
 }

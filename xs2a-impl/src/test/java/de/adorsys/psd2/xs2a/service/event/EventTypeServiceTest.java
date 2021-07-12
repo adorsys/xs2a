@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.event;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -38,7 +38,7 @@ class EventTypeServiceTest {
             EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED,
             EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_IDENTIFICATION_REQUEST_RECEIVED
         ).forEach((key, value) -> {
-            UpdateAuthorisationRequest updateAuthorisationRequest = buildUpdateAuthorisationRequest_Identification();
+            CommonAuthorisationParameters updateAuthorisationRequest = buildUpdateAuthorisationRequest_Identification();
             //When
             EventType eventType = eventTypeService.getEventType(updateAuthorisationRequest, key);
             //Then
@@ -55,7 +55,7 @@ class EventTypeServiceTest {
             EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED,
             EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_AUTHENTICATION_REQUEST_RECEIVED
         ).forEach((key, value) -> {
-            UpdateAuthorisationRequest updateAuthorisationRequest = buildUpdateAuthorisationRequest_Authentication();
+            CommonAuthorisationParameters updateAuthorisationRequest = buildUpdateAuthorisationRequest_Authentication();
             //When
             EventType eventType = eventTypeService.getEventType(updateAuthorisationRequest, key);
             //Then
@@ -72,7 +72,7 @@ class EventTypeServiceTest {
             EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED,
             EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_SELECT_AUTHENTICATION_METHOD_REQUEST_RECEIVED
         ).forEach((key, value) -> {
-            UpdateAuthorisationRequest updateAuthorisationRequest = buildUpdateAuthorisationRequest_SelectAuthenticationMethod();
+            CommonAuthorisationParameters updateAuthorisationRequest = buildUpdateAuthorisationRequest_SelectAuthenticationMethod();
             //When
             EventType eventType = eventTypeService.getEventType(updateAuthorisationRequest, key);
             //Then
@@ -89,7 +89,7 @@ class EventTypeServiceTest {
             EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_TAN_REQUEST_RECEIVED,
             EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_TAN_REQUEST_RECEIVED
         ).forEach((key, value) -> {
-            UpdateAuthorisationRequest updateAuthorisationRequest = buildUpdateAuthorisationRequest_Tan();
+            CommonAuthorisationParameters updateAuthorisationRequest = buildUpdateAuthorisationRequest_Tan();
             //When
             EventType eventType = eventTypeService.getEventType(updateAuthorisationRequest, key);
             //Then
@@ -106,7 +106,7 @@ class EventTypeServiceTest {
             EventAuthorisationType.PIS, EventType.UPDATE_PAYMENT_AUTHORISATION_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED,
             EventAuthorisationType.PIS_CANCELLATION, EventType.UPDATE_PAYMENT_CANCELLATION_PSU_DATA_CONFIRMATION_CODE_REQUEST_RECEIVED
         ).forEach((key, value) -> {
-            UpdateAuthorisationRequest updateAuthorisationRequest = buildUpdateAuthorisationRequest_ConfirmationCode();
+            CommonAuthorisationParameters updateAuthorisationRequest = buildUpdateAuthorisationRequest_ConfirmationCode();
             //When
             EventType eventType = eventTypeService.getEventType(updateAuthorisationRequest, key);
             //Then
@@ -114,8 +114,8 @@ class EventTypeServiceTest {
         });
     }
 
-    private UpdateAuthorisationRequest buildUpdateAuthorisationRequest_Identification() {
-        return new UpdateAuthorisationRequest() {
+    private CommonAuthorisationParameters buildUpdateAuthorisationRequest_Identification() {
+        return new CommonAuthorisationParameters() {
             @Override
             public PsuIdData getPsuData() {
                 return new PsuIdData();
@@ -163,8 +163,8 @@ class EventTypeServiceTest {
         };
     }
 
-    private UpdateAuthorisationRequest buildUpdateAuthorisationRequest_Authentication() {
-        return new UpdateAuthorisationRequest() {
+    private CommonAuthorisationParameters buildUpdateAuthorisationRequest_Authentication() {
+        return new CommonAuthorisationParameters() {
             @Override
             public PsuIdData getPsuData() {
                 return null;
@@ -212,8 +212,8 @@ class EventTypeServiceTest {
         };
     }
 
-    private UpdateAuthorisationRequest buildUpdateAuthorisationRequest_SelectAuthenticationMethod() {
-        return new UpdateAuthorisationRequest() {
+    private CommonAuthorisationParameters buildUpdateAuthorisationRequest_SelectAuthenticationMethod() {
+        return new CommonAuthorisationParameters() {
             @Override
             public PsuIdData getPsuData() {
                 return null;
@@ -261,8 +261,8 @@ class EventTypeServiceTest {
         };
     }
 
-    private UpdateAuthorisationRequest buildUpdateAuthorisationRequest_Tan() {
-        return new UpdateAuthorisationRequest() {
+    private CommonAuthorisationParameters buildUpdateAuthorisationRequest_Tan() {
+        return new CommonAuthorisationParameters() {
             @Override
             public PsuIdData getPsuData() {
                 return null;
@@ -310,8 +310,8 @@ class EventTypeServiceTest {
         };
     }
 
-    private UpdateAuthorisationRequest buildUpdateAuthorisationRequest_ConfirmationCode() {
-        return new UpdateAuthorisationRequest() {
+    private CommonAuthorisationParameters buildUpdateAuthorisationRequest_ConfirmationCode() {
+        return new CommonAuthorisationParameters() {
             @Override
             public PsuIdData getPsuData() {
                 return null;

@@ -21,10 +21,11 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import org.junit.jupiter.api.Test;
@@ -47,6 +48,7 @@ class DecoupledPisScaAuthorisationServiceTest {
     private static final String AUTHORISATION_ID = "ad746cb3-a01b-4196-a6b9-40b0e4cd2350";
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("psu Id", "psuId Type", "psu Corporate Id", "psuCorporate Id Type", "psuIp Address");
 
     @InjectMocks
@@ -63,18 +65,25 @@ class DecoupledPisScaAuthorisationServiceTest {
 
     @Test
     void createCommonPaymentAuthorisation() {
-        CreateAuthorisationResponse authorisationResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, "2344565", PSU_ID_DATA);
-        when(authorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA)).thenReturn(authorisationResponse);
+        CreateAuthorisationResponse authorisationResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, "2344565", PSU_ID_DATA, SCA_APPROACH);
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
+        when(authorisationService.createPisAuthorisation(xs2aCreateAuthorisationRequest)).thenReturn(authorisationResponse);
 
-        decoupledPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA);
+        decoupledPisScaAuthorisationService.createCommonPaymentAuthorisation(xs2aCreateAuthorisationRequest, PaymentType.SINGLE);
 
-        verify(authorisationService, times(1)).createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA);
+        verify(authorisationService, times(1)).createPisAuthorisation(xs2aCreateAuthorisationRequest);
         verify(pisCommonPaymentMapper, times(1)).mapToXsa2CreatePisAuthorisationResponse(authorisationResponse, PaymentType.SINGLE);
     }
 
     @Test
     void updateCommonPaymentPsuData() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
 
         decoupledPisScaAuthorisationService.updateCommonPaymentPsuData(request);
         verify(authorisationService, times(1)).updatePisAuthorisation(request, ScaApproach.DECOUPLED);
@@ -82,7 +91,7 @@ class DecoupledPisScaAuthorisationServiceTest {
 
     @Test
     void updateAuthorisation() {
-        UpdateAuthorisationRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        CommonAuthorisationParameters request = new PaymentAuthorisationParameters();
         AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
 
         decoupledPisScaAuthorisationService.updateAuthorisation(request, response);
@@ -91,7 +100,7 @@ class DecoupledPisScaAuthorisationServiceTest {
 
     @Test
     void updateCancellationAuthorisation() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
         AuthorisationProcessorResponse response = new AuthorisationProcessorResponse();
 
         decoupledPisScaAuthorisationService.updateCancellationAuthorisation(request, response);
@@ -100,18 +109,25 @@ class DecoupledPisScaAuthorisationServiceTest {
 
     @Test
     void createCommonPaymentCancellationAuthorisation() {
-        CreateAuthorisationResponse authorisationResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, "2344565", PSU_ID_DATA);
-        when(authorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA)).thenReturn(authorisationResponse);
+        CreateAuthorisationResponse authorisationResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, "2344565", PSU_ID_DATA, SCA_APPROACH);
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
+        when(authorisationService.createPisAuthorisationCancellation(xs2aCreateAuthorisationRequest)).thenReturn(authorisationResponse);
 
-        decoupledPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PaymentType.SINGLE, PSU_ID_DATA);
+        decoupledPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(xs2aCreateAuthorisationRequest, PaymentType.SINGLE);
 
-        verify(authorisationService, times(1)).createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA);
+        verify(authorisationService, times(1)).createPisAuthorisationCancellation(xs2aCreateAuthorisationRequest);
         verify(pisCommonPaymentMapper, times(1)).mapToXs2aCreatePisCancellationAuthorisationResponse(authorisationResponse, PaymentType.SINGLE);
     }
 
     @Test
     void updateCommonPaymentCancellationPsuData() {
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        PaymentAuthorisationParameters request = new PaymentAuthorisationParameters();
 
         decoupledPisScaAuthorisationService.updateCommonPaymentCancellationPsuData(request);
         verify(authorisationService, times(1)).updatePisCancellationAuthorisation(request, ScaApproach.DECOUPLED);

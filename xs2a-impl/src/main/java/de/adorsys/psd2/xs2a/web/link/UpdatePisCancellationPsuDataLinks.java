@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.HrefType;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 
 public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {//NOSONAR
@@ -28,7 +28,7 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {//NOSONAR
     private final ScaApproachResolver scaApproachResolver;
 
     public UpdatePisCancellationPsuDataLinks(String httpUrl, ScaApproachResolver scaApproachResolver,
-                                             Xs2aUpdatePisCommonPaymentPsuDataRequest request, ScaStatus scaStatus,
+                                             PaymentAuthorisationParameters request, ScaStatus scaStatus,
                                              AuthenticationObject chosenScaMethod) {
         super(httpUrl);
         this.scaApproachResolver = scaApproachResolver;
@@ -45,12 +45,12 @@ public class UpdatePisCancellationPsuDataLinks extends AbstractLinks {//NOSONAR
         }
     }
 
-    private HrefType buildAuthorisationLink(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+    private HrefType buildAuthorisationLink(PaymentAuthorisationParameters request) {
         return buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, request.getPaymentService().getValue(),
                          request.getPaymentProduct(), request.getPaymentId(), request.getAuthorisationId());
     }
 
-    private boolean isDecoupledScaApproach(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+    private boolean isDecoupledScaApproach(PaymentAuthorisationParameters request) {
         return scaApproachResolver.getScaApproach(request.getAuthorisationId()) == ScaApproach.DECOUPLED;
     }
 }

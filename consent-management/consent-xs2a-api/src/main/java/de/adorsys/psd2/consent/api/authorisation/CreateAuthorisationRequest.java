@@ -18,6 +18,7 @@ package de.adorsys.psd2.consent.api.authorisation;
 
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -31,11 +32,17 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "Create authorisation request", value = "CreateAuthorisationRequest")
 public class CreateAuthorisationRequest {
 
+    @ApiModelProperty(value = "Authorisation id")
+    private String authorisationId;
+
     @ApiModelProperty(value = "Corresponding PSU", required = true)
     private PsuIdData psuData;
 
     @ApiModelProperty(value = "SCA approach")
     private ScaApproach scaApproach;
+
+    @ApiModelProperty(value = "SCA status")
+    private ScaStatus scaStatus;
 
     @ApiModelProperty(value = "TPP redirect URIs")
     private TppRedirectUri tppRedirectURIs;

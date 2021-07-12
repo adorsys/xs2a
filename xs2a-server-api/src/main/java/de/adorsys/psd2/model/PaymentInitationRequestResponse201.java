@@ -1,24 +1,30 @@
 package de.adorsys.psd2.model;
 
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import de.adorsys.psd2.model.Amount;
+import de.adorsys.psd2.model.ChallengeData;
+import de.adorsys.psd2.model.ChosenScaMethod;
+import de.adorsys.psd2.model.ScaMethods;
+import de.adorsys.psd2.model.ScaStatus;
+import de.adorsys.psd2.model.TppMessage201PaymentInitiation;
+import de.adorsys.psd2.model.TransactionStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 
 /**
  * Body of the response for a successful payment initiation request.
  */
 @ApiModel(description = "Body of the response for a successful payment initiation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-06T13:39:46.654857+03:00[Europe/Kiev]")
 
 public class PaymentInitationRequestResponse201   {
   @JsonProperty("transactionStatus")
@@ -60,6 +66,9 @@ public class PaymentInitationRequestResponse201   {
   @JsonProperty("tppMessages")
   @Valid
   private List<TppMessage201PaymentInitiation> tppMessages = null;
+
+  @JsonProperty("scaStatus")
+  private ScaStatus scaStatus = null;
 
   public PaymentInitationRequestResponse201 transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -368,6 +377,29 @@ public class PaymentInitationRequestResponse201   {
     this.tppMessages = tppMessages;
   }
 
+  public PaymentInitationRequestResponse201 scaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+    return this;
+  }
+
+  /**
+   * Get scaStatus
+   * @return scaStatus
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("scaStatus")
+  public ScaStatus getScaStatus() {
+    return scaStatus;
+  }
+
+  public void setScaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -389,12 +421,13 @@ public class PaymentInitationRequestResponse201   {
     Objects.equals(this.challengeData, paymentInitationRequestResponse201.challengeData) &&
     Objects.equals(this._links, paymentInitationRequestResponse201._links) &&
     Objects.equals(this.psuMessage, paymentInitationRequestResponse201.psuMessage) &&
-    Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages);
+    Objects.equals(this.tppMessages, paymentInitationRequestResponse201.tppMessages) &&
+    Objects.equals(this.scaStatus, paymentInitationRequestResponse201.scaStatus);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(transactionStatus, paymentId, transactionFees, currencyConversionFee, estimatedTotalAmount, estimatedInterbankSettlementAmount, transactionFeeIndicator, scaMethods, chosenScaMethod, challengeData, _links, psuMessage, tppMessages);
+    return Objects.hash(transactionStatus, paymentId, transactionFees, currencyConversionFee, estimatedTotalAmount, estimatedInterbankSettlementAmount, transactionFeeIndicator, scaMethods, chosenScaMethod, challengeData, _links, psuMessage, tppMessages, scaStatus);
   }
 
   @Override
@@ -415,6 +448,7 @@ public class PaymentInitationRequestResponse201   {
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
+    sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
     sb.append("}");
     return sb.toString();
   }

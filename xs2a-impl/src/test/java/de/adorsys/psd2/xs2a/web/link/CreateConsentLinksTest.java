@@ -66,7 +66,7 @@ class CreateConsentLinksTest {
     void setUp() {
         expectedLinks = new AbstractLinks(HTTP_URL);
 
-        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, null, true, INTERNAL_REQUEST_ID, null);
+        response = new CreateConsentResponse(null, CONSENT_ID, null, null, null, true, INTERNAL_REQUEST_ID, null);
         response.setAuthorizationId(AUTHORISATION_ID);
     }
 
@@ -77,12 +77,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(true)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -100,12 +100,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(true)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(true)
+                                            .isSigningBasketModeActive(true)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -123,12 +123,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -147,12 +147,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -171,12 +171,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(true)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -194,12 +194,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(true)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(true)
+                                            .isSigningBasketModeActive(true)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -217,12 +217,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -241,12 +241,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, null);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -265,12 +265,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(true)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, ScaRedirectFlow.REDIRECT);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -288,12 +288,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, ScaRedirectFlow.OAUTH);
 
         expectedLinks.setScaRedirect(new HrefType(null));
@@ -306,7 +306,7 @@ class CreateConsentLinksTest {
     }
 
     @Test
-    void scaApproach_isNull(){
+    void scaApproach_isNull() {
         // Given
         response.setAuthorizationId(null);
 
@@ -336,12 +336,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(false)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, ScaRedirectFlow.REDIRECT);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
@@ -363,12 +363,12 @@ class CreateConsentLinksTest {
 
         // When
         LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(true)
-            .instanceId("")
-            .build();
+                                            .httpUrl(HTTP_URL)
+                                            .isExplicitMethod(false)
+                                            .isSigningBasketModeActive(false)
+                                            .isAuthorisationConfirmationRequestMandated(true)
+                                            .instanceId("")
+                                            .build();
         links = new CreateConsentLinks(linkParameters, scaApproachResolver, response, redirectLinkBuilder, redirectIdService, ScaRedirectFlow.REDIRECT);
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));

@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,10 +34,12 @@ import java.util.Optional;
 public class Xs2aConsentAuthorisationMapper {
     private final TppRedirectUriMapper tppRedirectUriMapper;
 
-    public CreateAuthorisationRequest mapToAuthorisationRequest(ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {
+    public CreateAuthorisationRequest mapToAuthorisationRequest(String authorisationId, ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
                        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
+                       consentAuthorization.setScaStatus(scaStatus);
+                       consentAuthorization.setAuthorisationId(authorisationId);
                        consentAuthorization.setPsuData(psuData);
                        consentAuthorization.setScaApproach(scaApproach);
                        consentAuthorization.setTppRedirectURIs(tppRedirectUriMapper.mapToTppRedirectUri(tppRedirectURI,tppNOKRedirectURI));
@@ -46,7 +48,7 @@ public class Xs2aConsentAuthorisationMapper {
                    .orElse(null);
     }
 
-    public UpdateAuthorisationRequest mapToAuthorisationRequest(UpdateConsentPsuDataReq updatePsuData) {
+    public UpdateAuthorisationRequest mapToAuthorisationRequest(ConsentAuthorisationsParameters updatePsuData) {
         return Optional.ofNullable(updatePsuData)
                    .map(data -> {
                        UpdateAuthorisationRequest consentAuthorization = new UpdateAuthorisationRequest();

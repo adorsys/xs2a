@@ -32,7 +32,7 @@ import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
@@ -77,10 +77,10 @@ public class PisAuthorisationConfirmationService {
      * - data is checked at XS2A side, we compare the data from DB with the incoming data;
      * - data is transferred to SPI level and checking should be implemented at ASPSP side.
      *
-     * @param request {@link Xs2aUpdatePisCommonPaymentPsuDataRequest} with all payment information.
+     * @param request {@link PaymentAuthorisationParameters} with all payment information.
      * @return {@link Xs2aUpdatePisCommonPaymentPsuDataResponse} with new authorisation status.
      */
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse processAuthorisationConfirmation(Xs2aUpdatePisCommonPaymentPsuDataRequest request) {
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse processAuthorisationConfirmation(PaymentAuthorisationParameters request) {
         String paymentId = request.getPaymentId();
         String authorisationId = request.getAuthorisationId();
 
@@ -107,14 +107,14 @@ public class PisAuthorisationConfirmationService {
                    : buildScaConfirmationCodeErrorResponse(paymentId, authorisationId, request.getPsuData());
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse processAuthorisationConfirmationInternal(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse processAuthorisationConfirmationInternal(PaymentAuthorisationParameters request,
                                                                                                Authorisation authorisationResponse) {
         return aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()
                    ? checkAuthorisationConfirmationXs2a(request, authorisationResponse)
                    : checkAuthorisationConfirmationOnSpi(request, authorisationResponse);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse checkAuthorisationConfirmationXs2a(Xs2aUpdatePisCommonPaymentPsuDataRequest request, Authorisation authorisation) {
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse checkAuthorisationConfirmationXs2a(PaymentAuthorisationParameters request, Authorisation authorisation) {
         SpiAspspConsentDataProvider aspspConsentDataProvider = aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(request.getPaymentId());
         boolean codeCorrect = pisCheckAuthorisationConfirmationService.checkConfirmationCodeInternally(request.getAuthorisationId(),
                                                                                                        request.getConfirmationCode(),
@@ -149,7 +149,7 @@ public class PisAuthorisationConfirmationService {
         return response;
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse resolveResponse(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse resolveResponse(PaymentAuthorisationParameters request,
                                                                       boolean codeCorrect,
                                                                       SpiPaymentConfirmationCodeValidationResponse spiResponse,
                                                                       Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
@@ -158,7 +158,7 @@ public class PisAuthorisationConfirmationService {
                    : buildScaConfirmationCodeErrorResponse(request.getPaymentId(), request.getAuthorisationId(), request.getPsuData());
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildResponseWithCurrencyConversionInfo(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse buildResponseWithCurrencyConversionInfo(PaymentAuthorisationParameters request,
                                                                                               SpiPaymentConfirmationCodeValidationResponse spiConfirmationResponse,
                                                                                               Xs2aCurrencyConversionInfo xs2aCurrencyConversionInfo) {
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(
@@ -166,7 +166,7 @@ public class PisAuthorisationConfirmationService {
             request.getPsuData(), xs2aCurrencyConversionInfo);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse checkAuthorisationConfirmationOnSpi(Xs2aUpdatePisCommonPaymentPsuDataRequest request,
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse checkAuthorisationConfirmationOnSpi(PaymentAuthorisationParameters request,
                                                                                           Authorisation authorisationResponse) {
         SpiContextData contextData = spiContextDataProvider.provideWithPsuIdData(request.getPsuData());
 

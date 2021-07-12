@@ -34,6 +34,8 @@ public class PiisConsentModelMapper {
     private final HrefLinkMapper hrefLinkMapper;
     private final AccountModelMapper accountModelMapper;
     private final ConsentModelMapper consentModelMapper;
+    private final CoreObjectsMapper coreObjectsMapper;
+    private final TppMessageGenericMapper tppMessageGenericMapper;
 
     public CreatePiisConsentRequest toCreatePiisConsentRequest(ConsentsConfirmationOfFunds consentsConfirmationOfFunds) {
         return Optional.ofNullable(consentsConfirmationOfFunds)
@@ -56,6 +58,10 @@ public class PiisConsentModelMapper {
                 consentsConfirmationOfFundsResponse.setConsentStatus(ConsentStatus.fromValue(response.getConsentStatus()));
                 consentsConfirmationOfFundsResponse.setLinks(hrefLinkMapper.mapToLinksMap(response.getLinks()));
                 consentsConfirmationOfFundsResponse.setPsuMessage(response.getPsuMessage());
+                consentsConfirmationOfFundsResponse.setTppMessage(tppMessageGenericMapper.mapToTppMessageGenericList(response.getTppMessageInformation()));
+                consentsConfirmationOfFundsResponse.setScaStatus(Optional.ofNullable(response.getScaStatus())
+                                                                     .map(coreObjectsMapper::mapToModelScaStatus)
+                                                                     .orElse(null));
                 return consentsConfirmationOfFundsResponse;
             }
         ).orElse(null);

@@ -401,7 +401,7 @@ class ConsentControllerTest {
         if (isEmpty(consentId)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
         }
-        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, null, false, INTERNAL_REQUEST_ID, null);
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), consentId, null, null, null, false, INTERNAL_REQUEST_ID, null);
         Links links = new Links();
         links.setSelf(new HrefType("type"));
         consentResponse.setLinks(links);
@@ -412,7 +412,7 @@ class ConsentControllerTest {
         if (isEmpty(CONSENT_ID)) {
             return ResponseObject.<CreateConsentResponse>builder().fail(MESSAGE_ERROR_AIS_404).build();
         }
-        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), ConsentControllerTest.CONSENT_ID, null, null, null, null, false, INTERNAL_REQUEST_ID, null);
+        CreateConsentResponse consentResponse = new CreateConsentResponse(ConsentStatus.RECEIVED.getValue(), ConsentControllerTest.CONSENT_ID, null, null, null, false, INTERNAL_REQUEST_ID, null);
         return ResponseObject.<CreateConsentResponse>builder().body(consentResponse).build();
     }
 
