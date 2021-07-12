@@ -54,7 +54,7 @@ import java.util.Set;
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class ConsentAuthorisationProcessorService<T extends Consent> extends BaseAuthorisationProcessorService {
     private static final String CONSENT_NOT_FOUND_LOG_MESSAGE = "Apply authorisation when update consent PSU data has failed. Consent not found by id.";
-    public static final String PSU_CREDENTIALS_INVALID = "Authorise PSU when apply authorisation has failed. PSU credentials invalid.";
+    private static final String PSU_CREDENTIALS_INVALID = "Authorise PSU when apply authorisation has failed. PSU credentials invalid.";
 
     private final Xs2aAuthorisationService authorisationService;
     private final SpiContextDataProvider spiContextDataProvider;
