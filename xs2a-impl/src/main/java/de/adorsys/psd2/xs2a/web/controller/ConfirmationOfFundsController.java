@@ -29,12 +29,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.ConsentStatusResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aConfirmationOfFundsResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aScaStatusResponse;
+import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.PiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ResponseMapper;
@@ -172,7 +167,7 @@ public class ConfirmationOfFundsController implements ConfirmationOfFundsApi {
     }
 
     private ResponseEntity<Object> updatePiisAuthorisation(PsuIdData psuData, String authorisationId, String consentId, Object body) {
-        UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
+        ConsentAuthorisationsParameters updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponse = piisConsentService.updateConsentPsuData(updatePsuDataRequest);
 
         if (updateConsentPsuDataResponse.hasError()) {

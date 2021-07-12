@@ -48,10 +48,7 @@ import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
 import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
@@ -184,7 +181,7 @@ class PaymentStartAuthorisationIT {
         given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
         given(authorisationServiceEncrypted.createAuthorisation(parentHolderCaptor.capture(), createAuthorisationRequest.capture()))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
-                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, buildPsuIdData()))
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.PSUIDENTIFIED, null, buildPsuIdData(), ScaApproach.EMBEDDED))
                             .build());
 
         given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
@@ -227,6 +224,19 @@ class PaymentStartAuthorisationIT {
                             .build());
         given(consentRestTemplate.postForEntity(anyString(), any(EventBO.class), eq(Boolean.class)))
             .willReturn(new ResponseEntity<>(true, HttpStatus.OK));
+        SpiStartAuthorisationResponse startAuthorisationResponse = new SpiStartAuthorisationResponse(ScaApproach.EMBEDDED,
+                                                                                                     ScaStatus.STARTED,
+                                                                                                     null,
+                                                                                                     null);
+        given(paymentAuthorisationSpi.startAuthorisation(any(SpiContextData.class),
+                                                         eq(ScaApproach.EMBEDDED),
+                                                         eq(ScaStatus.STARTED),
+                                                         anyString(),
+                                                         any(SpiPayment.class),
+                                                         any(SpiAspspConsentDataProvider.class)))
+            .willReturn(SpiResponse.<SpiStartAuthorisationResponse>builder()
+                            .payload(startAuthorisationResponse)
+                            .build());
 
         MockHttpServletRequestBuilder requestBuilder = post(UrlBuilder.buildPaymentStartAuthorisationUrl(
             SINGLE_PAYMENT_TYPE.getValue(), SEPA_PAYMENT_PRODUCT, PAYMENT_ID));

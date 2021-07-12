@@ -10,5 +10,6 @@
   "tppRedirectURIs": {
     "uri": "ok.uri",
     "nokUri": "nok.uri"
-  }
+  },
+  "scaStatus": "RECEIVED"
 }

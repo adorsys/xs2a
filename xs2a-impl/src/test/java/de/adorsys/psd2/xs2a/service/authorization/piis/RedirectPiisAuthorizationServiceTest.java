@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.service.authorization.piis.RedirectPiisAuthorizationService;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import org.junit.jupiter.api.Test;
@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 class RedirectPiisAuthorizationServiceTest {
     private static final ScaStatus STARTED_SCA_STATUS = ScaStatus.RECEIVED;
     private static final ScaStatus STARTED_XS2A_SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final String PSU_ID = "Test psuId";
     private static final PsuIdData PSU_DATA = new PsuIdData(PSU_ID, null, null, null, null);
     private static final String CONSENT_ID = "Test consentId";
@@ -62,9 +63,15 @@ class RedirectPiisAuthorizationServiceTest {
         //Given
         when(xs2aPiisConsentService.getPiisConsentById(WRONG_CONSENT_ID))
             .thenReturn(Optional.empty());
-
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .consentId(WRONG_CONSENT_ID)
+                                                                            .psuData(PSU_DATA)
+                                                                            .scaStatus(STARTED_SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
         //When
-        Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(PSU_DATA, WRONG_CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponse = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
 
         //Then
         assertThat(actualResponse).isNotPresent();
@@ -73,11 +80,18 @@ class RedirectPiisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_Success() {
         //Given
-        when(consentService.createConsentAuthorisation(CONSENT_ID, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, PSU_DATA))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .consentId(CONSENT_ID)
+                                                                            .psuData(PSU_DATA)
+                                                                            .scaStatus(STARTED_SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
         //When
-        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(PSU_DATA, CONSENT_ID);
+        Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
         //Then
         assertThat(actualResponseOptional).isPresent();
 
@@ -109,6 +123,6 @@ class RedirectPiisAuthorizationServiceTest {
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, INTERNAL_REQUEST_ID, null);
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, INTERNAL_REQUEST_ID, null, SCA_APPROACH);
     }
 }

@@ -33,28 +33,36 @@ import java.util.Set;
 public class SpiMockData {
     public static final SpiLinks SPI_LINKS = buildSpiLinks();
     public static final Set<TppMessageInformation> TPP_MESSAGES = buildTppMessages();
+    public static final Set<TppMessageInformation> TPP_MESSAGES_START_AUTHORISATION = buildTppMessagesStartAuthorisation();
     public static final List<SpiAuthenticationObject> SCA_METHODS = buildScaMethods();
-    public static final String PSU_MESSAGE = "mocked PSU message";
+    public static final String PSU_MESSAGE = "mocked PSU message from spi stub";
+    public static final String PSU_MESSAGE_START_AUTHORISATION = "Start authorisation mocked PSU message from spi stub";
 
     private static SpiLinks buildSpiLinks() {
         SpiLinks spiLinks = new SpiLinks();
-        spiLinks.setAccount(new SpiHrefType("Mock spi account link"));
+        spiLinks.setAccount(new SpiHrefType("Mock spi account link from spi stub"));
         return spiLinks;
     }
 
     private static Set<TppMessageInformation> buildTppMessages() {
         HashSet<TppMessageInformation> tppInformationSet = new HashSet<>();
-        tppInformationSet.add(TppMessageInformation.buildWithCustomWarning(MessageErrorCode.FORMAT_ERROR, "Mocked tpp message from the bank"));
+        tppInformationSet.add(TppMessageInformation.buildWithCustomWarning(MessageErrorCode.FORMAT_ERROR, "Mocked tpp message from spi stub"));
+        return tppInformationSet;
+    }
+
+    private static Set<TppMessageInformation> buildTppMessagesStartAuthorisation() {
+        HashSet<TppMessageInformation> tppInformationSet = new HashSet<>();
+        tppInformationSet.add(TppMessageInformation.buildWithCustomWarning(MessageErrorCode.FORMAT_ERROR, "Start authorisation Mocked tpp message from spi stub"));
         return tppInformationSet;
     }
 
     private static List<SpiAuthenticationObject> buildScaMethods() {
         SpiAuthenticationObject psi = new SpiAuthenticationObject();
-        psi.setAuthenticationType("Mocked Authentication type");
-        psi.setAuthenticationMethodId("Mocked Authentication id");
+        psi.setAuthenticationType("Mocked Authentication type from spi stub");
+        psi.setAuthenticationMethodId("Mocked Authentication id from spi stub");
         psi.setDecoupled(false);
-        psi.setName("Mocked name");
-        psi.setAuthenticationVersion("Mocked Authentication version");
+        psi.setName("Mocked name from spi stub");
+        psi.setAuthenticationVersion("Mocked Authentication version from spi stub");
 
         return Collections.singletonList(psi);
     }

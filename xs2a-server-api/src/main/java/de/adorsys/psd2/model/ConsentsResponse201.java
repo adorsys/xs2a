@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful consent request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-05T17:50:18.799682+03:00[Europe/Kiev]")
 
 public class ConsentsResponse201   {
   @JsonProperty("consentStatus")
@@ -45,6 +45,9 @@ public class ConsentsResponse201   {
   @JsonProperty("tppMessages")
   @Valid
   private List<TppMessageGeneric> tppMessages = null;
+
+  @JsonProperty("scaStatus")
+  private ScaStatus scaStatus = null;
 
   public ConsentsResponse201 consentStatus(ConsentStatus consentStatus) {
     this.consentStatus = consentStatus;
@@ -239,6 +242,29 @@ public class ConsentsResponse201   {
     this.tppMessages = tppMessages;
   }
 
+  public ConsentsResponse201 scaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+    return this;
+  }
+
+  /**
+   * Get scaStatus
+   * @return scaStatus
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("scaStatus")
+  public ScaStatus getScaStatus() {
+    return scaStatus;
+  }
+
+  public void setScaStatus(ScaStatus scaStatus) {
+    this.scaStatus = scaStatus;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -255,12 +281,13 @@ public class ConsentsResponse201   {
     Objects.equals(this.challengeData, consentsResponse201.challengeData) &&
     Objects.equals(this._links, consentsResponse201._links) &&
     Objects.equals(this.psuMessage, consentsResponse201.psuMessage) &&
-    Objects.equals(this.tppMessages, consentsResponse201.tppMessages);
+    Objects.equals(this.tppMessages, consentsResponse201.tppMessages) &&
+    Objects.equals(this.scaStatus, consentsResponse201.scaStatus);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(consentStatus, consentId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage, tppMessages);
+    return Objects.hash(consentStatus, consentId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage, tppMessages, scaStatus);
   }
 
   @Override
@@ -276,6 +303,7 @@ public class ConsentsResponse201   {
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
+    sb.append("    scaStatus: ").append(toIndentedString(scaStatus)).append("\n");
     sb.append("}");
     return sb.toString();
   }

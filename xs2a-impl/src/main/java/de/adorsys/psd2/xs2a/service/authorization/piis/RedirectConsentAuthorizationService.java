@@ -21,11 +21,13 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -40,19 +42,24 @@ public abstract class RedirectConsentAuthorizationService implements ConsentAuth
 
     /**
      * Creates consent authorisation using provided psu id and consent id by invoking CMS through ConsentAuthorizationService
-     * See {@link Xs2aConsentService#createConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
+     * See {@link Xs2aConsentService#createConsentAuthorisation(String, String, ScaApproach, ScaStatus, PsuIdData)} for details
      *
-     * @param psuData   PsuIdData container of authorisation data about PSU
-     * @param consentId String identification of consent
+     * @param createAuthorisationRequest   create authorisation request
      * @return Optional of CreateConsentAuthorizationResponse with consent creating data
      */
     @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
+    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(@NotNull Xs2aCreateAuthorisationRequest createAuthorisationRequest) {
+        String consentId = createAuthorisationRequest.getConsentId();
         if (isConsentAbsent(consentId)) {
+            log.warn("Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.", consentId);
             return Optional.empty();
         }
-
-        return consentService.createConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
+        PsuIdData psuData = createAuthorisationRequest.getPsuData();
+        return consentService.createConsentAuthorisation(consentId,
+                                                         createAuthorisationRequest.getAuthorisationId(),
+                                                         createAuthorisationRequest.getScaApproach(),
+                                                         createAuthorisationRequest.getScaStatus(),
+                                                         psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -60,11 +67,11 @@ public abstract class RedirectConsentAuthorizationService implements ConsentAuth
                        resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
                        resp.setPsuIdData(psuData);
+                       resp.setScaApproach(auth.getScaApproach());
                        resp.setInternalRequestId(auth.getInternalRequestId());
                        return resp;
                    });
     }
-
 
     protected abstract boolean isConsentAbsent(String consentId);
 

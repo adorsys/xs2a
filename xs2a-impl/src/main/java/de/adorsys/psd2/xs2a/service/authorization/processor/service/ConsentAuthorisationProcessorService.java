@@ -28,7 +28,8 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
@@ -39,10 +40,7 @@ import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapp
 import de.adorsys.psd2.xs2a.service.spi.SpiAspspConsentDataProviderFactory;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorisationStatus;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAvailableScaMethodsResponse;
-import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse;
+import de.adorsys.psd2.xs2a.spi.domain.authorisation.*;
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
@@ -51,10 +49,12 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @SuppressWarnings("PMD.TooManyMethods")
 public abstract class ConsentAuthorisationProcessorService<T extends Consent> extends BaseAuthorisationProcessorService {
     private static final String CONSENT_NOT_FOUND_LOG_MESSAGE = "Apply authorisation when update consent PSU data has failed. Consent not found by id.";
+    public static final String PSU_CREDENTIALS_INVALID = "Authorise PSU when apply authorisation has failed. PSU credentials invalid.";
 
     private final Xs2aAuthorisationService authorisationService;
     private final SpiContextDataProvider spiContextDataProvider;
@@ -63,9 +63,9 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
     private final Xs2aToSpiPsuDataMapper psuDataMapper;
 
     protected ConsentAuthorisationProcessorService(Xs2aAuthorisationService authorisationService,
-                                                SpiContextDataProvider spiContextDataProvider,
-                                                SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
-                                                SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper psuDataMapper) {
+                                                   SpiContextDataProvider spiContextDataProvider,
+                                                   SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
+                                                   SpiErrorMapper spiErrorMapper, Xs2aToSpiPsuDataMapper psuDataMapper) {
         this.authorisationService = authorisationService;
         this.spiContextDataProvider = spiContextDataProvider;
         this.aspspConsentDataProviderFactory = aspspConsentDataProviderFactory;
@@ -74,13 +74,54 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
     }
 
     @Override
+    public AuthorisationProcessorResponse doScaStarted(AuthorisationProcessorRequest authorisationProcessorRequest) {
+        CommonAuthorisationParameters updateAuthorisationRequest = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        PsuIdData psuIdData = updateAuthorisationRequest.getPsuData();
+        String consentId = updateAuthorisationRequest.getBusinessObjectId();
+        ScaApproach scaApproach = authorisationProcessorRequest.getScaApproach();
+
+        Optional<T> consentOptional = getConsentByIdFromCms(consentId);
+        if (consentOptional.isEmpty()) {
+            ErrorHolder errorHolder = ErrorHolder.builder(getErrorType400())
+                                          .tppMessages(TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_400))
+                                          .build();
+            writeErrorLog(authorisationProcessorRequest, psuIdData, errorHolder, CONSENT_NOT_FOUND_LOG_MESSAGE);
+            return new CreateConsentAuthorisationProcessorResponse(errorHolder, scaApproach, consentId, psuIdData);
+        }
+
+        SpiResponse<SpiStartAuthorisationResponse> spiResponse = getSpiStartAuthorisationResponse(spiContextDataProvider.provideWithPsuIdData(psuIdData),
+                                                                                                  scaApproach,
+                                                                                                  authorisationProcessorRequest.getScaStatus(),
+                                                                                                  updateAuthorisationRequest.getAuthorisationId(),
+                                                                                                  consentOptional.get(),
+                                                                                                  aspspConsentDataProviderFactory.getSpiAspspDataProviderFor(consentId));
+
+        if (spiResponse.hasError()) {
+            ErrorHolder errorHolder = spiErrorMapper.mapToErrorHolder(spiResponse, getServiceType());
+            writeErrorLog(authorisationProcessorRequest, psuIdData, errorHolder, "Verify SCA authorisation failed when create authorisation.");
+            return new CreateConsentAuthorisationProcessorResponse(errorHolder, scaApproach, consentId, psuIdData);
+        }
+
+        SpiStartAuthorisationResponse startAuthorisationResponse = spiResponse.getPayload();
+
+        ScaStatus scaStatusFromSpi = startAuthorisationResponse.getScaStatus();
+        ScaApproach scaApproachFromSpi = startAuthorisationResponse.getScaApproach();
+        String psuMessage = startAuthorisationResponse.getPsuMessage();
+        Set<TppMessageInformation> tppMessages = startAuthorisationResponse.getTppMessages();
+
+        return new CreateConsentAuthorisationProcessorResponse(scaStatusFromSpi, scaApproachFromSpi, psuMessage, tppMessages, consentId, psuIdData);
+    }
+
+    protected abstract SpiResponse<SpiStartAuthorisationResponse> getSpiStartAuthorisationResponse(SpiContextData spiContextData, ScaApproach scaApproach, ScaStatus scaStatus, String authorisationId, T consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider);
+
+    @Override
     public AuthorisationProcessorResponse doScaReceived(AuthorisationProcessorRequest authorisationProcessorRequest) {
         return doScaPsuIdentified(authorisationProcessorRequest);
     }
 
     @Override
     public AuthorisationProcessorResponse doScaPsuIdentified(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         return request.isUpdatePsuIdentification()
                    ? applyIdentification(authorisationProcessorRequest)
                    : applyAuthorisation(authorisationProcessorRequest);
@@ -88,7 +129,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
 
     @Override
     public AuthorisationProcessorResponse doScaPsuAuthenticated(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         String consentId = request.getBusinessObjectId();
         String authorisationId = request.getAuthorisationId();
 
@@ -115,7 +156,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
 
     @Override
     public AuthorisationProcessorResponse doScaMethodSelected(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         String consentId = request.getBusinessObjectId();
         String authorisationId = request.getAuthorisationId();
         Optional<T> consentOptional = getConsentByIdFromCms(consentId);
@@ -174,12 +215,12 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
 
     @Override
     public AuthorisationProcessorResponse doScaFinalised(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         return new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData());
     }
 
     private UpdateConsentPsuDataResponse proceedEmbeddedApproach(AuthorisationProcessorRequest authorisationProcessorRequest, String authenticationMethodId, T consent, PsuIdData psuData) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         SpiResponse<SpiAuthorizationCodeResult> spiResponse = requestAuthorisationCode(spiContextDataProvider.provideWithPsuIdData(psuData),
                                                                                        authenticationMethodId,
                                                                                        consent,
@@ -210,7 +251,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
     }
 
     private UpdateConsentPsuDataResponse applyAuthorisation(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         String consentId = request.getBusinessObjectId();
         String authorisationId = request.getAuthorisationId();
         Optional<T> consentOptional = getConsentByIdFromCms(consentId);
@@ -248,7 +289,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
             ErrorHolder errorHolder = ErrorHolder.builder(getErrorType401())
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.PSU_CREDENTIALS_INVALID))
                                           .build();
-            writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, "Authorise PSU when apply authorisation has failed. PSU credentials invalid.");
+            writeErrorLog(authorisationProcessorRequest, psuData, errorHolder, PSU_CREDENTIALS_INVALID);
             authorisationService.updateAuthorisationStatus(authorisationId, ScaStatus.FAILED);
             return new UpdateConsentPsuDataResponse(errorHolder, consentId, authorisationId, psuData);
         }
@@ -310,7 +351,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
 
     private UpdateConsentPsuDataResponse createResponseForOneAvailableMethod(AuthorisationProcessorRequest authorisationProcessorRequest, T consent,
                                                                              List<AuthenticationObject> availableScaMethods, PsuIdData psuData) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         authorisationService.saveAuthenticationMethods(request.getAuthorisationId(), availableScaMethods);
         AuthenticationObject chosenMethod = availableScaMethods.get(0);
 
@@ -323,7 +364,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
     }
 
     private UpdateConsentPsuDataResponse applyIdentification(AuthorisationProcessorRequest authorisationProcessorRequest) {
-        UpdateAuthorisationRequest request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
+        CommonAuthorisationParameters request = authorisationProcessorRequest.getUpdateAuthorisationRequest();
         if (!isPsuExist(request.getPsuData())) {
             ErrorHolder errorHolder = ErrorHolder.builder(getErrorType400())
                                           .tppMessages(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_NO_PSU))
@@ -356,7 +397,7 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
 
     abstract ServiceType getServiceType();
 
-    abstract SpiResponse<SpiVerifyScaAuthorisationResponse> verifyScaAuthorisation(SpiContextData spiContextData, UpdateAuthorisationRequest request, PsuIdData psuData, T consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider);
+    abstract SpiResponse<SpiVerifyScaAuthorisationResponse> verifyScaAuthorisation(SpiContextData spiContextData, CommonAuthorisationParameters request, PsuIdData psuData, T consent, SpiAspspConsentDataProvider spiAspspConsentDataProvider);
 
     abstract Optional<T> getConsentByIdFromCms(String consentId);
 

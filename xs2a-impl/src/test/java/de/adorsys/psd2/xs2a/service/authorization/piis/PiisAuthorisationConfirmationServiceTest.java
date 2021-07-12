@@ -28,7 +28,7 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
@@ -99,7 +99,7 @@ class PiisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_success_checkOnSpi() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, psuIdData);
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
 
@@ -135,7 +135,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_checkOnXs2a_success() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         request.setConfirmationCode(CONFIRMATION_CODE);
         UpdateConsentPsuDataResponse response = new UpdateConsentPsuDataResponse(ScaStatus.FINALISED, CONSENT_ID, AUTHORISATION_ID, buildPsuIdData());
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response).build();
@@ -165,7 +165,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_failed_NoAuthorisation() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         ResponseObject<UpdateConsentPsuDataResponse> expectedResult = ResponseObject.<UpdateConsentPsuDataResponse>builder()
                                                                           .fail(ErrorType.PIIS_403, of(CONSENT_UNKNOWN_403)).build();
 
@@ -184,7 +184,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_failed_WrongScaStatus() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIIS_400)
                                       .tppMessages(of(SCA_INVALID))
                                       .build();
@@ -210,7 +210,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_checkOnXs2a_wrongCode() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         request.setConfirmationCode("wrong_code");
 
         Authorisation authorisationResponse = getConsentAuthorisationResponse();
@@ -243,7 +243,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation__checkOnSpi_consentNotFound() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         Authorisation authorisationResponse = getConsentAuthorisationResponse();
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIIS_403)
                                       .tppMessages(of(CONSENT_UNKNOWN_403))
@@ -270,7 +270,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_checkOnXs2a_consentNotFound() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         Authorisation authorisationResponse = getConsentAuthorisationResponse();
         ErrorHolder errorHolder = ErrorHolder.builder(ErrorType.PIIS_403)
                                       .tppMessages(of(CONSENT_UNKNOWN_403))
@@ -297,7 +297,7 @@ class PiisAuthorisationConfirmationServiceTest {
     @Test
     void processAuthorisationConfirmation_checkOnXs2a_spiError() {
         // given
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         request.setConfirmationCode("wrong_code");
 
         Authorisation authorisationResponse = getConsentAuthorisationResponse();
@@ -336,7 +336,7 @@ class PiisAuthorisationConfirmationServiceTest {
     void processAuthorisationConfirmation_checkOnSpi_spiError() {
         // given
         PsuIdData psuIdData = buildPsuIdData();
-        UpdateConsentPsuDataReq request = buildUpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = buildUpdateConsentPsuDataReq();
         SpiResponse<SpiConsentConfirmationCodeValidationResponse> spiResponse = SpiResponse.<SpiConsentConfirmationCodeValidationResponse>builder()
                                                                                     .error(new TppMessage(PSU_CREDENTIALS_INVALID))
                                                                                     .build();
@@ -381,9 +381,9 @@ class PiisAuthorisationConfirmationServiceTest {
         verify(piisConsentSpi, times(1)).checkConfirmationCodeInternally(AUTHORISATION_ID, CONFIRMATION_CODE, SCA_AUTHENTICATION_DATA, aspspConsentDataProvider);
     }
 
-    private UpdateConsentPsuDataReq buildUpdateConsentPsuDataReq() {
-        UpdateConsentPsuDataReq request = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
-                                                                       UpdateConsentPsuDataReq.class);
+    private ConsentAuthorisationsParameters buildUpdateConsentPsuDataReq() {
+        ConsentAuthorisationsParameters request = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
+                                                                               ConsentAuthorisationsParameters.class);
         request.setConsentId(CONSENT_ID);
         request.setAuthorizationId(AUTHORISATION_ID);
         request.setPsuData(buildPsuIdData());

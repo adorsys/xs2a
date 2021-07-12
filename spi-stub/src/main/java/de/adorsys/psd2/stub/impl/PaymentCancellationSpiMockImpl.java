@@ -19,6 +19,7 @@ package de.adorsys.psd2.stub.impl;
 import de.adorsys.psd2.stub.impl.service.AuthorisationServiceMock;
 import de.adorsys.psd2.stub.impl.service.SpiMockData;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -43,6 +44,13 @@ public class PaymentCancellationSpiMockImpl implements PaymentCancellationSpi {
     private static final String PSU_MESSAGE = "Mocked PSU message from SPI for this payment";
 
     private final AuthorisationServiceMock authorisationService;
+
+    @Override
+    public SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull ScaApproach scaApproach, @NotNull ScaStatus scaStatus, @NotNull String authorisationId, SpiPayment businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiStartAuthorisationResponse>builder()
+                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, SpiMockData.PSU_MESSAGE_START_AUTHORISATION, SpiMockData.TPP_MESSAGES_START_AUTHORISATION))
+                   .build();
+    }
 
     @Override
     @NotNull

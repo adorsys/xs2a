@@ -72,7 +72,7 @@ class AuthorisationServiceRemoteTest {
 
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AUTHORISATION_TYPE, PARENT_ID);
         CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest();
-        CreateAuthorisationResponse controllerResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "internal request id", new PsuIdData());
+        CreateAuthorisationResponse controllerResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "internal request id", new PsuIdData(), null);
 
         when(consentRestTemplate.postForEntity(URL, createAuthorisationRequest, CreateAuthorisationResponse.class, AUTHORISATION_TYPE, PARENT_ID))
             .thenReturn(new ResponseEntity<>(controllerResponse, HttpStatus.CREATED));

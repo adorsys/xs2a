@@ -16,9 +16,12 @@
 
 package de.adorsys.psd2.xs2a.service.payment.create;
 
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.domain.pis.CommonPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.pis.PisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPisCommonPaymentService;
@@ -40,9 +43,13 @@ public class CreateCommonPaymentService extends AbstractCreatePaymentService<Com
                                       Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper,
                                       Xs2aToCmsPisCommonPaymentRequestMapper xs2aToCmsPisCommonPaymentRequestMapper,
                                       CommonPaymentInitiationService paymentInitiationService,
-                                      RequestProviderService requestProviderService) {
+                                      RequestProviderService requestProviderService,
+                                      LoggingContextService loggingContextService,
+                                      AuthorisationChainResponsibilityService authorisationChainResponsibilityService,
+                                      ScaApproachResolver scaApproachResolver) {
         super(pisCommonPaymentService, pisScaAuthorisationServiceResolver, authorisationMethodDecider,
-              xs2aPisCommonPaymentMapper, xs2aToCmsPisCommonPaymentRequestMapper, paymentInitiationService, requestProviderService);
+              xs2aPisCommonPaymentMapper, xs2aToCmsPisCommonPaymentRequestMapper, paymentInitiationService,
+              requestProviderService, loggingContextService, authorisationChainResponsibilityService, scaApproachResolver);
     }
 
     @Override

@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
@@ -41,6 +42,7 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
@@ -114,6 +116,9 @@ class ConsentServiceTest {
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.PARAMETER_NOT_SUPPORTED));
     private static final MessageError SERVICE_INVALID_400_ERROR =
         new MessageError(ErrorType.AIS_400, TppMessageInformation.of(MessageErrorCode.SERVICE_INVALID_400));
+    private static final ScaStatus SCA_STATUS = ScaStatus.STARTED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
+    private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
 
     @InjectMocks
     private ConsentService consentService;
@@ -170,6 +175,10 @@ class ConsentServiceTest {
     private PsuDataCleaner psuDataCleaner;
     @Mock
     private ScaMethodsMapper scaMethodsMapper;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
 
     private AisConsent aisConsent;
 
@@ -681,11 +690,14 @@ class ConsentServiceTest {
 
         when(authorisationMethodDecider.isImplicitMethod(true, false))
             .thenReturn(true);
-
+        CreateConsentAuthorisationProcessorResponse response = new CreateConsentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, CONSENT_ID, PSU_ID_DATA);
+        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
         when(aisScaAuthorisationServiceResolver.getService()).thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse authorisationResponse = new CreateConsentAuthorizationResponse();
         authorisationResponse.setAuthorisationId(AUTHORISATION_ID);
-        when(redirectAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
+
+        when(redirectAisAuthorizationService.createConsentAuthorization(any()))
             .thenReturn(Optional.of(authorisationResponse));
         when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
 
@@ -763,17 +775,21 @@ class ConsentServiceTest {
             .thenReturn(createValidationResult(true, null));
         when(aisConsentSpi.initiateAisConsent(any(SpiContextData.class), any(SpiAccountConsent.class), any(SpiAspspConsentDataProvider.class)))
             .thenReturn(SpiResponse.<SpiInitiateAisConsentResponse>builder()
-                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE,  null, null))
+                            .payload(new SpiInitiateAisConsentResponse(getSpiAccountAccess(), false, TEST_PSU_MESSAGE, null, null))
                             .build());
         when(authorisationMethodDecider.isImplicitMethod(true, false))
             .thenReturn(true);
+        when(scaApproachResolver.resolveScaApproach()).thenReturn(ScaApproach.EMBEDDED);
         when(aisScaAuthorisationServiceResolver.getService())
             .thenReturn(redirectAisAuthorizationService);
         CreateConsentAuthorizationResponse authorisationResponse = new CreateConsentAuthorizationResponse();
         authorisationResponse.setScaStatus(ScaStatus.RECEIVED);
-        when(redirectAisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
+
+        when(redirectAisAuthorizationService.createConsentAuthorization(any()))
             .thenReturn(Optional.of(authorisationResponse));
         when(scaMethodsMapper.mapToAuthenticationObjectList(any())).thenReturn(Collections.singletonList(getAuthenticationObject()));
+        CreateConsentAuthorisationProcessorResponse response = new CreateConsentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, TEST_PSU_MESSAGE, TEST_TPP_MESSAGES, CONSENT_ID, PSU_ID_DATA);
+        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
 
         // When
         consentService.createAccountConsentsWithResponse(req, PSU_ID_DATA, EXPLICIT_PREFERRED);
@@ -1510,7 +1526,7 @@ class ConsentServiceTest {
     @Test
     void updateConsentPsuData() {
         // Given
-        UpdateConsentPsuDataReq updatePsuData = new UpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters updatePsuData = new ConsentAuthorisationsParameters();
 
         // When
         consentService.updateConsentPsuData(updatePsuData);
@@ -1609,7 +1625,7 @@ class ConsentServiceTest {
         assertThat(response.getPsuMessage()).isEqualTo(TEST_PSU_MESSAGE);
     }
 
-    private de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject getAuthenticationObject(){
+    private de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject getAuthenticationObject() {
         AuthenticationObject authenticationObject = new AuthenticationObject();
         authenticationObject.setAuthenticationType("MockedAuthenticationType");
         authenticationObject.setAuthenticationMethodId("MockedAuthenticationMethodId");

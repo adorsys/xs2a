@@ -19,14 +19,16 @@ package de.adorsys.psd2.xs2a.service.authorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -39,25 +41,23 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
 
     protected abstract Optional<T> getConsentById(String consentId);
 
-    protected abstract void updateConsentAuthorisation(UpdateConsentPsuDataReq mapToUpdateConsentPsuDataReq);
+    protected abstract void updateConsentAuthorisation(ConsentAuthorisationsParameters mapToUpdateConsentPsuDataReq);
 
-    /**
-     * Creates consent authorisation using provided psu id and consent id by invoking CMS through ConsentService
-     * See {@link Xs2aConsentService#createConsentAuthorisation(String, ScaStatus, PsuIdData)} for details
-     *
-     * @param psuData   PsuIdData container of authorisation data about PSU
-     * @param consentId String identification of consent
-     * @return Optional of CreateConsentAuthorizationResponse with consent creating data
-     */
     @Override
-    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId) {
+    public Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(@NotNull Xs2aCreateAuthorisationRequest createAuthorisationRequest) {
+        String consentId = createAuthorisationRequest.getConsentId();
         Optional<T> consentOptional = getConsentById(consentId);
         if (consentOptional.isEmpty()) {
             log.info("Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.", consentId);
             return Optional.empty();
         }
 
-        return consentService.createConsentAuthorisation(consentId, ScaStatus.RECEIVED, psuData)
+        PsuIdData psuData = createAuthorisationRequest.getPsuData();
+        return consentService.createConsentAuthorisation(consentId,
+                                                         createAuthorisationRequest.getAuthorisationId(),
+                                                         createAuthorisationRequest.getScaApproach(),
+                                                         createAuthorisationRequest.getScaStatus(),
+                                                         psuData)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
 
@@ -65,12 +65,14 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
                        resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
                        resp.setPsuIdData(psuData);
+                       resp.setInternalRequestId(auth.getInternalRequestId());
+                       resp.setScaApproach(auth.getScaApproach());
                        return resp;
                    });
     }
 
     @Override
-    public AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response) {
+    public AuthorisationProcessorResponse updateConsentPsuData(CommonAuthorisationParameters request, AuthorisationProcessorResponse response) {
         if (response.hasError()) {
             log.info("Consent-ID [{}], Authentication-ID [{}], PSU-ID [{}]. Update consent authorisation has failed. Error msg: {}.",
                 request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData().getPsuId(), response.getErrorHolder());

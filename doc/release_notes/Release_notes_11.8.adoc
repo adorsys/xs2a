@@ -2,8 +2,14 @@
 
 == Table of Contents
 
-* Add validation for download transactions endpoint
+* Added validation for download transactions endpoint
+* Added new method to AuthorisationSpi
 
-== Add validation for download transactions endpoint
+== Added validation for download transactions endpoint
 
 From now on, requests for download transactions with all available accounts consent will be rejected by xs2a.
+
+== Added new method to AuthorisationSpi
+
+Added new method to AuthorisationSpi: AuthorisationSpi#startAuthorisation(SpiContextData, ScaApproach, ScaStatus, String, Object, SpiAspspConsentDataProvider)
+with default implementation.

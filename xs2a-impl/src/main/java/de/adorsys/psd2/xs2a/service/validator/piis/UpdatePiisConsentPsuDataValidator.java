@@ -21,7 +21,7 @@ import de.adorsys.psd2.xs2a.core.authorisation.ConsentAuthorization;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.validator.PiisPsuDataUpdateAuthorisationCheckerValidator;
 import de.adorsys.psd2.xs2a.service.validator.ais.consent.AbstractAisTppValidator;
 import de.adorsys.psd2.xs2a.service.validator.authorisation.AuthorisationStageCheckValidator;
@@ -56,7 +56,7 @@ public class UpdatePiisConsentPsuDataValidator extends AbstractAisTppValidator<U
     @Override
     protected ValidationResult executeBusinessValidation(UpdatePiisConsentPsuDataRequestObject requestObject) {
         PiisConsent consent = requestObject.getPiisConsent();
-        UpdateConsentPsuDataReq updatePsuData = requestObject.getUpdateRequest();
+        ConsentAuthorisationsParameters updatePsuData = requestObject.getUpdateRequest();
         String authorisationId = updatePsuData.getAuthorizationId();
 
         ValidationResult authorisationValidationResult = piisAuthorisationValidator.validate(authorisationId, consent);

@@ -27,7 +27,7 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.ResponseObject;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.SpiErrorMapper;
@@ -63,10 +63,10 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
      * - data is checked at XS2A side, we compare the data from DB with the incoming data;
      * - data is transferred to SPI level and checking should be implemented at ASPSP side.
      *
-     * @param request {@link UpdateConsentPsuDataReq} with all consent information.
+     * @param request {@link ConsentAuthorisationsParameters} with all consent information.
      * @return {@link UpdateConsentPsuDataResponse} with new authorisation status.
      */
-    public ResponseObject<UpdateConsentPsuDataResponse> processAuthorisationConfirmation(UpdateConsentPsuDataReq request) {
+    public ResponseObject<UpdateConsentPsuDataResponse> processAuthorisationConfirmation(ConsentAuthorisationsParameters request) {
         String authorisationId = request.getAuthorisationId();
 
         CmsResponse<Authorisation> authorisationCmsResponse = authorisationServiceEncrypted.getAuthorisationById(authorisationId);
@@ -94,13 +94,13 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
                    .orElseGet(ResponseObject.<UpdateConsentPsuDataResponse>builder().body(response)::build);
     }
 
-    private UpdateConsentPsuDataResponse processAuthorisationConfirmationInternal(UpdateConsentPsuDataReq request, String confirmationCodeFromDb) {
+    private UpdateConsentPsuDataResponse processAuthorisationConfirmationInternal(ConsentAuthorisationsParameters request, String confirmationCodeFromDb) {
         return aspspProfileServiceWrapper.isAuthorisationConfirmationCheckByXs2a()
                    ? checkAuthorisationConfirmationXs2a(request, confirmationCodeFromDb)
                    : checkAuthorisationConfirmationOnSpi(request);
     }
 
-    private UpdateConsentPsuDataResponse checkAuthorisationConfirmationXs2a(UpdateConsentPsuDataReq request, String confirmationCodeFromDb) {
+    private UpdateConsentPsuDataResponse checkAuthorisationConfirmationXs2a(ConsentAuthorisationsParameters request, String confirmationCodeFromDb) {
         String consentId = request.getConsentId();
         String authorisationId = request.getAuthorisationId();
         PsuIdData psuData = request.getPsuData();
@@ -141,7 +141,7 @@ public abstract class ConsentAuthorisationConfirmationService<T extends Consent>
         return response;
     }
 
-    private UpdateConsentPsuDataResponse checkAuthorisationConfirmationOnSpi(UpdateConsentPsuDataReq request) {
+    private UpdateConsentPsuDataResponse checkAuthorisationConfirmationOnSpi(ConsentAuthorisationsParameters request) {
         String consentId = request.getConsentId();
         String authorisationId = request.getAuthorisationId();
 

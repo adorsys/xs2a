@@ -60,17 +60,17 @@ paths:
         - Confirmation of Funds
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      #In this file only the basic security element to transport
-      # the bearer token of an an OAuth2 process, which has to
-      # be included inthe HTTP header ist described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommandes to adjust the security schemes according to
-      # your system enviroments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        #In this file only the basic security element to transport
+        # the bearer token of an an OAuth2 process, which has to
+        # be included inthe HTTP header ist described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommandes to adjust the security schemes according to
+        # your system enviroments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
@@ -78,7 +78,7 @@ paths:
         #path # NO PATH PARAMETER
         #query # NO QUERY PARAMETER
         #header
-          #common header parameter
+        #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
         - $ref: "#/components/parameters/Digest"
@@ -150,25 +150,25 @@ paths:
         - Confirmation of Funds
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      #In this file only the basic security element to transport
-      # the bearer token of an an OAuth2 process, which has to
-      # be included inthe HTTP header ist described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommandes to adjust the security schemes according to
-      # your system enviroments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        #In this file only the basic security element to transport
+        # the bearer token of an an OAuth2 process, which has to
+        # be included inthe HTTP header ist described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommandes to adjust the security schemes according to
+        # your system enviroments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -232,25 +232,25 @@ paths:
         - Confirmation of Funds
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      #In this file only the basic security element to transport
-      # the bearer token of an an OAuth2 process, which has to
-      # be included inthe HTTP header ist described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommandes to adjust the security schemes according to
-      # your system enviroments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        #In this file only the basic security element to transport
+        # the bearer token of an an OAuth2 process, which has to
+        # be included inthe HTTP header ist described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommandes to adjust the security schemes according to
+        # your system enviroments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -309,25 +309,25 @@ paths:
         - Confirmation of Funds
 
       security:
-      #####################################################
-      # REMARKS ON SECURITY IN THIS OPENAPI FILE
-      #In this file only the basic security element to transport
-      # the bearer token of an an OAuth2 process, which has to
-      # be included inthe HTTP header ist described.
-      #
-      # WARNING:
-      # If you want to use this file for a productive implementation,
-      # it is recommandes to adjust the security schemes according to
-      # your system enviroments and security policies.
-      #####################################################
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        #In this file only the basic security element to transport
+        # the bearer token of an an OAuth2 process, which has to
+        # be included inthe HTTP header ist described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommandes to adjust the security schemes according to
+        # your system enviroments and security policies.
+        #####################################################
         - {}
         - BearerAuthOAuth: []
 
       parameters:
-      #path
+        #path
         - $ref: "#/components/parameters/consentId_PATH"
-      #query # NO QUERY PARAMETER
-      #header
+          #query # NO QUERY PARAMETER
+          #header
           #common header parameter
         - $ref: "#/components/parameters/X-Request-ID"
           #header to support the signature function
@@ -380,455 +380,455 @@ paths:
 
   /v2/consents/confirmation-of-funds/{consentId}/authorisations:
 
-      post:
-          summary: Start the authorisation process for a consent
-          description: |
-              Create an authorisation sub-resource and start the authorisation process of a consent.
-              The message might in addition transmit authentication and authorisation related data.
+    post:
+      summary: Start the authorisation process for a consent
+      description: |
+        Create an authorisation sub-resource and start the authorisation process of a consent.
+        The message might in addition transmit authentication and authorisation related data.
 
-              his method is iterated n times for a n times SCA authorisation in a
-              corporate context, each creating an own authorisation sub-endpoint for
-              the corresponding PSU authorising the consent.
+        his method is iterated n times for a n times SCA authorisation in a
+        corporate context, each creating an own authorisation sub-endpoint for
+        the corresponding PSU authorising the consent.
 
-              The ASPSP might make the usage of this access method unnecessary,
-              since the related authorisation resource will be automatically created by
-              the ASPSP after the submission of the consent data with the first POST consents call.
+        The ASPSP might make the usage of this access method unnecessary,
+        since the related authorisation resource will be automatically created by
+        the ASPSP after the submission of the consent data with the first POST consents call.
 
-              The start authorisation process is a process which is needed for creating a new authorisation
-              or cancellation sub-resource.
+        The start authorisation process is a process which is needed for creating a new authorisation
+        or cancellation sub-resource.
 
-              This applies in the following scenarios:
+        This applies in the following scenarios:
 
-                * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment
-                  initiation response that an explicit start of the authorisation process is needed by the TPP.
-                  The 'startAuthorisation' hyperlink can transport more information about data which needs to be
-                  uploaded by using the extended forms:
-                  * 'startAuthorisationWithPsuIdentfication',
-                  * 'startAuthorisationWithPsuAuthentication'
-                  * 'startAuthorisationWithEncryptedPsuAuthentication'
-                  * 'startAuthorisationWithAuthentciationMethodSelection'
-                * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.
-                * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding
-                  payment cancellation response that an explicit start of the authorisation process is needed by the TPP.
-                  The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded
-                  by using the extended forms as indicated above.
-                * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for
-                  executing the cancellation.
-                * The signing basket needs to be authorised yet.
-          operationId: startConsentAuthorisation
-          tags:
-              - Confirmation of Funds
-          security:
-              #####################################################
-              # REMARKS ON SECURITY IN THIS OPENAPI FILE
-              # In this file only the basic security element to transport
-              # the bearer token of an OAuth2 process, which has to
-              # be included in the HTTP header is described.
-              #
-              # WARNING:
-              # If you want to use this file for a productive implementation,
-              # it is recommended to adjust the security schemes according to
-              # your system environments and security policies.
-              #####################################################
-              - {}
-              -   BearerAuthOAuth: []
-          parameters:
-              #path
-              -   $ref: "#/components/parameters/consentId_PATH"
-                    #query # NO QUERY PARAMETER
-                    #header
-                  #common header parameter
-              -   $ref: "#/components/parameters/X-Request-ID"
-                  #header to support the signature function
-              -   $ref: "#/components/parameters/Digest"
-              -   $ref: "#/components/parameters/Signature"
-              -   $ref: "#/components/parameters/TPP-Signature-Certificate"
-                  #method specific header elements
-              -   $ref: "#/components/parameters/PSU-ID"
-              -   $ref: "#/components/parameters/PSU-ID-Type"
-              -   $ref: "#/components/parameters/PSU-Corporate-ID"
-              -   $ref: "#/components/parameters/PSU-Corporate-ID-Type"
-              -   $ref: "#/components/parameters/TPP-Redirect-Preferred"
-              -   $ref: "#/components/parameters/TPP-Redirect-URI"
-              -   $ref: "#/components/parameters/TPP-Nok-Redirect-URI"
-                  #conditional for extended service lean Push
-              -   $ref: "#/components/parameters/TPP-Notification-URI"
-              -   $ref: "#/components/parameters/TPP-Notification-Content-Preferred"
-                  #conditional elemention for AIS
-              -   $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
-                  #optional additional PSU Information in header
-              -   $ref: "#/components/parameters/PSU-IP-Port"
-              -   $ref: "#/components/parameters/PSU-Accept"
-              -   $ref: "#/components/parameters/PSU-Accept-Charset"
-              -   $ref: "#/components/parameters/PSU-Accept-Encoding"
-              -   $ref: "#/components/parameters/PSU-Accept-Language"
-              -   $ref: "#/components/parameters/PSU-User-Agent"
-              -   $ref: "#/components/parameters/PSU-Http-Method"
-              -   $ref: "#/components/parameters/PSU-Device-ID"
-              -   $ref: "#/components/parameters/PSU-Geo-Location"
+          * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding Payment
+            initiation response that an explicit start of the authorisation process is needed by the TPP.
+            The 'startAuthorisation' hyperlink can transport more information about data which needs to be
+            uploaded by using the extended forms:
+            * 'startAuthorisationWithPsuIdentfication',
+            * 'startAuthorisationWithPsuAuthentication'
+            * 'startAuthorisationWithEncryptedPsuAuthentication'
+            * 'startAuthorisationWithAuthentciationMethodSelection'
+          * The related payment initiation cannot yet be executed since a multilevel SCA is mandated.
+          * The ASPSP has indicated with an 'startAuthorisation' hyperlink in the preceding
+            payment cancellation response that an explicit start of the authorisation process is needed by the TPP.
+            The 'startAuthorisation' hyperlink can transport more information about data which needs to be uploaded
+            by using the extended forms as indicated above.
+          * The related payment cancellation request cannot be applied yet since a multilevel SCA is mandate for
+            executing the cancellation.
+          * The signing basket needs to be authorised yet.
+      operationId: startConsentAuthorisation
+      tags:
+        - Confirmation of Funds
+      security:
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
+        - {}
+        -   BearerAuthOAuth: []
+      parameters:
+        #path
+        -   $ref: "#/components/parameters/consentId_PATH"
+              #query # NO QUERY PARAMETER
+          #header
+          #common header parameter
+        -   $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        -   $ref: "#/components/parameters/Digest"
+        -   $ref: "#/components/parameters/Signature"
+        -   $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #method specific header elements
+        -   $ref: "#/components/parameters/PSU-ID"
+        -   $ref: "#/components/parameters/PSU-ID-Type"
+        -   $ref: "#/components/parameters/PSU-Corporate-ID"
+        -   $ref: "#/components/parameters/PSU-Corporate-ID-Type"
+        -   $ref: "#/components/parameters/TPP-Redirect-Preferred"
+        -   $ref: "#/components/parameters/TPP-Redirect-URI"
+        -   $ref: "#/components/parameters/TPP-Nok-Redirect-URI"
+          #conditional for extended service lean Push
+        -   $ref: "#/components/parameters/TPP-Notification-URI"
+        -   $ref: "#/components/parameters/TPP-Notification-Content-Preferred"
+          #conditional elemention for AIS
+        -   $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        -   $ref: "#/components/parameters/PSU-IP-Port"
+        -   $ref: "#/components/parameters/PSU-Accept"
+        -   $ref: "#/components/parameters/PSU-Accept-Charset"
+        -   $ref: "#/components/parameters/PSU-Accept-Encoding"
+        -   $ref: "#/components/parameters/PSU-Accept-Language"
+        -   $ref: "#/components/parameters/PSU-User-Agent"
+        -   $ref: "#/components/parameters/PSU-Http-Method"
+        -   $ref: "#/components/parameters/PSU-Device-ID"
+        -   $ref: "#/components/parameters/PSU-Geo-Location"
 
-          requestBody:
-              content:
-                  application/json:
-                      schema:
-                          oneOf: #Different Authorisation Bodies
-                              - {}
-                              -   $ref: "#/components/schemas/updatePsuAuthentication"
-                              -   $ref: "#/components/schemas/selectPsuAuthenticationMethod"
-                              -   $ref: "#/components/schemas/transactionAuthorisation"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf: #Different Authorisation Bodies
+                - {}
+                -   $ref: "#/components/schemas/updatePsuAuthentication"
+                -   $ref: "#/components/schemas/selectPsuAuthenticationMethod"
+                -   $ref: "#/components/schemas/transactionAuthorisation"
 
-          responses:
-              '201':
-                  $ref: "#/components/responses/CREATED_201_StartScaProcess"
+      responses:
+        '201':
+          $ref: "#/components/responses/CREATED_201_StartScaProcess"
 
-              '400':
-                  $ref: "#/components/responses/BAD_REQUEST_400_AIS"
-              '401':
-                  $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
-              '403':
-                  $ref: "#/components/responses/FORBIDDEN_403_AIS"
-              '404':
-                  $ref: "#/components/responses/NOT_FOUND_404_AIS"
-              '405':
-                  $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
-              '406':
-                  $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
-              '408':
-                  $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
-              '409':
-                  $ref: "#/components/responses/CONFLICT_409_AIS"
-              '415':
-                  $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
-              '429':
-                  $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
-              '500':
-                  $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
-              '503':
-                  $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
 
 
-      get:
-          summary: Get consent authorisation sub-resources request
-          description: |
-              Return a list of all authorisation subresources IDs which have been created.
+    get:
+      summary: Get consent authorisation sub-resources request
+      description: |
+        Return a list of all authorisation subresources IDs which have been created.
 
-              This function returns an array of hyperlinks to all generated authorisation sub-resources.
-          operationId: getConsentAuthorisation
-          tags:
-              - Confirmation of Funds
+        This function returns an array of hyperlinks to all generated authorisation sub-resources.
+      operationId: getConsentAuthorisation
+      tags:
+        - Confirmation of Funds
 
-          security:
-              #####################################################
-              # REMARKS ON SECURITY IN THIS OPENAPI FILE
-              # In this file only the basic security element to transport
-              # the bearer token of an OAuth2 process, which has to
-              # be included in the HTTP header is described.
-              #
-              # WARNING:
-              # If you want to use this file for a productive implementation,
-              # it is recommended to adjust the security schemes according to
-              # your system environments and security policies.
-              #####################################################
-              - {}
-              -   BearerAuthOAuth: []
+      security:
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
+        - {}
+        -   BearerAuthOAuth: []
 
-          parameters:
-              #path
-              -   $ref: "#/components/parameters/consentId_PATH"
-                    #query # NO QUERY PARAMETER
-                    #header
-                  #common header parameter
-              -   $ref: "#/components/parameters/X-Request-ID"
-                  #header to support the signature function
-              -   $ref: "#/components/parameters/Digest"
-              -   $ref: "#/components/parameters/Signature"
-              -   $ref: "#/components/parameters/TPP-Signature-Certificate"
-                  #conditional elemention for AIS
-              -   $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
-                  #optional additional PSU Information in header
-              -   $ref: "#/components/parameters/PSU-IP-Port"
-              -   $ref: "#/components/parameters/PSU-Accept"
-              -   $ref: "#/components/parameters/PSU-Accept-Charset"
-              -   $ref: "#/components/parameters/PSU-Accept-Encoding"
-              -   $ref: "#/components/parameters/PSU-Accept-Language"
-              -   $ref: "#/components/parameters/PSU-User-Agent"
-              -   $ref: "#/components/parameters/PSU-Http-Method"
-              -   $ref: "#/components/parameters/PSU-Device-ID"
-              -   $ref: "#/components/parameters/PSU-Geo-Location"
-          #NO REQUEST BODY
+      parameters:
+        #path
+        -   $ref: "#/components/parameters/consentId_PATH"
+              #query # NO QUERY PARAMETER
+          #header
+          #common header parameter
+        -   $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        -   $ref: "#/components/parameters/Digest"
+        -   $ref: "#/components/parameters/Signature"
+        -   $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #conditional elemention for AIS
+        -   $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        -   $ref: "#/components/parameters/PSU-IP-Port"
+        -   $ref: "#/components/parameters/PSU-Accept"
+        -   $ref: "#/components/parameters/PSU-Accept-Charset"
+        -   $ref: "#/components/parameters/PSU-Accept-Encoding"
+        -   $ref: "#/components/parameters/PSU-Accept-Language"
+        -   $ref: "#/components/parameters/PSU-User-Agent"
+        -   $ref: "#/components/parameters/PSU-Http-Method"
+        -   $ref: "#/components/parameters/PSU-Device-ID"
+        -   $ref: "#/components/parameters/PSU-Geo-Location"
+      #NO REQUEST BODY
 
-          responses:
-              '200':
-                  $ref: "#/components/responses/OK_200_Authorisations"
+      responses:
+        '200':
+          $ref: "#/components/responses/OK_200_Authorisations"
 
-              '400':
-                  $ref: "#/components/responses/BAD_REQUEST_400_AIS"
-              '401':
-                  $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
-              '403':
-                  $ref: "#/components/responses/FORBIDDEN_403_AIS"
-              '404':
-                  $ref: "#/components/responses/NOT_FOUND_404_AIS"
-              '405':
-                  $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
-              '406':
-                  $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
-              '408':
-                  $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
-              '409':
-                  $ref: "#/components/responses/CONFLICT_409_AIS"
-              '415':
-                  $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
-              '429':
-                  $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
-              '500':
-                  $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
-              '503':
-                  $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
 
   /v2/consents/confirmation-of-funds/{consentId}/authorisations/{authorisationId}:
 
     get:
-        summary: Read the SCA status of the consent authorisation
-        description: |
-            This method returns the SCA status of a consent initiation's authorisation sub-resource.
-        operationId: getConsentScaStatus
-        tags:
-            - Confirmation of Funds
+      summary: Read the SCA status of the consent authorisation
+      description: |
+        This method returns the SCA status of a consent initiation's authorisation sub-resource.
+      operationId: getConsentScaStatus
+      tags:
+        - Confirmation of Funds
 
-        security:
-            #####################################################
-            # REMARKS ON SECURITY IN THIS OPENAPI FILE
-            # In this file only the basic security element to transport
-            # the bearer token of an OAuth2 process, which has to
-            # be included in the HTTP header is described.
-            #
-            # WARNING:
-            # If you want to use this file for a productive implementation,
-            # it is recommended to adjust the security schemes according to
-            # your system environments and security policies.
-            #####################################################
-            - {}
-            - BearerAuthOAuth: []
+      security:
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
+        - {}
+        - BearerAuthOAuth: []
 
-        parameters:
-            #path
-            - $ref: "#/components/parameters/consentId_PATH"
-            - $ref: "#/components/parameters/authorisationId"
-                #query # NO QUERY PARAMETER
-                #header
-                #common header parameter
-            - $ref: "#/components/parameters/X-Request-ID"
-                #header to support the signature function
-            - $ref: "#/components/parameters/Digest"
-            - $ref: "#/components/parameters/Signature"
-            - $ref: "#/components/parameters/TPP-Signature-Certificate"
-                #conditional elemention for AIS
-            - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
-                #optional additional PSU Information in header
-            - $ref: "#/components/parameters/PSU-IP-Port"
-            - $ref: "#/components/parameters/PSU-Accept"
-            - $ref: "#/components/parameters/PSU-Accept-Charset"
-            - $ref: "#/components/parameters/PSU-Accept-Encoding"
-            - $ref: "#/components/parameters/PSU-Accept-Language"
-            - $ref: "#/components/parameters/PSU-User-Agent"
-            - $ref: "#/components/parameters/PSU-Http-Method"
-            - $ref: "#/components/parameters/PSU-Device-ID"
-            - $ref: "#/components/parameters/PSU-Geo-Location"
-        #NO REQUEST BODY
+      parameters:
+        #path
+        - $ref: "#/components/parameters/consentId_PATH"
+        - $ref: "#/components/parameters/authorisationId"
+            #query # NO QUERY PARAMETER
+            #header
+          #common header parameter
+        - $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        - $ref: "#/components/parameters/Digest"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/TPP-Signature-Certificate"
+          #conditional elemention for AIS
+        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-Accept"
+        - $ref: "#/components/parameters/PSU-Accept-Charset"
+        - $ref: "#/components/parameters/PSU-Accept-Encoding"
+        - $ref: "#/components/parameters/PSU-Accept-Language"
+        - $ref: "#/components/parameters/PSU-User-Agent"
+        - $ref: "#/components/parameters/PSU-Http-Method"
+        - $ref: "#/components/parameters/PSU-Device-ID"
+        - $ref: "#/components/parameters/PSU-Geo-Location"
+      #NO REQUEST BODY
 
-        responses:
-            '200':
-                $ref: "#/components/responses/OK_200_ScaStatus"
+      responses:
+        '200':
+          $ref: "#/components/responses/OK_200_ScaStatus"
 
-            '400':
-                $ref: "#/components/responses/BAD_REQUEST_400_AIS"
-            '401':
-                $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
-            '403':
-                $ref: "#/components/responses/FORBIDDEN_403_AIS"
-            '404':
-                $ref: "#/components/responses/NOT_FOUND_404_AIS"
-            '405':
-                $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
-            '406':
-                $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
-            '408':
-                $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
-            '409':
-                $ref: "#/components/responses/CONFLICT_409_AIS"
-            '415':
-                $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
-            '429':
-                $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
-            '500':
-                $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
-            '503':
-                $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
 
 
     put:
-        summary: Update PSU Data for consents
-        description: |
-            This method update PSU data on the consents  resource if needed.
-            It may authorise a consent within the Embedded SCA Approach where needed.
+      summary: Update PSU Data for consents
+      description: |
+        This method update PSU data on the consents  resource if needed.
+        It may authorise a consent within the Embedded SCA Approach where needed.
 
-            Independently from the SCA Approach it supports e.g. the selection of
-            the authentication method and a non-SCA PSU authentication.
+        Independently from the SCA Approach it supports e.g. the selection of
+        the authentication method and a non-SCA PSU authentication.
 
-            This methods updates PSU data on the cancellation authorisation resource if needed.
+        This methods updates PSU data on the cancellation authorisation resource if needed.
 
-            There are several possible update PSU data requests in the context of a consent request if needed,
-            which depends on the SCA approach:
+        There are several possible update PSU data requests in the context of a consent request if needed,
+        which depends on the SCA approach:
 
-            * Redirect SCA Approach:
-              A specific Update PSU data request is applicable for
-                * the selection of authentication methods, before choosing the actual SCA approach.
-            * Decoupled SCA Approach:
-              A specific update PSU data request is only applicable for
-              * adding the PSU identification, if not provided yet in the payment initiation request or the Account Information Consent Request, or if no OAuth2 access token is used, or
-              * the selection of authentication methods.
-            * Embedded SCA Approach:
-              The Update PSU data request might be used
-              * to add credentials as a first factor authentication data of the PSU and
-              * to select the authentication method and
-              * transaction authorisation.
+        * Redirect SCA Approach:
+          A specific Update PSU data request is applicable for
+            * the selection of authentication methods, before choosing the actual SCA approach.
+        * Decoupled SCA Approach:
+          A specific update PSU data request is only applicable for
+          * adding the PSU identification, if not provided yet in the payment initiation request or the Account Information Consent Request, or if no OAuth2 access token is used, or
+          * the selection of authentication methods.
+        * Embedded SCA Approach:
+          The Update PSU data request might be used
+          * to add credentials as a first factor authentication data of the PSU and
+          * to select the authentication method and
+          * transaction authorisation.
 
-            The SCA Approach might depend on the chosen SCA method.
-            For that reason, the following possible update PSU data request can apply to all SCA approaches:
+        The SCA Approach might depend on the chosen SCA method.
+        For that reason, the following possible update PSU data request can apply to all SCA approaches:
 
-            * Select an SCA method in case of several SCA methods are available for the customer.
+        * Select an SCA method in case of several SCA methods are available for the customer.
 
-            There are the following request types on this access path:
-              * Update PSU identification
-              * Update PSU authentication
-              * Select PSU autorization method
-                WARNING: This method needs a reduced header,
-                therefore many optional elements are not present.
-                Maybe in a later version the access path will change.
-              * Transaction Authorisation
-                WARNING: This method needs a reduced header,
-                therefore many optional elements are not present.
-                Maybe in a later version the access path will change.
-        operationId: updateConsentsPsuData
-        tags:
-            - Confirmation of Funds
+        There are the following request types on this access path:
+          * Update PSU identification
+          * Update PSU authentication
+          * Select PSU autorization method
+            WARNING: This method needs a reduced header,
+            therefore many optional elements are not present.
+            Maybe in a later version the access path will change.
+          * Transaction Authorisation
+            WARNING: This method needs a reduced header,
+            therefore many optional elements are not present.
+            Maybe in a later version the access path will change.
+      operationId: updateConsentsPsuData
+      tags:
+        - Confirmation of Funds
 
-        security:
-            #####################################################
-            # REMARKS ON SECURITY IN THIS OPENAPI FILE
-            # In this file only the basic security element to transport
-            # the bearer token of an OAuth2 process, which has to
-            # be included in the HTTP header is described.
-            #
-            # WARNING:
-            # If you want to use this file for a productive implementation,
-            # it is recommended to adjust the security schemes according to
-            # your system environments and security policies.
-            #####################################################
-            - {}
-            - BearerAuthOAuth: []
+      security:
+        #####################################################
+        # REMARKS ON SECURITY IN THIS OPENAPI FILE
+        # In this file only the basic security element to transport
+        # the bearer token of an OAuth2 process, which has to
+        # be included in the HTTP header is described.
+        #
+        # WARNING:
+        # If you want to use this file for a productive implementation,
+        # it is recommended to adjust the security schemes according to
+        # your system environments and security policies.
+        #####################################################
+        - {}
+        - BearerAuthOAuth: []
 
-        parameters:
-            #query # NO QUERY PARAMETER
-            #header
-            #path
-            - $ref: "#/components/parameters/consentId_PATH"
-            - $ref: "#/components/parameters/authorisationId"
-                #common header parameter
-            - $ref: "#/components/parameters/X-Request-ID"
-                #header to support the signature function
-            - $ref: "#/components/parameters/Digest"
-            - $ref: "#/components/parameters/Signature"
-            - $ref: "#/components/parameters/TPP-Signature-Certificate"
-            #method specific header elements # Not always allowed depending on the kind of update which is ask for
-            - $ref: "#/components/parameters/PSU-ID"
-            - $ref: "#/components/parameters/PSU-ID-Type"
-            - $ref: "#/components/parameters/PSU-Corporate-ID"
-            - $ref: "#/components/parameters/PSU-Corporate-ID-Type"
-                #conditional elemention for AIS
-            - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
-                #optional additional PSU Information in header
-            - $ref: "#/components/parameters/PSU-IP-Port"
-            - $ref: "#/components/parameters/PSU-Accept"
-            - $ref: "#/components/parameters/PSU-Accept-Charset"
-            - $ref: "#/components/parameters/PSU-Accept-Encoding"
-            - $ref: "#/components/parameters/PSU-Accept-Language"
-            - $ref: "#/components/parameters/PSU-User-Agent"
-            - $ref: "#/components/parameters/PSU-Http-Method"
-            - $ref: "#/components/parameters/PSU-Device-ID"
-            - $ref: "#/components/parameters/PSU-Geo-Location"
+      parameters:
+        #query # NO QUERY PARAMETER
+        #header
+        #path
+        - $ref: "#/components/parameters/consentId_PATH"
+        - $ref: "#/components/parameters/authorisationId"
+          #common header parameter
+        - $ref: "#/components/parameters/X-Request-ID"
+          #header to support the signature function
+        - $ref: "#/components/parameters/Digest"
+        - $ref: "#/components/parameters/Signature"
+        - $ref: "#/components/parameters/TPP-Signature-Certificate"
+        #method specific header elements # Not always allowed depending on the kind of update which is ask for
+        - $ref: "#/components/parameters/PSU-ID"
+        - $ref: "#/components/parameters/PSU-ID-Type"
+        - $ref: "#/components/parameters/PSU-Corporate-ID"
+        - $ref: "#/components/parameters/PSU-Corporate-ID-Type"
+          #conditional elemention for AIS
+        - $ref: "#/components/parameters/PSU-IP-Address_conditionalForAis"
+          #optional additional PSU Information in header
+        - $ref: "#/components/parameters/PSU-IP-Port"
+        - $ref: "#/components/parameters/PSU-Accept"
+        - $ref: "#/components/parameters/PSU-Accept-Charset"
+        - $ref: "#/components/parameters/PSU-Accept-Encoding"
+        - $ref: "#/components/parameters/PSU-Accept-Language"
+        - $ref: "#/components/parameters/PSU-User-Agent"
+        - $ref: "#/components/parameters/PSU-Http-Method"
+        - $ref: "#/components/parameters/PSU-Device-ID"
+        - $ref: "#/components/parameters/PSU-Geo-Location"
 
-        requestBody:
-            content:
-                application/json:
-                    schema:
-                        oneOf: #Different Authorisation Bodies
-                            - {}
-                            - $ref: "#/components/schemas/updatePsuAuthentication"
-                            - $ref: "#/components/schemas/selectPsuAuthenticationMethod"
-                            - $ref: "#/components/schemas/transactionAuthorisation"
-                            - $ref: "#/components/schemas/authorisationConfirmation"
-                    examples:
-                        "Update PSU identification/additional SCA process (Embedded Approach)":
-                            value: {}
-                        "Update PSU authentication (Embedded Approach)":
-                            $ref: "#/components/examples/updatePsuAuthenticationExample_Embedded"
-                        "Select PSU authentication method (Embedded Approach)":
-                            $ref: "#/components/examples/selectPsuAuthenticationMethodExample_Embedded"
-                        "Transaction authorisation (Embedded Approach)":
-                            $ref: "#/components/examples/transactionAuthorisationExample_Embedded"
-                        "Authorisation confirmation (Redirect Approach)":
-                            $ref: "#/components/examples/authorisationConfirmationExample_Redirect"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf: #Different Authorisation Bodies
+                - {}
+                - $ref: "#/components/schemas/updatePsuAuthentication"
+                - $ref: "#/components/schemas/selectPsuAuthenticationMethod"
+                - $ref: "#/components/schemas/transactionAuthorisation"
+                - $ref: "#/components/schemas/authorisationConfirmation"
+            examples:
+              "Update PSU identification/additional SCA process (Embedded Approach)":
+                value: {}
+              "Update PSU authentication (Embedded Approach)":
+                $ref: "#/components/examples/updatePsuAuthenticationExample_Embedded"
+              "Select PSU authentication method (Embedded Approach)":
+                $ref: "#/components/examples/selectPsuAuthenticationMethodExample_Embedded"
+              "Transaction authorisation (Embedded Approach)":
+                $ref: "#/components/examples/transactionAuthorisationExample_Embedded"
+              "Authorisation confirmation (Redirect Approach)":
+                $ref: "#/components/examples/authorisationConfirmationExample_Redirect"
 
-        responses:
-            '200':
-                $ref: "#/components/responses/OK_200_UpdatePsuData"
+      responses:
+        '200':
+          $ref: "#/components/responses/OK_200_UpdatePsuData"
 
-            '400':
-                $ref: "#/components/responses/BAD_REQUEST_400_AIS"
-            '401':
-                $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
-            '403':
-                $ref: "#/components/responses/FORBIDDEN_403_AIS"
-            '404':
-                $ref: "#/components/responses/NOT_FOUND_404_AIS"
-            '405':
-                $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
-            '406':
-                $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
-            '408':
-                $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
-            '409':
-                $ref: "#/components/responses/CONFLICT_409_AIS"
-            '415':
-                $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
-            '429':
-                $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
-            '500':
-                $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
-            '503':
-                $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
+        '400':
+          $ref: "#/components/responses/BAD_REQUEST_400_AIS"
+        '401':
+          $ref: "#/components/responses/UNAUTHORIZED_401_AIS"
+        '403':
+          $ref: "#/components/responses/FORBIDDEN_403_AIS"
+        '404':
+          $ref: "#/components/responses/NOT_FOUND_404_AIS"
+        '405':
+          $ref: "#/components/responses/METHOD_NOT_ALLOWED_405_AIS"
+        '406':
+          $ref: "#/components/responses/NOT_ACCEPTABLE_406_AIS"
+        '408':
+          $ref: "#/components/responses/REQUEST_TIMEOUT_408_AIS"
+        '409':
+          $ref: "#/components/responses/CONFLICT_409_AIS"
+        '415':
+          $ref: "#/components/responses/UNSUPPORTED_MEDIA_TYPE_415_AIS"
+        '429':
+          $ref: "#/components/responses/TOO_MANY_REQUESTS_429_AIS"
+        '500':
+          $ref: "#/components/responses/INTERNAL_SERVER_ERROR_500_AIS"
+        '503':
+          $ref: "#/components/responses/SERVICE_UNAVAILABLE_503_AIS"
 
 
 components:
-#####################################################
-# Predefined Components
-#####################################################
+  #####################################################
+  # Predefined Components
+  #####################################################
 
   securitySchemes:
-  #####################################################
-  # Predefined Security Schemes:
-  #
-  # In this file only the basic security element to transport
-  # the bearer token of an an OAuth2 process, which has to
-  # be included inthe HTTP header ist described.
-  #
-  # WARNING:
-  # If you want to use this file for a productive implementation,
-  # it is recommandes to adjust the security schemes according to
-  # your system enviroments and security policies.
-  #####################################################
+    #####################################################
+    # Predefined Security Schemes:
+    #
+    # In this file only the basic security element to transport
+    # the bearer token of an an OAuth2 process, which has to
+    # be included inthe HTTP header ist described.
+    #
+    # WARNING:
+    # If you want to use this file for a productive implementation,
+    # it is recommandes to adjust the security schemes according to
+    # your system enviroments and security policies.
+    #####################################################
     BearerAuthOAuth:
       description: |
         Bearer Token.
@@ -840,9 +840,9 @@ components:
 
 
   schemas:
-  #####################################################
-  # Predefined Schemas
-  #####################################################
+    #####################################################
+    # Predefined Schemas
+    #####################################################
 
 
     consentId:
@@ -1037,7 +1037,7 @@ components:
 
     authenticationMethodId:
       description: |
-            An identification provided by the ASPSP for the later identification of the authentication method selection.
+        An identification provided by the ASPSP for the later identification of the authentication method selection.
       type: string
       maxLength: 35
       example: "myAuthenticationID"
@@ -1212,39 +1212,39 @@ components:
 
     updatePsuAuthentication:
       description: |
-          Content of the body of a Update PSU authentication request.
+        Content of the body of a Update PSU authentication request.
 
-          Password subfield is used.
+        Password subfield is used.
       type: object
       required:
-          - psuData
+        - psuData
       properties:
-          psuData:
-              $ref: "#/components/schemas/psuData"
+        psuData:
+          $ref: "#/components/schemas/psuData"
 
     selectPsuAuthenticationMethod:
-        description: |
-            Content of the body of a Select PSU authentication method request.
-        type: object
-        required:
-            - authenticationMethodId
-        properties:
-            authenticationMethodId:
-                $ref: "#/components/schemas/authenticationMethodId"
+      description: |
+        Content of the body of a Select PSU authentication method request.
+      type: object
+      required:
+        - authenticationMethodId
+      properties:
+        authenticationMethodId:
+          $ref: "#/components/schemas/authenticationMethodId"
 
     transactionAuthorisation:
-        description: |
-            Content of the body of a transaction authorisation request.
-        type: object
-        required:
-            - scaAuthenticationData
-        properties:
-            scaAuthenticationData:
-                $ref: "#/components/schemas/scaAuthenticationData"
+      description: |
+        Content of the body of a transaction authorisation request.
+      type: object
+      required:
+        - scaAuthenticationData
+      properties:
+        scaAuthenticationData:
+          $ref: "#/components/schemas/scaAuthenticationData"
 
-#####################################################
-# Content of Request Bodies
-#####################################################
+    #####################################################
+    # Content of Request Bodies
+    #####################################################
 
 
 
@@ -1272,9 +1272,9 @@ components:
 
 
 
-    #####################################################
-    # Content of Request Bodies - XML
-    #####################################################
+      #####################################################
+      # Content of Request Bodies - XML
+      #####################################################
 
       #####################################################
       # Content of Request Bodies - Single Part
@@ -1305,9 +1305,16 @@ components:
         challengeData:
           $ref: "#/components/schemas/challengeData"
         _links:
-           $ref: "#/components/schemas/_linksStartScaProcessSingleSca"
+          $ref: "#/components/schemas/_linksStartScaProcessSingleSca"
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        tppMessage:
+          type: array
+          items:
+            $ref: "#/components/schemas/tppMessageGeneric"
+          description: Messages to the TPP on operational issues.
 
     ConsentsConfirmationOfFundsMultilevelSCAResponse:
       description: Body of the JSON response for a Start Multilevel SCA authorisation request.
@@ -1322,7 +1329,7 @@ components:
         consentId:
           $ref: "#/components/schemas/consentId"
         _links:
-           $ref: "#/components/schemas/_linksStartScaProcessMultilevelSca"
+          $ref: "#/components/schemas/_linksStartScaProcessMultilevelSca"
         psuMessage:
           $ref: "#/components/schemas/psuMessageText"
         tppMessages:
@@ -1360,9 +1367,9 @@ components:
           $ref: "#/components/schemas/consentStatus"
 
 
-#####################################################
-# _links
-#####################################################
+    #####################################################
+    # _links
+    #####################################################
 
     _linksAll:
       description: |
@@ -1434,14 +1441,14 @@ components:
 
 
 
-#####################################################
-# Tpp-Messages to Communicate Error Information
-#####################################################
+    #####################################################
+    # Tpp-Messages to Communicate Error Information
+    #####################################################
 
 
-  #####################################################
-  # Generic Elements
-  #####################################################
+    #####################################################
+    # Generic Elements
+    #####################################################
 
     tppMessageCategory:
       description: Category of the TPP message category
@@ -1534,9 +1541,9 @@ components:
 
 
 
-  #####################################################
-  # Next Gen propriatary Tpp-Messages
-  #####################################################
+    #####################################################
+    # Next Gen propriatary Tpp-Messages
+    #####################################################
 
 
     tppMessageText:
@@ -1552,7 +1559,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode2XX"
         path:
@@ -1568,7 +1575,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode400_AIS"
         path:
@@ -1584,7 +1591,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode401_AIS"
         path:
@@ -1600,7 +1607,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode403_AIS"
         path:
@@ -1616,7 +1623,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode404_AIS"
         path:
@@ -1632,7 +1639,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode405_AIS"
         path:
@@ -1648,7 +1655,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode406_AIS"
         path:
@@ -1664,7 +1671,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode409_AIS"
         path:
@@ -1679,7 +1686,7 @@ components:
         - code
       properties:
         category:
-           $ref: "#/components/schemas/tppMessageCategory"
+          $ref: "#/components/schemas/tppMessageCategory"
         code:
           $ref: "#/components/schemas/MessageCode429_AIS"
         path:
@@ -1688,9 +1695,9 @@ components:
           $ref: "#/components/schemas/tppMessageText"
 
 
-  #####################################################
-  # RFC7807 Messages
-  #####################################################
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
 
     tppErrorTitle:
       description: |
@@ -1711,9 +1718,9 @@ components:
 
 
 
-  #####################################################
-  # RFC7807 Messages
-  #####################################################
+    #####################################################
+    # RFC7807 Messages
+    #####################################################
 
 
 
@@ -2149,7 +2156,7 @@ components:
                 $ref: "#/components/schemas/MessageCode429_AIS"
         _links:
           $ref: "#/components/schemas/_linksAll"
-      #example:
+        #example:
         #$ref: "#/components/examples/RFC7807_ErrorInfoBody"
 
 
@@ -2244,10 +2251,10 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "STATUS_INVALID",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "STATUS_INVALID",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
 
     Error429_NG_AIS:
@@ -2263,522 +2270,522 @@ components:
           $ref: "#/components/schemas/_linksAll"
       example:
         [{
-          "category": "ERROR",
-          "code": "ACCESS_EXCEEDED",
-          "text": "additional text information of the ASPSP up to 512 characters"
-        }]
+           "category": "ERROR",
+           "code": "ACCESS_EXCEEDED",
+           "text": "additional text information of the ASPSP up to 512 characters"
+         }]
 
     authorisationId:
-        description: Resource identification of the related SCA.
-        type: string
-        example: "123auth456"
+      description: Resource identification of the related SCA.
+      type: string
+      example: "123auth456"
 
     authorisationConfirmation:
-        description: |
-            Content of the body of an authorisation confirmation request
-        type: object
-        required: # conditional, empty body is covered in the definition of request body for Update PSU data
-            - confirmationCode
-        properties:
-            confirmationCode:
-                description: Confirmation Code as retrieved by the TPP from the redirect based SCA process.
-                type: string
+      description: |
+        Content of the body of an authorisation confirmation request
+      type: object
+      required: # conditional, empty body is covered in the definition of request body for Update PSU data
+        - confirmationCode
+      properties:
+        confirmationCode:
+          description: Confirmation Code as retrieved by the TPP from the redirect based SCA process.
+          type: string
 
 
-        #####################################################
-        # Content of Request Bodies - XML
-        #####################################################
+      #####################################################
+      # Content of Request Bodies - XML
+      #####################################################
 
-        #####################################################
-        # Content of Request Bodies - Single Part
-        #####################################################
+      #####################################################
+      # Content of Request Bodies - Single Part
+      #####################################################
 
     psuData:
-        description: PSU data for update PSU authentication.
-        type: object
-        minProperties: 1
-        properties:
-            password:
-                description: Password.
-                type: string
-            encryptedPassword:
-                description: Encrypted password.
-                type: string
-            additionalPassword:
-                description: Additional password in plaintext.
-                type: string
-            additionalEncryptedPassword:
-                description: Additional encrypted password.
-                type: string
+      description: PSU data for update PSU authentication.
+      type: object
+      minProperties: 1
+      properties:
+        password:
+          description: Password.
+          type: string
+        encryptedPassword:
+          description: Encrypted password.
+          type: string
+        additionalPassword:
+          description: Additional password in plaintext.
+          type: string
+        additionalEncryptedPassword:
+          description: Additional encrypted password.
+          type: string
 
     scaAuthenticationData:
-        description: |
-            SCA authentication data, depending on the chosen authentication method.
-            If the data is binary, then it is base64 encoded.
-        type: string
+      description: |
+        SCA authentication data, depending on the chosen authentication method.
+        If the data is binary, then it is base64 encoded.
+      type: string
 
     startScaprocessResponse:
-        description: Body of the JSON response for a Start SCA authorisation request.
-        type: object
-        required:
-            - scaStatus
-            - authorisationId
-            - _links
-        properties:
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            authorisationId:
-                $ref: "#/components/schemas/authorisationId"
-            scaMethods:
-                $ref: "#/components/schemas/scaMethods"
-            chosenScaMethod:
-                $ref: "#/components/schemas/chosenScaMethod"
-            challengeData:
-                $ref: "#/components/schemas/challengeData"
-            _links:
-                $ref: "#/components/schemas/_linksStartScaProcess"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
+      description: Body of the JSON response for a Start SCA authorisation request.
+      type: object
+      required:
+        - scaStatus
+        - authorisationId
+        - _links
+      properties:
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        authorisationId:
+          $ref: "#/components/schemas/authorisationId"
+        scaMethods:
+          $ref: "#/components/schemas/scaMethods"
+        chosenScaMethod:
+          $ref: "#/components/schemas/chosenScaMethod"
+        challengeData:
+          $ref: "#/components/schemas/challengeData"
+        _links:
+          $ref: "#/components/schemas/_linksStartScaProcess"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
     scaStatus:
-        description: |
-            This data element is containing information about the status of the SCA method applied.
+      description: |
+        This data element is containing information about the status of the SCA method applied.
 
-            The following codes are defined for this data type.
+        The following codes are defined for this data type.
 
-              * 'received':
-                An authorisation or cancellation-authorisation resource has been created successfully.
-              * 'psuIdentified':
-                The PSU related to the authorisation or cancellation-authorisation resource has been identified.
-              * 'psuAuthenticated':
-                The PSU related to the authorisation or cancellation-authorisation resource has been identified and authenticated e.g. by a password or by an access token.
-              * 'scaMethodSelected':
-                The PSU/TPP has selected the related SCA routine.
-                If the SCA method is chosen implicitly since only one SCA method is available,
-                then this is the first status to be reported instead of 'received'.
-              * 'unconfirmed':
-                SCA is technically successfully finalised by the PSU, but the authorisation resource needs a confirmation command by the TPP yet.
-              * 'started':
-                The addressed SCA routine has been started.
-              * 'finalised':
-                The SCA routine has been finalised successfully (including a potential confirmation command).
-                This is a final status of the authorisation resource.
-              * 'failed':
-                The SCA routine failed.
-                This is a final status of the authorisation resource.
-              * 'exempted':
-                SCA was exempted for the related transaction, the related authorisation is successful.
-                This is a final status of the authorisation resource.
-        type: string
-        enum:
-            - "received"
-            - "psuIdentified"
-            - "psuAuthenticated"
-            - "scaMethodSelected"
-            - "started"
-            - "unconfirmed"
-            - "finalised"
-            - "failed"
-            - "exempted"
+          * 'received':
+            An authorisation or cancellation-authorisation resource has been created successfully.
+          * 'psuIdentified':
+            The PSU related to the authorisation or cancellation-authorisation resource has been identified.
+          * 'psuAuthenticated':
+            The PSU related to the authorisation or cancellation-authorisation resource has been identified and authenticated e.g. by a password or by an access token.
+          * 'scaMethodSelected':
+            The PSU/TPP has selected the related SCA routine.
+            If the SCA method is chosen implicitly since only one SCA method is available,
+            then this is the first status to be reported instead of 'received'.
+          * 'unconfirmed':
+            SCA is technically successfully finalised by the PSU, but the authorisation resource needs a confirmation command by the TPP yet.
+          * 'started':
+            The addressed SCA routine has been started.
+          * 'finalised':
+            The SCA routine has been finalised successfully (including a potential confirmation command).
+            This is a final status of the authorisation resource.
+          * 'failed':
+            The SCA routine failed.
+            This is a final status of the authorisation resource.
+          * 'exempted':
+            SCA was exempted for the related transaction, the related authorisation is successful.
+            This is a final status of the authorisation resource.
+      type: string
+      enum:
+        - "received"
+        - "psuIdentified"
+        - "psuAuthenticated"
+        - "scaMethodSelected"
+        - "started"
+        - "unconfirmed"
+        - "finalised"
+        - "failed"
+        - "exempted"
 
-        example: "psuAuthenticated"
+      example: "psuAuthenticated"
 
     _linksStartScaProcess:
-        description: |
-            A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the
-            response depend on the dynamical decisions of the ASPSP when processing the request.
+      description: |
+        A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the
+        response depend on the dynamical decisions of the ASPSP when processing the request.
 
-            **Remark:** All links can be relative or full links, to be decided by the ASPSP.
+        **Remark:** All links can be relative or full links, to be decided by the ASPSP.
 
-            Type of links admitted in this response, (further links might be added for ASPSP defined
-            extensions):
+        Type of links admitted in this response, (further links might be added for ASPSP defined
+        extensions):
 
-            - 'scaRedirect':
-              In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to
-              redirect the PSU browser.
-            - 'scaOAuth':
-              In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.
-            * 'confirmation':
-              Might be added by the ASPSP if either the "scaRedirect" or "scaOAuth" hyperlink is returned
-              in the same response message.
-              This hyperlink defines the URL to the resource which needs to be updated with
-                * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or
-                * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.
-            - 'updatePsuIdentification':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where PSU identification data needs to be uploaded.
-            - 'startAuthorisationWithPsuAuthentication':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where PSU authentication data needs to be uploaded.
-            - 'startAuthorisationWithEncryptedPsuAuthentication':
-                Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on
-                application layer in uploading.
-            - 'selectAuthenticationMethod':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where the selected authentication method needs to be uploaded.
-              This link is contained under exactly the same conditions as the data element 'scaMethods'.
-            - 'authoriseTransaction':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where the authorisation data has to be uploaded, e.g. the TOP received by SMS.
-            - 'scaStatus':
-              The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+        - 'scaRedirect':
+          In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to
+          redirect the PSU browser.
+        - 'scaOAuth':
+          In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the configuration of the Authorisation Server can be retrieved. The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.
+        * 'confirmation':
+          Might be added by the ASPSP if either the "scaRedirect" or "scaOAuth" hyperlink is returned
+          in the same response message.
+          This hyperlink defines the URL to the resource which needs to be updated with
+            * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or
+            * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.
+        - 'updatePsuIdentification':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where PSU identification data needs to be uploaded.
+        - 'startAuthorisationWithPsuAuthentication':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where PSU authentication data needs to be uploaded.
+        - 'startAuthorisationWithEncryptedPsuAuthentication':
+            Same as startAuthorisactionWithPsuAuthentication where the authentication data need to be encrypted on
+            application layer in uploading.
+        - 'selectAuthenticationMethod':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where the selected authentication method needs to be uploaded.
+          This link is contained under exactly the same conditions as the data element 'scaMethods'.
+        - 'authoriseTransaction':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where the authorisation data has to be uploaded, e.g. the TOP received by SMS.
+        - 'scaStatus':
+          The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
 
-        type: object
-        additionalProperties:
-            $ref: "#/components/schemas/hrefType"
-        properties:
-            scaRedirect:
-                $ref: "#/components/schemas/hrefType"
-            scaOAuth:
-                $ref: "#/components/schemas/hrefType"
-            confirmation:
-                $ref: "#/components/schemas/hrefType"
-            updatePsuIdentification:
-                $ref: "#/components/schemas/hrefType"
-            startAuthorisationWithPsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            startAuthorisationWithEncryptedPsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            selectAuthenticationMethod:
-                $ref: "#/components/schemas/hrefType"
-            authoriseTransaction:
-                $ref: "#/components/schemas/hrefType"
-            scaStatus:
-                $ref: "#/components/schemas/hrefType"
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        scaRedirect:
+          $ref: "#/components/schemas/hrefType"
+        scaOAuth:
+          $ref: "#/components/schemas/hrefType"
+        confirmation:
+          $ref: "#/components/schemas/hrefType"
+        updatePsuIdentification:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        startAuthorisationWithEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        selectAuthenticationMethod:
+          $ref: "#/components/schemas/hrefType"
+        authoriseTransaction:
+          $ref: "#/components/schemas/hrefType"
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
 
     authorisationsList:
-        description: An array of all authorisationIds.
-        type: array
-        items:
-            $ref: "#/components/schemas/authorisationId"
+      description: An array of all authorisationIds.
+      type: array
+      items:
+        $ref: "#/components/schemas/authorisationId"
 
     authorisations:
-        description: An array of all authorisationIds.
-        type: object
-        required:
-            - authorisationIds
-        properties:
-            authorisationIds:
-                $ref: "#/components/schemas/authorisationsList"
+      description: An array of all authorisationIds.
+      type: object
+      required:
+        - authorisationIds
+      properties:
+        authorisationIds:
+          $ref: "#/components/schemas/authorisationsList"
 
     scaStatusResponse:
-        description: Body of the JSON response with SCA Status.
-        type: object
-        properties:
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            trustedBeneficiaryFlag:
-                $ref: "#/components/schemas/trustedBeneficiaryFlag"
+      description: Body of the JSON response with SCA Status.
+      type: object
+      properties:
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        trustedBeneficiaryFlag:
+          $ref: "#/components/schemas/trustedBeneficiaryFlag"
 
     trustedBeneficiaryFlag:
-        description: |
-            Additional Service: Trusted Benificiaries
-            Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.
-            This attribute is only contained in case of a final scaStatus.
-        type: boolean
-        example: false
+      description: |
+        Additional Service: Trusted Benificiaries
+        Within this data element, the ASPSP might optionally communicate towards the TPP whether the creditor was part of the related trusted beneficiary list.
+        This attribute is only contained in case of a final scaStatus.
+      type: boolean
+      example: false
 
     updatePsuIdenticationResponse:
-        description: Body of the JSON response for a successful update PSU identification request.
-        type: object
-        required:
-            - _links
-            - scaStatus
-        properties:
-            transactionFees:
-                # description: Might be used by the ASPSP to transport the total transaction fee relevant for the underlying payments. This field includes the entry of the currencyConversionFees if applicable.
-                $ref: "#/components/schemas/amount"
-            currencyConversionFees:
-                # description: Might be used by the ASPSP to transport specific currency conversion fees related to the initiated credit transfer.
-                $ref: "#/components/schemas/amount"
-            estimatedTotalAmount:
-                # description: The amount which is estimated to be debted from the debtor account.
-                $ref: "#/components/schemas/amount"
-            estimatedInterbankSettlementAmount:
-                # description: The estimated amount to be transferred to the payee.
-                $ref: "#/components/schemas/amount"
-            scaMethods:
-                $ref: "#/components/schemas/scaMethods"
-            _links:
-                $ref: "#/components/schemas/_linksUpdatePsuIdentification"
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
+      description: Body of the JSON response for a successful update PSU identification request.
+      type: object
+      required:
+        - _links
+        - scaStatus
+      properties:
+        transactionFees:
+          # description: Might be used by the ASPSP to transport the total transaction fee relevant for the underlying payments. This field includes the entry of the currencyConversionFees if applicable.
+          $ref: "#/components/schemas/amount"
+        currencyConversionFees:
+          # description: Might be used by the ASPSP to transport specific currency conversion fees related to the initiated credit transfer.
+          $ref: "#/components/schemas/amount"
+        estimatedTotalAmount:
+          # description: The amount which is estimated to be debted from the debtor account.
+          $ref: "#/components/schemas/amount"
+        estimatedInterbankSettlementAmount:
+          # description: The estimated amount to be transferred to the payee.
+          $ref: "#/components/schemas/amount"
+        scaMethods:
+          $ref: "#/components/schemas/scaMethods"
+        _links:
+          $ref: "#/components/schemas/_linksUpdatePsuIdentification"
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
     updatePsuAuthenticationResponse:
-        description: Body of the JSON response for a successful update PSU authentication request.
-        type: object
-        required:
-            - scaStatus
-        properties:
-            transactionFees:
-                # description: Might be used by the ASPSP to transport the total transaction fee relevant for the underlying payments. This field includes the entry of the currencyConversionFees if applicable.
-                $ref: "#/components/schemas/amount"
-            currencyConversionFees:
-                # description: Might be used by the ASPSP to transport specific currency conversion fees related to the initiated credit transfer.
-                $ref: "#/components/schemas/amount"
-            estimatedTotalAmount:
-                # description: The amount which is estimated to be debted from the debtor account.
-                $ref: "#/components/schemas/amount"
-            estimatedInterbankSettlementAmount:
-                # description: The estimated amount to be transferred to the payee.
-                $ref: "#/components/schemas/amount"
-            chosenScaMethod:
-                $ref: "#/components/schemas/chosenScaMethod"
-            challengeData:
-                $ref: "#/components/schemas/challengeData"
-            scaMethods:
-                $ref: "#/components/schemas/scaMethods"
-            _links:
-                $ref: "#/components/schemas/_linksUpdatePsuAuthentication"
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
-            authorisationId:
-                $ref: "#/components/schemas/authorisationId"
+      description: Body of the JSON response for a successful update PSU authentication request.
+      type: object
+      required:
+        - scaStatus
+      properties:
+        transactionFees:
+          # description: Might be used by the ASPSP to transport the total transaction fee relevant for the underlying payments. This field includes the entry of the currencyConversionFees if applicable.
+          $ref: "#/components/schemas/amount"
+        currencyConversionFees:
+          # description: Might be used by the ASPSP to transport specific currency conversion fees related to the initiated credit transfer.
+          $ref: "#/components/schemas/amount"
+        estimatedTotalAmount:
+          # description: The amount which is estimated to be debted from the debtor account.
+          $ref: "#/components/schemas/amount"
+        estimatedInterbankSettlementAmount:
+          # description: The estimated amount to be transferred to the payee.
+          $ref: "#/components/schemas/amount"
+        chosenScaMethod:
+          $ref: "#/components/schemas/chosenScaMethod"
+        challengeData:
+          $ref: "#/components/schemas/challengeData"
+        scaMethods:
+          $ref: "#/components/schemas/scaMethods"
+        _links:
+          $ref: "#/components/schemas/_linksUpdatePsuAuthentication"
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
+        authorisationId:
+          $ref: "#/components/schemas/authorisationId"
 
     selectPsuAuthenticationMethodResponse:
-        description: Body of the JSON response for a successful select PSU authentication method request.
-        type: object
-        required:
-            - scaStatus
-        properties:
-            transactionFees:
-                # description: Might be used by the ASPSP to transport the total transaction fee relevant for the underlying payments. This field includes the entry of the currencyConversionFees if applicable.
-                $ref: "#/components/schemas/amount"
-            currencyConversionFees:
-                # description: Might be used by the ASPSP to transport specific currency conversion fees related to the initiated credit transfer.
-                $ref: "#/components/schemas/amount"
-            estimatedTotalAmount:
-                # description: The amount which is estimated to be debted from the debtor account.
-                $ref: "#/components/schemas/amount"
-            estimatedInterbankSettlementAmount:
-                # description: The estimated amount to be transferred to the payee.
-                $ref: "#/components/schemas/amount"
-            chosenScaMethod:
-                $ref: "#/components/schemas/chosenScaMethod"
-            challengeData:
-                $ref: "#/components/schemas/challengeData"
-            _links:
-                $ref: "#/components/schemas/_linksSelectPsuAuthenticationMethod"
-            scaStatus:
-                $ref: "#/components/schemas/scaStatus"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
+      description: Body of the JSON response for a successful select PSU authentication method request.
+      type: object
+      required:
+        - scaStatus
+      properties:
+        transactionFees:
+          # description: Might be used by the ASPSP to transport the total transaction fee relevant for the underlying payments. This field includes the entry of the currencyConversionFees if applicable.
+          $ref: "#/components/schemas/amount"
+        currencyConversionFees:
+          # description: Might be used by the ASPSP to transport specific currency conversion fees related to the initiated credit transfer.
+          $ref: "#/components/schemas/amount"
+        estimatedTotalAmount:
+          # description: The amount which is estimated to be debted from the debtor account.
+          $ref: "#/components/schemas/amount"
+        estimatedInterbankSettlementAmount:
+          # description: The estimated amount to be transferred to the payee.
+          $ref: "#/components/schemas/amount"
+        chosenScaMethod:
+          $ref: "#/components/schemas/chosenScaMethod"
+        challengeData:
+          $ref: "#/components/schemas/challengeData"
+        _links:
+          $ref: "#/components/schemas/_linksSelectPsuAuthenticationMethod"
+        scaStatus:
+          $ref: "#/components/schemas/scaStatus"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
     amount:
-        type: object
-        required:
-            - currency
-            - amount
-        properties:
-            currency:
-                $ref: "#/components/schemas/currencyCode"
-            amount:
-                $ref: "#/components/schemas/amountValue"
-        example:
-          {
-              "currency": "EUR",
-              "amount": "123"
-          }
+      type: object
+      required:
+        - currency
+        - amount
+      properties:
+        currency:
+          $ref: "#/components/schemas/currencyCode"
+        amount:
+          $ref: "#/components/schemas/amountValue"
+      example:
+        {
+          "currency": "EUR",
+          "amount": "123"
+        }
 
     amountValue:
-        description: |
-            The amount given with fractional digits, where fractions must be compliant to the currency definition.
-            Up to 14 significant figures. Negative amounts are signed by minus.
-            The decimal separator is a dot.
+      description: |
+        The amount given with fractional digits, where fractions must be compliant to the currency definition.
+        Up to 14 significant figures. Negative amounts are signed by minus.
+        The decimal separator is a dot.
 
-            **Example:**
-            Valid representations for EUR with up to two decimals are:
+        **Example:**
+        Valid representations for EUR with up to two decimals are:
 
-              * 1056
-              * 5768.2
-              * -1.50
-              * 5877.78
-        type: string
-        pattern: "-?[0-9]{1,14}(\\.[0-9]{1,3})?"
-        example: "5877.78"
+          * 1056
+          * 5768.2
+          * -1.50
+          * 5877.78
+      type: string
+      pattern: "-?[0-9]{1,14}(\\.[0-9]{1,3})?"
+      example: "5877.78"
 
     _linksUpdatePsuIdentification:
-        description: |
-            A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.
+      description: |
+        A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.
 
-            **Remark:** All links can be relative or full links, to be decided by the ASPSP.
+        **Remark:** All links can be relative or full links, to be decided by the ASPSP.
 
-            Type of links admitted in this response, (further links might be added for ASPSP
-            defined extensions):
+        Type of links admitted in this response, (further links might be added for ASPSP
+        defined extensions):
 
-            - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
-            - 'selectAuthenticationMethod': This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated.. If this link is contained, then there is also the data element "scaMethods" contained in the response body.
-        type: object
-        additionalProperties:
-            $ref: "#/components/schemas/hrefType"
-        properties:
-            scaStatus:
-                $ref: "#/components/schemas/hrefType"
-            selectAuthenticationMethod:
-                $ref: "#/components/schemas/hrefType"
+        - 'scaStatus': The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+        - 'selectAuthenticationMethod': This is a link to a resource, where the TPP can select the applicable second factor authentication methods for the PSU, if there are several available authentication methods and if the PSU is already sufficiently authenticated.. If this link is contained, then there is also the data element "scaMethods" contained in the response body.
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
+        selectAuthenticationMethod:
+          $ref: "#/components/schemas/hrefType"
 
     _linksUpdatePsuAuthentication:
-        description: |
-            A list of hyperlinks to be recognised by the TPP. Might be contained, if several authentication methods
-            are available for the PSU.
-            Type of links admitted in this response:
-              * 'updateAdditionalPsuAuthentication':
-                The link to the payment initiation or account information resource,
-                which needs to be updated by an additional PSU password.
-                This link is only contained in rare cases,
-                where such additional passwords are needed for PSU authentications.
-              * 'updateAdditionalEncryptedPsuAuthentication':
-                The link to the payment initiation or account information resource,
-                which needs to be updated by an additional encrypted PSU password.
-                This link is only contained in rare cases, where such additional passwords are needed for PSU authentications.
-              * 'selectAuthenticationMethod':
-                This is a link to a resource, where the TPP can select the applicable second factor authentication
-                methods for the PSU, if there were several available authentication methods.
-                This link is only contained, if the PSU is already identified or authenticated with the first relevant
-                factor or alternatively an access token, if SCA is required and if the PSU has a choice between different
-                authentication methods.
-                If this link is contained, then there is also the data element 'scaMethods' contained in the response body.
-              * 'authoriseTransaction':
-                The link to the resource, where the "Transaction authorisation request" is sent to.
-                This is the link to the resource which will authorise the transaction by checking the SCA authentication
-                data within the Embedded SCA approach.
-              * 'scaStatus':
-                The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
-        type: object
-        additionalProperties:
-            $ref: "#/components/schemas/hrefType"
-        properties:
-            updateAdditionalPsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            updateAdditionalEncryptedPsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            selectAuthenticationMethod:
-                $ref: "#/components/schemas/hrefType"
-            authoriseTransaction:
-                $ref: "#/components/schemas/hrefType"
-            scaStatus:
-                $ref: "#/components/schemas/hrefType"
+      description: |
+        A list of hyperlinks to be recognised by the TPP. Might be contained, if several authentication methods
+        are available for the PSU.
+        Type of links admitted in this response:
+          * 'updateAdditionalPsuAuthentication':
+            The link to the payment initiation or account information resource,
+            which needs to be updated by an additional PSU password.
+            This link is only contained in rare cases,
+            where such additional passwords are needed for PSU authentications.
+          * 'updateAdditionalEncryptedPsuAuthentication':
+            The link to the payment initiation or account information resource,
+            which needs to be updated by an additional encrypted PSU password.
+            This link is only contained in rare cases, where such additional passwords are needed for PSU authentications.
+          * 'selectAuthenticationMethod':
+            This is a link to a resource, where the TPP can select the applicable second factor authentication
+            methods for the PSU, if there were several available authentication methods.
+            This link is only contained, if the PSU is already identified or authenticated with the first relevant
+            factor or alternatively an access token, if SCA is required and if the PSU has a choice between different
+            authentication methods.
+            If this link is contained, then there is also the data element 'scaMethods' contained in the response body.
+          * 'authoriseTransaction':
+            The link to the resource, where the "Transaction authorisation request" is sent to.
+            This is the link to the resource which will authorise the transaction by checking the SCA authentication
+            data within the Embedded SCA approach.
+          * 'scaStatus':
+            The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        updateAdditionalPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        updateAdditionalEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        selectAuthenticationMethod:
+          $ref: "#/components/schemas/hrefType"
+        authoriseTransaction:
+          $ref: "#/components/schemas/hrefType"
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
 
     _linksSelectPsuAuthenticationMethod:
-        description: |
-            A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in
-            the response depend on the dynamical decisions of the ASPSP when processing the request.
+      description: |
+        A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in
+        the response depend on the dynamical decisions of the ASPSP when processing the request.
 
-            **Remark:** All links can be relative or full links, to be decided by the ASPSP.
+        **Remark:** All links can be relative or full links, to be decided by the ASPSP.
 
-            **Remark:** This method can be applied before or after PSU identification.
-            This leads to many possible hyperlink responses.
-            Type of links admitted in this response, (further links might be added for ASPSP defined
-            extensions):
+        **Remark:** This method can be applied before or after PSU identification.
+        This leads to many possible hyperlink responses.
+        Type of links admitted in this response, (further links might be added for ASPSP defined
+        extensions):
 
-            - 'scaRedirect':
-              In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to
-              redirect the PSU browser.
-            - 'scaOAuth':
-              In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the
-              configuration of the Authorisation Server can be retrieved.
-              The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.
-            * 'confirmation':
-              Might be added by the ASPSP if either the "scaRedirect" or "scaOAuth" hyperlink is returned
-              in the same response message.
-              This hyperlink defines the URL to the resource which needs to be updated with
-                * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or
-                * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.
-            - 'updatePsuIdentification':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where PSU identification data needs to be uploaded.
-            - 'updatePsuAuthentication':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where PSU authentication data needs to be uploaded.
-              - 'updateEncryptedPsuAuthentication':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where PSU authentication encrypted data needs to be uploaded.
-            - 'updateAdditionalPsuAuthentication':
-                The link to the payment initiation or account information resource,
-                which needs to be updated by an additional PSU password.
-            - 'updateAdditionalEncryptedPsuAuthentication':
-                The link to the payment initiation or account information resource,
-                which needs to be updated by an additional encrypted PSU password.
-            - 'authoriseTransaction':
-              The link to the authorisation or cancellation authorisation sub-resource,
-              where the authorisation data has to be uploaded, e.g. the TOP received by SMS.
-            - 'scaStatus':
-              The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
-        type: object
-        additionalProperties:
-            $ref: "#/components/schemas/hrefType"
-        properties:
-            scaRedirect:
-                $ref: "#/components/schemas/hrefType"
-            scaOAuth:
-                $ref: "#/components/schemas/hrefType"
-            confirmation:
-                $ref: "#/components/schemas/hrefType"
-            updatePsuIdentification:
-                $ref: "#/components/schemas/hrefType"
-            updatePsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            updateAdditionalPsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            updateAdditionalEncryptedPsuAuthentication:
-                $ref: "#/components/schemas/hrefType"
-            authoriseTransaction:
-                $ref: "#/components/schemas/hrefType"
-            scaStatus:
-                $ref: "#/components/schemas/hrefType"
+        - 'scaRedirect':
+          In case of an SCA Redirect Approach, the ASPSP is transmitting the link to which to
+          redirect the PSU browser.
+        - 'scaOAuth':
+          In case of a SCA OAuth2 Approach, the ASPSP is transmitting the URI where the
+          configuration of the Authorisation Server can be retrieved.
+          The configuration follows the OAuth 2.0 Authorisation Server Metadata specification.
+        * 'confirmation':
+          Might be added by the ASPSP if either the "scaRedirect" or "scaOAuth" hyperlink is returned
+          in the same response message.
+          This hyperlink defines the URL to the resource which needs to be updated with
+            * a confirmation code as retrieved after the plain redirect authentication process with the ASPSP authentication server or
+            * an access token as retrieved by submitting an authorization code after the integrated OAuth based authentication process with the ASPSP authentication server.
+        - 'updatePsuIdentification':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where PSU identification data needs to be uploaded.
+        - 'updatePsuAuthentication':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where PSU authentication data needs to be uploaded.
+          - 'updateEncryptedPsuAuthentication':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where PSU authentication encrypted data needs to be uploaded.
+        - 'updateAdditionalPsuAuthentication':
+            The link to the payment initiation or account information resource,
+            which needs to be updated by an additional PSU password.
+        - 'updateAdditionalEncryptedPsuAuthentication':
+            The link to the payment initiation or account information resource,
+            which needs to be updated by an additional encrypted PSU password.
+        - 'authoriseTransaction':
+          The link to the authorisation or cancellation authorisation sub-resource,
+          where the authorisation data has to be uploaded, e.g. the TOP received by SMS.
+        - 'scaStatus':
+          The link to retrieve the scaStatus of the corresponding authorisation sub-resource.
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        scaRedirect:
+          $ref: "#/components/schemas/hrefType"
+        scaOAuth:
+          $ref: "#/components/schemas/hrefType"
+        confirmation:
+          $ref: "#/components/schemas/hrefType"
+        updatePsuIdentification:
+          $ref: "#/components/schemas/hrefType"
+        updatePsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        updateAdditionalPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        updateAdditionalEncryptedPsuAuthentication:
+          $ref: "#/components/schemas/hrefType"
+        authoriseTransaction:
+          $ref: "#/components/schemas/hrefType"
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
 
     authorisationConfirmationResponse:
-        description: Body of the JSON response for an authorisation confirmation request.
-        type: object
-        required:
-            - scaStatus
-            - _links
-        properties:
-            scaStatus:
-                $ref: "#/components/schemas/scaStatusAuthorisationConfirmation"
-            _links:
-                $ref: "#/components/schemas/_linksAuthorisationConfirmation"
-            psuMessage:
-                $ref: "#/components/schemas/psuMessageText"
+      description: Body of the JSON response for an authorisation confirmation request.
+      type: object
+      required:
+        - scaStatus
+        - _links
+      properties:
+        scaStatus:
+          $ref: "#/components/schemas/scaStatusAuthorisationConfirmation"
+        _links:
+          $ref: "#/components/schemas/_linksAuthorisationConfirmation"
+        psuMessage:
+          $ref: "#/components/schemas/psuMessageText"
 
     scaStatusAuthorisationConfirmation:
-        description: |
-            This data element is containing information about the status of the SCA method in an authorisation confirmation response.
+      description: |
+        This data element is containing information about the status of the SCA method in an authorisation confirmation response.
 
-            The following codes are defined for this data type.
+        The following codes are defined for this data type.
 
-              * 'finalised': if the transaction authorisation and confirmation was successfule.
-              * 'failed': if the transaction authorisation or confirmation was not successful.
-        type: string
-        enum:
-            - "finalised"
-            - "failed"
+          * 'finalised': if the transaction authorisation and confirmation was successfule.
+          * 'failed': if the transaction authorisation or confirmation was not successful.
+      type: string
+      enum:
+        - "finalised"
+        - "failed"
 
     _linksAuthorisationConfirmation:
-        description: |
-            A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.
+      description: |
+        A list of hyperlinks to be recognised by the TPP. The actual hyperlinks used in the response depend on the dynamical decisions of the ASPSP when processing the request.
 
-            **Remark:** All links can be relative or full links, to be decided by the ASPSP.
+        **Remark:** All links can be relative or full links, to be decided by the ASPSP.
 
-            Type of links admitted in this response, (further links might be added for ASPSP
-            defined extensions):
+        Type of links admitted in this response, (further links might be added for ASPSP
+        defined extensions):
 
-            - 'scaStatus': The link to retrieve the status of the corresponding transaction resource.
-        type: object
-        additionalProperties:
-            $ref: "#/components/schemas/hrefType"
-        properties:
-            scaStatus:
-                $ref: "#/components/schemas/hrefType"
+        - 'scaStatus': The link to retrieve the status of the corresponding transaction resource.
+      type: object
+      additionalProperties:
+        $ref: "#/components/schemas/hrefType"
+      properties:
+        scaStatus:
+          $ref: "#/components/schemas/hrefType"
 
   parameters:
-  #####################################################
-  # Predefined Parameters
-  #####################################################
+    #####################################################
+    # Predefined Parameters
+    #####################################################
 
     consentId_PATH:
       name: consentId
@@ -3071,53 +3078,53 @@ components:
       name: TPP-Notification-URI
       in: header
       description: |
-          URI for the Endpoint of the TPP-API to which the status of the payment initiation should be sent.
-          This header field may by ignored by the ASPSP.
+        URI for the Endpoint of the TPP-API to which the status of the payment initiation should be sent.
+        This header field may by ignored by the ASPSP.
 
-          For security reasons, it shall be ensured that the TPP-Notification-URI as introduced above is secured by the TPP eIDAS QWAC used for identification of the TPP. The following applies:
+        For security reasons, it shall be ensured that the TPP-Notification-URI as introduced above is secured by the TPP eIDAS QWAC used for identification of the TPP. The following applies:
 
-          URIs which are provided by TPPs in TPP-Notification-URI shall comply with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate. Please note that in case of example-TPP.com as certificate entry TPP- Notification-URI like www.example-TPP.com/xs2a-client/v2/ASPSPidentifcation/mytransaction- id/notifications or notifications.example-TPP.com/xs2a-client/v2/ASPSPidentifcation/mytransaction- id/notifications would be compliant.
+        URIs which are provided by TPPs in TPP-Notification-URI shall comply with the domain secured by the eIDAS QWAC certificate of the TPP in the field CN or SubjectAltName of the certificate. Please note that in case of example-TPP.com as certificate entry TPP- Notification-URI like www.example-TPP.com/xs2a-client/v2/ASPSPidentifcation/mytransaction- id/notifications or notifications.example-TPP.com/xs2a-client/v2/ASPSPidentifcation/mytransaction- id/notifications would be compliant.
 
-          Wildcard definitions shall be taken into account for compliance checks by the ASPSP.
-           ASPSPs may respond with ASPSP-Notification-Support set to false, if the provided URIs do not comply.
+        Wildcard definitions shall be taken into account for compliance checks by the ASPSP.
+         ASPSPs may respond with ASPSP-Notification-Support set to false, if the provided URIs do not comply.
       schema:
-          type: string
+        type: string
       required: false
 
     TPP-Notification-Content-Preferred:
       name: TPP-Notification-Content-Preferred
       in: header
       description: |
-          The string has the form
+        The string has the form
 
-          status=X1, ..., Xn
+        status=X1, ..., Xn
 
-          where Xi is one of the constants SCA, PROCESS, LAST and where constants are not
-          repeated.
-          The usage of the constants supports the of following semantics:
+        where Xi is one of the constants SCA, PROCESS, LAST and where constants are not
+        repeated.
+        The usage of the constants supports the of following semantics:
 
-            SCA: A notification on every change of the scaStatus attribute for all related authorisation processes is preferred by the TPP.
+          SCA: A notification on every change of the scaStatus attribute for all related authorisation processes is preferred by the TPP.
 
-            PROCESS: A notification on all changes of consentStatus or transactionStatus attributes is preferred by the TPP.
-            LAST: Only a notification on the last consentStatus or transactionStatus as available in the XS2A interface is preferred by the TPP.
+          PROCESS: A notification on all changes of consentStatus or transactionStatus attributes is preferred by the TPP.
+          LAST: Only a notification on the last consentStatus or transactionStatus as available in the XS2A interface is preferred by the TPP.
 
-          This header field may be ignored, if the ASPSP does not support resource notification services for the related TPP.
+        This header field may be ignored, if the ASPSP does not support resource notification services for the related TPP.
       schema:
-          type: string
+        type: string
       required: false
 
     authorisationId:
-        name: authorisationId
-        in: path
-        description: Resource identification of the related SCA.
-        required: true
-        schema:
-            $ref: "#/components/schemas/authorisationId"
+      name: authorisationId
+      in: path
+      description: Resource identification of the related SCA.
+      required: true
+      schema:
+        $ref: "#/components/schemas/authorisationId"
 
   requestBodies:
-  #####################################################
-  # Reusable Request Bodies
-  #####################################################
+    #####################################################
+    # Reusable Request Bodies
+    #####################################################
 
     consentsConfirmationOfFunds:
       description: |
@@ -3135,9 +3142,9 @@ components:
               $ref: "#/components/examples/consentsExample_without_Accounts"
 
   headers:
-  #####################################################
-  # Reusable Response Header Elements
-  #####################################################
+    #####################################################
+    # Reusable Response Header Elements
+    #####################################################
 
     X-Request-ID:
       description: ID of the request, unique to the call, as determined by the initiating party.
@@ -3173,9 +3180,9 @@ components:
       required: false
 
   responses:
-  #####################################################
-  # Reusabale Responses
-  #####################################################
+    #####################################################
+    # Reusabale Responses
+    #####################################################
     #####################################################
     # Positive Responses
     #####################################################
@@ -3263,7 +3270,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error401_AIS"
+            $ref: "#/components/schemas/Error401_AIS"
 
     FORBIDDEN_403_AIS:
       description: Forbidden
@@ -3281,7 +3288,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error403_AIS"
+            $ref: "#/components/schemas/Error403_AIS"
 
     NOT_FOUND_404_AIS:
       description: Not found
@@ -3299,7 +3306,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error404_AIS"
+            $ref: "#/components/schemas/Error404_AIS"
 
 
     METHOD_NOT_ALLOWED_405_AIS:
@@ -3318,7 +3325,7 @@ components:
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error405_AIS"
+            $ref: "#/components/schemas/Error405_AIS"
 
 
     NOT_ACCEPTABLE_406_AIS:
@@ -3336,7 +3343,7 @@ components:
             $ref: "#/components/schemas/Error406_NG_AIS"
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error406_AIS"
+            $ref: "#/components/schemas/Error406_AIS"
 
 
     REQUEST_TIMEOUT_408_AIS:
@@ -3361,11 +3368,11 @@ components:
       content:
         application/json:
           schema:
-             $ref: "#/components/schemas/Error409_NG_AIS"
+            $ref: "#/components/schemas/Error409_NG_AIS"
 
         application/problem+json:
           schema:
-             $ref: "#/components/schemas/Error409_AIS"
+            $ref: "#/components/schemas/Error409_AIS"
 
 
     UNSUPPORTED_MEDIA_TYPE_415_AIS:
@@ -3395,7 +3402,7 @@ components:
         application/problem+json:
 
           schema:
-             $ref: "#/components/schemas/Error429_AIS"
+            $ref: "#/components/schemas/Error429_AIS"
 
 
     INTERNAL_SERVER_ERROR_500_AIS:
@@ -3418,107 +3425,107 @@ components:
       #No Response body because there are no valid message codes for AIS in case of HTTP code 503
 
     CREATED_201_StartScaProcess:
-        description: Created
+      description: Created
 
-        headers:
-            X-Request-ID:
-                $ref: "#/components/headers/X-Request-ID"
-            ASPSP-SCA-Approach:
-                $ref: "#/components/headers/ASPSP-SCA-Approach"
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+        ASPSP-SCA-Approach:
+          $ref: "#/components/headers/ASPSP-SCA-Approach"
 
-        content:
-            application/json:
-                schema:
-                    $ref: "#/components/schemas/startScaprocessResponse"
-                examples:
-                    "Example 1: payments - Decoupled Approach":
-                        $ref: "#/components/examples/startScaProcessResponseExample1"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/startScaprocessResponse"
+          examples:
+            "Example 1: payments - Decoupled Approach":
+              $ref: "#/components/examples/startScaProcessResponseExample1"
 
     OK_200_Authorisations:
-        description: OK
+      description: OK
 
-        headers:
-            X-Request-ID:
-                $ref: "#/components/headers/X-Request-ID"
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
 
-        content:
-            application/json:
-                schema:
-                    $ref: "#/components/schemas/authorisations"
-                examples:
-                    Example:
-                        $ref: "#/components/examples/authorisationListExample"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/authorisations"
+          examples:
+            Example:
+              $ref: "#/components/examples/authorisationListExample"
 
     OK_200_ScaStatus:
-        description: OK
+      description: OK
 
-        headers:
-            X-Request-ID:
-                $ref: "#/components/headers/X-Request-ID"
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
 
-        content:
-            application/json:
-                schema:
-                    $ref: "#/components/schemas/scaStatusResponse"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/scaStatusResponse"
 
     OK_200_UpdatePsuData:
-        description: OK
+      description: OK
 
-        headers:
-            X-Request-ID:
-                $ref: "#/components/headers/X-Request-ID"
-            ASPSP-SCA-Approach:
-                $ref: "#/components/headers/ASPSP-SCA-Approach"
+      headers:
+        X-Request-ID:
+          $ref: "#/components/headers/X-Request-ID"
+        ASPSP-SCA-Approach:
+          $ref: "#/components/headers/ASPSP-SCA-Approach"
 
-        content:
-            application/json:
-                schema:
+      content:
+        application/json:
+          schema:
 
-                    oneOf: #Different Authorisation Bodies
-                        - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU identification
-                        - $ref: "#/components/schemas/updatePsuAuthenticationResponse" #Update PSU authentication
-                        - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select authentication method
-                        - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
-                        - $ref: "#/components/schemas/authorisationConfirmationResponse" #Authorisation Confirmation
-                examples:
-                    "Update PSU identification - payment pnitiation (Decoupled Approach)":
-                        $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
-                    "Update PSU authentication - payment pnitiation (Embedded Approach)":
-                        $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
-                    "Select PSU authentication - payment initiation method (Embedded Approach)":
-                        $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
-                    "Transaction authorisation (Embedded Approach)":
-                        $ref: "#/components/examples/transactionAuthorisationResponseExample"
-                    "Authorisation confirmation":
-                        $ref: "#/components/examples/authorisationConfirmationResponseExample"
+            oneOf: #Different Authorisation Bodies
+              - $ref: "#/components/schemas/updatePsuIdenticationResponse" #Update PSU identification
+              - $ref: "#/components/schemas/updatePsuAuthenticationResponse" #Update PSU authentication
+              - $ref: "#/components/schemas/selectPsuAuthenticationMethodResponse" #Select authentication method
+              - $ref: "#/components/schemas/scaStatusResponse" #Transaction Authorisation
+              - $ref: "#/components/schemas/authorisationConfirmationResponse" #Authorisation Confirmation
+          examples:
+            "Update PSU identification - payment pnitiation (Decoupled Approach)":
+              $ref: "#/components/examples/updatePsuIdentificationResponseExample_Decoupled_payments"
+            "Update PSU authentication - payment pnitiation (Embedded Approach)":
+              $ref: "#/components/examples/updatePsuAuthenticationResponseExample_Embedded_payments"
+            "Select PSU authentication - payment initiation method (Embedded Approach)":
+              $ref: "#/components/examples/selectPsuAuthenticationMethodResponseExample_Embedded_payments"
+            "Transaction authorisation (Embedded Approach)":
+              $ref: "#/components/examples/transactionAuthorisationResponseExample"
+            "Authorisation confirmation":
+              $ref: "#/components/examples/authorisationConfirmationResponseExample"
 
   examples:
-  #####################################################
-  # Predefined Examples
-  #####################################################
+    #####################################################
+    # Predefined Examples
+    #####################################################
 
     consentsExample_DedicatedAccounts:
       description: Consent request on dedicated accounts
       value:
         {
-        "access":
-          {
-            "balances": [
-                { "iban": "DE40100100103307118608" },
-                { "iban": "DE02100100109307118603",
-          "currency": "USD"
-                },
-                { "iban": "DE67100100101306118605" }
+          "access":
+            {
+              "balances": [
+              { "iban": "DE40100100103307118608" },
+              { "iban": "DE02100100109307118603",
+                "currency": "USD"
+              },
+              { "iban": "DE67100100101306118605" }
               ],
-            "transactions": [
-                { "iban": "DE40100100103307118608" },
-                { "maskedPan": "123456xxxxxx1234" }
+              "transactions": [
+              { "iban": "DE40100100103307118608" },
+              { "maskedPan": "123456xxxxxx1234" }
               ]
-           },
-        "recurringIndicator": "true",
-        "validUntil": "2017-11-01",
-        "frequencyPerDay": "4"
-       }
+            },
+          "recurringIndicator": "true",
+          "validUntil": "2017-11-01",
+          "frequencyPerDay": "4"
+        }
 
 
 
@@ -3526,7 +3533,7 @@ components:
       description: Consent on Account List of Available Accounts
       value:
         {"access":
-          {"availableAccounts": "allAccounts"},
+           {"availableAccounts": "allAccounts"},
          "recurringIndicator": "false",
          "validUntil": "2017-08-06",
          "frequencyPerDay": "1"
@@ -3537,127 +3544,127 @@ components:
       description: Consent request on account list or without indication of accounts
       value:
         {"access":
-        {
-          "balances": [],
-          "transactions": []
-        },
-        "recurringIndicator": "true",
-        "validUntil": "2017-11-01",
-        "frequencyPerDay": "4"
+           {
+             "balances": [],
+             "transactions": []
+           },
+         "recurringIndicator": "true",
+         "validUntil": "2017-11-01",
+         "frequencyPerDay": "4"
         }
 
     updatePsuAuthenticationExample_Embedded:
-        description: Update PSU authentication request body for the embedded approach.
-        value:
-          {
-              "psuData": {"password": "start12"}
-          }
+      description: Update PSU authentication request body for the embedded approach.
+      value:
+        {
+          "psuData": {"password": "start12"}
+        }
 
     selectPsuAuthenticationMethodExample_Embedded:
-        description: Select PSU authentication method request body for the embedded approach.
-        value:
-          {
-              authenticationMethodId: "myAuthenticationID"
-          }
+      description: Select PSU authentication method request body for the embedded approach.
+      value:
+        {
+          authenticationMethodId: "myAuthenticationID"
+        }
 
     transactionAuthorisationExample_Embedded:
-        description: Transaction authorisation request body for the embedded approach.
-        value:
-          {
-              "scaAuthenticationData": "123456"
-          }
+      description: Transaction authorisation request body for the embedded approach.
+      value:
+        {
+          "scaAuthenticationData": "123456"
+        }
 
     authorisationConfirmationExample_Redirect:
-        description: Authorisation confirmation request body for the redirect approach.
-        value:
-          {
-              "confirmationCode": "2256ffgh"
-          }
+      description: Authorisation confirmation request body for the redirect approach.
+      value:
+        {
+          "confirmationCode": "2256ffgh"
+        }
 
     startScaProcessResponseExample1:
-        value:
-          {
-              "scaStatus": "received",
-              "authorisationId": "123auth456",
-              "psuMessage": "Please use your BankApp for transaction Authorisation.",
-              "_links":
-                {
-                    "scaStatus":  {"href":"/v2/payments/qwer3456tzui7890/authorisations/123auth456"}
-                }
-          }
+      value:
+        {
+          "scaStatus": "received",
+          "authorisationId": "123auth456",
+          "psuMessage": "Please use your BankApp for transaction Authorisation.",
+          "_links":
+            {
+              "scaStatus":  {"href":"/v2/payments/qwer3456tzui7890/authorisations/123auth456"}
+            }
+        }
 
     authorisationListExample:
-        value:
-          {
-              "authorisationIds": ["123auth456"]
-          }
+      value:
+        {
+          "authorisationIds": ["123auth456"]
+        }
 
     updatePsuIdentificationResponseExample_Decoupled_payments:
-        description: Response of an update PSU identification for a payment initiation request for the decoupled approach.
-        value:
-          {
-              "scatransactionStatus": "psuIdentified",
-              "psuMessage": "Please use your BankApp for transaction Authorisation.",
-              "_links":
-                {
-                    "scaStatus":  {"href":"/v2/payments/qwer3456tzui7890/authorisations/123auth456"}
-                }
-          }
+      description: Response of an update PSU identification for a payment initiation request for the decoupled approach.
+      value:
+        {
+          "scatransactionStatus": "psuIdentified",
+          "psuMessage": "Please use your BankApp for transaction Authorisation.",
+          "_links":
+            {
+              "scaStatus":  {"href":"/v2/payments/qwer3456tzui7890/authorisations/123auth456"}
+            }
+        }
 
     updatePsuAuthenticationResponseExample_Embedded_payments:
-        description: Response of an update PSU authentication for a consent request for the embedded approach.
-        value:
-          {
-              "scaStatus": "psuAuthenticated",
-              _links: {
-                  "authoriseTransaction": {"href": "/v2/payments/1234-wertiq-983/authorisations/123auth456"}
-              }
+      description: Response of an update PSU authentication for a consent request for the embedded approach.
+      value:
+        {
+          "scaStatus": "psuAuthenticated",
+          _links: {
+            "authoriseTransaction": {"href": "/v2/payments/1234-wertiq-983/authorisations/123auth456"}
           }
+        }
 
     selectPsuAuthenticationMethodResponseExample_Embedded_payments:
-        description: Response of a select PSU authentication method payment initiation request for the embedded approach.
-        value:
-          {
-              "scaStatus": "scaMethodSelected",
-              "chosenScaMethod": {
-                  "authenticationType": "SMS_OTP",
-                  "authenticationMethodId": "myAuthenticationID"},
-              "challengeData": {
-                  "otpMaxLength": "6",
-                  "otpFormat": "integer"},
-              "_links": {
-                  "authoriseTransaction": {"href": "/v2/payments/1234-wertiq-983/authorisations/123auth456"}
-              }
+      description: Response of a select PSU authentication method payment initiation request for the embedded approach.
+      value:
+        {
+          "scaStatus": "scaMethodSelected",
+          "chosenScaMethod": {
+            "authenticationType": "SMS_OTP",
+            "authenticationMethodId": "myAuthenticationID"},
+          "challengeData": {
+            "otpMaxLength": "6",
+            "otpFormat": "integer"},
+          "_links": {
+            "authoriseTransaction": {"href": "/v2/payments/1234-wertiq-983/authorisations/123auth456"}
           }
+        }
 
     transactionAuthorisationResponseExample:
-        description: Response of a transaction authorisation request for the embedded approach.
-        value:
-          {
-              "scaStatus": "finalised"
-          }
+      description: Response of a transaction authorisation request for the embedded approach.
+      value:
+        {
+          "scaStatus": "finalised"
+        }
 
     authorisationConfirmationResponseExample:
-        description: Response of an authorisation confirmation request.
-        value:
-          {
-              "scaStatus": "finalised",
-              "_links":{
-                  "status":  {"href":"/v2/payments/sepa-credit-transfers/qwer3456tzui7890/status"}
-              }
+      description: Response of an authorisation confirmation request.
+      value:
+        {
+          "scaStatus": "finalised",
+          "_links":{
+            "status":  {"href":"/v2/payments/sepa-credit-transfers/qwer3456tzui7890/status"}
           }
+        }
 
 security:
-#####################################################
-# Global security options
-#####################################################
+  #####################################################
+  # Global security options
+  #####################################################
   - {}
 
 
 tags:
-#####################################################
-# Predefined Tags to Group Methods
-#####################################################
+  #####################################################
+  # Predefined Tags to Group Methods
+  #####################################################
 
   - name: Payment Initiation Service (PIS)
     description: |

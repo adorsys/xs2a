@@ -36,8 +36,8 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.CmsCreateConsentResponseService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
@@ -163,7 +163,7 @@ public class Xs2aAisConsentService {
      *
      * @param updatePsuData Consent PSU data
      */
-    public void updateConsentAuthorisation(UpdateConsentPsuDataReq updatePsuData) {
+    public void updateConsentAuthorisation(ConsentAuthorisationsParameters updatePsuData) {
         Optional.ofNullable(updatePsuData)
             .ifPresent(req -> {
                 final UpdateAuthorisationRequest request = consentAuthorisationMapper.mapToAuthorisationRequest(req);

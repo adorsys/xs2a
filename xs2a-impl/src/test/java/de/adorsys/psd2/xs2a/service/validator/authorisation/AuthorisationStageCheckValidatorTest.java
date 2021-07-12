@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +61,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_received_success() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(NON_EMPTY_PSU_DATA);
 
         //When
@@ -74,7 +74,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_received_failure_emptyPsuData_ais() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
 
         //When
@@ -89,7 +89,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_received_failure_emptyPsuData_piis() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
 
         //When
@@ -104,7 +104,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_received_failure_emptyPsuData_pis() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
 
         //When
@@ -119,7 +119,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_received_failure_emptyPsuData_pis_cancellation() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setPsuData(EMPTY_PSU_DATA);
 
         //When
@@ -134,7 +134,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuIdentified_success() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setPassword(TEST_PASSWORD);
 
         //When
@@ -147,7 +147,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuIdentified_failure_noPassword_ais() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, PSUIDENTIFIED_STATUS, AIS_AUTHORISATION);
@@ -161,7 +161,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuIdentified_failure_noPassword_pis() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, PSUIDENTIFIED_STATUS, PIS_AUTHORISATION);
@@ -175,7 +175,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuIdentified_failure_noPassword_pis_cancellation() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, PSUIDENTIFIED_STATUS, PIS_CANCELLATION_AUTHORISATION);
@@ -189,7 +189,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuAuthenticated_success() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setAuthenticationMethodId(TEST_AUTH_METHOD_ID);
 
         //When
@@ -202,7 +202,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuAuthenticated_failure_noAuthenticationMethodId_ais() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, PSUAUTHENTICATED_STATUS, AIS_AUTHORISATION);
@@ -216,7 +216,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuAuthenticated_failure_noAuthenticationMethodId_pis() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, PSUAUTHENTICATED_STATUS, PIS_AUTHORISATION);
@@ -230,7 +230,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_psuAuthenticated_failure_noAuthenticationMethodId_pis_cancellation() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, PSUAUTHENTICATED_STATUS, PIS_CANCELLATION_AUTHORISATION);
@@ -244,7 +244,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_scaMethodSelected_success() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
         updateRequest.setScaAuthenticationData(TEST_AUTH_DATA);
 
         //When
@@ -257,7 +257,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_scaMethodSelected_failure_noScaAuthenticationData_ais() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, SCAMETHODSELECTED_STATUS, AIS_AUTHORISATION);
@@ -271,7 +271,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_scaMethodSelected_failure_noScaAuthenticationData_pis() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, SCAMETHODSELECTED_STATUS, PIS_AUTHORISATION);
@@ -285,7 +285,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_scaMethodSelected_failure_noScaAuthenticationData_pis_cancellation() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, SCAMETHODSELECTED_STATUS, PIS_CANCELLATION_AUTHORISATION);
@@ -299,7 +299,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_finalised_success() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, FINALISED_STATUS, PIS_AUTHORISATION);
@@ -311,7 +311,7 @@ class AuthorisationStageCheckValidatorTest {
     @Test
     void test_exempted_success() {
         //Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest = buildPisUpdateRequest();
+        PaymentAuthorisationParameters updateRequest = buildPisUpdateRequest();
 
         //When
         ValidationResult validationResult = checkValidator.validate(updateRequest, EXEMPTED_STATUS, PIS_AUTHORISATION);
@@ -320,7 +320,7 @@ class AuthorisationStageCheckValidatorTest {
         assertTrue(validationResult.isValid());
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest buildPisUpdateRequest() {
-        return new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+    private PaymentAuthorisationParameters buildPisUpdateRequest() {
+        return new PaymentAuthorisationParameters();
     }
 }

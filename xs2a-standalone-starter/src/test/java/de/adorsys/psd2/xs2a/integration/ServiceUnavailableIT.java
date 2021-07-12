@@ -416,7 +416,7 @@ class ServiceUnavailableIT {
     }
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, null);
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, null, ScaApproach.EMBEDDED);
     }
 
     private <T> CmsResponse<T> buildCmsResponse(T payload) {

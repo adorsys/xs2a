@@ -305,7 +305,7 @@ public class PaymentService {
 
         CancelPaymentResponse cancelPaymentResponse = responseObject.getBody();
 
-        cancelPaymentResponse.setTppMessageInformation(cancelPaymentValidator.buildWarningMessages(cancelPaymentPO));
+        cancelPaymentResponse.getTppMessageInformation().addAll(cancelPaymentValidator.buildWarningMessages(cancelPaymentPO));
 
         loggingContextService.storeTransactionStatus(cancelPaymentResponse.getTransactionStatus());
 

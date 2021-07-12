@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.psd2.xs2a.spi.domain.piis.SpiPiisConsent;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -86,9 +86,9 @@ class Xs2aToSpiPiisConsentMapperTest {
     @Test
     void toSpiScaConfirmation() {
         //Given
-        UpdateConsentPsuDataReq updateAuthorisationRequest =
+        ConsentAuthorisationsParameters updateAuthorisationRequest =
             jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json",
-                UpdateConsentPsuDataReq.class);
+                ConsentAuthorisationsParameters.class);
         PsuIdData psuIdData =
             jsonReader.getObjectFromFile("json/service/mapper/psu-id-data.json",
                 PsuIdData.class);

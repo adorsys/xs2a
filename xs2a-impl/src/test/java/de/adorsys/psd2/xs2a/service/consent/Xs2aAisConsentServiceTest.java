@@ -40,8 +40,8 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRole;
 import de.adorsys.psd2.xs2a.domain.Xs2aResponse;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aCreateAisConsentResponse;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
 import de.adorsys.psd2.xs2a.service.CmsCreateConsentResponseService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
@@ -328,7 +328,7 @@ class Xs2aAisConsentServiceTest {
     @Test
     void updateConsentAuthorization() {
         // Given
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = new UpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = new ConsentAuthorisationsParameters();
         updateConsentPsuDataReq.setAuthorizationId(AUTHORISATION_ID);
         UpdateAuthorisationRequest request = new UpdateAuthorisationRequest();
 

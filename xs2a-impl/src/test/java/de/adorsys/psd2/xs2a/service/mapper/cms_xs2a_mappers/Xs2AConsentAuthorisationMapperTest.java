@@ -21,7 +21,7 @@ import de.adorsys.psd2.consent.api.authorisation.UpdateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.web.mapper.TppRedirectUriMapper;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.Test;
@@ -43,11 +43,11 @@ class Xs2AConsentAuthorisationMapperTest {
     @Autowired
     private Xs2aConsentAuthorisationMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void mapToAuthorisationRequest_CreateAuthorisationRequest() {
-        CreateAuthorisationRequest actual = mapper.mapToAuthorisationRequest(ScaStatus.RECEIVED, PSU_ID_DATA, ScaApproach.EMBEDDED, "ok.uri", "nok.uri");
+        CreateAuthorisationRequest actual = mapper.mapToAuthorisationRequest(null, ScaStatus.RECEIVED, PSU_ID_DATA, ScaApproach.EMBEDDED, "ok.uri", "nok.uri");
 
         CreateAuthorisationRequest expected = jsonReader.getObjectFromFile("json/service/mapper/consent/create-authorisation-request.json", CreateAuthorisationRequest.class);
         assertEquals(expected, actual);
@@ -55,13 +55,13 @@ class Xs2AConsentAuthorisationMapperTest {
 
     @Test
     void mapToAuthorisationRequest_CreateAuthorisationRequest_scaStatusIsNull() {
-        CreateAuthorisationRequest actual = mapper.mapToAuthorisationRequest(null, PSU_ID_DATA, ScaApproach.EMBEDDED, "ok.uri", "nok.uri");
+        CreateAuthorisationRequest actual = mapper.mapToAuthorisationRequest(null, null, PSU_ID_DATA, ScaApproach.EMBEDDED, "ok.uri", "nok.uri");
         assertNull(actual);
     }
 
     @Test
     void mapToAuthorisationRequest_UpdateAuthorisationRequest() {
-        UpdateConsentPsuDataReq updateAuthorisationRequest = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateAuthorisationRequest = jsonReader.getObjectFromFile("json/service/mapper/consent/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
 
         UpdateAuthorisationRequest actual = mapper.mapToAuthorisationRequest(updateAuthorisationRequest);
 

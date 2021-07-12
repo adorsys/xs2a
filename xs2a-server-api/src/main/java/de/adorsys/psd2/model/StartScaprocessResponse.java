@@ -8,6 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a Start SCA authorisation request.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-05T14:13:22.859201+03:00[Europe/Kiev]")
 
 public class StartScaprocessResponse   {
   @JsonProperty("scaStatus")
@@ -39,6 +41,10 @@ public class StartScaprocessResponse   {
 
   @JsonProperty("psuMessage")
   private String psuMessage = null;
+
+  @JsonProperty("tppMessage")
+  @Valid
+  private List<TppMessageGeneric> tppMessage = null;
 
   public StartScaprocessResponse scaStatus(ScaStatus scaStatus) {
     this.scaStatus = scaStatus;
@@ -202,6 +208,37 @@ public class StartScaprocessResponse   {
     this.psuMessage = psuMessage;
   }
 
+  public StartScaprocessResponse tppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
+    return this;
+  }
+
+  public StartScaprocessResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
+    if (this.tppMessage == null) {
+      this.tppMessage = new ArrayList<>();
+    }
+    this.tppMessage.add(tppMessageItem);
+    return this;
+  }
+
+  /**
+   * Messages to the TPP on operational issues.
+   * @return tppMessage
+  **/
+  @ApiModelProperty(value = "Messages to the TPP on operational issues.")
+
+  @Valid
+
+
+  @JsonProperty("tppMessage")
+  public List<TppMessageGeneric> getTppMessage() {
+    return tppMessage;
+  }
+
+  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
+    this.tppMessage = tppMessage;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -217,12 +254,13 @@ public class StartScaprocessResponse   {
     Objects.equals(this.chosenScaMethod, startScaprocessResponse.chosenScaMethod) &&
     Objects.equals(this.challengeData, startScaprocessResponse.challengeData) &&
     Objects.equals(this._links, startScaprocessResponse._links) &&
-    Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage);
+    Objects.equals(this.psuMessage, startScaprocessResponse.psuMessage) &&
+    Objects.equals(this.tppMessage, startScaprocessResponse.tppMessage);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaStatus, authorisationId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage);
+    return Objects.hash(scaStatus, authorisationId, scaMethods, chosenScaMethod, challengeData, _links, psuMessage, tppMessage);
   }
 
   @Override
@@ -237,6 +275,7 @@ public class StartScaprocessResponse   {
     sb.append("    challengeData: ").append(toIndentedString(challengeData)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
+    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -59,11 +59,23 @@ public abstract class CmsAuthorisationService<T extends Authorisable> implements
         psuDataOptional.ifPresent(psuData -> authorisationParent.setPsuDataList(psuService.enrichPsuData(psuData, psuDataList)));
         authorisationParent.setPsuDataList(psuDataList);
 
+        resolveScaStatus(request, psuDataOptional);
         CommonAspspProfileSetting commonAspspProfileSetting = aspspProfileService.getAspspSettings(authorisationParent.getInstanceId()).getCommon();
         AuthorisationEntity entity = authorisationService.prepareAuthorisationEntity(authorisationParent, request, psuDataOptional, getAuthorisationType(),
                                                                                     commonAspspProfileSetting.getRedirectUrlExpirationTimeMs(),
                                                                                     commonAspspProfileSetting.getAuthorisationExpirationTimeMs());
         return authorisationService.save(entity);
+    }
+
+    private void resolveScaStatus(CreateAuthorisationRequest request, Optional<PsuData> psuDataOptional) {
+        ScaStatus scaStatus = request.getScaStatus();
+        if (psuDataOptional.isPresent() && ScaStatus.STARTED.equals(scaStatus)) {
+            scaStatus = ScaStatus.PSUIDENTIFIED;
+        }
+        if (psuDataOptional.isEmpty() && ScaStatus.STARTED.equals(scaStatus)) {
+            scaStatus = ScaStatus.RECEIVED;
+        }
+        request.setScaStatus(scaStatus);
     }
 
     @Override

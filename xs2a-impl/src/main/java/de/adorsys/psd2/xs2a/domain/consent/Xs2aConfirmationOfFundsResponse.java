@@ -18,8 +18,15 @@ package de.adorsys.psd2.xs2a.domain.consent;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Xs2aConfirmationOfFundsResponse {
@@ -28,12 +35,15 @@ public class Xs2aConfirmationOfFundsResponse {
     private final boolean multilevelScaRequired;
     @JsonIgnore
     private final String internalRequestId;
-
     @JsonIgnore
     private String authorizationId;
-
     @JsonProperty("_links")
     private Links links = new Links();
-
-    private final String psuMessage;
+    @Nullable
+    private String psuMessage;
+    @Nullable
+    private ScaStatus scaStatus;
+    @Nullable
+    private ScaApproach scaApproach;
+    private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
 }

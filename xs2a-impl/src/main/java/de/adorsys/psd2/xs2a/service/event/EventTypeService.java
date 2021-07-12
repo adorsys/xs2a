@@ -17,18 +17,18 @@
 package de.adorsys.psd2.xs2a.service.event;
 
 import de.adorsys.psd2.event.core.model.EventType;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 public class EventTypeService {
-    public EventType getEventType(UpdateAuthorisationRequest updateAuthorisationRequest, EventAuthorisationType eventAuthorisationType) {
+    public EventType getEventType(CommonAuthorisationParameters updateAuthorisationRequest, EventAuthorisationType eventAuthorisationType) {
         return getUpdateEventType(updateAuthorisationRequest).getEventType(eventAuthorisationType);
     }
 
-    private UpdateEventType getUpdateEventType(UpdateAuthorisationRequest updateAuthorisationRequest) {
+    private UpdateEventType getUpdateEventType(CommonAuthorisationParameters updateAuthorisationRequest) {
         if (updateAuthorisationRequest.getConfirmationCode() != null) {
             return UpdateEventType.CONFIRMATION_CODE;
         }

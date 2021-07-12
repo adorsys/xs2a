@@ -19,6 +19,7 @@ package de.adorsys.psd2.xs2a.service;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
+import de.adorsys.psd2.logger.context.LoggingContextService;
 import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
@@ -29,6 +30,7 @@ import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
@@ -39,6 +41,7 @@ import de.adorsys.psd2.xs2a.domain.account.Xs2aCreatePiisConsentResponse;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
@@ -90,10 +93,12 @@ class PiisConsentServiceTest {
     private static final SpiContextData SPI_CONTEXT_DATA = new SpiContextData(SPI_PSU_DATA, TPP_INFO, UUID.randomUUID(), UUID.randomUUID(), "", "", null, null, null);
     private final PiisConsent piisConsent = buildPiisConsent(ConsentStatus.RECEIVED);
     private final SpiPiisConsent spiPiisConsent = buildSpiPiisConsent(ConsentStatus.RECEIVED);
-
+    private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.EMBEDDED;
     private static final MessageError RESOURCE_ERROR = new MessageError(ErrorType.PIIS_400, TppMessageInformation.of(MessageErrorCode.RESOURCE_UNKNOWN_400));
     private static final MessageError CONSENT_UNKNOWN_ERROR = new MessageError(ErrorType.PIIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403));
     private static final MessageError INCORRECT_CERTIFICATE_ERROR = new MessageError(ErrorType.PIIS_403, TppMessageInformation.of(MessageErrorCode.CONSENT_UNKNOWN_403_INCORRECT_CERTIFICATE));
+    private static final Set<TppMessageInformation> TEST_TPP_MESSAGES = Collections.singleton(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR));
 
     @InjectMocks
     private PiisConsentService piisConsentService;
@@ -140,6 +145,12 @@ class PiisConsentServiceTest {
     private Xs2aAuthorisationService xs2aAuthorisationService;
     @Mock
     private SpiToXs2aLinksMapper spiToXs2aLinksMapper;
+    @Mock
+    private ScaApproachResolver scaApproachResolver;
+    @Mock
+    private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
+    @Mock
+    private LoggingContextService loggingContextService;
 
     @Test
     void createPiisConsentWithResponse_success() {
@@ -175,10 +186,14 @@ class PiisConsentServiceTest {
             .thenReturn(true);
         when(piisScaAuthorisationServiceResolver.getService())
             .thenReturn(piisAuthorizationService);
+
+        CreateConsentAuthorisationProcessorResponse response = new CreateConsentAuthorisationProcessorResponse(SCA_STATUS, SCA_APPROACH, PSU_MESSAGE, TEST_TPP_MESSAGES, CONSENT_ID, PSU_ID_DATA);
+        when(authorisationChainResponsibilityService.apply(any())).thenReturn(response);
         CreateConsentAuthorizationResponse createConsentAuthorizationResponse = new CreateConsentAuthorizationResponse();
         String AUTHORISATION_ID = "4af7bca6-54f8-49ae-83b2-3436f8d99c6f";
         createConsentAuthorizationResponse.setAuthorisationId(AUTHORISATION_ID);
-        when(piisAuthorizationService.createConsentAuthorization(PSU_ID_DATA, CONSENT_ID))
+
+        when(piisAuthorizationService.createConsentAuthorization(any()))
             .thenReturn(Optional.of(createConsentAuthorizationResponse));
 
         //When
@@ -576,7 +591,7 @@ class PiisConsentServiceTest {
 
     @Test
     void updateConsentPsuData() {
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = new UpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = new ConsentAuthorisationsParameters();
         piisConsentService.updateConsentPsuData(updateConsentPsuDataReq);
 
         verify(piisConsentAuthorisationService, times(1)).updateConsentPsuData(updateConsentPsuDataReq);

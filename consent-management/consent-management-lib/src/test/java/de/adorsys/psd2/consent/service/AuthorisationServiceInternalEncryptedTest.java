@@ -71,7 +71,7 @@ class AuthorisationServiceInternalEncryptedTest {
         when(securityDataService.decryptId(ENCRYPTED_PARENT_ID)).thenReturn(Optional.of(DECRYPTED_PARENT_ID));
 
         AuthorisationParentHolder decryptedParentHolder = new AuthorisationParentHolder(AUTHORISATION_TYPE, DECRYPTED_PARENT_ID);
-        CreateAuthorisationResponse createAuthorisationResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "internal request id", new PsuIdData());
+        CreateAuthorisationResponse createAuthorisationResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "internal request id", new PsuIdData(), ScaApproach.EMBEDDED);
         CmsResponse<CreateAuthorisationResponse> innerServiceResponse = CmsResponse.<CreateAuthorisationResponse>builder().payload(createAuthorisationResponse).build();
         when(authorisationService.createAuthorisation(decryptedParentHolder, createAuthorisationRequest)).thenReturn(innerServiceResponse);
 

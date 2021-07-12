@@ -17,7 +17,7 @@
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
 import de.adorsys.psd2.core.data.ais.AisConsent;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.authorization.AbstractConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -42,7 +42,7 @@ public abstract class AbstractAisAuthorizationService extends AbstractConsentAut
     }
 
     @Override
-    protected void updateConsentAuthorisation(UpdateConsentPsuDataReq updateConsentPsuDataReq) {
+    protected void updateConsentAuthorisation(ConsentAuthorisationsParameters updateConsentPsuDataReq) {
         aisConsentService.updateConsentAuthorisation(updateConsentPsuDataReq);
     }
 }

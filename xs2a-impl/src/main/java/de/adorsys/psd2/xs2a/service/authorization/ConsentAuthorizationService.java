@@ -17,18 +17,19 @@
 package de.adorsys.psd2.xs2a.service.authorization;
 
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 
 import java.util.Optional;
 
 public interface ConsentAuthorizationService extends ScaApproachServiceTypeProvider {
-    Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(PsuIdData psuData, String consentId);
 
-    AuthorisationProcessorResponse updateConsentPsuData(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
+    Optional<CreateConsentAuthorizationResponse> createConsentAuthorization(Xs2aCreateAuthorisationRequest createAuthorisationRequest);
+
+    AuthorisationProcessorResponse updateConsentPsuData(CommonAuthorisationParameters request, AuthorisationProcessorResponse response);
 
     Optional<Authorisation> getConsentAuthorizationById(String authorizationId);
 

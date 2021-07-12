@@ -27,9 +27,8 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentReq;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountAccessMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiAccountReferenceMapper;
 import de.adorsys.psd2.xs2a.service.mapper.spi_xs2a_mappers.Xs2aToSpiPsuDataMapper;
@@ -75,7 +74,7 @@ class Xs2aAisConsentMapperTest {
 
     @Test
     void mapToSpiScaConfirmation() {
-        UpdateConsentPsuDataReq request = new UpdateConsentPsuDataReq();
+        ConsentAuthorisationsParameters request = new ConsentAuthorisationsParameters();
         request.setConsentId(CONSENT_ID);
         request.setScaAuthenticationData("123456");
 
@@ -88,7 +87,7 @@ class Xs2aAisConsentMapperTest {
 
     @Test
     void mapToSpiScaConfirmation_psuIdDataIsNull() {
-        SpiScaConfirmation spiScaConfirmation = mapper.mapToSpiScaConfirmation(new UpdateConsentPsuDataReq(), null);
+        SpiScaConfirmation spiScaConfirmation = mapper.mapToSpiScaConfirmation(new ConsentAuthorisationsParameters(), null);
         assertNotNull(spiScaConfirmation);
         assertNull(spiScaConfirmation.getPsuId());
     }

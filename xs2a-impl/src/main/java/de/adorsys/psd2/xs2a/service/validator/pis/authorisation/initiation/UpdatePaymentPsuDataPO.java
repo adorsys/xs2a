@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.validator.pis.authorisation.initiation;
 import de.adorsys.psd2.consent.api.pis.PisCommonPaymentResponse;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.UpdatePisPsuDataPO;
 import de.adorsys.psd2.xs2a.service.validator.pis.authorisation.cancellation.UpdatePisCancellationPsuDataValidator;
 import lombok.Value;
@@ -33,7 +33,7 @@ public class UpdatePaymentPsuDataPO implements UpdatePisPsuDataPO {
     @NotNull
     PisCommonPaymentResponse pisCommonPaymentResponse;
     @NotNull
-    Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest;
+    PaymentAuthorisationParameters updateRequest;
 
     @Override
     public TppInfo getTppInfo() {

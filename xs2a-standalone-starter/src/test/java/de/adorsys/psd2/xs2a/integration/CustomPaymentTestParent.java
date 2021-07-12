@@ -33,6 +33,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
+import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.spi.service.CommonPaymentSpi;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,6 +97,8 @@ public abstract class CustomPaymentTestParent {
     @MockBean
     @Qualifier("consentRestTemplate")
     protected RestTemplate consentRestTemplate;
+    @MockBean
+    protected AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
 
     protected void init() {
         HashMap<String, String> headerMap = new HashMap<>();

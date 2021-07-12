@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service.validator.piis.dto;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.validator.TppInfoProvider;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public class UpdatePiisConsentPsuDataRequestObject implements TppInfoProvider {
     private final PiisConsent piisConsent;
 
     @NotNull
-    private final UpdateConsentPsuDataReq updateRequest;
+    private final ConsentAuthorisationsParameters updateRequest;
 
     @Override
     public TppInfo getTppInfo() {

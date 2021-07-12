@@ -82,7 +82,11 @@ public class AuthorisationServiceInternal implements AuthorisationService {
         Authorisable authorisationParent = parentOptional.get();
         AuthorisationEntity newAuthorisation = authService.saveAuthorisation(request, authorisationParent);
 
-        CreateAuthorisationResponse response = new CreateAuthorisationResponse(newAuthorisation.getExternalId(), newAuthorisation.getScaStatus(), authorisationParent.getInternalRequestId(authorisationType), request.getPsuData());
+        CreateAuthorisationResponse response = new CreateAuthorisationResponse(newAuthorisation.getExternalId(),
+                                                                               newAuthorisation.getScaStatus(),
+                                                                               authorisationParent.getInternalRequestId(authorisationType),
+                                                                               request.getPsuData(),
+                                                                               newAuthorisation.getScaApproach());
         return CmsResponse.<CreateAuthorisationResponse>builder()
                    .payload(response)
                    .build();

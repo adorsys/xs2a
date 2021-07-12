@@ -24,7 +24,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponseType;
 import de.adorsys.psd2.xs2a.domain.authorisation.CancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationRequest;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
@@ -70,11 +70,11 @@ class PaymentAuthorisationCancellationAspectServiceTest {
     private RequestProviderService requestProviderService;
 
     private ResponseObject<CancellationAuthorisationResponse> responseObject;
-    private Xs2aUpdatePisCommonPaymentPsuDataRequest updateRequest;
+    private PaymentAuthorisationParameters updateRequest;
 
     @BeforeEach
     void setUp() {
-        updateRequest = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+        updateRequest = new PaymentAuthorisationParameters();
         updateRequest.setPaymentService(SINGLE);
     }
 

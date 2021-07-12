@@ -17,14 +17,10 @@
 package de.adorsys.psd2.xs2a.service.authorization.pis;
 
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ScaApproachServiceTypeProvider;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -35,12 +31,11 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
     /**
      * Creates authorisation for a payment
      *
-     * @param paymentId   ASPSP identifier of a payment
-     * @param paymentType Type of payment
-     * @param psuData     PsuIdData container of authorisation data about PSU
+     * @param createAuthorisationRequest create authorisation request
+     * @param paymentType                Type of payment
      * @return create payment authorisation response
      */
-    Optional<Xs2aCreatePisAuthorisationResponse> createCommonPaymentAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData);
+    Optional<Xs2aCreatePisAuthorisationResponse> createCommonPaymentAuthorisation(Xs2aCreateAuthorisationRequest createAuthorisationRequest, PaymentType paymentType);
 
     /**
      * Updates authorisation for the payment
@@ -48,20 +43,20 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
      * @param request Provides transporting data when updating consent psu data
      * @return update payment authorisation response
      */
-    Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request);
+    Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentPsuData(PaymentAuthorisationParameters request);
 
-    void updateAuthorisation(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
-    void updateCancellationAuthorisation(UpdateAuthorisationRequest request, AuthorisationProcessorResponse response);
+    void updateAuthorisation(CommonAuthorisationParameters request, AuthorisationProcessorResponse response);
+
+    void updateCancellationAuthorisation(CommonAuthorisationParameters request, AuthorisationProcessorResponse response);
 
     /**
      * Creates authorisation cancellation for the payment
      *
-     * @param paymentId   ASPSP identifier of a payment
-     * @param paymentType Type of payment
-     * @param psuData     PsuIdData container of authorisation data about PSU
+     * @param createAuthorisationRequest create Authorisation Request
+     * @param paymentType                Type of payment
      * @return create payment cancellation authorisation response
      */
-    Optional<Xs2aCreatePisCancellationAuthorisationResponse> createCommonPaymentCancellationAuthorisation(String paymentId, PaymentType paymentType, PsuIdData psuData);
+    Optional<Xs2aCreatePisCancellationAuthorisationResponse> createCommonPaymentCancellationAuthorisation(Xs2aCreateAuthorisationRequest createAuthorisationRequest, PaymentType paymentType);
 
     /**
      * Gets authorisation cancellation sub resources
@@ -77,7 +72,7 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
      * @param request Provides transporting data when updating payment psu data
      * @return update consent authorisation response
      */
-    Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentCancellationPsuData(Xs2aUpdatePisCommonPaymentPsuDataRequest request);
+    Xs2aUpdatePisCommonPaymentPsuDataResponse updateCommonPaymentCancellationPsuData(PaymentAuthorisationParameters request);
 
     /**
      * Gets authorisation sub resources
@@ -99,7 +94,7 @@ public interface PisScaAuthorisationService extends ScaApproachServiceTypeProvid
     /**
      * Gets SCA status of cancellation authorisation
      *
-     * @param paymentId      ASPSP identifier of the payment, associated with the authorisation
+     * @param paymentId       ASPSP identifier of the payment, associated with the authorisation
      * @param authorisationId authorisation identifier
      * @return SCA status
      */

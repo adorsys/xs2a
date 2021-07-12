@@ -25,11 +25,8 @@ import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aAuthorisationSubResources;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
-import de.adorsys.psd2.xs2a.domain.consent.Xs2aPaymentCancellationAuthorisationSubResource;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.*;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aPisCommonPaymentMapper;
 import org.junit.jupiter.api.Test;
@@ -55,17 +52,18 @@ class RedirectPisScaAuthorisationServiceTest {
     private static final String CANCELLATION_AUTHORISATION_ID = "dd5d766f-eeb7-4efe-b730-24d5ed53f537";
     private static final String WRONG_CANCELLATION_AUTHORISATION_ID = "wrong cancellation authorisation id";
     private static final ScaStatus SCA_STATUS = ScaStatus.RECEIVED;
+    private static final ScaApproach SCA_APPROACH = ScaApproach.REDIRECT;
     private static final List<String> STRING_LIST = Collections.singletonList(PAYMENT_ID);
     private static final Xs2aAuthorisationSubResources XS2A_AUTHORISATION_SUB_RESOURCES = new Xs2aAuthorisationSubResources(STRING_LIST);
-    private static final Xs2aUpdatePisCommonPaymentPsuDataRequest XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = new Xs2aUpdatePisCommonPaymentPsuDataRequest();
+    private static final PaymentAuthorisationParameters XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_REQUEST = new PaymentAuthorisationParameters();
     private static final Xs2aPaymentCancellationAuthorisationSubResource XS2A_PAYMENT_CANCELLATION_AUTHORISATION_SUB_RESOURCE = new Xs2aPaymentCancellationAuthorisationSubResource(STRING_LIST);
     private static final PaymentType PAYMENT_TYPE = PaymentType.SINGLE;
     private static final PsuIdData PSU_ID_DATA = new PsuIdData("Test psuId", null, null, null, null);
-    private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null);
-    private static final CreateAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(WRONG_AUTHORISATION_ID, SCA_STATUS, null, null);
+    private static final CreateAuthorisationResponse CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, SCA_APPROACH);
+    private static final CreateAuthorisationResponse WRONG_CREATE_PIS_AUTHORISATION_RESPONSE = new CreateAuthorisationResponse(WRONG_AUTHORISATION_ID, SCA_STATUS, null, null, SCA_APPROACH);
     private static final Xs2aCreatePisCancellationAuthorisationResponse XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE = new Xs2aCreatePisCancellationAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE.getAuthorizationId(), ScaStatus.RECEIVED, PAYMENT_TYPE, null);
     private static final Xs2aUpdatePisCommonPaymentPsuDataResponse XS2A_UPDATE_PIS_COMMON_PAYMENT_PSU_DATA_RESPONSE = new Xs2aUpdatePisCommonPaymentPsuDataResponse();
-    private static final Xs2aCreatePisAuthorisationResponse XS2A_CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, PAYMENT_TYPE, null, null, null);
+    private static final Xs2aCreatePisAuthorisationResponse XS2A_CREATE_PIS_AUTHORISATION_RESPONSE = new Xs2aCreatePisAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, PAYMENT_TYPE, null, null, null, null, SCA_APPROACH);
 
     @InjectMocks
     private RedirectPisScaAuthorisationService redirectPisScaAuthorisationService;
@@ -79,13 +77,20 @@ class RedirectPisScaAuthorisationServiceTest {
     @Test
     void createCommonPaymentAuthorisation_success() {
         // Given
-        when(pisAuthorisationService.createPisAuthorisation(PAYMENT_ID, PSU_ID_DATA))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
+        when(pisAuthorisationService.createPisAuthorisation(xs2aCreateAuthorisationRequest))
             .thenReturn(CREATE_PIS_AUTHORISATION_RESPONSE);
         when(pisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
             .thenReturn(Optional.of(XS2A_CREATE_PIS_AUTHORISATION_RESPONSE));
 
         // When
-        Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
+        Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentAuthorisation(xs2aCreateAuthorisationRequest, PAYMENT_TYPE);
 
         // Then
         assertTrue(actualResponse.isPresent());
@@ -95,13 +100,20 @@ class RedirectPisScaAuthorisationServiceTest {
     @Test
     void createCommonPaymentAuthorisation_wrongId_fail() {
         // Given
-        when(pisAuthorisationService.createPisAuthorisation(WRONG_PAYMENT_ID, PSU_ID_DATA))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(WRONG_PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
+        when(pisAuthorisationService.createPisAuthorisation(xs2aCreateAuthorisationRequest))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
         when(pisCommonPaymentMapper.mapToXsa2CreatePisAuthorisationResponse(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentAuthorisation(WRONG_PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
+        Optional<Xs2aCreatePisAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentAuthorisation(xs2aCreateAuthorisationRequest, PAYMENT_TYPE);
 
         // Then
         assertThat(actualResponse).isNotPresent();
@@ -136,13 +148,20 @@ class RedirectPisScaAuthorisationServiceTest {
     @Test
     void createCommonPaymentCancellationAuthorisation_success() {
         // Given
-        when(pisAuthorisationService.createPisAuthorisationCancellation(PAYMENT_ID, PSU_ID_DATA))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
+        when(pisAuthorisationService.createPisAuthorisationCancellation(xs2aCreateAuthorisationRequest))
             .thenReturn(CREATE_PIS_AUTHORISATION_RESPONSE);
         when(pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
             .thenReturn(Optional.of(XS2A_CREATE_PIS_CANCELLATION_AUTHORISATION_RESPONSE));
 
         // When
-        Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
+        Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(xs2aCreateAuthorisationRequest, PAYMENT_TYPE);
 
         // Then
         assertTrue(actualResponse.isPresent());
@@ -152,13 +171,20 @@ class RedirectPisScaAuthorisationServiceTest {
     @Test
     void createCommonPaymentCancellationAuthorisation_fail() {
         // Given
-        when(pisAuthorisationService.createPisAuthorisationCancellation(WRONG_PAYMENT_ID, PSU_ID_DATA))
+        Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
+                                                                            .paymentId(WRONG_PAYMENT_ID)
+                                                                            .psuData(PSU_ID_DATA)
+                                                                            .scaStatus(SCA_STATUS)
+                                                                            .scaApproach(SCA_APPROACH)
+                                                                            .authorisationId(AUTHORISATION_ID)
+                                                                            .build();
+        when(pisAuthorisationService.createPisAuthorisationCancellation(xs2aCreateAuthorisationRequest))
             .thenReturn(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE);
         when(pisCommonPaymentMapper.mapToXs2aCreatePisCancellationAuthorisationResponse(WRONG_CREATE_PIS_AUTHORISATION_RESPONSE, PAYMENT_TYPE))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(WRONG_PAYMENT_ID, PAYMENT_TYPE, PSU_ID_DATA);
+        Optional<Xs2aCreatePisCancellationAuthorisationResponse> actualResponse = redirectPisScaAuthorisationService.createCommonPaymentCancellationAuthorisation(xs2aCreateAuthorisationRequest, PAYMENT_TYPE);
 
         // Then
         assertThat(actualResponse).isNotPresent();

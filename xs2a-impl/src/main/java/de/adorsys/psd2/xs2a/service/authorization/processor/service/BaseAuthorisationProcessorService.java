@@ -22,7 +22,7 @@ import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiAuthorizationCodeResult;
@@ -56,6 +56,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
                    .orElse(false);
     }
 
+    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1627
     void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
         String businessObjectName = resolveBusinessObjectName(request.getServiceType());
         String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", businessObjectName, message);
@@ -67,6 +68,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
                  errorHolder);
     }
 
+    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1627
     void writeInfoLog(AuthorisationProcessorRequest request, PsuIdData psuData, String message) {
         String businessObjectName = resolveBusinessObjectName(request.getServiceType());
         String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", businessObjectName, message);
@@ -92,7 +94,7 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
         return authorizationCodeResult.getChallengeData();
     }
 
-    PsuIdData extractPsuIdData(UpdateAuthorisationRequest request,
+    PsuIdData extractPsuIdData(CommonAuthorisationParameters request,
                                Authorisation authorisation) {
         PsuIdData psuDataInRequest = request.getPsuData();
         return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisation.getPsuIdData();

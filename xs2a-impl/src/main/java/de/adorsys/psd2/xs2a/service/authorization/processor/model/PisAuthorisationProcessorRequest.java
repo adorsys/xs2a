@@ -20,14 +20,14 @@ import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import lombok.Value;
 
 @Value
 public class PisAuthorisationProcessorRequest extends AuthorisationProcessorRequest {
 
     public PisAuthorisationProcessorRequest(ScaApproach scaApproach, ScaStatus scaStatus,
-                                            UpdateAuthorisationRequest updateAuthorisationRequest,
+                                            CommonAuthorisationParameters updateAuthorisationRequest,
                                             Authorisation authorisation) {
         super(ServiceType.PIS, scaApproach, scaStatus, updateAuthorisationRequest, authorisation);
     }

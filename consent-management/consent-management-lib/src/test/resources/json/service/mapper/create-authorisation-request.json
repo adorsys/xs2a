@@ -6,6 +6,7 @@
     "psuCorporateIdType": "PSU CORPORATE ID TYPE",
     "psuIpAddress": "PSU IP ADDRESS"
   },
+  "scaStatus": "PSUIDENTIFIED",
   "scaApproach": "EMBEDDED",
   "tppRedirectURIs": {
     "uri": "ok.uri",

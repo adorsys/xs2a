@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.service;
 
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
-import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataReq;
+import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.service.validator.piis.*;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.CreatePiisConsentAuthorisationObject;
 import de.adorsys.psd2.xs2a.service.validator.piis.dto.UpdatePiisConsentPsuDataRequestObject;
@@ -42,7 +42,7 @@ public class ConfirmationOfFundsConsentValidationService {
         return createPiisConsentAuthorisationValidator.validate(createPiisConsentAuthorisationObject);
     }
 
-    public ValidationResult validateConsentPsuDataOnUpdate(PiisConsent consent, UpdateConsentPsuDataReq request) {
+    public ValidationResult validateConsentPsuDataOnUpdate(PiisConsent consent, ConsentAuthorisationsParameters request) {
         return updatePiisConsentPsuDataValidator.validate(new UpdatePiisConsentPsuDataRequestObject(consent, request));
     }
 

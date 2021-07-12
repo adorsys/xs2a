@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.domain.consent.Xs2aChosenScaMethod;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,5 +52,6 @@ public class CancelPaymentResponse {
     @JsonProperty("_links")
     private Links links;
     private String internalRequestId;
-    private Set<TppMessageInformation> tppMessageInformation;
+    private Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
+    private String psuMessage;
 }

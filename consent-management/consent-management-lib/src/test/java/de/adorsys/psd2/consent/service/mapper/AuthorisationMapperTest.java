@@ -40,7 +40,7 @@ class AuthorisationMapperTest {
     @Autowired
     private AuthorisationMapper mapper;
 
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     @Test
     void prepareAuthorisationEntity() {

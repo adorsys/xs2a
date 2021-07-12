@@ -29,7 +29,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.consent.*;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.mapper.AccountModelMapper;
 import de.adorsys.psd2.xs2a.service.profile.AspspProfileServiceWrapper;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -71,24 +71,20 @@ class ConsentModelMapperTest {
 
     @InjectMocks
     private ConsentModelMapper consentModelMapper;
-
     @Mock
     private HrefLinkMapper hrefLinkMapper;
-
     @Mock
     private ScaMethodsMapper scaMethodsMapper;
-
     @Mock
     private AccountModelMapper accountModelMapper;
-
     @Mock
     private Xs2aObjectMapper xs2aObjectMapper;
-
     @Mock
     private AspspProfileServiceWrapper aspspProfileService;
-
     @Mock
     private TppMessageGenericMapper tppMessageGenericMapper;
+    @Mock
+    private CoreObjectsMapper coreObjectsMapper;
 
     private CreateConsentResponse createConsentResponseWithScaMethods;
     private CreateConsentResponse createConsentResponseWithoutScaMethods;
@@ -216,10 +212,10 @@ class ConsentModelMapperTest {
     @Test
     void mapToUpdatePsuData_WithBody() {
         // Given
-        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
-                                                                        UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-with-password.json",
+                                                                                ConsentAuthorisationsParameters.class);
         // When
-        UpdateConsentPsuDataReq actual = consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, bodyMap);
+        ConsentAuthorisationsParameters actual = consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, bodyMap);
         // Then
         assertEquals(expected, actual);
     }
@@ -227,10 +223,10 @@ class ConsentModelMapperTest {
     @Test
     void mapToUpdatePsuData_WithEmptyBody() {
         // Given
-        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-without-password.json",
-                                                                        UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-without-password.json",
+                                                                                ConsentAuthorisationsParameters.class);
         // When
-        UpdateConsentPsuDataReq actual = consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, getEmptyBodyMap());
+        ConsentAuthorisationsParameters actual = consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, getEmptyBodyMap());
         // Then
         assertEquals(expected, actual);
     }
@@ -238,10 +234,10 @@ class ConsentModelMapperTest {
     @Test
     void mapToUpdatePsuData_WithoutBody() {
         // Given
-        UpdateConsentPsuDataReq expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-without-password.json",
-                                                                        UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters expected = jsonReader.getObjectFromFile("json/service/mapper/update-consent-psu-data-req-without-password.json",
+                                                                                ConsentAuthorisationsParameters.class);
         // When
-        UpdateConsentPsuDataReq actual = consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, null);
+        ConsentAuthorisationsParameters actual = consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, null);
         // Then
         assertEquals(expected, actual);
     }
@@ -249,11 +245,11 @@ class ConsentModelMapperTest {
     @Test
     void mapToPisUpdatePsuData_WithBody() {
         // Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-with-password.json",
-                                                                                         Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
+        PaymentAuthorisationParameters expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-with-password.json",
+                                                                               PaymentAuthorisationParameters.class);
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataRequest actual = consentModelMapper
-                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, bodyMap);
+        PaymentAuthorisationParameters actual = consentModelMapper
+                                                    .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, bodyMap);
         // Then
         assertEquals(expected, actual);
     }
@@ -261,11 +257,11 @@ class ConsentModelMapperTest {
     @Test
     void mapToPisUpdatePsuData_WithEmptyBody() {
         // Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-without-password.json",
-                                                                                         Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
+        PaymentAuthorisationParameters expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-without-password.json",
+                                                                               PaymentAuthorisationParameters.class);
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataRequest actual = consentModelMapper
-                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, getEmptyBodyMap());
+        PaymentAuthorisationParameters actual = consentModelMapper
+                                                    .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, getEmptyBodyMap());
         // Then
         assertEquals(expected, actual);
     }
@@ -273,11 +269,11 @@ class ConsentModelMapperTest {
     @Test
     void mapToPisUpdatePsuData_WithoutBody() {
         // Given
-        Xs2aUpdatePisCommonPaymentPsuDataRequest expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-without-password.json",
-                                                                                         Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
+        PaymentAuthorisationParameters expected = jsonReader.getObjectFromFile("json/service/mapper/update-payment-psu-data-without-password.json",
+                                                                               PaymentAuthorisationParameters.class);
         // When
-        Xs2aUpdatePisCommonPaymentPsuDataRequest actual = consentModelMapper
-                                                              .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, null);
+        PaymentAuthorisationParameters actual = consentModelMapper
+                                                    .mapToPisUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, SINGLE, PAYMENT_PRODUCT, null);
         // Then
         assertEquals(expected, actual);
     }
@@ -346,7 +342,7 @@ class ConsentModelMapperTest {
         AisConsent aisConsent = getAisConsentWithFullAdditionalInfo();
         AdditionalInformationAccess expected = jsonReader.getObjectFromFile("json/service/mapper/consent-model-mapper/additional-info-expected.json", AdditionalInformationAccess.class);
         de.adorsys.psd2.model.AccountReference accountReference = jsonReader
-            .getObjectFromFile("json/service/mapper/consent-model-mapper/account-references.json", de.adorsys.psd2.model.AccountReference.class);
+                                                                      .getObjectFromFile("json/service/mapper/consent-model-mapper/account-references.json", de.adorsys.psd2.model.AccountReference.class);
         //When
         when(accountModelMapper.mapToAccountReferences(any())).thenReturn(List.of(accountReference));
         ConsentInformationResponse200Json consentInformationResponse = consentModelMapper.mapToConsentInformationResponse200Json(aisConsent);

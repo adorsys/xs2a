@@ -16,11 +16,16 @@
 
 package de.adorsys.psd2.xs2a.domain.consent;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.Links;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import lombok.Data;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class CreateConsentAuthorizationResponse implements AuthorisationResponse {
@@ -31,4 +36,6 @@ public class CreateConsentAuthorizationResponse implements AuthorisationResponse
     private Links links;
     private String internalRequestId;
     private PsuIdData psuIdData;
+    private ScaApproach scaApproach;
+    private final Set<TppMessageInformation> tppMessageInformation = new HashSet<>();
 }

@@ -93,8 +93,8 @@ class AuthorisationServiceInternalTest {
         String parentId = "parent id";
         AuthorisationType authorisationType = AuthorisationType.CONSENT;
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(authorisationType, parentId);
-        CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest(PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
-        CreateAuthorisationResponse expectedResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, PSU_ID_DATA);
+        CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest(AUTHORISATION_ID, PSU_ID_DATA, ScaApproach.REDIRECT, ScaStatus.STARTED, TPP_REDIRECT_URIs);
+        CreateAuthorisationResponse expectedResponse = new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, INTERNAL_REQUEST_ID, PSU_ID_DATA, null);
 
         ConsentEntity consentEntity = new ConsentEntity();
         consentEntity.setInternalRequestId(INTERNAL_REQUEST_ID);
@@ -122,7 +122,7 @@ class AuthorisationServiceInternalTest {
         // Given
         String parentId = "parent id";
         AuthorisationParentHolder authorisationParentHolder = new AuthorisationParentHolder(AuthorisationType.CONSENT, parentId);
-        CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest(PSU_ID_DATA, ScaApproach.REDIRECT, TPP_REDIRECT_URIs);
+        CreateAuthorisationRequest createAuthorisationRequest = new CreateAuthorisationRequest(AUTHORISATION_ID, PSU_ID_DATA, ScaApproach.REDIRECT, ScaStatus.STARTED, TPP_REDIRECT_URIs);
 
         when(authServiceResolver.getAuthService(AuthorisationType.CONSENT)).thenReturn(authService);
         when(authService.getNotFinalisedAuthorisationParent(parentId)).thenReturn(Optional.empty());

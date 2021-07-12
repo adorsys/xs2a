@@ -30,9 +30,11 @@ import de.adorsys.psd2.xs2a.config.Xs2aInterfaceConfig;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.AuthorisationScaApproachResponse;
-import de.adorsys.psd2.xs2a.integration.builder.PsuIdDataBuilder;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
+import de.adorsys.psd2.xs2a.domain.consent.CreatePaymentAuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.payment.PisCommonPaymentResponseBuilder;
+import de.adorsys.psd2.xs2a.service.authorization.processor.model.PisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
 import de.adorsys.psd2.xs2a.spi.domain.payment.SpiPaymentInfo;
@@ -58,8 +60,7 @@ import org.springframework.util.MultiValueMap;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -199,10 +200,10 @@ class InitiateCustomPaymentIT extends CustomPaymentTestParent {
     }
 
     private void makePreparation(ScaApproach scaApproach) {
-        given(authorisationServiceEncrypted.createAuthorisation(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID),
-                                                                new CreateAuthorisationRequest(PsuIdDataBuilder.buildPsuIdData(), scaApproach, TPP_REDIRECT_URIs)))
+        given(authorisationServiceEncrypted.createAuthorisation(eq(new PisAuthorisationParentHolder(ENCRYPT_PAYMENT_ID)),
+                                                                any(CreateAuthorisationRequest.class)))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
-                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null))
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, SCA_STATUS, null, null, scaApproach))
                             .build());
         given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(scaApproach));
         given(commonPaymentSpi.initiatePayment(any(SpiContextData.class), any(SpiPaymentInfo.class), any(SpiAspspConsentDataProvider.class)))
@@ -213,5 +214,10 @@ class InitiateCustomPaymentIT extends CustomPaymentTestParent {
             .willReturn(CmsResponse.<AuthorisationScaApproachResponse>builder()
                             .payload(new AuthorisationScaApproachResponse(scaApproach))
                             .build());
+        CreatePaymentAuthorisationProcessorResponse processorResponse =
+            new CreatePaymentAuthorisationProcessorResponse(ScaStatus.STARTED, scaApproach, null,
+                                                            Collections.emptySet(), ENCRYPT_PAYMENT_ID, null);
+        given(authorisationChainResponsibilityService.apply(any(PisAuthorisationProcessorRequest.class)))
+            .willReturn(processorResponse);
     }
 }

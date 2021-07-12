@@ -158,7 +158,7 @@ public class ConsentController implements ConsentApi {
     }
 
     private ResponseEntity<Object> updateAisAuthorisation(PsuIdData psuData, String authorisationId, String consentId, Object body) {
-        UpdateConsentPsuDataReq updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
+        ConsentAuthorisationsParameters updatePsuDataRequest = consentModelMapper.mapToUpdatePsuData(psuData, consentId, authorisationId, (Map) body);
         ResponseObject<UpdateConsentPsuDataResponse> updateConsentPsuDataResponse = consentService.updateConsentPsuData(updatePsuDataRequest);
 
         if (updateConsentPsuDataResponse.hasError()) {

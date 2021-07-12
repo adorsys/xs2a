@@ -382,7 +382,7 @@ class ConfirmationOfFundsControllerTest {
         Map body = new HashMap();
         PsuIdData psuIdData = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, null);
 
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
 
         when(consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, body)).thenReturn(updateConsentPsuDataReq);
 
@@ -416,7 +416,7 @@ class ConfirmationOfFundsControllerTest {
         Map body = new HashMap();
         PsuIdData psuIdData = new PsuIdData(CORRECT_PSU_ID, null, null, null, null, null);
 
-        UpdateConsentPsuDataReq updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", UpdateConsentPsuDataReq.class);
+        ConsentAuthorisationsParameters updateConsentPsuDataReq = jsonReader.getObjectFromFile("json/piis/update-consent-psu-data-req.json", ConsentAuthorisationsParameters.class);
 
         when(consentModelMapper.mapToUpdatePsuData(psuIdData, CONSENT_ID, AUTHORISATION_ID, body)).thenReturn(updateConsentPsuDataReq);
 
@@ -490,7 +490,8 @@ class ConfirmationOfFundsControllerTest {
     }
 
     private ResponseObject<Xs2aConfirmationOfFundsResponse> createConsentsConfirmationOfFunds() {
-        Xs2aConfirmationOfFundsResponse consentResponse = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), ConfirmationOfFundsControllerTest.CONSENT_ID, false, null, PSU_MESSAGE_RESPONSE);
+        Xs2aConfirmationOfFundsResponse consentResponse = new Xs2aConfirmationOfFundsResponse(ConsentStatus.RECEIVED.getValue(), ConfirmationOfFundsControllerTest.CONSENT_ID, false, null);
+        consentResponse.setPsuMessage(PSU_MESSAGE_RESPONSE);
         Links links = new Links();
         links.setSelf(new HrefType("type"));
         consentResponse.setLinks(links);

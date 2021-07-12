@@ -25,7 +25,7 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreatePisCancellationAuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aPisCommonPayment;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiScaConfirmation;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -65,9 +65,9 @@ class Xs2aPisCommonPaymentMapperTest {
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/spi-sca-confirmation.json",
                                          SpiScaConfirmation.class);
 
-        Xs2aUpdatePisCommonPaymentPsuDataRequest request =
+        PaymentAuthorisationParameters request =
             jsonReader.getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-update-pis-common-payment-psu-data-request.json",
-                                         Xs2aUpdatePisCommonPaymentPsuDataRequest.class);
+                                         PaymentAuthorisationParameters.class);
         String consentId = "consentId";
         String paymentId = "paymentId";
 

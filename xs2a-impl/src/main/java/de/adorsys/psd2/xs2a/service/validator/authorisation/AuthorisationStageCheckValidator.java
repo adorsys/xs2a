@@ -20,7 +20,7 @@ import de.adorsys.psd2.xs2a.core.error.ErrorType;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.service.validator.ValidationResult;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationServiceType;
-import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 @Component
 public class AuthorisationStageCheckValidator {
 
-    public ValidationResult validate(@NotNull UpdateAuthorisationRequest updateRequest, @NotNull ScaStatus scaStatus, @NotNull AuthorisationServiceType authType) {
+    public ValidationResult validate(@NotNull CommonAuthorisationParameters updateRequest, @NotNull ScaStatus scaStatus, @NotNull AuthorisationServiceType authType) {
         if (scaStatus == RECEIVED && updateRequest.getPsuData().isEmpty()) {
             return ValidationResult.invalid(resolveErrorType(authType), SERVICE_INVALID_400);
         }

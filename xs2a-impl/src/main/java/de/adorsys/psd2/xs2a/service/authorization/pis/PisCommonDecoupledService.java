@@ -23,7 +23,7 @@ import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.pis.Xs2aCurrencyConversionInfo;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.context.SpiContextDataProvider;
@@ -59,15 +59,15 @@ public class PisCommonDecoupledService {
     private final CurrencyConversionInfoSpi currencyConversionInfoSpi;
     private final SpiToXs2aCurrencyConversionInfoMapper spiToXs2aCurrencyConversionInfoMapper;
 
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledInitiation(PaymentAuthorisationParameters request, SpiPayment payment, String authenticationMethodId) {
         return proceedDecoupled(request, payment, authenticationMethodId, PIS_CREATION);
     }
 
-    public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment, String authenticationMethodId) {
+    public Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupledCancellation(PaymentAuthorisationParameters request, SpiPayment payment, String authenticationMethodId) {
         return proceedDecoupled(request, payment, authenticationMethodId, AuthorisationType.PIS_CANCELLATION);
     }
 
-    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(Xs2aUpdatePisCommonPaymentPsuDataRequest request, SpiPayment payment,
+    private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedDecoupled(PaymentAuthorisationParameters request, SpiPayment payment,
                                                                        String authenticationMethodId, AuthorisationType authorisationType) {
         String authenticationId = request.getAuthorisationId();
         String paymentId = request.getPaymentId();

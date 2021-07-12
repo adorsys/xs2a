@@ -19,7 +19,7 @@ package de.adorsys.psd2.xs2a.service.authorization;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.domain.consent.pis.Xs2aUpdatePisCommonPaymentPsuDataRequest;
+import de.adorsys.psd2.xs2a.domain.consent.pis.PaymentAuthorisationParameters;
 import de.adorsys.psd2.xs2a.service.authorization.processor.AuthorisationProcessorServiceProvider;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -48,7 +48,7 @@ class AuthorisationChainResponsibilityServiceTest {
         Authorisation authorisation = new Authorisation();
         AisAuthorisationProcessorRequest request = new AisAuthorisationProcessorRequest(ScaApproach.EMBEDDED,
                                                                                         ScaStatus.RECEIVED,
-                                                                                        new Xs2aUpdatePisCommonPaymentPsuDataRequest(),
+                                                                                        new PaymentAuthorisationParameters(),
                                                                                         authorisation);
         when(provider.getProcessorService(request)).thenReturn(aisAuthorisationProcessorServiceImpl);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();

@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.spi.service;
 
 import de.adorsys.psd2.xs2a.core.error.MessageErrorCode;
 import de.adorsys.psd2.xs2a.core.error.TppMessage;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.spi.domain.SpiAspspConsentDataProvider;
 import de.adorsys.psd2.xs2a.spi.domain.SpiContextData;
@@ -34,6 +35,25 @@ import org.jetbrains.annotations.Nullable;
  * @param <T> business object to be provided during the implementation
  */
 interface AuthorisationSpi<T> {
+
+    /**
+     * Starts SCA authorisation.
+     *
+     * @param contextData              holder of call's context data (e.g. about PSU and TPP)
+     * @param scaApproach              SCA approach from xs2a
+     * @param scaStatus                scaStatus from CMS which is always be equal STARTED
+     * @param authorisationId          a unique identifier of authorisation process
+     * @param businessObject           generic consent/payment object
+     * @param aspspConsentDataProvider Provides access to read/write encrypted data to be stored in the consent management system.
+     * @return Returns an object containing scaApproach, scaStatus, psuMessage, tppMessages from the bank.
+     */
+    default SpiResponse<SpiStartAuthorisationResponse> startAuthorisation(@NotNull SpiContextData contextData, @NotNull ScaApproach scaApproach,
+                                                                          @NotNull ScaStatus scaStatus, @NotNull String authorisationId,
+                                                                          T businessObject, @NotNull SpiAspspConsentDataProvider aspspConsentDataProvider) {
+        return SpiResponse.<SpiStartAuthorisationResponse>builder()
+                   .payload(new SpiStartAuthorisationResponse(scaApproach, scaStatus, null, null))
+                   .build();
+    }
 
     /**
      * Authorises psu and returns current authorisation status. Used only with embedded SCA Approach.

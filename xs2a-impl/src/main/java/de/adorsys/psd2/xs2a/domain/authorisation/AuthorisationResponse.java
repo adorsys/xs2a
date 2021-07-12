@@ -16,9 +16,17 @@
 
 package de.adorsys.psd2.xs2a.domain.authorisation;
 
+import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
+
+import java.util.Set;
+
 /**
  * Common authorisation response to be used in AIS and PIS on creating or updating the authorisation
  */
 public interface AuthorisationResponse {
     String getAuthorisationId();
+    void setPsuMessage(String psuMessage);
+    default Set<TppMessageInformation> getTppMessageInformation() {
+        return null;
+    }
 }

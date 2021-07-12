@@ -38,6 +38,8 @@ public abstract class AuthorisationModelMapper {
     protected HrefLinkMapper hrefLinkMapper;
     @Autowired
     protected ScaMethodsMapper scaMethodsMapper;
+    @Autowired
+    protected TppMessageGenericMapper tppMessageGenericMapper;
 
     public Object mapToStartOrUpdateCancellationResponse(CancellationAuthorisationResponse cancellationAuthorisationResponse) {
         if (Objects.isNull(cancellationAuthorisationResponse)) {
@@ -58,8 +60,8 @@ public abstract class AuthorisationModelMapper {
     @Mapping(target = "_links", ignore = true)
     @Mapping(target = "challengeData", ignore = true)
     @Mapping(target = "chosenScaMethod", ignore = true)
-    @Mapping(target = "psuMessage", ignore = true)
     @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "tppMessage", expression = "java(tppMessageGenericMapper.mapToTppMessageGenericList(xs2aResponse.getTppMessageInformation()))")
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(xs2aResponse.getLinks()))")
     public abstract StartScaprocessResponse mapToStartScaProcessResponse(Xs2aCreatePisAuthorisationResponse xs2aResponse);
 
@@ -67,6 +69,7 @@ public abstract class AuthorisationModelMapper {
     @Mapping(target = "challengeData", ignore = true)
     @Mapping(target = "chosenScaMethod", ignore = true)
     @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "tppMessage", expression = "java(tppMessageGenericMapper.mapToTppMessageGenericList(xs2aResponse.getTppMessageInformation()))")
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(xs2aResponse.getLinks()))")
     public abstract StartScaprocessResponse mapToStartScaProcessResponse(CreateConsentAuthorizationResponse xs2aResponse);
 
@@ -74,6 +77,7 @@ public abstract class AuthorisationModelMapper {
     @Mapping(target = "challengeData", ignore = true)
     @Mapping(target = "chosenScaMethod", ignore = true)
     @Mapping(target = "scaMethods", ignore = true)
+    @Mapping(target = "tppMessage", expression = "java(tppMessageGenericMapper.mapToTppMessageGenericList(xs2aResponse.getTppMessageInformation()))")
     @Mapping(target = "links", expression = "java(hrefLinkMapper.mapToLinksMap(xs2aResponse.getLinks()))")
     public abstract StartScaprocessResponse mapToStartScaProcessResponseCancellation(Xs2aCreatePisCancellationAuthorisationResponse xs2aResponse);
 

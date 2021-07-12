@@ -48,6 +48,7 @@ import de.adorsys.psd2.xs2a.core.tpp.TppRedirectUri;
 import de.adorsys.psd2.xs2a.integration.builder.AspspSettingsBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.TppInfoBuilder;
 import de.adorsys.psd2.xs2a.integration.builder.UrlBuilder;
+import de.adorsys.xs2a.reader.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -126,6 +127,7 @@ class PaymentStartCancellationAuthorisationIT {
 
 
     private final HttpHeaders httpHeadersExplicit = new HttpHeaders();
+    private final JsonReader jsonReader = new JsonReader();
 
     @BeforeEach
     void setUp() {
@@ -157,7 +159,7 @@ class PaymentStartCancellationAuthorisationIT {
         given(aspspProfileService.getScaApproaches(null)).willReturn(Collections.singletonList(ScaApproach.EMBEDDED));
         given(authorisationServiceEncrypted.createAuthorisation(pisCancellationAuthorisationParentHolderCaptor.capture(), createAuthorisationRequestCaptor.capture()))
             .willReturn(CmsResponse.<CreateAuthorisationResponse>builder()
-                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, PIS_AUTHORISATION_SCA_STATUS, null, null))
+                            .payload(new CreateAuthorisationResponse(AUTHORISATION_ID, PIS_AUTHORISATION_SCA_STATUS, null, null, ScaApproach.EMBEDDED))
                             .build());
 
         given(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
@@ -174,8 +176,8 @@ class PaymentStartCancellationAuthorisationIT {
         requestBuilder.headers(httpHeadersExplicit);
 
         CreateAuthorisationRequest expectedCreatePisAuthorisationRequest =
-            new CreateAuthorisationRequest(new PsuIdData(PSU_ID, null, null, null, null),
-                                           ScaApproach.EMBEDDED, TPP_REDIRECT_URIs);
+            new CreateAuthorisationRequest(AUTHORISATION_ID, new PsuIdData(PSU_ID, null, null, null, null),
+                                           ScaApproach.EMBEDDED, ScaStatus.STARTED, TPP_REDIRECT_URIs);
 
         //When
         ResultActions resultActions = mockMvc.perform(requestBuilder);
@@ -185,7 +187,9 @@ class PaymentStartCancellationAuthorisationIT {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(content().json(IOUtils.resourceToString(AUTHORISATION_RESPONSE, UTF_8)));
 
-        assertEquals(expectedCreatePisAuthorisationRequest, createAuthorisationRequestCaptor.getValue());
+        CreateAuthorisationRequest actual = createAuthorisationRequestCaptor.getValue();
+        expectedCreatePisAuthorisationRequest.setAuthorisationId(actual.getAuthorisationId());
+        assertEquals(expectedCreatePisAuthorisationRequest, actual);
         assertEquals(PAYMENT_ID, pisCancellationAuthorisationParentHolderCaptor.getValue().getParentId());
     }
 

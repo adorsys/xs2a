@@ -24,7 +24,6 @@ import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.service.RequestProviderService;
-import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import org.junit.jupiter.api.Test;
@@ -57,16 +56,12 @@ class Xs2aConsentServiceTest {
     @Mock
     private Xs2aConsentAuthorisationMapper aisConsentAuthorisationMapper;
     @Mock
-    private ScaApproachResolver scaApproachResolver;
-    @Mock
     private RequestProviderService requestProviderService;
 
     @Test
     void createAisConsentAuthorization_success() {
         // Given
-        when(scaApproachResolver.resolveScaApproach())
-            .thenReturn(SCA_APPROACH);
-        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
+        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
             .thenReturn(AIS_CONSENT_AUTHORISATION_REQUEST);
         when(authorisationService.createAuthorisation(AIS_CONSENT_AUTHORISATION_REQUEST, CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
@@ -76,7 +71,7 @@ class Xs2aConsentServiceTest {
             .thenReturn(NOK_REDIRECT_URI);
 
         // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
+        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA);
 
         // Then
         assertThat(actualResponse).isPresent().contains(buildCreateAisConsentAuthorizationResponse());
@@ -88,15 +83,14 @@ class Xs2aConsentServiceTest {
         when(requestProviderService.getTppRedirectURI()).thenReturn("ok.uri");
         when(requestProviderService.getTppNokRedirectURI()).thenReturn("nok.uri");
 
-        when(scaApproachResolver.resolveScaApproach()).thenReturn(SCA_APPROACH);
         CreateAuthorisationRequest request = new CreateAuthorisationRequest();
-        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(SCA_STATUS, PSU_DATA, SCA_APPROACH, "ok.uri", "nok.uri"))
+        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH, "ok.uri", "nok.uri"))
             .thenReturn(request);
         when(authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, SCA_STATUS, PSU_DATA);
+        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA);
 
         // Then
         assertThat(actualResponse).isNotPresent();
@@ -116,7 +110,6 @@ class Xs2aConsentServiceTest {
     }
 
     private static CreateAuthorisationResponse buildCreateAisConsentAuthorizationResponse() {
-        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null);
+        return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null, SCA_APPROACH);
     }
-
 }
