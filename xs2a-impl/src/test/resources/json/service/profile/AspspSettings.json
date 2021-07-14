@@ -1,14 +1,79 @@
 {
   "ais": {
+    "consentTypes": {
+      "bankOfferedConsentSupported": false,
+      "globalConsentSupported": false,
+      "availableAccountsConsentSupported": true,
+      "accountAccessFrequencyPerDay": 4,
+      "notConfirmedConsentExpirationTimeMs": 86400000,
+      "maxConsentValidityDays": 0
+    },
+    "redirectLinkToOnlineBanking": {
+      "aisRedirectUrlToAspsp": "http://localhost:4200/ais/{redirect-id}/{encrypted-consent-id}"
+    },
     "transactionParameters": {
       "availableBookingStatuses": [
         "BOOKED"
+      ],
+      "supportedTransactionApplicationTypes": [
+        "supportedTransactionApplicationTypes"
       ]
+    },
+    "deltaReportSettings": {
+      "entryReferenceFromSupported": false,
+      "deltaListSupported": false
+    },
+    "scaRequirementsForOneTimeConsents": {
+      "scaByOneTimeAvailableAccountsConsentRequired": true,
+      "scaByOneTimeGlobalConsentRequired": true
     }
   },
   "pis": {
+    "supportedPaymentTypeAndProductMatrix": {
+      "payments": [
+        "sepa-credit-transfers"
+      ]
+    },
+    "maxTransactionValidityDays": 0,
+    "notConfirmedPaymentExpirationTimeMs": 86400000,
+    "paymentCancellationAuthorisationMandated": false,
+    "redirectLinkToOnlineBanking": {
+      "pisRedirectUrlToAspsp": "http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}",
+      "pisPaymentCancellationRedirectUrlToAspsp": "http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}",
+      "paymentCancellationRedirectUrlExpirationTimeMs": 600000
+    },
+    "countryValidationSupported": "DE",
     "supportedTransactionStatusFormats": [
       "application/json"
+    ]
+  },
+  "piis": {
+    "piisConsentSupported": "ASPSP_CONSENT_SUPPORTED",
+    "redirectLinkToOnlineBanking": {
+      "piisRedirectUrlToAspsp": "http://localhost:4200/piis/{redirect-id}/{encrypted-consent-id}"
+    }
+  },
+  "sb": {
+    "signingBasketSupported": false
+  },
+  "common": {
+    "tppUriComplianceResponse": "WARNING",
+    "oauthConfigurationUrl": "http://oauthConfigurationUrl.com/",
+    "scaRedirectFlow": "REDIRECT",
+    "startAuthorisationMode": "AUTO",
+    "tppSignatureRequired": false,
+    "psuInInitialRequestMandated": false,
+    "redirectUrlExpirationTimeMs": 600000,
+    "authorisationExpirationTimeMs": 86400000,
+    "forceXs2aBaseLinksUrl": false,
+    "xs2aBaseLinksUrl": "http://myhost.com/",
+    "supportedAccountReferenceFields": [
+      "IBAN"
+    ],
+    "multicurrencyAccountLevelSupported": "SUBACCOUNT",
+    "aisPisSessionsSupported": false,
+    "aspspNotificationsSupported": [
+      "NONE"
     ]
   }
 }
