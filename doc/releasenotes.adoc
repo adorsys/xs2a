@@ -8,7 +8,8 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 10.x (Stable. Supported minimum till 13.09.2021)
 
-* xref:release_notes/Release_notes_10.8.adoc[Version 10.8  (release date: ?)]
+* xref:release_notes/Release_notes_10.9.adoc[Version 10.9  (release date: ?)]
+* xref:release_notes/Release_notes_10.8.adoc[Version 10.8  (release date: 14.07.2021)]
 * xref:release_notes/Release_notes_10.7.adoc[Version 10.7  (release date: 30.06.2021)]
 * xref:release_notes/Release_notes_10.6.adoc[Version 10.6  (release date: 16.06.2021)]
 * xref:release_notes/Release_notes_10.5.adoc[Version 10.5  (release date: 2.06.2021)]
