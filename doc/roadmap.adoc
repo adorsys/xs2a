@@ -208,6 +208,25 @@ a|
 
 a|
 
+|14.07.2021| | 10.8| 11.8| |
+
+a|
+a| * Bugfix: Add validation for download transactions endpoint
+
+a|* All fixes and updates from v.10.8
+
+* Add new method to AuthorisationSpi
+
+a| Signing Basket plugin for XS2A
+
+a|
+
+a|
+
+a|
+
+a|
+
 a|
 
 |*For future development*| |*10.x*|*11.x*| *XS2A extention (commercial)*
