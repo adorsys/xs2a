@@ -1,19 +1,3 @@
-/*
- * Copyright 2018-2021 adorsys GmbH & Co KG
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package de.adorsys.psd2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-15T10:28:21.780938+03:00[Europe/Kiev]")
 
 public class PaymentInitiationStatusResponse202Json   {
   @JsonProperty("transactionStatus")
@@ -51,7 +35,7 @@ public class PaymentInitiationStatusResponse202Json   {
 
   @JsonProperty("tppMessage")
   @Valid
-  private List<TppMessageInitiationStatusResponse202> tppMessage = new ArrayList<>();
+  private List<TppMessageInitiationStatusResponse200> tppMessage = new ArrayList<>();
 
   public PaymentInitiationStatusResponse202Json transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -144,12 +128,12 @@ public class PaymentInitiationStatusResponse202Json   {
     this._links = _links;
   }
 
-  public PaymentInitiationStatusResponse202Json tppMessage(List<TppMessageInitiationStatusResponse202> tppMessage) {
+  public PaymentInitiationStatusResponse202Json tppMessage(List<TppMessageInitiationStatusResponse200> tppMessage) {
     this.tppMessage = tppMessage;
     return this;
   }
 
-  public PaymentInitiationStatusResponse202Json addTppMessageItem(TppMessageInitiationStatusResponse202 tppMessageItem) {
+  public PaymentInitiationStatusResponse202Json addTppMessageItem(TppMessageInitiationStatusResponse200 tppMessageItem) {
     this.tppMessage.add(tppMessageItem);
     return this;
   }
@@ -165,11 +149,11 @@ public class PaymentInitiationStatusResponse202Json   {
 
 
   @JsonProperty("tppMessage")
-  public List<TppMessageInitiationStatusResponse202> getTppMessage() {
+  public List<TppMessageInitiationStatusResponse200> getTppMessage() {
     return tppMessage;
   }
 
-  public void setTppMessage(List<TppMessageInitiationStatusResponse202> tppMessage) {
+  public void setTppMessage(List<TppMessageInitiationStatusResponse200> tppMessage) {
     this.tppMessage = tppMessage;
   }
 
