@@ -1,12 +1,13 @@
 package de.adorsys.psd2.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-15T10:28:21.780938+03:00[Europe/Kiev]")
 
 public class PaymentExchangeRate   {
   @JsonProperty("unitCurrency")
@@ -26,41 +27,8 @@ public class PaymentExchangeRate   {
   @JsonProperty("contractIdentification")
   private String contractIdentification = null;
 
-  /**
-   * Gets or Sets rateType
-   */
-  public enum RateTypeEnum {
-    SPOT("SPOT"),
-
-    SALE("SALE"),
-
-    AGRD("AGRD");
-
-    private String value;
-
-    RateTypeEnum(String value) {
-      this.value = value;
-    }
-
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
-
-    @JsonCreator
-    public static RateTypeEnum fromValue(String text) {
-      for (RateTypeEnum b : RateTypeEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-
   @JsonProperty("rateType")
-  private RateTypeEnum rateType = null;
+  private ExchangeRateTypeCode rateType = null;
 
   public PaymentExchangeRate unitCurrency(String unitCurrency) {
     this.unitCurrency = unitCurrency;
@@ -73,7 +41,7 @@ public class PaymentExchangeRate   {
   **/
   @ApiModelProperty(value = "")
 
-
+@Pattern(regexp="[A-Z]{3}")
 
   @JsonProperty("unitCurrency")
   public String getUnitCurrency() {
@@ -117,7 +85,7 @@ public class PaymentExchangeRate   {
   **/
   @ApiModelProperty(value = "")
 
-
+@Size(max=35)
 
   @JsonProperty("contractIdentification")
   public String getContractIdentification() {
@@ -128,7 +96,7 @@ public class PaymentExchangeRate   {
     this.contractIdentification = contractIdentification;
   }
 
-  public PaymentExchangeRate rateType(RateTypeEnum rateType) {
+  public PaymentExchangeRate rateType(ExchangeRateTypeCode rateType) {
     this.rateType = rateType;
     return this;
   }
@@ -139,14 +107,15 @@ public class PaymentExchangeRate   {
   **/
   @ApiModelProperty(value = "")
 
+  @Valid
 
 
   @JsonProperty("rateType")
-  public RateTypeEnum getRateType() {
+  public ExchangeRateTypeCode getRateType() {
     return rateType;
   }
 
-  public void setRateType(RateTypeEnum rateType) {
+  public void setRateType(ExchangeRateTypeCode rateType) {
     this.rateType = rateType;
   }
 
