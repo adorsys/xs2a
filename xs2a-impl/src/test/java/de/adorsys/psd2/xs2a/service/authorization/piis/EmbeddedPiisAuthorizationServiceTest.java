@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.piis;
 
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -25,6 +26,7 @@ import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,6 +58,8 @@ class EmbeddedPiisAuthorizationServiceTest {
     private Xs2aConsentService consentService;
     @Mock
     private PiisConsent consent;
+    @Mock
+    private Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
 
     @Test
     void createConsentAuthorization_wrongConsentId_fail() {
@@ -79,7 +83,8 @@ class EmbeddedPiisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_Success() {
         //Given
-        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        when(xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, STARTED_SCA_STATUS, PSU_DATA, SCA_APPROACH)).thenReturn(getTestCreateAuthRequest());
+        when(consentService.createConsentAuthorisation(CONSENT_ID, getTestCreateAuthRequest()))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
         Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
@@ -125,4 +130,12 @@ class EmbeddedPiisAuthorizationServiceTest {
         return new CreateAuthorisationResponse(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, "", null, SCA_APPROACH);
     }
 
+    private CreateAuthorisationRequest getTestCreateAuthRequest() {
+        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
+        consentAuthorization.setScaStatus(STARTED_SCA_STATUS);
+        consentAuthorization.setAuthorisationId(AUTHORISATION_ID);
+        consentAuthorization.setPsuData(PSU_DATA);
+        consentAuthorization.setScaApproach(SCA_APPROACH);
+        return consentAuthorization;
+    }
 }

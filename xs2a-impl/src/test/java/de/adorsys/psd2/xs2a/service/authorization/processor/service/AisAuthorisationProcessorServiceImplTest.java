@@ -38,7 +38,7 @@ import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AbstractAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
@@ -94,7 +94,7 @@ class AisAuthorisationProcessorServiceImplTest {
     private static final ErrorType TEST_ERROR_TYPE_400 = AIS_400;
 
     @Mock
-    private AisAuthorizationService embeddedAisAuthorisationService;
+    private AbstractAisAuthorizationService consentAuthorizationService;
     @Mock
     private Xs2aAuthorisationService xs2aAuthorisationService;
     @Mock
@@ -128,8 +128,8 @@ class AisAuthorisationProcessorServiceImplTest {
         aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-received-status.json", AisConsent.class);
         authorisation = jsonReader.getObjectFromFile("json/service/authorisation.json", Authorisation.class);
 
-        AisAuthorizationService decoupledAisAuthorisationService = Mockito.mock(AisAuthorizationService.class);
-        List<AisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, embeddedAisAuthorisationService);
+        AbstractAisAuthorizationService decoupledAisAuthorisationService = Mockito.mock(AbstractAisAuthorizationService.class);
+        List<AbstractAisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, consentAuthorizationService);
 
         aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(xs2aAuthorisationService, spiContextDataProvider, spiAspspConsentDataProviderFactory,
                                                                                     spiErrorMapper, xs2aToSpiPsuDataMapper, services,
@@ -145,13 +145,13 @@ class AisAuthorisationProcessorServiceImplTest {
         AuthorisationProcessorRequest processorRequest = buildAuthorisationProcessorRequest(ScaStatus.PSUIDENTIFIED, updateAuthorisationRequest, authorisation);
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
 
-        when(embeddedAisAuthorisationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
+        when(consentAuthorizationService.getScaApproachServiceType()).thenReturn(ScaApproach.EMBEDDED);
 
         // When
         aisAuthorisationProcessorService.updateAuthorisation(processorRequest, processorResponse);
 
         // Then
-        verify(embeddedAisAuthorisationService).updateConsentPsuData(updateAuthorisationRequest, processorResponse);
+        verify(consentAuthorizationService).updateConsentPsuData(updateAuthorisationRequest, processorResponse);
     }
 
     @Test
@@ -166,7 +166,7 @@ class AisAuthorisationProcessorServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> aisAuthorisationProcessorService.updateAuthorisation(processorRequest, processorResponse));
 
         // Then
-        verify(embeddedAisAuthorisationService, never()).updateConsentPsuData(any(CommonAuthorisationParameters.class), any(AuthorisationProcessorResponse.class));
+        verify(consentAuthorizationService, never()).updateConsentPsuData(any(CommonAuthorisationParameters.class), any(AuthorisationProcessorResponse.class));
     }
 
     @Test

@@ -19,12 +19,8 @@ package de.adorsys.psd2.xs2a.service.consent;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
-import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
-import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
-import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,25 +31,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class Xs2aConsentService {
-    private final RequestProviderService requestProviderService;
-    private final Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
     private final Xs2aAuthorisationService authorisationService;
 
     /**
      * Sends a POST request to CMS to store created consent authorisation
      *
      * @param consentId       String representation of identifier of stored consent
-     * @param authorisationId String representation of identifier of consent authorisation
-     * @param scaApproach     Enum for approach of the SCA applied
-     * @param scaStatus       Enum for status of the SCA method applied
-     * @param psuData         authorisation data about PSU
+     * @param request         Object representation of all data needed for authorisation creation
      * @return CreateAuthorisationResponse object with authorisation ID and scaStatus
      */
-    // TODO https://git.adorsys.de/adorsys/xs2a/aspsp-xs2a/-/issues/1628
-    public Optional<CreateAuthorisationResponse> createConsentAuthorisation(String consentId, String authorisationId, ScaApproach scaApproach, ScaStatus scaStatus, PsuIdData psuData) {
-        String tppRedirectURI = requestProviderService.getTppRedirectURI();
-        String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
-        CreateAuthorisationRequest request = xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(authorisationId, scaStatus, psuData, scaApproach, tppRedirectURI, tppNOKRedirectURI);
+    public Optional<CreateAuthorisationResponse> createConsentAuthorisation(String consentId, CreateAuthorisationRequest request) {
         return authorisationService.createAuthorisation(request, consentId, AuthorisationType.CONSENT);
     }
 

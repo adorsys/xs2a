@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PiisScaAuthorisationServiceResolver extends ScaServiceResolver<PiisAuthorizationService> {
+public class PiisScaAuthorisationServiceResolver extends ScaServiceResolver<AbstractPiisAuthorizationService> {
 
-    public PiisScaAuthorisationServiceResolver(List<PiisAuthorizationService> services, ScaApproachResolver scaApproachResolver) {
+    public PiisScaAuthorisationServiceResolver(List<AbstractPiisAuthorizationService> services, ScaApproachResolver scaApproachResolver) {
         super(services, scaApproachResolver);
     }
 }

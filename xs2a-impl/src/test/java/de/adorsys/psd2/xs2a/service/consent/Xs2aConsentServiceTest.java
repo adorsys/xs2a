@@ -34,7 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,17 +61,11 @@ class Xs2aConsentServiceTest {
     @Test
     void createAisConsentAuthorization_success() {
         // Given
-        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH, REDIRECT_URI, NOK_REDIRECT_URI))
-            .thenReturn(AIS_CONSENT_AUTHORISATION_REQUEST);
         when(authorisationService.createAuthorisation(AIS_CONSENT_AUTHORISATION_REQUEST, CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Optional.of(buildCreateAisConsentAuthorizationResponse()));
-        when(requestProviderService.getTppRedirectURI())
-            .thenReturn(REDIRECT_URI);
-        when(requestProviderService.getTppNokRedirectURI())
-            .thenReturn(NOK_REDIRECT_URI);
 
         // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA);
+        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, AIS_CONSENT_AUTHORISATION_REQUEST);
 
         // Then
         assertThat(actualResponse).isPresent().contains(buildCreateAisConsentAuthorizationResponse());
@@ -80,17 +74,12 @@ class Xs2aConsentServiceTest {
     @Test
     void createAisConsentAuthorization_false() {
         // Given
-        when(requestProviderService.getTppRedirectURI()).thenReturn("ok.uri");
-        when(requestProviderService.getTppNokRedirectURI()).thenReturn("nok.uri");
-
         CreateAuthorisationRequest request = new CreateAuthorisationRequest();
-        when(aisConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH, "ok.uri", "nok.uri"))
-            .thenReturn(request);
         when(authorisationService.createAuthorisation(request, CONSENT_ID, AuthorisationType.CONSENT))
             .thenReturn(Optional.empty());
 
         // When
-        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA);
+        Optional<CreateAuthorisationResponse> actualResponse = xs2aConsentService.createConsentAuthorisation(CONSENT_ID, request);
 
         // Then
         assertThat(actualResponse).isNotPresent();

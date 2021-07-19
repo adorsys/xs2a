@@ -21,11 +21,12 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
- * AisAuthorizationService implementation to be used in case of embedded approach
+ * ConsentAuthorizationService implementation to be used in case of embedded approach
  */
 @Service
 @Slf4j
@@ -35,8 +36,9 @@ public class EmbeddedAisAuthorizationService extends AbstractAisAuthorizationSer
     public EmbeddedAisAuthorizationService(Xs2aConsentService consentService,
                                            Xs2aAuthorisationService authorisationService,
                                            ConsentPsuDataMapper consentPsuDataMapper,
-                                           Xs2aAisConsentService aisConsentService) {
-        super(consentService, authorisationService, consentPsuDataMapper, aisConsentService);
+                                           Xs2aAisConsentService aisConsentService,
+                                           Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper) {
+        super(consentService, authorisationService, consentPsuDataMapper, aisConsentService, xs2aConsentAuthorisationMapper);
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.ais;
 
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.xs2a.config.factory.AisScaStageAuthorisationFactory;
@@ -31,6 +32,7 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aAisConsentMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -77,6 +79,8 @@ class EmbeddedAisAuthorizationServiceTest {
     private UpdateConsentPsuDataResponse updateConsentPsuDataResponse;
     @Mock
     private AisConsent consent;
+    @Mock
+    private Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
 
     @Test
     void createConsentAuthorization_wrongConsentId_fail() {
@@ -141,7 +145,8 @@ class EmbeddedAisAuthorizationServiceTest {
                                                                             .scaApproach(SCA_APPROACH)
                                                                             .scaStatus(STARTED_XS2A_SCA_STATUS)
                                                                             .build();
-        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA))
+        when(xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH)).thenReturn(getTestCreateAuthRequest());
+        when(consentService.createConsentAuthorisation(CONSENT_ID, getTestCreateAuthRequest()))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
@@ -184,7 +189,8 @@ class EmbeddedAisAuthorizationServiceTest {
                                                                             .scaApproach(SCA_APPROACH)
                                                                             .scaStatus(STARTED_XS2A_SCA_STATUS)
                                                                             .build();
-        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        when(xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH)).thenReturn(getTestCreateAuthRequest());
+        when(consentService.createConsentAuthorisation(CONSENT_ID, getTestCreateAuthRequest()))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
 
@@ -210,7 +216,8 @@ class EmbeddedAisAuthorizationServiceTest {
                                                                             .scaApproach(SCA_APPROACH)
                                                                             .scaStatus(STARTED_XS2A_SCA_STATUS)
                                                                             .build();
-        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, psuIdData))
+        when(xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, psuIdData, SCA_APPROACH)).thenReturn(getTestCreateAuthRequest());
+        when(consentService.createConsentAuthorisation(CONSENT_ID, getTestCreateAuthRequest()))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(aisConsentService.getAccountConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
         Optional<CreateConsentAuthorizationResponse> actualResponseOptional = authorizationService.createConsentAuthorization(xs2aCreateAuthorisationRequest);
@@ -247,5 +254,14 @@ class EmbeddedAisAuthorizationServiceTest {
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
         return new CreateAuthorisationResponse(AUTHORISATION_ID, ScaStatus.RECEIVED, "", null, SCA_APPROACH);
+    }
+
+    private CreateAuthorisationRequest getTestCreateAuthRequest() {
+        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
+        consentAuthorization.setScaStatus(SCA_STATUS);
+        consentAuthorization.setAuthorisationId(AUTHORISATION_ID);
+        consentAuthorization.setPsuData(PSU_DATA);
+        consentAuthorization.setScaApproach(SCA_APPROACH);
+        return consentAuthorization;
     }
 }
