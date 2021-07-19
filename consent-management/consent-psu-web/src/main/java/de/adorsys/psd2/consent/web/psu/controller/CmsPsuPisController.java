@@ -62,12 +62,12 @@ public class CmsPsuPisController implements CmsPsuPisApi {
 
     @Override
     public ResponseEntity<Object> updatePayment(String paymentId, String paymentService, String paymentProduct, String instanceId, Object body) {
-        byte[] payment = paymentModelMapperCms.mapToXs2aPayment();
         if (PaymentType.getByValue(paymentService).isEmpty()) {
             log.info("Payment ID [{}], Payment Service [{}], Payment Product: [{}], Instance ID: [{}]. Bad request: Payment Service incorrect.", paymentId, paymentService, paymentProduct, instanceId);
             return ResponseEntity.badRequest().build();
         }
 
+        byte[] payment = paymentModelMapperCms.mapToXs2aPayment();
         UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest(payment, instanceId, paymentId, paymentProduct, paymentService);
         return cmsPsuPisService.updatePayment(updatePaymentRequest)
                    ? ResponseEntity.ok().build()

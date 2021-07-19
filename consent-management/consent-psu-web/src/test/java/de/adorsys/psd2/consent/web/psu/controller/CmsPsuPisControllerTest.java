@@ -81,6 +81,7 @@ class CmsPsuPisControllerTest {
     private static final byte[] EMPTY_BODY = new byte[0];
     private static final String PAYMENT_PRODUCT = "sepa-credit-transfers";
     private static final String PAYMENT_TYPE = "payments";
+    private static final String WRONG_PAYMENT_TYPE = "paymentzzz";
 
     private final JsonReader jsonReader = new JsonReader();
     private MockMvc mockMvc;
@@ -132,6 +133,22 @@ class CmsPsuPisControllerTest {
                             .content(payment))
             .andExpect(status().isBadRequest())
             .andExpect(content().bytes(EMPTY_BODY));
+    }
+
+    @Test
+    void updatePayment_wrongPaymentService() throws Exception {
+        //Given
+        String payment = jsonReader.getStringFromFile("json/pis/request/update-payment.json");
+
+        //Then
+        mockMvc.perform(put("/psu-api/v1/payment/{payment-service}/{payment-product}/{payment-id}", WRONG_PAYMENT_TYPE, PAYMENT_PRODUCT, PAYMENT_ID)
+                            .headers(INSTANCE_ID_HEADERS)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(payment))
+            .andExpect(status().isBadRequest())
+            .andExpect(content().bytes(EMPTY_BODY));
+        verifyNoInteractions(paymentModelMapperCms);
+        verifyNoInteractions(cmsPsuPisService);
     }
 
     @Test
