@@ -27,8 +27,8 @@ import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
@@ -56,7 +56,7 @@ import java.util.Optional;
 
 @Service
 public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationProcessorService<AisConsent> {
-    private final List<AisAuthorizationService> services;
+    private final List<ConsentAuthorizationService> services;
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentSpi aisConsentSpi;
     private final Xs2aAisConsentMapper aisConsentMapper;
@@ -68,7 +68,7 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
                                                 SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                                 SpiErrorMapper spiErrorMapper,
                                                 Xs2aToSpiPsuDataMapper psuDataMapper,
-                                                List<AisAuthorizationService> services,
+                                                List<ConsentAuthorizationService> services,
                                                 Xs2aAisConsentService aisConsentService,
                                                 AisConsentSpi aisConsentSpi,
                                                 Xs2aAisConsentMapper aisConsentMapper,
@@ -85,11 +85,11 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
 
     @Override
     public void updateAuthorisation(AuthorisationProcessorRequest request, AuthorisationProcessorResponse response) {
-        AisAuthorizationService authorizationService = getService(request.getScaApproach());
+        ConsentAuthorizationService authorizationService = getService(request.getScaApproach());
         authorizationService.updateConsentPsuData(request.getUpdateAuthorisationRequest(), response);
     }
 
-    private AisAuthorizationService getService(ScaApproach scaApproach) {
+    private ConsentAuthorizationService getService(ScaApproach scaApproach) {
         return services.stream().filter(s -> s.getScaApproachServiceType() == scaApproach).findFirst()
                    .orElseThrow(() -> new IllegalArgumentException("Ais authorisation service was not found for approach " + scaApproach));
     }

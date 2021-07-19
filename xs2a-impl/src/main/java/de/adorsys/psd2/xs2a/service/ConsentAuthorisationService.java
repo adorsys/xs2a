@@ -31,9 +31,9 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorisationConfirmationService;
-import de.adorsys.psd2.xs2a.service.authorization.ais.AisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
@@ -165,7 +165,7 @@ public class ConsentAuthorisationService {
                        .build();
         }
 
-        AisAuthorizationService authorizationService = aisScaAuthorisationServiceResolver.getService(authorisationId);
+        ConsentAuthorizationService authorizationService = aisScaAuthorisationServiceResolver.getService(authorisationId);
         Optional<ScaStatus> scaStatusOptional = authorizationService
                                                     .getAuthorisationScaStatus(consentId, authorisationId);
 
@@ -245,7 +245,7 @@ public class ConsentAuthorisationService {
     }
 
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(ConsentAuthorisationsParameters updatePsuData) {
-        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
+        ConsentAuthorizationService service = aisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
 
         Optional<Authorisation> authorizationOptional = service.getConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
@@ -337,7 +337,7 @@ public class ConsentAuthorisationService {
                                                                         .scaApproach(processorResponse.getScaApproach())
                                                                         .build();
 
-        AisAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
+        ConsentAuthorizationService service = aisScaAuthorisationServiceResolver.getService();
         Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
 
         if (consentAuthorizationResponse.isEmpty()) {

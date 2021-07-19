@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.piis;
 
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
@@ -23,8 +24,11 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
+import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -48,6 +52,8 @@ class RedirectPiisAuthorizationServiceTest {
     private static final String WRONG_CONSENT_ID = "Wrong consent id";
     private static final String AUTHORISATION_ID = "Test authorisationId";
     private static final String INTERNAL_REQUEST_ID = "Internal request id";
+    private static final String TPP_REDIRECT_URI = "tpp redirect uri";
+    private static final String TPP_NOK_REDIRECT_URI = "tpp nok redirect uri";
 
     @InjectMocks
     private RedirectPiisAuthorizationService authorizationService;
@@ -57,6 +63,12 @@ class RedirectPiisAuthorizationServiceTest {
     private Xs2aConsentService consentService;
     @Mock
     private PiisConsent consent;
+    @Mock
+    private Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
+    @Mock
+    private Xs2aAisConsentService aisConsentService;
+    @Mock
+    private RequestProviderService requestProviderService;
 
     @Test
     void createConsentAuthorization_wrongConsentId_fail() {
@@ -80,9 +92,12 @@ class RedirectPiisAuthorizationServiceTest {
     @Test
     void createConsentAuthorization_Success() {
         //Given
-        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, STARTED_XS2A_SCA_STATUS, PSU_DATA))
+        when(xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, STARTED_SCA_STATUS, PSU_DATA, SCA_APPROACH, TPP_REDIRECT_URI, TPP_NOK_REDIRECT_URI)).thenReturn(getTestCreateAuthRequest());
+        when(consentService.createConsentAuthorisation(CONSENT_ID, getTestCreateAuthRequest()))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         when(xs2aPiisConsentService.getPiisConsentById(CONSENT_ID)).thenReturn(Optional.of(consent));
+        when(requestProviderService.getTppRedirectURI()).thenReturn(TPP_REDIRECT_URI);
+        when(requestProviderService.getTppNokRedirectURI()).thenReturn(TPP_NOK_REDIRECT_URI);
         Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
                                                                             .consentId(CONSENT_ID)
                                                                             .psuData(PSU_DATA)
@@ -124,5 +139,14 @@ class RedirectPiisAuthorizationServiceTest {
 
     private CreateAuthorisationResponse buildCreateAuthorisationResponse() {
         return new CreateAuthorisationResponse(AUTHORISATION_ID, STARTED_XS2A_SCA_STATUS, INTERNAL_REQUEST_ID, null, SCA_APPROACH);
+    }
+
+    private CreateAuthorisationRequest getTestCreateAuthRequest() {
+        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
+        consentAuthorization.setScaStatus(STARTED_SCA_STATUS);
+        consentAuthorization.setAuthorisationId(AUTHORISATION_ID);
+        consentAuthorization.setPsuData(PSU_DATA);
+        consentAuthorization.setScaApproach(SCA_APPROACH);
+        return consentAuthorization;
     }
 }

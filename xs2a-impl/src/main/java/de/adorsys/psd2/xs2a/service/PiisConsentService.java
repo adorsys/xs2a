@@ -44,8 +44,8 @@ import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
+import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PiisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
@@ -381,7 +381,7 @@ public class PiisConsentService {
                                                                         .scaApproach(processorResponse.getScaApproach())
                                                                         .build();
 
-        PiisAuthorizationService service = piisScaAuthorisationServiceResolver.getService();
+        ConsentAuthorizationService service = piisScaAuthorisationServiceResolver.getService();
         Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
 
         if (consentAuthorizationResponse.isPresent()) {

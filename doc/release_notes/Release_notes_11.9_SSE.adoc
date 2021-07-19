@@ -4,6 +4,8 @@
 
 * BG errata 1.3.9 changes implemented
 
+* Refactored `Xs2aConsentService#createConsentAuthorisation`
+
 == BG errata 1.3.9 changes implemented
 
 * New models were added:
@@ -22,3 +24,8 @@
 | MessageCode202InitiationStatus | renamed to `MessageCode200InitiationStatus`
 
 |===
+
+== Refactored Xs2aConsentService#createConsentAuthorisation method
+
+`Xs2aConsentService#createConsentAuthorisation` method signature changed from
+(String, String, ScaApproach, ScaStatus, PsuIdData) to (String, CreateAuthorisationRequest), refactored inheritance structure for `AbstractConsentAuthorizationService`

@@ -16,16 +16,19 @@
 
 package de.adorsys.psd2.xs2a.service.authorization;
 
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
-import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
+import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.Xs2aCreateAuthorisationRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +41,7 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
     private final Xs2aConsentService consentService;
     private final Xs2aAuthorisationService authorisationService;
     private final ConsentPsuDataMapper consentPsuDataMapper;
+    protected final Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
 
     protected abstract Optional<T> getConsentById(String consentId);
 
@@ -53,14 +57,13 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
         }
 
         PsuIdData psuData = createAuthorisationRequest.getPsuData();
-        return consentService.createConsentAuthorisation(consentId,
-                                                         createAuthorisationRequest.getAuthorisationId(),
-                                                         createAuthorisationRequest.getScaApproach(),
-                                                         createAuthorisationRequest.getScaStatus(),
-                                                         psuData)
+        CreateAuthorisationRequest authorisationRequest = createAuthorisationRequest(createAuthorisationRequest.getAuthorisationId(),
+                                                                                     createAuthorisationRequest.getScaStatus(),
+                                                                                     psuData,
+                                                                                     createAuthorisationRequest.getScaApproach());
+        return consentService.createConsentAuthorisation(consentId, authorisationRequest)
                    .map(auth -> {
                        CreateConsentAuthorizationResponse resp = new CreateConsentAuthorizationResponse();
-
                        resp.setConsentId(consentId);
                        resp.setAuthorisationId(auth.getAuthorizationId());
                        resp.setScaStatus(auth.getScaStatus());
@@ -71,11 +74,19 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
                    });
     }
 
+    protected CreateAuthorisationRequest createAuthorisationRequest(String authorisationId, ScaStatus scaStatus, PsuIdData psuData,
+                                                                    ScaApproach scaApproach) {
+        return xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(authorisationId,
+                                                                        scaStatus,
+                                                                        psuData,
+                                                                        scaApproach);
+    }
+
     @Override
     public AuthorisationProcessorResponse updateConsentPsuData(CommonAuthorisationParameters request, AuthorisationProcessorResponse response) {
         if (response.hasError()) {
             log.info("Consent-ID [{}], Authentication-ID [{}], PSU-ID [{}]. Update consent authorisation has failed. Error msg: {}.",
-                request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData().getPsuId(), response.getErrorHolder());
+                     request.getBusinessObjectId(), request.getAuthorisationId(), request.getPsuData().getPsuId(), response.getErrorHolder());
         } else {
             updateConsentAuthorisation(consentPsuDataMapper.mapToUpdateConsentPsuDataReq(request, response));
         }
@@ -102,7 +113,7 @@ public abstract class AbstractConsentAuthorizationService<T> implements ConsentA
      * @return SCA status of the authorisation
      */
     @Override
-    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId){
+    public Optional<ScaStatus> getAuthorisationScaStatus(String consentId, String authorisationId) {
         return consentService.getAuthorisationScaStatus(consentId, authorisationId);
     }
 }

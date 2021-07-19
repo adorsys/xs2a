@@ -32,9 +32,9 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
+import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorisationConfirmationService;
-import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.PiisAuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
@@ -131,7 +131,7 @@ public class PiisConsentAuthorisationService {
     }
 
     private ResponseObject<UpdateConsentPsuDataResponse> getUpdateConsentPsuDataResponse(ConsentAuthorisationsParameters updatePsuData) {
-        PiisAuthorizationService service = piisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
+        ConsentAuthorizationService service = piisScaAuthorisationServiceResolver.getService(updatePsuData.getAuthorizationId());
 
         Optional<Authorisation> authorizationOptional = service.getConsentAuthorizationById(updatePsuData.getAuthorizationId());
 
@@ -254,7 +254,7 @@ public class PiisConsentAuthorisationService {
                                                                         .scaApproach(processorResponse.getScaApproach())
                                                                         .build();
 
-        PiisAuthorizationService service = piisScaAuthorisationServiceResolver.getService();
+        ConsentAuthorizationService service = piisScaAuthorisationServiceResolver.getService();
         Optional<CreateConsentAuthorizationResponse> consentAuthorizationResponse = service.createConsentAuthorization(createAuthorisationRequest);
 
         if (consentAuthorizationResponse.isEmpty()) {
@@ -336,7 +336,7 @@ public class PiisConsentAuthorisationService {
                        .build();
         }
 
-        PiisAuthorizationService authorizationService = piisScaAuthorisationServiceResolver.getService(authorisationId);
+        ConsentAuthorizationService authorizationService = piisScaAuthorisationServiceResolver.getService(authorisationId);
         Optional<ScaStatus> scaStatusOptional = authorizationService
                                                     .getAuthorisationScaStatus(consentId, authorisationId);
 

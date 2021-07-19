@@ -34,7 +34,9 @@ import java.util.Optional;
 public class Xs2aConsentAuthorisationMapper {
     private final TppRedirectUriMapper tppRedirectUriMapper;
 
-    public CreateAuthorisationRequest mapToAuthorisationRequest(String authorisationId, ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI, String tppNOKRedirectURI) {
+    public CreateAuthorisationRequest mapToAuthorisationRequest(String authorisationId, ScaStatus scaStatus,
+                                                                PsuIdData psuData, ScaApproach scaApproach, String tppRedirectURI,
+                                                                String tppNOKRedirectURI) {
         return Optional.ofNullable(scaStatus)
                    .map(st -> {
                        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
@@ -46,6 +48,11 @@ public class Xs2aConsentAuthorisationMapper {
                        return consentAuthorization;
                    })
                    .orElse(null);
+    }
+
+    public CreateAuthorisationRequest mapToAuthorisationRequest(String authorisationId, ScaStatus scaStatus,
+                                                                PsuIdData psuData, ScaApproach scaApproach) {
+        return mapToAuthorisationRequest(authorisationId, scaStatus, psuData, scaApproach, null, null);
     }
 
     public UpdateAuthorisationRequest mapToAuthorisationRequest(ConsentAuthorisationsParameters updatePsuData) {
@@ -63,5 +70,4 @@ public class Xs2aConsentAuthorisationMapper {
                    })
                    .orElse(null);
     }
-
 }

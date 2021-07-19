@@ -21,6 +21,7 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +33,9 @@ public class DecoupledPiisAuthorizationService extends AbstractPiisAuthorization
     public DecoupledPiisAuthorizationService(Xs2aConsentService consentService,
                                              Xs2aAuthorisationService authorisationService,
                                              ConsentPsuDataMapper consentPsuDataMapper,
-                                             Xs2aPiisConsentService piisConsentService) {
-        super(consentService, authorisationService, consentPsuDataMapper, piisConsentService);
+                                             Xs2aPiisConsentService piisConsentService,
+                                             Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper) {
+        super(consentService, authorisationService, consentPsuDataMapper, piisConsentService, xs2aConsentAuthorisationMapper);
     }
 
     @Override
