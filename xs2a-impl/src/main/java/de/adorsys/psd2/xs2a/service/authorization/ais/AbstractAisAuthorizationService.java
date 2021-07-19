@@ -23,16 +23,18 @@ import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aAisConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 
 import java.util.Optional;
 
 
-public abstract class AbstractAisAuthorizationService extends AbstractConsentAuthorizationService<AisConsent> implements AisAuthorizationService {
+public abstract class AbstractAisAuthorizationService extends AbstractConsentAuthorizationService<AisConsent> {
     private final Xs2aAisConsentService aisConsentService;
 
-
-    protected AbstractAisAuthorizationService(Xs2aConsentService consentService, Xs2aAuthorisationService authorisationService, ConsentPsuDataMapper consentPsuDataMapper, Xs2aAisConsentService aisConsentService) {
-        super(consentService, authorisationService, consentPsuDataMapper);
+    protected AbstractAisAuthorizationService(Xs2aConsentService consentService, Xs2aAuthorisationService authorisationService,
+                                              ConsentPsuDataMapper consentPsuDataMapper, Xs2aAisConsentService aisConsentService,
+                                              Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper) {
+        super(consentService, authorisationService, consentPsuDataMapper, xs2aConsentAuthorisationMapper);
         this.aisConsentService = aisConsentService;
     }
 

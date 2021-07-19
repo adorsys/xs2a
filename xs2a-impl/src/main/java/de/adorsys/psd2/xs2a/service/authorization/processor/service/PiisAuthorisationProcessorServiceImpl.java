@@ -25,9 +25,10 @@ import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
+import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.piis.AbstractPiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.CommonDecoupledPiisService;
-import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
@@ -54,7 +55,7 @@ import java.util.Optional;
 
 @Service
 public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationProcessorService<PiisConsent> {
-    private final List<PiisAuthorizationService> services;
+    private final List<AbstractPiisAuthorizationService> services;
     private final Xs2aPiisConsentService piisConsentService;
     private final PiisConsentSpi piisConsentSpi;
     private final Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper;
@@ -66,7 +67,7 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
                                                  SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                                  SpiErrorMapper spiErrorMapper,
                                                  Xs2aToSpiPsuDataMapper psuDataMapper,
-                                                 List<PiisAuthorizationService> services,
+                                                 List<AbstractPiisAuthorizationService> services,
                                                  Xs2aPiisConsentService piisConsentService,
                                                  PiisConsentSpi piisConsentSpi,
                                                  Xs2aToSpiPiisConsentMapper xs2aToSpiPiisConsentMapper,
@@ -83,11 +84,11 @@ public class PiisAuthorisationProcessorServiceImpl extends ConsentAuthorisationP
 
     @Override
     public void updateAuthorisation(AuthorisationProcessorRequest request, AuthorisationProcessorResponse response) {
-        PiisAuthorizationService authorizationService = getService(request.getScaApproach());
+        ConsentAuthorizationService authorizationService = getService(request.getScaApproach());
         authorizationService.updateConsentPsuData(request.getUpdateAuthorisationRequest(), response);
     }
 
-    private PiisAuthorizationService getService(ScaApproach scaApproach) {
+    private ConsentAuthorizationService getService(ScaApproach scaApproach) {
         return services.stream().filter(s -> s.getScaApproachServiceType() == scaApproach).findFirst()
                    .orElseThrow(() -> new IllegalArgumentException("Piis authorisation service was not found for approach " + scaApproach));
     }

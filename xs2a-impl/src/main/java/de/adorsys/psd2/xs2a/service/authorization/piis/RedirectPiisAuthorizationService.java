@@ -16,42 +16,54 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.piis;
 
-import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
+import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
+import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
 import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
+import de.adorsys.psd2.xs2a.service.RequestProviderService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
+import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * PiisAuthorizationService implementation to be used in case of redirect approach
  */
 @Service
 @Slf4j
-public class RedirectPiisAuthorizationService extends RedirectConsentAuthorizationService implements PiisAuthorizationService {
-    private final Xs2aPiisConsentService xs2aPiisConsentService;
+public class RedirectPiisAuthorizationService extends AbstractPiisAuthorizationService {
+private final RequestProviderService requestProviderService;
 
-    public RedirectPiisAuthorizationService(Xs2aAuthorisationService authorisationService, Xs2aConsentService consentService, Xs2aPiisConsentService xs2aPiisConsentService) {
-        super(authorisationService, consentService);
-        this.xs2aPiisConsentService = xs2aPiisConsentService;
-    }
-
-    @Override
-    protected boolean isConsentAbsent(String consentId) {
-        Optional<PiisConsent> piisConsentOptional = xs2aPiisConsentService.getPiisConsentById(consentId);
-        if (piisConsentOptional.isEmpty()) {
-            log.info("Consent-ID [{}]. Create consent authorisation has failed. Consent not found by id.", consentId);
-            return true;
-        }
-        return false;
+    public RedirectPiisAuthorizationService(Xs2aConsentService consentService,
+                                            Xs2aAuthorisationService authorisationService,
+                                            ConsentPsuDataMapper consentPsuDataMapper,
+                                            Xs2aPiisConsentService xs2aPiisConsentService,
+                                            Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper,
+                                            RequestProviderService requestProviderService) {
+        super(consentService, authorisationService, consentPsuDataMapper, xs2aPiisConsentService, xs2aConsentAuthorisationMapper);
+        this.requestProviderService = requestProviderService;
     }
 
     @Override
     public AuthorisationProcessorResponse updateConsentPsuData(CommonAuthorisationParameters request, AuthorisationProcessorResponse response) {
         return null;
+    }
+
+    @Override
+    protected CreateAuthorisationRequest createAuthorisationRequest(String authorisationId, ScaStatus scaStatus, PsuIdData psuData, ScaApproach scaApproach) {
+        String tppRedirectURI = requestProviderService.getTppRedirectURI();
+        String tppNOKRedirectURI = requestProviderService.getTppNokRedirectURI();
+        return xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(authorisationId, scaStatus, psuData, scaApproach,
+                                                                        tppRedirectURI, tppNOKRedirectURI);
+    }
+
+    @Override
+    public ScaApproach getScaApproachServiceType() {
+        return ScaApproach.REDIRECT;
     }
 }

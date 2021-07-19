@@ -44,7 +44,7 @@ import de.adorsys.psd2.xs2a.domain.fund.CreatePiisConsentRequest;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationMethodDecider;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
-import de.adorsys.psd2.xs2a.service.authorization.piis.PiisAuthorizationService;
+import de.adorsys.psd2.xs2a.service.authorization.piis.AbstractPiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.AccountReferenceInConsentUpdater;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
@@ -134,7 +134,7 @@ class PiisConsentServiceTest {
     @Mock
     private PiisScaAuthorisationServiceResolver piisScaAuthorisationServiceResolver;
     @Mock
-    private PiisAuthorizationService piisAuthorizationService;
+    private AbstractPiisAuthorizationService piisAuthorizationService;
     @Mock
     private ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     @Mock

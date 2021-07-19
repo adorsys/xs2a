@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service.authorization.piis;
 
+import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationRequest;
 import de.adorsys.psd2.consent.api.authorisation.CreateAuthorisationResponse;
 import de.adorsys.psd2.core.data.piis.v1.PiisConsent;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
@@ -32,6 +33,7 @@ import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationP
 import de.adorsys.psd2.xs2a.service.consent.Xs2aConsentService;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.mapper.ConsentPsuDataMapper;
+import de.adorsys.psd2.xs2a.service.mapper.cms_xs2a_mappers.Xs2aConsentAuthorisationMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -68,13 +70,16 @@ class DecoupledPiisAuthorizationServiceTest {
     private Xs2aConsentService consentService;
     @Mock
     private ConsentPsuDataMapper consentPsuDataMapper;
+    @Mock
+    private Xs2aConsentAuthorisationMapper xs2aConsentAuthorisationMapper;
 
     @Test
     void createConsentAuthorization_success() {
         // Given
         when(piisConsentService.getPiisConsentById(CONSENT_ID))
             .thenReturn(Optional.of(buildConsent()));
-        when(consentService.createConsentAuthorisation(CONSENT_ID, AUTHORISATION_ID, SCA_APPROACH, SCA_STATUS, PSU_DATA))
+        when(xs2aConsentAuthorisationMapper.mapToAuthorisationRequest(AUTHORISATION_ID, SCA_STATUS, PSU_DATA, SCA_APPROACH)).thenReturn(getTestCreateAuthRequest());
+        when(consentService.createConsentAuthorisation(CONSENT_ID, getTestCreateAuthRequest()))
             .thenReturn(Optional.of(buildCreateAuthorisationResponse()));
         Xs2aCreateAuthorisationRequest xs2aCreateAuthorisationRequest = Xs2aCreateAuthorisationRequest.builder()
                                                                             .psuData(PSU_DATA)
@@ -233,5 +238,14 @@ class DecoupledPiisAuthorizationServiceTest {
         AuthorisationProcessorResponse processorResponse = new AuthorisationProcessorResponse();
         processorResponse.setErrorHolder(ErrorHolder.builder(ErrorType.AIS_400).build());
         return processorResponse;
+    }
+
+    private CreateAuthorisationRequest getTestCreateAuthRequest() {
+        CreateAuthorisationRequest consentAuthorization = new CreateAuthorisationRequest();
+        consentAuthorization.setScaStatus(SCA_STATUS);
+        consentAuthorization.setAuthorisationId(AUTHORISATION_ID);
+        consentAuthorization.setPsuData(PSU_DATA);
+        consentAuthorization.setScaApproach(SCA_APPROACH);
+        return consentAuthorization;
     }
 }
