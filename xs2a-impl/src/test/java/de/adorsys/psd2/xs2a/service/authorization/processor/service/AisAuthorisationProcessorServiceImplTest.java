@@ -37,8 +37,8 @@ import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.ConsentAuthorisationsParameters;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorisationProcessorResponse;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
-import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AbstractAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AisAuthorisationProcessorRequest;
@@ -94,7 +94,7 @@ class AisAuthorisationProcessorServiceImplTest {
     private static final ErrorType TEST_ERROR_TYPE_400 = AIS_400;
 
     @Mock
-    private ConsentAuthorizationService consentAuthorizationService;
+    private AbstractAisAuthorizationService consentAuthorizationService;
     @Mock
     private Xs2aAuthorisationService xs2aAuthorisationService;
     @Mock
@@ -128,8 +128,8 @@ class AisAuthorisationProcessorServiceImplTest {
         aisConsent = jsonReader.getObjectFromFile("json/service/ais-consent-received-status.json", AisConsent.class);
         authorisation = jsonReader.getObjectFromFile("json/service/authorisation.json", Authorisation.class);
 
-        ConsentAuthorizationService decoupledAisAuthorisationService = Mockito.mock(ConsentAuthorizationService.class);
-        List<ConsentAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, consentAuthorizationService);
+        AbstractAisAuthorizationService decoupledAisAuthorisationService = Mockito.mock(AbstractAisAuthorizationService.class);
+        List<AbstractAisAuthorizationService> services = Arrays.asList(decoupledAisAuthorisationService, consentAuthorizationService);
 
         aisAuthorisationProcessorService = new AisAuthorisationProcessorServiceImpl(xs2aAuthorisationService, spiContextDataProvider, spiAspspConsentDataProviderFactory,
                                                                                     spiErrorMapper, xs2aToSpiPsuDataMapper, services,

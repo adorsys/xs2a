@@ -29,6 +29,7 @@ import de.adorsys.psd2.xs2a.domain.authorisation.CommonAuthorisationParameters;
 import de.adorsys.psd2.xs2a.domain.consent.UpdateConsentPsuDataResponse;
 import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.ais.AbstractAisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.AisScaAuthorisationService;
 import de.adorsys.psd2.xs2a.service.authorization.ais.CommonDecoupledAisService;
 import de.adorsys.psd2.xs2a.service.authorization.processor.model.AuthorisationProcessorRequest;
@@ -56,7 +57,7 @@ import java.util.Optional;
 
 @Service
 public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationProcessorService<AisConsent> {
-    private final List<ConsentAuthorizationService> services;
+    private final List<AbstractAisAuthorizationService> services;
     private final Xs2aAisConsentService aisConsentService;
     private final AisConsentSpi aisConsentSpi;
     private final Xs2aAisConsentMapper aisConsentMapper;
@@ -68,7 +69,7 @@ public class AisAuthorisationProcessorServiceImpl extends ConsentAuthorisationPr
                                                 SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory,
                                                 SpiErrorMapper spiErrorMapper,
                                                 Xs2aToSpiPsuDataMapper psuDataMapper,
-                                                List<ConsentAuthorizationService> services,
+                                                List<AbstractAisAuthorizationService> services,
                                                 Xs2aAisConsentService aisConsentService,
                                                 AisConsentSpi aisConsentSpi,
                                                 Xs2aAisConsentMapper aisConsentMapper,

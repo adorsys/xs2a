@@ -33,8 +33,8 @@ import de.adorsys.psd2.xs2a.domain.ResponseObject;
 import de.adorsys.psd2.xs2a.domain.authorisation.AuthorisationResponse;
 import de.adorsys.psd2.xs2a.domain.consent.*;
 import de.adorsys.psd2.xs2a.service.authorization.AuthorisationChainResponsibilityService;
-import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.Xs2aAuthorisationService;
+import de.adorsys.psd2.xs2a.service.authorization.piis.AbstractPiisAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.piis.PiisScaAuthorisationServiceResolver;
 import de.adorsys.psd2.xs2a.service.consent.Xs2aPiisConsentService;
 import de.adorsys.psd2.xs2a.service.event.EventTypeService;
@@ -93,7 +93,7 @@ class PiisConsentAuthorisationServiceTest {
     @Mock
     private ConfirmationOfFundsConsentValidationService confirmationOfFundsConsentValidationService;
     @Mock
-    private ConsentAuthorizationService redirectPiisAuthorizationService;
+    private AbstractPiisAuthorizationService redirectPiisAuthorizationService;
     @Mock
     private Xs2aAuthorisationService xs2aAuthorisationService;
     @Mock
@@ -103,7 +103,7 @@ class PiisConsentAuthorisationServiceTest {
     @Mock
     private LoggingContextService loggingContextService;
     @Mock
-    private ConsentAuthorizationService piisAuthorizationService;
+    private AbstractPiisAuthorizationService piisAuthorizationService;
     @Mock
     private AuthorisationChainResponsibilityService authorisationChainResponsibilityService;
     @Mock

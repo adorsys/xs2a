@@ -17,16 +17,15 @@
 package de.adorsys.psd2.xs2a.service.authorization.piis;
 
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
-import de.adorsys.psd2.xs2a.service.authorization.ConsentAuthorizationService;
 import de.adorsys.psd2.xs2a.service.authorization.ScaServiceResolver;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PiisScaAuthorisationServiceResolver extends ScaServiceResolver<ConsentAuthorizationService> {
+public class PiisScaAuthorisationServiceResolver extends ScaServiceResolver<AbstractPiisAuthorizationService> {
 
-    public PiisScaAuthorisationServiceResolver(List<ConsentAuthorizationService> services, ScaApproachResolver scaApproachResolver) {
+    public PiisScaAuthorisationServiceResolver(List<AbstractPiisAuthorizationService> services, ScaApproachResolver scaApproachResolver) {
         super(services, scaApproachResolver);
     }
 }
