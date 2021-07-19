@@ -448,6 +448,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li>
 <p>BG errata 1.3.9 changes implemented</p>
 </li>
+<li>
+<p>Refactored <code>Xs2aConsentService#createConsentAuthorisation</code></p>
+</li>
 </ul>
 </div>
 </div>
@@ -506,10 +509,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_refactored_xs2aconsentservicecreateconsentauthorisation_method">Refactored Xs2aConsentService#createConsentAuthorisation method</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Xs2aConsentService#createConsentAuthorisation</code> method signature changed from
+(String, String, ScaApproach, ScaStatus, PsuIdData) to (String, CreateAuthorisationRequest), refactored inheritance structure for <code>AbstractConsentAuthorizationService</code></p>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-07-16 12:09:26 UTC
+Last updated 2021-07-19 12:45:04 UTC
 </div>
 </div>
 </body>
