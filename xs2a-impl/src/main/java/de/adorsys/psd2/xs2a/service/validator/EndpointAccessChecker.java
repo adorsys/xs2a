@@ -26,9 +26,8 @@ public class EndpointAccessChecker {
     protected boolean isAccessible(ScaApproach chosenScaApproach, ScaStatus scaStatus, boolean confirmationCodeCase) {
         if (ScaApproach.REDIRECT == chosenScaApproach) {
             return EnumSet.of(ScaStatus.UNCONFIRMED, ScaStatus.FAILED, ScaStatus.FINALISED).contains(scaStatus) && confirmationCodeCase;
-        } else if (ScaApproach.DECOUPLED == chosenScaApproach) {
-            return ScaStatus.SCAMETHODSELECTED != scaStatus;
+        } else {
+            return ScaApproach.DECOUPLED != chosenScaApproach;
         }
-        return true;
     }
 }

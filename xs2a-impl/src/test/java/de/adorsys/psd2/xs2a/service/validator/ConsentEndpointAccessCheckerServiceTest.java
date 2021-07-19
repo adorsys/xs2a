@@ -78,7 +78,7 @@ class ConsentEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    void isEndpointAccessible_Unconfirmed_Decoupled_true() {
+    void isEndpointAccessible_Unconfirmed_Decoupled_false() {
 
         when(aspspProfileService.isAuthorisationConfirmationRequestMandated())
             .thenReturn(true);
@@ -88,7 +88,7 @@ class ConsentEndpointAccessCheckerServiceTest {
 
         boolean actual = consentEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, true);
 
-        assertTrue(actual);
+        assertFalse(actual);
     }
 
     @Test
