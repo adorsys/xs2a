@@ -1,0 +1,9 @@
+= Release notes v.11.9
+
+== Table of Contents
+
+* Block update authorisation calls for payment in decoupled approach
+
+== Block update authorisation calls for payment in decoupled approach
+
+From now on, calls to update authorisation endpoint in decoupled approach are being blocked with the `SERVICE_BLOCKED` error code and 403 HTTP response code.
