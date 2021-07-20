@@ -75,7 +75,7 @@ class PisEndpointAccessCheckerServiceTest {
     }
 
     @Test
-    void isEndpointAccessible_InitiationAuthorisation_ShouldAccessible_Decoupled_True() {
+    void isEndpointAccessible_InitiationAuthorisation_ShouldBeNotAccessible_Decoupled_False() {
         //When
         when(authorisationServiceEncrypted.getAuthorisationById(AUTHORISATION_ID))
             .thenReturn(buildGetPisAuthorisationResponse(ScaApproach.DECOUPLED));
@@ -83,7 +83,7 @@ class PisEndpointAccessCheckerServiceTest {
         boolean endpointAccessible = pisEndpointAccessCheckerService.isEndpointAccessible(AUTHORISATION_ID, CONFIRMATION_CODE_RECEIVED_FALSE);
 
         //Then
-        assertTrue(endpointAccessible);
+        assertFalse(endpointAccessible);
     }
 
     @Test
