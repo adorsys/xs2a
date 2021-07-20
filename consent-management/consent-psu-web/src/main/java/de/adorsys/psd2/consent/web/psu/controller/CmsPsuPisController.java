@@ -27,6 +27,7 @@ import de.adorsys.psd2.consent.web.psu.mapper.PaymentModelMapperCmsPsu;
 import de.adorsys.psd2.xs2a.core.exception.AuthorisationIsExpiredException;
 import de.adorsys.psd2.xs2a.core.exception.RedirectUrlIsExpiredException;
 import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
+import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.AuthenticationDataHolder;
 import de.adorsys.psd2.xs2a.core.sca.ScaStatus;
@@ -61,6 +62,11 @@ public class CmsPsuPisController implements CmsPsuPisApi {
 
     @Override
     public ResponseEntity<Object> updatePayment(String paymentId, String paymentService, String paymentProduct, String instanceId, Object body) {
+        if (PaymentType.getByValue(paymentService).isEmpty()) {
+            log.info("Payment ID [{}], Payment Service [{}], Payment Product: [{}], Instance ID: [{}]. Bad request: Payment Service incorrect.", paymentId, paymentService, paymentProduct, instanceId);
+            return ResponseEntity.badRequest().build();
+        }
+
         byte[] payment = paymentModelMapperCms.mapToXs2aPayment();
         UpdatePaymentRequest updatePaymentRequest = new UpdatePaymentRequest(payment, instanceId, paymentId, paymentProduct, paymentService);
         return cmsPsuPisService.updatePayment(updatePaymentRequest)

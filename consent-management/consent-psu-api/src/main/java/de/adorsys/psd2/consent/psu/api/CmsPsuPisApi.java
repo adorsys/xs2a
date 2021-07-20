@@ -63,7 +63,8 @@ public interface CmsPsuPisApi {
             required = true)
         @PathVariable("payment-id") String paymentId,
 
-        @ApiParam(value = "Payment service ",
+        @ApiParam(value = "Payment service. Permitted values are : payments, bulk-payments, periodic-payments",
+            allowableValues = "payments, bulk-payments, periodic-payments",
             example = "payments",
             required = true)
         @PathVariable("payment-service") String paymentService,
