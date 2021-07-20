@@ -315,21 +315,6 @@ Deploy to Openshift (Support-8.x):
     OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT8X} # Openshift target namespace
   <<: *deploy_openshift
 
-Notify Slack channel (Support):
-  image: "bash:4"
-  stage: "Notification"
-  cache: {}
-  only:
-    - support-8.x
-  variables:
-    HELM_RELEASE: support8x-psd2
-    ENV_JSON_FILE: scripts/notifications/psd2-support8x.json
-    SLACK_CHANNEL: ${SLACK_PSD2_SUPPORT_CHANNEL}
-  script:
-    - apk update && apk add jq curl
-    - sleep 60
-    - scripts/notifications/./webhook_slack.sh xs2a cms aspspprofile ledgers
-
 # Build RELEASE image support8.x
 Push to DockerHub (release):
   stage: "Package"
