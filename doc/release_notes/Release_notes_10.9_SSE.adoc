@@ -1,0 +1,9 @@
+= Release notes v.10.9
+
+== Table of Contents
+
+* Renamed methods getCardAccount, readCardAccount in CardAccountsAPI
+
+== Renamed methods getCardAccount, readCardAccount in CardAccountsAPI
+
+Methods getCardAccount, readCardAccount in CardAccountsAPI renamed into getCardAccountList and readCardAccountDetails

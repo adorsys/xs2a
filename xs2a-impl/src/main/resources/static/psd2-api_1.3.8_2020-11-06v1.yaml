@@ -1889,7 +1889,7 @@ paths:
         It is assumed that a consent of the PSU to this access is already given and stored on the ASPSP system.
         The addressed list of card accounts depends then on the PSU ID and the stored consent addressed by consentId,
         respectively the OAuth2 access token.
-      operationId: getCardAccount
+      operationId: getCardAccountList
       tags:
         - Account Information Service (AIS)
 
@@ -1972,7 +1972,7 @@ paths:
         and stored on the ASPSP system. The addressed details of this account depends
         then on the stored consent addressed by consentId, respectively the OAuth2
         access token.
-      operationId: ReadCardAccount
+      operationId: readCardAccountDetails
       tags:
         - Account Information Service (AIS)
 
