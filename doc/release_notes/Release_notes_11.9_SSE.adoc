@@ -10,6 +10,8 @@
 
 * Renamed methods getCardAccount, readCardAccount in CardAccountsAPI
 
+* Cleaned payment links for pure Decoupled approach
+
 == BG errata 1.3.9 changes implemented
 
 * New models were added:
@@ -41,3 +43,8 @@ From now on validation of `paymentService` parameter is performed in `CmsPsuPisA
 == Renamed methods getCardAccount, readCardAccount in CardAccountsAPI
 
 Methods getCardAccount, readCardAccount in CardAccountsAPI renamed into getCardAccountList and readCardAccountDetails
+
+== Cleaned payment links for pure Decoupled approach
+
+From now on authorisation links for create payment request and start payment authorisation request in pure decoupled
+approach are removed from responses

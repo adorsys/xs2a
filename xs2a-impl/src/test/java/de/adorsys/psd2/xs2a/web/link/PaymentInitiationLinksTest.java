@@ -273,61 +273,7 @@ class PaymentInitiationLinksTest {
     }
 
     @Test
-    void scaApproachDecoupledAndExplicitMethodAndNotMultiLevelScaRequired() {
-        // Given
-        response.setMultilevelScaRequired(false);
-
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
-            .thenReturn(ScaApproach.DECOUPLED);
-
-        // When
-        LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
-
-        links = new PaymentInitiationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
-                                           response, null);
-        expectedLinks.setSelf(new HrefType(SELF_LINK));
-        expectedLinks.setStatus(new HrefType(STATUS_LINK));
-        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType(START_AUTHORISATION));
-
-        // Then
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void scaApproach_Decoupled_Explicit_MultiLevelScaNotRequired_SigningBasketModeActive() {
-        // Given
-        response.setMultilevelScaRequired(false);
-
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
-            .thenReturn(ScaApproach.DECOUPLED);
-
-        // When
-        LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(true)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
-
-        links = new PaymentInitiationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
-                                           response, null);
-        expectedLinks.setSelf(new HrefType(SELF_LINK));
-        expectedLinks.setStatus(new HrefType(STATUS_LINK));
-        expectedLinks.setStartAuthorisation(new HrefType(START_AUTHORISATION));
-
-        // Then
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataIsEmpty() {
+    void scaApproachDecoupledAndExplicitMethod() {
         // Given
         response.setMultilevelScaRequired(true);
 
@@ -347,44 +293,13 @@ class PaymentInitiationLinksTest {
                                            response, null);
         expectedLinks.setSelf(new HrefType(SELF_LINK));
         expectedLinks.setStatus(new HrefType(STATUS_LINK));
-        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType(START_AUTHORISATION));
 
         // Then
         assertEquals(expectedLinks, links);
     }
 
     @Test
-    void scaApproachDecoupledAndExplicitMethodAndMultiLevelScaRequiredAndPsuDataNotEmpty() {
-        // Given
-        psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
-        paymentRequestParameters.setPsuData(psuIdData);
-
-        response.setMultilevelScaRequired(true);
-
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
-            .thenReturn(ScaApproach.DECOUPLED);
-
-        // When
-        LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(true)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
-
-        links = new PaymentInitiationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
-                                           response, null);
-        expectedLinks.setSelf(new HrefType(SELF_LINK));
-        expectedLinks.setStatus(new HrefType(STATUS_LINK));
-        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType(START_AUTHORISATION));
-
-        // Then
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void scaApproachDecoupledAndImplicitMethodAndPsuDataIsEmpty() {
+    void scaApproachDecoupledAndImplicitMethod() {
         // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
             .thenReturn(ScaApproach.DECOUPLED);
@@ -403,36 +318,6 @@ class PaymentInitiationLinksTest {
         expectedLinks.setSelf(new HrefType(SELF_LINK));
         expectedLinks.setStatus(new HrefType(STATUS_LINK));
         expectedLinks.setScaStatus(new HrefType(SCA_STATUS));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType(SCA_STATUS));
-
-        // Then
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void scaApproachDecoupledAndImplicitMethodAndPsuDataIsNotEmpty() {
-        // Given
-        psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
-        paymentRequestParameters.setPsuData(psuIdData);
-
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID))
-            .thenReturn(ScaApproach.DECOUPLED);
-
-        // When
-        LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .isExplicitMethod(false)
-            .isSigningBasketModeActive(false)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
-
-        links = new PaymentInitiationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder, redirectIdService, paymentRequestParameters,
-                                           response, null);
-        expectedLinks.setSelf(new HrefType(SELF_LINK));
-        expectedLinks.setStatus(new HrefType(STATUS_LINK));
-        expectedLinks.setScaStatus(new HrefType(SCA_STATUS));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType(SCA_STATUS));
 
         // Then
         assertEquals(expectedLinks, links);

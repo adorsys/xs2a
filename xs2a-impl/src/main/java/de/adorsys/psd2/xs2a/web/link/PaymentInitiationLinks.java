@@ -26,10 +26,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 
-import java.util.EnumSet;
-
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
 public class PaymentInitiationLinks extends AbstractLinks {//NOSONAR
 
@@ -69,15 +66,25 @@ public class PaymentInitiationLinks extends AbstractLinks {//NOSONAR
         ScaApproach scaApproach = authorisationId == null ?
                                       scaApproachResolver.resolveScaApproach()
                                       : scaApproachResolver.getScaApproach(authorisationId);
-        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
-        } else if (scaApproach == REDIRECT) {
+
+        if (scaApproach == ScaApproach.EMBEDDED) {
+            addEmbeddedRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, signingBasketModeActive);
+        } else if (scaApproach == ScaApproach.REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
+        } else if (scaApproach == ScaApproach.DECOUPLED){
+            addDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         }
     }
 
-    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId,
-                                                  String authorisationId, boolean signingBasketModeActive) {
+    private void addDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId,
+                                          String authorisationId) {
+        if (!linkParameters.isExplicitMethod()) {
+            setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
+        }
+    }
+
+    private void addEmbeddedRelatedLinks(String paymentService, String paymentProduct, String paymentId,
+                                         String authorisationId, boolean signingBasketModeActive) {
         if (linkParameters.isExplicitMethod()) {
             if (signingBasketModeActive) { // no more data needs to be updated
                 setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));

@@ -25,9 +25,8 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 
-import java.util.EnumSet;
-
-import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
 public class CreatePisAuthorisationLinks extends AbstractLinks {
     public CreatePisAuthorisationLinks(LinkParameters linkParameters, ScaApproachResolver scaApproachResolver, RedirectLinkBuilder redirectLinkBuilder,
@@ -42,7 +41,7 @@ public class CreatePisAuthorisationLinks extends AbstractLinks {
         setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, linkParameters.getAuthorisationId()));
 
         ScaApproach initiationScaApproach = scaApproachResolver.getScaApproach(linkParameters.getAuthorisationId());
-        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(initiationScaApproach)) {
+        if (initiationScaApproach == EMBEDDED) {
             String path = UrlHolder.PIS_AUTHORISATION_LINK_URL;
             setUpdatePsuAuthentication(buildPath(path, paymentService, paymentProduct, paymentId, linkParameters.getAuthorisationId()));
         } else if (initiationScaApproach == REDIRECT) {

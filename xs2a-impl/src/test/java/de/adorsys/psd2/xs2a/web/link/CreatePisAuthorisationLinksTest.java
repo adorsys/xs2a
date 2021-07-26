@@ -120,55 +120,6 @@ class CreatePisAuthorisationLinksTest {
     }
 
     @Test
-    void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsuDataIsEmpty() {
-        // Given
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
-
-        // When
-        LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .authorisationId(AUTHORISATION_ID)
-            .internalRequestId(null)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
-        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
-            redirectIdService, request, null);
-
-        expectedLinks.setScaStatus(new HrefType(SCA_STATUS));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType(SCA_STATUS));
-
-        // Then
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
-    void isScaStatusMethodAuthenticatedAndDecoupledScaApproachAndPsyDataIsNotEmpty() {
-        // Given
-        psuIdData = jsonReader.getObjectFromFile("json/link/psu-id-data.json", PsuIdData.class);
-        request = new Xs2aCreatePisAuthorisationRequest(PAYMENT_ID, psuIdData, PAYMENT_PRODUCT, SINGLE, "");
-
-        when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.DECOUPLED);
-
-        // When
-        LinkParameters linkParameters = LinkParameters.builder()
-            .httpUrl(HTTP_URL)
-            .authorisationId(AUTHORISATION_ID)
-            .internalRequestId(null)
-            .isAuthorisationConfirmationRequestMandated(false)
-            .instanceId("")
-            .build();
-        links = new CreatePisAuthorisationLinks(linkParameters, scaApproachResolver, redirectLinkBuilder,
-            redirectIdService, request, null);
-
-        expectedLinks.setScaStatus(new HrefType(SCA_STATUS));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType(SCA_STATUS));
-
-        // Then
-        assertEquals(expectedLinks, links);
-    }
-
-    @Test
     void scaApproachRedirect() {
         // Given
         when(scaApproachResolver.getScaApproach(AUTHORISATION_ID)).thenReturn(ScaApproach.REDIRECT);
