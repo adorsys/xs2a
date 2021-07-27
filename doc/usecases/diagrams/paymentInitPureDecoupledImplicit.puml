@@ -1,0 +1,162 @@
+@startuml
+
+== Payment Initiation with Pure Decoupled implicit approach ==
+
+actor PSU
+entity TPP
+entity XS2A
+entity CMS
+entity SPI
+entity ASPSP
+PSU->TPP: Initiate payment
+activate TPP
+TPP -> XS2A: REST Call Initiate payment\nPOST "/v1/payments/{payment-product}"\n[TPP-decoupled-preferred header=true]
+activate XS2A
+XS2A->SPI: Java Call SPIinitiatePayment
+activate SPI
+|||
+SPI-->XS2A: SpiSinglePaymentInitiationResponse
+deactivate SPI
+|||
+XS2A->CMS: Save payment
+|||
+
+|||
+XS2A->SPI: Start authorisation request \n(payment, Authorisation ID, SCA status, resolved SCA approach)
+activate SPI
+SPI->ASPSP: Authorisation request
+activate ASPSP
+ASPSP-->SPI: Authorisation response \n(chosen SCA approach, PSU message, SCA status)
+deactivate ASPSP
+SPI-->XS2A: Start Authorisation response \n (PSU message, SCA status, SCA approach)
+deactivate SPI
+XS2A->CMS: Save Authorisation
+XS2A-->TPP:Payment Initiation response \n (SCA status, PSU message, SCA approach)
+deactivate XS2A
+|||
+TPP-->PSU: PSU message \n"Please use your xxx App to confirm the payment"
+deactivate TPP
+|||
+
+activate PSU
+|||
+group PSU to ASPSP Interface
+|||
+ASPSP-->PSU: The ASPSP pushes a confirmation request to ASPSP application
+activate ASPSP
+|||
+PSU->ASPSP: The PSU authorises the payment
+deactivate PSU
+|||
+end group
+activate ASPSP
+|||
+ASPSP->CMS: REST Call UpdateAuthorisationStatus\n"PUT/psu-api/v1/payment/{payment-id}/authorisation/\n{authorisation-id}/status/{status}"
+activate CMS
+|||
+CMS-->ASPSP: Response "http Codes: 200 successful or 400 error"
+|||
+ASPSP->CMS: REST Call UpdatePaymentStatus\n"PUT/psu-api/v1/payment/{payment-id}/status/{status}"
+|||
+CMS-->ASPSP: Response "http Codes: 200 successful or 400 error"
+deactivate CMS
+deactivate ASPSP
+|||
+== TPP asks for the result of the transaction ==
+|||
+TPP->XS2A: REST Call get payment status\n"GET/v1/{payment-service}/{paymentId}/status"
+activate XS2A
+activate TPP
+XS2A->CMS: REST Call GetPaymentById
+activate CMS
+|||
+CMS-->XS2A: Payment Object Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call SPI GetPaymentStatusByid
+activate SPI
+|||
+SPI->ASPSP: GetPaymentStatusById
+activate ASPSP
+|||
+ASPSP-->SPI: Transaction Status Response
+deactivate ASPSP
+|||
+SPI-->XS2A: Transaction Status Response
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateTransactionStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateTransactionStatus Response
+deactivate CMS
+|||
+XS2A-->TPP: Transaction Status Response
+|||
+TPP->XS2A: REST Call Get Payment Request\n"GET/v1/{payment-service}/{paymentId}"
+|||
+XS2A->CMS: REST Call GetPaymentById
+activate CMS
+|||
+CMS-->XS2A: Payment Object Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call SpiGetPaymentbyId
+activate SPI
+|||
+SPI->ASPSP: GetPaymentById
+activate ASPSP
+|||
+ASPSP-->SPI: Payment Object Response
+deactivate ASPSP
+|||
+SPI-->XS2A: SpiSinglePayment /\nSpiPeriodicPayment /\nSpiBulkPayment /\nSpiPaymentInfo            Response
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdatePayment
+activate CMS
+|||
+CMS-->XS2A: UpdatePayment Response
+deactivate CMS
+|||
+XS2A-->TPP: GetPayment Response
+|||
+TPP->XS2A: REST Call Get Authorisation Sub-resources\n"GET/v1/{payment-service}/{payment-product}\n/{paymentId/authorisations}"
+|||
+XS2A->CMS: GetAuthorisationsByPaymentId
+activate CMS
+|||
+CMS-->XS2A: GetAuthorisationsByPaymentId Response
+deactivate CMS
+XS2A-->TPP: AuthorisationByPaymentIdsList Response
+|||
+TPP->XS2A: REST Call Get Sca Status Request\n"GET/v1/{payment-service}/{payment-product}/\n{paymentId/authorisations}/{authorithationId}"
+|||
+XS2A->CMS: REST Call getPaymentInitiationAuthorisationScaStatus
+activate CMS
+|||
+CMS-->XS2A: getPaymentInitiationAuthorisationScaStatus Response
+deactivate CMS
+|||
+XS2A->SPI: Java Call getScaStatus
+activate SPI
+|||
+SPI->ASPSP: getScaStatus
+activate ASPSP
+|||
+ASPSP-->SPI: getScaStatus Response
+deactivate ASPSP
+SPI->XS2A: SpiScaStatusResponse
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdateAuthorisationStatus
+activate CMS
+|||
+CMS-->XS2A: UpdateAuthorisationStatus Response
+|||
+deactivate CMS
+|||
+XS2A-->TPP: Get Sca Status Response
+deactivate TPP
+deactivate XS2A
+@enduml
