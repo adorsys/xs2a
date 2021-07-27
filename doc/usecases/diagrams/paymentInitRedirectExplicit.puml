@@ -2,18 +2,19 @@
 actor PSU
 entity TPP
 entity XS2A
-entity SPI
-entity SPI
 entity CMS
+entity SPI
 entity Online_banking
-entity Core_banking
+entity ASPSP
+|||
+== Payment Initiation with Redirect approach explicit authorisation mode==
+
 note right of CMS
 For an Authorisation Call
 CMS-PSU-API is used
 end note
 PSU->TPP: Initiate payment
 activate TPP
-activate PSU
 TPP -> XS2A: REST Call Initiate payment\nPOST "/v1/payments/{payment-product}"
 activate XS2A
 XS2A->SPI: Java Call SPIinitiatePayment
@@ -21,22 +22,33 @@ activate SPI
 |||
 SPI-->XS2A: SpiSinglePaymentInitiationResponse
 deactivate SPI
+XS2A->CMS: Save Payment
 |||
 XS2A-->TPP:Payment initiation response
 deactivate XS2A
 |||
-TPP->XS2A: REST Call Initiate authorisation implicitly \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
+TPP->XS2A: REST Call Start authorisation \nPOST"/v1/{payment-service }/{payment-product}/\n{paymentId}/authorisations"
 activate XS2A
 note left
          in case of Multilevel SCA
          the authorisation steps
-         should be repeated for other PSU
+         should be repeated for each PSU
 end note
 |||
+XS2A->SPI: Start authorisation request \n(payment, Authorisation ID, SCA status, resolved SCA approach)
+activate SPI
+SPI->ASPSP: Authorisation request
+activate ASPSP
+ASPSP-->SPI: Authorisation response \n(chosen SCA approach, PSU message, SCA status)
+deactivate ASPSP
+SPI-->XS2A: Start Authorisation response
+deactivate SPI
+XS2A->CMS: Save Authorisation
 XS2A-->TPP:Start authorisation response\n"link_SCARedirect "
 deactivate XS2A
 TPP-->PSU: Feedback to the customer\nAuthorise the transaction
 deactivate TPP
+activate PSU
 |||
 PSU->Online_banking: PSU re-direct to an authorisation webpage of the ASPSP
 deactivate PSU
@@ -64,11 +76,11 @@ activate CMS
 |||
 CMS-->Online_banking: Response "http Codes: 200 successful or 400 error"
 deactivate CMS
-Online_banking->Core_banking: Execute Payment
-activate Core_banking
+Online_banking->ASPSP: Execute Payment
+activate ASPSP
 |||
-Core_banking-->Online_banking: Response PaymentStatus
-deactivate Core_banking
+ASPSP-->Online_banking: Response PaymentStatus
+deactivate ASPSP
 Online_banking->CMS: REST Call UpdatePaymentStatus\n"PUT/psu-api/v1/payment/{payment-id}/status/{status}"
 activate CMS
 |||
@@ -94,11 +106,11 @@ deactivate CMS
 XS2A->SPI: Java Call SPI GetPaymentStatusByid
 activate SPI
 |||
-SPI->Core_banking: GetPaymentStatusById
-activate Core_banking
+SPI->ASPSP: GetPaymentStatusById
+activate ASPSP
 |||
-Core_banking-->SPI: Transaction Status Response
-deactivate Core_banking
+ASPSP-->SPI: Transaction Status Response
+deactivate ASPSP
 |||
 SPI-->XS2A: Transaction Status Response
 deactivate SPI
@@ -124,11 +136,11 @@ deactivate CMS
 XS2A->SPI: Java Call SPIGetPaymentbyId
 activate SPI
 |||
-SPI->Core_banking: GetPaymentById
-activate Core_banking
+SPI->ASPSP: GetPaymentById
+activate ASPSP
 |||
-Core_banking-->SPI: Payment Object Response
-deactivate Core_banking
+ASPSP-->SPI: Payment Object Response
+deactivate ASPSP
 SPI-->XS2A: SpiSinglrPayment /\nSpiPeriodicPayment /\nSpiBulkPayment /\nSpiPaymentInfo
 deactivate SPI
 |||
@@ -163,11 +175,11 @@ deactivate CMS
 XS2A->SPI: Java Call getScaStatus
 activate SPI
 |||
-SPI->Core_banking: getScaStatus
-activate Core_banking
+SPI->ASPSP: getScaStatus
+activate ASPSP
 |||
-Core_banking-->SPI: getScaStatus Response
-deactivate Core_banking
+ASPSP-->SPI: getScaStatus Response
+deactivate ASPSP
 SPI->XS2A: SpiScaStatusResponse
 deactivate SPI
 |||

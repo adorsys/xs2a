@@ -33,21 +33,31 @@ Parameter *"countryValidationSupported"* in the ASPSP-Profile, defines for which
 
 
 === SCA Approaches fo PIS
+
 ==== Payment Initiation Service in Redirect Approach
 
-image::paymentInitRedirect.png[Payment Initiation in Redirect Approach, title='Payment Initiation in Redirect Approach', align='center']
+image::../images/paymentInitRedirectImplicit.png[Payment Initiation in Redirect Approach, title='Payment Initiation in Redirect Approach, implicit authorisation mode', align='center']
 
-==== Integration OAuth2 Redirect SCA Approach
-
-image::PaymentInitOAuth.png[Payment Initiation in OAuth with Redirect Approach, title='Payment Initiation in OAuth with Redirect Approach', align='center']
+image::../images/paymentInitRedirectExplicit.png[Payment Initiation in Redirect Approach, title='Payment Initiation in Redirect Approach, explicit authorisation mode', align='center']
 
 ==== Payment Initiation Service in Embedded Approach
 
-image::paymentInitEmbedded.png[Payment Initiation in Embedded Approach, title='Payment Initiation in Embedded Approach', align='center']
+image::../images/paymentInitEmbeddedImplicit.png[Payment Initiation in Embedded Approach, title='Payment Initiation in Embedded Approach, implicit authorisation mode', align='center']
 
-==== Payment Initiation Service in Decoupled Approach (Decoupled approach as a second SCA factor)
+image::../images/paymentInitEmbeddedExplicit.png[Payment Initiation in Embedded Approach, title='Payment Initiation in Embedded Approach, explicit authorisation mode', align='center']
 
-image::paymentInitDecoupled.png[Payment Initiation in Decopled Approach, title='Payment Initiation in Decoupled Approach', align='center']
+==== Payment Initiation Service in Embedded Decoupled Approach (Decoupled approach as a second SCA factor)
+
+image::../images/paymentInitEmbeddedDecoupledImplicit.png[Payment Initiation in Embedded Decopled Approach, title='Payment Initiation in Embedded Decoupled Approach, implicit authorisation mode', align='center']
+
+image::../images/paymentInitEmbeddedDecoupledExplicit.png[Payment Initiation in Embedded Decopled Approach, title='Payment Initiation in Embedded Decoupled Approach, explicit authorisation mode', align='center']
+
+==== Payment Initiation Service in Pure Decoupled Approach
+
+image::../images/paymentInitPureDecoupledImplicit.png[Payment Initiation in Pure Decopled Approach, title='Payment Initiation in Pure Decoupled Approach, implicit authorisation mode', align='center']
+
+image::../images/paymentInitPureDecoupledExplicit.png[Payment Initiation in Pure Decopled Approach, title='Payment Initiation in Pure Decoupled Approach, explicit authorisation mode', align='center']
+
 
 === Payment statuses
 Payment transaction status is synchronised in bank's database and in CMS. When payment data with payment transaction status is given from ASPSP, status will be updated in CMS, even if it is already finalised. There is endpoint in cms-aspsp-api to set payment data with payment transaction status directly from ASPSP to CMS.
@@ -107,5 +117,3 @@ Depending on SpiPaymentCancellationResponse properties *transactionStatus* and *
 |with authorisation
 |with authorisation
 |===
-
-image::PaymentCancellation Redirect.png[Payment Cancellation in Redirect Approach, title="Payment Cancellation in Redirect Approach", align="center"]
