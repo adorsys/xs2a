@@ -1,9 +1,0 @@
-= Release notes v.11.9
-
-== Table of Contents
-
-* Added UML diagrams for Pure Decoupled SCA approach
-
-== Added UML diagrams for Pure Decoupled SCA approach
-
-Added diagrams for Pure Decoupled SCA approach, updated related documentation.
