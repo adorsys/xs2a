@@ -5,6 +5,8 @@ entity XS2A
 entity CMS
 entity SPI
 entity ASPSP
+== Payment Initiation with Embedded approach implicit authorisation mode==
+
 PSU->TPP: Initiate payment
 
 activate TPP
