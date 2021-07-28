@@ -80,6 +80,8 @@ public class PaymentInitiationLinks extends AbstractLinks {//NOSONAR
                                           String authorisationId) {
         if (!linkParameters.isExplicitMethod()) {
             setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
+        } else {
+            setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
         }
     }
 

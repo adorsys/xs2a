@@ -293,6 +293,7 @@ class PaymentInitiationLinksTest {
                                            response, null);
         expectedLinks.setSelf(new HrefType(SELF_LINK));
         expectedLinks.setStatus(new HrefType(STATUS_LINK));
+        expectedLinks.setStartAuthorisation(new HrefType(START_AUTHORISATION));
 
         // Then
         assertEquals(expectedLinks, links);
