@@ -95,7 +95,7 @@ class CardAccountControllerTest {
     private ResponseErrorMapper responseErrorMapper;
 
     @Test
-    void readCardAccount_withBalance_ok() throws IOException {
+    void readCardAccountDetails_withBalance_ok() throws IOException {
         // Given
         when(cardAccountService.getCardAccountDetails(anyString(), any(), anyString())).thenReturn(getXs2aCardAccountDetailsHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -106,7 +106,7 @@ class CardAccountControllerTest {
             .when(responseMapper).ok(any(), any());
 
         // When
-        CardAccountDetails result = (CardAccountDetails) cardAccountController.readCardAccount(ACCOUNT_ID, null,
+        CardAccountDetails result = (CardAccountDetails) cardAccountController.readCardAccountDetails(ACCOUNT_ID, null,
                                                                                                CONSENT_ID, null, null, null, null,
                                                                                                null, null, null, null, null,
                                                                                                null, null, null, null).getBody();
@@ -115,7 +115,7 @@ class CardAccountControllerTest {
     }
 
     @Test
-    void readCardAccount_wrongId_fail() {
+    void readCardAccountDetails_wrongId_fail() {
         // Given
         when(cardAccountService.getCardAccountDetails(anyString(), any(), anyString())).thenReturn(getXs2aCardAccountDetailsHolder());
         when(request.getRequestURI()).thenReturn(REQUEST_URI);
@@ -127,7 +127,7 @@ class CardAccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity<?> result = cardAccountController.readCardAccount(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
+        ResponseEntity<?> result = cardAccountController.readCardAccountDetails(WRONG_ACCOUNT_ID, null, WRONG_CONSENT_ID, null,
                                                                          null, null, null, null,
                                                                          null, null, null, null,
                                                                          null, null, null, null);
@@ -147,7 +147,7 @@ class CardAccountControllerTest {
             .when(responseMapper).ok(any(), any());
 
         // When
-        CardAccountList result = (CardAccountList) cardAccountController.getCardAccount(null, CONSENT_ID,
+        CardAccountList result = (CardAccountList) cardAccountController.getCardAccountList(null, CONSENT_ID,
                                                                                         null, null, null, null, null, null,
                                                                                         null, null, null, null, null,
                                                                                         null, null).getBody();
@@ -170,7 +170,7 @@ class CardAccountControllerTest {
             .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         // When
-        ResponseEntity<?> result = cardAccountController.getCardAccount(null, WRONG_CONSENT_ID,
+        ResponseEntity<?> result = cardAccountController.getCardAccountList(null, WRONG_CONSENT_ID,
                                                                         null, null, null, null, null, null,
                                                                         null, null, null, null, null,
                                                                         null, null);

@@ -16,7 +16,6 @@ stages:
   - "Test"    # run tests and code quality checks
   - "Package" # dockerize jar and push to docker registry
   - "Deploy"  # push to openshift registry (snapshot deployment) or release registry
-  - "Notification" # Notify to specific channel about applications versions
 
 # ------------------------------------------------------------------
 # variables

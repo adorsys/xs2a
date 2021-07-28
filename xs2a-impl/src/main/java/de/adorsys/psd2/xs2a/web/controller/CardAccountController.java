@@ -51,7 +51,7 @@ public class CardAccountController implements CardAccountsApi {
     private final ResponseErrorMapper responseErrorMapper;
 
     @Override
-    public ResponseEntity getCardAccount(UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity getCardAccountList(UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
         ResponseObject<Xs2aCardAccountListHolder> accountList = cardAccountService.getCardAccountList(consentID, trimEndingSlash(request.getRequestURI()));
 
         return accountList.hasError()
@@ -82,7 +82,7 @@ public class CardAccountController implements CardAccountsApi {
     }
 
     @Override
-    public ResponseEntity readCardAccount(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
+    public ResponseEntity readCardAccountDetails(String accountId, UUID xRequestID, String consentID, String digest, String signature, byte[] tpPSignatureCertificate, String psUIPAddress, String psUIPPort, String psUAccept, String psUAcceptCharset, String psUAcceptEncoding, String psUAcceptLanguage, String psUUserAgent, String psUHttpMethod, UUID psUDeviceID, String psUGeoLocation) {
 
         ResponseObject<Xs2aCardAccountDetailsHolder> accountDetails = cardAccountService.getCardAccountDetails(consentID, accountId, trimEndingSlash(request.getRequestURI()));
 
