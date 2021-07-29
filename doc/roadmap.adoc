@@ -54,15 +54,7 @@ Get SCA Status Request
 
 a|
 
-a|
 
-a|
-
-a|
-
-a|
-
-a|
 
 |05.05.2021| | 10.3| 11.3| |
 
@@ -82,15 +74,7 @@ a|* All fixes and updates from v.10.3
 
 a|
 
-a|
 
-a|
-
-a|
-
-a|
-
-a|
 
 |19.05.2021| | 10.4| 11.4| |
 
@@ -104,15 +88,7 @@ a|* All fixes and updates from v.10.4
 
 a|
 
-a|
 
-a|
-
-a|
-
-a|
-
-a|
 
 |02.06.2021| 10.0.2 | 10.5| 11.5| |
 
@@ -136,15 +112,7 @@ a|* All fixes and updates from v.10.5, v.10.0.2
 
 * Pass Header TPP-Decoupled-Preferred to SPI level
 
-a|
 
-a|
-
-a|
-
-a|
-
-a|
 
 a|
 |16.06.2021| | 10.6| 11.6| |
@@ -172,19 +140,8 @@ a|* All fixes and updates from v.10.6
 * Update connector to use latest ledgers version
 
 * Check Transaction report with execution date for pending transaction in valueDate attribute
-
-
 a|
 
-a|
-
-a|
-
-a|
-
-a|
-
-a|
 |30.06.2021| | 10.7| 11.7| |
 
 a|
@@ -198,18 +155,7 @@ a|* All fixes and updates from v.10.7
 
 a| Signing Basket plugin for XS2A
 
-a|
-
-a|
-
-a|
-
-a|
-
-a|
-
 |14.07.2021| | 10.8| 11.8| |
-
 a|
 a| * Bugfix: Add validation for download transactions endpoint
 
@@ -218,6 +164,24 @@ a|* All fixes and updates from v.10.8
 * Add new method to AuthorisationSpi
 
 a| Signing Basket plugin for XS2A
+
+|28.07.2021| | 10.9| 11.9| |
+a|
+a| * Rename method ReadCardAccount in CardAccountAPI
+
+a|* All fixes and updates from v.10.9
+* Bugfix: Refactor Xs2aConsentService#createConsentAuthorisation
+* Bugfix: Add validation of payment type to CmsPsuPisApi#updatePayment
+* Update HTTP Response Code for Message Code "FUNDS_NOT_AVAILABLE"
+* Change format for Card Account Details
+* Changes for Payment Exchange Rate type
+* Change format for "transactionDetails" in Card Transactions type
+* Block update authorisation calls for PIS/AIS/payment cancellation in pure decoupled
+* Change response header sca-approach for payment in pure decoupled sca
+* Clean payment links for pure decoupled sca
+* Add new method to AuthorisationSpi
+
+a|
 
 a|
 
