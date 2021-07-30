@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7e68acc5-ce01-46e4-a057-43765745bb99",
+		"_postman_id": "798c52eb-957b-4657-b112-786692b674c8",
 		"name": "Redirect OAuth (works with Dynamic Sandbox)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -17,7 +17,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d3ea925a-e577-4559-8bf1-8acc20d71155",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -65,7 +64,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c910b8f6-4e39-4a2c-93ce-d927aa12ea30",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -118,7 +116,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "c7cae976-c7ae-4fbf-b22f-a9cc615bb42a",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -205,7 +202,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ad4d635c-9f6f-4ac7-9fd3-19fe9f64e4c6",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -277,7 +273,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "66b5cf84-d5a0-42de-a83d-a27895918987",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -335,7 +330,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ef067def-f774-4fbd-90df-0490b47101a6",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -421,10 +415,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n  \"access\": {\n    \"accounts\": [],\n    \"balances\": [],\n    \"allPsd2\": \"allAccounts\",\n    \"transactions\": []\n  },\n  \"combinedServiceIndicator\": false,\n  \"frequencyPerDay\": 10,\n  \"recurringIndicator\": true,\n  \"validUntil\": \"2029-12-12\"\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents",
@@ -446,7 +437,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "497c7138-f956-4a6a-b288-6d9176a6df81",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -511,7 +501,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "36af25bf-77db-4bec-9e16-322b808ccfc8",
 										"exec": [
 											"pm.test(\"Status code is 401\", () => {",
 											"    pm.response.to.have.status(401);",
@@ -552,9 +541,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Integrated",
@@ -565,7 +552,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "810db22e-eb64-44b2-ac75-b1a2186159e2",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -613,7 +599,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b6c04532-aa3c-46e2-bab4-b0dadb6277ac",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -666,7 +651,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ac1591b0-4ac8-4a8b-8113-f63c7304e3eb",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -767,7 +751,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "51d0940f-fd9f-4dd3-a19a-9ed3d2783684",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -793,7 +776,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "4477e238-ff43-46ed-aa89-e53cf1aecfb9",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -836,7 +818,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3972c937-da59-4bf6-a8ea-1a10b0834e01",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -894,7 +875,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9cd39f98-5a00-47ee-ade0-efeff77aa642",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -930,7 +910,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "9cad16ab-fb9a-46c8-91fa-1098ddd60f3f",
 										"exec": [
 											""
 										],
@@ -991,7 +970,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3451ae82-1a1e-453b-b07a-8207208174a2",
 										"exec": [
 											"pm.test(\"Status code is 401\", function () {",
 											"    pm.response.to.have.status(401);",
@@ -1003,7 +981,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "3aa9c23f-51c1-4580-8111-bf91b7913228",
 										"exec": [
 											""
 										],
@@ -1051,9 +1028,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Integrated + check confirmation code by SPI",
@@ -1064,7 +1039,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "140ecdbb-9746-4aee-a294-b0e1b88996d8",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1112,7 +1086,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6a20ef37-443f-47de-863e-78ff022cd49c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1165,7 +1138,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "2e552be2-2748-46b1-8f3b-7fc61e2ad4d9",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -1266,7 +1238,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "235482be-f77d-4975-bc91-1ce17d72e29c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1292,7 +1263,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "5185a04a-501c-4b2d-aa1b-e2e57eea1955",
 										"exec": [
 											""
 										],
@@ -1334,7 +1304,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "ca2cd065-978a-4e7d-97bd-1e7df47647e1",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -1392,7 +1361,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fb90d400-5bbd-47d1-96e6-4f006908fede",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1426,7 +1394,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "0f4cb73b-df35-4eb6-b06c-4312e60e6b9f",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -1462,7 +1429,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7dda62e0-bf94-48a5-84a7-804d563cd227",
 										"exec": [
 											"pm.test('Status code is 200', () => {",
 											"  pm.response.to.have.status(200);",
@@ -1516,10 +1482,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\n}",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n\t\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -1545,7 +1508,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b49faf0e-b0b4-4b8d-bbd6-d28a40e46231",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -1581,7 +1543,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "114fa82e-a438-4d44-a0bd-2e7de5e6b59e",
 										"exec": [
 											""
 										],
@@ -1642,7 +1603,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "f116e575-078f-4737-a16c-1588cf36aed2",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1676,7 +1636,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "9b7e30c4-9a1f-464f-8f5d-94e9b7d67618",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -1706,9 +1665,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Integrated + check confirmation code by XS2A",
@@ -1719,7 +1676,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "59986cae-c46f-48a6-9d12-1d176b6e652e",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1767,7 +1723,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d96e281b-3423-4954-9bb8-8524547f6f1c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1820,7 +1775,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "605b4717-2900-479d-bc13-ccdc29c4aa24",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -1921,7 +1875,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "297b7a35-6d55-4d00-9207-aeab244fb55c",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -1947,7 +1900,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "34c40ffb-af2f-44f7-befe-c0800a40a37d",
 										"exec": [
 											""
 										],
@@ -1989,7 +1941,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8c460900-09c5-4c9a-b9c9-77d6eedfd206",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -2047,7 +1998,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "7808bf98-730c-4504-80ce-1bc701a99458",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2081,7 +2031,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "396675c2-92ce-4983-85ee-6909912dbd98",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -2117,7 +2066,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e283784a-871c-465a-bcd1-deedd505a79a",
 										"exec": [
 											"pm.test('Status code is 200', () => {",
 											"  pm.response.to.have.status(200);",
@@ -2171,10 +2119,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\n}",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n\t\n}"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/consents/{{consent_id}}/authorisations/{{authorisation_id}}",
@@ -2200,7 +2145,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "38610501-1eb9-4078-b620-b7684b236f08",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -2236,7 +2180,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "a50f213b-4d51-4054-86e4-cfe2633bc31e",
 										"exec": [
 											""
 										],
@@ -2297,7 +2240,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "a999d10c-4201-4f81-a012-f73507a5a6a3",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2331,7 +2273,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "fe0afe0e-ba59-4efa-ba5e-c01e486ace5f",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -2361,12 +2302,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "PIS",
@@ -2380,7 +2318,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9a2d6632-f608-415a-93e7-a6dee64911a9",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2428,7 +2365,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9e214793-7d84-4e21-ba98-46188e3db25d",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2481,7 +2417,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8f21fe45-8958-4b2f-94ca-64e5cdccd545",
 										"exec": [
 											"pm.test(\"Status code is 401\", function () {",
 											"    pm.response.to.have.status(401);",
@@ -2495,7 +2430,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "9d04871a-0c33-4d4e-a5f7-9202650111c2",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -2549,10 +2483,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -2576,7 +2507,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8c551209-dc42-4e62-aa9d-8574972ba579",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -2648,7 +2578,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "73e39d44-3eb1-457d-803e-b970ec3e6fdf",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -2681,7 +2610,7 @@
 									"formdata": [
 										{
 											"key": "code",
-											"value": "kdIaB9BK3Q7vixRrjzgSrr1l",
+											"value": "{{code}}",
 											"type": "text"
 										}
 									]
@@ -2706,7 +2635,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "e2b7c9d5-924c-403d-904f-019382f96acf",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -2740,7 +2668,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "15f5f7d0-12b3-4487-ba48-2f7a91260596",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -2804,10 +2731,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -2831,7 +2755,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "770b7e2e-0a53-42d4-bb47-587d7ff7fb9b",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -2896,7 +2819,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "5848f6ba-ad32-4a14-9fbc-6f8b2fe65c5d",
 										"exec": [
 											"pm.test(\"Status code is 401\", function () {",
 											"    pm.response.to.have.status(401);",
@@ -2938,9 +2860,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Integrated",
@@ -2951,7 +2871,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "bcc5194c-162f-4740-aa6e-ea6e0cd00993",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -2999,7 +2918,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "28b8393e-0051-4eb0-a48c-dfe17f558275",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3052,7 +2970,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fac54ecb-2097-4457-8aff-d5b0abcc82c1",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -3099,7 +3016,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "aa8016f3-c952-4f42-a40b-2f36a59c134b",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -3153,10 +3069,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -3180,7 +3093,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "36621e83-83bd-40c7-8154-b217829aad77",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3206,7 +3118,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "12f7d61a-fe8a-4fc0-ad1b-663ff74ee4cb",
 										"exec": [
 											"pm.globals.unset(\"internal_consent_id\");",
 											"pm.globals.unset(\"authorisation_id\");"
@@ -3248,7 +3159,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8f880960-e3a4-49c0-b749-0ea10a070f3d",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -3306,7 +3216,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d13adc57-8ea0-4179-a574-226ec4fee984",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -3371,7 +3280,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "b9337747-b9ff-4160-93b3-6a3092d1095a",
 										"exec": [
 											"pm.test(\"Status code is 401\", function () {",
 											"    pm.response.to.have.status(401);",
@@ -3413,9 +3321,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Integrated + check confirmation code by SPI",
@@ -3426,7 +3332,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "3fbf7801-fe38-4245-a18e-4f48dcc52c98",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3474,7 +3379,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "347da963-5d5b-4643-a9e3-46273b4695e2",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3527,7 +3431,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "58a4001e-12bf-49fb-bb82-2576fc4f230f",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -3573,7 +3476,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "658df4de-6a1a-4bb5-a9ef-6cef5a561fa6",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -3627,10 +3529,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -3654,7 +3553,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "9d5793d6-9bf2-4268-88aa-9610ddb860bc",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3680,7 +3578,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "52221212-0782-4680-bde8-1a450cad62de",
 										"exec": [
 											""
 										],
@@ -3721,7 +3618,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "8254aa9e-cf6f-41d0-99a4-74b5008e0bae",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -3779,7 +3675,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "cf1a6269-8eb3-4a92-a5ed-0b5ea75bd45f",
 										"exec": [
 											"pm.test('Status code is 200', () => {",
 											"  pm.response.to.have.status(200);",
@@ -3860,7 +3755,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "64c7fa29-54d0-4cff-ab1b-15677ddbdb5b",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -3923,9 +3817,7 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				},
 				{
 					"name": "Integrated + check confirmation code by  XS2A",
@@ -3936,7 +3828,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "0dccaa40-51a1-47c8-8964-247f0d574db1",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -3984,7 +3875,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "73910bfa-1528-448b-b2a7-b95ac77563c1",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4037,7 +3927,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "efeb64a8-1ca1-4caf-bb2a-af8dc93e3425",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -4083,7 +3972,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "77788bbb-1166-4ff3-a975-e43927da3043",
 										"exec": [
 											"pm.globals.unset(\"payment_id\");"
 										],
@@ -4137,10 +4025,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }",
-									"options": {
-										"raw": {}
-									}
+									"raw": "{\n    \"endToEndIdentification\": \"WBG-123456789\",\n    \"debtorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"instructedAmount\": {\n      \"currency\": \"EUR\",\n      \"amount\": \"0.01\"\n    },\n    \"creditorAccount\": {\n      \"currency\": \"EUR\",\n      \"iban\": \"{{iban_single}}\"\n    },\n    \"creditorAgent\" : \"AAAADEBBXXX\",\n    \"creditorName\": \"WBG\",\n    \"creditorAddress\": {\n      \"buildingNumber\": \"56\",\n      \"townName\": \"Nürnberg\",\n      \"country\": \"DE\",\n      \"postCode\": \"90543\",\n      \"streetName\": \"WBG Straße\"\n    },\n    \"remittanceInformationUnstructured\": \"Ref. Number WBG-1222\"\n  }"
 								},
 								"url": {
 									"raw": "{{protocol}}://{{url_xs2a}}/v1/{{payment_service}}/{{payment_product}}",
@@ -4164,7 +4049,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "706190f9-2bd0-474d-8bdd-512b4598192d",
 										"exec": [
 											"pm.test(\"Status code is 200\", () => {",
 											"    pm.response.to.have.status(200);",
@@ -4190,7 +4074,6 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"id": "1612c8ef-3045-4f7b-839d-033ba285633f",
 										"exec": [
 											""
 										],
@@ -4231,7 +4114,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "fab6ccbc-af51-428a-adb8-621528d4ce8f",
 										"exec": [
 											"const jsonData = pm.response.json();",
 											"",
@@ -4289,7 +4171,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "6bf5a7cb-025f-4405-b36c-9b3964fb2835",
 										"exec": [
 											"pm.test('Status code is 200', () => {",
 											"  pm.response.to.have.status(200);",
@@ -4370,7 +4251,6 @@
 								{
 									"listen": "test",
 									"script": {
-										"id": "d708518d-fba4-40f9-b0fb-b047a8e82391",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -4434,13 +4314,9 @@
 							},
 							"response": []
 						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
+					]
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }
