@@ -1,0 +1,10 @@
+= Release notes v.11.10
+
+== Table of Contents
+
+* Refactored scheduler for Non-recurring consent expiration task, fixed flow for NotConfirmedConsentExpirationScheduleTask
+
+==  Refactored scheduler for Non-recurring consent expiration task, fixed flow for NotConfirmedConsentExpirationScheduleTask
+
+Schedulers for Non-recurring consent expiration task and Not Confirmed Consent Expiration task are recommended to be run separately with at least 15 min interval
+to avoid of database inner locks. Fixed bug in NotConfirmedConsentExpirationScheduleTask flow as a result all not confirmed consents are now expiring according to ASPSP profile settings.

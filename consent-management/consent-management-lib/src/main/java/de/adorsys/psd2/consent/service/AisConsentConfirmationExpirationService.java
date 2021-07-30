@@ -24,4 +24,6 @@ public interface AisConsentConfirmationExpirationService extends ConfirmationExp
     ConsentEntity expireConsent(ConsentEntity consent);
 
     List<ConsentEntity> updateConsentListOnConfirmationExpiration(List<ConsentEntity> consents);
+
+    void updateConsentListOnConfirmationExpirationByExternalIds(List<String> externalIds);
 }
