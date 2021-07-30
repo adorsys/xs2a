@@ -79,6 +79,13 @@ public class AisConsentConfirmationExpirationServiceImpl implements AisConsentCo
 
     @Transactional
     @Override
+    public void updateConsentListOnConfirmationExpirationByExternalIds(List<String> externalIds) {
+        consentJpaRepository.expireConsentsByIds(externalIds);
+        authorisationRepository.updateAuthorisationByConsentIds(externalIds);
+    }
+
+    @Transactional
+    @Override
     public List<ConsentEntity> updateConsentListOnConfirmationExpiration(List<ConsentEntity> consents) {
         return IterableUtils.toList(consentJpaRepository.saveAll(obsoleteConsentList(consents)));
     }

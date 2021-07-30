@@ -35,6 +35,8 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
 
     List<ConsentEntity> findByConsentStatusIn(Set<ConsentStatus> statuses, Pageable pageable);
 
+    List<ConsentEntity> findByConsentStatusIn(Set<ConsentStatus> statuses);
+
     Long countByConsentStatusIn(Set<ConsentStatus> statuses);
 
     Optional<ConsentEntity> findByExternalId(String externalId);
@@ -48,6 +50,14 @@ public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long
     )
     @Modifying
     void expireByConsentStatusIn(@Param("consentStatuses") Set<ConsentStatus> consentStatuses);
+
+    @Query(
+        "UPDATE consent " +
+            "SET consentStatus = 'REJECTED', lastActionDate = CURRENT_TIMESTAMP " +
+            "WHERE externalId IN :ids"
+    )
+    @Modifying
+    void expireConsentsByIds(@Param("ids") List<String> ids);
 
     @Query(
         "select c from consent c " +
