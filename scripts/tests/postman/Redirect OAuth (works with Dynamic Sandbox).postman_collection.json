@@ -2387,7 +2387,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"http://localhost:4200/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"http://localhost:4200/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH_PRE_STEP\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
+									"raw": "{\n    \"ais\": {\n        \"consentTypes\": {\n            \"bankOfferedConsentSupported\": false,\n            \"globalConsentSupported\": true,\n            \"availableAccountsConsentSupported\": true,\n            \"accountAccessFrequencyPerDay\": 4,\n            \"notConfirmedConsentExpirationTimeMs\": 86400000,\n            \"maxConsentValidityDays\": 0\n        },\n        \"redirectLinkToOnlineBanking\": {\n            \"aisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/account-information/login?encryptedConsentId={encrypted-consent-id}&redirectId={redirect-id}\"\n        },\n        \"transactionParameters\": {\n            \"availableBookingStatuses\": [\n                \"booked\",\n                \"pending\"\n            ],\n            \"transactionsWithoutBalancesSupported\": false,\n            \"supportedTransactionApplicationTypes\": [\n                \"application/json\"\n            ]\n        },\n        \"deltaReportSettings\": {\n            \"entryReferenceFromSupported\": false,\n            \"deltaListSupported\": false\n        },\n        \"scaRequirementsForOneTimeConsents\": {\n            \"scaByOneTimeAvailableAccountsConsentRequired\": true,\n            \"scaByOneTimeGlobalConsentRequired\": true\n        }\n    },\n    \"pis\": {\n        \"supportedPaymentTypeAndProductMatrix\": {\n            \"payments\": [\n                \"sepa-credit-transfers\",\n                \"instant-sepa-credit-transfers\"\n            ]\n        },\n        \"maxTransactionValidityDays\": 0,\n        \"notConfirmedPaymentExpirationTimeMs\": 86400000,\n        \"paymentCancellationAuthorisationMandated\": false,\n        \"redirectLinkToOnlineBanking\": {\n            \"pisRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/pis/{redirect-id}/{encrypted-payment-id}\",\n            \"pisPaymentCancellationRedirectUrlToAspsp\": \"{{protocol}}://{{url_online_banking_ui}}/pis/cancellation/{redirect-id}/{encrypted-payment-id}\",\n            \"paymentCancellationRedirectUrlExpirationTimeMs\": 600000\n        },\n        \"countryValidationSupported\": \"DE\",\n        \"supportedTransactionStatusFormats\": [\n            \"application/json\"\n        ]\n    },\n    \"sb\": {\n        \"signingBasketSupported\": false\n    },\n    \"piis\": {\n        \"piisConsentSupported\": \"ASPSP_CONSENT_SUPPORTED\"\n    },\n    \"common\": {\n        \"scaRedirectFlow\": \"OAUTH_PRE_STEP\",\n        \"oauthConfigurationUrl\": \"{{protocol}}://{{url_online_banking_ui}}/oba-proxy/oauth/authorise?redirect_uri=https%3A%2F%2Fgoogle.com\",\n        \"startAuthorisationMode\": \"IMPLICIT\",\n        \"tppSignatureRequired\": false,\n        \"psuInInitialRequestMandated\": false,\n        \"redirectUrlExpirationTimeMs\": 600000,\n        \"authorisationExpirationTimeMs\": 86400000,\n        \"forceXs2aBaseLinksUrl\": false,\n        \"xs2aBaseLinksUrl\": \"http://myhost.com/\",\n        \"supportedAccountReferenceFields\": [\n            \"IBAN\"\n        ],\n        \"multicurrencyAccountLevelSupported\": \"SUBACCOUNT\",\n        \"aisPisSessionsSupported\": false,\n        \"aspspNotificationsSupported\": [\n            \"NONE\"\n        ]\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2660,6 +2660,10 @@
 											"});",
 											"",
 											"pm.globals.set(\"payment_id\", jsonData.paymentId);",
+											"const scaStatusParts = jsonData._links.scaStatus.href.split('/');",
+											"const redirectId = scaStatusParts.pop() || scaStatusParts.pop();",
+											"pm.globals.set(\"redirect_id\", redirectId);",
+											"",
 											""
 										],
 										"type": "text/javascript"
@@ -2750,7 +2754,73 @@
 							"response": []
 						},
 						{
-							"name": "7. Get Payment Information",
+							"name": "7. Get authorization endpoint from redirect URL and proceed to SCA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", () => {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"const jsonData = pm.response.json();",
+											"",
+											"pm.test(\"Authorisation endpoint is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"authorization_endpoint\");",
+											"});",
+											"",
+											"pm.test(\"Token endpoint is present\", () => {",
+											"    pm.expect(jsonData).to.have.property(\"token_endpoint\");",
+											"});",
+											"",
+											"",
+											"// pm.globals.set(\"internal_consent_id\", jsonData.accountConsent.id);",
+											"// pm.globals.set(\"authorisation_id\", authorisationId);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"pm.globals.unset(\"internal_consent_id\");",
+											"pm.globals.unset(\"authorisation_id\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{protocol}}://{{url_online_banking}}/oauth/authorization-server?paymentId={{payment_id}}&redirectId={{redirect_id}}",
+									"protocol": "{{protocol}}",
+									"host": [
+										"{{url_online_banking}}"
+									],
+									"path": [
+										"oauth",
+										"authorization-server"
+									],
+									"query": [
+										{
+											"key": "paymentId",
+											"value": "{{payment_id}}"
+										},
+										{
+											"key": "redirectId",
+											"value": "{{redirect_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "8. Get Payment Information",
 							"event": [
 								{
 									"listen": "test",
@@ -2814,7 +2884,7 @@
 							"response": []
 						},
 						{
-							"name": "8. Get Payment Information without token",
+							"name": "9. Get Payment Information without token",
 							"event": [
 								{
 									"listen": "test",
@@ -2965,7 +3035,7 @@
 							"response": []
 						},
 						{
-							"name": "3. Payment initiation request with token and process SCA in OBA",
+							"name": "3. Payment initiation request",
 							"event": [
 								{
 									"listen": "test",

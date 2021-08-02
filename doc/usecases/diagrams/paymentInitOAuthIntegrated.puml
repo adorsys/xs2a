@@ -1,0 +1,63 @@
+@startuml
+actor PSU
+entity TPP
+entity Connector as "XS2A + CMS +\n Connector-Examples"
+entity OBA as "Online Banking \n app"
+entity IDP as "IDP \n(Keycloak)"
+entity Ledgers as "ASPSP \n(Ledgers)"
+== Payment Initiation with OAuth approach (integrated mode) ==
+
+PSU->TPP: Initiate payment
+activate TPP
+|||
+TPP->Connector: REST Call Initiate payment\nPOST "/v1/payments/{payment-product}"
+|||
+activate Connector
+|||
+Connector-->TPP: HTTP 201: Successful response with "scaRedirect" link, \n Payment ID and Authorisation ID
+deactivate Connector
+|||
+TPP->IDP: Redirect to IDP and provide payment ID and authorisation ID
+|||
+activate IDP
+|||
+IDP-->TPP: Response with "authorization_endpoint" parameter
+deactivate IDP
+TPP-->PSU: Link to Online Banking app
+deactivate TPP
+activate PSU
+|||
+PSU->OBA: Login to Online Banking app and complete the SCA with the help of this application
+deactivate PSU
+activate OBA
+OBA-> Ledgers: Execute payment
+|||
+deactivate OBA
+activate Ledgers
+|||
+Ledgers--> OBA: Transaction Status
+deactivate Ledgers
+activate OBA
+|||
+OBA-->TPP: Return back to TPP with the "code" parameter
+deactivate OBA
+activate TPP
+|||
+TPP->IDP: Exchange auth code with token
+deactivate TPP
+activate IDP
+|||
+IDP-->TPP: Access token
+deactivate IDP
+|||
+deactivate Connector
+|||
+ref over PSU, Ledgers
+
+For all GET requests use this access token and see Payment Initiation diagrams for Redirect approach
+
+
+end ref
+|||
+@enduml
+
