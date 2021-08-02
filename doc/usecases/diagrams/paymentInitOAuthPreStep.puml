@@ -1,0 +1,74 @@
+@startuml
+actor PSU
+entity TPP
+entity Connector as "XS2A + CMS +\n Connector-Examples"
+entity OBA as "Online Banking \n app"
+entity IDP as "IDP \n(Keycloak)"
+entity Ledgers as "ASPSP \n(Ledgers)"
+== Payment Initiation with OAuth approach (pre-step mode) ==
+
+PSU->TPP: Initiate payment
+activate TPP
+|||
+TPP->Connector: REST Call Initiate payment\nPOST "/v1/payments/{payment-product}"
+|||
+activate Connector
+Connector-->TPP: HTTP 401: Retrieve token first at {link} (IDP server-info)
+deactivate Connector
+|||
+TPP-->PSU: PSU receives link to IDP \n built by TPP
+deactivate TPP
+activate PSU
+|||
+PSU->IDP: Login to IDP (made from TPP, provide PSU login and PSU password)
+|||
+deactivate PSU
+activate IDP
+|||
+IDP-->TPP: Redirect URI with "code" parameter
+deactivate IDP
+activate TPP
+|||
+TPP->IDP: Exchange auth code with token
+activate IDP
+|||
+IDP-->TPP: Access token
+deactivate IDP
+|||
+TPP->Connector: REST Call Initiate payment with token\nPOST "/v1/payments/{payment-product}"
+activate Connector
+|||
+Connector-->TPP: HTTP 201: Payment initiation response \n with Payment ID and Authorisation ID
+deactivate Connector
+|||
+TPP->IDP: Redirect to IDP and provide Payment ID and Authorisation ID
+|||
+activate IDP
+|||
+IDP-->TPP: Response with "authorization_endpoint" parameter
+deactivate IDP
+TPP-->PSU: Link to Online Banking app
+deactivate TPP
+activate PSU
+|||
+PSU->OBA: Login to Online Banking app and complete the SCA with the help of this application
+deactivate PSU
+activate OBA
+|||
+OBA-> Ledgers: Execute payment
+|||
+deactivate OBA
+activate Ledgers
+|||
+Ledgers-->TPP: Transaction Status
+deactivate Ledgers
+|||
+ref over PSU, Ledgers
+
+For all GET requests see Payment Initiation diagrams for Redirect approach
+
+
+end ref
+|||
+@enduml
+
