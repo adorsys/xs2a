@@ -161,7 +161,6 @@ class CreatePiisAuthorisationLinksTest {
         links = new CreatePiisAuthorisationLinks(linkParameters, response, scaApproachResolver, redirectLinkBuilder, redirectIdService, scaRedirectFlow);
 
         expectedLinks.setScaStatus(new HrefType("http://url/v2/consents/confirmation-of-funds/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType("http://url/v2/consents/confirmation-of-funds/9mp1PaotpXSToNCi/authorisations/463318a0-1e33-45d8-8209-e16444b18dda"));
         assertEquals(expectedLinks, links);
     }
 

@@ -78,10 +78,10 @@ public class PaymentInitiationLinks extends AbstractLinks {//NOSONAR
 
     private void addDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId,
                                           String authorisationId) {
-        if (!linkParameters.isExplicitMethod()) {
-            setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
-        } else {
+        if (linkParameters.isExplicitMethod()) {
             setStartAuthorisation(buildPath(UrlHolder.START_PIS_AUTHORISATION_URL, paymentService, paymentProduct, paymentId));
+        } else {
+            setScaStatus(buildPath(UrlHolder.PIS_AUTHORISATION_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }
     }
 

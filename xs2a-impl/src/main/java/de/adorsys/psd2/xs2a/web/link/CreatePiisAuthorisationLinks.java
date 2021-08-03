@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.web.link;
 
 import de.adorsys.psd2.xs2a.core.consent.ConsentType;
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.core.profile.ScaRedirectFlow;
 import de.adorsys.psd2.xs2a.domain.HrefType;
 import de.adorsys.psd2.xs2a.domain.consent.CreateConsentAuthorizationResponse;
@@ -25,6 +26,7 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 
+import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.EMBEDDED;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.REDIRECT;
 
 public class CreatePiisAuthorisationLinks extends AbstractLinks {
@@ -37,8 +39,9 @@ public class CreatePiisAuthorisationLinks extends AbstractLinks {
         String authorisationId = response.getAuthorisationId();
 
         setScaStatus(buildPath(UrlHolder.PIIS_AUTHORISATION_URL, consentId, authorisationId));
+        ScaApproach resolvedScaApproach = scaApproachResolver.getScaApproach(authorisationId);
 
-        if (scaApproachResolver.getScaApproach(authorisationId) == REDIRECT) {
+        if (resolvedScaApproach == REDIRECT) {
             String redirectId = redirectIdService.generateRedirectId(authorisationId);
 
             String consentOauthLink = scaRedirectFlow == ScaRedirectFlow.OAUTH
@@ -51,7 +54,7 @@ public class CreatePiisAuthorisationLinks extends AbstractLinks {
                 setConfirmation(buildPath(redirectLinkBuilder.buildConfirmationLink(consentId, redirectId, ConsentType.PIIS_TPP)));
             }
 
-        } else {
+        } else if (resolvedScaApproach == EMBEDDED) {
             setUpdatePsuAuthentication(buildPath(UrlHolder.PIIS_AUTHORISATION_URL, consentId, authorisationId));
         }
     }

@@ -254,7 +254,6 @@ class PaymentCancellationLinksTest {
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
-        expectedLinks.setUpdatePsuAuthentication(PIS_CANCELLATION_AUTH_LINK_URL);
         expectedLinks.setScaStatus(PIS_CANCELLATION_AUTH_LINK_URL);
 
         // Then
@@ -279,7 +278,7 @@ class PaymentCancellationLinksTest {
 
         expectedLinks.setSelf(SELF_LINK);
         expectedLinks.setStatus(STATUS_LINK);
-        expectedLinks.setStartAuthorisationWithPsuAuthentication(CANCEL_AUTH_LINK);
+        expectedLinks.setStartAuthorisation(CANCEL_AUTH_LINK);
 
         // Then
         assertEquals(expectedLinks, links);

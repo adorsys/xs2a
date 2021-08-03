@@ -181,7 +181,7 @@ class CreateConsentLinksTest {
 
         expectedLinks.setSelf(new HrefType(SELF_LINK));
         expectedLinks.setStatus(new HrefType(STATUS_LINK));
-        expectedLinks.setStartAuthorisationWithPsuAuthentication(new HrefType(START_AUTHORIZATION_LINK));
+        expectedLinks.setStartAuthorisation(new HrefType(START_AUTHORIZATION_LINK));
 
         // Then
         assertEquals(expectedLinks, links);
@@ -228,7 +228,6 @@ class CreateConsentLinksTest {
         expectedLinks.setSelf(new HrefType(SELF_LINK));
         expectedLinks.setStatus(new HrefType(STATUS_LINK));
         expectedLinks.setScaStatus(new HrefType(SCA_STATUS_LINK));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType(SCA_STATUS_LINK));
 
         // Then
         assertEquals(expectedLinks, links);
@@ -252,7 +251,6 @@ class CreateConsentLinksTest {
         expectedLinks.setSelf(new HrefType(SELF_LINK));
         expectedLinks.setStatus(new HrefType(STATUS_LINK));
         expectedLinks.setScaStatus(new HrefType(SCA_STATUS_LINK));
-        expectedLinks.setUpdatePsuAuthentication(new HrefType(SCA_STATUS_LINK));
 
         // Then
         assertEquals(expectedLinks, links);
