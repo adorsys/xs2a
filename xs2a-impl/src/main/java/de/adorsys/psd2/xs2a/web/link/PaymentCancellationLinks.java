@@ -25,8 +25,6 @@ import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
 import de.adorsys.psd2.xs2a.web.RedirectLinkBuilder;
 import de.adorsys.psd2.xs2a.web.link.holder.LinkParameters;
 
-import java.util.EnumSet;
-
 import static de.adorsys.psd2.xs2a.core.pis.TransactionStatus.RJCT;
 import static de.adorsys.psd2.xs2a.core.profile.ScaApproach.*;
 
@@ -67,14 +65,16 @@ public class PaymentCancellationLinks extends AbstractLinks {//NOSONAR
         setStatus(buildPath(UrlHolder.PAYMENT_STATUS_URL, paymentService, paymentProduct, paymentId));
 
         ScaApproach scaApproach = scaApproachResolver.resolveScaApproach();
-        if (EnumSet.of(EMBEDDED, DECOUPLED).contains(scaApproach)) {
-            addEmbeddedDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
+        if (scaApproach == EMBEDDED) {
+            addEmbeddedRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         } else if (scaApproach == REDIRECT) {
             addRedirectRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId, internalRequestId);
+        } else if (scaApproach == DECOUPLED) {
+            addDecoupledRelatedLinks(paymentService, paymentProduct, paymentId, authorisationId);
         }
     }
 
-    private void addEmbeddedDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
+    private void addEmbeddedRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
         if (linkParameters.isExplicitMethod()) {
             setStartAuthorisationWithPsuAuthentication(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
         } else {
@@ -83,6 +83,14 @@ public class PaymentCancellationLinks extends AbstractLinks {//NOSONAR
 
             setUpdatePsuAuthentication(
                 buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
+        }
+    }
+
+    private void addDecoupledRelatedLinks(String paymentService, String paymentProduct, String paymentId, String authorisationId) {
+        if (linkParameters.isExplicitMethod()) {
+            setStartAuthorisation(buildPath(UrlHolder.START_PIS_CANCELLATION_AUTH_URL, paymentService, paymentProduct, paymentId));
+        } else {
+            setScaStatus(buildPath(UrlHolder.PIS_CANCELLATION_AUTH_LINK_URL, paymentService, paymentProduct, paymentId, authorisationId));
         }
     }
 
