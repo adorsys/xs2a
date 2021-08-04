@@ -10,6 +10,8 @@
 
 * Cleaned Payment Cancellation links for pure Decoupled approach
 
+* Fixed bug for Read Transaction List with `bookingStatus=INFORMATION` parameter
+
 ==  Refactored scheduler for Non-recurring consent expiration task, fixed flow for NotConfirmedConsentExpirationScheduleTask
 
 Schedulers for Non-recurring consent expiration task and Not Confirmed Consent Expiration task are recommended to be run separately with at least 15 min interval
@@ -29,3 +31,8 @@ approach implicit mode are removed from responses
 
 From now on, authorisation links for payment cancellation request and payment cancellation authorisation request in pure decoupled
 approach implicit mode are removed from responses
+
+== Fixed bug for Read Transaction List with bookingStatus=INFORMATION parameter
+
+From now on, reading Transaction List with query parameter `bookingStatus=INFORMATION` returns successful response
+even with the absence of other query parameters

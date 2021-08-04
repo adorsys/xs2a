@@ -43,12 +43,15 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class DateFromQueryParameterParamsValidatorImplTest {
     private static final String DATE_FROM_PARAMETER_NAME = "dateFrom";
+    private static final String BOOKING_STATUS_PARAMETER_NAME = "bookingStatus";
     private static final String ENTRY_REFERENCE_FROM_PARAMETER_NAME = "entryReferenceFrom";
     private static final String DELTA_LIST_PARAMETER_NAME = "deltaList";
 
     private static final String DATE_FROM_TEST = LocalDate.now().toString();
     private static final String ENTRY_REFERENCE_TEST = "IVHdQ15dIOr0uQzvlCxLSB";
     private static final String DELTA_LIST_TEST = "true";
+    private static final String BOOKING_STATUS_INFORMATION = "information";
+    private static final String BOOKING_STATUS_BOOKED = "booked";
 
     private Map<String, List<String>> queryParams = new HashMap<>();
 
@@ -63,6 +66,16 @@ class DateFromQueryParameterParamsValidatorImplTest {
     void validate_withCorrectValue_shouldNotEnrichError() {
         //Given
         queryParams.put(DATE_FROM_PARAMETER_NAME, Collections.singletonList(DATE_FROM_TEST));
+        //When
+        dateFromQueryParameterParamsValidator.validate(queryParams, messageError);
+        //Then
+        verifyNoError();
+    }
+
+    @Test
+    void validate_withoutDateFromAndInformationStatus_shouldNotEnrichError() {
+        //Given
+        queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Collections.singletonList(BOOKING_STATUS_INFORMATION));
         //When
         dateFromQueryParameterParamsValidator.validate(queryParams, messageError);
         //Then
@@ -126,6 +139,17 @@ class DateFromQueryParameterParamsValidatorImplTest {
     @Test
     void validate_withMissingParameter_shouldEnrichError() {
         //Given
+        ArgumentCaptor<TppMessageInformation> captor = ArgumentCaptor.forClass(TppMessageInformation.class);
+        //When
+        dateFromQueryParameterParamsValidator.validate(queryParams, messageError);
+        //Then
+        verifyError(captor);
+    }
+
+    @Test
+    void validate_withMissingParameterAndBookedStatus_shouldEnrichError() {
+        //Given
+        queryParams.put(BOOKING_STATUS_PARAMETER_NAME, Collections.singletonList(BOOKING_STATUS_BOOKED));
         ArgumentCaptor<TppMessageInformation> captor = ArgumentCaptor.forClass(TppMessageInformation.class);
         //When
         dateFromQueryParameterParamsValidator.validate(queryParams, messageError);
