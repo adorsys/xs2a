@@ -20,9 +20,13 @@
 
 |xs2a.cms.service.instance-id|Instance identification|UNDEFINED
 |xs2a.cms.stoplist.cron.expression|Cron expression to unblock TPP in stop list|0 0 * * * *
-|xs2a.cms.not-confirmed-consent-expiration.cron.expression|Cron expression to update status for non confirmed consents|0 0 * * * *
+|xs2a.cms.not-confirmed-consent-expiration.cron.expression|Cron expression to update status for non confirmed consents
+
+RECOMMENDED: run at least with 15 min delay with `xs2a.cms.used-non-recurring-consent-expiration.cron.expression`|0 0 * * * *
 |xs2a.cms.not-confirmed-payment-expiration.cron.expression|Cron expression to update status for non confirmed payments|0 0 * * * *
-|xs2a.cms.used-non-recurring-consent-expiration.cron.expression|Cron expression to expire non-recurring consents|0 0 * * * *
+|xs2a.cms.used-non-recurring-consent-expiration.cron.expression|Cron expression to expire non-recurring consents
+
+RECOMMENDED: run at least with 15 min delay with `xs2a.cms.not-confirmed-consent-expiration.cron.expression`|0 15 * * * *
 |xs2a.cms.consent.cron.expression|Cron expression to expire consents with statuses (VALID and RECEIVED)|0 0 1 * * ?
 |xs2a.cms.scheduler.pool.size|Size of CMS scheduler pool|30
 |xs2a.cms.scheduler.processing.page-size|Size of processed page|100
