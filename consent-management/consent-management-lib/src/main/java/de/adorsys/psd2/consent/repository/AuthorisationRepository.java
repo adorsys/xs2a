@@ -20,7 +20,10 @@ import de.adorsys.psd2.consent.domain.AuthorisationEntity;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,4 +49,8 @@ public interface AuthorisationRepository extends CrudRepository<AuthorisationEnt
     List<AuthorisationEntity> findAllByParentExternalIdAndTypeIn(String parentExternalId,
                                                                  Set<AuthorisationType> authorisationTypes,
                                                                  Pageable pageable);
+
+    @Query("UPDATE authorisation SET scaStatus='FAILED' WHERE type = 'CONSENT' AND parentExternalId IN :consentIds")
+    @Modifying
+    void updateAuthorisationByConsentIds(@Param("consentIds") List<String> consentIds);
 }

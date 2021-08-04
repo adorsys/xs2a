@@ -37,13 +37,14 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AisConsentConfirmationExpirationServiceTest {
     private static final LocalDate TOMORROW = LocalDate.now().plusDays(1);
     private static final LocalDate TODAY = LocalDate.now();
+    private final List<String> EXTERNAL_IDS = List.of("first id", "second id", "third id");
 
     @InjectMocks
     private AisConsentConfirmationExpirationServiceImpl expirationService;
@@ -125,6 +126,25 @@ class AisConsentConfirmationExpirationServiceTest {
         // Then
         verify(consentJpaRepository).saveAll(aisConsentListCaptor.capture());
         assertEquals(ConsentStatus.REJECTED, aisConsentListCaptor.getValue().get(0).getConsentStatus());
+    }
+
+    @Test
+    void updateConsentListOnConfirmationExpirationByExternalIds() {
+        //When
+        expirationService.updateConsentListOnConfirmationExpirationByExternalIds(EXTERNAL_IDS);
+
+        //Then
+        verify(consentJpaRepository, times(1)).expireConsentsByIds(EXTERNAL_IDS);
+        verify(authorisationRepository, times(1)).updateAuthorisationByConsentIds(EXTERNAL_IDS);
+    }
+
+    @Test
+    void isConfirmationExpired_nullInput() {
+        //When
+        boolean actual = expirationService.isConfirmationExpired(null);
+
+        //Then
+        assertFalse(actual);
     }
 
     private ConsentEntity buildConsent() {
