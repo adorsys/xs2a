@@ -257,8 +257,10 @@ public class PaymentController implements PaymentApi {
         CancelPaymentResponse cancelPayment = serviceResponse.getBody();
         PaymentInitiationCancelResponse202 response = paymentModelMapperPsd2.mapToPaymentInitiationCancelResponse(cancelPayment);
 
+        ResponseHeaders responseHeaders = paymentCancellationHeadersBuilder.buildCancelPaymentHeaders(cancelPayment.getAuthorizationId());
+
         return cancelPayment.isStartAuthorisationRequired()
-                   ? responseMapper.accepted(ResponseObject.builder().body(response).build())
+                   ? responseMapper.accepted(ResponseObject.builder().body(response).build(), responseHeaders)
                    : responseMapper.delete(serviceResponse);
     }
 
