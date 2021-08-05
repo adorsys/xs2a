@@ -159,6 +159,18 @@ public class ResponseMapper {
         return generateResponse(response, ACCEPTED);
     }
 
+    /**
+     * Generates {@link ResponseEntity} with the response body and headers in response to a request that hasn't been processed yet
+     *
+     * @param response response object from the service with the body inside
+     * @param <T>      type of the body in the response object
+     * @param responseHeaders headers to be returned in the response
+     * @return response entity with Accepted HTTP status and body
+     */
+    public <T> ResponseEntity accepted(ResponseObject<T> response, ResponseHeaders responseHeaders) {
+        return generateResponse(response, ACCEPTED, null, responseHeaders);
+    }
+
     private <T> ResponseEntity generateResponse(ResponseObject<T> response, HttpStatus positiveStatus) {
         return generateResponse(response, positiveStatus, null);
     }

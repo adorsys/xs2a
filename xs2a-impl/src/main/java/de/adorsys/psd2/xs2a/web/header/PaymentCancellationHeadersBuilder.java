@@ -16,15 +16,38 @@
 
 package de.adorsys.psd2.xs2a.web.header;
 
+import de.adorsys.psd2.xs2a.core.profile.ScaApproach;
 import de.adorsys.psd2.xs2a.service.ScaApproachResolver;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PaymentCancellationHeadersBuilder extends AbstractHeadersBuilder{
+public class PaymentCancellationHeadersBuilder extends AbstractHeadersBuilder {
 
     @Autowired
     public PaymentCancellationHeadersBuilder(ScaApproachResolver scaApproachResolver) {
         super(scaApproachResolver);
     }
+
+    /**
+     * Builds response headers for payment cancellation request
+     *
+     * @param authorisationId id of the authorisation, if it was created implicitly
+     * @return response headers
+     */
+    public ResponseHeaders buildCancelPaymentHeaders(@Nullable String authorisationId) {
+        ResponseHeaders.ResponseHeadersBuilder responseHeadersBuilder = ResponseHeaders.builder();
+
+        if (authorisationId == null) {
+            return responseHeadersBuilder
+                       .build();
+        }
+
+        ScaApproach scaApproach = scaApproachResolver.getScaApproach(authorisationId);
+        return responseHeadersBuilder
+                   .aspspScaApproach(scaApproach)
+                   .build();
+    }
+
 }

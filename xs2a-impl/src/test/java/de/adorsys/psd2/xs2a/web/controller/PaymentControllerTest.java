@@ -60,6 +60,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.*;
 import java.util.function.Function;
@@ -105,6 +107,8 @@ class PaymentControllerTest {
     private static final boolean EXPLICIT_PREFERRED_FALSE = false;
     private static final String PSU_DATA_PASSWORD_JSON_PATH = "json/web/controller/psuData-password.json";
     private static final String PSU_MESSAGE = "PSU message";
+    private static final String SCA_APPROACH_HEADER = "Aspsp-Sca-Approach";
+    private static final String DECOUPLED_APPROACH_VALUE = "DECOUPLED";
 
     @InjectMocks
     private PaymentController paymentController;
@@ -301,11 +305,18 @@ class PaymentControllerTest {
     void cancelPayment_WithAuthorisation_Success() {
         PisPaymentCancellationRequest paymentCancellationRequest = new PisPaymentCancellationRequest(SINGLE, PRODUCT, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null);
 
-        when(responseMapper.accepted(any()))
-            .thenReturn(new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED));
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.put(SCA_APPROACH_HEADER, Collections.singletonList(DECOUPLED_APPROACH_VALUE));
+
+        ResponseEntity<PaymentInitiationCancelResponse202> response = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), headers, ACCEPTED);
+
+        when(responseMapper.accepted(any(), any()))
+            .thenReturn(response);
         when(paymentModelMapperPsd2.mapToPaymentCancellationRequest(PRODUCT, CORRECT_PAYMENT_SERVICE, CORRECT_PAYMENT_ID, BooleanUtils.isTrue(EXPLICIT_PREFERRED_FALSE), null, null))
             .thenReturn(paymentCancellationRequest);
         when(xs2aPaymentService.cancelPayment(paymentCancellationRequest)).thenReturn(getCancelPaymentResponseObject(true));
+        when(paymentCancellationHeadersBuilder.buildCancelPaymentHeaders(AUTHORISATION_ID))
+            .thenReturn(ResponseHeaders.builder().aspspScaApproach(ScaApproach.DECOUPLED).build());
 
         // Given
         ResponseEntity<PaymentInitiationCancelResponse202> expectedResult = new ResponseEntity<>(getPaymentInitiationCancelResponse200202(de.adorsys.psd2.model.TransactionStatus.ACTC), HttpStatus.ACCEPTED);
@@ -323,6 +334,8 @@ class PaymentControllerTest {
         // Then
         assertThat(actualResult.getStatusCode()).isEqualTo(expectedResult.getStatusCode());
         assertThat(actualResult.getBody()).isEqualTo(expectedResult.getBody());
+        assertTrue(actualResult.getHeaders().containsKey(SCA_APPROACH_HEADER));
+        assertThat(actualResult.getHeaders().get(SCA_APPROACH_HEADER)).isEqualTo(Collections.singletonList(DECOUPLED_APPROACH_VALUE));
     }
 
     @Test
@@ -1215,6 +1228,7 @@ class PaymentControllerTest {
 
     private ResponseObject<CancelPaymentResponse> getCancelPaymentResponseObject(boolean startAuthorisationRequired) {
         CancelPaymentResponse response = new CancelPaymentResponse();
+        response.setAuthorizationId(AUTHORISATION_ID);
         response.setStartAuthorisationRequired(startAuthorisationRequired);
         return ResponseObject.<CancelPaymentResponse>builder().body(response).build();
     }

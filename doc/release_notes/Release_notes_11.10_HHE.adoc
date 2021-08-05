@@ -1,0 +1,10 @@
+= Release notes v.11.10
+
+== Table of Contents
+
+* Added `Aspsp-Sca-Approach` header for `Cancel Payment` response
+
+==  Added `Aspsp-Sca-Approach` header for `Cancel Payment` response
+
+From now on, the `Aspsp-Sca-Approach` header is present in a response for cancel payment request (DELETE `/v1/{payment_service}/{payment_product}/{payment_id}`).
+
