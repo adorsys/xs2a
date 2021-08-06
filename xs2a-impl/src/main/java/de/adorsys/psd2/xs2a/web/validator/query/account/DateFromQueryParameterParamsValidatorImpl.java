@@ -34,6 +34,7 @@ public class DateFromQueryParameterParamsValidatorImpl extends AbstractQueryPara
     private static final String DATE_FROM_PARAMETER_NAME = "dateFrom";
     private static final String ENTRY_REFERENCE_FROM_PARAMETER_NAME = "entryReferenceFrom";
     private static final String DELTA_LIST_PARAMETER_NAME = "deltaList";
+    private static final String BOOKING_STATUS_PARAMETER_NAME = "bookingStatus";
 
     public DateFromQueryParameterParamsValidatorImpl(ErrorBuildingService errorBuildingService) {
         super(errorBuildingService);
@@ -52,7 +53,11 @@ public class DateFromQueryParameterParamsValidatorImpl extends AbstractQueryPara
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_INVALID_FIELD, getQueryParameterName()));
         }
 
-        if (dateFrom == null && !isDeltaAccess(queryParameterMap)) {
+        boolean isBookingStatusInformation = queryParameterMap.get(BOOKING_STATUS_PARAMETER_NAME) != null
+                                                 && queryParameterMap.get(BOOKING_STATUS_PARAMETER_NAME).size() == 1
+                                                 && queryParameterMap.get(BOOKING_STATUS_PARAMETER_NAME).get(0).equalsIgnoreCase("information");
+
+        if (dateFrom == null && !isDeltaAccess(queryParameterMap) && !isBookingStatusInformation) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_ABSENT_PARAMETER, getQueryParameterName()));
         }
 
