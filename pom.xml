@@ -141,6 +141,18 @@
             <organization>LLC Golden Dimension</organization>
             <organizationUrl>https://adorsys.com.ua/</organizationUrl>
         </developer>
+        <developer>
+            <name>Kateryna Yashnyk</name>
+            <email>kya@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Serhii Semenykhin</name>
+            <email>sse@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
     </developers>
 
     <properties>
