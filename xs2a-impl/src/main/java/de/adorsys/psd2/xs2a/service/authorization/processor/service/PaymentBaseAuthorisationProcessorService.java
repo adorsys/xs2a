@@ -53,6 +53,7 @@ import de.adorsys.psd2.xs2a.spi.domain.payment.response.SpiPaymentExecutionRespo
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
@@ -63,20 +64,21 @@ import java.util.Set;
 
 import static de.adorsys.psd2.xs2a.core.sca.ScaStatus.*;
 
-abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisationProcessorService {
+@Slf4j
+abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisationProcessorService {// NOPMD
 
     private static final String EMBEDDED_SELECTING_SCA_METHOD_FAILED_MSG = "Proceed embedded approach when performs authorisation depending on selected SCA method has failed.";
 
-    private List<PisScaAuthorisationService> services;
-    private Xs2aAuthorisationService xs2aAuthorisationService;
-    private Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
-    private Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
-    private SpiContextDataProvider spiContextDataProvider;
-    private SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
-    private SpiErrorMapper spiErrorMapper;
-    private PisAspspDataService pisAspspDataService;
-    private Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
-    private Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
+    private final List<PisScaAuthorisationService> services;
+    private final Xs2aAuthorisationService xs2aAuthorisationService;
+    private final Xs2aPisCommonPaymentService xs2aPisCommonPaymentService;
+    private final Xs2aToSpiPaymentMapper xs2aToSpiPaymentMapper;
+    private final SpiContextDataProvider spiContextDataProvider;
+    private final SpiAspspConsentDataProviderFactory aspspConsentDataProviderFactory;
+    private final SpiErrorMapper spiErrorMapper;
+    private final PisAspspDataService pisAspspDataService;
+    private final Xs2aPisCommonPaymentMapper xs2aPisCommonPaymentMapper;
+    private final Xs2aToSpiPsuDataMapper xs2aToSpiPsuDataMapper;
 
     protected PaymentBaseAuthorisationProcessorService(List<PisScaAuthorisationService> services,
                                                        Xs2aAuthorisationService xs2aAuthorisationService,
@@ -395,6 +397,13 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
                                                 aspspConsentDataProvider, psuData, xs2aCurrencyConversionInfo);
     }
 
+    protected SpiPayment getSpiPayment(String encryptedPaymentId) {
+        Optional<PisCommonPaymentResponse> commonPaymentById = xs2aPisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
+        return commonPaymentById
+                   .map(pisCommonPaymentResponse -> xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse))
+                   .orElse(null);
+    }
+
     private Xs2aUpdatePisCommonPaymentPsuDataResponse proceedSingleScaEmbeddedApproach(AuthorisationProcessorRequest authorisationProcessorRequest,
                                                                                        SpiPayment payment,
                                                                                        AuthenticationObject chosenMethod,
@@ -481,10 +490,22 @@ abstract class PaymentBaseAuthorisationProcessorService extends BaseAuthorisatio
         return response;
     }
 
-    protected SpiPayment getSpiPayment(String encryptedPaymentId) {
-        Optional<PisCommonPaymentResponse> commonPaymentById = xs2aPisCommonPaymentService.getPisCommonPaymentById(encryptedPaymentId);
-        return commonPaymentById
-                   .map(pisCommonPaymentResponse -> xs2aToSpiPaymentMapper.mapToSpiPayment(pisCommonPaymentResponse))
-                   .orElse(null);
+    private void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
+        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", message);
+        log.warn(messageToLog,
+                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
+                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
+                 psuData != null ? psuData.getPsuId() : "-",
+                 request.getScaApproach(),
+                 errorHolder);
+    }
+
+    private void writeInfoLog(AuthorisationProcessorRequest request, PsuIdData psuData, String message) {
+        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", message);
+        log.info(messageToLog,
+                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
+                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
+                 psuData != null ? psuData.getPsuId() : "-",
+                 request.getScaApproach());
     }
 }
