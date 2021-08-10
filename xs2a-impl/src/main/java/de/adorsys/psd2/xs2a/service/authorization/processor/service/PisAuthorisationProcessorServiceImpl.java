@@ -53,11 +53,13 @@ import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.CurrencyConversionInfoSpi;
 import de.adorsys.psd2.xs2a.spi.service.PaymentAuthorisationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisationProcessorService {
 
     private final PisExecutePaymentService pisExecutePaymentService;
@@ -115,8 +117,8 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
 
     @Override
     SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
-                                                                            SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
-                                                                            SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                                     SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
+                                                                                     SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return pisExecutePaymentService.verifyScaAuthorisationAndExecutePaymentWithPaymentResponse(contextData,
                                                                                                    spiScaConfirmation,
                                                                                                    payment,
@@ -231,4 +233,13 @@ public class PisAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisati
         return new Xs2aUpdatePisCommonPaymentPsuDataResponse(resultScaStatus, paymentId, authorisationId, psuData, xs2aCurrencyConversionInfo);
     }
 
+    private void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
+        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", message);
+        log.warn(messageToLog,
+                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
+                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
+                 psuData != null ? psuData.getPsuId() : "-",
+                 request.getScaApproach(),
+                 errorHolder);
+    }
 }
