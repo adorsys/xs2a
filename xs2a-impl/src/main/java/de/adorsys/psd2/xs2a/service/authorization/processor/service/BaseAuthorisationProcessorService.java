@@ -18,8 +18,6 @@ package de.adorsys.psd2.xs2a.service.authorization.processor.service;
 
 import de.adorsys.psd2.xs2a.core.authorisation.AuthenticationObject;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
-import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
-import de.adorsys.psd2.xs2a.core.mapper.ServiceType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.sca.ChallengeData;
 import de.adorsys.psd2.xs2a.domain.authorisation.UpdateAuthorisationRequest;
@@ -56,27 +54,6 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
                    .orElse(false);
     }
 
-    void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
-        String businessObjectName = resolveBusinessObjectName(request.getServiceType());
-        String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", businessObjectName, message);
-        log.info(messageToLog,
-                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
-                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
-                 psuData != null ? psuData.getPsuId() : "-",
-                 request.getScaApproach(),
-                 errorHolder);
-    }
-
-    void writeInfoLog(AuthorisationProcessorRequest request, PsuIdData psuData, String message) {
-        String businessObjectName = resolveBusinessObjectName(request.getServiceType());
-        String messageToLog = String.format("%s [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", businessObjectName, message);
-        log.info(messageToLog,
-                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
-                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
-                 psuData != null ? psuData.getPsuId() : "-",
-                 request.getScaApproach());
-    }
-
     boolean isSingleScaMethod(List<AuthenticationObject> spiScaMethods) {
         return spiScaMethods.size() == 1;
     }
@@ -96,9 +73,5 @@ abstract class BaseAuthorisationProcessorService implements AuthorisationProcess
                                Authorisation authorisation) {
         PsuIdData psuDataInRequest = request.getPsuData();
         return isPsuExist(psuDataInRequest) ? psuDataInRequest : authorisation.getPsuIdData();
-    }
-
-    protected String resolveBusinessObjectName(ServiceType serviceType) {
-        return serviceType == ServiceType.AIS || serviceType == ServiceType.PIIS ? "Consent-ID" : "Payment-ID";
     }
 }
