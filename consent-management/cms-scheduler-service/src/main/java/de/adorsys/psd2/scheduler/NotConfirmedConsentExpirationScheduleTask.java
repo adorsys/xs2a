@@ -23,7 +23,6 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class NotConfirmedConsentExpirationScheduleTask extends PageableSchedulerTask {
+public class NotConfirmedConsentExpirationScheduleTask {
     private final AisConsentConfirmationExpirationService aisConsentConfirmationExpirationService;
     private final ConsentJpaRepository consentJpaRepository;
 
@@ -45,22 +44,17 @@ public class NotConfirmedConsentExpirationScheduleTask extends PageableScheduler
         long start = System.currentTimeMillis();
         log.info("Not confirmed consent expiration schedule task is run!");
 
-        Long totalItems = consentJpaRepository.countByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED));
-        log.debug("Found {} non confirmed consent items for expiration checking", totalItems);
+        List<String> expiredNotConfirmedConsentIds = consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED))
+                                                     .stream()
+                                                     .filter(aisConsentConfirmationExpirationService::isConfirmationExpired)
+                                                     .map(ConsentEntity::getExternalId)
+                                                     .collect(Collectors.toList());
+        log.info("Found {} non confirmed consent items for expiration", expiredNotConfirmedConsentIds.size());
 
-        execute(totalItems);
-        log.info("Not confirmed consent expiration schedule task completed in {}ms!", System.currentTimeMillis() - start);
-    }
-
-    @Override
-    protected void executePageable(Pageable pageable) {
-        List<ConsentEntity> expiredNotConfirmedConsents = consentJpaRepository.findByConsentStatusIn(EnumSet.of(ConsentStatus.RECEIVED, ConsentStatus.PARTIALLY_AUTHORISED), pageable)
-                                                              .stream()
-                                                              .filter(aisConsentConfirmationExpirationService::isConfirmationExpired)
-                                                              .collect(Collectors.toList());
-
-        if (CollectionUtils.isNotEmpty(expiredNotConfirmedConsents)) {
-            aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpiration(expiredNotConfirmedConsents);
+        if (CollectionUtils.isNotEmpty(expiredNotConfirmedConsentIds)) {
+            aisConsentConfirmationExpirationService.updateConsentListOnConfirmationExpirationByExternalIds(expiredNotConfirmedConsentIds);
         }
+
+        log.info("Not confirmed consent expiration schedule task completed in {}ms!", System.currentTimeMillis() - start);
     }
 }

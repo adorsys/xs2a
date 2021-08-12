@@ -46,6 +46,7 @@ import de.adorsys.psd2.xs2a.spi.domain.authorisation.SpiPsuAuthorisationResponse
 import de.adorsys.psd2.xs2a.spi.domain.consent.SpiVerifyScaAuthorisationResponse;
 import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -53,6 +54,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("PMD.TooManyMethods")
+@Slf4j
 public abstract class ConsentAuthorisationProcessorService<T extends Consent> extends BaseAuthorisationProcessorService {
     private static final String CONSENT_NOT_FOUND_LOG_MESSAGE = "Apply authorisation when update consent PSU data has failed. Consent not found by id.";
 
@@ -339,6 +341,15 @@ public abstract class ConsentAuthorisationProcessorService<T extends Consent> ex
         return authorisationService.isAuthenticationMethodDecoupled(authorisationId, authenticationMethodId);
     }
 
+    private void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
+        String messageToLog = String.format("Consent-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", message);
+        log.warn(messageToLog,
+                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
+                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
+                 psuData != null ? psuData.getPsuId() : "-",
+                 request.getScaApproach(),
+                 errorHolder);
+    }
 
     abstract UpdateConsentPsuDataResponse proceedDecoupledApproach(String consentId, String authorisationId, T consent, String authenticationMethodId, PsuIdData psuData);
 

@@ -57,11 +57,13 @@ import de.adorsys.psd2.xs2a.spi.domain.psu.SpiPsuData;
 import de.adorsys.psd2.xs2a.spi.domain.response.SpiResponse;
 import de.adorsys.psd2.xs2a.spi.service.PaymentCancellationSpi;
 import de.adorsys.psd2.xs2a.spi.service.SpiPayment;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBaseAuthorisationProcessorService {
 
     private final PaymentCancellationSpi paymentCancellationSpi;
@@ -110,8 +112,8 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
     @Override
     SpiResponse<SpiPaymentExecutionResponse> verifyScaAuthorisationAndExecutePayment(Authorisation authorisation,
-                                                                            SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
-                                                                            SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
+                                                                                     SpiPayment payment, SpiScaConfirmation spiScaConfirmation,
+                                                                                     SpiContextData contextData, SpiAspspConsentDataProvider spiAspspConsentDataProvider) {
         return paymentCancellationSpi.verifyScaAuthorisationAndCancelPaymentWithResponse(contextData, spiScaConfirmation, payment, spiAspspConsentDataProvider);
     }
 
@@ -202,5 +204,24 @@ public class PisCancellationAuthorisationProcessorServiceImpl extends PaymentBas
 
         return psuIdDataList.stream()
                    .anyMatch(psu -> psu.contentEquals(psuData));
+    }
+
+    private void writeErrorLog(AuthorisationProcessorRequest request, PsuIdData psuData, ErrorHolder errorHolder, String message) {
+        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s Error msg: [{}]", message);
+        log.warn(messageToLog,
+                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
+                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
+                 psuData != null ? psuData.getPsuId() : "-",
+                 request.getScaApproach(),
+                 errorHolder);
+    }
+
+    private void writeInfoLog(AuthorisationProcessorRequest request, PsuIdData psuData, String message) {
+        String messageToLog = String.format("Payment-ID [{}], Authorisation-ID [{}], PSU-ID [{}], SCA Approach [{}]. %s", message);
+        log.info(messageToLog,
+                 request.getUpdateAuthorisationRequest().getBusinessObjectId(),
+                 request.getUpdateAuthorisationRequest().getAuthorisationId(),
+                 psuData != null ? psuData.getPsuId() : "-",
+                 request.getScaApproach());
     }
 }

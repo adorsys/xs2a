@@ -21,7 +21,7 @@
 
     <groupId>de.adorsys.psd2</groupId>
     <artifactId>xs2a</artifactId>
-    <version>10.9</version>
+    <version>10.10</version>
     <modules>
         <module>xs2a-server-api</module>
         <module>xs2a-core</module>
@@ -138,6 +138,18 @@
         <developer>
             <name>Vitaliy Shershnyov</name>
             <email>vse@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Kateryna Yashnyk</name>
+            <email>kya@adorsys.com.ua</email>
+            <organization>LLC Golden Dimension</organization>
+            <organizationUrl>https://adorsys.com.ua/</organizationUrl>
+        </developer>
+        <developer>
+            <name>Serhii Semenykhin</name>
+            <email>sse@adorsys.com.ua</email>
             <organization>LLC Golden Dimension</organization>
             <organizationUrl>https://adorsys.com.ua/</organizationUrl>
         </developer>
