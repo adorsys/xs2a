@@ -22,8 +22,6 @@ stages:
 # ------------------------------------------------------------------
 
 variables:
-  SONAR_HOST: "https://psd2-quality.cloud.adorsys.de"
-
   DOCKER_IMAGE_NAME_CNT_MGMNT: "xs2a-consent-management"
   DOCKER_IMAGE_NAME_ASPSP_PROFILE: "xs2a-aspsp-profile"
   DOCKER_IMAGE_NAME_XS2A: "xs2a-service"
@@ -269,21 +267,6 @@ Test:Unit_Tests_XS2A_Java11:
   variables:
     JAVA_VERSION: "system@1.11"
     JAVA_TOOL_OPTIONS: "-Djavax.net.ssl.trustStorePassword=changeit -XX:MaxRAM=3G"
-
-Test:Sonarcube:
-  stage: "Test"
-  needs: []
-  except:
-    - schedules
-    - develop
-  script:
-    - jabba use system@1.11
-    - cat /sys/fs/cgroup/memory/memory.limit_in_bytes
-    - java -XX:+PrintFlagsFinal -version | grep -Ei "maxheapsize|maxram"
-    - mvn -ntp -e --fail-at-end clean install
-    - mvn -ntp -e sonar:sonar -Dsonar.host.url=${SONAR_HOST} -Dsonar.login=${SONAR_TOKEN}
-  variables:
-    TESTCONTAINERS_RYUK_DISABLED: "true"
 
 Test:AsciiDoc:
   stage: "Test"
