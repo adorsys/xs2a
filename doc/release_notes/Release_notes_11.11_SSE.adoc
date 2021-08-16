@@ -1,0 +1,10 @@
+= Release notes v.11.11
+
+== Table of Contents
+
+* Added new query parameter of bookingStatus for Transaction report
+
+== Added new query parameter of bookingStatus for Transaction report
+
+From now on, new `BookingStatus.ALL` is available for Transaction report. In this case Transaction report will include
+all types of transactions(Booked, Pending, Information). ASPSP should support this property to use it.

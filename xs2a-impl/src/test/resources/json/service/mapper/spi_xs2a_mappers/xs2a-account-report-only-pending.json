@@ -1,6 +1,8 @@
 {
   "booked": [
   ],
+  "information": [
+  ],
   "pending": [
     {
       "transactionId": "7654321",
