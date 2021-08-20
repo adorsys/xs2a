@@ -115,9 +115,15 @@ public class OneOffConsentExpirationService {
         Set<BookingStatus> bookingStatuses = consentTransactions.stream()
                                                  .map(AisConsentTransaction::getBookingStatus)
                                                  .collect(Collectors.toSet());
-        EnumSet<BookingStatus> filteredBookingStatuses = bookingStatuses.contains(BookingStatus.BOTH) ?
-                                                             EnumSet.of(BookingStatus.BOTH) :
-                                                             EnumSet.of(BookingStatus.BOOKED, BookingStatus.PENDING);
+        EnumSet<BookingStatus> filteredBookingStatuses;
+        if (bookingStatuses.contains(BookingStatus.ALL)) {
+            filteredBookingStatuses = EnumSet.of(BookingStatus.ALL);
+        } else if (bookingStatuses.contains(BookingStatus.BOTH)) {
+            filteredBookingStatuses = EnumSet.of(BookingStatus.BOTH);
+        } else {
+            filteredBookingStatuses = EnumSet.of(BookingStatus.BOOKED, BookingStatus.PENDING);
+        }
+
         return consentTransactions.stream()
                    .filter(t -> filteredBookingStatuses.contains(t.getBookingStatus()))
                    .map(AisConsentTransaction::getNumberOfTransactions)

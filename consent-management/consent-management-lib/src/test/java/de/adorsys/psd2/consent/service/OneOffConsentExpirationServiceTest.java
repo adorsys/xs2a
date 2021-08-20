@@ -28,6 +28,7 @@ import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.xs2a.reader.JsonReader;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,6 +116,58 @@ class OneOffConsentExpirationServiceTest {
         when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
         cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
         aisConsentTransaction.setNumberOfTransactions(1);
+
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(1);
+
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, null, null);
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+
+        // When
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
+
+        // Then
+        assertTrue(isExpired);
+    }
+
+    @Test
+    void isConsentExpired_bookingStatusAllIsPresent_shouldReturnTrue() {
+        // Given
+        aspspSettings.getAis().getTransactionParameters().getAvailableBookingStatuses().add(BookingStatus.ALL);
+        when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
+        cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
+        aisConsentTransaction.setNumberOfTransactions(1);
+        aisConsentTransaction.setBookingStatus(BookingStatus.ALL);
+
+        when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
+            .thenReturn(Collections.singletonList(aisConsentTransaction));
+        when(aisConsentUsageRepository.countByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID))
+            .thenReturn(1);
+
+        AisConsent aisConsent = buildAisConsent(accountReference, null, null, null, null);
+        when(cmsAisConsentMapper.mapToAisConsent(cmsConsent))
+            .thenReturn(aisConsent);
+        cmsConsent.setAspspAccountAccesses(aisConsent.getAspspAccountAccesses());
+
+        // When
+        boolean isExpired = oneOffConsentExpirationService.isConsentExpired(cmsConsent, CONSENT_ID);
+
+        // Then
+        assertTrue(isExpired);
+    }
+
+    @Test
+    void isConsentExpired_bookingStatusBothIsPresent_shouldReturnTrue() {
+        // Given
+        aspspSettings.getAis().getTransactionParameters().getAvailableBookingStatuses().add(BookingStatus.BOTH);
+        when(aspspProfileService.getAspspSettings(INSTANCE_ID)).thenReturn(aspspSettings);
+        cmsConsent.setConsentData(consentDataMapper.getBytesFromConsentData(AisConsentData.buildDefaultAisConsentData()));
+        aisConsentTransaction.setNumberOfTransactions(1);
+        aisConsentTransaction.setBookingStatus(BookingStatus.BOTH);
 
         when(aisConsentTransactionRepository.findByConsentIdAndResourceId(CONSENT_ID, RESOURCE_ID, Pageable.unpaged()))
             .thenReturn(Collections.singletonList(aisConsentTransaction));
