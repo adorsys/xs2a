@@ -33,7 +33,7 @@ public class RequestUriHandler {
 
     public String handleTransactionUri(String transactionUri, String bookingStatus, Integer pageIndex) {
         UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromPath(transactionUri)
-                                                        .queryParam("bookingStatus", bookingStatus);
+                                                        .queryParam("bookingStatus", bookingStatus.toLowerCase());
         if (pageIndex != null) {
             uriComponentsBuilder.replaceQueryParam("pageIndex", pageIndex);
         }
