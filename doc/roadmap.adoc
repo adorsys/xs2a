@@ -187,6 +187,9 @@ a|
 a|
 a| * GET Transactions by download resource return an object with links to localhost on DEV environment
 * Adjust connector to retrieve "fundsAvailable" for Get Transaction Status Response
+* Getting started step: create tables using liquibase
+* Bug fixing: Sql exception
+* Fix logging in xs2a
 a|* All fixes and updates from v.10.10
 * Clean AIS/PIS/PIIS/payment cancellation consent links in pure decoupled sca
 * Block update authorisation calls in pure decoupled for AIS/PIS/PIIS/payment cancellation
@@ -196,11 +199,9 @@ a|
 
 26.08.2021| | 10.11| 11.11| |
 a|
-a| * Getting started step: create tables using liquibase
-* Read Transaction List with bookingStatus=INFORMATION should not mandate any query parameters
+a| * Read Transaction List with bookingStatus=INFORMATION should not mandate any query parameters
 * Bug fixing: uppercase bookingStatus query parameter for One-off consents
-* Bug fixing: Sql exception
-* Fix logging in xs2a
+
 a|* All fixes and updates from v.10.10
 * Add new query parameter of bookingStatus for Transaction report
 * Update documentation about pure decoupled
