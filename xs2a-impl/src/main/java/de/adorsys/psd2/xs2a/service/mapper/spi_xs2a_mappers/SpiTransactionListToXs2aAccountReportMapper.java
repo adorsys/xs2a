@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 public class SpiTransactionListToXs2aAccountReportMapper {
     private static final Predicate<SpiTransaction> BOOKED_PREDICATE = SpiTransaction::isBookedTransaction;
     private static final Predicate<SpiTransaction> PENDING_PREDICATE = SpiTransaction::isPendingTransaction;
+    private static final Predicate<SpiTransaction> INFORMATION_PREDICATE = SpiTransaction::isInformationTransaction;
 
     private final SpiToXs2aTransactionMapper toXs2aTransactionMapper;
 
@@ -48,23 +49,33 @@ public class SpiTransactionListToXs2aAccountReportMapper {
             return Optional.empty();
         }
 
-        if (bookingStatus == BookingStatus.INFORMATION) {
-            return Optional.of(new Xs2aAccountReport(null, null, toXs2aTransactionMapper.mapToXs2aTransactionList(spiTransactions), null));
-        }
-
         List<Transactions> booked = Collections.emptyList();
         List<Transactions> pending = Collections.emptyList();
+        List<Transactions> information = Collections.emptyList();
 
-
-        if (bookingStatus != BookingStatus.PENDING) {
-            booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
+        switch (bookingStatus) {
+            case INFORMATION:
+                information = filterTransaction(spiTransactions, INFORMATION_PREDICATE);
+                break;
+            case BOOKED:
+                booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
+                break;
+            case PENDING:
+                pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
+                break;
+            case BOTH:
+                booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
+                pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
+                break;
+            case ALL:
+                information = filterTransaction(spiTransactions, INFORMATION_PREDICATE);
+                booked = filterTransaction(spiTransactions, BOOKED_PREDICATE);
+                pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
+                break;
+            default:
+                throw new IllegalArgumentException("This Booking Status is not supported: " + bookingStatus);
         }
-
-        if (bookingStatus != BookingStatus.BOOKED) {
-            pending = filterTransaction(spiTransactions, PENDING_PREDICATE);
-        }
-
-        return Optional.of(new Xs2aAccountReport(booked, pending, null, null));
+        return Optional.of(new Xs2aAccountReport(booked, pending, information, null));
     }
 
     @NotNull

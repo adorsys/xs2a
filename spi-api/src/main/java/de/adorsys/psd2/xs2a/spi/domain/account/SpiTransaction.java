@@ -51,6 +51,10 @@ public class SpiTransaction {
     }
 
     public boolean isPendingTransaction() {
-        return !isBookedTransaction();
+        return bookingDate == null && additionalInformationStructured == null;
+    }
+
+    public boolean isInformationTransaction() {
+        return additionalInformationStructured != null;
     }
 }

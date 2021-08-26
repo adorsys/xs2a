@@ -26,7 +26,8 @@ public enum BookingStatus {
     INFORMATION("information"),
     PENDING("pending"),
     BOOKED("booked"),
-    BOTH("both");
+    BOTH("both"),
+    ALL("all");
 
     private final String value;
 

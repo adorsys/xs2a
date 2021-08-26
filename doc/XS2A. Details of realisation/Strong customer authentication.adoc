@@ -14,6 +14,7 @@ Following transactions require strong customer authentication (SCA) of the PSU a
 * Establish account information consent transactions.
 
 === SCA Approaches
+
 XS2A Interface supports multiple SCA approaches. https://github.com/adorsys/xs2a/tree/develop/aspsp-profile[ASPSP-Profile] may contain a list of approaches (in order of priority - first one with the highest priority).
 Choice of SCA approach also depends on header parameter in initial request - TPP-Redirect-Preferred.
 If TPP-Redirect-Preferred is true and ASPSP supports REDIRECT approach, then REDIRECT approach is used. Otherwise first approach in ASPSP-profile is used.
@@ -28,10 +29,12 @@ If TPP-Redirect-Preferred is true and ASPSP supports REDIRECT approach, then RED
 |===
 
 === SCA using the redirect approach
+
 For the redirect approach the individual steps of the SCA are not executed at the XS2A interface, but directly between the PSU and the ASPSP. In this case, the PSU is redirected to a web interface of the ASPSP for authentication.
 Once the PSU has been redirected to the ASPSP (app or web interface) the SCA of the PSU is executed step by step and directly between the ASPSP and the PSU. After completion of the SCA the PSU is redirected back to the TPP.
 
 === Support Pre-step and Integrated OAuth modes
+
 The XS2A supports OAuth2 mode in two ways: as a Pre-step for PSU authentication and as Integrated OAuth SCA approach for the authorisation of payment/ consent/ payment cancellation.
 
 Parameter *"scaRedirectFlow"* in the ASPSP-Profile defines variant of the SCA redirect approach:
@@ -45,6 +48,7 @@ Parameter *"scaRedirectFlow"* in the ASPSP-Profile defines variant of the SCA r
 Parameter *"oauthConfigurationUrl"* in the ASPSP-Profile defines link to IDP (Authorisation Server) to authorise request with Redirect approach. Attribute is available to be configured with custom url pattern.
 
 ==== Pre-step OAuth
+
 Profile settings:
 |===
 |Option |Value
@@ -69,6 +73,7 @@ During Prestep OAuth TPP in initial request for consent, payment and payment can
 * If *Token is absent* in initial request, then XS2A responds with *HTTP error 401 Unauthorized* "Please retrieve token first from ... (link scaOauth)".
 
 ==== Integrated OAuth
+
 Profile settings:
 |===
 |Option |Value
@@ -104,20 +109,31 @@ The Token is validated in SPI, there is a collection of an error messages in res
 
 * *401 TOKEN_EXPIRED* The OAuth2 token is associated to the TPP but has expired and needs to be renewed.
 
-=== SCA using the decoupled approach
-The transaction flow of the decoupled approach to SCA is similar to that of the redirect approach. The difference is that the ASPSP asks the PSU to authenticate
-e.g. by sending a push notification with payment transaction details to a dedicated mobile app or via any other application or device which is independent of the online banking frontend.
-The first factor of authorisation process is executed on XS2A side and the second one through the bank application
-
 === SCA using the embedded approach
+
 When applying the embedded approach the SCA of the PSU is executed entirely as part of the transaction at the XS2A interface.
 
+=== SCA using the embedded + decoupled (decoupled as a second SCA factor) approach
+
+There is a possibility to use decoupled as a second factor during embedded approach flow (embedded + decoupled approach).
+The difference is that the ASPSP asks the PSU to authenticate e.g. by sending a push notification with payment transaction details to
+a dedicated mobile app or via any other application or device which is independent of the online banking frontend.
+The first factor of authorisation process is executed on XS2A side as embedded, and the second factor through the bank application as decoupled.
+
+=== SCA using the pure decoupled approach
+
+During the transaction flow of the decoupled (or pure decoupled) approach to SCA, immediately after starting authorisation
+the ASPSP asks the PSU to authenticate operation by sending a push notification with operation details to a dedicated
+mobile app or via any other application or device, which is independent of the online banking frontend,
+and the whole authorisation process is executed through this bank application apart from XS2A interface.
+
 === Explicit/Implicit start of authorisation
+
 Explicit start of authorisation is supported in case of Multilevel SCA and in case of Signing Basket, otherwise there is implicit start of authorisation.
 
 ASPSP may have Explicit\Implicit\Auto start of authorisation in any case of all flows.
 
-There is an option in ASPSP- Profile *"startAuthorisationMode"* that accepts 3 values (*case-insensetive*):
+There is an option in ASPSP- Profile *"startAuthorisationMode"* that accepts 3 values (*case-insensitive*):
 
 * Explicit - always explicit;
 
@@ -128,6 +144,7 @@ There is an option in ASPSP- Profile *"startAuthorisationMode"* that accepts 3 v
 This force overrides multilevel SCA, signing baskets etc.
 
 === Confirmation of Authorisation
+
 For counteraction of the fraud attacks in Redirect Approach, there is additional step for confirmation of Authorisation (Payment Initiation, Establish AIS Consent, Payment Cancellation process).
 
 This solution is following the solution proposal as defined in OAuth2 using an access token resp. a confirmation code for a confirmation command of the TPP
@@ -169,6 +186,7 @@ In case where a confirmation is processed but the preceding SCA method failed, t
 image::PaymentRedirectWithConfirmationCode.png[Payment Initiation in Redirect Approach with Authorisation Confirmation Code, title='Payment Initiation in Redirect Approach with Authorisation Confirmation Code', align='center']
 
 === Authorisation (SCA) Statuses
+
 Statuses which are defined finalised:
 
 * Finalised (The SCA routine has been finalised successfully);

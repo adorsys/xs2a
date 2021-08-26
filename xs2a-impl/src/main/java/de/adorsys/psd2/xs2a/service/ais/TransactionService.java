@@ -21,6 +21,7 @@ import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.core.data.ais.AisConsent;
 import de.adorsys.psd2.event.core.model.EventType;
 import de.adorsys.psd2.logger.context.LoggingContextService;
+import de.adorsys.psd2.xs2a.core.ais.BookingStatus;
 import de.adorsys.psd2.xs2a.core.domain.ErrorHolder;
 import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.ErrorType;
@@ -59,6 +60,7 @@ import org.springframework.stereotype.Service;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.adorsys.psd2.xs2a.core.error.ErrorType.AIS_400;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -151,7 +153,7 @@ public class TransactionService {
 
         if (CollectionUtils.isNotEmpty(spiTransactions)) {
             xs2aAccountService.saveTransactionParameters(request.getConsentId(), request.getAccountId(),
-                                                         new Xs2aTransactionParameters(spiTransactions.size(),
+                                                         new Xs2aTransactionParameters(getNumberOfTransactions(spiTransactions, request.getBookingStatus()),
                                                                                        spiTransactionReport.getTotalPages(),
                                                                                        request.getBookingStatus()));
         }
@@ -258,6 +260,17 @@ public class TransactionService {
                                                                                                 request.getBookingStatus(),
                                                                                                 request.getDateFrom());
         return getTransactionsReportValidator.validate(validatorObject);
+    }
+
+    private int getNumberOfTransactions(List<SpiTransaction> spiTransactions, BookingStatus bookingStatus) {
+        if (bookingStatus == BookingStatus.INFORMATION) {
+            //since we can not read transaction details for INFORMATION transaction status, we don't need real number of this kind of transactions
+            return 1;
+        }
+        return spiTransactions.stream()
+                   .filter(t -> !t.isInformationTransaction())
+                   .collect(Collectors.toList())
+                   .size();
     }
 
     private ValidationResult getValidationResultForCommonAccountTransactions(String accountId, String requestUri,

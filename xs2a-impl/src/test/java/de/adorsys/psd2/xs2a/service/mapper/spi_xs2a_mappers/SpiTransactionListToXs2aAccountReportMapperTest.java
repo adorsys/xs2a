@@ -122,6 +122,24 @@ class SpiTransactionListToXs2aAccountReportMapperTest {
     }
 
     @Test
+    void mapToXs2aAccountReport_shouldReturnAll() {
+        //Given
+        List<SpiTransaction> transactions = jsonReader
+            .getListFromFile("json/service/mapper/spi_xs2a_mappers/spi-transactions.json", SpiTransaction.class);
+        Xs2aAccountReport expected = jsonReader
+            .getObjectFromFile("json/service/mapper/spi_xs2a_mappers/xs2a-account-report-all.json", Xs2aAccountReport.class);
+
+        //When
+        Optional<Xs2aAccountReport> actual = spiTransactionListToXs2aAccountReportMapper
+            .mapToXs2aAccountReport(BookingStatus.ALL, transactions, null);
+
+        //Then
+        assertThat(actual)
+            .isNotEmpty()
+            .contains(expected);
+    }
+
+    @Test
     void mapToXs2aAccountReport_bookingStatusIsInformation() {
         //Given
         List<SpiTransaction> transactions = jsonReader
@@ -139,7 +157,7 @@ class SpiTransactionListToXs2aAccountReportMapperTest {
             .get()
             .extracting(Xs2aAccountReport::getInformation)
             .asList()
-            .hasSize(2)
+            .hasSize(1)
             .isEqualTo(expected);
     }
 }

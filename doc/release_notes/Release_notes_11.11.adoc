@@ -1,0 +1,24 @@
+= Release notes v.11.11
+
+== Table of Contents
+
+* Added new query parameter of bookingStatus for Transaction report
+
+* Added description for the Pure Decoupled SCA approach to documentation
+
+* Fixed bug with uppercase bookingStatus query parameter for One-off consents
+
+== Added new query parameter of bookingStatus for Transaction report
+
+From now on, new `BookingStatus.ALL` is available for Transaction report. In this case Transaction report will include
+all types of transactions(Booked, Pending, Information). ASPSP should support this property to use it.
+
+== Added description for the Pure Decoupled SCA approach to documentation
+
+Short description for the Pure Decoupled SCA approach was added into `doc/XS2A. Details of realisation/Strong customer authentication.adoc`,
+changed description for the Embedded + Decoupled approach.
+
+== Fixed bug with uppercase bookingStatus query parameter for One-off consents
+
+From now on, it is unable to read transaction list with the same booking status more times, than allowed by consent, using
+different letter cases in query parameter `bookingStatus`.

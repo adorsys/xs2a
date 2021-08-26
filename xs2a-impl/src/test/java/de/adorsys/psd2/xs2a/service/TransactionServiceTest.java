@@ -111,10 +111,12 @@ class TransactionServiceTest {
     private static final SpiTransactionReport SPI_TRANSACTION_REPORT = buildSpiTransactionReport();
     private static final SpiContextData SPI_CONTEXT_DATA = TestSpiDataProvider.getSpiContextData();
     private static final BookingStatus BOOKING_STATUS = BookingStatus.BOTH;
+    private static final BookingStatus BOOKING_STATUS_INFORMATION = BookingStatus.INFORMATION;
     private static final MessageError VALIDATION_ERROR = new MessageError(ErrorType.AIS_401, of(CONSENT_INVALID));
     private static final String ENTRY_REFERENCE_FROM = "777";
     private static final Boolean DELTA_LIST = Boolean.TRUE;
     private static final Xs2aTransactionsReportByPeriodRequest XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST = buildXs2aTransactionsReportByPeriodRequest();
+    private static final Xs2aTransactionsReportByPeriodRequest XS2A_TRANSACTIONS_REPORT_BY_PERIOD_BOOKING_STATUS_INFO_REQUEST = buildXs2aTransactionsReportByPeriodBookingStatusInfoRequest();
     private static final String DOWNLOAD_ID = "dGVzdA==";
     private static final int DATA_SIZE_BYTES = 1000;
     private static final String FILENAME = "transactions.json";
@@ -173,6 +175,9 @@ class TransactionServiceTest {
     private LoggingContextService loggingContextService;
     @Mock
     private Xs2aAccountService xs2aAccountService;
+    @Mock
+    SpiTransaction testSpiTransaction;
+
 
     @BeforeEach
     void setUp() {
@@ -316,6 +321,50 @@ class TransactionServiceTest {
 
         // When
         ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_REQUEST);
+
+        // Then
+        assertResponseHasNoErrors(actualResponse);
+
+        Xs2aTransactionsReport body = actualResponse.getBody();
+
+        assertThat(body).isNotNull();
+        assertThat(body.getAccountReport()).isEqualTo(xs2aAccountReport);
+        assertThat(body.getAccountReference()).isEqualTo(XS2A_ACCOUNT_REFERENCE);
+        assertThat(CollectionUtils.isEqualCollection(body.getBalances(), Collections.emptyList())).isTrue();
+
+        verify(accountSpi).requestTransactionsForAccount(any(SpiContextData.class), argumentCaptor.capture(), any(SpiAccountReference.class), any(SpiAccountConsent.class), eq(null));
+        checkPassingParametersWithoutAnyChanges(argumentCaptor.getValue());
+    }
+
+    @Test
+    void getTransactionsReportByPeriodBookingStatusInformation_Success() {
+        // Given
+        when(getTransactionsReportValidator.validate(any(TransactionsReportByPeriodObject.class)))
+            .thenReturn(ValidationResult.valid());
+        when(aisConsentService.getAccountConsentById(CONSENT_ID))
+            .thenReturn(Optional.of(aisConsent));
+        when(accountHelperService.findAccountReference(any(), any()))
+            .thenReturn(spiAccountReference);
+        when(accountHelperService.getSpiContextData())
+            .thenReturn(SPI_CONTEXT_DATA);
+        when(aspspProfileService.isTransactionsWithoutBalancesSupported())
+            .thenReturn(true);
+        when(accountSpi.requestTransactionsForAccount(SPI_CONTEXT_DATA, buildSpiTransactionReportParametersBookingStatusInfo(), spiAccountReference, SPI_ACCOUNT_CONSENT, spiAspspConsentDataProvider))
+            .thenReturn(buildSuccessSpiResponse(buildSpiTransactionReportNonEmptyTransactionList()));
+
+        Xs2aAccountReport xs2aAccountReport = new Xs2aAccountReport(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), null);
+
+        when(transactionsToAccountReportMapper.mapToXs2aAccountReport(BookingStatus.INFORMATION, Collections.singletonList(testSpiTransaction), null))
+            .thenReturn(Optional.of(xs2aAccountReport));
+        when(referenceMapper.mapToXs2aAccountReference(spiAccountReference))
+            .thenReturn(XS2A_ACCOUNT_REFERENCE);
+        when(consentMapper.mapToSpiAccountConsent(any()))
+            .thenReturn(SPI_ACCOUNT_CONSENT);
+
+        ArgumentCaptor<SpiTransactionReportParameters> argumentCaptor = ArgumentCaptor.forClass(SpiTransactionReportParameters.class);
+
+        // When
+        ResponseObject<Xs2aTransactionsReport> actualResponse = transactionService.getTransactionsReportByPeriod(XS2A_TRANSACTIONS_REPORT_BY_PERIOD_BOOKING_STATUS_INFO_REQUEST);
 
         // Then
         assertResponseHasNoErrors(actualResponse);
@@ -948,9 +997,18 @@ class TransactionServiceTest {
         return new SpiTransactionReport(DOWNLOAD_ID, Collections.emptyList(), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null, null, 5);
     }
 
+    private SpiTransactionReport buildSpiTransactionReportNonEmptyTransactionList() {
+        return new SpiTransactionReport(DOWNLOAD_ID, Collections.singletonList(testSpiTransaction), Collections.emptyList(), SpiTransactionReport.RESPONSE_TYPE_JSON, null, null, 5);
+    }
+
     @NotNull
     private static Xs2aTransactionsReportByPeriodRequest buildXs2aTransactionsReportByPeriodRequest() {
         return new Xs2aTransactionsReportByPeriodRequest(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, null, null);
+    }
+
+    @NotNull
+    private static Xs2aTransactionsReportByPeriodRequest buildXs2aTransactionsReportByPeriodBookingStatusInfoRequest() {
+        return new Xs2aTransactionsReportByPeriodRequest(CONSENT_ID, ACCOUNT_ID, MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS_INFORMATION, REQUEST_URI, ENTRY_REFERENCE_FROM, DELTA_LIST, null, null);
     }
 
     @NotNull
@@ -960,5 +1018,9 @@ class TransactionServiceTest {
 
     private SpiTransactionReportParameters buildSpiTransactionReportParameters() {
         return new SpiTransactionReportParameters(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS, ENTRY_REFERENCE_FROM, DELTA_LIST, null, null);
+    }
+
+    private SpiTransactionReportParameters buildSpiTransactionReportParametersBookingStatusInfo() {
+        return new SpiTransactionReportParameters(MediaType.APPLICATION_JSON_VALUE, WITH_BALANCE, DATE_FROM, DATE_TO, BOOKING_STATUS_INFORMATION, ENTRY_REFERENCE_FROM, DELTA_LIST, null, null);
     }
 }

@@ -82,4 +82,18 @@ class RequestUriHandlerTest {
         // Then
         assertThat(actual).isEqualTo(expected);
     }
+
+    @Test
+    void handleTransactionUri_WithoutPageUpperCaseBookingStatus() {
+        // Given
+        String transactionUri = "v1/accounts/account_id/transactions";
+        String bookingStatus = "BOOKED";
+
+        // When
+        String actual = requestUriHandler.handleTransactionUri(transactionUri, bookingStatus, null);
+        String expected = "v1/accounts/account_id/transactions?bookingStatus=booked";
+
+        // Then
+        assertThat(actual).isEqualTo(expected);
+    }
 }
