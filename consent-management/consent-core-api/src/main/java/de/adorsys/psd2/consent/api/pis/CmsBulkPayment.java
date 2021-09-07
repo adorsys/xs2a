@@ -39,6 +39,7 @@ public class CmsBulkPayment extends BaseCmsPayment {
         return PaymentType.BULK;
     }
 
+    @Override
     public TransactionStatus getTransactionStatus() {
         return paymentStatus;
     }
