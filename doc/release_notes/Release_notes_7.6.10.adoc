@@ -1,0 +1,9 @@
+= Release notes v.7.6.10
+
+== Table of Contents
+
+* Added transaction status to payment models in CMS PSU API
+
+== Added transaction status to payment models in CMS PSU API
+
+`TransactionStatus` field was added to responses in endpoints "/psu-api/v1/payment/{payment-id}" and "/psu-api/v1/payment/redirect/{redirect-id}".

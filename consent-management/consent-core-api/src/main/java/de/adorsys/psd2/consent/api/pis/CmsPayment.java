@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.consent.api.pis;
 
+import de.adorsys.psd2.xs2a.core.pis.TransactionStatus;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.core.tpp.TppInfo;
@@ -37,4 +38,6 @@ public interface CmsPayment {
     OffsetDateTime getCreationTimestamp();
 
     OffsetDateTime getStatusChangeTimestamp();
+
+    TransactionStatus getTransactionStatus();
 }

@@ -59,4 +59,9 @@ public class CmsSinglePayment extends BaseCmsPayment {
         return PaymentType.SINGLE;
     }
 
+    @Override
+    public TransactionStatus getTransactionStatus() {
+        return paymentStatus;
+    }
+
 }
