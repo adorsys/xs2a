@@ -1,185 +1,27 @@
 = Roadmap
 
-Starting 1st of March 2020 XS2A-core Team is providing development within two branches:
+Starting 13th of September 2021 XS2A-core Team is providing development within two branches:
 
-*Stable branch 10.x*
+*Stable branch 12.x*
 
-Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.8. Will be supported till 13.09.2021
+Stable branch will contain bugfixing and possibly necessary changes to support mandatory endpoints defined by Berlin Group NextGenPSD2 Spec 1.3.9 with all Errata files. Will be supported till 14.03.2022
 
-*Development branch 11.x*
+*Development branch 13.x*
 
 Development branch is oriented on implementation of new features and optional endpoints.
-No backward compatibility with 10.x is guaranteed. Will be released as Stable version 12.x on 13.09.2021
+No backward compatibility with 12.x is guaranteed. Will be released as Stable version 12.x on 14.03.2022
 
 [cols="5*.<"]
 |====
-|release date|version 8.x (Stable)|version 10.x (Stable)|version 11.x (Development)|XS2A extention (commercial)
+|release date|version 10.x (Stable)|version 12.x (Stable)|version 13.x (Development)|XS2A extention (commercial)
 
-|25.03.2021| 8.12| 10.0| 11.0| |
-
-a| * Mock debtorName for get payment info
-
-a| * All fixes and updates from v.8.0
-
-* Add call to Spi for scaStatus on GET SCA Status request
-
-a|* All fixes and updates from v.10.0
-
-a| Signing Basket plugin for XS2A
-
-|08.04.2021| 8.13| 10.1| 11.1| |
-
-a| * Bugfixing: Fixed npe in AIS Consent checksum validation
-
-a| * All fixes and updates from v.8.0
-
-* Bugfixing: Added business object to AuthorisationSpi#getScaStatus
-
-a|* All fixes and updates from v.10.1
-
-*  Added pagination to event-service
+|13.09.2021| | 12.0| 13.0| |
 
 a|
 
-|21.04.2021| | 10.2| 11.2| |
+a| * All fixes and updates from v.11.11
 
-a|
-
-a| *  Added description about scaExemption flag
-
-a|* All fixes and updates from v.10.2
-
-*  Add new optional attributes (_links, tppMessages) to the Response body of Get Transaction Status Request,
-Get SCA Status Request
-
-a|
-
-
-
-|05.05.2021| | 10.3| 11.3| |
-
-a|
-
-a| * Restricted FrequencyPerDay for one-off consent usage
-
-* Increased test coverage
-
-* Removed deprecated AuthorisationSpi#getScaInformation
-
-* Removed deprecated CmsPayment
-
-a|* All fixes and updates from v.10.3
-
-*  Added new attribute to ASPSP-Profile
-
-a|
-
-
-
-|19.05.2021| | 10.4| 11.4| |
-
-a|
-
-a| * Refactored FieldLengthValidator
-
-a|* All fixes and updates from v.10.4
-
-*  Added new optional Header TPP-Decoupled-Preferred
-
-a|
-
-
-
-|02.06.2021| 10.0.2 | 10.5| 11.5| |
-
-a| * Bugfixing: SQLException. Lock wait timeout exceeded
-
-a| * All fixes and updates from v.10.0.2
-
-* Bugfixing: debtorName not available in response for get payment request for certain payments types
-
-* Bump commons-io from 2.6 to 2.8.0
-
-* Upgrade commons-validator from v. 1.6 to 1.7
-
-* Pass Header TPP-Redirect-Preferred to SPI level
-
-a|* All fixes and updates from v.10.5, v.10.0.2
-
-* Implement the posibility to add debtorAccount to payment resource
-
-* Migrate to .yaml open API ver 1.3.9_2021-05-04v1
-
-* Pass Header TPP-Decoupled-Preferred to SPI level
-
-
-
-a|
-|16.06.2021| | 10.6| 11.6| |
-
-a|
-a| * NPE for get transactions list without get account list
-
-* Remove withBalance query parameter from read card transaction list
-
-* Bump snakeyaml from 1.23 to 1.26
-
-* Bump hibernate-validator from 6.1.0.Final to 6.1.5.Final
-
-* Incorrect response structure for read transaction details request
-
-* Retrieve fields from SPI
-
-* Implement GetScaStatus from Ledgers
-
-
-a|* All fixes and updates from v.10.6
-
-* Migrate Connector to use OperationInitiationResource
-
-* Update connector to use latest ledgers version
-
-* Check Transaction report with execution date for pending transaction in valueDate attribute
-a|
-
-|30.06.2021| | 10.7| 11.7| |
-
-a|
-a| * Read Transaction List return "_links" subfield in wrong place
-
-* Fix filters order
-
-a|* All fixes and updates from v.10.7
-
-* Bugfixing: Update psu data with password fails for payment without creditor address field
-
-a| Signing Basket plugin for XS2A
-
-|14.07.2021| | 10.8| 11.8| |
-a|
-a| * Bugfix: Add validation for download transactions endpoint
-
-a|* All fixes and updates from v.10.8
-
-* Add new method to AuthorisationSpi
-
-a| Signing Basket plugin for XS2A
-
-|28.07.2021| | 10.9| 11.9| |
-a|
-a| * Rename method ReadCardAccount in CardAccountAPI
-
-a|* All fixes and updates from v.10.9
-* Bugfix: Refactor Xs2aConsentService#createConsentAuthorisation
-* Bugfix: Add validation of payment type to CmsPsuPisApi#updatePayment
-* Update HTTP Response Code for Message Code "FUNDS_NOT_AVAILABLE"
-* Change format for Card Account Details
-* Changes for Payment Exchange Rate type
-* Change format for "transactionDetails" in Card Transactions type
-* Block update authorisation calls for PIS/AIS/payment cancellation in pure decoupled
-* Change response header sca-approach for payment in pure decoupled sca
-* Clean payment links for pure decoupled sca
-* Add new method to AuthorisationSpi
+a| * All fixes and updates from v.11.11
 
 a|
 
@@ -193,7 +35,7 @@ a|
 
 a|
 
-|*For future development*| |*10.x*|*11.x*| *XS2A extention (commercial)*
+|*For future development*| |*12.x*|*13.x*| *XS2A extention (commercial)*
 
 | | | | |Signing Basket plugin for XS2A
 
