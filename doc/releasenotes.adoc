@@ -6,9 +6,19 @@ For Versioning policy see xref:version_policy.adoc[Versioning, Release and Suppo
 
 For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
+=== Mainline 13.x (Development. Planned to be released 14.03.2022 as 14.0 Stable version)
+
+* xref:release_notes/Release_notes_13.0.adoc[Version 13.0 (release date: ?)]
+
+=== Mainline 12.x (Stable. Supported minimum till 14.03.2022)
+
+* xref:release_notes/Release_notes_12.0.adoc[Version 12.0  (release date: ?)]
+
 === Mainline 11.x (Development. Planned to be released 13.09.2021 as 12.0 Stable version)
 
-* xref:release_notes/Release_notes_11.9.adoc[Version 11.9 (release date: ?)]
+* xref:release_notes/Release_notes_11.11.adoc[Version 11.11 (release date: 26.08.2021)]
+* xref:release_notes/Release_notes_11.10.adoc[Version 11.10 (release date: 12.08.2021)]
+* xref:release_notes/Release_notes_11.9.adoc[Version 11.9 (release date: 28.07.2021)]
 * xref:release_notes/Release_notes_11.8.adoc[Version 11.8 (release date: 14.07.2021)]
 * xref:release_notes/Release_notes_11.7.adoc[Version 11.7 (release date: 30.06.2021)]
 * xref:release_notes/Release_notes_11.6.adoc[Version 11.6 (release date: 16.06.2021)]
@@ -21,7 +31,9 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 10.x (Stable. Supported minimum till 13.09.2021)
 
-* xref:release_notes/Release_notes_10.9.adoc[Version 10.9  (release date: ?)]
+* xref:release_notes/Release_notes_10.11.adoc[Version 10.11  (release date: 26.08.2021)]
+* xref:release_notes/Release_notes_10.10.adoc[Version 10.10  (release date: 12.08.2021)]
+* xref:release_notes/Release_notes_10.9.adoc[Version 10.9  (release date: 28.07.2021)]
 * xref:release_notes/Release_notes_10.8.adoc[Version 10.8  (release date: 14.07.2021)]
 * xref:release_notes/Release_notes_10.7.adoc[Version 10.7  (release date: 30.06.2021)]
 * xref:release_notes/Release_notes_10.6.adoc[Version 10.6  (release date: 16.06.2021)]

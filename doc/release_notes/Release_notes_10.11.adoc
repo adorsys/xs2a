@@ -1,0 +1,9 @@
+= Release notes v.10.11
+
+== Table of Contents
+
+* Fixed bug with uppercase bookingStatus query parameter for One-off consents
+
+== Fixed bug with uppercase bookingStatus query parameter for One-off consents
+
+From now on, it is unable to read transaction list with the same booking status more times, than allowed by consent, using different letter cases in query parameter bookingStatus.
