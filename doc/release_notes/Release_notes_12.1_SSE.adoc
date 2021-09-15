@@ -1,0 +1,9 @@
+= Release notes v.12.1
+
+== Table of Contents
+
+* Fixed bug with broken pipe during read account list request
+
+== Fixed bug with broken pipe during read account list request
+
+Fixed bug with `Broken pipe` exception in CMS during multithreading read account list request on PostgreSQL DB.
