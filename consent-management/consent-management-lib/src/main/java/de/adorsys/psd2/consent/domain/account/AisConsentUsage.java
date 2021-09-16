@@ -63,4 +63,18 @@ public class AisConsentUsage {
         this.consent = consent;
         this.requestUri = requestUri;
     }
+
+    @Override
+    public String toString() {
+        return "AisConsentUsage{" +
+                   "id=" + id +
+                   ", consentId=" + consent.getId() +
+                   ", requestUri='" + requestUri + '\'' +
+                   ", resourceId='" + resourceId + '\'' +
+                   ", transactionId='" + transactionId + '\'' +
+                   ", usageDate=" + usageDate +
+                   ", usage=" + usage +
+                   ", version=" + version +
+                   '}';
+    }
 }
