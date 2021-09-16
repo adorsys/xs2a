@@ -39,11 +39,7 @@ variables:
   # Private Openshift Images #
   ############################
 
-  OPENSHIFT_NAMESPACE_SUPPORT: "multibanking-xs2a"
-
-
-  OPENSHIFT_NAMESPACE_ADORSYS_XS2A_DEV: "adorsys-xs2a-dev"
-  OPENSHIFT_NAMESPACE_ADORSYS_XS2A_INTEG: "adorsys-xs2a-integ"
+  OPENSHIFT_NAMESPACE_SUPPORT10X: "adorsys-xs2a-support10x"
 
   ###########################
   # Build variables         #
