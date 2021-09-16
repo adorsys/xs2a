@@ -118,7 +118,7 @@ Lint:Docker_compose:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-12.x
     - master
   script:
     - apt update && apt install yamllint docker-compose make -yq
@@ -130,7 +130,7 @@ Lint:Ci_file:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-12.x
     - master
   script:
     - apt-get update && apt-get install yamllint python3-pkg-resources -yq
@@ -142,7 +142,7 @@ Lint:XS2A_yaml_json_xml:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-12.x
     - master
   script:
     - apt-get update && apt-get install jsonlint yamllint libxml2-utils make curl -yq && ln -s /usr/bin/jsonlint-php /usr/bin/jsonlint
@@ -158,7 +158,7 @@ Lint:XS2A_PMD_CPD_Report:
   stage: "Lint"
   except:
     - schedules
-    - develop
+    - support-12.x
     - master
   script:
     - apt update && apt install make -yq
@@ -181,7 +181,7 @@ Lint:XS2A_core_dockerfiles:
     - docker:20.10-dind
   except:
     - schedules
-    - develop
+    - support-12.x
     - master
   script:
     - echo "Run Xs2a core dockerfile check"
@@ -244,7 +244,7 @@ Test:DOCKER_test_image_build:
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_XS2A}:${DOCKER_TAG}" xs2a-standalone-starter
     - docker build -t "${DOCKERHUB_REGISTRY}/${DOCKERHUB_NAMESPACE}/${DOCKER_IMAGE_NAME_CERTIFICATE_GENERATOR}:${DOCKER_TAG}" certificate-generator
   variables:
-    DOCKER_TAG: develop
+    DOCKER_TAG: support-12x
 
 Test:Javadoc_Java11:
   stage: "Test"
@@ -278,60 +278,35 @@ Test:AsciiDoc:
   script:
     - make pages
 
-###########
-# develop #
-###########
+################
+# support-12.x #
+################
 
-Push to DockerHub (develop):
+Push to DockerHub (support-12.x):
   stage: "Package"
   only:
-    - develop
+    - support-12.x
   except:
     - schedules
   variables:
-    DOCKER_TAG: develop
+    DOCKER_TAG: support12x
   <<: *build_dockerhub_image
 
-Deploy to Openshift (develop):
+Deploy to Openshift (support-12.x):
   stage: "Deploy"
   cache: {}
   dependencies: []
   only:
-    - develop
+    - support-12.x
   except:
     - schedules
   variables:
     GIT_STRATEGY: none
-    DOCKER_TAG: develop # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_ADORSYS_XS2A_DEV} # Openshift target namespace
+    DOCKER_TAG: support12x # Dockerhub source tag
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT10X} # Openshift target namespace
   <<: *deploy_openshift
 
-# Build NIGHTLY image and deploy (scheduled) to INTEG
-
-Deploy to Openshift (nightly):
-  stage: "Deploy"
-  cache: {}
-  dependencies: []
-  only:
-    - schedules
-  variables:
-    GIT_STRATEGY: none
-    DOCKER_TAG: develop # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_ADORSYS_XS2A_INTEG} # Openshift target namespace
-  <<: *deploy_openshift
-
-# Build MASTER image and deploy to DEMO
-
-Push to DockerHub (master):
-  stage: "Package"
-  only:
-    - master
-  variables:
-    DOCKER_TAG: latest
-  <<: *build_dockerhub_image
-
-# Build RELEASE image and deploy (manual) to DEMO
-
+# Build RELEASE image support12.x
 Push to DockerHub (release):
   stage: "Package"
   only:
@@ -339,4 +314,3 @@ Push to DockerHub (release):
   variables:
     DOCKER_TAG: ${CI_COMMIT_TAG}
   <<: *build_dockerhub_image
-
