@@ -59,14 +59,14 @@ class AisAuthServiceTest {
         // Given
         consentEntity.setConsentStatus(ConsentStatus.VALID);
 
-        when(consentJpaRepository.findByExternalId(PARENT_ID))
+        when(consentJpaRepository.findByExternalIdNative(PARENT_ID))
             .thenReturn(Optional.of(consentEntity));
 
         // When
         assertEquals(Optional.of(consentEntity), service.getNotFinalisedAuthorisationParent(PARENT_ID));
 
         // Then
-        verify(consentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+        verify(consentJpaRepository, times(1)).findByExternalIdNative(PARENT_ID);
     }
 
     @Test
@@ -74,27 +74,27 @@ class AisAuthServiceTest {
         // Given
         consentEntity.setConsentStatus(ConsentStatus.EXPIRED);
 
-        when(consentJpaRepository.findByExternalId(PARENT_ID))
+        when(consentJpaRepository.findByExternalIdNative(PARENT_ID))
             .thenReturn(Optional.of(consentEntity));
 
         // When
         assertEquals(Optional.empty(), service.getNotFinalisedAuthorisationParent(PARENT_ID));
 
         // Then
-        verify(consentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+        verify(consentJpaRepository, times(1)).findByExternalIdNative(PARENT_ID);
     }
 
     @Test
     void getAuthorisationParent() {
         // Given
-        when(consentJpaRepository.findByExternalId(PARENT_ID))
+        when(consentJpaRepository.findByExternalIdNative(PARENT_ID))
             .thenReturn(Optional.of(consentEntity));
 
         // When
         assertEquals(Optional.of(consentEntity), service.getAuthorisationParent(PARENT_ID));
 
         // Then
-        verify(consentJpaRepository, times(1)).findByExternalId(PARENT_ID);
+        verify(consentJpaRepository, times(1)).findByExternalIdNative(PARENT_ID);
     }
 
     @Test

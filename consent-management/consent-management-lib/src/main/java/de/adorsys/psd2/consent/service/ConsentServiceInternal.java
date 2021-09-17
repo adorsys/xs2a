@@ -116,7 +116,7 @@ public class ConsentServiceInternal implements ConsentService {
     @Override
     @Transactional
     public CmsResponse<ConsentStatus> getConsentStatusById(String consentId) {
-        Optional<ConsentStatus> consentStatusOptional = consentJpaRepository.findByExternalId(consentId)
+        Optional<ConsentStatus> consentStatusOptional = consentJpaRepository.findByExternalIdNative(consentId)
                                                             .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                             .map(this::checkAndUpdateOnExpiration)
                                                             .map(ConsentEntity::getConsentStatus);
@@ -168,7 +168,7 @@ public class ConsentServiceInternal implements ConsentService {
     @Override
     @Transactional
     public CmsResponse<CmsConsent> getConsentById(String consentId) {
-        Optional<ConsentEntity> consentEntityOptional = consentJpaRepository.findByExternalId(consentId)
+        Optional<ConsentEntity> consentEntityOptional = consentJpaRepository.findByExternalIdNative(consentId)
                                                             .map(aisConsentConfirmationExpirationService::checkAndUpdateOnConfirmationExpiration)
                                                             .map(this::checkAndUpdateOnExpiration);
 
@@ -199,7 +199,7 @@ public class ConsentServiceInternal implements ConsentService {
     @Override
     @Transactional
     public CmsResponse<Boolean> findAndTerminateOldConsentsByNewConsentId(String newConsentId) {
-        ConsentEntity newConsent = consentJpaRepository.findByExternalId(newConsentId)
+        ConsentEntity newConsent = consentJpaRepository.findByExternalIdNative(newConsentId)
                                        .orElseThrow(() -> {
                                            log.info("Consent ID: [{}]. Cannot find consent by ID", newConsentId);
                                            return new IllegalArgumentException("Wrong consent ID: " + newConsentId);
@@ -270,7 +270,7 @@ public class ConsentServiceInternal implements ConsentService {
     @Override
     @Transactional(rollbackFor = WrongChecksumException.class)
     public CmsResponse<Boolean> updateMultilevelScaRequired(String consentId, boolean multilevelScaRequired) throws WrongChecksumException {
-        Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalId(consentId);
+        Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalIdNative(consentId);
         if (aisConsentOptional.isEmpty()) {
             log.info("Consent ID: [{}]. Get update multilevel SCA required status failed, because consent authorisation is not found",
                      consentId);
@@ -297,7 +297,7 @@ public class ConsentServiceInternal implements ConsentService {
     }
 
     private Optional<ConsentEntity> getActualAisConsent(String consentId) {
-        return consentJpaRepository.findByExternalId(consentId)
+        return consentJpaRepository.findByExternalIdNative(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 

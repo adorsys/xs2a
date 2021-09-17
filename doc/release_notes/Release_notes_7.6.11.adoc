@@ -1,0 +1,9 @@
+= Release notes v.7.6.11
+
+== Table of Contents
+
+* Replaced some repository calls with native queries
+
+== Replaced some repository calls with native queries
+
+Some methods in consent repository were implemented through native queries to DB.

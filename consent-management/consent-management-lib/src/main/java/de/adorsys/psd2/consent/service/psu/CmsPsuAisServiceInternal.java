@@ -381,7 +381,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         } else {
             log.info("Authorisation ID [{}]. No PSU data available in the authorisation.", authorisation.getExternalId());
 
-            Optional<ConsentEntity> consentOptional = consentJpaRepository.findByExternalId(authorisation.getParentExternalId());
+            Optional<ConsentEntity> consentOptional = consentJpaRepository.findByExternalIdNative(authorisation.getParentExternalId());
             if (consentOptional.isEmpty()) {
                 log.info("Authorisation ID [{}]. Update PSU data in consent failed, couldn't find consent by the parent ID in the authorisation.",
                          authorisation.getExternalId());
@@ -430,7 +430,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     }
 
     private Optional<CmsAisConsentResponse> createCmsAisConsentResponseFromAuthorisation(AuthorisationEntity authorisation, String redirectId) {
-        Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalId(authorisation.getParentExternalId());
+        Optional<ConsentEntity> aisConsentOptional = consentJpaRepository.findByExternalIdNative(authorisation.getParentExternalId());
         if (aisConsentOptional.isEmpty()) {
             log.info("Authorisation ID [{}]. Check redirect URL and get consent failed in createCmsAisConsentResponseFromAisConsent method, because AIS consent is null",
                      redirectId);

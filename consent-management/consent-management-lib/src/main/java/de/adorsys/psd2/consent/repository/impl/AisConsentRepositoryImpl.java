@@ -77,7 +77,7 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
     @Override
     @Transactional
     public Optional<ConsentEntity> getActualAisConsent(String consentId) {
-        return aisConsentRepository.findByExternalId(consentId)
+        return aisConsentRepository.findByExternalIdNative(consentId)
                    .filter(c -> !c.getConsentStatus().isFinalisedStatus());
     }
 
@@ -137,8 +137,9 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
     }
 
     private boolean wasStatusHoldBefore(ConsentEntity entity) {
-        return getPreviousConsentStatus(entity) == VALID
-                   || isFinalisedStatus(entity);
+        ConsentStatus previousConsentStatus = getPreviousConsentStatus(entity);
+        return previousConsentStatus == VALID
+                   || previousConsentStatus != null && previousConsentStatus.isFinalisedStatus();
     }
 
     private AisConsent mapToAisConsent(ConsentEntity entity) {
@@ -149,16 +150,6 @@ public class AisConsentRepositoryImpl implements AisConsentVerifyingRepository {
     }
 
     private ConsentStatus getPreviousConsentStatus(ConsentEntity entity) {
-        Optional<ConsentEntity> optionalConsentStatus = aisConsentRepository.findByExternalId(entity.getExternalId());
-
-        return optionalConsentStatus
-                   .map(ConsentEntity::getConsentStatus)
-                   .orElse(null);
-
-    }
-
-    private boolean isFinalisedStatus(ConsentEntity entity) {
-        ConsentStatus previousConsentStatus = getPreviousConsentStatus(entity);
-        return previousConsentStatus !=null && previousConsentStatus.isFinalisedStatus();
+        return aisConsentRepository.getConsentStatusByExternalId(entity.getExternalId()).orElse(null);
     }
 }

@@ -77,8 +77,8 @@ class AisConsentRepositoryImplTest {
         when(calculatingFactory.getServiceByChecksum(any(), eq(ConsentType.AIS)))
             .thenReturn(Optional.of(checksumCalculatingService));
         ConsentEntity previousConsentEntity = buildConsentEntity(ConsentStatus.RECEIVED);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(previousConsentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(aisConsentRepository.save(consentEntity))
             .thenReturn(consentEntity);
 
@@ -97,8 +97,8 @@ class AisConsentRepositoryImplTest {
             .thenReturn(Optional.of(checksumCalculatingService));
         when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
             .thenReturn(aisConsent);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
             .thenReturn(false);
 
@@ -119,8 +119,8 @@ class AisConsentRepositoryImplTest {
             .thenReturn(Optional.of(checksumCalculatingService));
         when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
             .thenReturn(aisConsent);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
             .thenReturn(false);
 
@@ -140,8 +140,8 @@ class AisConsentRepositoryImplTest {
             .thenReturn(Optional.of(checksumCalculatingService));
         when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
             .thenReturn(aisConsent);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
             .thenReturn(true);
         when(aisConsentRepository.save(consentEntity))
@@ -164,8 +164,8 @@ class AisConsentRepositoryImplTest {
             .thenReturn(Optional.of(checksumCalculatingService));
         when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
             .thenReturn(aisConsent);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
             .thenReturn(true);
         when(aisConsentRepository.save(consentEntity))
@@ -188,8 +188,8 @@ class AisConsentRepositoryImplTest {
             .thenReturn(Optional.of(checksumCalculatingService));
         when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
             .thenReturn(aisConsent);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(checksumCalculatingService.verifyConsentWithChecksum(aisConsent, CHECKSUM))
             .thenReturn(false);
 
@@ -211,8 +211,8 @@ class AisConsentRepositoryImplTest {
             .thenReturn(true);
         when(aisConsentRepository.save(consentEntity))
             .thenReturn(consentEntity);
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
-            .thenReturn(Optional.of(consentEntity));
+        when(aisConsentRepository.getConsentStatusByExternalId(consentEntity.getExternalId()))
+            .thenReturn(Optional.of(consentEntity.getConsentStatus()));
         when(aisConsentMapper.mapToAisConsent(eq(consentEntity), any()))
             .thenReturn(aisConsent);
 
@@ -230,7 +230,7 @@ class AisConsentRepositoryImplTest {
     @Test
     void getActualAisConsent_success() {
         // Given
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+        when(aisConsentRepository.findByExternalIdNative(consentEntity.getExternalId()))
             .thenReturn(Optional.of(consentEntity));
 
         // When
@@ -244,7 +244,7 @@ class AisConsentRepositoryImplTest {
     void getActualAisConsent_empty() {
         consentEntity.setConsentStatus(ConsentStatus.REJECTED);
         // Given
-        when(aisConsentRepository.findByExternalId(consentEntity.getExternalId()))
+        when(aisConsentRepository.findByExternalIdNative(consentEntity.getExternalId()))
             .thenReturn(Optional.of(consentEntity));
 
         // When

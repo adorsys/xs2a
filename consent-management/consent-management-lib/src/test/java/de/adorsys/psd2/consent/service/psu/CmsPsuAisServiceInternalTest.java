@@ -161,7 +161,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.ofNullable(authorisationEntity));
-        when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+        when(consentJpaRepository.findByExternalIdNative(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consentEntity));
         when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(psuData);
@@ -270,7 +270,7 @@ class CmsPsuAisServiceInternalTest {
             .thenReturn(Optional.ofNullable(authorisationEntity));
         when(psuDataMapper.mapToPsuData(psuIdData, DEFAULT_SERVICE_INSTANCE_ID))
             .thenReturn(psuData);
-        when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+        when(consentJpaRepository.findByExternalIdNative(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.empty());
 
         // When
@@ -882,7 +882,7 @@ class CmsPsuAisServiceInternalTest {
         //noinspection unchecked
         when(authorisationRepository.findOne(any(Specification.class)))
             .thenReturn(Optional.of(mockAisConsentAuthorization));
-        when(consentJpaRepository.findByExternalId(EXTERNAL_CONSENT_ID))
+        when(consentJpaRepository.findByExternalIdNative(EXTERNAL_CONSENT_ID))
             .thenReturn(Optional.of(consentEntity));
         when(mockAisConsentAuthorization.isRedirectUrlNotExpired())
             .thenReturn(true);

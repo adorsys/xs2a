@@ -51,7 +51,7 @@ class AccountServiceInternalTest {
     @Test
     void saveNumberOfTransactions_shouldFail() {
         // Given
-        when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.empty());
+        when(consentJpaRepository.findByExternalIdNative(CONSENT_ID)).thenReturn(Optional.empty());
 
         // When
         boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);
@@ -64,7 +64,7 @@ class AccountServiceInternalTest {
     @Test
     void saveNumberOfTransactions_success() {
         // Given
-        when(consentJpaRepository.findByExternalId(CONSENT_ID)).thenReturn(Optional.of(new ConsentEntity()));
+        when(consentJpaRepository.findByExternalIdNative(CONSENT_ID)).thenReturn(Optional.of(new ConsentEntity()));
 
         // When
         boolean result = accountServiceInternal.saveNumberOfTransactions(CONSENT_ID, RESOURCE_ID, 10);

@@ -175,7 +175,7 @@ class CmsPsuAisControllerIT {
     @Test
     void confirmConsent() throws Exception {
         given(consentJpaRepository.findOne(any(Specification.class))).willReturn(Optional.of(consentEntity));
-        given(consentJpaRepository.findByExternalId(CONSENT_ID)).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findByExternalIdNative(CONSENT_ID)).willReturn(Optional.of(consentEntity));
         given(aisConsentRepository.verifyAndSave(consentEntity)).willReturn(consentEntity);
 
         MockHttpServletRequestBuilder requestBuilder = put(UrlBuilder.confirmConsentUrl(CONSENT_ID));
@@ -260,7 +260,7 @@ class CmsPsuAisControllerIT {
     @Test
     void getConsentIdByRedirectId() throws Exception {
         given(authorisationRepository.findOne(any(Specification.class))).willReturn(Optional.of(authorisationEntity));
-        given(consentJpaRepository.findByExternalId(authorisationEntity.getParentExternalId())).willReturn(Optional.of(consentEntity));
+        given(consentJpaRepository.findByExternalIdNative(authorisationEntity.getParentExternalId())).willReturn(Optional.of(consentEntity));
 
         MockHttpServletRequestBuilder requestBuilder = get(UrlBuilder.getConsentIdByRedirectIdUrl(REDIRECT_ID));
         requestBuilder.headers(httpHeaders);

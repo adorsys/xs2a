@@ -31,7 +31,11 @@ import java.util.Set;
 public interface ConsentJpaRepository extends CrudRepository<ConsentEntity, Long>, JpaSpecificationExecutor<ConsentEntity> {
     List<ConsentEntity> findByConsentStatusIn(Set<ConsentStatus> statuses);
 
-    Optional<ConsentEntity> findByExternalId(String externalId);
+    @Query("select c from consent c where c.externalId = :externalId")
+    Optional<ConsentEntity> findByExternalIdNative(@Param("externalId") String externalId);
+
+    @Query(value = "SELECT c.consent_status FROM {h-schema}consent c WHERE c.external_id=:externalId", nativeQuery = true)
+    Optional<ConsentStatus> getConsentStatusByExternalId(@Param("externalId") String externalId);
 
     @Query(
         "select c from consent c " +

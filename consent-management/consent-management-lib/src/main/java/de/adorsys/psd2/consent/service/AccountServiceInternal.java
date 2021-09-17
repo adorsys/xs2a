@@ -40,7 +40,7 @@ public class AccountServiceInternal implements AccountService {
     @Transactional
     public boolean saveNumberOfTransactions(String consentId, String resourceId, int numberOfTransactions) {
 
-        Optional<ConsentEntity> optionalConsent = consentJpaRepository.findByExternalId(consentId);
+        Optional<ConsentEntity> optionalConsent = consentJpaRepository.findByExternalIdNative(consentId);
 
         if (optionalConsent.isPresent()) {
 

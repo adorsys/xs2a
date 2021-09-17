@@ -49,14 +49,14 @@ public class AisAuthService extends CmsAuthorisationService<ConsentEntity> {
 
     @Override
     public Optional<Authorisable> getNotFinalisedAuthorisationParent(String parentId) {
-        return consentJpaRepository.findByExternalId(parentId)
+        return consentJpaRepository.findByExternalIdNative(parentId)
                    .filter(con -> !con.getConsentStatus().isFinalisedStatus())
                    .map(con -> con);
     }
 
     @Override
     public Optional<Authorisable> getAuthorisationParent(String parentId) {
-        return consentJpaRepository.findByExternalId(parentId)
+        return consentJpaRepository.findByExternalIdNative(parentId)
                    .map(con -> con);
     }
 
