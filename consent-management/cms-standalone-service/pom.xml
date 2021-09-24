@@ -16,68 +16,59 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
-		<artifactId>consent-management</artifactId>
-		<groupId>de.adorsys.psd2</groupId>
-		<version>7.6.13-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>consent-management</artifactId>
+        <groupId>de.adorsys.psd2</groupId>
+        <version>7.6.13</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-	<properties>
-		<ruleset.basedir>../..</ruleset.basedir>
-		<ci.build.number>&#8203;</ci.build.number>
-	</properties>
+    <properties>
+        <ruleset.basedir>../..</ruleset.basedir>
+        <ci.build.number>&#8203;</ci.build.number>
+    </properties>
 
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>cms-standalone-service</artifactId>
+    <artifactId>cms-standalone-service</artifactId>
 
 
-	<dependencies>
-		<!-- project dependencies -->
+    <dependencies>
+        <!-- project dependencies -->
         <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc11</artifactId>
-                                    <version>18.3.0.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/../cms-standalone-service/src/main/resources/oracle/ojdbc11.jar</systemPath>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-management-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-xs2a-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-psu-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>consent-aspsp-web</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>aspsp-profile-remote</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>de.adorsys.psd2</groupId>
-			<artifactId>consent-management-lib</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.adorsys.psd2</groupId>
-			<artifactId>consent-xs2a-web</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.adorsys.psd2</groupId>
-			<artifactId>consent-psu-web</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.adorsys.psd2</groupId>
-			<artifactId>consent-aspsp-web</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.adorsys.psd2</groupId>
-			<artifactId>aspsp-profile-remote</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.adorsys.psd2</groupId>
-			<artifactId>cms-db-schema</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>de.adorsys.psd2</groupId>
+            <artifactId>cms-db-schema</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>de.adorsys.psd2</groupId>
@@ -115,61 +106,61 @@
             <version>${project.version}</version>
         </dependency>
 
-		<!-- other dependencies -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<exclusions>
+        <!-- other dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-entitymanager</artifactId>
                 </exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
 
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>javax.xml.bind</groupId>
@@ -177,12 +168,12 @@
         </dependency>
 
         <dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<scope>provided</scope>
-		</dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<!-- test dependencies -->
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -207,18 +198,18 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<finalName>consent-management</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
-				<configuration>
-					<includeSystemScope>true</includeSystemScope>
-				</configuration>
+    <build>
+        <finalName>consent-management</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -238,7 +229,7 @@
                         </configuration>
                     </execution>
                 </executions>
-			</plugin>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -247,6 +238,6 @@
                     <classesDirectory>${project.build.directory}/${project.build.finalName}.jar.original</classesDirectory>
                 </configuration>
             </plugin>
-		</plugins>
-	</build>
+        </plugins>
+    </build>
 </project>

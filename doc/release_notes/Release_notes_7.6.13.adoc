@@ -1,0 +1,9 @@
+= Release notes v.7.6.13
+
+== Table of Contents
+
+* Refactored `ConsentEntity` child entities and their relations - `AspspAccountAccess` and `TppAccountAccess`
+
+== Refactored `ConsentEntity` child entities and their relations - `AspspAccountAccess` and `TppAccountAccess`
+
+Embedded relations were replaced by simple OneToMany mapping. This resulted in performance increasing during `getAccountList` request. According changes were also implemented in DB structure.
