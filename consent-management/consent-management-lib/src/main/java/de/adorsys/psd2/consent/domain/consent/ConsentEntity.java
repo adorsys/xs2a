@@ -30,13 +30,15 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.builder.ToStringExclude;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 
 @Data
 @Entity(name = "consent")
