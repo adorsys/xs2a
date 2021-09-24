@@ -21,7 +21,7 @@
 	<parent>
 		<artifactId>consent-management</artifactId>
 		<groupId>de.adorsys.psd2</groupId>
-		<version>7.6.12</version>
+		<version>7.6.13-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -37,6 +37,15 @@
 
 	<dependencies>
 		<!-- project dependencies -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc11</artifactId>
+                                    <version>18.3.0.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../cms-standalone-service/src/main/resources/oracle/ojdbc11.jar</systemPath>
+        </dependency>
+
+
 		<dependency>
 			<groupId>de.adorsys.psd2</groupId>
 			<artifactId>consent-management-lib</artifactId>

@@ -296,7 +296,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         byte[] data = consentDataMapper.getBytesFromConsentData(aisConsentDataNew);
 
         AccountAccess requestedAccountAccess = consentMapper.mapToAccountAccess(requestedAisAccountAccess);
-        List<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(requestedAccountAccess);
+        List<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consent, requestedAccountAccess);
 
         consent.setData(data);
         consent.setAspspAccountAccesses(aspspAccountAccesses);

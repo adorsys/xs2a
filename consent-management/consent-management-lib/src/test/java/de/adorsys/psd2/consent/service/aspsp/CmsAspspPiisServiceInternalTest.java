@@ -486,7 +486,7 @@ class CmsAspspPiisServiceInternalTest {
     }
 
     public AspspAccountAccess buildAspspAccountAccess(AccountReference accountReference) {
-        return new AspspAccountAccess(accountReference.getUsedAccountReferenceSelector().getAccountValue(),
+        return new AspspAccountAccess(accountReference.getId(), buildPiisConsentEntity(ConsentStatus.VALID), accountReference.getUsedAccountReferenceSelector().getAccountValue(),
                                       TypeAccess.ACCOUNT,
                                       accountReference.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                       accountReference.getCurrency(),

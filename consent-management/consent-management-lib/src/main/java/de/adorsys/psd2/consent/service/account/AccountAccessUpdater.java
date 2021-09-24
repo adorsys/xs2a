@@ -98,10 +98,13 @@ public class AccountAccessUpdater {
     }
 
     private AccountReference updateAccountReference(AccountReference existingReference, List<AccountReference> requestedAspspReferences) {
-        return requestedAspspReferences.stream()
+        AccountReference reference = requestedAspspReferences.stream()
                    .filter(aspsp -> aspsp.getUsedAccountReferenceSelector().equals(existingReference.getUsedAccountReferenceSelector()))
                    .filter(aspsp -> Objects.equals(aspsp.getCurrency(), existingReference.getCurrency()))
                    .findFirst()
                    .orElse(existingReference);
+        reference.setAccessId(existingReference.getAccessId());
+        reference.setId(existingReference.getId());
+        return reference;
     }
 }

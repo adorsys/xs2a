@@ -141,4 +141,7 @@
     <include relativeToChangelogFile="true" file="migration/0113-drop-tables-with-ais-prefix.xml"/>
     <include relativeToChangelogFile="true" file="migration/0114-increase-length-of-postCode-column.xml"/>
     <include relativeToChangelogFile="true" file="migration/0115-add-additional-info-to-consent-tpp-information.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0116-refactor-aspsp-account-access-table.xml"/>
+    <include relativeToChangelogFile="true" file="migration/0117-refactor-account-access-table.xml"/>
+
 </databaseChangeLog>

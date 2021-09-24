@@ -30,15 +30,13 @@ import de.adorsys.psd2.xs2a.core.consent.ConsentType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.builder.ToStringExclude;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Data
 @Entity(name = "consent")
@@ -117,12 +115,10 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @OneToMany(mappedBy = "consent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AisConsentUsage> usages = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST)
     private List<TppAccountAccess> tppAccountAccesses = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "aspsp_account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.MERGE) // TODO: why???
     private List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
 
     @Column(name = "owner_name_type", nullable = false)
