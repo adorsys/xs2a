@@ -72,7 +72,7 @@ public class AccountAccessUpdater {
                                                getAccountReferences(existingAccess.getTrustedBeneficiaries(), requestedAccess.getTrustedBeneficiaries()));
     }
 
-    private List<AccountReference> getAccountReferences(List<AccountReference> existing, List<AccountReference> requested){
+    private List<AccountReference> getAccountReferences(List<AccountReference> existing, List<AccountReference> requested) {
         if (existing != null && requested != null) {
             return existing.stream()
                        .map(ref -> updateAccountReference(ref, requested))
@@ -99,11 +99,10 @@ public class AccountAccessUpdater {
 
     private AccountReference updateAccountReference(AccountReference existingReference, List<AccountReference> requestedAspspReferences) {
         AccountReference reference = requestedAspspReferences.stream()
-                   .filter(aspsp -> aspsp.getUsedAccountReferenceSelector().equals(existingReference.getUsedAccountReferenceSelector()))
-                   .filter(aspsp -> Objects.equals(aspsp.getCurrency(), existingReference.getCurrency()))
-                   .findFirst()
-                   .orElse(existingReference);
-        reference.setAccessId(existingReference.getAccessId());
+                                         .filter(aspsp -> aspsp.getUsedAccountReferenceSelector().equals(existingReference.getUsedAccountReferenceSelector()))
+                                         .filter(aspsp -> Objects.equals(aspsp.getCurrency(), existingReference.getCurrency()))
+                                         .findFirst()
+                                         .orElse(existingReference);
         reference.setId(existingReference.getId());
         return reference;
     }

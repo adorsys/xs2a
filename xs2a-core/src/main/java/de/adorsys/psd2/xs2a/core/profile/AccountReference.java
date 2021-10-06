@@ -23,8 +23,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsExclude;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 
 import java.util.Comparator;
 import java.util.Currency;
@@ -38,11 +36,8 @@ import java.util.stream.Stream;
 @EqualsAndHashCode(exclude = "id")
 public class AccountReference {
 
+    @JsonIgnore
     private Long id;
-
-    @EqualsExclude
-    @HashCodeExclude
-    private Long accessId;
 
     @ApiModelProperty(example = "123-DEDE89370400440532013000-EUR")
     private String aspspAccountId;

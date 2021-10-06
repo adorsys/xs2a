@@ -1,0 +1,9 @@
+= Release notes v.7.6.14
+
+== Table of Contents
+
+* Fixed possible errors in Consent checksum calculation
+
+== Fixed possible errors in Consent checksum calculation
+
+Fixed possible errors caused by wrong fields serialization in consent checksum calculation mechanism.
