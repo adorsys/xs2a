@@ -27,6 +27,7 @@ import java.util.Optional;
 @ApiModel(description = "CashAccountType", value = "Cash Account Type")
 public enum CashAccountType {
     CACC("Current"),  // Account used to post debits and credits when no specific account has been nominated
+    CARD("CardAccount"), // Account used for credit card payments
     CASH("CashPayment"),  // Account used for the payment of cash
     CHAR("Charges"),  // Account used for charges if different from the account for payment
     CISH("CashIncome"),  // Account used for payment of income if different from the current cash account
