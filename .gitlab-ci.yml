@@ -39,7 +39,7 @@ variables:
   # Private Openshift Images #
   ############################
 
-  OPENSHIFT_NAMESPACE_SUPPORT10X: "adorsys-xs2a-support10x"
+  OPENSHIFT_NAMESPACE_SUPPORT12X: "adorsys-xs2a-support12x"
 
   ###########################
   # Build variables         #
@@ -299,7 +299,7 @@ Deploy to Openshift (support-12.x):
   variables:
     GIT_STRATEGY: none
     DOCKER_TAG: support12x # Dockerhub source tag
-    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT10X} # Openshift target namespace
+    OPENSHIFT_NAMESPACE: ${OPENSHIFT_NAMESPACE_SUPPORT12X} # Openshift target namespace
   <<: *deploy_openshift
 
 # Build RELEASE image support12.x
