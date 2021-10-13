@@ -67,6 +67,8 @@ class ConsentSpecificationIT extends BaseTest {
         ConsentEntity consentEntity = jsonReader.getObjectFromFile("json/specification/consent-entity.json", ConsentEntity.class);
         consentEntity.setConsentType(ConsentType.AIS.getName());
         consentEntity.getTppInformation().setTppInfo(tppInfo);
+        consentEntity.getAspspAccountAccesses().get(0).setConsent(consentEntity);
+
         consentJpaRepository.save(consentEntity);
     }
 

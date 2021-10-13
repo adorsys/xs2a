@@ -80,7 +80,7 @@ public class PiisConsentMapper {
         consent.setValidUntil(request.getValidUntil());
         consent.setLastActionDate(LocalDate.now());
         consent.getPsuDataList().add(psuDataMapper.mapToPsuData(psuIdData, instanceId));
-        consent.getAspspAccountAccesses().add(accessMapper.mapToAspspAccountAccess(request.getAccount()));
+        consent.getAspspAccountAccesses().add(accessMapper.mapToAspspAccountAccess(consent, request.getAccount()));
         consent.getTppInformation().setTppInfo(tppInfoEntity);
         consent.getTppInformation().setAdditionalInfo(AdditionalTppInfo.NONE);
         PiisConsentData consentData = new PiisConsentData(request.getCardNumber(), request.getCardExpiryDate(),

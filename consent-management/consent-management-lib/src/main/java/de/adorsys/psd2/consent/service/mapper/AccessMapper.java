@@ -20,6 +20,7 @@ import de.adorsys.psd2.consent.api.TypeAccess;
 import de.adorsys.psd2.consent.api.ais.AdditionalAccountInformationType;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.account.TppAccountAccess;
+import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
 import de.adorsys.psd2.core.data.AccountAccess;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.core.profile.AdditionalInformationAccess;
@@ -52,7 +53,8 @@ public class AccessMapper {
                                                          AdditionalAccountInformationType trustedBeneficiariesType) {
         AccountAccessListHolder holder = new AccountAccessListHolder();
         aspspAccountAccesses.forEach(a -> {
-            AccountReference accountReference = new AccountReference(a.getAccountReferenceType(),
+            AccountReference accountReference = new AccountReference(a.getId(),
+                                                                     a.getAccountReferenceType(),
                                                                      a.getAccountIdentifier(),
                                                                      a.getCurrency(),
                                                                      a.getResourceId(),
@@ -62,30 +64,35 @@ public class AccessMapper {
         return buildAccountAccess(holder, ownerNameType, trustedBeneficiariesType);
     }
 
-    public List<TppAccountAccess> mapToTppAccountAccess(AccountAccess accountAccess) {
+    public List<TppAccountAccess> mapToTppAccountAccess(ConsentEntity consent, AccountAccess accountAccess) {
         List<TppAccountAccess> tppAccountAccesses = new ArrayList<>();
-        tppAccountAccesses.addAll(accountAccess.getAccounts().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+        tppAccountAccesses.addAll(accountAccess.getAccounts().stream().map(a -> new TppAccountAccess(a.getId(),
+                                                                                                     consent,a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                      TypeAccess.ACCOUNT,
                                                                                                      a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                      a.getCurrency())).collect(Collectors.toList()));
-        tppAccountAccesses.addAll(accountAccess.getBalances().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+        tppAccountAccesses.addAll(accountAccess.getBalances().stream().map(a -> new TppAccountAccess(a.getId(),
+                                                                                                     consent,
+                                                                                                     a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                      TypeAccess.BALANCE,
                                                                                                      a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                      a.getCurrency())).collect(Collectors.toList()));
-        tppAccountAccesses.addAll(accountAccess.getTransactions().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+        tppAccountAccesses.addAll(accountAccess.getTransactions().stream().map(a -> new TppAccountAccess(a.getId(),
+                                                                                                         consent,
+                                                                                                         a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                          TypeAccess.TRANSACTION,
                                                                                                          a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                          a.getCurrency())).collect(Collectors.toList()));
         AdditionalInformationAccess additionalInformationAccess = accountAccess.getAdditionalInformationAccess();
         if (additionalInformationAccess != null) {
             if (CollectionUtils.isNotEmpty(additionalInformationAccess.getOwnerName())) {
-                tppAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                tppAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new TppAccountAccess(a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                                             TypeAccess.OWNER_NAME,
                                                                                                                             a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                                             a.getCurrency())).collect(Collectors.toList()));
             }
             if (CollectionUtils.isNotEmpty(additionalInformationAccess.getTrustedBeneficiaries())) {
-                tppAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new TppAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                tppAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new TppAccountAccess(a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                                                        TypeAccess.BENEFICIARIES,
                                                                                                                                        a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                                                        a.getCurrency())).collect(Collectors.toList()));
@@ -95,21 +102,22 @@ public class AccessMapper {
         return tppAccountAccesses;
     }
 
-    public List<AspspAccountAccess> mapToAspspAccountAccess(AccountAccess accountAccess) {
+    public List<AspspAccountAccess> mapToAspspAccountAccess(ConsentEntity consent, AccountAccess accountAccess) {
         List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
-        aspspAccountAccesses.addAll(accountAccess.getAccounts().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+        aspspAccountAccesses.addAll(accountAccess.getAccounts().stream().map(a -> new AspspAccountAccess(
+            a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                          TypeAccess.ACCOUNT,
                                                                                                          a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                          a.getCurrency(),
                                                                                                          a.getResourceId(),
                                                                                                          a.getAspspAccountId())).collect(Collectors.toList()));
-        aspspAccountAccesses.addAll(accountAccess.getBalances().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+        aspspAccountAccesses.addAll(accountAccess.getBalances().stream().map(a -> new AspspAccountAccess(a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                          TypeAccess.BALANCE,
                                                                                                          a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                          a.getCurrency(),
                                                                                                          a.getResourceId(),
                                                                                                          a.getAspspAccountId())).collect(Collectors.toList()));
-        aspspAccountAccesses.addAll(accountAccess.getTransactions().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+        aspspAccountAccesses.addAll(accountAccess.getTransactions().stream().map(a -> new AspspAccountAccess(a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                              TypeAccess.TRANSACTION,
                                                                                                              a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                              a.getCurrency(),
@@ -118,7 +126,7 @@ public class AccessMapper {
         AdditionalInformationAccess additionalInformationAccess = accountAccess.getAdditionalInformationAccess();
         if (additionalInformationAccess != null) {
             if (CollectionUtils.isNotEmpty(additionalInformationAccess.getOwnerName())) {
-                aspspAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                aspspAccountAccesses.addAll(additionalInformationAccess.getOwnerName().stream().map(a -> new AspspAccountAccess(a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                                                 TypeAccess.OWNER_NAME,
                                                                                                                                 a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                                                 a.getCurrency(),
@@ -126,7 +134,7 @@ public class AccessMapper {
                                                                                                                                 a.getAspspAccountId())).collect(Collectors.toList()));
             }
             if (CollectionUtils.isNotEmpty(additionalInformationAccess.getTrustedBeneficiaries())) {
-                aspspAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new AspspAccountAccess(a.getUsedAccountReferenceSelector().getAccountValue(),
+                aspspAccountAccesses.addAll(additionalInformationAccess.getTrustedBeneficiaries().stream().map(a -> new AspspAccountAccess(a.getId(), consent, a.getUsedAccountReferenceSelector().getAccountValue(),
                                                                                                                                            TypeAccess.BENEFICIARIES,
                                                                                                                                            a.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                                                                                                                            a.getCurrency(),
@@ -138,8 +146,8 @@ public class AccessMapper {
         return aspspAccountAccesses;
     }
 
-    public AspspAccountAccess mapToAspspAccountAccess(AccountReference accountReference) {
-        return new AspspAccountAccess(accountReference.getUsedAccountReferenceSelector().getAccountValue(),
+    public AspspAccountAccess mapToAspspAccountAccess(ConsentEntity consent, AccountReference accountReference) {
+        return new AspspAccountAccess(consent, accountReference.getUsedAccountReferenceSelector().getAccountValue(),
                                       TypeAccess.ACCOUNT,
                                       accountReference.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                       accountReference.getCurrency(),
