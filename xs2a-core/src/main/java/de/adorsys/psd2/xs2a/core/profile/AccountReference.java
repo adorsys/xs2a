@@ -19,8 +19,8 @@ package de.adorsys.psd2.xs2a.core.profile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,10 +31,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(description = "Account Reference", value = "AccountReference")
+@EqualsAndHashCode(exclude = "id")
 public class AccountReference {
+
+    @JsonIgnore
+    private Long id;
+
     @ApiModelProperty(example = "123-DEDE89370400440532013000-EUR")
     private String aspspAccountId;
 
@@ -72,6 +76,18 @@ public class AccountReference {
         this(accountReferenceType, accountReferenceValue, currency, null, null);
     }
 
+    public AccountReference(String aspspAccountId, String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency, String otherAccountIdentification) {
+        this.aspspAccountId = aspspAccountId;
+        this.resourceId = resourceId;
+        this.iban = iban;
+        this.bban = bban;
+        this.pan = pan;
+        this.maskedPan = maskedPan;
+        this.msisdn = msisdn;
+        this.currency = currency;
+        this.otherAccountIdentification = otherAccountIdentification;
+    }
+
     /**
      * This constructor should be used for storing accounts data received from aspsp
      *
@@ -90,6 +106,15 @@ public class AccountReference {
         this.aspspAccountId = aspspAccountId;
     }
 
+    public AccountReference(Long id, AccountReferenceType accountReferenceType, String accountReferenceValue, Currency currency, String resourceId, String aspspAccountId) {
+        if (accountReferenceType != null) {
+            accountReferenceType.setFieldValue(this, accountReferenceValue);
+        }
+        this.id = id;
+        this.currency = currency;
+        this.resourceId = resourceId;
+        this.aspspAccountId = aspspAccountId;
+    }
 
     @JsonIgnore
     public AccountReferenceType getAccountReferenceType() {

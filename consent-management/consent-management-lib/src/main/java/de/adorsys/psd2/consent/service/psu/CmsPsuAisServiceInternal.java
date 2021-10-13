@@ -31,6 +31,7 @@ import de.adorsys.psd2.consent.psu.api.CmsPsuAuthorisation;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisConsentAccessRequest;
 import de.adorsys.psd2.consent.psu.api.ais.CmsAisPsuDataAuthorisation;
 import de.adorsys.psd2.consent.repository.AisConsentVerifyingRepository;
+import de.adorsys.psd2.consent.repository.AspspAccountAccessRepository;
 import de.adorsys.psd2.consent.repository.AuthorisationRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.specification.AisConsentSpecification;
@@ -101,6 +102,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
     private final CmsConsentAuthorisationServiceInternal consentAuthorisationService;
     private final CmsPsuConsentServiceInternal cmsPsuConsentServiceInternal;
     private final PageRequestBuilder pageRequestBuilder;
+    private final AspspAccountAccessRepository aspspAccountAccessRepository;
 
     @Override
     @Transactional
@@ -314,7 +316,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         byte[] data = consentDataMapper.getBytesFromConsentData(aisConsentDataNew);
 
         AccountAccess requestedAccountAccess = consentMapper.mapToAccountAccess(requestedAisAccountAccess);
-        List<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(requestedAccountAccess);
+        List<AspspAccountAccess> aspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consent, requestedAccountAccess);
 
         consent.setData(data);
         consent.setAspspAccountAccesses(aspspAccountAccesses);
@@ -328,15 +330,7 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         }
 
         aisConsentUsageService.resetUsage(consent);
-
-        try {
-            aisConsentRepository.verifyAndUpdate(consent);
-        } catch (WrongChecksumException e) {
-            log.info("Consent ID [{}]. Update account access in consent failed, because consent has wrong checksum",
-                     consent.getExternalId());
-            return false;
-        }
-
+        updateBankOfferedConsentInCms(consent);
         return true;
     }
 
@@ -413,5 +407,10 @@ public class CmsPsuAisServiceInternal implements CmsPsuAisService {
         List<AuthorisationEntity> authorisations =
             consentAuthorisationService.getAuthorisationsByParentExternalId(entity.getExternalId());
         return consentMapper.mapToCmsAisAccountConsent(entity, authorisations);
+    }
+
+    private void updateBankOfferedConsentInCms(ConsentEntity consent) {
+        aspspAccountAccessRepository.deleteByConsentId(consent.getId());
+        consentJpaRepository.save(consent);
     }
 }
