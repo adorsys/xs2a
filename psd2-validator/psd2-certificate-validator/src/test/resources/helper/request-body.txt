@@ -22,5 +22,5 @@
     "combinedServiceIndicator": false,
     "frequencyPerDay": 15,
     "recurringIndicator": true,
-    "validUntil": "2021-10-10"
+    "validUntil": "2025-10-10"
 }

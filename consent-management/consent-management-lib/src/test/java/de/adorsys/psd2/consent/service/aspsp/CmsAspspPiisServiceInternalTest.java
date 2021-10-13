@@ -24,6 +24,7 @@ import de.adorsys.psd2.consent.domain.PsuData;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.account.AspspAccountAccess;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.AspspAccountAccessRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
@@ -85,6 +86,8 @@ class CmsAspspPiisServiceInternalTest {
     private PiisConsentMapper piisConsentMapper;
     @Mock
     private PiisConsentEntitySpecification piisConsentEntitySpecification;
+    @Mock
+    private AspspAccountAccessRepository aspspAccountAccessRepository;
     @Spy
     private PageRequestBuilder pageRequestBuilder = new PageRequestBuilder();
     @InjectMocks
@@ -502,7 +505,7 @@ class CmsAspspPiisServiceInternalTest {
     }
 
     public AspspAccountAccess buildAspspAccountAccess(AccountReference accountReference) {
-        return new AspspAccountAccess(accountReference.getUsedAccountReferenceSelector().getAccountValue(),
+        return new AspspAccountAccess(accountReference.getId(), buildPiisConsentEntity(ConsentStatus.VALID), accountReference.getUsedAccountReferenceSelector().getAccountValue(),
                                       TypeAccess.ACCOUNT,
                                       accountReference.getUsedAccountReferenceSelector().getAccountReferenceType(),
                                       accountReference.getCurrency(),

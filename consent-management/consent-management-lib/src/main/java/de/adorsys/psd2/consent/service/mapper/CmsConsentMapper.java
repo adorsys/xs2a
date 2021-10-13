@@ -100,8 +100,8 @@ public class CmsConsentMapper {
         entity.setInternalRequestId(cmsConsent.getInternalRequestId());
         entity.setTppInformation(consentTppInformationMapper.mapToConsentTppInformationEntity(cmsConsent.getTppInformation()));
         AccountAccess tppAccountAccesses = cmsConsent.getTppAccountAccesses();
-        entity.setTppAccountAccesses(accessMapper.mapToTppAccountAccess(tppAccountAccesses));
-        entity.setAspspAccountAccesses(accessMapper.mapToAspspAccountAccess(cmsConsent.getAspspAccountAccesses()));
+        entity.setTppAccountAccesses(accessMapper.mapToTppAccountAccess(entity, tppAccountAccesses));
+        entity.setAspspAccountAccesses(accessMapper.mapToAspspAccountAccess(entity, cmsConsent.getAspspAccountAccesses()));
         entity.setInstanceId(cmsConsent.getInstanceId());
 
         AdditionalInformationAccess additionalInformationAccess = tppAccountAccesses.getAdditionalInformationAccess();
