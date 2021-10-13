@@ -129,7 +129,7 @@ public class AisConsentServiceInternal implements AisConsentService {
                                                                                     consentEntity.getOwnerNameType(),
                                                                                     consentEntity.getTrustedBeneficiariesType());
         AccountAccess updatedAccesses = accountAccessUpdater.updateAccountReferencesInAccess(existingAccess, request);
-        List<AspspAccountAccess> updatedAspspAccountAccesses = accessMapper.mapToAspspAccountAccess(updatedAccesses);
+        List<AspspAccountAccess> updatedAspspAccountAccesses = accessMapper.mapToAspspAccountAccess(consentEntity, updatedAccesses);
         consentEntity.setAspspAccountAccesses(updatedAspspAccountAccesses);
         return consentEntity;
     }

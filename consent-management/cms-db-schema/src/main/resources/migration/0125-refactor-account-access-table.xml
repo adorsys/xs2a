@@ -1,0 +1,108 @@
+<!--
+  ~ Copyright 2018-2021 adorsys GmbH & Co KG
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="2021-09-23-8" author="hhe@adorsys.com.ua">
+        <comment>Create sequence for account_access_id</comment>
+
+        <createSequence sequenceName="account_access_seq"/>
+        <sql dbms="mariadb">CREATE SEQUENCE account_access_seq</sql>
+    </changeSet>
+
+    <changeSet id="2021-09-23-9" author="hhe@adorsys.com.ua">
+        <comment>Create table account_access_temp</comment>
+
+        <createTable tableName="account_access_temp">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"
+                             primaryKey="true"
+                primaryKeyName="account_access_pkey"/>
+            </column>
+            <column name="consent_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)"/>
+            <column name="type_access" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_identifier" type="VARCHAR(34)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_reference_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2021-09-23-10" author="hhe@adorsys.com.ua">
+        <comment>Drop foreign key fk_account_access_consent</comment>
+
+        <dropForeignKeyConstraint baseTableName="account_access"
+                                  constraintName="fk_account_access_consent"/>
+    </changeSet>
+
+    <changeSet id="2021-09-23-11" author="hhe@adorsys.com.ua">
+        <comment>Migrate existing account_access data into account_access_temp</comment>
+
+        <sql dbms="mariadb,h2">
+            INSERT INTO account_access_temp (id, consent_id, currency, type_access,
+            account_identifier, account_reference_type)
+            SELECT NEXT VALUE FOR account_access_seq, old.consent_id, old.currency, old.type_access,
+            old.account_identifier, old.account_reference_type
+            FROM account_access old
+        </sql>
+
+        <sql dbms="postgresql">
+            INSERT INTO account_access_temp (id, consent_id, currency, type_access,
+            account_identifier, account_reference_type)
+            SELECT nextval('account_access_seq'), old.consent_id, old.currency, old.type_access,
+            old.account_identifier, old.account_reference_type
+            FROM account_access old
+        </sql>
+
+        <sql dbms="oracle">
+            INSERT INTO account_access_temp (id, consent_id, currency, type_access,
+            account_identifier, account_reference_type)
+            SELECT account_access_seq.NEXTVAL, old.consent_id, old.currency, old.type_access,
+            old.account_identifier, old.account_reference_type
+            FROM account_access old
+        </sql>
+    </changeSet>
+
+    <changeSet id="2021-09-23-12" author="hhe@adorsys.com.ua">
+        <comment>Drop account_access table.</comment>
+        <dropTable tableName="account_access"/>
+    </changeSet>
+
+    <changeSet id="2021-09-23-13" author="hhe@adorsys.com.ua">
+        <comment>Rename account_access_temp table.</comment>
+        <renameTable newTableName="account_access"
+                     oldTableName="account_access_temp"/>
+    </changeSet>
+
+    <changeSet id="2021-09-23-14" author="hhe@adorsys.com.ua">
+        <comment>Add foreign key to account_access table</comment>
+        <addForeignKeyConstraint baseTableName="account_access" baseColumnNames="consent_id"
+                                 constraintName="fk_account_access_consent"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedTableName="consent" referencedColumnNames="consent_id"/>
+    </changeSet>
+
+</databaseChangeLog>
