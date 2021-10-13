@@ -1,0 +1,94 @@
+@startuml
+actor PSU
+entity TPP
+entity XS2A
+entity CMS
+entity SPI
+entity ASPSP
+== Payment Cancellation with Pure Decoupled approach, explicit authorisation mode==
+
+PSU->TPP: Cancel payment
+
+activate TPP
+TPP -> XS2A: REST Call Cancel payment\nDELETE "/v1/payments/{payment-product}/\n{paymentId}"
+activate XS2A
+XS2A->CMS: Java Call getPaymentById
+activate CMS
+|||
+CMS-->XS2A: Payment object
+|||
+deactivate CMS
+XS2A->SPI: SPI call initPaymentCancellation
+|||
+activate SPI
+|||
+SPI->ASPSP: initPaymentCancellation
+activate ASPSP
+|||
+ASPSP-->SPI: initPaymentCancellation response (payment status)
+|||
+deactivate ASPSP
+
+SPI-->XS2A: initPaymentCancellation response (payment status)
+deactivate SPI
+|||
+XS2A->CMS: Update payment status
+|||
+XS2A-->TPP: Return HTTP code 400 "RESOURCE BLOCKED"
+note right
+         If payment status is finalized
+end note
+TPP-->PSU: Message to the customer\n"Payment can't be cancelled"
+
+|||
+XS2A->SPI: Start cancellation authorisation request \n(payment, Authorisation ID, SCA status, resolved SCA approach)
+note left
+         If payment status is not finalized
+end note
+activate SPI
+SPI->ASPSP: Cancellation authorisation request
+activate ASPSP
+ASPSP-->SPI: Cancellation authorisation response \n(chosen SCA approach, PSU message, SCA status)
+deactivate ASPSP
+SPI-->XS2A: Start cancellation authorisation response
+deactivate SPI
+|||
+XS2A->CMS: Save Authorisation
+XS2A-->TPP:Start cancellation authorisation response\n"link_updatePsuWithAuthentication"
+deactivate XS2A
+|||
+TPP-->PSU: Message to the customer\n""Please use your xxx App to confirm\n the payment cancellation"
+deactivate TPP
+activate PSU
+|||
+
+group PSU to ASPSP Interface
+|||
+ASPSP-->PSU: The ASPSP pushes a confirmation request to ASPSP application
+activate ASPSP
+|||
+PSU->ASPSP: The PSU authorises the payment cancellation
+deactivate PSU
+|||
+end group
+activate ASPSP
+|||
+ASPSP->CMS: REST Call UpdateAuthorisationStatus\n"PUT/psu-api/v1/payment/{payment-id}/authorisation/\n{authorisation-id}/status/{status}"
+activate CMS
+|||
+CMS-->ASPSP: Response "http Codes: 200 successful or 400 error"
+|||
+ASPSP->CMS: REST Call UpdatePaymentStatus\n"PUT/psu-api/v1/payment/{payment-id}/status/{status}"
+|||
+CMS-->ASPSP: Response "http Codes: 200 successful or 400 error"
+deactivate CMS
+deactivate ASPSP
+|||
+ref over PSU, ASPSP
+
+For all GET requests see Payment Initiation diagram for Pure Decoupled approach
+
+
+end ref
+|||
+@enduml
