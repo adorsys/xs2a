@@ -11,12 +11,12 @@ import java.util.Objects;
  */
 @ApiModel(description = "Array of structured remittance information. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-10-13T17:30:20.351194+03:00[Europe/Kiev]")
 
-public class RemittanceInformationStructuredArray extends ArrayList<String>  {
+public class RemittanceInformationStructuredArray extends ArrayList<RemittanceInformationStructured>  {
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -48,7 +48,7 @@ public class RemittanceInformationStructuredArray extends ArrayList<String>  {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

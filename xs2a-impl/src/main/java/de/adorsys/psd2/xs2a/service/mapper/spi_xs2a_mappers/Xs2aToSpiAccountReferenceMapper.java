@@ -62,6 +62,6 @@ public class Xs2aToSpiAccountReferenceMapper {
             account.getMaskedPan(),
             account.getMsisdn(),
             account.getCurrency(),
-            account.getOtherAccountIdentification());
+            account.getOther());
     }
 }

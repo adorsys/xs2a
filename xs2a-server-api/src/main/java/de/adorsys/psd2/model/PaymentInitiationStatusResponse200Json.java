@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful payment initiation status request in case of an JSON based endpoint.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-15T10:28:21.780938+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-10-20T16:47:52.806132+03:00[Europe/Kiev]")
 
 public class PaymentInitiationStatusResponse200Json   {
   @JsonProperty("transactionStatus")
@@ -35,7 +35,7 @@ public class PaymentInitiationStatusResponse200Json   {
 
   @JsonProperty("tppMessage")
   @Valid
-  private List<TppMessageInitiationStatusResponse200> tppMessage = null;
+  private List<TppMessageGeneric> tppMessage = null;
 
   public PaymentInitiationStatusResponse200Json transactionStatus(TransactionStatus transactionStatus) {
     this.transactionStatus = transactionStatus;
@@ -128,12 +128,12 @@ public class PaymentInitiationStatusResponse200Json   {
     this._links = _links;
   }
 
-  public PaymentInitiationStatusResponse200Json tppMessage(List<TppMessageInitiationStatusResponse200> tppMessage) {
+  public PaymentInitiationStatusResponse200Json tppMessage(List<TppMessageGeneric> tppMessage) {
     this.tppMessage = tppMessage;
     return this;
   }
 
-  public PaymentInitiationStatusResponse200Json addTppMessageItem(TppMessageInitiationStatusResponse200 tppMessageItem) {
+  public PaymentInitiationStatusResponse200Json addTppMessageItem(TppMessageGeneric tppMessageItem) {
     if (this.tppMessage == null) {
       this.tppMessage = new ArrayList<>();
     }
@@ -151,11 +151,11 @@ public class PaymentInitiationStatusResponse200Json   {
 
 
   @JsonProperty("tppMessage")
-  public List<TppMessageInitiationStatusResponse200> getTppMessage() {
+  public List<TppMessageGeneric> getTppMessage() {
     return tppMessage;
   }
 
-  public void setTppMessage(List<TppMessageInitiationStatusResponse200> tppMessage) {
+  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
     this.tppMessage = tppMessage;
   }
 

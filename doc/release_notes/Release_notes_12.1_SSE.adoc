@@ -6,6 +6,8 @@
 
 * Refactored `ConsentEntity` child entities and their relations - `AspspAccountAccess` and `TppAccountAccess`
 
+* Fixed minor bugs with non correct BG .yaml file implementation
+
 == Fixed bug with broken pipe during read account list request
 
 Fixed bug with `Broken pipe` exception in CMS during multithreading read account list request on PostgreSQL DB.
@@ -15,3 +17,7 @@ Fixed bug with `Broken pipe` exception in CMS during multithreading read account
 Embedded relations were replaced by simple OneToMany mapping. This resulted in performance increasing during
 `getAccountList` request. According changes were also implemented in DB structure. Additional required changes were made
 for PIIS V1 consents flow. Postman tests were fixed and updated.
+
+== Fixed minor bugs with non correct BG .yaml file implementation
+Added correct implementation of BG .yaml file v. 1.3.9 with errata models, mappers refactored according to changes,
+postman tests updated

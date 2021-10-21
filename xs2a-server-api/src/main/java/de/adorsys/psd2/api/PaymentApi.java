@@ -249,7 +249,6 @@ public interface PaymentApi {
     }, tags={  })
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "OK", response = PaymentInitiationStatusResponse200Json.class),
-        @ApiResponse(code = 202, message = "OK", response = PaymentInitiationStatusResponse202Json.class),
         @ApiResponse(code = 400, message = "Bad Request", response = Error400NGPIS.class),
         @ApiResponse(code = 401, message = "Unauthorized", response = Error401NGPIS.class),
         @ApiResponse(code = 403, message = "Forbidden", response = Error403NGPIS.class),

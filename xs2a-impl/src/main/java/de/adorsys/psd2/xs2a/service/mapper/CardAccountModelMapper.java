@@ -18,6 +18,7 @@ package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
 import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.Xs2aBalance;
 import de.adorsys.psd2.xs2a.domain.Xs2aExchangeRate;
 import de.adorsys.psd2.xs2a.domain.account.*;
@@ -76,7 +77,7 @@ public abstract class CardAccountModelMapper {
     @Mapping(target = "lastChangeDateTime", expression = "java(mapToOffsetDateTime(balance.getLastChangeDateTime()))")
     public abstract Balance mapToBalance(Xs2aBalance balance);
 
-    @Mapping(target = "cardAccount", source = "xs2aAccountReference")
+    @Mapping(target = "cardAccount", expression = "java(mapToCardAccount(balancesReport.getXs2aAccountReference()))")
     public abstract ReadCardAccountBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport);
 
     @Mapping(target = "_links", ignore = true)
@@ -157,8 +158,29 @@ public abstract class CardAccountModelMapper {
                    .orElseGet(this::getMulticurrencyRepresentationOrNull);
     }
 
+    protected de.adorsys.psd2.model.AccountReference mapToCardAccount(AccountReference xs2aAccountReference) {
+        if (xs2aAccountReference == null) {
+            return null;
+        }
+        de.adorsys.psd2.model.AccountReference accountReference = new de.adorsys.psd2.model.AccountReference();
+        accountReference.setIban(xs2aAccountReference.getIban());
+        accountReference.setBban(xs2aAccountReference.getBban());
+        accountReference.setCurrency(xs2aAccountReference.getCurrency().getCurrencyCode());
+        accountReference.setMaskedPan(xs2aAccountReference.getMaskedPan());
+        accountReference.setPan(xs2aAccountReference.getPan());
+        accountReference.setMsisdn(xs2aAccountReference.getMsisdn());
+        accountReference.setOther(mapToOtherType(xs2aAccountReference.getOther()));
+        accountReference.setCashAccountType(xs2aAccountReference.getCashAccountType());
+
+        return accountReference;
+    }
+
     private String getMulticurrencyRepresentationOrNull() {
         return MULTICURRENCY_ACCOUNT_AGGREGATION_LEVELS.contains(aspspProfileServiceWrapper.getMulticurrencyAccountLevel()) ? "XXX" : null;
+    }
+
+    protected OtherType mapToOtherType(String other){
+        return other == null ? null : new OtherType().identification(other);
     }
 }
 
