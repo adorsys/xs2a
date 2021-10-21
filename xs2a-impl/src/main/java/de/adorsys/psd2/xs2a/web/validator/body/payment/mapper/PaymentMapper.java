@@ -28,10 +28,12 @@ import de.adorsys.psd2.xs2a.domain.pis.BulkPayment;
 import de.adorsys.psd2.xs2a.domain.pis.PeriodicPayment;
 import de.adorsys.psd2.xs2a.domain.pis.SinglePayment;
 import de.adorsys.psd2.xs2a.web.mapper.PurposeCodeMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Currency;
 import java.util.List;
 import java.util.Optional;
@@ -82,7 +84,7 @@ public class PaymentMapper {
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(paymentRequest.getRemittanceInformationStructured());
-        payment.setRemittanceInformationStructuredArray(paymentRequest.getRemittanceInformationStructuredArray());
+        payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredArrayString(paymentRequest.getRemittanceInformationStructuredArray()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
         payment.setChargeBearer(paymentRequest.getChargeBearer());
@@ -112,7 +114,7 @@ public class PaymentMapper {
         payment.setUltimateCreditor(paymentRequest.getUltimateCreditor());
         payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(paymentRequest.getPurposeCode()));
         payment.setRemittanceInformationStructured(paymentRequest.getRemittanceInformationStructured());
-        payment.setRemittanceInformationStructuredArray(paymentRequest.getRemittanceInformationStructuredArray());
+        payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredArrayString(paymentRequest.getRemittanceInformationStructuredArray()));
         payment.setInstructionIdentification(paymentRequest.getInstructionIdentification());
         payment.setDebtorName(paymentRequest.getDebtorName());
 
@@ -127,6 +129,16 @@ public class PaymentMapper {
         return Optional.ofNullable(rule)
                    .map(ExecutionRule::toString)
                    .flatMap(PisExecutionRule::getByValue);
+    }
+
+    private List<String> mapToRemittanceInformationStructuredArrayString(RemittanceInformationStructuredArray remittanceInformationStructuredArray) {
+        if (CollectionUtils.isEmpty(remittanceInformationStructuredArray)) {
+            return Collections.emptyList();
+        }
+
+        return remittanceInformationStructuredArray.stream()
+                   .map(RemittanceInformationStructured::getReference)
+                   .collect(Collectors.toList());
     }
 
     private de.adorsys.psd2.xs2a.core.pis.FrequencyCode mapToFrequencyCode(FrequencyCode frequency) {
@@ -204,7 +216,7 @@ public class PaymentMapper {
                        payment.setUltimateCreditor(p.getUltimateCreditor());
                        payment.setPurposeCode(purposeCodeMapper.mapToPurposeCode(p.getPurposeCode()));
                        payment.setRemittanceInformationStructured(p.getRemittanceInformationStructured());
-                       payment.setRemittanceInformationStructuredArray(p.getRemittanceInformationStructuredArray());
+                       payment.setRemittanceInformationStructuredArray(mapToRemittanceInformationStructuredArrayString(p.getRemittanceInformationStructuredArray()));
                        payment.setInstructionIdentification(p.getInstructionIdentification());
                        payment.setDebtorName(p.getDebtorName());
                        payment.setChargeBearer(p.getChargeBearer());

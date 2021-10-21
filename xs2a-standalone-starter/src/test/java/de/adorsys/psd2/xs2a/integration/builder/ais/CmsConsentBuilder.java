@@ -23,6 +23,7 @@ import de.adorsys.psd2.core.data.ais.AisConsentData;
 import de.adorsys.psd2.core.mapper.ConsentDataMapper;
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
 import de.adorsys.psd2.model.Consents;
+import de.adorsys.psd2.model.OtherType;
 import de.adorsys.psd2.xs2a.core.ais.AccountAccessType;
 import de.adorsys.psd2.xs2a.core.authorisation.Authorisation;
 import de.adorsys.psd2.xs2a.core.authorisation.AuthorisationTemplate;
@@ -151,7 +152,7 @@ public class CmsConsentBuilder {
                                     psd2AccountReference.getBban(), psd2AccountReference.getPan(),
                                     psd2AccountReference.getMaskedPan(), psd2AccountReference.getMsisdn(),
                                     mapToCurrency(psd2AccountReference.getCurrency()),
-                                    psd2AccountReference.getOtherAccountIdentification());
+                                    mapFromOtherType(psd2AccountReference.getOther()));
     }
 
     private static Currency mapToCurrency(String currencyCode) {
@@ -176,5 +177,9 @@ public class CmsConsentBuilder {
                                                 .collect(Collectors.toList());
 
         return new AdditionalInformationAccess(ownerNames, trustedBeneficiaries);
+    }
+
+    private static String mapFromOtherType(OtherType other) {
+        return other == null ? null : other.getIdentification();
     }
 }
