@@ -1,0 +1,204 @@
+@startuml
+actor PSU
+entity TPP
+entity XS2A
+entity CMS
+entity SPI
+entity ASPSP
+== Payment Cancellation with Embedded approach, explicit authorisation mode==
+
+PSU->TPP: Cancel payment
+
+activate TPP
+TPP -> XS2A: REST Call Cancel payment\nDELETE "/v1/payments/{payment-product}/{paymentId}"
+deactivate TPP
+activate XS2A
+XS2A->CMS: Java Call getPaymentById
+activate CMS
+|||
+CMS-->XS2A: Payment object
+|||
+deactivate CMS
+XS2A->SPI: SPI call initPaymentCancellation
+deactivate XS2A
+|||
+activate SPI
+|||
+SPI->ASPSP: initPaymentCancellation
+activate ASPSP
+|||
+ASPSP-->SPI: initPaymentCancellation response (payment status)
+deactivate XS2A
+|||
+deactivate ASPSP
+
+SPI-->XS2A: initPaymentCancellation response (payment status)
+deactivate SPI
+activate XS2A
+|||
+XS2A->CMS: Update payment status
+|||
+alt Payment status        finalized
+XS2A-->TPP: Return HTTP code 400 "RESOURCE BLOCKED"
+activate TPP
+TPP-->PSU: Message to the customer\n"Payment can't be cancelled"
+deactivate TPP
+|||
+else Payment status not finalized AND                          paymentCancellationAuthorisationMandated = FALSE
+|||
+XS2A->SPI: Proceed no SCA cancellation
+activate SPI
+|||
+SPI->ASPSP: Cancel payment without SCA
+activate ASPSP
+|||
+ASPSP-->SPI: Cancel payment response
+|||
+deactivate ASPSP
+SPI-->XS2A: Cancel payment response
+deactivate SPI
+|||
+XS2A->CMS: Update payment status
+      XS2A-->TPP: Response "http Code: 204 successful\n{"transactionStatus": "CANC"}"
+activate TPP
+TPP-->PSU: Message to the customer\n"Payment is cancelled"
+deactivate TPP
+|||
+else Payment status not finalized AND                          paymentCancellationAuthorisationMandated   = TRUE
+XS2A-->TPP: Payment cancellation initiation response \n(start authorisation link)
+deactivate XS2A
+activate TPP
+TPP->XS2A: REST Call Start cancellation authorisation\nPOST"/v1/{payment-service}/{payment-product}/\n{paymentId}/cancellation-authorisations"
+note left
+         in case of Multilevel SCA
+         the authorisation steps
+         should be repeated for each PSU
+end note
+deactivate TPP
+activate XS2A
+|||
+|||
+XS2A->SPI: Start cancellation authorisation request \n(payment, Authorisation ID, SCA status, resolved SCA approach)
+activate SPI
+SPI->ASPSP: Cancellation authorisation request
+activate ASPSP
+ASPSP-->SPI: Cancellation authorisation response \n(chosen SCA approach, PSU message, SCA status)
+deactivate ASPSP
+SPI-->XS2A: Start cancellation authorisation response
+deactivate SPI
+|||
+XS2A->CMS: Save Authorisation
+XS2A-->TPP:Start cancellation authorisation response\n"link_updatePsuWithAuthentication"
+deactivate XS2A
+activate TPP
+|||
+TPP-->PSU: Feedback to the customer\n"Please enter your User-id & password"
+activate PSU
+|||
+PSU->TPP: PSU provide User-id & password
+deactivate PSU
+|||
+TPP->XS2A: REST Call Update PSU data (Authentication)\n"PUT/v1/{payment-service}/{payment-id}/\n{payment-product}/cancellation-authorisations/{authorisationId}"
+deactivate TPP
+activate XS2A
+|||
+XS2A->SPI: SpiPsuAuthorisationRequest (PSU credentials)
+activate SPI
+|||
+SPI->ASPSP: Update PSU data
+activate ASPSP
+|||
+ASPSP-->SPI: Update PSU data Response
+deactivate ASPSP
+|||
+SPI-->XS2A: SpiPsuAuthorisationResponse\n(SCA status)
+|||
+deactivate SPI
+
+XS2A->CMS: REST Call UpdatePisAuthorisation
+activate CMS
+|||
+CMS-->XS2A: UpdatePisAuthorisation Response
+deactivate CMS
+
+|||
+XS2A->TPP: UpdatePsuAuthenticationResponse
+deactivate XS2A
+activate TPP
+|||
+TPP-->PSU: Feedback to the customer\n"Please select SCA method"
+activate PSU
+|||
+PSU->TPP: SCA Method
+deactivate PSU
+|||
+TPP->XS2A: REST Call Update Psu data(Select Authentication Method)\n"PUT/v1/{payment-service}/{payment-id}/\n{payment-product}/cancellation-authorisations/{authorisationId}"
+deactivate TPP
+activate XS2A
+|||
+XS2A->SPI: Java Call PaymentCancellationSpi
+activate SPI
+|||
+SPI->ASPSP: SelectScaMethod
+activate ASPSP
+|||
+ASPSP-->PSU: ScaAuthenticationData
+activate PSU
+|||
+ASPSP-->SPI: SelectScaMethod Response
+deactivate ASPSP
+|||
+SPI-->XS2A: SpiAuthorisationCodeResult\nwith scaExempted (TRUE or FALSE)
+deactivate SPI
+|||
+XS2A->CMS: REST Call UpdatePisAuthorisation
+activate CMS
+|||
+CMS-->XS2A: UpdatePisAuthorisation Response
+deactivate CMS
+|||
+XS2A-->TPP:UpdatePsuAuthenticationResponse
+deactivate XS2A
+activate TPP
+|||
+PSU->TPP: Provide Authentication Data
+deactivate PSU
+|||
+TPP->XS2A: REST Call Transaction Authorisation\n"PUT/v1/{payment-service}/{payment-id}/\n{payment-product}/cancellation-authorisations/{authorisationId}"
+deactivate TPP
+activate XS2A
+|||
+XS2A->SPI: Java Call SinglePaymentSpi
+activate SPI
+|||
+SPI-->ASPSP: Authorised Payment cancellation
+activate ASPSP
+|||
+ASPSP-->SPI: Authorised Payment cancellation Response
+deactivate ASPSP
+|||
+SPI-->XS2A: SpiPaymentCancellation Response
+deactivate SPI
+|||
+
+XS2A->CMS: Update SCA status
+XS2A->CMS: Update payment status
+|||
+XS2A-->TPP: Payment Cancellation Authorisation Response
+deactivate XS2A
+activate TPP
+|||
+TPP-->PSU: Feedback to the customer:\n"Payment cancelled"
+|||
+deactivate PSU
+deactivate TPP
+end
+|||
+ref over PSU, ASPSP
+
+For all GET requests see Payment Initiation diagram for Embedded approach
+
+
+end ref
+|||
+@enduml
