@@ -117,12 +117,10 @@ public class ConsentEntity extends InstanceDependableEntity implements Authorisa
     @OneToMany(mappedBy = "consent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AisConsentUsage> usages = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.PERSIST)
     private List<TppAccountAccess> tppAccountAccesses = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "aspsp_account_access", joinColumns = @JoinColumn(name = "consent_id"))
+    @OneToMany(mappedBy = "consent", cascade = CascadeType.MERGE)
     private List<AspspAccountAccess> aspspAccountAccesses = new ArrayList<>();
 
     @Column(name = "owner_name_type", nullable = false)

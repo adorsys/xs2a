@@ -22,6 +22,7 @@ import de.adorsys.psd2.consent.aspsp.api.piis.CmsAspspPiisService;
 import de.adorsys.psd2.consent.aspsp.api.piis.CreatePiisConsentRequest;
 import de.adorsys.psd2.consent.domain.TppInfoEntity;
 import de.adorsys.psd2.consent.domain.consent.ConsentEntity;
+import de.adorsys.psd2.consent.repository.AspspAccountAccessRepository;
 import de.adorsys.psd2.consent.repository.ConsentJpaRepository;
 import de.adorsys.psd2.consent.repository.TppInfoRepository;
 import de.adorsys.psd2.consent.repository.specification.PiisConsentEntitySpecification;
@@ -60,6 +61,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
     private final PiisConsentMapper piisConsentMapper;
     private final PiisConsentLazyMigrationService piisConsentLazyMigrationService;
     private final PageRequestBuilder pageRequestBuilder;
+    private final AspspAccountAccessRepository aspspAccountAccessRepository;
 
     @Override
     @Transactional
@@ -74,6 +76,7 @@ public class CmsAspspPiisServiceInternal implements CmsAspspPiisService {
         TppInfoEntity tppInfoEntity = getTppInfoEntity(request.getTppAuthorisationNumber());
         ConsentEntity consent = piisConsentMapper.mapToPiisConsentEntity(psuIdData, tppInfoEntity, request, instanceId);
         ConsentEntity savedConsent = consentJpaRepository.save(consent);
+        aspspAccountAccessRepository.saveAll(savedConsent.getAspspAccountAccesses());
 
         if (savedConsent.getId() != null) {
             return Optional.ofNullable(savedConsent.getExternalId());
