@@ -17,6 +17,7 @@
 package de.adorsys.psd2.xs2a.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
@@ -181,7 +182,8 @@ class RequestProviderServiceTest {
                              HEADERS.get(Xs2aHeaderConstant.PSU_ID_TYPE),
                              HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID),
                              HEADERS.get(Xs2aHeaderConstant.PSU_CORPORATE_ID_TYPE),
-                             HEADERS.get(Xs2aHeaderConstant.PSU_IP_ADDRESS));
+                             HEADERS.get(Xs2aHeaderConstant.PSU_IP_ADDRESS),
+                             new AdditionalPsuIdData());
     }
 
     @Test

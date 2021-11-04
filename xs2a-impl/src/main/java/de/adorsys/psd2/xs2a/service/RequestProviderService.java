@@ -16,6 +16,7 @@
 
 package de.adorsys.psd2.xs2a.service;
 
+import de.adorsys.psd2.xs2a.core.psu.AdditionalPsuIdData;
 import de.adorsys.psd2.xs2a.core.psu.PsuIdData;
 import de.adorsys.psd2.xs2a.domain.RequestData;
 import de.adorsys.psd2.xs2a.web.validator.constants.Xs2aHeaderConstant;
@@ -50,6 +51,7 @@ public class RequestProviderService {
 
     private static final String TPP_REDIRECT_PREFERRED_HEADER = "tpp-redirect-preferred";
     private static final String X_REQUEST_ID_HEADER = "x-request-id";
+    private static final String PSU_ACCEPT_LANGUAGE = "psu-accept-language";
     private static final String PSU_ID_HEADER = "psu-id";
     private static final String PSU_ID_TYPE_HEADER = "psu-id-type";
     private static final String PSU_CORPORATE_ID_HEADER = "psu-corporate-id";
@@ -89,7 +91,8 @@ public class RequestProviderService {
                              getHeader(PSU_ID_TYPE_HEADER),
                              getHeader(PSU_CORPORATE_ID_HEADER),
                              getHeader(PSU_CORPORATE_ID_TYPE_HEADER),
-                             getHeader(PSU_IP_ADDRESS));
+                             getHeader(PSU_IP_ADDRESS),
+                             getAdditionalPsuIdData());
     }
 
     /**
@@ -105,7 +108,7 @@ public class RequestProviderService {
     }
 
     @Nullable
-    public String getInstanceId(){
+    public String getInstanceId() {
         return getHeader(INSTANCE_ID);
     }
 
@@ -183,6 +186,11 @@ public class RequestProviderService {
 
     private String getHeader(String headerName) {
         return httpServletRequest.getHeader(headerName);
+    }
+
+    private AdditionalPsuIdData getAdditionalPsuIdData() {
+        return new AdditionalPsuIdData(
+            null, null, null, null, null, null, getHeader(PSU_ACCEPT_LANGUAGE), null, null);
     }
 
     private Map<String, String> getRequestHeaders(HttpServletRequest request) {

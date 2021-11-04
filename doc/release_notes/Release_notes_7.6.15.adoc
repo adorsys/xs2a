@@ -1,0 +1,9 @@
+= Release notes v.7.6.15
+
+== Table of Contents
+
+* Fixed error with PSU-Accept-Language header parsing
+
+== Fixed error with PSU-Accept-Language header parsing
+
+From now on, the `PSU-Accept-Language` is passed to SPI level in scope of `getAccountList` call.
