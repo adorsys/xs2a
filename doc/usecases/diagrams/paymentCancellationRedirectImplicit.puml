@@ -6,7 +6,7 @@ entity CMS
 entity SPI
 entity Online_banking
 entity ASPSP
-== Payment Cancellation with Redirect approach, explicit authorisation mode===
+== Payment Cancellation with Redirect approach, implicit authorisation mode==
 PSU->TPP: Initiate Payment Cancellation
 activate TPP
 note right of TPP
@@ -62,13 +62,8 @@ deactivate TPP
 |||
 else Payment status not finalized AND                          paymentCancellationAuthorisationMandated   = TRUE
 |||
-      XS2A-->TPP: Payment Cancellation Response\n"link startAuthorisation"\n"http Code: 202 successful"
-deactivate XS2A
-activate TPP
-|||
-TPP->XS2A: REST Call Start cancellation authorisation\nPOST"/v1/{payment-service}/{payment-product}/\n{paymentId}/cancellation-authorisations"
-activate XS2A
 XS2A->SPI: Start authorisation request \n(payment, Authorisation ID, SCA status, resolved SCA approach)
+deactivate XS2A
 activate SPI
 SPI->ASPSP: Authorisation request
 activate ASPSP
@@ -76,9 +71,11 @@ ASPSP-->SPI: Authorisation response \n(chosen SCA approach, PSU message, SCA sta
 deactivate ASPSP
 SPI-->XS2A: Start Authorisation response
 deactivate SPI
+activate XS2A
 XS2A->CMS: Save Authorisation
 XS2A-->TPP:Start cancellation authorisation response\n"link_SCARedirect"
 deactivate XS2A
+activate TPP
 TPP-->PSU: Feedback to the customer\nAuthorise payment cancellation
 deactivate TPP
 activate PSU

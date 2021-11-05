@@ -23,7 +23,7 @@ able to provide an even better service going forward.
 For more information, advice for your XS2A implementation project or if your use case
 requires more time to adapt this change, please contact us at psd2@adorsys.com.
 
-For additional details please see the section “FAQ on Licensing Change”.
+For additional details please see the section [FAQ on Licensing Change](https://github.com/adorsys/xs2a#faq-on-licensing-change).
 
 ## What is it
 
@@ -88,7 +88,7 @@ This project is licensed under the Apache License version 2.0 **(until 01.01.202
 **What is a dual-licensing model?**
 
 Under a dual-licensing model, our product is available under two licenses:
-1. The Affero GNU General Public License v3 (AGPL v3).
+1. [The Affero GNU General Public License v3 (AGPL v3)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 2. A proprietary commercial license. 
    
 If you are a developer or business that would like to review our products in detail, test and
@@ -148,11 +148,11 @@ existing license.
 **What open-source products from Adorsys are affected by the licensing change?**
 
 The following products are affected:
-- XS2A Core,
-- XS2A Sandbox & ModelBank,
-- Open Banking Gateway incl. XS2A Adapters,
-- SmartAnalytics,
-- Datasafe.
+- [XS2A Core](https://github.com/adorsys/xs2a)
+- [XS2A Sandbox & ModelBank](https://github.com/adorsys/XS2A-Sandbox)
+- [Open Banking Gateway](https://github.com/adorsys/open-banking-gateway) incl. [XS2A Adapters](https://github.com/adorsys/xs2a-adapter)
+- [SmartAnalytics](https://github.com/adorsys/smartanalytics)
+- [Datasafe](https://github.com/adorsys/datasafe)
 
 **I’m using one of these products indirectly via some software integrator. How does the licensing
 change affect me?**

@@ -5,7 +5,7 @@ entity XS2A
 entity CMS
 entity SPI
 entity ASPSP
-== Payment Cancellation with Pure Decoupled approach, explicit authorisation mode==
+== Payment Cancellation with Pure Decoupled approach, implicit authorisation mode==
 
 PSU->TPP: Cancel payment
 

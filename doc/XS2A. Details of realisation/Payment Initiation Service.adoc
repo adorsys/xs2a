@@ -40,6 +40,12 @@ image::../images/paymentInitRedirectImplicit.png[Payment Initiation in Redirect 
 
 image::../images/paymentInitRedirectExplicit.png[Payment Initiation in Redirect Approach, title='Payment Initiation in Redirect Approach, explicit authorisation mode', align='center']
 
+==== Payment Initiation Service in OAuth2 Approach
+
+image::../images/paymentInitOAuthIntegrated.png[Payment Initiation in OAuth2 Approach, title='Payment Initiation in OAuth Integrated', align='center']
+
+image::../images/paymentInitOAuthPreStep.png[Payment Initiation in OAuth2 Approach, title='Payment Initiation in OAuth Pre-step', align='center']
+
 ==== Payment Initiation Service in Embedded Approach
 
 image::../images/paymentInitEmbeddedImplicit.png[Payment Initiation in Embedded Approach, title='Payment Initiation in Embedded Approach, implicit authorisation mode', align='center']
@@ -83,7 +89,8 @@ After setting finalised status for payment:
 
 === Payment Cancellation
 The support of this use case at the XS2A interface is optional.
-A TPP may execute a transaction according to this use case to cancel a (still pending) payment, which has been initiated before. Only future dated payments and recurring payments may be cancelled.
+
+A TPP may execute a transaction according to this use case to cancel a (still pending, with payment status not finalized) payment, which has been initiated before. Also future dated payments and recurring payments may be cancelled.
 
 NOTE: It is up to the ASPSP to decide if a given payment can still be cancelled or not.
 
@@ -117,3 +124,29 @@ Depending on SpiPaymentCancellationResponse properties *transactionStatus* and *
 |with authorisation
 |with authorisation
 |===
+
+=== SCA Approaches for Payment Cancellation
+
+==== Payment Cancellation Service in Redirect Approach
+
+image::../images/paymentCancellationRedirectImplicit.png[title='Payment Cancellation in Redirect Approach, implicit authorisation mode', align='center']
+
+image::../images/paymentCancellationRedirectExplicit.png[title='Payment Cancellation Service in Redirect Approach, explicit authorisation mode', align='center']
+
+==== Payment Cancellation Service in Embedded Approach
+
+image::../images/paymentCancellationEmbeddedImplicit.png[title='Payment Cancellation in Embedded Approach, implicit authorisation mode', align='center']
+
+image::../images/paymentCancellationEmbeddedExplicit.png[title='Payment Cancellation in Embedded Approach, explicit authorisation mode', align='center']
+
+==== Payment Cancellation Service in Embedded Decoupled Approach (Decoupled approach as a second SCA factor)
+
+image::../images/paymentCancellationEmbeddedDecoupledImplicit.png[title='Payment Cancellation in Embedded Decoupled Approach, implicit authorisation mode', align='center']
+
+image::../images/paymentCancellationEmbeddedDecoupledExplicit.png[title='Payment Cancellation in Embedded Decoupled Approach, explicit authorisation mode', align='center']
+
+==== Payment Cancellation Service in Pure Decoupled Approach
+
+image::../images/paymentCancellationPureDecoupledImplicit.png[title='Payment Cancellation in Pure Decoupled Approach, implicit authorisation mode', align='center']
+
+image::../images/paymentCancellationPureDecoupledExplicit.png[title='Payment Cancellation in Pure Decoupled Approach, explicit authorisation mode', align='center']
