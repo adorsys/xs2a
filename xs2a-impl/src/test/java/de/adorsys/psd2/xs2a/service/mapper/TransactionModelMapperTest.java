@@ -17,9 +17,13 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.model.*;
+import de.adorsys.psd2.model.AccountReport;
+import de.adorsys.psd2.model.EntryDetailsElement;
+import de.adorsys.psd2.model.InlineResponse2001;
+import de.adorsys.psd2.model.TransactionsResponse200Json;
 import de.adorsys.psd2.xs2a.core.pis.PisExecutionRule;
 import de.adorsys.psd2.xs2a.domain.HrefType;
+import de.adorsys.psd2.xs2a.domain.TransactionInfo;
 import de.adorsys.psd2.xs2a.domain.Transactions;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAdditionalInformationStructured;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aStandingOrderDetails;
@@ -271,6 +275,7 @@ class TransactionModelMapperTest {
         standingOrderDetails.setFrequency(frequencyCode);
         additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
         transactions.setAdditionalInformationStructured(additionalInformationStructured);
+        transactions.setTransactionInfo(new TransactionInfo(null, null, null, null, null, null, null, null, null, null, null, Collections.emptyList(), null));
         return transactions;
     }
 
@@ -281,6 +286,7 @@ class TransactionModelMapperTest {
         standingOrderDetails.setExecutionRule(executionRule);
         additionalInformationStructured.setStandingOrderDetails(standingOrderDetails);
         transactions.setAdditionalInformationStructured(additionalInformationStructured);
+        transactions.setTransactionInfo(new TransactionInfo(null, null, null, null, null, null, null, null, null, null, null, Collections.emptyList(), null));
         return transactions;
     }
 

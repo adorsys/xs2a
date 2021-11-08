@@ -35,6 +35,7 @@
   "purposeCode": "CDQC" ,
   "remittanceInformationUnstructured": "Ref. Number TELEKOM-1222" ,
   "remittanceInformationStructured": "remittanceInformationStructured" ,
+  "remittanceInformationStructuredArray": [],
   "startDate": "2017-03-03" ,
   "executionRule": "following" ,
   "endDate": "2018-03-03" ,

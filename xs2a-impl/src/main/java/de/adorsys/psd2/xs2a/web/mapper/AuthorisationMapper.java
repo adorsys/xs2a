@@ -32,7 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -97,7 +100,7 @@ public class AuthorisationMapper {
                    .trustedBeneficiaryFlag(xs2aScaStatusResponse.getTrustedBeneficiaryFlag())
                    .psuMessage(xs2aScaStatusResponse.getPsuMessage())
                    ._links(hrefLinkMapper.mapToLinksMap(xs2aScaStatusResponse.getLinks()))
-                   .tppMessage(tppMessageGenericMapper.mapToTppMessageGenericList(xs2aScaStatusResponse.getTppMessageInformation()));
+                   .tppMessages(tppMessageGenericMapper.mapToTppMessageGenericList(xs2aScaStatusResponse.getTppMessageInformation()));
     }
 
     public UpdatePsuAuthenticationResponse mapToPisUpdatePsuAuthenticationResponse(Xs2aUpdatePisCommonPaymentPsuDataResponse response) {

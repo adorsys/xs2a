@@ -37,5 +37,6 @@
   "remittanceInformationStructured": "remittanceInformationStructured" ,
   "startDate": "2017-03-03" ,
   "endDate": "2018-03-03" ,
-  "dayOfExecution": "14"
+  "dayOfExecution": "14",
+  "remittanceInformationStructuredArray": []
 }

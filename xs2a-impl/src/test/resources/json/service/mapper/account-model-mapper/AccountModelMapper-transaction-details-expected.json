@@ -47,7 +47,9 @@
   ],
   "remittanceInformationStructured": "Ref Number Merchant",
   "remittanceInformationStructuredArray": [
-    "Remittance structured array element reference"
+    {
+      "reference": "Remittance structured array element reference"
+    }
   ],
   "additionalInformationStructured": {
     "standingOrderDetails": {
@@ -105,9 +107,13 @@
       "remittanceInformationUnstructuredArray": [
         "remittanceInformationUnstructuredArray"
       ],
-      "remittanceInformationStructured": "remittanceInformationStructured",
+      "remittanceInformationStructured": {
+        "reference": "remittanceInformationStructured"
+      },
       "remittanceInformationStructuredArray": [
-        "remittanceInformationStructuredArray"
+        {
+          "reference": "Remittance structured array element reference"
+        }
       ],
       "purposeCode": "CDCB"
     }

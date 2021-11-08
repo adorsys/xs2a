@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "The body part 2 of a periodic payment initation request containes the execution related informations  of the periodic payment. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @JsonProperty("startDate")
@@ -32,6 +33,9 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   @JsonProperty("dayOfExecution")
   private DayOfExecution dayOfExecution = null;
+
+  @JsonProperty("monthsOfExecution")
+  private MonthsOfExecution monthsOfExecution = null;
 
   public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson startDate(LocalDate startDate) {
     this.startDate = startDate;
@@ -139,6 +143,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
   @ApiModelProperty(value = "")
 
   @Valid
+@Size(max=2)
 
   @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
@@ -147,6 +152,29 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
 
   public void setDayOfExecution(DayOfExecution dayOfExecution) {
     this.dayOfExecution = dayOfExecution;
+  }
+
+  public PeriodicPaymentInitiationXmlPart2StandingorderTypeJson monthsOfExecution(MonthsOfExecution monthsOfExecution) {
+    this.monthsOfExecution = monthsOfExecution;
+    return this;
+  }
+
+  /**
+   * Get monthsOfExecution
+   * @return monthsOfExecution
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("monthsOfExecution")
+  public MonthsOfExecution getMonthsOfExecution() {
+    return monthsOfExecution;
+  }
+
+  public void setMonthsOfExecution(MonthsOfExecution monthsOfExecution) {
+    this.monthsOfExecution = monthsOfExecution;
   }
 
 
@@ -162,12 +190,13 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     Objects.equals(this.endDate, periodicPaymentInitiationXmlPart2StandingorderTypeJson.endDate) &&
     Objects.equals(this.executionRule, periodicPaymentInitiationXmlPart2StandingorderTypeJson.executionRule) &&
     Objects.equals(this.frequency, periodicPaymentInitiationXmlPart2StandingorderTypeJson.frequency) &&
-    Objects.equals(this.dayOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.dayOfExecution);
+    Objects.equals(this.dayOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.dayOfExecution) &&
+    Objects.equals(this.monthsOfExecution, periodicPaymentInitiationXmlPart2StandingorderTypeJson.monthsOfExecution);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(startDate, endDate, executionRule, frequency, dayOfExecution);
+    return Objects.hash(startDate, endDate, executionRule, frequency, dayOfExecution, monthsOfExecution);
   }
 
   @Override
@@ -180,6 +209,7 @@ public class PeriodicPaymentInitiationXmlPart2StandingorderTypeJson   {
     sb.append("    executionRule: ").append(toIndentedString(executionRule)).append("\n");
     sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
     sb.append("    dayOfExecution: ").append(toIndentedString(dayOfExecution)).append("\n");
+    sb.append("    monthsOfExecution: ").append(toIndentedString(monthsOfExecution)).append("\n");
     sb.append("}");
     return sb.toString();
   }

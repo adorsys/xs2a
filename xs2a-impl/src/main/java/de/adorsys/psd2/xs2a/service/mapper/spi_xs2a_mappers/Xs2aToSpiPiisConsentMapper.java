@@ -59,6 +59,6 @@ public interface Xs2aToSpiPiisConsentMapper {
             account.getMaskedPan(),
             account.getMsisdn(),
             account.getCurrency(),
-            account.getOtherAccountIdentification());
+            account.getOther());
     }
 }

@@ -8,11 +8,11 @@ import org.springframework.validation.annotation.Validated;
 import java.util.Objects;
 
 /**
- * PSU data for update PSU authentication.
+ * PSU Data for Update PSU authentication.
  */
-@ApiModel(description = "PSU data for update PSU authentication.")
+@ApiModel(description = "PSU Data for Update PSU authentication.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class PsuData   {
   @JsonProperty("password")

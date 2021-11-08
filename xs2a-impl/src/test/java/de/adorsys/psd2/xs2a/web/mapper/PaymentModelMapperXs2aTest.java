@@ -17,10 +17,7 @@
 package de.adorsys.psd2.xs2a.web.mapper;
 
 import de.adorsys.psd2.mapper.Xs2aObjectMapper;
-import de.adorsys.psd2.model.DayOfExecution;
-import de.adorsys.psd2.model.ExecutionRule;
-import de.adorsys.psd2.model.FrequencyCode;
-import de.adorsys.psd2.model.PeriodicPaymentInitiationXmlPart2StandingorderTypeJson;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.PaymentType;
 import de.adorsys.psd2.xs2a.domain.pis.PaymentInitiationParameters;
 import de.adorsys.xs2a.reader.JsonReader;
@@ -81,12 +78,16 @@ class PaymentModelMapperXs2aTest {
     @Test
     void mapToXs2aRawPayment_periodic() {
         PaymentInitiationParameters requestParameters = new PaymentInitiationParameters();
+        MonthsOfExecution months = new MonthsOfExecution();
+        months.add("4");
+
         requestParameters.setPaymentType(PaymentType.PERIODIC);
 
         PeriodicPaymentInitiationXmlPart2StandingorderTypeJson jsonStandingOrderType = new PeriodicPaymentInitiationXmlPart2StandingorderTypeJson();
         jsonStandingOrderType.setDayOfExecution(DayOfExecution._5);
         jsonStandingOrderType.setExecutionRule(ExecutionRule.FOLLOWING);
         jsonStandingOrderType.setFrequency(FrequencyCode.MONTHLY);
+        jsonStandingOrderType.setMonthsOfExecution(months);
 
         byte[] actual = paymentModelMapper.mapToXs2aRawPayment(requestParameters, "xml", jsonStandingOrderType);
 

@@ -34,5 +34,6 @@
   "ultimateDebtor": "ultimateDebtor",
   "ultimateCreditor": "ultimateCreditor",
   "purposeCode": "CDQC",
-  "remittanceInformationStructured": "remittanceInformationStructured"
+  "remittanceInformationStructured": "remittanceInformationStructured",
+  "remittanceInformationStructuredArray": []
 }

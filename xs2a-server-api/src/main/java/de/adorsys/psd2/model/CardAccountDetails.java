@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Card account details. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-15T10:28:21.780938+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class CardAccountDetails   {
   @JsonProperty("resourceId")
