@@ -38,6 +38,8 @@
   "purposeCode": "CDQC",
   "remittanceInformationStructured": "remittanceInformationStructured",
   "remittanceInformationStructuredArray": [
-    "Remittance structured array element reference"
+    {
+      "reference": "Remittance structured array element reference"
+    }
   ]
 }

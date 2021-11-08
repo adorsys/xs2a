@@ -5,16 +5,17 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
- * Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN).
+ * Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN), or   * a proprietary ID of the  respective account that uniquely identifies the account for this ASPSP.
  */
-@ApiModel(description = "Reference to an account by either:   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN). ")
+@ApiModel(description = "Reference to an account by either   * IBAN, of a payment accounts, or   * BBAN, for payment accounts if there is no IBAN, or    * the Primary Account Number (PAN) of a card, can be tokenised by the ASPSP due to PCI DSS requirements, or   * the Primary Account Number (PAN) of a card in a masked form, or   * an alias to access a payment account via a registered mobile phone number (MSISDN), or   * a proprietary ID of the  respective account that uniquely identifies the account for this ASPSP. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class AccountReference   {
   @JsonProperty("iban")
@@ -32,11 +33,14 @@ public class AccountReference   {
   @JsonProperty("msisdn")
   private String msisdn = null;
 
+  @JsonProperty("other")
+  private OtherType other = null;
+
   @JsonProperty("currency")
   private String currency = null;
 
-  @JsonProperty("otherAccountIdentification")
-  private String otherAccountIdentification = null;
+  @JsonProperty("cashAccountType")
+  private String cashAccountType = null;
 
   public AccountReference iban(String iban) {
     this.iban = iban;
@@ -148,6 +152,29 @@ public class AccountReference   {
     this.msisdn = msisdn;
   }
 
+  public AccountReference other(OtherType other) {
+    this.other = other;
+    return this;
+  }
+
+  /**
+   * Get other
+   * @return other
+  **/
+  @ApiModelProperty(value = "")
+
+  @Valid
+
+
+  @JsonProperty("other")
+  public OtherType getOther() {
+    return other;
+  }
+
+  public void setOther(OtherType other) {
+    this.other = other;
+  }
+
   public AccountReference currency(String currency) {
     this.currency = currency;
     return this;
@@ -170,26 +197,26 @@ public class AccountReference   {
     this.currency = currency;
   }
 
-  public AccountReference otherAccountIdentification(String otherAccountIdentification) {
-    this.otherAccountIdentification = otherAccountIdentification;
+  public AccountReference cashAccountType(String cashAccountType) {
+    this.cashAccountType = cashAccountType;
     return this;
   }
 
   /**
-   * Get otherAccountIdentification
-   * @return otherAccountIdentification
+   * Get cashAccountType
+   * @return cashAccountType
   **/
   @ApiModelProperty(value = "")
 
 
 
-  @JsonProperty("otherAccountIdentification")
-  public String getOtherAccountIdentification() {
-    return otherAccountIdentification;
+  @JsonProperty("cashAccountType")
+  public String getCashAccountType() {
+    return cashAccountType;
   }
 
-  public void setOtherAccountIdentification(String otherAccountIdentification) {
-    this.otherAccountIdentification = otherAccountIdentification;
+  public void setCashAccountType(String cashAccountType) {
+    this.cashAccountType = cashAccountType;
   }
 
 
@@ -206,13 +233,14 @@ public class AccountReference   {
     Objects.equals(this.pan, accountReference.pan) &&
     Objects.equals(this.maskedPan, accountReference.maskedPan) &&
     Objects.equals(this.msisdn, accountReference.msisdn) &&
+    Objects.equals(this.other, accountReference.other) &&
     Objects.equals(this.currency, accountReference.currency) &&
-    Objects.equals(this.otherAccountIdentification, accountReference.otherAccountIdentification);
+    Objects.equals(this.cashAccountType, accountReference.cashAccountType);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(iban, bban, pan, maskedPan, msisdn, currency, otherAccountIdentification);
+    return Objects.hash(iban, bban, pan, maskedPan, msisdn, other, currency, cashAccountType);
   }
 
   @Override
@@ -225,8 +253,9 @@ public class AccountReference   {
     sb.append("    pan: ").append(toIndentedString(pan)).append("\n");
     sb.append("    maskedPan: ").append(toIndentedString(maskedPan)).append("\n");
     sb.append("    msisdn: ").append(toIndentedString(msisdn)).append("\n");
+    sb.append("    other: ").append(toIndentedString(other)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
-    sb.append("    otherAccountIdentification: ").append(toIndentedString(otherAccountIdentification)).append("\n");
+    sb.append("    cashAccountType: ").append(toIndentedString(cashAccountType)).append("\n");
     sb.append("}");
     return sb.toString();
   }

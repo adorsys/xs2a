@@ -38,7 +38,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-11-12T16:52:53.861403+02:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 @Api(value = "v1", description = "account API")
 public interface AccountApi {
@@ -61,7 +61,7 @@ public interface AccountApi {
         @Authorization(value = "BearerAuthOAuth")
     }, tags={  })
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "OK", response = AccountList.class),
+        @ApiResponse(code = 200, message = "OK. In case, no account is accessible, the ASPSP shall return an empty array. As this is also considered a positive response, the Response code must still be 200.", response = AccountList.class),
         @ApiResponse(code = 400, message = "Bad Request", response = Error400NGAIS.class),
         @ApiResponse(code = 401, message = "Unauthorized", response = Error401NGAIS.class),
         @ApiResponse(code = 403, message = "Forbidden", response = Error403NGAIS.class),

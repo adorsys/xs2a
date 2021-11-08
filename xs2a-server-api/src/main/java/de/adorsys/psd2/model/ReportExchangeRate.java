@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -16,7 +17,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Exchange Rate.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class ReportExchangeRate   {
   @JsonProperty("sourceCurrency")
@@ -95,7 +96,7 @@ public class ReportExchangeRate   {
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
-
+@Pattern(regexp="[A-Z]{3}")
 
   @JsonProperty("unitCurrency")
   public String getUnitCurrency() {
@@ -164,7 +165,7 @@ public class ReportExchangeRate   {
   **/
   @ApiModelProperty(value = "")
 
-
+@Size(max=35)
 
   @JsonProperty("contractIdentification")
   public String getContractIdentification() {

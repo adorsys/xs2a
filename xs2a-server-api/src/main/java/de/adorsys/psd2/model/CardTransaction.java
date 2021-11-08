@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Card transaction information.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-07-15T10:28:21.780938+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class CardTransaction   {
   @JsonProperty("cardTransactionId")
@@ -36,8 +36,14 @@ public class CardTransaction   {
   @JsonProperty("bookingDate")
   private LocalDate bookingDate = null;
 
+  @JsonProperty("valueDate")
+  private LocalDate valueDate = null;
+
   @JsonProperty("transactionAmount")
   private Amount transactionAmount = null;
+
+  @JsonProperty("grandTotalAmount")
+  private Object grandTotalAmount = null;
 
   @JsonProperty("currencyExchange")
   private ReportExchangeRateList currencyExchange = null;
@@ -188,6 +194,29 @@ public class CardTransaction   {
     this.bookingDate = bookingDate;
   }
 
+  public CardTransaction valueDate(LocalDate valueDate) {
+    this.valueDate = valueDate;
+    return this;
+  }
+
+  /**
+   * The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. For card transactions this is the payment due date of related booked transactions of a card.
+   * @return valueDate
+  **/
+  @ApiModelProperty(value = "The Date at which assets become available to the account owner in case of a credit, or cease to be available to the account owner in case of a debit entry. For card transactions this is the payment due date of related booked transactions of a card.")
+
+  @Valid
+
+
+  @JsonProperty("valueDate")
+  public LocalDate getValueDate() {
+    return valueDate;
+  }
+
+  public void setValueDate(LocalDate valueDate) {
+    this.valueDate = valueDate;
+  }
+
   public CardTransaction transactionAmount(Amount transactionAmount) {
     this.transactionAmount = transactionAmount;
     return this;
@@ -210,6 +239,28 @@ public class CardTransaction   {
 
   public void setTransactionAmount(Amount transactionAmount) {
     this.transactionAmount = transactionAmount;
+  }
+
+  public CardTransaction grandTotalAmount(Object grandTotalAmount) {
+    this.grandTotalAmount = grandTotalAmount;
+    return this;
+  }
+
+  /**
+   * Get grandTotalAmount
+   * @return grandTotalAmount
+  **/
+  @ApiModelProperty(value = "")
+
+
+
+  @JsonProperty("grandTotalAmount")
+  public Object getGrandTotalAmount() {
+    return grandTotalAmount;
+  }
+
+  public void setGrandTotalAmount(Object grandTotalAmount) {
+    this.grandTotalAmount = grandTotalAmount;
   }
 
   public CardTransaction currencyExchange(ReportExchangeRateList currencyExchange) {
@@ -494,7 +545,9 @@ public class CardTransaction   {
     Objects.equals(this.transactionDate, cardTransaction.transactionDate) &&
     Objects.equals(this.acceptorTransactionDateTime, cardTransaction.acceptorTransactionDateTime) &&
     Objects.equals(this.bookingDate, cardTransaction.bookingDate) &&
+    Objects.equals(this.valueDate, cardTransaction.valueDate) &&
     Objects.equals(this.transactionAmount, cardTransaction.transactionAmount) &&
+    Objects.equals(this.grandTotalAmount, cardTransaction.grandTotalAmount) &&
     Objects.equals(this.currencyExchange, cardTransaction.currencyExchange) &&
     Objects.equals(this.originalAmount, cardTransaction.originalAmount) &&
     Objects.equals(this.markupFee, cardTransaction.markupFee) &&
@@ -511,7 +564,7 @@ public class CardTransaction   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cardTransactionId, terminalId, transactionDate, acceptorTransactionDateTime, bookingDate, transactionAmount, currencyExchange, originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, cardAcceptorPhone, merchantCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
+    return Objects.hash(cardTransactionId, terminalId, transactionDate, acceptorTransactionDateTime, bookingDate, valueDate, transactionAmount, grandTotalAmount, currencyExchange, originalAmount, markupFee, markupFeePercentage, cardAcceptorId, cardAcceptorAddress, cardAcceptorPhone, merchantCategoryCode, maskedPAN, transactionDetails, invoiced, proprietaryBankTransactionCode);
   }
 
   @Override
@@ -524,7 +577,9 @@ public class CardTransaction   {
     sb.append("    transactionDate: ").append(toIndentedString(transactionDate)).append("\n");
     sb.append("    acceptorTransactionDateTime: ").append(toIndentedString(acceptorTransactionDateTime)).append("\n");
     sb.append("    bookingDate: ").append(toIndentedString(bookingDate)).append("\n");
+    sb.append("    valueDate: ").append(toIndentedString(valueDate)).append("\n");
     sb.append("    transactionAmount: ").append(toIndentedString(transactionAmount)).append("\n");
+    sb.append("    grandTotalAmount: ").append(toIndentedString(grandTotalAmount)).append("\n");
     sb.append("    currencyExchange: ").append(toIndentedString(currencyExchange)).append("\n");
     sb.append("    originalAmount: ").append(toIndentedString(originalAmount)).append("\n");
     sb.append("    markupFee: ").append(toIndentedString(markupFee)).append("\n");

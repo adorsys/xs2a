@@ -14,7 +14,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response for a successful read transaction list request. This account report contains transactions resulting from the query parameters. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-06-03T17:05:20.987779+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class TransactionsResponse200Json   {
   @JsonProperty("account")

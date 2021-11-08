@@ -14,7 +14,7 @@ import java.util.Objects;
  * EntryDetailsElement
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-27T17:20:49.558962+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class EntryDetailsElement   {
   @JsonProperty("endToEndId")
@@ -66,7 +66,7 @@ public class EntryDetailsElement   {
   private RemittanceInformationUnstructuredArray remittanceInformationUnstructuredArray = null;
 
   @JsonProperty("remittanceInformationStructured")
-  private String remittanceInformationStructured = null;
+  private RemittanceInformationStructured remittanceInformationStructured = null;
 
   @JsonProperty("remittanceInformationStructuredArray")
   private RemittanceInformationStructuredArray remittanceInformationStructuredArray = null;
@@ -432,7 +432,7 @@ public class EntryDetailsElement   {
     this.remittanceInformationUnstructuredArray = remittanceInformationUnstructuredArray;
   }
 
-  public EntryDetailsElement remittanceInformationStructured(String remittanceInformationStructured) {
+  public EntryDetailsElement remittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
     return this;
   }
@@ -443,14 +443,15 @@ public class EntryDetailsElement   {
   **/
   @ApiModelProperty(value = "")
 
-@Size(max=140)
+  @Valid
+
 
   @JsonProperty("remittanceInformationStructured")
-  public String getRemittanceInformationStructured() {
+  public RemittanceInformationStructured getRemittanceInformationStructured() {
     return remittanceInformationStructured;
   }
 
-  public void setRemittanceInformationStructured(String remittanceInformationStructured) {
+  public void setRemittanceInformationStructured(RemittanceInformationStructured remittanceInformationStructured) {
     this.remittanceInformationStructured = remittanceInformationStructured;
   }
 

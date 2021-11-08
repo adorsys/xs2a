@@ -7,5 +7,5 @@ xml
 Content-Disposition: form-data; name="json_standingorderType"
 Content-Type: application/json
 
-{"startDate":null,"endDate":null,"executionRule":"following","frequency":"Monthly","dayOfExecution":"5"}
+{"startDate":null,"endDate":null,"executionRule":"following","frequency":"Monthly","dayOfExecution":"5","monthsOfExecution":["4"]}
 --AaaBbbCcc--

@@ -17,10 +17,7 @@
 package de.adorsys.psd2.xs2a.service.mapper;
 
 import de.adorsys.psd2.aspsp.profile.domain.MulticurrencyAccountLevel;
-import de.adorsys.psd2.model.AccountDetails;
-import de.adorsys.psd2.model.AccountList;
-import de.adorsys.psd2.model.InlineResponse200;
-import de.adorsys.psd2.model.ReadAccountBalanceResponse200;
+import de.adorsys.psd2.model.*;
 import de.adorsys.psd2.xs2a.core.profile.AccountReference;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetails;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aAccountDetailsHolder;
@@ -54,6 +51,7 @@ public abstract class AccountModelMapper {
     protected BalanceMapper balanceMapper;
 
     @Mapping(target = "currency", source = "currency.currencyCode")
+    @Mapping(target = "other", expression = "java(mapToOtherType(accountReference.getOther()))")
     public abstract de.adorsys.psd2.model.AccountReference mapToAccountReference(AccountReference accountReference);
 
     public abstract List<de.adorsys.psd2.model.AccountReference> mapToAccountReferences(List<AccountReference> accountReferences);
@@ -87,6 +85,12 @@ public abstract class AccountModelMapper {
         return Optional.ofNullable(currency)
                    .map(Currency::getCurrencyCode)
                    .orElseGet(this::getMulticurrencyRepresentationOrNull);
+    }
+
+    protected OtherType mapToOtherType(String other){
+        return other == null
+                   ? null
+                   : new OtherType().identification(other);
     }
 
     private String getMulticurrencyRepresentationOrNull() {

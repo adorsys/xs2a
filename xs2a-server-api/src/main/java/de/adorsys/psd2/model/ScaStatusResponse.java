@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the JSON response with SCA Status.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class ScaStatusResponse   {
   @JsonProperty("scaStatus")
@@ -33,9 +33,9 @@ public class ScaStatusResponse   {
   @JsonProperty("_links")
   private Map _links = null;
 
-  @JsonProperty("tppMessage")
+  @JsonProperty("tppMessages")
   @Valid
-  private List<TppMessageGeneric> tppMessage = null;
+  private List<TppMessageGeneric> tppMessages = null;
 
   public ScaStatusResponse scaStatus(ScaStatus scaStatus) {
     this.scaStatus = scaStatus;
@@ -128,35 +128,35 @@ public class ScaStatusResponse   {
     this._links = _links;
   }
 
-  public ScaStatusResponse tppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public ScaStatusResponse tppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
     return this;
   }
 
-  public ScaStatusResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
-    if (this.tppMessage == null) {
-      this.tppMessage = new ArrayList<>();
+  public ScaStatusResponse addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
+    if (this.tppMessages == null) {
+      this.tppMessages = new ArrayList<>();
     }
-    this.tppMessage.add(tppMessageItem);
+    this.tppMessages.add(tppMessagesItem);
     return this;
   }
 
   /**
    * Messages to the TPP on operational issues.
-   * @return tppMessage
+   * @return tppMessages
   **/
   @ApiModelProperty(value = "Messages to the TPP on operational issues.")
 
   @Valid
 
 
-  @JsonProperty("tppMessage")
-  public List<TppMessageGeneric> getTppMessage() {
-    return tppMessage;
+  @JsonProperty("tppMessages")
+  public List<TppMessageGeneric> getTppMessages() {
+    return tppMessages;
   }
 
-  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public void setTppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
   }
 
 
@@ -172,12 +172,12 @@ public class ScaStatusResponse   {
     Objects.equals(this.psuMessage, scaStatusResponse.psuMessage) &&
     Objects.equals(this.trustedBeneficiaryFlag, scaStatusResponse.trustedBeneficiaryFlag) &&
     Objects.equals(this._links, scaStatusResponse._links) &&
-    Objects.equals(this.tppMessage, scaStatusResponse.tppMessage);
+    Objects.equals(this.tppMessages, scaStatusResponse.tppMessages);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(scaStatus, psuMessage, trustedBeneficiaryFlag, _links, tppMessage);
+    return Objects.hash(scaStatus, psuMessage, trustedBeneficiaryFlag, _links, tppMessages);
   }
 
   @Override
@@ -189,7 +189,7 @@ public class ScaStatusResponse   {
     sb.append("    psuMessage: ").append(toIndentedString(psuMessage)).append("\n");
     sb.append("    trustedBeneficiaryFlag: ").append(toIndentedString(trustedBeneficiaryFlag)).append("\n");
     sb.append("    _links: ").append(toIndentedString(_links)).append("\n");
-    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
+    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");
     return sb.toString();
   }

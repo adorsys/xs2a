@@ -76,7 +76,7 @@ public abstract class CardAccountModelMapper {
     @Mapping(target = "lastChangeDateTime", expression = "java(mapToOffsetDateTime(balance.getLastChangeDateTime()))")
     public abstract Balance mapToBalance(Xs2aBalance balance);
 
-    @Mapping(target = "cardAccount", source = "xs2aAccountReference")
+    @Mapping(target = "cardAccount", expression = "java(mapToCardAccount(balancesReport.getXs2aAccountReference()))")
     public abstract ReadCardAccountBalanceResponse200 mapToBalance(Xs2aBalancesReport balancesReport);
 
     @Mapping(target = "_links", ignore = true)
@@ -95,6 +95,10 @@ public abstract class CardAccountModelMapper {
 
     @Mapping(target = "currencyExchange", expression = "java(mapToReportExchanges(transactions.getCurrencyExchange()))")
     public abstract CardTransaction mapToCardTransaction(de.adorsys.psd2.xs2a.domain.CardTransaction transactions);
+
+    @Mapping(target = "currency", source = "currency.currencyCode")
+    @Mapping(target = "other", expression = "java(mapToOtherType(xs2aAccountReference.getOther()))")
+    public abstract de.adorsys.psd2.model.AccountReference mapToCardAccount(de.adorsys.psd2.xs2a.core.profile.AccountReference xs2aAccountReference);
 
     protected OffsetDateTime mapToOffsetDateTime(LocalDateTime localDateTime) {
         if (localDateTime == null) {
@@ -155,6 +159,12 @@ public abstract class CardAccountModelMapper {
         return Optional.ofNullable(currency)
                    .map(Currency::getCurrencyCode)
                    .orElseGet(this::getMulticurrencyRepresentationOrNull);
+    }
+
+    protected OtherType mapToOtherType(String other){
+        return other == null
+                   ? null
+                   : new OtherType().identification(other);
     }
 
     private String getMulticurrencyRepresentationOrNull() {

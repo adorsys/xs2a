@@ -16,13 +16,17 @@
 
 package de.adorsys.psd2.xs2a.service.mapper;
 
+import de.adorsys.psd2.model.AccountReference;
+import de.adorsys.psd2.model.OtherType;
 import de.adorsys.psd2.model.TrustedBeneficiariesList;
 import de.adorsys.psd2.model.TrustedBeneficiary;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiaries;
 import de.adorsys.psd2.xs2a.domain.account.Xs2aTrustedBeneficiariesList;
 import de.adorsys.psd2.xs2a.web.mapper.Xs2aAddressMapper;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
+import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,24 @@ public interface TrustedBeneficiariesModelMapper {
         return result;
     }
 
+    @Mapping(target = "creditorAccount", expression = "java(mapToAccountReference(trustedBeneficiaries.getCreditorAccount()))")
+    @Mapping(target = "debtorAccount", expression = "java(mapToAccountReference(trustedBeneficiaries.getDebtorAccount()))")
     TrustedBeneficiary mapToTrustedBeneficiaries(Xs2aTrustedBeneficiaries trustedBeneficiaries);
+
+    @Mapping(target = "currency", expression = "java(mapToCurrency(value.getCurrency()))")
+    @Mapping(target = "other", expression = "java(mapToOtherType(value.getOther()))")
+    AccountReference mapToAccountReference(de.adorsys.psd2.xs2a.core.profile.AccountReference value);
+
+    default OtherType mapToOtherType(String other){
+        return other == null
+                   ? null
+                   : new OtherType().identification(other);
+    }
+
+    default String mapToCurrency(Currency value){
+        return value == null
+                   ? null
+                   : value.getCurrencyCode();
+    }
 }
 

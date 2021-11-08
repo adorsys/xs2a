@@ -51,7 +51,6 @@ public class PaymentModelMapperPsd2 {
     private final ScaMethodsMapper scaMethodsMapper;
     private final StandardPaymentProductsResolver standardPaymentProductsResolver;
     private final Xs2aObjectMapper xs2aObjectMapper;
-    private final TppMessage200Mapper tppMessage200Mapper;
     private final TppMessage201Mapper tppMessage201Mapper;
     private final TppMessageGenericMapper tppMessageGenericMapper;
 
@@ -81,7 +80,7 @@ public class PaymentModelMapperPsd2 {
                    .fundsAvailable(response.getFundsAvailable())
                    .psuMessage(response.getPsuMessage())
                    ._links(hrefLinkMapper.mapToLinksMap(response.getLinks()))
-                   .tppMessage(tppMessage200Mapper.mapToTppMessage200List(response.getTppMessageInformation()));
+                   .tppMessages(tppMessageGenericMapper.mapToTppMessageGenericList(response.getTppMessageInformation()));
     }
 
     public byte[] mapToStatusResponseRaw(GetPaymentStatusResponse response) {
