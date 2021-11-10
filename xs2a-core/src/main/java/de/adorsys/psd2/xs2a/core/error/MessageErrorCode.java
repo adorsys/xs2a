@@ -457,7 +457,7 @@ public enum MessageErrorCode {
         }
     },
 
-    REQUIRED_KID_MISSING(401),  // The payment initiation has failed due to a missing KID
+    KID_MISSING(401),  // The payment initiation has failed due to a missing KID
     EXECUTION_DATE_INVALID(400), // The requested execution date is not a valid execution date for the ASPSP
 
     // Value 'requestedExecutionDate' should not be in the past
