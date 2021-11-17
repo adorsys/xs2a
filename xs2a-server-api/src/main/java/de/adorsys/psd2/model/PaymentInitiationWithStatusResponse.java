@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -79,9 +79,9 @@ public class PaymentInitiationWithStatusResponse   {
   @JsonProperty("transactionStatus")
   private TransactionStatus transactionStatus = null;
 
-  @JsonProperty("tppMessage")
+  @JsonProperty("tppMessages")
   @Valid
-  private List<TppMessageGeneric> tppMessage = null;
+  private List<TppMessageGeneric> tppMessages = null;
 
   public PaymentInitiationWithStatusResponse endToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -514,35 +514,35 @@ public class PaymentInitiationWithStatusResponse   {
     this.transactionStatus = transactionStatus;
   }
 
-  public PaymentInitiationWithStatusResponse tppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public PaymentInitiationWithStatusResponse tppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
     return this;
   }
 
-  public PaymentInitiationWithStatusResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
-    if (this.tppMessage == null) {
-      this.tppMessage = new ArrayList<>();
+  public PaymentInitiationWithStatusResponse addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
+    if (this.tppMessages == null) {
+      this.tppMessages = new ArrayList<>();
     }
-    this.tppMessage.add(tppMessageItem);
+    this.tppMessages.add(tppMessagesItem);
     return this;
   }
 
   /**
    * Messages to the TPP on operational issues.
-   * @return tppMessage
+   * @return tppMessages
   **/
   @ApiModelProperty(value = "Messages to the TPP on operational issues.")
 
   @Valid
 
 
-  @JsonProperty("tppMessage")
-  public List<TppMessageGeneric> getTppMessage() {
-    return tppMessage;
+  @JsonProperty("tppMessages")
+  public List<TppMessageGeneric> getTppMessages() {
+    return tppMessages;
   }
 
-  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public void setTppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
   }
 
 
@@ -573,12 +573,12 @@ public class PaymentInitiationWithStatusResponse   {
     Objects.equals(this.remittanceInformationStructuredArray, paymentInitiationWithStatusResponse.remittanceInformationStructuredArray) &&
     Objects.equals(this.requestedExecutionDate, paymentInitiationWithStatusResponse.requestedExecutionDate) &&
     Objects.equals(this.transactionStatus, paymentInitiationWithStatusResponse.transactionStatus) &&
-    Objects.equals(this.tppMessage, paymentInitiationWithStatusResponse.tppMessage);
+    Objects.equals(this.tppMessages, paymentInitiationWithStatusResponse.tppMessages);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, chargeBearer, remittanceInformationUnstructured, remittanceInformationStructured, remittanceInformationStructuredArray, requestedExecutionDate, transactionStatus, tppMessage);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, creditorId, ultimateCreditor, purposeCode, chargeBearer, remittanceInformationUnstructured, remittanceInformationStructured, remittanceInformationStructuredArray, requestedExecutionDate, transactionStatus, tppMessages);
   }
 
   @Override
@@ -605,7 +605,7 @@ public class PaymentInitiationWithStatusResponse   {
     sb.append("    remittanceInformationStructuredArray: ").append(toIndentedString(remittanceInformationStructuredArray)).append("\n");
     sb.append("    requestedExecutionDate: ").append(toIndentedString(requestedExecutionDate)).append("\n");
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
-    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
+    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");
     return sb.toString();
   }

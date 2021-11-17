@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Body of the response for a successful payment initiation status request in case of an XML based endpoint.  The status is returned as a pain.002 structure.   urn:iso:std:iso:20022:tech:xsd:pain.002.001.03  The chosen XML schema of the status request is following the XML schema definitions of the original pain.001 schema. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class PaymentInitiationStatusResponse200Xml   {
 

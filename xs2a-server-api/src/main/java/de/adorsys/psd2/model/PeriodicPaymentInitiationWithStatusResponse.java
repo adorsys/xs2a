@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding periodic payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class PeriodicPaymentInitiationWithStatusResponse   {
   @JsonProperty("endToEndIdentification")
@@ -45,6 +45,9 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
 
   @JsonProperty("creditorAgent")
   private String creditorAgent = null;
+
+  @JsonProperty("creditorId")
+  private String creditorId = null;
 
   @JsonProperty("creditorName")
   private String creditorName = null;
@@ -82,9 +85,9 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   @JsonProperty("transactionStatus")
   private TransactionStatus transactionStatus = null;
 
-  @JsonProperty("tppMessage")
+  @JsonProperty("tppMessages")
   @Valid
-  private List<TppMessageGeneric> tppMessage = null;
+  private List<TppMessageGeneric> tppMessages = null;
 
   public PeriodicPaymentInitiationWithStatusResponse endToEndIdentification(String endToEndIdentification) {
     this.endToEndIdentification = endToEndIdentification;
@@ -266,6 +269,28 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
 
   public void setCreditorAgent(String creditorAgent) {
     this.creditorAgent = creditorAgent;
+  }
+
+  public PeriodicPaymentInitiationWithStatusResponse creditorId(String creditorId) {
+    this.creditorId = creditorId;
+    return this;
+  }
+
+  /**
+   * Identification of Creditors, e.g. a SEPA Creditor ID.
+   * @return creditorId
+  **/
+  @ApiModelProperty(value = "Identification of Creditors, e.g. a SEPA Creditor ID.")
+
+@Size(max=35)
+
+  @JsonProperty("creditorId")
+  public String getCreditorId() {
+    return creditorId;
+  }
+
+  public void setCreditorId(String creditorId) {
+    this.creditorId = creditorId;
   }
 
   public PeriodicPaymentInitiationWithStatusResponse creditorName(String creditorName) {
@@ -509,6 +534,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
   @ApiModelProperty(value = "")
 
   @Valid
+@Size(max=2)
 
   @JsonProperty("dayOfExecution")
   public DayOfExecution getDayOfExecution() {
@@ -542,35 +568,35 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     this.transactionStatus = transactionStatus;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse tppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public PeriodicPaymentInitiationWithStatusResponse tppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
     return this;
   }
 
-  public PeriodicPaymentInitiationWithStatusResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
-    if (this.tppMessage == null) {
-      this.tppMessage = new ArrayList<>();
+  public PeriodicPaymentInitiationWithStatusResponse addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
+    if (this.tppMessages == null) {
+      this.tppMessages = new ArrayList<>();
     }
-    this.tppMessage.add(tppMessageItem);
+    this.tppMessages.add(tppMessagesItem);
     return this;
   }
 
   /**
    * Messages to the TPP on operational issues.
-   * @return tppMessage
+   * @return tppMessages
   **/
   @ApiModelProperty(value = "Messages to the TPP on operational issues.")
 
   @Valid
 
 
-  @JsonProperty("tppMessage")
-  public List<TppMessageGeneric> getTppMessage() {
-    return tppMessage;
+  @JsonProperty("tppMessages")
+  public List<TppMessageGeneric> getTppMessages() {
+    return tppMessages;
   }
 
-  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public void setTppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
   }
 
 
@@ -590,6 +616,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     Objects.equals(this.instructedAmount, periodicPaymentInitiationWithStatusResponse.instructedAmount) &&
     Objects.equals(this.creditorAccount, periodicPaymentInitiationWithStatusResponse.creditorAccount) &&
     Objects.equals(this.creditorAgent, periodicPaymentInitiationWithStatusResponse.creditorAgent) &&
+    Objects.equals(this.creditorId, periodicPaymentInitiationWithStatusResponse.creditorId) &&
     Objects.equals(this.creditorName, periodicPaymentInitiationWithStatusResponse.creditorName) &&
     Objects.equals(this.creditorAddress, periodicPaymentInitiationWithStatusResponse.creditorAddress) &&
     Objects.equals(this.ultimateCreditor, periodicPaymentInitiationWithStatusResponse.ultimateCreditor) &&
@@ -602,12 +629,12 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     Objects.equals(this.frequency, periodicPaymentInitiationWithStatusResponse.frequency) &&
     Objects.equals(this.dayOfExecution, periodicPaymentInitiationWithStatusResponse.dayOfExecution) &&
     Objects.equals(this.transactionStatus, periodicPaymentInitiationWithStatusResponse.transactionStatus) &&
-    Objects.equals(this.tppMessage, periodicPaymentInitiationWithStatusResponse.tppMessage);
+    Objects.equals(this.tppMessages, periodicPaymentInitiationWithStatusResponse.tppMessages);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution, transactionStatus, tppMessage);
+    return Objects.hash(endToEndIdentification, instructionIdentification, debtorName, debtorAccount, ultimateDebtor, instructedAmount, creditorAccount, creditorAgent, creditorId, creditorName, creditorAddress, ultimateCreditor, purposeCode, remittanceInformationUnstructured, remittanceInformationStructured, startDate, endDate, executionRule, frequency, dayOfExecution, transactionStatus, tppMessages);
   }
 
   @Override
@@ -623,6 +650,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     sb.append("    instructedAmount: ").append(toIndentedString(instructedAmount)).append("\n");
     sb.append("    creditorAccount: ").append(toIndentedString(creditorAccount)).append("\n");
     sb.append("    creditorAgent: ").append(toIndentedString(creditorAgent)).append("\n");
+    sb.append("    creditorId: ").append(toIndentedString(creditorId)).append("\n");
     sb.append("    creditorName: ").append(toIndentedString(creditorName)).append("\n");
     sb.append("    creditorAddress: ").append(toIndentedString(creditorAddress)).append("\n");
     sb.append("    ultimateCreditor: ").append(toIndentedString(ultimateCreditor)).append("\n");
@@ -635,7 +663,7 @@ public class PeriodicPaymentInitiationWithStatusResponse   {
     sb.append("    frequency: ").append(toIndentedString(frequency)).append("\n");
     sb.append("    dayOfExecution: ").append(toIndentedString(dayOfExecution)).append("\n");
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
-    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
+    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");
     return sb.toString();
   }

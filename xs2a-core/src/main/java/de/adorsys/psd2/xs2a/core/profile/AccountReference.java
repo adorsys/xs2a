@@ -64,7 +64,9 @@ public class AccountReference {
     private Currency currency;
 
     @ApiModelProperty(value = "Other account identifier", example = "30-163033-7")
-    private String otherAccountIdentification;
+    private String other;
+
+    private String cashAccountType;
     /**
      * This constructor should be used for storing initial accounts data (as it was requested by TPP)
      *
@@ -76,7 +78,7 @@ public class AccountReference {
         this(accountReferenceType, accountReferenceValue, currency, null, null);
     }
 
-    public AccountReference(String aspspAccountId, String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency, String otherAccountIdentification) {
+    public AccountReference(String aspspAccountId, String resourceId, String iban, String bban, String pan, String maskedPan, String msisdn, Currency currency, String other) {
         this.aspspAccountId = aspspAccountId;
         this.resourceId = resourceId;
         this.iban = iban;
@@ -85,7 +87,7 @@ public class AccountReference {
         this.maskedPan = maskedPan;
         this.msisdn = msisdn;
         this.currency = currency;
-        this.otherAccountIdentification = otherAccountIdentification;
+        this.other = other;
     }
 
     /**

@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Might be used by the ASPSP to transport details about transactions within a batch. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-27T13:20:30.606211+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class EntryDetails extends ArrayList<EntryDetailsElement>  {
 

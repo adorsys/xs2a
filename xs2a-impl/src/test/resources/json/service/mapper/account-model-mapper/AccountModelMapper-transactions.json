@@ -120,7 +120,7 @@
         ],
         "remittanceInformationStructured": "remittanceInformationStructured",
         "remittanceInformationStructuredArray": [
-          "remittanceInformationStructuredArray"
+          "Remittance structured array element reference"
         ],
         "purposeCode": "CDCB"
       }

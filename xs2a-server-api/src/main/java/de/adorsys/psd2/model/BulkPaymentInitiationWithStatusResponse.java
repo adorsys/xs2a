@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @ApiModel(description = "Generic JSON response body consistion of the corresponding bulk payment initation JSON body together with an optional transaction status field. ")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-05-24T13:41:46.273636+03:00[Europe/Kiev]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2021-11-05T12:22:49.487689+02:00[Europe/Kiev]")
 
 public class BulkPaymentInitiationWithStatusResponse   {
   @JsonProperty("batchBookingPreferred")
@@ -44,9 +44,9 @@ public class BulkPaymentInitiationWithStatusResponse   {
   @JsonProperty("transactionStatus")
   private TransactionStatus transactionStatus = null;
 
-  @JsonProperty("tppMessage")
+  @JsonProperty("tppMessages")
   @Valid
-  private List<TppMessageGeneric> tppMessage = null;
+  private List<TppMessageGeneric> tppMessages = null;
 
   public BulkPaymentInitiationWithStatusResponse batchBookingPreferred(Boolean batchBookingPreferred) {
     this.batchBookingPreferred = batchBookingPreferred;
@@ -214,35 +214,35 @@ public class BulkPaymentInitiationWithStatusResponse   {
     this.transactionStatus = transactionStatus;
   }
 
-  public BulkPaymentInitiationWithStatusResponse tppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public BulkPaymentInitiationWithStatusResponse tppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
     return this;
   }
 
-  public BulkPaymentInitiationWithStatusResponse addTppMessageItem(TppMessageGeneric tppMessageItem) {
-    if (this.tppMessage == null) {
-      this.tppMessage = new ArrayList<>();
+  public BulkPaymentInitiationWithStatusResponse addTppMessagesItem(TppMessageGeneric tppMessagesItem) {
+    if (this.tppMessages == null) {
+      this.tppMessages = new ArrayList<>();
     }
-    this.tppMessage.add(tppMessageItem);
+    this.tppMessages.add(tppMessagesItem);
     return this;
   }
 
   /**
    * Messages to the TPP on operational issues.
-   * @return tppMessage
+   * @return tppMessages
   **/
   @ApiModelProperty(value = "Messages to the TPP on operational issues.")
 
   @Valid
 
 
-  @JsonProperty("tppMessage")
-  public List<TppMessageGeneric> getTppMessage() {
-    return tppMessage;
+  @JsonProperty("tppMessages")
+  public List<TppMessageGeneric> getTppMessages() {
+    return tppMessages;
   }
 
-  public void setTppMessage(List<TppMessageGeneric> tppMessage) {
-    this.tppMessage = tppMessage;
+  public void setTppMessages(List<TppMessageGeneric> tppMessages) {
+    this.tppMessages = tppMessages;
   }
 
 
@@ -261,12 +261,12 @@ public class BulkPaymentInitiationWithStatusResponse   {
     Objects.equals(this.paymentInformationId, bulkPaymentInitiationWithStatusResponse.paymentInformationId) &&
     Objects.equals(this.payments, bulkPaymentInitiationWithStatusResponse.payments) &&
     Objects.equals(this.transactionStatus, bulkPaymentInitiationWithStatusResponse.transactionStatus) &&
-    Objects.equals(this.tppMessage, bulkPaymentInitiationWithStatusResponse.tppMessage);
+    Objects.equals(this.tppMessages, bulkPaymentInitiationWithStatusResponse.tppMessages);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(batchBookingPreferred, requestedExecutionDate, acceptorTransactionDateTime, debtorAccount, paymentInformationId, payments, transactionStatus, tppMessage);
+    return Objects.hash(batchBookingPreferred, requestedExecutionDate, acceptorTransactionDateTime, debtorAccount, paymentInformationId, payments, transactionStatus, tppMessages);
   }
 
   @Override
@@ -281,7 +281,7 @@ public class BulkPaymentInitiationWithStatusResponse   {
     sb.append("    paymentInformationId: ").append(toIndentedString(paymentInformationId)).append("\n");
     sb.append("    payments: ").append(toIndentedString(payments)).append("\n");
     sb.append("    transactionStatus: ").append(toIndentedString(transactionStatus)).append("\n");
-    sb.append("    tppMessage: ").append(toIndentedString(tppMessage)).append("\n");
+    sb.append("    tppMessages: ").append(toIndentedString(tppMessages)).append("\n");
     sb.append("}");
     return sb.toString();
   }
