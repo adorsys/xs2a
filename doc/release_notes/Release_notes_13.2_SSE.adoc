@@ -1,9 +1,0 @@
-= Release notes v.13.2
-
-== Table of Contents
-
-* XS2A migrated onto BG 1.3.11 .yaml file version
-
-== XS2A migrated onto BG 1.3.11 .yaml file version
-
-From now on XS2A uses models and API's according to the last BG 1.3.11 .yaml file version.

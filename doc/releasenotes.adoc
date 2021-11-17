@@ -8,6 +8,7 @@ For upcoming versions see our xref:roadmap.adoc[Roadmap].
 
 === Mainline 13.x (Development. Planned to be released 14.03.2022 as 14.0 Stable version)
 
+* xref:release_notes/Release_notes_13.2.adoc[Version 13.2 (release date: 17.11.2021)]
 * xref:release_notes/Release_notes_13.1.adoc[Version 13.1 (release date: 03.11.2021)]
 * xref:release_notes/Release_notes_13.0.adoc[Version 13.0 (release date: 13.09.2021)]
 
