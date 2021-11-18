@@ -1,0 +1,9 @@
+= Release notes v.13.3
+
+== Table of Contents
+
+* Added CardAccount to CashAccountType and SpiAccountType
+
+== Added CardAccount to CashAccountType and SpiAccountType
+
+From now on, new value `CARD` is added to enums CashAccountType and SpiAccountType.
