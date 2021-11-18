@@ -25,6 +25,39 @@ a| * All fixes and updates from v.11.11
 
 a|
 
+|03.11.2021| | 12.1| 13.1| |
+
+a|
+
+a| * CMS performance improvement
+* Update UML diagrams for PIS flows 0Auth
+* Refactoring according to BG yaml-file v.1.3.9:
+- Refactor trusted beneficiaries endpoint
+- Rename subelement otherAccountIdentification to Other
+- Restore TppMessage2XX object
+- Refactor PIIS consentId_HEADER_optional
+- Revert data model for Remittances
+- Update HTTP Response Code for Message Code "FUNDS_NOT_AVAILABLE"
+
+a| * CMS performance improvement
+* Update UML diagrams for PIS flows 0Auth
+
+a|
+
+|17.11.2021| | 12.2| 13.2| |
+
+a|
+
+a| * Documentation and UML diagramms update for PIS and payment cancellation on Github
+
+a| * All fixes and updates from v.12.2
+* Migrate to YAML open API version 1.3.11 from 01.10.2021:
+- New subelements for card transactions
+- Card Account Details, subelement "details": Format changed to "Max1000Text"
+- Added Element "monthsOfExecution" to initiate payments that are executed only in certain months of each year
+- Subelement "contractIdentification": Format changed to "Max35Text"
+- Error Code "REQUIRED_KID_MISSING" renamed to "KID_MISSING"
+
 a|
 
 a|
@@ -35,10 +68,17 @@ a|
 
 a|
 
-|*For future development*| |*12.x*|*13.x*| *XS2A extention (commercial)*
+a|
 
-| | | | |Signing Basket plugin for XS2A
+|*For future development*| |*12.x*|*13.x*| *XS2A extentions (commercial)*
 
-| | | | |Multiple consents plugin for XS2A
+| | | | |AIS - current & savings accounts plugin
+
+| | | | |AIS - push notification services plugin
+
+| | | | |Signing Basket plugin
+
+| | | | |Multiple consents plugin
+
 
 |====
