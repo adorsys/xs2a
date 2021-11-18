@@ -18,6 +18,7 @@
   "creditorAgent": "BCENECEQ",
   "creditorName": "Telekom",
   "dayOfExecution": "14",
+  "monthsOfExecution": ["1","2","3"],
   "debtorAccount": {
     "currency": "EUR",
     "iban": "DE52500105173911841934",

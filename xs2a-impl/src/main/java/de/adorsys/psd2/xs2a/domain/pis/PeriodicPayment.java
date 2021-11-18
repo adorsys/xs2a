@@ -26,6 +26,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -40,6 +41,7 @@ public class PeriodicPayment extends SinglePayment {
     @NotNull
     private FrequencyCode frequency;
     private PisDayOfExecution dayOfExecution;
+    private List<String> monthsOfExecution;
 
     @Override
     public PaymentType getPaymentType() {

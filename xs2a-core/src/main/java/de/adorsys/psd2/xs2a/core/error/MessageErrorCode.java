@@ -188,6 +188,20 @@ public enum MessageErrorCode {
             return FORMAT_ERROR_NAME;
         }
     },
+    // Value 'monthsOfExecution' should be non empty array of maximum 11 distinct numbers
+    FORMAT_ERROR_INVALID_SIZE_MONTHS_OF_EXECUTION(400) {
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    },
+    // Values of 'monthsOfExecution' should be numbers of months in year
+    FORMAT_ERROR_INVALID_MONTHS_OF_EXECUTION(400) {
+        @Override
+        public String getName() {
+            return FORMAT_ERROR_NAME;
+        }
+    },
     // Query parameter '%s' is missing in request
     FORMAT_ERROR_ABSENT_PARAMETER(400) {
         @Override

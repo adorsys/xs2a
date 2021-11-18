@@ -34,6 +34,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Optional;
@@ -76,7 +77,7 @@ class DateFieldValidatorImplTest {
     }
 
     @Test
-    void validate_requestedExecutionDateWrongValue_wrongFormat_error() {
+    void validate_requestedExecutionDateWrongValue_wrongFormat_error() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -91,7 +92,7 @@ class DateFieldValidatorImplTest {
     }
 
     @Test
-    void validate_requestedExecutionDateWrongValue_success() {
+    void validate_requestedExecutionDateWrongValue_success() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -108,7 +109,7 @@ class DateFieldValidatorImplTest {
     }
 
     @Test
-    void validate_requestedExecutionTimeWrongValue_wrongFormat_error() {
+    void validate_requestedExecutionTimeWrongValue_wrongFormat_error() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -124,7 +125,7 @@ class DateFieldValidatorImplTest {
     }
 
     @Test
-    void validate_requestedExecutionTimeWrongValue_success() {
+    void validate_requestedExecutionTimeWrongValue_success() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -139,7 +140,7 @@ class DateFieldValidatorImplTest {
     }
 
     @Test
-    void validate_dayOfExecutionWrongValue_wrongFormat_error() {
+    void validate_dayOfExecutionWrongValue_wrongFormat_error() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -154,7 +155,7 @@ class DateFieldValidatorImplTest {
     }
 
     @Test
-    void validate_dayOfExecutionWrongValue_success() {
+    void validate_dayOfExecutionWrongValue_success() throws IOException {
         // Given
         MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 

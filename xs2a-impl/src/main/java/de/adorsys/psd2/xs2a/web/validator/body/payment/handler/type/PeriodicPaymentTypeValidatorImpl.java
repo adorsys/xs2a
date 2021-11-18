@@ -42,11 +42,11 @@ public class PeriodicPaymentTypeValidatorImpl extends SinglePaymentTypeValidator
     private CustomPaymentValidationService customPaymentValidationService;
 
     @Autowired
-    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMappe,
+    public PeriodicPaymentTypeValidatorImpl(ErrorBuildingService errorBuildingService, Xs2aObjectMapper xs2aObjectMapper,
                                             PaymentMapper paymentMapper, AmountValidator amountValidator,
                                             IbanValidator ibanValidator, CustomPaymentValidationService customPaymentValidationService,
                                             FieldLengthValidator fieldLengthValidator, AspspProfileServiceWrapper aspspProfileServiceWrapper) {
-        super(errorBuildingService, xs2aObjectMappe, paymentMapper, amountValidator, ibanValidator, customPaymentValidationService,
+        super(errorBuildingService, xs2aObjectMapper, paymentMapper, amountValidator, ibanValidator, customPaymentValidationService,
               fieldLengthValidator, aspspProfileServiceWrapper);
         this.customPaymentValidationService = customPaymentValidationService;
     }

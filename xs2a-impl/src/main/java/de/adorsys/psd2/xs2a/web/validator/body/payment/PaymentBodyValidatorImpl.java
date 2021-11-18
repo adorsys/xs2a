@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.*;
@@ -110,7 +109,7 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         validateCurrency(request, messageError);
         validateBulkPaymentFields(request, messageError);
         validateFrequencyForPeriodicPayment(request, messageError);
-        validatePurposeCodes(request, messageError);
+        validatePurposeCode(request, messageError);
         validateChargeBearerList(request, messageError);
         return messageError;
     }
@@ -145,13 +144,15 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
     }
 
     private void validateFrequencyForPeriodicPayment(HttpServletRequest request, MessageError messageError) {
-        Optional<String> frequencyOptional = fieldExtractor.extractField(request, FREQUENCY_FIELD_NAME, messageError);
         boolean isPeriodicPayment = getPathParameters(request).get(PAYMENT_SERVICE_PATH_VAR).equals(PERIODIC_PAYMENT_PATH_VAR);
         if (isPeriodicPayment) {
+            Optional<String> frequencyOptional = fieldExtractor.extractField(request, FREQUENCY_FIELD_NAME, messageError);
             if (frequencyOptional.isEmpty()) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_NULL_VALUE, FREQUENCY_FIELD_NAME));
             } else if (FrequencyCode.fromValue(frequencyOptional.get()) == null) {
                 errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, FREQUENCY_FIELD_NAME));
+            } else if (FrequencyCode.MONTHLYVARIABLE.equals(FrequencyCode.fromValue(frequencyOptional.get()))) {
+                dateFieldValidator.validateMonthsOfExecution(request, messageError);
             }
         }
     }
@@ -179,13 +180,11 @@ public class PaymentBodyValidatorImpl extends AbstractBodyValidatorImpl implemen
         return standardPaymentProductsResolver.isRawPaymentProduct(paymentProduct);
     }
 
-    private void validatePurposeCodes(HttpServletRequest request, MessageError messageError) {
-        List<String> purposeCodes = fieldExtractor.extractList(request, PURPOSE_CODE_FIELD_NAME, messageError);
-        boolean isPurposeCodeInvalid = purposeCodes.stream()
-                                           .map(PurposeCode::fromValue)
-                                           .anyMatch(Objects::isNull);
+    private void validatePurposeCode(HttpServletRequest request, MessageError messageError) {
+        String purposeCode = fieldExtractor.extractField(request, PURPOSE_CODE_FIELD_NAME, messageError).orElse(null);
 
-        if (isPurposeCodeInvalid) {
+        if (purposeCode != null
+                && PurposeCode.fromValue(purposeCode) == null) {
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_WRONG_FORMAT_VALUE, PURPOSE_CODE_FIELD_NAME));
         }
     }
