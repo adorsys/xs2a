@@ -18,7 +18,7 @@ package de.adorsys.psd2.xs2a.web.validator.body.payment.handler.config;
 
 import de.adorsys.psd2.validator.payment.config.ValidationObject;
 
-public interface PaymentValidationConfig{
+public interface PaymentValidationConfig {
 
     ValidationObject getEndToEndIdentification();
     ValidationObject getInstructionIdentification();
@@ -46,6 +46,7 @@ public interface PaymentValidationConfig{
     ValidationObject getExecutionRule();
     ValidationObject getCreditorId();
     ValidationObject getDayOfExecution();
+    ValidationObject getMonthsOfExecution();
 
     ValidationObject getRemittanceInformationStructured();
     ValidationObject getChargeBearer();

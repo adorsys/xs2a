@@ -62,6 +62,7 @@ class PaymentBodyValidatorImplTest {
     private static final String PAYMENT_PRODUCT_PATH_VAR = "payment-product";
     private static final String WRONG_FREQUENCY_STRING = "wrong frequency";
     private static final String WRONG_BATCH_BOOKING_PREFERRED_STRING = "not boolean string";
+    private static final String PURPOSE_CODE = "BKDF";
 
     private static final MessageError DAY_OF_EXECUTION_WRONG_VALUE_ERROR =
         new MessageError(ErrorType.PIS_400, TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_DAY_OF_EXECUTION));
@@ -142,8 +143,8 @@ class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         when(pathParameterExtractor.extractParameters(mockRequest)).thenReturn(templates);
 
-        when(fieldExtractor.extractField(mockRequest, FREQUENCY_FIELD_NAME, messageError))
-            .thenReturn(Optional.of(VALID_FREQUENCY_CODE));
+        when(fieldExtractor.extractField(mockRequest, PURPOSE_CODE_FIELD_NAME, messageError))
+            .thenReturn(Optional.of(PURPOSE_CODE));
 
         doAnswer((Answer<Void>) invocation -> {
             messageError.addTppMessage(TppMessageInformation.of(MessageErrorCode.FORMAT_ERROR_INVALID_DAY_OF_EXECUTION));
@@ -304,8 +305,8 @@ class PaymentBodyValidatorImplTest {
         Map<String, String> templates = buildTemplateVariables(JSON_PAYMENT_PRODUCT, PAYMENT_SERVICE);
         when(pathParameterExtractor.extractParameters(mockRequest)).thenReturn(templates);
 
-        when(fieldExtractor.extractList(mockRequest, PURPOSE_CODE_FIELD_NAME, messageError))
-            .thenReturn(Collections.singletonList(purposeCode));
+        when(fieldExtractor.extractField(mockRequest, PURPOSE_CODE_FIELD_NAME, messageError))
+            .thenReturn(Optional.of(purposeCode));
 
         // When
         validator.validate(mockRequest, messageError);

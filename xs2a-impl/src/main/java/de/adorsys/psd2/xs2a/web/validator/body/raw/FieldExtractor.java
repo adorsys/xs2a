@@ -22,6 +22,7 @@ import de.adorsys.psd2.xs2a.core.domain.TppMessageInformation;
 import de.adorsys.psd2.xs2a.core.error.MessageError;
 import de.adorsys.psd2.xs2a.web.validator.ErrorBuildingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +35,10 @@ import java.util.Optional;
 import static de.adorsys.psd2.xs2a.core.error.MessageErrorCode.FORMAT_ERROR_DESERIALIZATION_FAIL;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class FieldExtractor {
+    private static final String EXTRACT_ERROR_MESSAGE = "Couldn't extract field {} from json: {}";
 
     private final ErrorBuildingService errorBuildingService;
     private final Xs2aObjectMapper xs2aObjectMapper;
@@ -46,6 +49,7 @@ public class FieldExtractor {
             fieldOptional = xs2aObjectMapper.toJsonField(request.getInputStream(), fieldName, new TypeReference<String>() {
             });
         } catch (IOException e) {
+            log.info(EXTRACT_ERROR_MESSAGE, fieldName, e.getMessage());
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
 
@@ -64,8 +68,9 @@ public class FieldExtractor {
     public List<String> extractList(HttpServletRequest request, String fieldName, MessageError messageError) {
         List<String> fieldList = new ArrayList<>();
         try {
-            fieldList.addAll(xs2aObjectMapper.toJsonGetValuesForField(request.getInputStream(), fieldName));
+            fieldList.addAll(xs2aObjectMapper.toJsonGetListValuesForField(request.getInputStream(), fieldName));
         } catch (IOException e) {
+            log.info(EXTRACT_ERROR_MESSAGE, fieldName, e.getMessage());
             errorBuildingService.enrichMessageError(messageError, TppMessageInformation.of(FORMAT_ERROR_DESERIALIZATION_FAIL));
         }
         return fieldList;
