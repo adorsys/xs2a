@@ -44,6 +44,20 @@ a| * CMS performance improvement
 
 a|
 
+|17.11.2021| | 12.2| 13.2| |
+
+a|
+
+a| * Documentation and UML diagramms update for PIS and payment cancellation on Github
+
+a| * All fixes and updates from v.12.2
+* Migrate to YAML open API version 1.3.11 from 01.10.2021:
+- New subelements for card transactions
+- Card Account Details, subelement "details": Format changed to "Max1000Text"
+- Added Element "monthsOfExecution" to initiate payments that are executed only in certain months of each year
+- Subelement "contractIdentification": Format changed to "Max35Text"
+- Error Code "REQUIRED_KID_MISSING" renamed to "KID_MISSING"
+
 a|
 
 a|
@@ -54,12 +68,17 @@ a|
 
 a|
 
-|*For future development*| |*12.x*|*13.x*| *XS2A extention (commercial)*
+a|
 
-| | | | |Signing Basket plugin for XS2A
+|*For future development*| |*12.x*|*13.x*| *XS2A extentions (commercial)*
 
-| | | | |Multiple consents plugin for XS2A
+| | | | |AIS - current & savings accounts plugin
 
-| | | | |Current & Saving accounts plugin for XS2A
+| | | | |AIS - push notification services plugin
+
+| | | | |Signing Basket plugin
+
+| | | | |Multiple consents plugin
+
 
 |====
