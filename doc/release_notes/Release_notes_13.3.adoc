@@ -4,6 +4,25 @@
 
 * Added CardAccount to CashAccountType and SpiAccountType
 
+* Implemented validation for the field `monthsOfExecution` for Periodic payments
+
+* Clarification is added to license model
+
+* Roadmap updated
+
 == Added CardAccount to CashAccountType and SpiAccountType
 
 From now on, new value `CARD` is added to enums CashAccountType and SpiAccountType.
+
+== Implemented validation for the field `monthsOfExecution` for Periodic payments
+
+From now on validation for the field `monthsOfExecution` is being performed in case of `frequency = MonthlyVariable`
+for periodic payments initiation.
+
+== Clarification is added to license model
+
+License related information was updated in README.md file.
+
+== Roadmap updated
+
+Roadmap.adoc was updated.

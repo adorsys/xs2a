@@ -1,0 +1,9 @@
+= Release notes v.12.2
+
+== Table of Contents
+
+* Documentation updated
+
+== Documentation updated
+
+Updated info and UML flows for PIS and payment cancellation, changes to roadmap and readme files.
