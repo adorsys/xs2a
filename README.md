@@ -9,7 +9,7 @@
 
 Constantly evolving and extending scope, production traffic and support in open banking
 world call for high maintenance and service investments on our part.
-Henceforth, adorsys will offer all versions higher than v.12.4 of this XS2A-CORE framework
+Henceforth, adorsys will offer all versions later than v.12.4 of the stable branch and v.13.4 of the development branch of this XS2A-CORE framework
 under a dual-license model. Thus, this repository will be available either under Affero GNU
 General Public License v.3 (AGPL v.3) or alternatively under a commercial license agreement.
 
