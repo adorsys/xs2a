@@ -1,0 +1,9 @@
+= Release notes v.13.0
+
+== Table of Contents
+
+* Updated Postman tests for decoupled approach
+
+== Updated Postman tests for decoupled approach
+
+Postman collections for decoupled SCA approach were updated and enriched.
